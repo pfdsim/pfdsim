@@ -1,0 +1,71 @@
+#==============================================================================
+# PERMANENT SOLID - DRY FEED, SLURRY MIXING, SPLITTING, HEATING, AND COOLING
+#==============================================================================
+
+PROCESS: Permanent-Solid Slurry Operations
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Explicit dry NaCl remains solid while water flashes independently through ordinary equipment
+THERMO_METHOD: IDEAL
+
+COMPONENTS:
+    water | Water | MW=18.0153
+    salt  | Sodium chloride | CAS=7647-14-5, MW=58.4428, type=permanent_solid, solid_material_form=crystalline, particle_diameter=0.0002, particle_sphericity=0.85
+
+STREAM WaterFeed : FEED -> MIX-1.water
+    T = 25 [C]
+    P = 1 [bar]
+    F = 80 [kmol/h]
+    x = water:1.0
+
+STREAM DrySaltFeed : FEED -> MIX-1.salt
+    T = 25 [C]
+    P = 1 [bar]
+    F = 20 [kmol/h]
+    x = salt:1.0
+
+STREAM Slurry : MIX-1.out -> SPLIT-1.in
+STREAM HotBranch : SPLIT-1.hot -> HEAT-1.in
+STREAM ColdBranch : SPLIT-1.cold -> COOL-1.in
+STREAM HotProduct : HEAT-1.out -> PRODUCT
+STREAM ColdProduct : COOL-1.out -> PRODUCT
+
+UNIT MIX-1
+    TYPE: Mixer
+    PORTS:
+        water : inlet
+        salt  : inlet
+        out   : outlet
+    PARAMS:
+        T_out = 25 [C]
+        P = 1 [bar]
+
+UNIT SPLIT-1
+    TYPE: Splitter
+    PORTS:
+        in   : inlet
+        hot  : outlet
+        cold : outlet
+    PARAMS:
+        outlets = hot, cold
+        hot_split_frac = 0.50
+
+UNIT HEAT-1
+    TYPE: Heater
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 50 [C]
+
+UNIT COOL-1
+    TYPE: Cooler
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 10 [C]
+
+# DrySaltFeed has solid_fraction=1. The mixed and product streams retain
+# 20 mol% permanent solid. Both branches conserve particle defaults and solid
+# component flow while their duties include the NaCl sensible enthalpy.

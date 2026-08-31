@@ -1,0 +1,46 @@
+# Acrylic Acid Rigorous Liquid-Liquid Extraction
+# 200 kg/h acrylic acid in 1500 kg/h water extracted with
+# 2000 kg/h of 50:50 mass diethyl ether/n-hexane solvent.
+
+PROCESS: Acrylic Acid Rigorous Extraction
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFAC
+
+COMPONENTS:
+    diethyl ether | Diethyl Ether | MW=74.12
+    n-hexane | n-Hexane | MW=86.18
+    acrylic acid | Acrylic Acid | MW=72.06, Tc=615.372, Pc=57.755, omega=0.5373, Tb=414.261
+    water | Water | MW=18.015
+
+# Aqueous feed: 200 kg/h acrylic acid + 1500 kg/h water.
+# PFD streams use kmol/h, so the mass specification is converted to:
+# F = 200/72.06 + 1500/18.015 = 86.0394116 kmol/h.
+STREAM AqueousFeed : FEED -> EX-100.feed
+    T = 25 [C]
+    P = 1 [bar]
+    F = 86.0394116014 [kmol/h]
+    x = acrylic acid:0.0322580645161, water:0.967741935484
+
+# Solvent: 1000 kg/h diethyl ether + 1000 kg/h n-hexane.
+# F = 1000/74.12 + 1000/86.18 = 25.0952555 kmol/h.
+STREAM Solvent : FEED -> EX-100.solvent
+    T = 25 [C]
+    P = 1 [bar]
+    F = 25.0952555157 [kmol/h]
+    x = diethyl ether:0.537616968185, n-hexane:0.462383031815
+
+STREAM Raffinate : EX-100.raffinate -> PRODUCT
+STREAM Extract : EX-100.extract -> PRODUCT
+
+UNIT EX-100
+    TYPE: RigorousExtractor
+    PORTS:
+        feed : inlet
+        solvent : solvent_inlet
+        raffinate : raffinate_outlet
+        extract : extract_outlet
+    PARAMS:
+        N_stages = 20
+        T = 25 [C]
+        max_iterations = 250

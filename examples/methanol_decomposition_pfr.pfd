@@ -1,0 +1,48 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - PFR with Kinetics
+#==============================================================================
+
+PROCESS: Methanol Decomposition in PFR
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Isothermal plug flow reactor with first-order kinetics
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    CH3OH | Methanol | MW=32.04
+    CO    | Carbon Monoxide | MW=28.01
+    H2    | Hydrogen | MW=2.016
+
+#------------------------------------------------------------------------------
+# STREAMS
+#------------------------------------------------------------------------------
+STREAM Feed : FEED -> PFR-1.in
+    T = 250 [C]
+    P = 5 [bar]
+    F = 100 [kmol/h]
+    x = CH3OH:1.0
+
+STREAM Product : PFR-1.out -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNITS
+#------------------------------------------------------------------------------
+UNIT PFR-1
+    TYPE: PFR
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        volume = 5 [m3]
+        diameter = 0.3 [m]
+        mode = isothermal
+        T = 250 [C]
+        phase = vapor
+    REACTIONS:
+        CH3OH -> CO + 2 H2 | A=1e8, Ea=80000, Ea_unit=J/mol, rate_basis=concentration, concentration_unit=kmol/m3, pressure_unit=bar, rate_unit=kmol/m3/h
+
+#------------------------------------------------------------------------------
+# END OF FILE
+#------------------------------------------------------------------------------

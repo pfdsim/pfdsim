@@ -1,0 +1,103 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - CSTR/PFR Comparison with Kinetics
+#==============================================================================
+
+PROCESS: Ethanol Dehydration Process
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: RK
+DESCRIPTION: Comparing CSTR vs PFR for ethanol dehydration to ethylene
+
+#------------------------------------------------------------------------------
+# COMPONENTS - All with critical properties for RK
+#------------------------------------------------------------------------------
+COMPONENTS:
+    C2H5OH | Ethanol    | MW=46.07, Tc=513.9, Pc=61.4, omega=0.644, Hf=-235
+    C2H4   | Ethylene   | MW=28.05, Tc=282.4, Pc=50.4, omega=0.087, Hf=52.5
+    H2O    | Water      | MW=18.02, Tc=647.1, Pc=220.6, omega=0.344, Hf=-241.8
+
+# One canonical kinetic definition is shared by all three reactors.
+REACTIONS:
+    ethanol_dehydration : C2H5OH -> C2H4 + H2O | A=1e13, Ea=140000, Ea_unit=J/mol, rate_basis=concentration, concentration_unit=kmol/m3, pressure_unit=bar, rate_unit=kmol/m3/h
+
+#------------------------------------------------------------------------------
+# FEED STREAM
+#------------------------------------------------------------------------------
+STREAM Feed : FEED -> CSTR-1.in
+    T = 350 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = C2H5OH:1.0
+
+#------------------------------------------------------------------------------
+# CSTR Section
+#------------------------------------------------------------------------------
+STREAM CSTR-Product : CSTR-1.out -> PRODUCT
+
+UNIT CSTR-1
+    TYPE: CSTR
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        volume = 5 [m3]
+        mode = isothermal
+        T_out = 350 [C]
+        phase = vapor
+    REACTIONS:
+        @ethanol_dehydration
+
+#------------------------------------------------------------------------------
+# PFR Section (parallel for comparison)
+#------------------------------------------------------------------------------
+STREAM Feed2 : FEED -> PFR-1.in
+    T = 350 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = C2H5OH:1.0
+
+STREAM PFR-Iso-Product : PFR-1.out -> PRODUCT
+
+UNIT PFR-1
+    TYPE: PFR
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        volume = 5 [m3]
+        diameter = 0.5 [m]
+        mode = isothermal
+        T = 350 [C]
+        phase = vapor
+        profile_points = 11
+    REACTIONS:
+        @ethanol_dehydration
+
+#------------------------------------------------------------------------------
+# Adiabatic PFR (shows temperature drop for endothermic)
+#------------------------------------------------------------------------------
+STREAM Feed3 : FEED -> PFR-2.in
+    T = 400 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = C2H5OH:1.0
+
+STREAM PFR-Adia-Product : PFR-2.out -> PRODUCT
+
+UNIT PFR-2
+    TYPE: PFR
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        volume = 5 [m3]
+        diameter = 0.5 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 11
+    REACTIONS:
+        @ethanol_dehydration
+
+#------------------------------------------------------------------------------
+# END OF FILE
+#------------------------------------------------------------------------------

@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1",
+    "description": "Extended UNIQUAC molecular structure constants and Antoine constants. q_prime is the residual interaction surface parameter used by the extended UNIQUAC model.",
+    "notes": [
+      "Values were manually transcribed from data/reference/main50.pdf because OCR is unreliable for Table 1.",
+      "Antoine constants use log10(P_mmHg) = A - B / (C + t_C)."
+    ]
+  },
+  "components": [
+    {"cas": "75-05-8", "name": "Acetonitrile", "formula": "C2H3N", "r": 1.8701, "q": 1.7240, "q_prime_expression": "q^0.1", "antoine_A": 7.33986, "antoine_B": 1482.29, "antoine_C": 250.523},
+    {"cas": "71-43-2", "name": "Benzene", "formula": "C6H6", "r": 3.1878, "q": 2.4000, "q_prime_expression": "q^0.1", "antoine_A": 6.87987, "antoine_B": 1196.76, "antoine_C": 219.161},
+    {"cas": "71-36-3", "name": "1-Butanol", "formula": "C4H10O", "r": 3.4543, "q": 3.0520, "q_prime": 0.88, "antoine_A": 7.83800, "antoine_B": 1558.19, "antoine_C": 196.881},
+    {"cas": "110-82-7", "name": "Cyclohexane", "formula": "C6H12", "r": 4.0464, "q": 3.2400, "q_prime_expression": "q^0.1", "antoine_A": 6.85146, "antoine_B": 1206.47, "antoine_C": 223.136},
+    {"cas": "123-91-1", "name": "1,4-Dioxane", "formula": "C4H8O2", "r": 3.1854, "q": 2.6400, "q_prime_expression": "q^0.1", "antoine_A": 7.43155, "antoine_B": 1554.68, "antoine_C": 240.337},
+    {"cas": "64-17-5", "name": "Ethanol", "formula": "C2H6O", "r": 2.1055, "q": 1.9720, "q_prime": 0.92, "antoine_A": 8.11220, "antoine_B": 1592.86, "antoine_C": 226.184},
+    {"cas": "141-78-6", "name": "Ethyl acetate", "formula": "C4H8O2", "r": 3.4786, "q": 3.1160, "q_prime_expression": "q^0.1", "antoine_A": 7.10179, "antoine_B": 1244.95, "antoine_C": 217.881},
+    {"cas": "109-94-4", "name": "Ethyl formate", "formula": "C3H6O2", "r": 2.8042, "q": 2.5760, "q_prime_expression": "q^0.1", "antoine_A": 7.00902, "antoine_B": 1123.94, "antoine_C": 218.247},
+    {"cas": "142-82-5", "name": "n-Heptane", "formula": "C7H16", "r": 5.1742, "q": 4.3960, "q_prime_expression": "q^0.1", "antoine_A": 6.89386, "antoine_B": 1264.37, "antoine_C": 216.640},
+    {"cas": "67-56-1", "name": "Methanol", "formula": "CH4O", "r": 1.4311, "q": 1.4320, "q_prime": 0.95, "antoine_A": 8.08097, "antoine_B": 1582.27, "antoine_C": 239.726},
+    {"cas": "79-20-9", "name": "Methyl acetate", "formula": "C3H6O2", "r": 2.8042, "q": 2.5760, "q_prime_expression": "q^0.1", "antoine_A": 7.06524, "antoine_B": 1157.63, "antoine_C": 219.726},
+    {"cas": "71-23-8", "name": "1-Propanol", "formula": "C3H8O", "r": 2.7799, "q": 2.5120, "q_prime": 0.89, "antoine_A": 7.74416, "antoine_B": 1437.69, "antoine_C": 198.463},
+    {"cas": "67-63-0", "name": "2-Propanol", "formula": "C3H8O", "r": 2.7791, "q": 2.5080, "q_prime": 0.89, "antoine_A": 8.87829, "antoine_B": 2010.33, "antoine_C": 252.636},
+    {"cas": "108-88-3", "name": "Toluene", "formula": "C7H8", "r": 3.9228, "q": 2.9680, "q_prime_expression": "q^0.1", "antoine_A": 6.95087, "antoine_B": 1342.31, "antoine_C": 219.187}
+  ]
+}

@@ -1,0 +1,38 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Retired repository metadata (kept locally for recovery only)
+.git.disabled-by-codex-*/
+
+# Local env files
+.env
+.env.*
+
+# App/runtime caches
+.property_cache/
+data/runtime/
+
+# Test, lint, packaging, and build artifacts
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+*.bak
+build/
+dist/
+
+# Generated process output
+outputs/
+
+# Logs
+logs/
+*.log
+
+# OS/editor noise
+.DS_Store

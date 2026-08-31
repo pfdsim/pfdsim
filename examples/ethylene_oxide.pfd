@@ -1,0 +1,138 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - Ethylene Oxide Production
+#==============================================================================
+
+#------------------------------------------------------------------------------
+# METADATA
+#------------------------------------------------------------------------------
+PROCESS: Ethylene Oxide Production
+VERSION: 1.0
+ONLINE_LOOKUP: false
+AUTHOR: Process Engineering
+DATE: 2025-01-15
+DESCRIPTION: Direct oxidation of ethylene to ethylene oxide with recycle
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    C2H4   | Ethylene       | MW=28.05
+    O2     | Oxygen         | MW=32.00
+    C2H4O  | Ethylene Oxide | MW=44.05
+    CO2    | Carbon Dioxide | MW=44.01
+    H2O    | Water          | MW=18.02
+    N2     | Nitrogen       | MW=28.01
+
+#------------------------------------------------------------------------------
+# STREAMS
+#------------------------------------------------------------------------------
+STREAM Ethylene-Feed : FEED -> MIX-1.in1
+    T = 25 [C]
+    P = 20 [bar]
+    F = 100 [kmol/h]
+    x = C2H4:0.99, N2:0.01
+
+STREAM Air-Feed : FEED -> COMP-1.in
+    T = 25 [C]
+    P = 1 [bar]
+    F = 500 [kmol/h]
+    x = O2:0.21, N2:0.79
+
+STREAM S1 : COMP-1.out -> MIX-1.in2
+    P = 20 [bar]
+
+STREAM S2 : MIX-1.out -> R-1.in
+
+STREAM S4 : R-1.out -> COOL-1.in
+
+STREAM S6 : COOL-1.out -> SEP-1.in
+    T = 40 [C]
+
+STREAM Recycle-Gas : SEP-1.vap -> PURGE-1.in
+STREAM Recycle : PURGE-1.out -> MIX-1.in3
+STREAM Purge : PURGE-1.out2 -> PRODUCT
+
+STREAM S7 : SEP-1.liq -> DIST-1.feed
+
+STREAM EO-Product : DIST-1.distillate -> PRODUCT
+
+STREAM Bottoms : DIST-1.bottoms -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNITS
+#------------------------------------------------------------------------------
+UNIT MIX-1
+    TYPE: Mixer
+    PORTS:
+        in1 : inlet
+        in2 : inlet
+        in3 : inlet
+        out : outlet
+    PARAMS:
+        mode = adiabatic
+
+UNIT COMP-1
+    TYPE: Compressor
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        P_out = 20 [bar]
+        eta_isen = 0.78
+
+UNIT R-1
+    TYPE: Reactor
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T = 270 [C]
+        P_drop = 0.5 [bar]
+        catalyst = Ag/Al2O3
+    REACTIONS:
+        C2H4 + 0.5 O2 -> C2H4O | conversion=0.25, basis=C2H4
+        C2H4 + 3 O2 -> 2 CO2 + 2 H2O | conversion=0.05, basis=C2H4
+
+UNIT COOL-1
+    TYPE: Cooler
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 40 [C]
+        coolant = CW
+
+UNIT SEP-1
+    TYPE: Flash
+    PORTS:
+        in  : inlet
+        vap : vapor_outlet
+        liq : liquid_outlet
+    PARAMS:
+        T = 40 [C]
+        P = 19 [bar]
+
+UNIT PURGE-1
+    TYPE: Splitter
+    PORTS:
+        in  : inlet
+        out : outlet
+        out2 : outlet
+    PARAMS:
+        split_frac = 0.50
+
+UNIT DIST-1
+    TYPE: ShortcutDistillation
+    PORTS:
+        feed       : inlet
+        distillate : outlet
+        bottoms    : outlet
+    PARAMS:
+        N_stages = 25
+        reflux_ratio = 3.5
+        P_top = 2 [bar]
+        condenser_type = partial
+
+#------------------------------------------------------------------------------
+# END OF FILE
+#------------------------------------------------------------------------------

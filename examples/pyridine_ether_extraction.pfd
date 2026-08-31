@@ -1,0 +1,42 @@
+# Pyridine Liquid-Liquid Extraction
+# 1000 kg/h aqueous feed at 10 wt% pyridine and 30 C extracted with
+# 500 kg/h diethyl ether at 20 C in a 20-stage adiabatic counter-current extractor.
+
+PROCESS: Pyridine Ether Extraction
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFNIST
+
+COMPONENTS:
+    pyridine | Pyridine | MW=79.10, SMILES=c1ccncc1
+    water | Water | MW=18.015
+    diethyl ether | Diethyl Ether | MW=74.12
+
+STREAM AqueousFeed : FEED -> EX-100.feed
+    T = 30 [C]
+    P = 1 [bar]
+    F_mass = 1000 [kg/h]
+    w = pyridine:0.10, water:0.90
+
+STREAM Solvent : FEED -> EX-100.solvent
+    T = 20 [C]
+    P = 1 [bar]
+    F_mass = 500 [kg/h]
+    w = diethyl ether:1.0
+
+STREAM Raffinate : EX-100.raffinate -> PRODUCT
+STREAM Extract : EX-100.extract -> PRODUCT
+
+UNIT EX-100
+    TYPE: RigorousExtractor
+    PORTS:
+        feed : inlet
+        solvent : solvent_inlet
+        raffinate : raffinate_outlet
+        extract : extract_outlet
+    PARAMS:
+        N_stages = 20
+        mode = adiabatic
+        T = 25 [C]
+        max_iterations = 80
+        max_jacobian_evaluations = 60

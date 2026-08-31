@@ -1,0 +1,133 @@
+#==============================================================================
+# Methane Claude Liquefaction - Textbook Example 9.3
+#==============================================================================
+#
+# Natural gas is represented as pure methane and liquefied by a Claude process.
+# This file is a solved design point for the textbook specifications:
+#
+#   - PR thermodynamics
+#   - methane compressed to 60 bar and precooled to 300 K
+#   - 25% expander draw from the high-pressure exchanger stream
+#   - expander exhausts to 1 bar as saturated vapor with eta_isen = 0.75
+#   - throttle exhausts to 1 bar
+#   - recycle methane leaves the exchanger system at 295 K
+#   - no heat leaks
+#
+# Solved PR design point:
+#   - expander branch enters the expander at 254.862153 K
+#   - throttle branch enters the valve at 198.070501 K
+#   - valve outlet vapor fraction is about 0.840889
+#   - liquefied fraction of methane entering the exchanger is
+#       z = (1 - 0.25) * (1 - 0.840889) = 0.119334
+#
+# The heat exchanger is represented as two countercurrent sections:
+#   - HX-WARM cools the full high-pressure stream to the expander draw point
+#   - HX-COLD cools the remaining throttle branch to the JT valve inlet
+# The low-pressure expander exhaust and JT vapor return through the cold side.
+
+PROCESS: Methane Claude Liquefaction PR
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: PR
+TEAR_STREAMS: Cold-Return-After-Cold-HX, JT-Vapor-Return
+DESCRIPTION: Solved PR design point for pure-methane Claude liquefaction, Example 9.3
+
+COMPONENTS:
+    CH4 | Methane | MW=16.043
+
+STREAM Exchanger-Feed : FEED -> HX-WARM.hot_in
+    T = 300 [K]
+    P = 60 [bar]
+    F = 1 [kmol/h]
+    x = CH4:1.0
+
+STREAM Expander-Draw-Point : HX-WARM.hot_out -> SPLIT-100.in
+
+STREAM Expander-Branch : SPLIT-100.expander -> EXP-100.in
+STREAM Throttle-Branch : SPLIT-100.throttle -> HX-COLD.hot_in
+
+STREAM Valve-Inlet : HX-COLD.hot_out -> JT-100.in
+
+STREAM Expander-Exhaust : EXP-100.out -> RETURN-MIX.expander
+STREAM Throttle-Exhaust : JT-100.out -> JT-FLASH.in
+STREAM JT-Vapor-Return : JT-FLASH.vapor_out -> RETURN-MIX.throttle
+STREAM LNG-Product : JT-FLASH.liquid_out -> PRODUCT
+
+STREAM Cold-Return-Mixed : RETURN-MIX.out -> HX-COLD.cold_in
+STREAM Cold-Return-After-Cold-HX : HX-COLD.cold_out -> HX-WARM.cold_in
+STREAM Warm-Recycle : HX-WARM.cold_out -> PRODUCT
+
+UNIT HX-WARM
+    TYPE: HeatExchanger
+    PORTS:
+        hot_in   : inlet
+        hot_out  : outlet
+        cold_in  : inlet
+        cold_out : outlet
+    PARAMS:
+        flow_pattern = countercurrent
+        T_hot_out = 254.862152616646 [K]
+        P_drop_hot = 0 [bar]
+        P_drop_cold = 0 [bar]
+        min_approach = 1 [K]
+
+UNIT SPLIT-100
+    TYPE: Splitter
+    PORTS:
+        in       : inlet
+        expander : outlet
+        throttle : outlet
+    PARAMS:
+        outlets = expander, throttle
+        expander_split_frac = 0.25
+
+UNIT HX-COLD
+    TYPE: HeatExchanger
+    PORTS:
+        hot_in   : inlet
+        hot_out  : outlet
+        cold_in  : inlet
+        cold_out : outlet
+    PARAMS:
+        flow_pattern = countercurrent
+        T_hot_out = 198.070501159593 [K]
+        P_drop_hot = 0 [bar]
+        P_drop_cold = 0 [bar]
+        min_approach = 1 [K]
+
+UNIT EXP-100
+    TYPE: Expander
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        P_out = 1 [bar]
+        eta_isen = 0.75
+        eta_mech = 1.0
+
+UNIT JT-FLASH
+    TYPE: Flash
+    PORTS:
+        in         : inlet
+        vapor_out  : outlet
+        liquid_out : outlet
+    PARAMS:
+        P = 1 [bar]
+        Q = 0 [kW]
+
+UNIT RETURN-MIX
+    TYPE: Mixer
+    PORTS:
+        expander : inlet
+        throttle : inlet
+        out      : outlet
+    PARAMS:
+        mode = adiabatic
+
+UNIT JT-100
+    TYPE: Valve
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        P_out = 1 [bar]

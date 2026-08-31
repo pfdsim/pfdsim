@@ -1,0 +1,108 @@
+#==============================================================================
+# 3-Methylpyridine Extraction With Ether Recycle
+#==============================================================================
+#
+# 1000 kg/h of 15 wt% 3-methylpyridine in water is extracted with recycled
+# diethyl ether plus a 25 kg/h fresh ether makeup stream. The extract goes to a
+# solvent recovery column, whose ether-rich distillate is recycled. The recovery
+# bottoms are polished in a second column to force more water overhead.
+
+PROCESS: 3-Methylpyridine Ether Extraction With Solvent Recycle
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFNIST
+RECYCLE_METHOD: BROYDEN
+TEAR_STREAMS: Recycle
+DESCRIPTION: Rigorous extraction, ether recovery recycle, and a partial-condenser polishing column for 3-methylpyridine
+
+COMPONENTS:
+    3-methylpyridine | 3-Methylpyridine | MW=93.13, Tb=417.0389, Tc=644.8, Pc=46.3, omega=0.289299, SMILES=Cc1cccnc1
+    water | Water | MW=18.015
+    diethyl ether | Diethyl Ether | MW=74.12
+
+STREAM AqueousFeed : FEED -> EX-100.feed
+    T = 30 [C]
+    P = 1 [bar]
+    F_mass = 1000 [kg/h]
+    w = 3-methylpyridine:0.15, water:0.85
+
+STREAM FreshEther : FEED -> MIX-100.fresh
+    T = 20 [C]
+    P = 1 [bar]
+    F_mass = 25 [kg/h]
+    w = diethyl ether:1.0
+
+# Initial recycle guess from the first pass estimate. The solver
+# replaces this with the calculated COL-100 distillate after each recycle
+# evaluation.
+STREAM Recycle : COL-100.distillate -> MIX-100.recycle
+    T = 33 [C]
+    P = 1 [bar]
+    F_mass = 390 [kg/h]
+    w = diethyl ether:0.981, water:0.019
+
+STREAM Solvent : MIX-100.out -> EX-100.solvent
+STREAM Raffinate : EX-100.raffinate -> PRODUCT
+STREAM Extract : EX-100.extract -> COL-100.feed
+STREAM RecoveryBottoms : COL-100.bottoms -> COL-200.feed
+STREAM EtherLossWaterCut : COL-200.distillate -> PRODUCT
+STREAM Product3MP : COL-200.bottoms -> PRODUCT
+
+UNIT MIX-100
+    TYPE: Mixer
+    PORTS:
+        fresh : inlet
+        recycle : inlet
+        out : outlet
+    PARAMS:
+        mode = adiabatic
+
+UNIT EX-100
+    TYPE: RigorousExtractor
+    PORTS:
+        feed : inlet
+        solvent : solvent_inlet
+        raffinate : raffinate_outlet
+        extract : extract_outlet
+    PARAMS:
+        N_stages = 20
+        mode = adiabatic
+        T = 25 [C]
+        max_iterations = 80
+        max_jacobian_evaluations = 60
+
+UNIT COL-100
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 10
+        feed_stage = 7
+        reflux_ratio = 0.5
+        distillate_mass_fraction = 0.69
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0 [bar]
+        condenser_type = total
+        initializer = estimate
+        max_iterations = 80
+        max_jacobian_evaluations = 80
+
+UNIT COL-200
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 20
+        feed_stage = 10
+        reflux_ratio = 1.0
+        distillate_mass_fraction = 0.230528
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0 [bar]
+        condenser_type = partial
+        stage_phase_model = VLLE
+        max_iterations = 100
+        max_jacobian_evaluations = 100

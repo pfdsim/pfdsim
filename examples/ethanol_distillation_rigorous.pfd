@@ -1,0 +1,40 @@
+# Ethanol-Water Rigorous Distillation
+# This example demonstrates stage-by-stage distillation with UNIFAC
+# Note: Ethanol-water forms an azeotrope at ~89 mol% ethanol
+
+PROCESS: Ethanol Purification Column
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFAC
+
+COMPONENTS:
+    ethanol | Ethanol | MW=46.07
+    water | Water | MW=18.02
+
+# Feed stream - dilute ethanol from fermentation
+STREAM Feed : FEED -> COL-1.feed
+    T = 80 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = ethanol:0.1, water:0.9
+
+# Product streams
+STREAM Distillate : COL-1.distillate -> PRODUCT
+STREAM Bottoms : COL-1.bottoms -> PRODUCT
+
+# Rigorous equilibrium-stage distillation column
+UNIT COL-1
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 20
+        feed_stage = 10
+        reflux_ratio = 4.0
+        D_to_F = 0.11
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0 [bar]
+        condenser_type = total
+        initializer = cmo

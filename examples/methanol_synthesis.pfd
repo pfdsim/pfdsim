@@ -1,0 +1,137 @@
+#==============================================================================
+# Methanol Synthesis Process
+#==============================================================================
+
+PROCESS: Methanol from Syngas
+VERSION: 1.0
+THERMO_METHOD: PR
+ONLINE_LOOKUP: false
+DESCRIPTION: CO + 2H2 -> CH3OH with high-pressure separation and product degassing
+
+COMPONENTS:
+    CO     | Carbon Monoxide | MW=28.01
+    H2     | Hydrogen        | MW=2.016
+    CH3OH  | Methanol        | MW=32.04
+
+#------------------------------------------------------------------------------
+# FEED STREAMS
+#------------------------------------------------------------------------------
+
+STREAM Syngas : FEED -> MIX-1.in1
+    T = 50 [C]
+    P = 50 [bar]
+    F = 100 [kmol/h]
+    x = CO:0.333, H2:0.667
+
+#------------------------------------------------------------------------------
+# RECYCLE (will be calculated)
+#------------------------------------------------------------------------------
+
+STREAM Vapor : F-1.vapor_out -> PURGE-1.in
+STREAM Recycle : PURGE-1.out -> MIX-1.in2
+STREAM Purge : PURGE-1.out2 -> PRODUCT
+
+#------------------------------------------------------------------------------
+# PROCESS STREAMS
+#------------------------------------------------------------------------------
+
+STREAM S1 : MIX-1.out -> C-1.in
+STREAM S2 : C-1.out -> H-1.in
+STREAM S3 : H-1.out -> R-1.in
+STREAM S4 : R-1.out -> COOL-1.in
+STREAM S5 : COOL-1.out -> F-1.in
+
+#------------------------------------------------------------------------------
+# PRODUCT STREAMS
+#------------------------------------------------------------------------------
+
+STREAM Crude-Methanol : F-1.liquid_out -> V-2.in
+STREAM Letdown-Methanol : V-2.out -> F-2.in
+STREAM Degassing-Gas : F-2.vapor_out -> PRODUCT
+STREAM Methanol : F-2.liquid_out -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNIT OPERATIONS
+#------------------------------------------------------------------------------
+
+UNIT MIX-1
+    TYPE: Mixer
+    PORTS:
+        in1 : inlet
+        in2 : inlet
+        out : outlet
+    PARAMS:
+        mode = adiabatic
+
+UNIT C-1
+    TYPE: Compressor
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        P_out = 80 [bar]
+        eta_isen = 0.75
+
+UNIT H-1
+    TYPE: Heater
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        T_out = 250 [C]
+
+UNIT R-1
+    TYPE: Reactor
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        mode = isothermal
+        T = 250 [C]
+    REACTIONS:
+        CO + 2 H2 -> CH3OH | conversion=0.25
+
+UNIT COOL-1
+    TYPE: Cooler
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        T_out = 40 [C]
+
+UNIT F-1
+    TYPE: Flash
+    PORTS:
+        in : inlet
+        vapor_out : vapor_outlet
+        liquid_out : liquid_outlet
+    PARAMS:
+        T = 40 [C]
+        P = 75 [bar]
+
+UNIT V-2
+    TYPE: Valve
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        P_out = 5 [bar]
+
+UNIT F-2
+    TYPE: Flash
+    PORTS:
+        in : inlet
+        vapor_out : vapor_outlet
+        liquid_out : liquid_outlet
+    PARAMS:
+        P = 5 [bar]
+        Q = 0 [kW]
+
+UNIT PURGE-1
+    TYPE: Splitter
+    PORTS:
+        in : inlet
+        out : outlet
+        out2 : outlet
+    PARAMS:
+        split_frac = 0.50

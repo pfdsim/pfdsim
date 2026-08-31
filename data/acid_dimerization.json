@@ -1,0 +1,142 @@
+{
+  "_metadata": {
+    "description": "Carboxylic acid vapor-phase dimerization parameters for VDM",
+    "reaction": "2 R-COOH ⇌ (R-COOH)₂",
+    "standard_state": "Fugacity-based equilibrium constant, 1 bar reference",
+    "temperature_dependence": "K(T) = exp(ΔS/R − ΔH/(RT))",
+    "units": {
+      "delta_S": "J/mol·K",
+      "delta_H": "J/mol",
+      "delta_S_residual": "J/mol·K",
+      "delta_H_residual": "J/mol"
+    }
+  },
+  "cross_dimers": [
+    {
+      "symbols": [
+        "CH3COOH",
+        "C2H5COOH"
+      ],
+      "delta_S_residual": 0.0,
+      "delta_H_residual": 0.0,
+      "source": "Miyamoto et al., Journal of Chemical & Engineering Data 46 (2001) 405-409, DOI 10.1021/je000205n; assessed in data/source/three_acids_vle.json",
+      "note": "Binary VLE supports statistical acetic-acid/propionic-acid cross-association without a residual correction."
+    },
+    {
+      "symbols": [
+        "CH3COOH",
+        "C2H3COOH"
+      ],
+      "delta_S_residual": 0.0,
+      "delta_H_residual": 0.0,
+      "source": "Linek and Wichterle, Collection of Czechoslovak Chemical Communications 38 (1973) 1853-1857; assessed in data/source/three_acids_vle.json",
+      "note": "Binary VLE supports statistical acetic-acid/acrylic-acid cross-association without a residual correction."
+    },
+    {
+      "symbols": [
+        "C2H5COOH",
+        "C2H3COOH"
+      ],
+      "delta_S_residual": 0.0,
+      "delta_H_residual": 0.0,
+      "source": "Propionic-acid/acrylic-acid literature assessment in data/source/three_acids_vle.json",
+      "note": "Normalized binary VLE strongly supports statistical propionic-acid/acrylic-acid cross-association; any residual correction is below the experimental resolution."
+    }
+  ],
+  "dimers": [
+    {
+      "symbol": "HCOOH",
+      "name": "Formic acid",
+      "formula": "HCOOH",
+      "chemsep_id": null,
+      "delta_S": -155.0,
+      "delta_H": -60300
+    },
+    {
+      "symbol": "CH3COOH",
+      "name": "Acetic acid",
+      "formula": "CH3COOH",
+      "chemsep_id": "1252",
+      "delta_S": -155.5,
+      "delta_H": -65500
+    },
+    {
+      "symbol": "C2H5COOH",
+      "name": "Propionic acid",
+      "formula": "C2H5COOH",
+      "chemsep_id": "1253",
+      "delta_S": -152.4,
+      "delta_H": -63490
+    },
+    {
+      "symbol": "C3H7COOH",
+      "name": "n-Butyric acid",
+      "formula": "C3H7COOH",
+      "chemsep_id": "1256",
+      "delta_S": -149.9,
+      "delta_H": -63800,
+      "source": "Journal of Chemical & Engineering Data 44 (1) (1999) 48-51"
+    },
+    {
+      "symbol": "iC3H7COOH",
+      "name": "Isobutyric acid",
+      "formula": "(CH3)2CHCOOH",
+      "chemsep_id": null,
+      "delta_S": -138.4,
+      "delta_H": -60100,
+      "source": "Journal of Chemical & Engineering Data 44 (1) (1999) 48-51"
+    },
+    {
+      "symbol": "C4H9COOH",
+      "name": "Valeric acid",
+      "formula": "C4H9COOH",
+      "chemsep_id": null,
+      "delta_S": -147.1,
+      "delta_H": -63000,
+      "source": "Journal of Chemical & Engineering Data 44 (1) (1999) 48-51"
+    },
+    {
+      "symbol": "C2H3COOH",
+      "name": "Acrylic acid",
+      "formula": "C2H3COOH",
+      "chemsep_id": "1277",
+      "delta_S": -161.4,
+      "delta_H": -67000
+    },
+    {
+      "symbol": "CF3COOH",
+      "name": "Trifluoroacetic acid",
+      "formula": "CF3COOH",
+      "chemsep_id": null,
+      "delta_S": -168.5,
+      "delta_H": -58450
+    },
+    {
+      "symbol": "CH3CH(OH)COOH",
+      "name": "Lactic acid",
+      "formula": "C3H6O3",
+      "CAS": "79-33-4",
+      "chemsep_id": null,
+      "aliases": [
+        "L-lactic acid",
+        "(S)-Lactic acid"
+      ],
+      "delta_S": -153.0,
+      "delta_H": -66300,
+      "source": "Journal of Physical Chemistry A 125 (2021) 218-229"
+    },
+    {
+      "symbol": "CH3COCOOH",
+      "name": "Pyruvic acid",
+      "formula": "C3H4O3",
+      "CAS": "127-17-3",
+      "chemsep_id": null,
+      "aliases": [
+        "2-oxopropanoic acid"
+      ],
+      "delta_S": -151.0,
+      "delta_H": -32600,
+      "source": "Journal of Physical Chemistry A 123 (2019) 983-991; Chemical Physics Letters 380 (2003) 34-41"
+    }
+  ]
+}

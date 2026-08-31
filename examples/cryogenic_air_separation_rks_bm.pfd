@@ -1,0 +1,56 @@
+#==============================================================================
+# Cryogenic Air Separation With RKS-BM
+#==============================================================================
+
+PROCESS: Cryogenic Air Separation RKS-BM
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: RKS-BM
+DESCRIPTION: 407.2 kmol/h air cooled to -190 C and separated in a 30-stage column at 1 bar
+
+COMPONENTS:
+    N2 | Nitrogen | MW=28.0134
+    O2 | Oxygen   | MW=31.9988
+    Ar | Argon    | MW=39.948
+
+INTERACTION_PARAMETERS:
+    N2/O2 | model=SRK, kij_a=0.03324, kij_c=-0.000455, Tmin_K=60, Tmax_K=125
+
+STREAM Air-Feed : FEED -> E-100.in
+    T = 30 [C]
+    P = 1.01325 [bar]
+    F = 407.2 [kmol/h]
+    x = N2:0.78, O2:0.21, Ar:0.01
+
+STREAM Cooled-Air : E-100.out -> T-100.feed
+STREAM Nitrogen-Rich-Distillate : T-100.distillate -> PRODUCT
+STREAM Oxygen-Rich-Bottoms : T-100.bottoms -> PRODUCT
+
+UNIT E-100
+    TYPE: Cooler
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        T_out = -190 [C]
+        P_drop = 0.01325 [bar]
+
+UNIT T-100
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 30
+        feed_stage = 21
+        reflux_ratio = 0.8
+        D_to_F = 0.782
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0.0
+        condenser_type = total
+        initializer = cheap_estimate
+        mesh_tolerance = 1e-6
+        T_min = 60 [K]
+        T_max = 140 [K]
+        max_iterations = 400

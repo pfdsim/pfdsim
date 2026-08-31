@@ -1,0 +1,2051 @@
+{
+  "aliases": {
+    "1": "74-82-8",
+    "10": "111-65-9",
+    "100414": "100-41-4",
+    "105373": "105-37-3",
+    "105544": "105-54-4",
+    "106423": "106-42-3",
+    "106978": "106-97-8",
+    "107926": "107-92-6",
+    "108203": "108-20-3",
+    "108383": "108-38-3",
+    "108883": "108-88-3",
+    "108952": "108-95-2",
+    "109604": "109-60-4",
+    "109660": "109-66-0",
+    "109944": "109-94-4",
+    "11": "111-84-2",
+    "110543": "110-54-3",
+    "110827": "110-82-7",
+    "111273": "111-27-3",
+    "111659": "111-65-9",
+    "111842": "111-84-2",
+    "111875": "111-87-5",
+    "12": "124-18-5",
+    "121448": "121-44-8",
+    "123513": "123-51-3",
+    "123911": "123-91-1",
+    "123966": "123-96-6",
+    "124185": "124-18-5",
+    "124389": "124-38-9",
+    "124403": "124-40-3",
+    "13": "7782-44-7",
+    "14": "7727-37-9",
+    "141786": "141-78-6",
+    "142825": "142-82-5",
+    "14dioxane": "123-91-1",
+    "15": "7732-18-5",
+    "16": "124-38-9",
+    "17": "7783-06-4",
+    "18": "71-43-2",
+    "19": "108-88-3",
+    "1903": "7697-37-2",
+    "1butanol": "71-36-3",
+    "1hexanol": "111-27-3",
+    "1nonanol": "111-87-5",
+    "1pentanol": "71-41-0",
+    "1propanol": "71-23-8",
+    "2": "74-84-0",
+    "20": "95-47-6",
+    "21": "108-38-3",
+    "22": "106-42-3",
+    "23": "100-41-4",
+    "24": "108-95-2",
+    "26": "67-56-1",
+    "27": "64-17-5",
+    "28": "67-63-0",
+    "2butanol": "78-92-2",
+    "2octanol": "123-96-6",
+    "2pentanol": "6032-29-7",
+    "2propanol": "67-63-0",
+    "3": "74-98-6",
+    "36": "78-93-3",
+    "3methyl1butanol": "123-51-3",
+    "4": "106-97-8",
+    "5": "75-28-5",
+    "544763": "544-76-3",
+    "56235": "56-23-5",
+    "6": "109-66-0",
+    "60297": "60-29-7",
+    "6032297": "6032-29-7",
+    "62533": "62-53-3",
+    "64175": "64-17-5",
+    "64197": "64-19-7",
+    "67561": "67-56-1",
+    "67630": "67-63-0",
+    "67641": "67-64-1",
+    "67663": "67-66-3",
+    "7": "78-78-4",
+    "71238": "71-23-8",
+    "71363": "71-36-3",
+    "71410": "71-41-0",
+    "71432": "71-43-2",
+    "74828": "74-82-8",
+    "74840": "74-84-0",
+    "74986": "74-98-6",
+    "75058": "75-05-8",
+    "75070": "75-07-0",
+    "75092": "75-09-2",
+    "75218": "75-21-8",
+    "75285": "75-28-5",
+    "7697372": "7697-37-2",
+    "7727379": "7727-37-9",
+    "7732185": "7732-18-5",
+    "7782447": "7782-44-7",
+    "7783064": "7783-06-4",
+    "78784": "78-78-4",
+    "78922": "78-92-2",
+    "78933": "78-93-3",
+    "79094": "79-09-4",
+    "79107": "79-10-7",
+    "79209": "79-20-9",
+    "8": "110-54-3",
+    "9": "142-82-5",
+    "95476": "95-47-6",
+    "98011": "98-01-1",
+    "98828": "98-82-8",
+    "98839": "98-83-9",
+    "acetaldehyde": "75-07-0",
+    "aceticacid": "64-19-7",
+    "acetone": "67-64-1",
+    "acetonitrile": "75-05-8",
+    "acrylicacid": "79-10-7",
+    "alphamethylstyrene": "98-83-9",
+    "aniline": "62-53-3",
+    "benzene": "71-43-2",
+    "butane": "106-97-8",
+    "butanoicacid": "107-92-6",
+    "butanol": "71-36-3",
+    "butyricacid": "107-92-6",
+    "carbondioxide": "124-38-9",
+    "carbontetrachloride": "56-23-5",
+    "chloroform": "67-66-3",
+    "cumene": "98-82-8",
+    "cyclohexane": "110-82-7",
+    "decane": "124-18-5",
+    "dichloromethane": "75-09-2",
+    "diethylether": "60-29-7",
+    "diisopropylether": "108-20-3",
+    "dimethylamine": "124-40-3",
+    "ethane": "74-84-0",
+    "ethanol": "64-17-5",
+    "ethylacetate": "141-78-6",
+    "ethylbenzene": "100-41-4",
+    "ethylbutanoate": "105-54-4",
+    "ethylbutyrate": "105-54-4",
+    "ethyleneoxide": "75-21-8",
+    "ethylformate": "109-94-4",
+    "ethylpropanoate": "105-37-3",
+    "ethylpropionate": "105-37-3",
+    "furfural": "98-01-1",
+    "heptane": "142-82-5",
+    "hexadecane": "544-76-3",
+    "hexane": "110-54-3",
+    "hexanol": "111-27-3",
+    "hydrogensulfide": "7783-06-4",
+    "isoamylalcohol": "123-51-3",
+    "isobutane": "75-28-5",
+    "isopentane": "78-78-4",
+    "isopropanol": "67-63-0",
+    "methane": "74-82-8",
+    "methanol": "67-56-1",
+    "methylacetate": "79-20-9",
+    "methylethylketone": "78-93-3",
+    "methylstyrene": "98-83-9",
+    "mxylene": "108-38-3",
+    "nitricacid": "7697-37-2",
+    "nitrogen": "7727-37-9",
+    "nonane": "111-84-2",
+    "nonanol": "111-87-5",
+    "octane": "111-65-9",
+    "oxygen": "7782-44-7",
+    "oxylene": "95-47-6",
+    "pentane": "109-66-0",
+    "pentanol": "71-41-0",
+    "phenol": "108-95-2",
+    "propane": "74-98-6",
+    "propanol": "71-23-8",
+    "propionicacid": "79-09-4",
+    "propylacetate": "109-60-4",
+    "propylethanoate": "109-60-4",
+    "pxylene": "106-42-3",
+    "toluene": "108-88-3",
+    "triethylamine": "121-44-8",
+    "water": "7732-18-5"
+  },
+  "components": {
+    "100-41-4": {
+      "aliases": [
+        "23",
+        "C8H10",
+        "Ethylbenzene"
+      ],
+      "cas": "100-41-4",
+      "formula": "C8H10",
+      "name": "Ethylbenzene",
+      "q": 3.51,
+      "r": 4.6,
+      "records": [
+        {
+          "dwsim_id": "23",
+          "formula": "C8H10",
+          "name": "Ethylbenzene",
+          "q": 3.51,
+          "r": 4.6,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "105-37-3": {
+      "aliases": [
+        "C5H10O2",
+        "Ethyl propanoate",
+        "Ethyl propionate"
+      ],
+      "cas": "105-37-3",
+      "formula": "C5H10O2",
+      "name": "Ethyl propionate",
+      "q": 3.6559,
+      "r": 4.1535,
+      "records": [
+        {
+          "formula": "C5H10O2",
+          "name": "Ethyl propionate",
+          "q": 3.6559,
+          "r": 4.1535,
+          "source": "ester_uniquac_combinatorial_parameters.json; Group-additive derivation in this work"
+        },
+        {
+          "formula": "C5H10O2",
+          "name": "Ethyl propanoate",
+          "q": 3.6559,
+          "r": 4.1535,
+          "source": "ester_uniquac_combinatorial_parameters.json; Group-additive derivation in this work"
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Group-additive derivation in this work"
+    },
+    "105-54-4": {
+      "aliases": [
+        "C6H12O2",
+        "Ethyl butanoate",
+        "Ethyl butyrate"
+      ],
+      "cas": "105-54-4",
+      "formula": "C6H12O2",
+      "name": "Ethyl butyrate",
+      "q": 4.19632,
+      "r": 4.8279,
+      "records": [
+        {
+          "formula": "C6H12O2",
+          "name": "Ethyl butyrate",
+          "q": 4.19632,
+          "r": 4.8279,
+          "source": "ester_uniquac_combinatorial_parameters.json; Group-additive derivation in this work"
+        },
+        {
+          "formula": "C6H12O2",
+          "name": "Ethyl butanoate",
+          "q": 4.19632,
+          "r": 4.8279,
+          "source": "ester_uniquac_combinatorial_parameters.json; Group-additive derivation in this work"
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Group-additive derivation in this work"
+    },
+    "106-42-3": {
+      "aliases": [
+        "22",
+        "C8H10",
+        "P-xylene"
+      ],
+      "cas": "106-42-3",
+      "formula": "C8H10",
+      "name": "P-xylene",
+      "q": 3.54,
+      "r": 4.66,
+      "records": [
+        {
+          "dwsim_id": "22",
+          "formula": "C8H10",
+          "name": "P-xylene",
+          "q": 3.54,
+          "r": 4.66,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "106-97-8": {
+      "aliases": [
+        "4",
+        "C4H10",
+        "N-butane"
+      ],
+      "cas": "106-97-8",
+      "formula": "C4H10",
+      "name": "N-butane",
+      "q": 2.776,
+      "r": 3.151,
+      "records": [
+        {
+          "dwsim_id": "4",
+          "formula": "C4H10",
+          "name": "N-butane",
+          "q": 2.776,
+          "r": 3.151,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "107-92-6": {
+      "aliases": [
+        "Butanoic acid",
+        "Butyric acid",
+        "C4H8O2"
+      ],
+      "cas": "107-92-6",
+      "formula": "C4H8O2",
+      "name": "Butyric acid",
+      "q": 3.15242,
+      "r": 3.5514,
+      "records": [
+        {
+          "formula": "C4H8O2",
+          "name": "Butyric acid",
+          "q": 3.15242,
+          "r": 3.5514,
+          "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+        },
+        {
+          "formula": "C4H8O2",
+          "name": "Butanoic acid",
+          "q": 3.15242,
+          "r": 3.5514,
+          "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+    },
+    "108-20-3": {
+      "aliases": [
+        "Diisopropyl ether"
+      ],
+      "cas": "108-20-3",
+      "formula": "",
+      "name": "Diisopropyl ether",
+      "q": 4.088,
+      "r": 4.7421,
+      "records": [
+        {
+          "formula": "",
+          "name": "Diisopropyl ether",
+          "q": 4.088,
+          "r": 4.7421,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+    },
+    "108-38-3": {
+      "aliases": [
+        "21",
+        "C8H10",
+        "M-xylene"
+      ],
+      "cas": "108-38-3",
+      "formula": "C8H10",
+      "name": "M-xylene",
+      "q": 3.54,
+      "r": 4.66,
+      "records": [
+        {
+          "dwsim_id": "21",
+          "formula": "C8H10",
+          "name": "M-xylene",
+          "q": 3.54,
+          "r": 4.66,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "108-88-3": {
+      "aliases": [
+        "19",
+        "C7H8",
+        "Toluene"
+      ],
+      "cas": "108-88-3",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 6.95087,
+          "B": 1342.31,
+          "C": 219.187,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.968,
+        "q_prime": 1.114926889191602,
+        "q_prime_expression": "q^0.1",
+        "r": 3.9228,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C7H8",
+      "name": "Toluene",
+      "q": 2.968,
+      "r": 3.9228,
+      "records": [
+        {
+          "dwsim_id": "19",
+          "formula": "C7H8",
+          "name": "Toluene",
+          "q": 2.968,
+          "r": 3.9228,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "C7H8",
+          "name": "Toluene",
+          "q": 2.968,
+          "r": 3.9228,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "108-95-2": {
+      "aliases": [
+        "24",
+        "C6H5OH",
+        "Phenol"
+      ],
+      "cas": "108-95-2",
+      "formula": "C6H5OH",
+      "name": "Phenol",
+      "q": 2.68,
+      "r": 3.5517,
+      "records": [
+        {
+          "dwsim_id": "24",
+          "formula": "C6H5OH",
+          "name": "Phenol",
+          "q": 2.68,
+          "r": 3.5517,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "109-60-4": {
+      "aliases": [
+        "C5H10O2",
+        "Propyl acetate",
+        "Propyl ethanoate",
+        "n-Propyl acetate"
+      ],
+      "cas": "109-60-4",
+      "formula": "C5H10O2",
+      "name": "n-Propyl acetate",
+      "q": 3.656,
+      "r": 4.153,
+      "records": [
+        {
+          "formula": "C5H10O2",
+          "name": "n-Propyl acetate",
+          "q": 3.656,
+          "r": 4.153,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        },
+        {
+          "formula": "C5H10O2",
+          "name": "Propyl acetate",
+          "q": 3.656,
+          "r": 4.153,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        },
+        {
+          "formula": "C5H10O2",
+          "name": "Propyl ethanoate",
+          "q": 3.656,
+          "r": 4.153,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+    },
+    "109-66-0": {
+      "aliases": [
+        "6",
+        "C5H12",
+        "N-pentane"
+      ],
+      "cas": "109-66-0",
+      "formula": "C5H12",
+      "name": "N-pentane",
+      "q": 3.316,
+      "r": 3.8254,
+      "records": [
+        {
+          "dwsim_id": "6",
+          "formula": "C5H12",
+          "name": "N-pentane",
+          "q": 3.316,
+          "r": 3.8254,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "109-94-4": {
+      "aliases": [
+        "C3H6O2",
+        "Ethyl formate"
+      ],
+      "cas": "109-94-4",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.00902,
+          "B": 1123.94,
+          "C": 218.247,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.576,
+        "q_prime": 1.099245220191554,
+        "q_prime_expression": "q^0.1",
+        "r": 2.8042,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C3H6O2",
+      "name": "Ethyl formate",
+      "q": 2.576,
+      "r": 2.8042,
+      "records": [
+        {
+          "formula": "C3H6O2",
+          "name": "Ethyl formate",
+          "q": 2.576,
+          "r": 2.8042,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+    },
+    "110-54-3": {
+      "aliases": [
+        "8",
+        "C6H14",
+        "N-hexane",
+        "n-Hexane"
+      ],
+      "cas": "110-54-3",
+      "formula": "C6H14",
+      "name": "N-hexane",
+      "q": 3.856,
+      "r": 4.4998,
+      "records": [
+        {
+          "dwsim_id": "8",
+          "formula": "C6H14",
+          "name": "N-hexane",
+          "q": 3.856,
+          "r": 4.4998,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "",
+          "name": "n-Hexane",
+          "q": 3.856,
+          "r": 4.4998,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "110-82-7": {
+      "aliases": [
+        "C6H12",
+        "Cyclohexane"
+      ],
+      "cas": "110-82-7",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 6.85146,
+          "B": 1206.47,
+          "C": 223.136,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 3.24,
+        "q_prime": 1.1247461131420948,
+        "q_prime_expression": "q^0.1",
+        "r": 4.0464,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C6H12",
+      "name": "Cyclohexane",
+      "q": 3.24,
+      "r": 4.0464,
+      "records": [
+        {
+          "formula": "",
+          "name": "Cyclohexane",
+          "q": 3.24,
+          "r": 4.0464,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        },
+        {
+          "formula": "C6H12",
+          "name": "Cyclohexane",
+          "q": 3.24,
+          "r": 4.0464,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+    },
+    "111-27-3": {
+      "aliases": [
+        "1-Hexanol",
+        "C6H14O",
+        "N-hexanol"
+      ],
+      "cas": "111-27-3",
+      "formula": "C6H14O",
+      "name": "1-Hexanol",
+      "q": 4.132,
+      "r": 4.8029,
+      "records": [
+        {
+          "formula": "C6H14O",
+          "name": "1-Hexanol",
+          "q": 4.132,
+          "r": 4.8029,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C6H14O",
+          "name": "N-hexanol",
+          "q": 4.132,
+          "r": 4.8029,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "111-65-9": {
+      "aliases": [
+        "10",
+        "C8H18",
+        "N-octane"
+      ],
+      "cas": "111-65-9",
+      "formula": "C8H18",
+      "name": "N-octane",
+      "q": 4.936,
+      "r": 5.8486,
+      "records": [
+        {
+          "dwsim_id": "10",
+          "formula": "C8H18",
+          "name": "N-octane",
+          "q": 4.936,
+          "r": 5.8486,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "111-84-2": {
+      "aliases": [
+        "11",
+        "C9H20",
+        "N-nonane"
+      ],
+      "cas": "111-84-2",
+      "formula": "C9H20",
+      "name": "N-nonane",
+      "q": 5.476,
+      "r": 6.523,
+      "records": [
+        {
+          "dwsim_id": "11",
+          "formula": "C9H20",
+          "name": "N-nonane",
+          "q": 5.476,
+          "r": 6.523,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "111-87-5": {
+      "aliases": [
+        "1-Nonanol",
+        "C9H20O",
+        "N-nonanol"
+      ],
+      "cas": "111-87-5",
+      "formula": "C9H20O",
+      "name": "1-Nonanol",
+      "q": 5.828,
+      "r": 6.622,
+      "records": [
+        {
+          "formula": "C9H20O",
+          "name": "1-Nonanol",
+          "q": 5.828,
+          "r": 6.622,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C9H20O",
+          "name": "N-nonanol",
+          "q": 5.828,
+          "r": 6.622,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "121-44-8": {
+      "aliases": [
+        "C6H15N",
+        "Triethylamine"
+      ],
+      "cas": "121-44-8",
+      "formula": "C6H15N",
+      "name": "Triethylamine",
+      "q": 4.26,
+      "r": 5.01,
+      "records": [
+        {
+          "formula": "C6H15N",
+          "name": "Triethylamine",
+          "q": 4.26,
+          "r": 5.01,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "123-51-3": {
+      "aliases": [
+        "3-Methyl-1-butanol",
+        "C5H12O",
+        "Isoamyl alcohol"
+      ],
+      "cas": "123-51-3",
+      "formula": "C5H12O",
+      "name": "3-Methyl-1-butanol",
+      "q": 3.478,
+      "r": 4.273,
+      "records": [
+        {
+          "formula": "C5H12O",
+          "name": "3-Methyl-1-butanol",
+          "q": 3.478,
+          "r": 4.273,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        },
+        {
+          "formula": "C5H12O",
+          "name": "Isoamyl alcohol",
+          "q": 3.478,
+          "r": 4.273,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+    },
+    "123-91-1": {
+      "aliases": [
+        "1,4-Dioxane",
+        "C4H8O2"
+      ],
+      "cas": "123-91-1",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.43155,
+          "B": 1554.68,
+          "C": 240.337,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.64,
+        "q_prime": 1.1019462027587548,
+        "q_prime_expression": "q^0.1",
+        "r": 3.1854,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C4H8O2",
+      "name": "1,4-Dioxane",
+      "q": 2.64,
+      "r": 3.1854,
+      "records": [
+        {
+          "formula": "C4H8O2",
+          "name": "1,4-Dioxane",
+          "q": 2.64,
+          "r": 3.1854,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+    },
+    "123-96-6": {
+      "aliases": [
+        "2-Octanol",
+        "C8H18O"
+      ],
+      "cas": "123-96-6",
+      "formula": "C8H18O",
+      "name": "2-Octanol",
+      "q": 5.20828,
+      "r": 6.15128,
+      "records": [
+        {
+          "formula": "C8H18O",
+          "name": "2-Octanol",
+          "q": 5.20828,
+          "r": 6.15128,
+          "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+    },
+    "124-18-5": {
+      "aliases": [
+        "12",
+        "C10H22",
+        "N-decane"
+      ],
+      "cas": "124-18-5",
+      "formula": "C10H22",
+      "name": "N-decane",
+      "q": 6.02,
+      "r": 7.2,
+      "records": [
+        {
+          "dwsim_id": "12",
+          "formula": "C10H22",
+          "name": "N-decane",
+          "q": 6.02,
+          "r": 7.2,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "124-38-9": {
+      "aliases": [
+        "16",
+        "CO2",
+        "Carbon dioxide"
+      ],
+      "cas": "124-38-9",
+      "formula": "CO2",
+      "name": "Carbon dioxide",
+      "q": 1.292,
+      "r": 1.2986,
+      "records": [
+        {
+          "dwsim_id": "16",
+          "formula": "CO2",
+          "name": "Carbon dioxide",
+          "q": 1.292,
+          "r": 1.2986,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "124-40-3": {
+      "aliases": [
+        "C2H7N",
+        "Dimethylamine"
+      ],
+      "cas": "124-40-3",
+      "formula": "C2H7N",
+      "name": "Dimethylamine",
+      "q": 2.09,
+      "r": 2.33,
+      "records": [
+        {
+          "formula": "C2H7N",
+          "name": "Dimethylamine",
+          "q": 2.09,
+          "r": 2.33,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "141-78-6": {
+      "aliases": [
+        "C4H8O2",
+        "Ethyl acetate"
+      ],
+      "cas": "141-78-6",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.10179,
+          "B": 1244.95,
+          "C": 217.881,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 3.116,
+        "q_prime": 1.1203655464337905,
+        "q_prime_expression": "q^0.1",
+        "r": 3.4786,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C4H8O2",
+      "name": "Ethyl acetate",
+      "q": 3.1159,
+      "r": 3.4789,
+      "records": [
+        {
+          "formula": "C4H8O2",
+          "name": "Ethyl acetate",
+          "q": 3.1159,
+          "r": 3.4789,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C4H8O2",
+          "name": "Ethyl acetate",
+          "q": 3.116,
+          "r": 3.4786,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "142-82-5": {
+      "aliases": [
+        "9",
+        "C7H16",
+        "N-heptane",
+        "n-Heptane"
+      ],
+      "cas": "142-82-5",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 6.89386,
+          "B": 1264.37,
+          "C": 216.64,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 4.396,
+        "q_prime": 1.1595934895470186,
+        "q_prime_expression": "q^0.1",
+        "r": 5.1742,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C7H16",
+      "name": "N-heptane",
+      "q": 4.396,
+      "r": 5.1742,
+      "records": [
+        {
+          "dwsim_id": "9",
+          "formula": "C7H16",
+          "name": "N-heptane",
+          "q": 4.396,
+          "r": 5.1742,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "C7H16",
+          "name": "n-Heptane",
+          "q": 4.396,
+          "r": 5.1742,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "544-76-3": {
+      "aliases": [
+        "C16H34",
+        "n-Hexadecane"
+      ],
+      "cas": "544-76-3",
+      "formula": "C16H34",
+      "name": "n-Hexadecane",
+      "q": 9.26,
+      "r": 11.24,
+      "records": [
+        {
+          "formula": "C16H34",
+          "name": "n-Hexadecane",
+          "q": 9.26,
+          "r": 11.24,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "56-23-5": {
+      "aliases": [
+        "CCl4",
+        "Carbon Tetrachloride",
+        "Carbon tetrachloride"
+      ],
+      "cas": "56-23-5",
+      "formula": "CCl4",
+      "name": "Carbon Tetrachloride",
+      "q": 2.91,
+      "r": 3.39,
+      "records": [
+        {
+          "formula": "CCl4",
+          "name": "Carbon Tetrachloride",
+          "q": 2.91,
+          "r": 3.39,
+          "source": "UNIFAC Consortium Exact Component"
+        },
+        {
+          "formula": "",
+          "name": "Carbon tetrachloride",
+          "q": 2.91,
+          "r": 3.39,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "UNIFAC Consortium Exact Component"
+    },
+    "60-29-7": {
+      "aliases": [
+        "(C2H5)2O",
+        "Diethyl ether"
+      ],
+      "cas": "60-29-7",
+      "formula": "(C2H5)2O",
+      "name": "Diethyl ether",
+      "q": 3.016,
+      "r": 3.395,
+      "records": [
+        {
+          "formula": "(C2H5)2O",
+          "name": "Diethyl ether",
+          "q": 3.016,
+          "r": 3.395,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "",
+          "name": "Diethyl ether",
+          "q": 3.016,
+          "r": 3.395,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "6032-29-7": {
+      "aliases": [
+        "2-Pentanol",
+        "C5H12O"
+      ],
+      "cas": "6032-29-7",
+      "formula": "C5H12O",
+      "name": "2-Pentanol",
+      "q": 3.556,
+      "r": 4.283,
+      "records": [
+        {
+          "formula": "C5H12O",
+          "name": "2-Pentanol",
+          "q": 3.556,
+          "r": 4.283,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+    },
+    "62-53-3": {
+      "aliases": [
+        "Aniline",
+        "C6H7N"
+      ],
+      "cas": "62-53-3",
+      "formula": "C6H7N",
+      "name": "Aniline",
+      "q": 2.83,
+      "r": 3.72,
+      "records": [
+        {
+          "formula": "C6H7N",
+          "name": "Aniline",
+          "q": 2.83,
+          "r": 3.72,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "64-17-5": {
+      "aliases": [
+        "27",
+        "C2H5OH",
+        "C2H6O",
+        "Ethanol"
+      ],
+      "cas": "64-17-5",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 8.1122,
+          "B": 1592.86,
+          "C": 226.184,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 1.972,
+        "q_prime": 0.92,
+        "r": 2.1055,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C2H5OH",
+      "name": "Ethanol",
+      "q": 1.97,
+      "r": 2.11,
+      "records": [
+        {
+          "dwsim_id": "27",
+          "formula": "C2H5OH",
+          "name": "Ethanol",
+          "q": 1.97,
+          "r": 2.11,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "C2H6O",
+          "name": "Ethanol",
+          "q": 1.972,
+          "r": 2.1055,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "64-19-7": {
+      "aliases": [
+        "Acetic acid",
+        "C2H4O2"
+      ],
+      "cas": "64-19-7",
+      "formula": "C2H4O2",
+      "name": "Acetic acid",
+      "q": 2.072,
+      "r": 2.2024,
+      "records": [
+        {
+          "formula": "C2H4O2",
+          "name": "Acetic acid",
+          "q": 2.072,
+          "r": 2.2024,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "67-56-1": {
+      "aliases": [
+        "26",
+        "CH3OH",
+        "CH4O",
+        "Methanol"
+      ],
+      "cas": "67-56-1",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 8.08097,
+          "B": 1582.27,
+          "C": 239.726,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 1.432,
+        "q_prime": 0.95,
+        "r": 1.4311,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "CH3OH",
+      "name": "Methanol",
+      "q": 1.43,
+      "r": 1.43,
+      "records": [
+        {
+          "dwsim_id": "26",
+          "formula": "CH3OH",
+          "name": "Methanol",
+          "q": 1.43,
+          "r": 1.43,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "CH4O",
+          "name": "Methanol",
+          "q": 1.432,
+          "r": 1.4311,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "67-63-0": {
+      "aliases": [
+        "2-Propanol",
+        "28",
+        "C3H7OH",
+        "C3H8O",
+        "Isopropanol"
+      ],
+      "cas": "67-63-0",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 8.87829,
+          "B": 2010.33,
+          "C": 252.636,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.508,
+        "q_prime": 0.89,
+        "r": 2.7791,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C3H7OH",
+      "name": "Isopropanol",
+      "q": 2.51,
+      "r": 2.78,
+      "records": [
+        {
+          "dwsim_id": "28",
+          "formula": "C3H7OH",
+          "name": "Isopropanol",
+          "q": 2.51,
+          "r": 2.78,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "C3H8O",
+          "name": "2-Propanol",
+          "q": 2.508,
+          "r": 2.7791,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "67-64-1": {
+      "aliases": [
+        "Acetone",
+        "C3H6O"
+      ],
+      "cas": "67-64-1",
+      "formula": "C3H6O",
+      "name": "Acetone",
+      "q": 2.336,
+      "r": 2.5735,
+      "records": [
+        {
+          "formula": "C3H6O",
+          "name": "Acetone",
+          "q": 2.336,
+          "r": 2.5735,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "67-66-3": {
+      "aliases": [
+        "CHCl3",
+        "Chloroform"
+      ],
+      "cas": "67-66-3",
+      "formula": "CHCl3",
+      "name": "Chloroform",
+      "q": 2.41,
+      "r": 2.87,
+      "records": [
+        {
+          "formula": "CHCl3",
+          "name": "Chloroform",
+          "q": 2.41,
+          "r": 2.87,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        },
+        {
+          "formula": "",
+          "name": "Chloroform",
+          "q": 2.41,
+          "r": 2.87,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "71-23-8": {
+      "aliases": [
+        "1-Propanol",
+        "C3H8O",
+        "N-propanol"
+      ],
+      "cas": "71-23-8",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.74416,
+          "B": 1437.69,
+          "C": 198.463,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.512,
+        "q_prime": 0.89,
+        "r": 2.7799,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C3H8O",
+      "name": "1-Propanol",
+      "q": 2.513,
+      "r": 2.78,
+      "records": [
+        {
+          "formula": "C3H8O",
+          "name": "1-Propanol",
+          "q": 2.513,
+          "r": 2.78,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C3H8O",
+          "name": "N-propanol",
+          "q": 2.513,
+          "r": 2.78,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C3H8O",
+          "name": "1-Propanol",
+          "q": 2.512,
+          "r": 2.7799,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "71-36-3": {
+      "aliases": [
+        "1-Butanol",
+        "C4H10O",
+        "C4H9OH",
+        "N-butanol"
+      ],
+      "cas": "71-36-3",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.838,
+          "B": 1558.19,
+          "C": 196.881,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 3.052,
+        "q_prime": 0.88,
+        "r": 3.4543,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C4H9OH",
+      "name": "1-Butanol",
+      "q": 3.048,
+      "r": 3.4542,
+      "records": [
+        {
+          "formula": "C4H9OH",
+          "name": "1-Butanol",
+          "q": 3.048,
+          "r": 3.4542,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C4H9OH",
+          "name": "N-butanol",
+          "q": 3.048,
+          "r": 3.4542,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C4H10O",
+          "name": "1-Butanol",
+          "q": 3.052,
+          "r": 3.4543,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "71-41-0": {
+      "aliases": [
+        "1-Pentanol",
+        "C5H12O",
+        "n-Pentanol"
+      ],
+      "cas": "71-41-0",
+      "formula": "C5H12O",
+      "name": "1-Pentanol",
+      "q": 3.592,
+      "r": 4.129,
+      "records": [
+        {
+          "formula": "C5H12O",
+          "name": "1-Pentanol",
+          "q": 3.592,
+          "r": 4.129,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        },
+        {
+          "formula": "C5H12O",
+          "name": "n-Pentanol",
+          "q": 3.592,
+          "r": 4.129,
+          "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+    },
+    "71-43-2": {
+      "aliases": [
+        "18",
+        "Benzene",
+        "C6H6"
+      ],
+      "cas": "71-43-2",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 6.87987,
+          "B": 1196.76,
+          "C": 219.161,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.4,
+        "q_prime": 1.091493425617897,
+        "q_prime_expression": "q^0.1",
+        "r": 3.1878,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C6H6",
+      "name": "Benzene",
+      "q": 2.4,
+      "r": 3.1878,
+      "records": [
+        {
+          "dwsim_id": "18",
+          "formula": "C6H6",
+          "name": "Benzene",
+          "q": 2.4,
+          "r": 3.1878,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "C6H6",
+          "name": "Benzene",
+          "q": 2.4,
+          "r": 3.1878,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "74-82-8": {
+      "aliases": [
+        "1",
+        "CH4",
+        "Methane"
+      ],
+      "cas": "74-82-8",
+      "formula": "CH4",
+      "name": "Methane",
+      "q": 1.152,
+      "r": 1.1239,
+      "records": [
+        {
+          "dwsim_id": "1",
+          "formula": "CH4",
+          "name": "Methane",
+          "q": 1.152,
+          "r": 1.1239,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "74-84-0": {
+      "aliases": [
+        "2",
+        "C2H6",
+        "Ethane"
+      ],
+      "cas": "74-84-0",
+      "formula": "C2H6",
+      "name": "Ethane",
+      "q": 1.696,
+      "r": 1.8022,
+      "records": [
+        {
+          "dwsim_id": "2",
+          "formula": "C2H6",
+          "name": "Ethane",
+          "q": 1.696,
+          "r": 1.8022,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "74-98-6": {
+      "aliases": [
+        "3",
+        "C3H8",
+        "Propane"
+      ],
+      "cas": "74-98-6",
+      "formula": "C3H8",
+      "name": "Propane",
+      "q": 2.236,
+      "r": 2.4766,
+      "records": [
+        {
+          "dwsim_id": "3",
+          "formula": "C3H8",
+          "name": "Propane",
+          "q": 2.236,
+          "r": 2.4766,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "75-05-8": {
+      "aliases": [
+        "Acetonitrile",
+        "C2H3N",
+        "CH3CN"
+      ],
+      "cas": "75-05-8",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.33986,
+          "B": 1482.29,
+          "C": 250.523,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 1.724,
+        "q_prime": 1.0559752180195185,
+        "q_prime_expression": "q^0.1",
+        "r": 1.8701,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "CH3CN",
+      "name": "Acetonitrile",
+      "q": 1.72,
+      "r": 1.87,
+      "records": [
+        {
+          "formula": "CH3CN",
+          "name": "Acetonitrile",
+          "q": 1.72,
+          "r": 1.87,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C2H3N",
+          "name": "Acetonitrile",
+          "q": 1.724,
+          "r": 1.8701,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "75-07-0": {
+      "aliases": [
+        "Acetaldehyde",
+        "C2H4O"
+      ],
+      "cas": "75-07-0",
+      "formula": "C2H4O",
+      "name": "Acetaldehyde",
+      "q": 1.8,
+      "r": 1.9,
+      "records": [
+        {
+          "formula": "C2H4O",
+          "name": "Acetaldehyde",
+          "q": 1.8,
+          "r": 1.9,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "75-09-2": {
+      "aliases": [
+        "CH2Cl2",
+        "Dichloromethane"
+      ],
+      "cas": "75-09-2",
+      "formula": "CH2Cl2",
+      "name": "Dichloromethane",
+      "q": 1.988,
+      "r": 2.2564,
+      "records": [
+        {
+          "formula": "CH2Cl2",
+          "name": "Dichloromethane",
+          "q": 1.988,
+          "r": 2.2564,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "",
+          "name": "Dichloromethane",
+          "q": 1.988,
+          "r": 2.2564,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "75-21-8": {
+      "aliases": [
+        "C2H4O",
+        "Ethylene oxide"
+      ],
+      "cas": "75-21-8",
+      "formula": "C2H4O",
+      "name": "Ethylene oxide",
+      "q": 1.64,
+      "r": 1.59,
+      "records": [
+        {
+          "formula": "C2H4O",
+          "name": "Ethylene oxide",
+          "q": 1.64,
+          "r": 1.59,
+          "source": "Regressed in this work from EO\u2013H\u2082O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and \u03b3^\u221e_{EO,H\u2082O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng\u2013Robinson and k12=-0.10 following Huang et al. (2012)."
+        }
+      ],
+      "source": "Regressed in this work from EO\u2013H\u2082O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and \u03b3^\u221e_{EO,H\u2082O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng\u2013Robinson and k12=-0.10 following Huang et al. (2012)."
+    },
+    "75-28-5": {
+      "aliases": [
+        "5",
+        "C4H10",
+        "Isobutane"
+      ],
+      "cas": "75-28-5",
+      "formula": "C4H10",
+      "name": "Isobutane",
+      "q": 2.772,
+      "r": 3.1502,
+      "records": [
+        {
+          "dwsim_id": "5",
+          "formula": "C4H10",
+          "name": "Isobutane",
+          "q": 2.772,
+          "r": 3.1502,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "7697-37-2": {
+      "aliases": [
+        "1903",
+        "HNO3",
+        "Nitric acid"
+      ],
+      "cas": "7697-37-2",
+      "formula": "HNO3",
+      "name": "Nitric acid",
+      "q": 1.6,
+      "r": 1.64,
+      "records": [
+        {
+          "dwsim_id": "1903",
+          "formula": "HNO3",
+          "name": "Nitric acid",
+          "q": 1.6,
+          "r": 1.64,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "7727-37-9": {
+      "aliases": [
+        "14",
+        "N2",
+        "Nitrogen"
+      ],
+      "cas": "7727-37-9",
+      "formula": "N2",
+      "name": "Nitrogen",
+      "q": 1.088,
+      "r": 1.0415,
+      "records": [
+        {
+          "dwsim_id": "14",
+          "formula": "N2",
+          "name": "Nitrogen",
+          "q": 1.088,
+          "r": 1.0415,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "7732-18-5": {
+      "aliases": [
+        "15",
+        "H2O",
+        "Water"
+      ],
+      "cas": "7732-18-5",
+      "formula": "H2O",
+      "name": "Water",
+      "q": 1.4,
+      "r": 0.92,
+      "records": [
+        {
+          "dwsim_id": "15",
+          "formula": "H2O",
+          "name": "Water",
+          "q": 1.4,
+          "r": 0.92,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "",
+          "name": "Water",
+          "q": 1.4,
+          "r": 0.92,
+          "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "7782-44-7": {
+      "aliases": [
+        "13",
+        "O2",
+        "Oxygen"
+      ],
+      "cas": "7782-44-7",
+      "formula": "O2",
+      "name": "Oxygen",
+      "q": 0.94,
+      "r": 0.857,
+      "records": [
+        {
+          "dwsim_id": "13",
+          "formula": "O2",
+          "name": "Oxygen",
+          "q": 0.94,
+          "r": 0.857,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "7783-06-4": {
+      "aliases": [
+        "17",
+        "H2S",
+        "Hydrogen sulfide"
+      ],
+      "cas": "7783-06-4",
+      "formula": "H2S",
+      "name": "Hydrogen sulfide",
+      "q": 1.241,
+      "r": 1.234,
+      "records": [
+        {
+          "dwsim_id": "17",
+          "formula": "H2S",
+          "name": "Hydrogen sulfide",
+          "q": 1.241,
+          "r": 1.234,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "78-78-4": {
+      "aliases": [
+        "7",
+        "C5H12",
+        "Isopentane"
+      ],
+      "cas": "78-78-4",
+      "formula": "C5H12",
+      "name": "Isopentane",
+      "q": 3.31,
+      "r": 3.82,
+      "records": [
+        {
+          "dwsim_id": "7",
+          "formula": "C5H12",
+          "name": "Isopentane",
+          "q": 3.31,
+          "r": 3.82,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "78-92-2": {
+      "aliases": [
+        "2-Butanol",
+        "C4H10O"
+      ],
+      "cas": "78-92-2",
+      "formula": "C4H10O",
+      "name": "2-Butanol",
+      "q": 3.04,
+      "r": 3.45,
+      "records": [
+        {
+          "formula": "C4H10O",
+          "name": "2-Butanol",
+          "q": 3.04,
+          "r": 3.45,
+          "source": "ester_uniquac_combinatorial_parameters.json; Ghanadzadeh Gilani, H.; Golpour, M.; Abbasi Souraki, B. Ternary equilibrium data of mixtures consisting of 2-butanol, water, and heavy alcohols at T = 298.2 K. J. Chem. Thermodyn. 2012, 49, 39-45."
+        }
+      ],
+      "source": "ester_uniquac_combinatorial_parameters.json; Ghanadzadeh Gilani, H.; Golpour, M.; Abbasi Souraki, B. Ternary equilibrium data of mixtures consisting of 2-butanol, water, and heavy alcohols at T = 298.2 K. J. Chem. Thermodyn. 2012, 49, 39-45."
+    },
+    "78-93-3": {
+      "aliases": [
+        "36",
+        "C4H8O",
+        "Methyl ethyl ketone"
+      ],
+      "cas": "78-93-3",
+      "formula": "C4H8O",
+      "name": "Methyl ethyl ketone",
+      "q": 2.88,
+      "r": 3.25,
+      "records": [
+        {
+          "dwsim_id": "36",
+          "formula": "C4H8O",
+          "name": "Methyl ethyl ketone",
+          "q": 2.88,
+          "r": 3.25,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "79-09-4": {
+      "aliases": [
+        "C3H6O2",
+        "Propionic acid"
+      ],
+      "cas": "79-09-4",
+      "formula": "C3H6O2",
+      "name": "Propionic acid",
+      "q": 2.612,
+      "r": 2.877,
+      "records": [
+        {
+          "formula": "C3H6O2",
+          "name": "Propionic acid",
+          "q": 2.612,
+          "r": 2.877,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "79-10-7": {
+      "aliases": [
+        "Acrylic acid",
+        "C3H4O2"
+      ],
+      "cas": "79-10-7",
+      "formula": "C3H4O2",
+      "name": "Acrylic acid",
+      "q": 2.4,
+      "r": 2.6467,
+      "records": [
+        {
+          "formula": "C3H4O2",
+          "name": "Acrylic acid",
+          "q": 2.4,
+          "r": 2.6467,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "79-20-9": {
+      "aliases": [
+        "C3H6O2",
+        "Methyl acetate"
+      ],
+      "cas": "79-20-9",
+      "extended_uniquac": {
+        "antoine": {
+          "A": 7.06524,
+          "B": 1157.63,
+          "C": 219.726,
+          "pressure_units": "mmHg",
+          "temperature_units": "degC"
+        },
+        "q": 2.576,
+        "q_prime": 1.099245220191554,
+        "q_prime_expression": "q^0.1",
+        "r": 2.8042,
+        "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+      },
+      "formula": "C3H6O2",
+      "name": "Methyl acetate",
+      "q": 2.576,
+      "r": 2.8042,
+      "records": [
+        {
+          "formula": "C3H6O2",
+          "name": "Methyl acetate",
+          "q": 2.576,
+          "r": 2.8042,
+          "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        }
+      ],
+      "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+    },
+    "95-47-6": {
+      "aliases": [
+        "20",
+        "C8H10",
+        "O-xylene"
+      ],
+      "cas": "95-47-6",
+      "formula": "C8H10",
+      "name": "O-xylene",
+      "q": 3.54,
+      "r": 4.66,
+      "records": [
+        {
+          "dwsim_id": "20",
+          "formula": "C8H10",
+          "name": "O-xylene",
+          "q": 3.54,
+          "r": 4.66,
+          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        }
+      ],
+      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "98-01-1": {
+      "aliases": [
+        "C5H4O2",
+        "Furfural"
+      ],
+      "cas": "98-01-1",
+      "formula": "C5H4O2",
+      "name": "Furfural",
+      "q": 2.58,
+      "r": 2.8,
+      "records": [
+        {
+          "formula": "C5H4O2",
+          "name": "Furfural",
+          "q": 2.58,
+          "r": 2.8,
+          "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        }
+      ],
+      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+    },
+    "98-82-8": {
+      "aliases": [
+        "C9H12",
+        "Cumene"
+      ],
+      "cas": "98-82-8",
+      "formula": "C9H12",
+      "name": "Cumene",
+      "q": 3.816,
+      "r": 5.0434,
+      "records": [
+        {
+          "formula": "C9H12",
+          "name": "Cumene",
+          "q": 3.816,
+          "r": 5.0434,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    },
+    "98-83-9": {
+      "aliases": [
+        "Alpha-methylstyrene",
+        "C9H10",
+        "\u03b1-methylstyrene"
+      ],
+      "cas": "98-83-9",
+      "formula": "C9H10",
+      "name": "Alpha-methylstyrene",
+      "q": 3.956,
+      "r": 5.0401,
+      "records": [
+        {
+          "formula": "C9H10",
+          "name": "Alpha-methylstyrene",
+          "q": 3.956,
+          "r": 5.0401,
+          "source": "User-provided paper"
+        },
+        {
+          "formula": "C9H10",
+          "name": "\u03b1-methylstyrene",
+          "q": 3.956,
+          "r": 5.0401,
+          "source": "User-provided paper"
+        }
+      ],
+      "source": "User-provided paper"
+    }
+  },
+  "metadata": {
+    "ambiguous_alias_count": 0,
+    "ambiguous_aliases": [],
+    "component_count": 66,
+    "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
+    "key_basis": "CAS",
+    "source_files": [
+      "data/source/dwsim_uniquac_combinatorial_parameters.csv",
+      "data/source/water_ethylene_oxide_interactions.json",
+      "data/source/water_organic_binary_fits.json",
+      "data/source/nagata_gmehling_extended_uniquac_rq.json",
+      "data/source/ester_uniquac_combinatorial_parameters.json"
+    ]
+  }
+}

@@ -1,0 +1,1738 @@
+{
+  "schema_version": 2,
+  "generated_date": "2026-08-30",
+  "purpose": "Full combined PFDSIM temperature-dependent NRTL/UNIQUAC binary interaction parameter set from the alcohol/ether survey and reliable additional systems found in the supplied papers.",
+  "conventions": {
+    "temperature_unit": "K",
+    "component_order": "Parameters 12 and 21 follow the components array order.",
+    "nrtl": {
+      "tau_ij": "a_ij + b_ij/T + c_ij*T",
+      "G_ij": "exp(-alpha*tau_ij)"
+    },
+    "uniquac": {
+      "tau_ij": "exp(a_ij + b_ij/T + c_ij*T)"
+    },
+    "term_count": {
+      "1": "a_ij = c_ij = 0; only b_ij/T retained",
+      "2": "a_ij + b_ij/T",
+      "3": "a_ij + b_ij/T + c_ij*T"
+    }
+  },
+  "model_selection": {
+    "criteria": [
+      "fit quality",
+      "AICc improvement where available",
+      "scaled-Jacobian conditioning and parameter correlation",
+      "stability to leaving out an independent source",
+      "physical/reusable NRTL alpha",
+      "independent temperature leverage rather than composition-temperature confounding"
+    ],
+    "accepted_three_term_entries": 0,
+    "note": "No c*T term was retained: apparent SSE improvements did not survive identifiability/stability checks."
+  },
+  "original_question_definition": {
+    "alcohols": [
+      "1-butanol",
+      "1-propanol",
+      "2-propanol",
+      "ethanol",
+      "methanol"
+    ],
+    "ethers": [
+      "dibutyl ether",
+      "diethyl ether",
+      "diisopropyl ether",
+      "dipropyl ether"
+    ],
+    "meaning": "A binary pair containing exactly one listed alcohol and exactly one listed ether."
+  },
+  "sources": {
+    "gao_2012": {
+      "citation": "Gao et al., Industrial & Engineering Chemistry Research 51 (2012) 567-575",
+      "doi": "10.1021/ie201805m",
+      "vapor_basis": "gamma-phi; Hayden-O'Connell vapor fugacity, saturated-vapor fugacity correction, Poynting correction, modified Rackett liquid volume"
+    },
+    "lladosa_2006": {
+      "citation": "Lladosa et al., Fluid Phase Equilibria 247 (2006) 47-53",
+      "doi": "10.1016/j.fluid.2006.06.017",
+      "vapor_basis": "ideal vapor at 20 and 101.3 kPa; liquid pressure dependence neglected"
+    },
+    "reddy_2013": {
+      "citation": "Reddy, Benecke & Ramjugernath, Journal of Chemical Thermodynamics 58 (2013) 330-339",
+      "doi": "10.1016/j.jct.2012.11.005",
+      "vapor_basis": "gamma-phi; truncated two-term virial EOS with Hayden-O'Connell second virials, saturation fugacity and Poynting corrections"
+    },
+    "cartes_2021": {
+      "citation": "Cartes et al., Fuel 297 (2021) 120361",
+      "doi": "10.1016/j.fuel.2021.120361",
+      "vapor_basis": "ideal vapor modified Raoult law at 94 kPa; liquid fugacity pressure dependence neglected"
+    },
+    "wang_2020": {
+      "citation": "Wang et al., Journal of Chemical & Engineering Data 65 (2020) 4387-4394",
+      "doi": "10.1021/acs.jced.0c00204",
+      "vapor_basis": "ideal-vapor approximation at 101.3 kPa; vapor fugacity and Poynting corrections taken as approximately unity"
+    },
+    "soujanya_2014": {
+      "citation": "Soujanya, Satyavathi & Sankarshana, Fluid Phase Equilibria 382 (2014) 286-299",
+      "doi": "10.1016/j.fluid.2014.09.014",
+      "vapor_basis": "low-pressure bubble-point treatment; no separate HOC correction documented for the activity-coefficient fits"
+    },
+    "lladosa_2007": {
+      "citation": "Lladosa et al., Fluid Phase Equilibria 262 (2007) 271-279",
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "vapor_basis": "ideal-vapor modified Raoult law; liquid pressure dependence neglected; justified by low pressure"
+    },
+    "arce_2003": {
+      "citation": "Arce et al., Journal of Chemical Thermodynamics 35 (2003) 871-884",
+      "doi": "10.1016/S0021-9614(03)00018-1",
+      "vapor_basis": "gamma-phi; Hayden-O'Connell second-virial vapor fugacity; saturated-vapor fugacity and Poynting correction; Rackett liquid volume"
+    },
+    "chamorro_2002": {
+      "citation": "Chamorro et al., Journal of Chemical Thermodynamics 34 (2002) 13-28",
+      "doi": "10.1006/jcht.2001.0840",
+      "vapor_basis": "Barker total-pressure reduction; second-virial EOS with Hayden-O'Connell coefficients"
+    },
+    "shawaqfeh_2010": {
+      "citation": "Shawaqfeh, Afinidad LXVII 549 (2010)",
+      "doi": null,
+      "vapor_basis": "gamma-phi; virial EOS with Hayden-O'Connell second virials; modified Rackett liquid volume; Antoine vapor pressures"
+    },
+    "lepori_2000": {
+      "citation": "Lepori et al., Physical Chemistry Chemical Physics 2 (2000) 4837-4842",
+      "doi": "10.1039/B005160H",
+      "vapor_basis": "head-space GC; virial vapor nonideality correction including air represented as nitrogen; corrections generally under 4%"
+    }
+  },
+  "entries": [
+    {
+      "components": [
+        "1-butanol",
+        "dibutyl ether"
+      ],
+      "status": "recommended_update",
+      "sources_used_for_refit": [
+        "lladosa_2006",
+        "lepori_2000"
+      ],
+      "parameter_treatment": "global_refit",
+      "validity": {
+        "T_K": [
+          298.15,
+          411.1
+        ],
+        "P_kPa": [
+          0.9,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 2,
+        "alpha": 0.59840813,
+        "a12": 0.20308121,
+        "b12_K": 152.334314,
+        "c12_per_K": 0.0,
+        "a21": -2.2428764,
+        "b21_K": 1056.184603,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma": 0.01736056,
+          "RMS_ln_gamma_by_source": {
+            "lladosa_2006_20kPa": 0.01827,
+            "lladosa_2006_101.3kPa": 0.01929,
+            "lepori_2000_298.15K": 0.01307
+          },
+          "AICc_one_term_free_alpha": -568.13,
+          "AICc_two_term": -848.75
+        },
+        "three_term_test": {
+          "accepted": false,
+          "reason": "leave-source-out coefficients unstable despite lower SSE"
+        },
+        "azeotrope_checks": [
+          {
+            "P_kPa": 20.0,
+            "x_1_butanol_calc": 0.71184,
+            "T_K_calc": 349.03,
+            "x_exp": 0.7087,
+            "T_K_exp": 349.45
+          },
+          {
+            "P_kPa": 101.3,
+            "x_1_butanol_calc": 0.87889,
+            "T_K_calc": 390.07,
+            "x_exp": 0.8858,
+            "T_K_exp": 390.29
+          }
+        ]
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 2,
+        "a12": -0.12533602,
+        "b12_K": 147.409781,
+        "c12_per_K": 0.0,
+        "a21": 0.72435572,
+        "b21_K": -522.450397,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma": 0.02391699,
+          "RMS_ln_gamma_by_source": {
+            "lladosa_2006_20kPa": 0.01681,
+            "lladosa_2006_101.3kPa": 0.02069,
+            "lepori_2000_298.15K": 0.03348
+          },
+          "AICc_one_term": -551.03,
+          "AICc_two_term": -783.04
+        },
+        "three_term_test": {
+          "accepted": false,
+          "reason": "strong leave-source-out instability and high condition number"
+        },
+        "azeotrope_checks": [
+          {
+            "P_kPa": 20.0,
+            "x_1_butanol_calc": 0.70247,
+            "T_K_calc": 349.06
+          },
+          {
+            "P_kPa": 101.3,
+            "x_1_butanol_calc": 0.88527,
+            "T_K_calc": 390.17
+          }
+        ]
+      },
+      "source_ids": [
+        "lladosa_2006",
+        "lepori_2000"
+      ],
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "1-propanol",
+        "dipropyl ether"
+      ],
+      "source_ids": [
+        "lladosa_2006"
+      ],
+      "parameter_treatment": "published_as_is_after_convention_conversion",
+      "refit_strategy": "published simultaneous 20 and 101.3 kPa temperature-dependent regression; converted algebraically to a+b/T convention",
+      "validity": {
+        "P_kPa": [
+          20.0,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": -0.418548,
+        "b12_K": 265.779,
+        "c12_per_K": 0.0,
+        "a21": -0.262194,
+        "b21_K": 412.137,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "AAD_y1": 0.0051,
+          "AAD_T_K": 0.07
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": 0.323533,
+        "b12_K": -12.9545,
+        "c12_per_K": 0.0,
+        "a21": -0.131097,
+        "b21_K": -255.284,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "AAD_y1": 0.0055,
+          "AAD_T_K": 0.07
+        },
+        "structural_basis": "DECHEMA, as used by source"
+      },
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "2-propanol",
+        "dibutyl ether"
+      ],
+      "source_ids": [
+        "wang_2020"
+      ],
+      "parameter_treatment": "published_as_is",
+      "refit_strategy": "published coefficients already use a+b/T form",
+      "validity": {
+        "P_kPa": [
+          101.3,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": 0.0064,
+        "b12_K": 255.09,
+        "c12_per_K": 0.0,
+        "a21": -0.005,
+        "b21_K": 245.27,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.009,
+          "RMS_T_K": 0.33
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": -0.0012,
+        "b12_K": 112.65,
+        "c12_per_K": 0.0,
+        "a21": 0.0018,
+        "b21_K": -341.76,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.0087,
+          "RMS_T_K": 0.33
+        }
+      },
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "methanol"
+      ],
+      "status": "recommended_nrtl",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.026
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.50730973,
+        "a12": 0.0,
+        "b12_K": 465.526229,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 542.753235,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.021182
+        }
+      },
+      "uniquac": {
+        "recommended": false,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -592.488987,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 40.40917,
+        "c21_per_K": 0.0,
+        "structural_parameters": {
+          "dibutyl ether": {
+            "r": 6.0925,
+            "q": 5.176
+          },
+          "methanol": {
+            "r": 1.4311,
+            "q": 1.432
+          }
+        },
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.077788
+        },
+        "note": "Not recommended under this standard r/q convention; fit is much worse than NRTL and source smoothing."
+      },
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "diethyl ether",
+        "1-butanol"
+      ],
+      "source_ids": [
+        "gao_2012"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "global refit to published binary activity-coefficient/VLE information",
+      "validity": {
+        "T_K": [
+          309.2,
+          388.7
+        ],
+        "P_kPa": [
+          101.325,
+          101.325
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": -1.39058,
+        "b12_K": 360.048,
+        "c12_per_K": 0.0,
+        "a21": 1.54676,
+        "b21_K": -418.999,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "mean_abs_T_K": 0.45,
+          "mean_abs_y1": 0.0116,
+          "mean_abs_gamma1": 0.0065,
+          "mean_abs_gamma2": 0.0043
+        },
+        "refit_metrics": null
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": 0.666966,
+        "b12_K": -164.889,
+        "c12_per_K": 0.0,
+        "a21": -0.746315,
+        "b21_K": 191.662,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "mean_abs_T_K": 0.46,
+          "mean_abs_y1": 0.0085,
+          "mean_abs_gamma1": 0.0046,
+          "mean_abs_gamma2": 0.0038
+        },
+        "refit_metrics": null
+      },
+      "notes": [
+        "Temperature trend is useful but the fitted temperature coefficients are somewhat correlated."
+      ],
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "diethyl ether",
+        "methanol"
+      ],
+      "source_ids": [
+        "gao_2012"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "global refit to published binary activity-coefficient/VLE information; NRTL alpha regularized to a conventional positive value instead of the published negative alpha",
+      "validity": {
+        "T_K": [
+          307.7,
+          335.7
+        ],
+        "P_kPa": [
+          101.325,
+          101.325
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": -0.557447,
+        "b12_K": 710.993,
+        "c12_per_K": 0.0,
+        "a21": -0.412573,
+        "b21_K": 93.9489,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "mean_abs_T_K": 0.28,
+          "mean_abs_y1": 0.0105,
+          "mean_abs_gamma1": 0.0202,
+          "mean_abs_gamma2": 0.0495
+        },
+        "refit_metrics": null
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": 3.34369,
+        "b12_K": -1594.29,
+        "c12_per_K": 0.0,
+        "a21": -0.468566,
+        "b21_K": 272.819,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "mean_abs_T_K": 0.34,
+          "mean_abs_y1": 0.0084,
+          "mean_abs_gamma1": 0.0125,
+          "mean_abs_gamma2": 0.0145
+        },
+        "refit_metrics": null
+      },
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "diisopropyl ether",
+        "1-butanol"
+      ],
+      "source_ids": [
+        "reddy_2013"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "global regression over both isotherms; no third temperature term because curvature is not identifiable from two isotherms",
+      "validity": {
+        "T_K": [
+          318.15,
+          338.15
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.47,
+        "a12": -1.83772,
+        "b12_K": 932.913,
+        "c12_per_K": 0.0,
+        "a21": 0.77204,
+        "b21_K": -54.5116,
+        "c21_per_K": 0.0,
+        "refit_metrics": {
+          "RMS_ln_gamma_global": 0.0424,
+          "RMS_ln_gamma_parameter_interpolation": 0.0532
+        },
+        "published_original_fit_ranges": {
+          "AAD_x1": [
+            0.002,
+            0.003
+          ],
+          "AAD_y1": [
+            0.003,
+            0.006
+          ],
+          "AAD_P_kPa": [
+            0.05,
+            0.11
+          ],
+          "AAD_T_K": [
+            0.08,
+            0.08
+          ]
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": 0.453895,
+        "b12_K": -404.859,
+        "c12_per_K": 0.0,
+        "a21": -0.13135,
+        "b21_K": 128.706,
+        "c21_per_K": 0.0,
+        "refit_metrics": {
+          "RMS_ln_gamma_global": 0.0458,
+          "RMS_ln_gamma_parameter_interpolation": 0.0498
+        },
+        "published_original_fit_ranges": {
+          "AAD_x1": [
+            0.002,
+            0.004
+          ],
+          "AAD_y1": [
+            0.004,
+            0.006
+          ],
+          "AAD_P_kPa": [
+            0.06,
+            0.13
+          ],
+          "AAD_T_K": [
+            0.1,
+            0.1
+          ]
+        }
+      },
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "diisopropyl ether",
+        "2-propanol"
+      ],
+      "aliases": [
+        [
+          "DIPE",
+          "IPA"
+        ]
+      ],
+      "status": "recommended_replacement",
+      "replaces": "Soujanya 2014-derived DIPE + IPA entry",
+      "sources_used_for_refit": [
+        "lladosa_2007",
+        "arce_2003",
+        "chamorro_2002"
+      ],
+      "validation_sources": [
+        "shawaqfeh_2010"
+      ],
+      "parameter_treatment": "global_refit",
+      "validity": {
+        "T_K": [
+          307.2,
+          355.4
+        ],
+        "P_kPa": [
+          30.0,
+          101.32
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 2,
+        "alpha": 0.57087796,
+        "a12": -1.04999734,
+        "b12_K": 659.656328,
+        "c12_per_K": 0.0,
+        "a21": 0.90684636,
+        "b21_K": -123.756489,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_primary": 0.02398085,
+          "RMS_ln_gamma_by_source": {
+            "lladosa_2007_30kPa": 0.0326,
+            "lladosa_2007_101.3kPa": 0.02448,
+            "arce_2003_101.32kPa": 0.02659,
+            "chamorro_2002_313.15K": 0.00554
+          },
+          "AICc_one_term_free_alpha": -1316.03,
+          "AICc_two_term": -1332.64
+        },
+        "three_term_test": {
+          "accepted": false,
+          "reason": "lower SSE/AICc but severe collinearity and source-deletion instability",
+          "scaled_jacobian_condition_approx": 18500,
+          "max_parameter_correlation_approx": 0.99995
+        },
+        "azeotrope_checks": [
+          {
+            "P_kPa": 30.0,
+            "x_DIPE_calc": 0.90676,
+            "T_K_calc": 307.31,
+            "x_DIPE_exp": 0.9064
+          },
+          {
+            "P_kPa": 95.0,
+            "x_DIPE_calc": 0.78387,
+            "T_K_calc": 337.44,
+            "x_DIPE_exp_validation": 0.796
+          },
+          {
+            "P_kPa": 101.3,
+            "x_DIPE_calc": 0.77551,
+            "T_K_calc": 339.29,
+            "x_DIPE_exp": 0.7818
+          }
+        ]
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -305.298998,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 103.819007,
+        "c21_per_K": 0.0,
+        "structural_parameters": {
+          "diisopropyl ether": {
+            "r": 4.7421,
+            "q": 4.088
+          },
+          "2-propanol": {
+            "r": 2.9137,
+            "q": 2.5276
+          }
+        },
+        "fit_metrics": {
+          "RMS_ln_gamma_primary": 0.02638695,
+          "RMS_ln_gamma_by_source": {
+            "lladosa_2007_30kPa": 0.03432,
+            "lladosa_2007_101.3kPa": 0.0261,
+            "arce_2003_101.32kPa": 0.02988,
+            "chamorro_2002_313.15K": 0.01046
+          },
+          "AICc_one_term": -1304.49,
+          "AICc_two_term": -1307.58,
+          "two_term_max_parameter_correlation_approx": 0.99897
+        },
+        "model_order_note": "Two-term gain is too small relative to near-collinearity; one-term is preferred.",
+        "three_term_test": {
+          "accepted": false,
+          "reason": "severely ill-conditioned",
+          "scaled_jacobian_condition_approx": 58600
+        },
+        "azeotrope_checks": [
+          {
+            "P_kPa": 30.0,
+            "x_DIPE_calc": 0.9099,
+            "T_K_calc": 307.4
+          },
+          {
+            "P_kPa": 95.0,
+            "x_DIPE_calc": 0.77708,
+            "T_K_calc": 337.4
+          },
+          {
+            "P_kPa": 101.3,
+            "x_DIPE_calc": 0.76874,
+            "T_K_calc": 339.24
+          }
+        ]
+      },
+      "source_ids": [
+        "lladosa_2007",
+        "arce_2003",
+        "chamorro_2002",
+        "shawaqfeh_2010"
+      ],
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "diisopropyl ether",
+        "ethanol"
+      ],
+      "source_ids": [
+        "reddy_2013"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "global regression over all isotherms; preferred over interpolation of separately published isotherm BIPs",
+      "validity": {
+        "T_K": [
+          313.15,
+          333.15
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.47,
+        "a12": 3.07788,
+        "b12_K": -586.184,
+        "c12_per_K": 0.0,
+        "a21": -1.58735,
+        "b21_K": 801.16,
+        "c21_per_K": 0.0,
+        "refit_metrics": {
+          "RMS_ln_gamma_global": 0.0271,
+          "RMS_ln_gamma_parameter_interpolation": 0.0335
+        },
+        "published_original_fit_ranges": {
+          "AAD_x1": [
+            0.003,
+            0.005
+          ],
+          "AAD_y1": [
+            0.005,
+            0.007
+          ],
+          "AAD_P_kPa": [
+            0.03,
+            0.05
+          ],
+          "AAD_T_K": [
+            0.05,
+            0.08
+          ]
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": -3.29389,
+        "b12_K": 610.251,
+        "c12_per_K": 0.0,
+        "a21": 1.26154,
+        "b21_K": -305.43,
+        "c21_per_K": 0.0,
+        "refit_metrics": {
+          "RMS_ln_gamma_global": 0.0328,
+          "RMS_ln_gamma_parameter_interpolation": 0.0474
+        },
+        "published_original_fit_ranges": {
+          "AAD_x1": [
+            0.003,
+            0.005
+          ],
+          "AAD_y1": [
+            0.004,
+            0.008
+          ],
+          "AAD_P_kPa": [
+            0.04,
+            0.06
+          ],
+          "AAD_T_K": [
+            0.06,
+            0.1
+          ]
+        }
+      },
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "diisopropyl ether",
+        "methanol"
+      ],
+      "source_ids": [
+        "reddy_2013"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "global regression over all isotherms; preferred over interpolation of separately published isotherm BIPs",
+      "validity": {
+        "T_K": [
+          305.15,
+          325.15
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.47,
+        "a12": 0.3549,
+        "b12_K": 401.974,
+        "c12_per_K": 0.0,
+        "a21": -1.04607,
+        "b21_K": 817.113,
+        "c21_per_K": 0.0,
+        "refit_metrics": {
+          "RMS_ln_gamma_global": 0.0428,
+          "RMS_ln_gamma_parameter_interpolation": 0.0564
+        },
+        "published_original_fit_ranges": {
+          "AAD_x1": [
+            0.002,
+            0.004
+          ],
+          "AAD_y1": [
+            0.003,
+            0.008
+          ],
+          "AAD_P_kPa": [
+            0.02,
+            0.07
+          ],
+          "AAD_T_K": [
+            0.06,
+            0.1
+          ]
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": -1.59483,
+        "b12_K": -141.77,
+        "c12_per_K": 0.0,
+        "a21": 0.388311,
+        "b21_K": -77.2558,
+        "c21_per_K": 0.0,
+        "refit_metrics": {
+          "RMS_ln_gamma_global": 0.0612,
+          "RMS_ln_gamma_parameter_interpolation": 0.0775
+        },
+        "published_original_fit_ranges": {
+          "AAD_x1": [
+            0.003,
+            0.005
+          ],
+          "AAD_y1": [
+            0.004,
+            0.004
+          ],
+          "AAD_P_kPa": [
+            0.03,
+            0.08
+          ],
+          "AAD_T_K": [
+            0.07,
+            0.11
+          ]
+        }
+      },
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "ethanol",
+        "dibutyl ether"
+      ],
+      "source_ids": [
+        "cartes_2021"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "temperature-dependent global refit to reported binary VLE/activity coefficients",
+      "validity": {
+        "T_K": [
+          351.54,
+          377.36
+        ],
+        "P_kPa": [
+          94.0,
+          94.0
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.4,
+        "a12": 13.1566,
+        "b12_K": -4236.56,
+        "c12_per_K": 0.0,
+        "a21": -3.5894,
+        "b21_K": 1463.27,
+        "c21_per_K": 0.0,
+        "published_original_fit_metrics": {
+          "bubble_percent_AAD_P": 0.79,
+          "bubble_AAD_y_x100": 0.33,
+          "dew_percent_AAD_P": 1.2,
+          "dew_AAD_x_x100": 0.96
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": -3.31212,
+        "b12_K": 1246.06,
+        "c12_per_K": 0.0,
+        "a21": 3.40086,
+        "b21_K": -1574.27,
+        "c21_per_K": 0.0,
+        "published_original_fit_metrics": {
+          "bubble_percent_AAD_P": 0.86,
+          "bubble_AAD_y_x100": 0.36,
+          "dew_percent_AAD_P": 1.29,
+          "dew_AAD_x_x100": 1.47
+        }
+      },
+      "notes": [
+        "Fit quality is good, but the temperature coefficients are compensating; extrapolate cautiously."
+      ],
+      "original_question_pair": true
+    },
+    {
+      "components": [
+        "2-propanol",
+        "2-methoxyethanol"
+      ],
+      "status": "recommended_but_near_ideal",
+      "sources": [
+        "lladosa_2007"
+      ],
+      "parameter_treatment": "published_as_is_after_convention_conversion",
+      "validity": {
+        "P_kPa": [
+          101.3,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 36.031192,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 17.174892,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "AAD_T_K": 0.45,
+          "AAD_y1": 0.0067
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": 123.589467,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": -179.608721,
+        "c21_per_K": 0.0,
+        "structural_basis": "DECHEMA, as used by source",
+        "published_fit_metrics": {
+          "AAD_T_K": 0.59,
+          "AAD_y1": 0.0094
+        }
+      },
+      "source_ids": [
+        "lladosa_2007"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "2-propanol",
+        "anisole"
+      ],
+      "source_ids": [
+        "wang_2020"
+      ],
+      "parameter_treatment": "published_as_is",
+      "refit_strategy": "published coefficients already use a+b/T form",
+      "validity": {
+        "P_kPa": [
+          101.3,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": 0.0141,
+        "b12_K": 357.19,
+        "c12_per_K": 0.0,
+        "a21": -0.0095,
+        "b21_K": 110.63,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.0094,
+          "RMS_T_K": 0.51
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": -0.0058,
+        "b12_K": -45.12,
+        "c12_per_K": 0.0,
+        "a21": 0.0057,
+        "b21_K": -104.13,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.009,
+          "RMS_T_K": 0.48
+        }
+      },
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "2-propanol",
+        "n-heptane"
+      ],
+      "status": "usable_nrtl_uniquac_second_tier",
+      "sources": [
+        "chamorro_2002"
+      ],
+      "parameter_treatment": "published_as_is_after_convention_conversion",
+      "validity": {
+        "T_K": [
+          313.15,
+          313.15
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.5366,
+        "a12": 0.0,
+        "b12_K": 447.11557,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 660.49598,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_P_kPa": 0.126,
+          "max_abs_P_kPa": 0.322
+        }
+      },
+      "uniquac": {
+        "recommended": false,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": 82.303867,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": -324.30988,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_P_kPa": 0.402,
+          "max_abs_P_kPa": 1.442
+        },
+        "note": "Clearly weaker than NRTL for this data set."
+      },
+      "source_ids": [
+        "chamorro_2002"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "2-propanol",
+        "water"
+      ],
+      "status": "recommended",
+      "sources": [
+        "arce_2003"
+      ],
+      "parameter_treatment": "published_as_is_after_convention_conversion",
+      "validity": {
+        "P_kPa": [
+          101.32,
+          101.32
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 0.065767,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 802.915391,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_T_K": 0.2,
+          "RMS_x1": 0.0045,
+          "RMS_y1": 0.0046,
+          "RMS_P_kPa": 0.11
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -31.505223,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": -465.804007,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_T_K": 0.22,
+          "RMS_x1": 0.0036,
+          "RMS_y1": 0.0055,
+          "RMS_P_kPa": 0.12
+        }
+      },
+      "source_ids": [
+        "arce_2003"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "acetonitrile"
+      ],
+      "status": "recommended_nrtl",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.019
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.48749031,
+        "a12": 0.0,
+        "b12_K": 429.87706,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 612.225781,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.017217
+        }
+      },
+      "uniquac": {
+        "recommended": false,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -441.420934,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 26.586161,
+        "c21_per_K": 0.0,
+        "structural_parameters": {
+          "dibutyl ether": {
+            "r": 6.0925,
+            "q": 5.176
+          },
+          "acetonitrile": {
+            "r": 1.8701,
+            "q": 1.724
+          }
+        },
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.088288
+        },
+        "note": "Not recommended; substantially worse than NRTL."
+      },
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "butylamine"
+      ],
+      "status": "usable_nrtl_only",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.034
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 425.797731,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": -163.729028,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.042892
+        },
+        "note": "Free alpha ran to the upper bound and was rejected."
+      },
+      "uniquac": null,
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "cyclopentanone"
+      ],
+      "status": "usable_nrtl_only",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.02
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 107.619664,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 219.750163,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.033087
+        },
+        "note": "Unconstrained alpha optimized near 0.95; rejected as an overly exotic compensation."
+      },
+      "uniquac": null,
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "propanone"
+      ],
+      "aliases": [
+        [
+          "dibutyl ether",
+          "acetone"
+        ]
+      ],
+      "status": "recommended",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.015
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.68338034,
+        "a12": 0.0,
+        "b12_K": 165.472317,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 278.772879,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.012658
+        },
+        "note": "Alpha is high but statistically identified; fixed-alpha alternatives fit measurably worse."
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -219.41342,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 55.435279,
+        "c21_per_K": 0.0,
+        "structural_parameters": {
+          "dibutyl ether": {
+            "r": 6.0925,
+            "q": 5.176
+          },
+          "propanone": {
+            "r": 2.5735,
+            "q": 2.336
+          }
+        },
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.02336
+        },
+        "note": "Acceptable, but NRTL is clearly better."
+      },
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "propylamine"
+      ],
+      "status": "usable_nrtl_only",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.039
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 298.222194,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": -56.714881,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.054279
+        },
+        "note": "Moderate rather than excellent fit; free alpha ran to the upper bound and was rejected."
+      },
+      "uniquac": null,
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "tetrahydrofuran"
+      ],
+      "status": "recommended",
+      "sources": [
+        "lepori_2000"
+      ],
+      "parameter_treatment": "refit_to_raw_ln_gamma_ratio",
+      "validity": {
+        "T_K": [
+          298.15,
+          298.15
+        ]
+      },
+      "source_fit_quality": {
+        "source_RK_sigma_ln_gamma_ratio": 0.016
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": -144.141462,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 220.139394,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.014504
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -71.615005,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 38.985382,
+        "c21_per_K": 0.0,
+        "structural_parameters": {
+          "dibutyl ether": {
+            "r": 6.0925,
+            "q": 5.176
+          },
+          "tetrahydrofuran": {
+            "r": 2.9415,
+            "q": 2.72
+          }
+        },
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.014452
+        }
+      },
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "diisopropyl ether",
+        "2-methoxyethanol"
+      ],
+      "status": "recommended",
+      "sources": [
+        "lladosa_2007"
+      ],
+      "parameter_treatment": "published_as_is_after_convention_conversion",
+      "validity": {
+        "P_kPa": [
+          101.3,
+          101.3
+        ],
+        "T_K": [
+          341.5,
+          397.4
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 305.934384,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 269.601308,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "AAD_T_K": 0.16,
+          "AAD_y1": 0.0058
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -249.784032,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 50.035705,
+        "c21_per_K": 0.0,
+        "structural_basis": "DECHEMA, as used by source",
+        "published_fit_metrics": {
+          "AAD_T_K": 0.18,
+          "AAD_y1": 0.0059
+        }
+      },
+      "source_ids": [
+        "lladosa_2007"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "diisopropyl ether",
+        "n-heptane"
+      ],
+      "status": "recommended_near_ideal",
+      "sources": [
+        "chamorro_2002"
+      ],
+      "parameter_treatment": "published_as_is_after_convention_conversion",
+      "validity": {
+        "T_K": [
+          313.15,
+          313.15
+        ]
+      },
+      "nrtl": {
+        "recommended": true,
+        "term_count": 1,
+        "alpha": 0.3,
+        "a12": 0.0,
+        "b12_K": 48.569565,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 0.594985,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_P_kPa": 0.007,
+          "max_abs_P_kPa": 0.015
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": 2.557359,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": -14.156445,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_P_kPa": 0.007,
+          "max_abs_P_kPa": 0.015
+        }
+      },
+      "source_ids": [
+        "chamorro_2002"
+      ],
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "isopropyl acetate",
+        "anisole"
+      ],
+      "source_ids": [
+        "wang_2020"
+      ],
+      "parameter_treatment": "published_as_is",
+      "refit_strategy": "published coefficients already use a+b/T form",
+      "validity": {
+        "P_kPa": [
+          101.3,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": -0.0019,
+        "b12_K": -145.02,
+        "c12_per_K": 0.0,
+        "a21": 0.0023,
+        "b21_K": 192.57,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.0019,
+          "RMS_T_K": 0.04
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": 0.0002,
+        "b12_K": -45.74,
+        "c12_per_K": 0.0,
+        "a21": -0.0001,
+        "b21_K": 52.67,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.0022,
+          "RMS_T_K": 0.03
+        }
+      },
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "isopropyl acetate",
+        "dibutyl ether"
+      ],
+      "source_ids": [
+        "wang_2020"
+      ],
+      "parameter_treatment": "published_as_is",
+      "refit_strategy": "published coefficients already use a+b/T form",
+      "validity": {
+        "P_kPa": [
+          101.3,
+          101.3
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.3,
+        "a12": 0.0103,
+        "b12_K": 332.72,
+        "c12_per_K": 0.0,
+        "a21": -0.0071,
+        "b21_K": -180.86,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.0063,
+          "RMS_T_K": 0.09
+        }
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": -0.0057,
+        "b12_K": -37.9,
+        "c12_per_K": 0.0,
+        "a21": 0.0054,
+        "b21_K": 8.78,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "RMS_y1": 0.0059,
+          "RMS_T_K": 0.08
+        }
+      },
+      "original_question_pair": false
+    },
+    {
+      "components": [
+        "methanol",
+        "1-butanol"
+      ],
+      "source_ids": [
+        "gao_2012"
+      ],
+      "parameter_treatment": "global_refit",
+      "refit_strategy": "global refit to published binary activity-coefficient/VLE information",
+      "validity": {
+        "T_K": [
+          338.3,
+          386.6
+        ],
+        "P_kPa": [
+          101.325,
+          101.325
+        ]
+      },
+      "nrtl": {
+        "term_count": 2,
+        "alpha": 0.36,
+        "a12": -0.233226,
+        "b12_K": -176.21,
+        "c12_per_K": 0.0,
+        "a21": -0.004149,
+        "b21_K": 315.963,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "mean_abs_T_K": 0.26,
+          "mean_abs_y1": 0.0068,
+          "mean_abs_gamma1": 0.0028,
+          "mean_abs_gamma2": 0.0025
+        },
+        "refit_metrics": null
+      },
+      "uniquac": {
+        "term_count": 2,
+        "a12": 0.376144,
+        "b12_K": -106.0,
+        "c12_per_K": 0.0,
+        "a21": -0.537085,
+        "b21_K": 119.704,
+        "c21_per_K": 0.0,
+        "published_fit_metrics": {
+          "mean_abs_T_K": 0.31,
+          "mean_abs_y1": 0.0076,
+          "mean_abs_gamma1": 0.0036,
+          "mean_abs_gamma2": 0.0028
+        },
+        "refit_metrics": null
+      },
+      "original_question_pair": false
+    }
+  ],
+  "retired_or_not_promoted": [
+    {
+      "components": [
+        "diisopropyl ether",
+        "2-propanol"
+      ],
+      "source_ids": [
+        "soujanya_2014"
+      ],
+      "status": "retired_replaced",
+      "reason": "Old Soujanya-derived global fit was inconsistent with the stronger Lladosa/Arce/Chamorro/Shawaqfeh evidence and gave a substantially shifted azeotrope.",
+      "replacement_present": true
+    },
+    {
+      "components": [
+        "n-hexane",
+        "dibutyl ether"
+      ],
+      "source_ids": [
+        "cartes_2021",
+        "lepori_2000"
+      ],
+      "status": "retired_use_zero_interaction",
+      "reason": "Independent sources indicate near-ideal behavior; directional fitted BIPs are poorly identifiable and the earlier compensating parameters should not be retained.",
+      "recommended_action": "Use zero/default interaction parameters unless a special local regression is required."
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "n-octane"
+      ],
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "status": "not_promoted_use_zero_interaction",
+      "reason": "Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable."
+    },
+    {
+      "components": [
+        "dibutyl ether",
+        "diethyl ether"
+      ],
+      "source_ids": [
+        "lepori_2000"
+      ],
+      "status": "not_promoted_use_zero_interaction",
+      "reason": "Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable."
+    }
+  ],
+  "counts": {
+    "active_binary_entries": 26,
+    "original_question_binary_entries": 11,
+    "additional_binary_entries": 15,
+    "retired_or_not_promoted_cases": 4
+  }
+}

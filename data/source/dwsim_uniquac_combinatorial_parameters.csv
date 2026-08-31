@@ -1,0 +1,59 @@
+source,name,cas,formula,dwsim_id,UNIQUAC_r,UNIQUAC_q
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Benzene,71-43-2,C6H6,18,3.1878,2.4
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Carbon dioxide,124-38-9,CO2,16,1.2986,1.292
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Ethane,74-84-0,C2H6,2,1.8022,1.696
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Ethanol,64-17-5,C2H5OH,27,2.11,1.97
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Ethylbenzene,100-41-4,C8H10,23,4.6,3.51
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Hydrogen,1333-74-0,H2,37,0,0
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Hydrogen sulfide,7783-06-4,H2S,17,1.234,1.241
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Isobutane,75-28-5,C4H10,5,3.1502,2.772
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Isopentane,78-78-4,C5H12,7,3.82,3.31
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Isopropanol,67-63-0,C3H7OH,28,2.78,2.51
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,M-xylene,108-38-3,C8H10,21,4.66,3.54
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Methane,74-82-8,CH4,1,1.1239,1.152
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Methanol,67-56-1,CH3OH,26,1.43,1.43
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Methyl ethyl ketone,78-93-3,C4H8O,36,3.25,2.88
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-butane,106-97-8,C4H10,4,3.151,2.776
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-decane,124-18-5,C10H22,12,7.2,6.02
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-heptane,142-82-5,C7H16,9,5.1742,4.396
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-hexane,110-54-3,C6H14,8,4.4998,3.856
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-nonane,111-84-2,C9H20,11,6.523,5.476
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-octane,111-65-9,C8H18,10,5.8486,4.936
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,N-pentane,109-66-0,C5H12,6,3.8254,3.316
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Nitrogen,7727-37-9,N2,14,1.0415,1.088
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,O-xylene,95-47-6,C8H10,20,4.66,3.54
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Oxygen,7782-44-7,O2,13,0.857,0.94
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,P-xylene,106-42-3,C8H10,22,4.66,3.54
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Phenol,108-95-2,C6H5OH,24,3.5517,2.68
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Propane,74-98-6,C3H8,3,2.4766,2.236
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Toluene,108-88-3,C7H8,19,3.9228,2.968
+DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Water,7732-18-5,H2O,15,0.92,1.4
+User-provided paper,Nitric acid,7697-37-2,HNO3,1903,1.64,1.60
+User-provided paper,Alpha-methylstyrene,98-83-9,C9H10,,5.0401,3.9560
+User-provided paper,α-methylstyrene,98-83-9,C9H10,,5.0401,3.9560
+User-provided paper,Acetone,67-64-1,C3H6O,,2.5735,2.3360
+User-provided paper,Ethyl acetate,141-78-6,C4H8O2,,3.4789,3.1159
+User-provided paper,Cumene,98-82-8,C9H12,,5.0434,3.8160
+User-provided paper,Acetic acid,64-19-7,C2H4O2,,2.2024,2.0720
+User-provided paper,Propionic acid,79-09-4,C3H6O2,,2.8770,2.6120
+User-provided paper,1-Propanol,71-23-8,C3H8O,,2.7800,2.5130
+User-provided paper,N-propanol,71-23-8,C3H8O,,2.7800,2.5130
+User-provided paper,Diethyl ether,60-29-7,(C2H5)2O,,3.3950,3.0160
+User-provided paper,Dichloromethane,75-09-2,CH2Cl2,,2.2564,1.9880
+User-provided paper,Acrylic acid,79-10-7,C3H4O2,,2.6467,2.4000
+User-provided paper,1-Butanol,71-36-3,C4H9OH,,3.4542,3.0480
+User-provided paper,N-butanol,71-36-3,C4H9OH,,3.4542,3.0480
+User-provided paper,1-Hexanol,111-27-3,C6H14O,,4.8029,4.1320
+User-provided paper,N-hexanol,111-27-3,C6H14O,,4.8029,4.1320
+User-provided paper,1-Nonanol,111-87-5,C9H20O,,6.6220,5.8280
+User-provided paper,N-nonanol,111-87-5,C9H20O,,6.6220,5.8280
+User-provided paper,Acetonitrile,75-05-8,CH3CN,,1.870,1.720
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",Chloroform,67-66-3,CHCl3,,2.8700,2.4100
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",Acetaldehyde,75-07-0,C2H4O,,1.9000,1.8000
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",Dimethylamine,124-40-3,C2H7N,,2.3300,2.0900
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",Furfural,98-01-1,C5H4O2,,2.8000,2.5800
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",Aniline,62-53-3,C6H7N,,3.7200,2.8300
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",Triethylamine,121-44-8,C6H15N,,5.0100,4.2600
+"Abrams and Prausnitz (1975), AIChE J. 21, 116-128",n-Hexadecane,544-76-3,C16H34,,11.2400,9.2600
+UNIFAC Consortium Exact Component,Carbon Tetrachloride,56-23-5,CCl4,,3.3900,2.9100
+

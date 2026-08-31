@@ -1,0 +1,53 @@
+PROCESS: Isothermal Trace Organic Water Stripping
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: UNIFNIST rigorous isothermal stripping of 5 ppmw trace organics from water with air at 25 C.
+THERMO_METHOD: UNIFNIST
+
+COMPONENTS:
+    water | Water | MW=18.0153, UNIFAC=1H2O
+    acetaldehyde | Acetaldehyde | MW=44.05, UNIFAC=1CH3+1CHO
+    acetone | Acetone | MW=58.08, UNIFAC=1CH3+1CH3CO
+    benzene | Benzene | MW=78.11, UNIFAC=6ACH
+    diethyl ether | Diethyl Ether | MW=74.12, UNIFAC=2CH3+1CH2+1CH2O
+    nitrogen | Nitrogen | MW=28.01
+    oxygen | Oxygen | MW=32.00
+
+STREAM Contaminated-Water : FEED -> STRIP-100.liquid
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 55.50759433666292 [kmol/h]
+    x = water:0.9999940356630026, acetaldehyde:2.0448981681880737e-6, acetone:1.550925694020052e-6, benzene:1.1532168007769124e-6, diethyl ether:1.2152963344398897e-6
+
+STREAM Air : FEED -> STRIP-100.air
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 34.664568304798614 [kmol/h]
+    x = nitrogen:0.79, oxygen:0.21
+
+STREAM Treated-Water : STRIP-100.liquid_out -> PRODUCT
+STREAM Loaded-Air : STRIP-100.gas_out -> PRODUCT
+
+UNIT STRIP-100
+    TYPE: RigorousStripper
+    PORTS:
+        liquid     : inlet
+        air        : inlet
+        liquid_out : liquid_outlet
+        gas_out    : vapor_outlet
+    PARAMS:
+        N_stages = 5
+        mode = isothermal
+        T = 25 [C]
+        P_drop_per_stage = 0
+        component_solve_threshold = 1e-12
+        component_scale_floor = 1e-10
+        T_min = 250 [K]
+        T_max = 400 [K]
+
+# Expected behavior:
+# - Automatically uses Henry data for the four dilute organics and for N2/O2.
+# - Uses the loading_profile initializer for the stiff multi-Henry trace system.
+# - Requires about 13.7 kW of heat to hold all stages at 25 C.
+# - Isothermal operation strips more acetone than the adiabatic case because
+#   the column no longer cools toward the bottom.

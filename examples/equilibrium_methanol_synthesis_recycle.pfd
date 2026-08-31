@@ -1,0 +1,51 @@
+#==============================================================================
+# EQUILIBRIUM METHANOL SYNTHESIS WITH CONDENSATION AND RECYCLE
+#==============================================================================
+
+PROCESS: Equilibrium methanol synthesis with recycle
+VERSION: 1.0
+DESCRIPTION: Homogeneous PR vapor-reaction equilibrium followed by methanol condensation, purge, and synthesis-gas recycle
+THERMO_METHOD: PR
+ONLINE_LOOKUP: false
+RECYCLE_METHOD: WEGSTEIN
+
+COMPONENTS:
+    CO | Carbon monoxide | formula=CO
+    H2 | Hydrogen | formula=H2
+    CH3OH | Methanol | formula=CH4O
+
+STREAM Fresh-Syngas : -> MIX-100.fresh
+    T = 250 [C]
+    P = 80 [bar]
+    F = 3 [kmol/h]
+    x = CO:0.3333333333333333, H2:0.6666666666666667
+
+STREAM Recycle-Gas : SPLIT-100.recycle -> MIX-100.recycle
+STREAM Reactor-Feed : MIX-100.mix -> EQ-100.reactant
+STREAM Reactor-Effluent : EQ-100.effluent -> COOL-100.in
+STREAM Cooled-Effluent : COOL-100.cooled -> FLASH-100.feed
+STREAM Separator-Gas : FLASH-100.v -> SPLIT-100.in
+STREAM Methanol-Product : FLASH-100.l
+STREAM Purge : SPLIT-100.purge
+
+UNIT MIX-100 : Mixer
+    T_out = 250 [C]
+    P = 78 [bar]
+
+UNIT EQ-100 : EquilibriumReactor
+    phase = vapor
+    T_out = 250 [C]
+    P_drop = 0 [bar]
+    REACTIONS:
+        CO + 2 H2 <=> CH3OH | name=methanol_synthesis
+
+UNIT COOL-100 : Cooler
+    T_out = 40 [C]
+
+UNIT FLASH-100 : Flash
+    T = 40 [C]
+    P = 78 [bar]
+
+UNIT SPLIT-100 : Splitter
+    outlets = recycle, purge
+    recycle_split_frac = 0.90

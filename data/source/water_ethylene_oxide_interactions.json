@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "source": "Regressed in this work from EO–H₂O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and γ^∞_{EO,H₂O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng–Robinson and k12=-0.10 following Huang et al. (2012).",
+    "description": "Water/ethylene oxide liquid-activity and vapor-EOS interaction regressions.",
+    "component_order": "1 = water, 2 = ethylene oxide",
+    "components": ["Water", "Ethylene oxide"],
+    "cas": ["7732-18-5", "75-21-8"],
+    "activity_temperature_range_K": [280.0, 420.0],
+    "eos_temperature_range_K": [330.0, 400.0],
+    "nrtl_form": "tau_ij = A_ij + B_ij/T",
+    "uniquac_form": "ln(tau_ij) = A_ij + B_ij/T",
+    "notes": [
+      "NRTL and UNIQUAC describe the liquid phase; PR and SRK kij values describe vapor-phase fugacity corrections.",
+      "The component orientation is retained explicitly because all activity-model parameters are directional."
+    ]
+  },
+  "fitted_parameters": {
+    "NRTL": {
+      "alpha12": 0.2,
+      "tau12_c": 5.85370,
+      "tau12_d": -1547.70,
+      "tau12_e": 0.0,
+      "tau21_c": -4.70938,
+      "tau21_d": 1926.66,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    "UNIQUAC": {
+      "tau12_a": -2.31209,
+      "tau12_b": 673.029,
+      "tau12_c": 0.0,
+      "tau21_a": 3.13674,
+      "tau21_b": -1397.36,
+      "tau21_c": 0.0,
+      "model_variant": "standard_uniquac",
+      "use_q_prime": false,
+      "component2_r": 1.59,
+      "component2_q": 1.64
+    },
+    "PR": {
+      "kij": -0.10
+    },
+    "SRK": {
+      "kij": -0.13
+    }
+  },
+  "validation": {
+    "gamma_inf_EO_in_water_298_15_K_NRTL": 6.66663
+  }
+}

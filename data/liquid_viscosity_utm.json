@@ -1,0 +1,1587 @@
+{
+  "metadata": {
+    "name": "UTM-modified UNIFAC-VISCO interaction parameters",
+    "parameter": "beta_nm_over_K",
+    "units": "K",
+    "orientation": "row group n -> column group m; value is beta_nm/K",
+    "blank_cells": "omitted",
+    "source": "Ind. Eng. Chem. Res. 2025,64,21861−21879",
+    "entry_count": 168,
+    "group_count": 21,
+    "id_policy": "standard UNIFAC subgroup IDs when exact; Dortmund subgroup IDs when standard lacks an exact group; custom UNIFAC-VISCO keys otherwise",
+    "important_notes": [
+      "CO is keyed as standard UNIFAC main group 9 rather than a specific subgroup because the image uses generic CO, while standard UNIFAC splits ketone carbonyl into CH3CO and CH2CO.",
+      "FCH2O and (CH2O)3PO are retained as UNIFAC-VISCO custom keys because no exact DDBST published standard/Dortmund subgroup assignment was made here."
+    ]
+  },
+  "groups": {
+    "std:2": {
+      "label": "CH2",
+      "visco_index": 1,
+      "scheme": "standard_unifac",
+      "subgroup_id": 2,
+      "main_group_id": 1,
+      "main_group_name": "CH2"
+    },
+    "std:1": {
+      "label": "CH3",
+      "visco_index": 2,
+      "scheme": "standard_unifac",
+      "subgroup_id": 1,
+      "main_group_id": 1,
+      "main_group_name": "CH2"
+    },
+    "do:78": {
+      "label": "CH2,cy",
+      "visco_index": 3,
+      "scheme": "modified_unifac_dortmund",
+      "subgroup_id": 78,
+      "main_group_id": 42,
+      "main_group_name": "CY-CH2",
+      "dortmund_label": "CY-CH2",
+      "notes": "Original/published standard UNIFAC does not include this exact cyclic-CH2 subgroup in the DDBST list; Dortmund does."
+    },
+    "std:9": {
+      "label": "ACH",
+      "visco_index": 4,
+      "scheme": "standard_unifac",
+      "subgroup_id": 9,
+      "main_group_id": 3,
+      "main_group_name": "ACH"
+    },
+    "std_main:9": {
+      "label": "CO",
+      "visco_index": 5,
+      "scheme": "standard_unifac_main_group",
+      "main_group_id": 9,
+      "main_group_name": "CH2CO",
+      "standard_subgroup_candidates": [
+        18,
+        19
+      ],
+      "notes": "UNIFAC-VISCO table uses generic CO. Standard UNIFAC represents ketone carbonyl using CH3CO/CH2CO, so this is keyed at the main-group level."
+    },
+    "std:77": {
+      "label": "COO",
+      "visco_index": 6,
+      "scheme": "standard_unifac",
+      "subgroup_id": 77,
+      "main_group_id": 41,
+      "main_group_name": "COO",
+      "notes": "Generic COO subgroup in published original UNIFAC. For ordinary ester-specific decomposition, compare standard subgroups CH3COO/CH2COO/HCOO."
+    },
+    "std:14": {
+      "label": "OH",
+      "visco_index": 7,
+      "scheme": "standard_unifac",
+      "subgroup_id": 14,
+      "main_group_id": 5,
+      "main_group_name": "OH"
+    },
+    "std:15": {
+      "label": "CH3OH",
+      "visco_index": 8,
+      "scheme": "standard_unifac",
+      "subgroup_id": 15,
+      "main_group_id": 6,
+      "main_group_name": "CH3OH"
+    },
+    "std:17": {
+      "label": "ACOH",
+      "visco_index": 9,
+      "scheme": "standard_unifac",
+      "subgroup_id": 17,
+      "main_group_id": 8,
+      "main_group_name": "ACOH"
+    },
+    "std:42": {
+      "label": "COOH",
+      "visco_index": 10,
+      "scheme": "standard_unifac",
+      "subgroup_id": 42,
+      "main_group_id": 20,
+      "main_group_name": "COOH"
+    },
+    "visco:FCH2O": {
+      "label": "FCH2O",
+      "visco_index": 11,
+      "scheme": "unifac_visco_custom",
+      "subgroup_id": null,
+      "main_group_id": null,
+      "main_group_name": null,
+      "notes": "Not assigned to a DDBST published standard/Dortmund subgroup here. Keep as UNIFAC-VISCO custom unless your implementation has a legacy FCH2O group."
+    },
+    "std:72": {
+      "label": "DMF",
+      "visco_index": 12,
+      "scheme": "standard_unifac",
+      "subgroup_id": 72,
+      "main_group_id": 39,
+      "main_group_name": "DMF"
+    },
+    "std:29": {
+      "label": "CH2NH2",
+      "visco_index": 13,
+      "scheme": "standard_unifac",
+      "subgroup_id": 29,
+      "main_group_id": 14,
+      "main_group_name": "CNH2"
+    },
+    "std:32": {
+      "label": "CH2NH",
+      "visco_index": 14,
+      "scheme": "standard_unifac",
+      "subgroup_id": 32,
+      "main_group_id": 15,
+      "main_group_name": "CNH"
+    },
+    "std:40": {
+      "label": "CH3CN",
+      "visco_index": 15,
+      "scheme": "standard_unifac",
+      "subgroup_id": 40,
+      "main_group_id": 19,
+      "main_group_name": "CCN"
+    },
+    "std:54": {
+      "label": "CH3NO2",
+      "visco_index": 16,
+      "scheme": "standard_unifac",
+      "subgroup_id": 54,
+      "main_group_id": 26,
+      "main_group_name": "CNO2"
+    },
+    "std:57": {
+      "label": "ACNO2",
+      "visco_index": 17,
+      "scheme": "standard_unifac",
+      "subgroup_id": 57,
+      "main_group_id": 27,
+      "main_group_name": "ACNO2"
+    },
+    "std:37": {
+      "label": "C5H5N",
+      "visco_index": 18,
+      "scheme": "standard_unifac",
+      "subgroup_id": 37,
+      "main_group_id": 18,
+      "main_group_name": "PYRIDINE"
+    },
+    "std:67": {
+      "label": "DMSO",
+      "visco_index": 19,
+      "scheme": "standard_unifac",
+      "subgroup_id": 67,
+      "main_group_id": 35,
+      "main_group_name": "DMSO"
+    },
+    "std:118": {
+      "label": "CH2SO2CH2",
+      "visco_index": 20,
+      "scheme": "standard_unifac",
+      "subgroup_id": 118,
+      "main_group_id": 55,
+      "main_group_name": "SULFONES",
+      "standard_label": "(CH2)2SU"
+    },
+    "visco:(CH2O)3PO": {
+      "label": "(CH2O)3PO",
+      "visco_index": 21,
+      "scheme": "unifac_visco_custom",
+      "subgroup_id": null,
+      "main_group_id": null,
+      "main_group_name": null,
+      "notes": "No exact DDBST published standard/Dortmund subgroup was assigned."
+    }
+  },
+  "beta_nm_K": {
+    "std:2": {
+      "std:2": 0.0,
+      "std:1": -367.4,
+      "do:78": 35.393,
+      "std:9": 230.62,
+      "std_main:9": 705.4,
+      "std:77": 273.52,
+      "std:14": 1396.39,
+      "std:15": -138.59,
+      "std:17": 2129.5,
+      "std:42": 51.717,
+      "visco:FCH2O": 244.18,
+      "std:72": 388.48,
+      "std:29": 663.43,
+      "std:32": 595.58,
+      "std:40": 690.04,
+      "std:54": 593.56,
+      "std:57": 322.41,
+      "std:37": 157.62,
+      "std:67": 384.76,
+      "std:118": 878.46,
+      "visco:(CH2O)3PO": -53.985
+    },
+    "std:1": {
+      "std:2": -290.51,
+      "std:1": 0.0,
+      "do:78": -99.148,
+      "std:9": 55.368,
+      "std_main:9": -61.709,
+      "std:77": 190.32,
+      "std:14": 388.04,
+      "std:15": -149.51,
+      "std:17": -725.5,
+      "std:42": -66.468,
+      "visco:FCH2O": 143.44,
+      "std:72": 431.73,
+      "std:29": -731.14,
+      "std:32": 30.679,
+      "std:40": 770.99,
+      "std:54": 431.66,
+      "std:57": 31.478,
+      "std:37": 47.339,
+      "std:67": 434.14,
+      "std:118": -42.273,
+      "visco:(CH2O)3PO": -638.35
+    },
+    "do:78": {
+      "std:2": -170.28,
+      "std:1": 19.085,
+      "do:78": 0.0,
+      "std:9": 295.49,
+      "std:14": 293.27,
+      "visco:FCH2O": 67.724,
+      "visco:(CH2O)3PO": -278.77
+    },
+    "std:9": {
+      "std:2": -346.33,
+      "std:1": -108.29,
+      "do:78": -149.33,
+      "std:9": 0.0,
+      "std_main:9": 67.456,
+      "std:77": 120.12,
+      "std:14": 444.04,
+      "std:15": -2.9034,
+      "std:17": -454.08,
+      "std:42": 4.0885,
+      "visco:FCH2O": -40.635,
+      "std:72": 302.04,
+      "std:40": -25.263,
+      "std:57": 22.391,
+      "std:37": -81.226,
+      "std:67": 9.2035,
+      "std:118": -27.275,
+      "visco:(CH2O)3PO": -220.18
+    },
+    "std_main:9": {
+      "std:2": 363.77,
+      "std:1": -554.26,
+      "std:9": -388.71,
+      "std_main:9": 0.0,
+      "std:14": 70.556,
+      "std:15": -33.704
+    },
+    "std:77": {
+      "std:2": 550.27,
+      "std:1": -436.71,
+      "std:9": -9.45,
+      "std:77": 0.0,
+      "std:118": -29.992
+    },
+    "std:14": {
+      "std:2": -297.04,
+      "std:1": 1113.18,
+      "do:78": 248.73,
+      "std:9": 199.98,
+      "std_main:9": 777.34,
+      "std:14": 0.0,
+      "visco:FCH2O": 577.56,
+      "std:72": 175.93,
+      "std:29": 1045.6,
+      "std:32": -483.97,
+      "std:40": 841.26,
+      "std:54": 521.76,
+      "std:57": 42.219,
+      "std:37": 83.144,
+      "std:67": 520.69,
+      "visco:(CH2O)3PO": -238.19
+    },
+    "std:15": {
+      "std:2": -67.64,
+      "std:1": -92.891,
+      "std:9": -15.43,
+      "std_main:9": -38.647,
+      "std:15": 0.0,
+      "visco:FCH2O": 56.421,
+      "std:72": -11.162,
+      "std:40": 141.53,
+      "std:54": -36.789,
+      "std:57": -321.63,
+      "std:37": -211.61,
+      "std:67": 21.42,
+      "visco:(CH2O)3PO": -888.74
+    },
+    "std:17": {
+      "std:2": 999.27,
+      "std:1": -824.83,
+      "std:9": -255.93,
+      "std:17": 0.0,
+      "std:42": -301.71
+    },
+    "std:42": {
+      "std:2": 258.3,
+      "std:1": -228.99,
+      "std:9": 140.34,
+      "std:17": -623.5,
+      "std:42": 0.0
+    },
+    "visco:FCH2O": {
+      "std:2": -319.76,
+      "std:1": 9.3721,
+      "do:78": 62.37,
+      "std:9": 161.48,
+      "std:14": 196.39,
+      "std:15": 39.973
+    },
+    "std:72": {
+      "std:2": -260.61,
+      "std:1": -316.51,
+      "std:9": -212.69,
+      "std:14": 124.19,
+      "std:15": -24.254
+    },
+    "std:29": {
+      "std:2": -605.43,
+      "std:1": -564.35,
+      "std:14": 204.68
+    },
+    "std:32": {
+      "std:2": -364.61,
+      "std:1": -506.49,
+      "std:14": 544.66
+    },
+    "std:40": {
+      "std:2": -575.2,
+      "std:1": -512.23,
+      "std:9": 48.276,
+      "std:14": 399.92,
+      "std:15": 8.2738
+    },
+    "std:54": {
+      "std:2": -417.47,
+      "std:1": -448.15,
+      "std:14": 358.18,
+      "std:15": 211.14
+    },
+    "std:57": {
+      "std:2": 108.13,
+      "std:1": -158.64,
+      "std:9": -295.63,
+      "std:14": -30.333,
+      "std:15": 35.015
+    },
+    "std:37": {
+      "std:2": -90.716,
+      "std:1": 57.165,
+      "std:9": 57.539,
+      "std:14": 372.7,
+      "std:15": 355.99
+    },
+    "std:67": {
+      "std:2": -405.03,
+      "std:1": -281.78,
+      "std:9": 45.282,
+      "std:14": 77.956,
+      "std:15": -19.308
+    },
+    "std:118": {
+      "std:2": -305.8,
+      "std:1": 828.02,
+      "std:9": 331.26,
+      "std:77": 755.65
+    },
+    "visco:(CH2O)3PO": {
+      "std:2": 73.001,
+      "std:1": -543.32,
+      "do:78": -219.83,
+      "std:9": -307.08,
+      "std:14": 68.203,
+      "std:15": -211.27
+    }
+  },
+  "entries": [
+    {
+      "n": "std:2",
+      "m": "std:2",
+      "n_label": "CH2",
+      "m_label": "CH2",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:2",
+      "m": "std:1",
+      "n_label": "CH2",
+      "m_label": "CH3",
+      "beta_nm_over_K": -367.4
+    },
+    {
+      "n": "std:2",
+      "m": "do:78",
+      "n_label": "CH2",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": 35.393
+    },
+    {
+      "n": "std:2",
+      "m": "std:9",
+      "n_label": "CH2",
+      "m_label": "ACH",
+      "beta_nm_over_K": 230.62
+    },
+    {
+      "n": "std:2",
+      "m": "std_main:9",
+      "n_label": "CH2",
+      "m_label": "CO",
+      "beta_nm_over_K": 705.4
+    },
+    {
+      "n": "std:2",
+      "m": "std:77",
+      "n_label": "CH2",
+      "m_label": "COO",
+      "beta_nm_over_K": 273.52
+    },
+    {
+      "n": "std:2",
+      "m": "std:14",
+      "n_label": "CH2",
+      "m_label": "OH",
+      "beta_nm_over_K": 1396.39
+    },
+    {
+      "n": "std:2",
+      "m": "std:15",
+      "n_label": "CH2",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -138.59
+    },
+    {
+      "n": "std:2",
+      "m": "std:17",
+      "n_label": "CH2",
+      "m_label": "ACOH",
+      "beta_nm_over_K": 2129.5
+    },
+    {
+      "n": "std:2",
+      "m": "std:42",
+      "n_label": "CH2",
+      "m_label": "COOH",
+      "beta_nm_over_K": 51.717
+    },
+    {
+      "n": "std:2",
+      "m": "visco:FCH2O",
+      "n_label": "CH2",
+      "m_label": "FCH2O",
+      "beta_nm_over_K": 244.18
+    },
+    {
+      "n": "std:2",
+      "m": "std:72",
+      "n_label": "CH2",
+      "m_label": "DMF",
+      "beta_nm_over_K": 388.48
+    },
+    {
+      "n": "std:2",
+      "m": "std:29",
+      "n_label": "CH2",
+      "m_label": "CH2NH2",
+      "beta_nm_over_K": 663.43
+    },
+    {
+      "n": "std:2",
+      "m": "std:32",
+      "n_label": "CH2",
+      "m_label": "CH2NH",
+      "beta_nm_over_K": 595.58
+    },
+    {
+      "n": "std:2",
+      "m": "std:40",
+      "n_label": "CH2",
+      "m_label": "CH3CN",
+      "beta_nm_over_K": 690.04
+    },
+    {
+      "n": "std:2",
+      "m": "std:54",
+      "n_label": "CH2",
+      "m_label": "CH3NO2",
+      "beta_nm_over_K": 593.56
+    },
+    {
+      "n": "std:2",
+      "m": "std:57",
+      "n_label": "CH2",
+      "m_label": "ACNO2",
+      "beta_nm_over_K": 322.41
+    },
+    {
+      "n": "std:2",
+      "m": "std:37",
+      "n_label": "CH2",
+      "m_label": "C5H5N",
+      "beta_nm_over_K": 157.62
+    },
+    {
+      "n": "std:2",
+      "m": "std:67",
+      "n_label": "CH2",
+      "m_label": "DMSO",
+      "beta_nm_over_K": 384.76
+    },
+    {
+      "n": "std:2",
+      "m": "std:118",
+      "n_label": "CH2",
+      "m_label": "CH2SO2CH2",
+      "beta_nm_over_K": 878.46
+    },
+    {
+      "n": "std:2",
+      "m": "visco:(CH2O)3PO",
+      "n_label": "CH2",
+      "m_label": "(CH2O)3PO",
+      "beta_nm_over_K": -53.985
+    },
+    {
+      "n": "std:1",
+      "m": "std:2",
+      "n_label": "CH3",
+      "m_label": "CH2",
+      "beta_nm_over_K": -290.51
+    },
+    {
+      "n": "std:1",
+      "m": "std:1",
+      "n_label": "CH3",
+      "m_label": "CH3",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:1",
+      "m": "do:78",
+      "n_label": "CH3",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": -99.148
+    },
+    {
+      "n": "std:1",
+      "m": "std:9",
+      "n_label": "CH3",
+      "m_label": "ACH",
+      "beta_nm_over_K": 55.368
+    },
+    {
+      "n": "std:1",
+      "m": "std_main:9",
+      "n_label": "CH3",
+      "m_label": "CO",
+      "beta_nm_over_K": -61.709
+    },
+    {
+      "n": "std:1",
+      "m": "std:77",
+      "n_label": "CH3",
+      "m_label": "COO",
+      "beta_nm_over_K": 190.32
+    },
+    {
+      "n": "std:1",
+      "m": "std:14",
+      "n_label": "CH3",
+      "m_label": "OH",
+      "beta_nm_over_K": 388.04
+    },
+    {
+      "n": "std:1",
+      "m": "std:15",
+      "n_label": "CH3",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -149.51
+    },
+    {
+      "n": "std:1",
+      "m": "std:17",
+      "n_label": "CH3",
+      "m_label": "ACOH",
+      "beta_nm_over_K": -725.5
+    },
+    {
+      "n": "std:1",
+      "m": "std:42",
+      "n_label": "CH3",
+      "m_label": "COOH",
+      "beta_nm_over_K": -66.468
+    },
+    {
+      "n": "std:1",
+      "m": "visco:FCH2O",
+      "n_label": "CH3",
+      "m_label": "FCH2O",
+      "beta_nm_over_K": 143.44
+    },
+    {
+      "n": "std:1",
+      "m": "std:72",
+      "n_label": "CH3",
+      "m_label": "DMF",
+      "beta_nm_over_K": 431.73
+    },
+    {
+      "n": "std:1",
+      "m": "std:29",
+      "n_label": "CH3",
+      "m_label": "CH2NH2",
+      "beta_nm_over_K": -731.14
+    },
+    {
+      "n": "std:1",
+      "m": "std:32",
+      "n_label": "CH3",
+      "m_label": "CH2NH",
+      "beta_nm_over_K": 30.679
+    },
+    {
+      "n": "std:1",
+      "m": "std:40",
+      "n_label": "CH3",
+      "m_label": "CH3CN",
+      "beta_nm_over_K": 770.99
+    },
+    {
+      "n": "std:1",
+      "m": "std:54",
+      "n_label": "CH3",
+      "m_label": "CH3NO2",
+      "beta_nm_over_K": 431.66
+    },
+    {
+      "n": "std:1",
+      "m": "std:57",
+      "n_label": "CH3",
+      "m_label": "ACNO2",
+      "beta_nm_over_K": 31.478
+    },
+    {
+      "n": "std:1",
+      "m": "std:37",
+      "n_label": "CH3",
+      "m_label": "C5H5N",
+      "beta_nm_over_K": 47.339
+    },
+    {
+      "n": "std:1",
+      "m": "std:67",
+      "n_label": "CH3",
+      "m_label": "DMSO",
+      "beta_nm_over_K": 434.14
+    },
+    {
+      "n": "std:1",
+      "m": "std:118",
+      "n_label": "CH3",
+      "m_label": "CH2SO2CH2",
+      "beta_nm_over_K": -42.273
+    },
+    {
+      "n": "std:1",
+      "m": "visco:(CH2O)3PO",
+      "n_label": "CH3",
+      "m_label": "(CH2O)3PO",
+      "beta_nm_over_K": -638.35
+    },
+    {
+      "n": "do:78",
+      "m": "std:2",
+      "n_label": "CH2,cy",
+      "m_label": "CH2",
+      "beta_nm_over_K": -170.28
+    },
+    {
+      "n": "do:78",
+      "m": "std:1",
+      "n_label": "CH2,cy",
+      "m_label": "CH3",
+      "beta_nm_over_K": 19.085
+    },
+    {
+      "n": "do:78",
+      "m": "do:78",
+      "n_label": "CH2,cy",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "do:78",
+      "m": "std:9",
+      "n_label": "CH2,cy",
+      "m_label": "ACH",
+      "beta_nm_over_K": 295.49
+    },
+    {
+      "n": "do:78",
+      "m": "std:14",
+      "n_label": "CH2,cy",
+      "m_label": "OH",
+      "beta_nm_over_K": 293.27
+    },
+    {
+      "n": "do:78",
+      "m": "visco:FCH2O",
+      "n_label": "CH2,cy",
+      "m_label": "FCH2O",
+      "beta_nm_over_K": 67.724
+    },
+    {
+      "n": "do:78",
+      "m": "visco:(CH2O)3PO",
+      "n_label": "CH2,cy",
+      "m_label": "(CH2O)3PO",
+      "beta_nm_over_K": -278.77
+    },
+    {
+      "n": "std:9",
+      "m": "std:2",
+      "n_label": "ACH",
+      "m_label": "CH2",
+      "beta_nm_over_K": -346.33
+    },
+    {
+      "n": "std:9",
+      "m": "std:1",
+      "n_label": "ACH",
+      "m_label": "CH3",
+      "beta_nm_over_K": -108.29
+    },
+    {
+      "n": "std:9",
+      "m": "do:78",
+      "n_label": "ACH",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": -149.33
+    },
+    {
+      "n": "std:9",
+      "m": "std:9",
+      "n_label": "ACH",
+      "m_label": "ACH",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:9",
+      "m": "std_main:9",
+      "n_label": "ACH",
+      "m_label": "CO",
+      "beta_nm_over_K": 67.456
+    },
+    {
+      "n": "std:9",
+      "m": "std:77",
+      "n_label": "ACH",
+      "m_label": "COO",
+      "beta_nm_over_K": 120.12
+    },
+    {
+      "n": "std:9",
+      "m": "std:14",
+      "n_label": "ACH",
+      "m_label": "OH",
+      "beta_nm_over_K": 444.04
+    },
+    {
+      "n": "std:9",
+      "m": "std:15",
+      "n_label": "ACH",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -2.9034
+    },
+    {
+      "n": "std:9",
+      "m": "std:17",
+      "n_label": "ACH",
+      "m_label": "ACOH",
+      "beta_nm_over_K": -454.08
+    },
+    {
+      "n": "std:9",
+      "m": "std:42",
+      "n_label": "ACH",
+      "m_label": "COOH",
+      "beta_nm_over_K": 4.0885
+    },
+    {
+      "n": "std:9",
+      "m": "visco:FCH2O",
+      "n_label": "ACH",
+      "m_label": "FCH2O",
+      "beta_nm_over_K": -40.635
+    },
+    {
+      "n": "std:9",
+      "m": "std:72",
+      "n_label": "ACH",
+      "m_label": "DMF",
+      "beta_nm_over_K": 302.04
+    },
+    {
+      "n": "std:9",
+      "m": "std:40",
+      "n_label": "ACH",
+      "m_label": "CH3CN",
+      "beta_nm_over_K": -25.263
+    },
+    {
+      "n": "std:9",
+      "m": "std:57",
+      "n_label": "ACH",
+      "m_label": "ACNO2",
+      "beta_nm_over_K": 22.391
+    },
+    {
+      "n": "std:9",
+      "m": "std:37",
+      "n_label": "ACH",
+      "m_label": "C5H5N",
+      "beta_nm_over_K": -81.226
+    },
+    {
+      "n": "std:9",
+      "m": "std:67",
+      "n_label": "ACH",
+      "m_label": "DMSO",
+      "beta_nm_over_K": 9.2035
+    },
+    {
+      "n": "std:9",
+      "m": "std:118",
+      "n_label": "ACH",
+      "m_label": "CH2SO2CH2",
+      "beta_nm_over_K": -27.275
+    },
+    {
+      "n": "std:9",
+      "m": "visco:(CH2O)3PO",
+      "n_label": "ACH",
+      "m_label": "(CH2O)3PO",
+      "beta_nm_over_K": -220.18
+    },
+    {
+      "n": "std_main:9",
+      "m": "std:2",
+      "n_label": "CO",
+      "m_label": "CH2",
+      "beta_nm_over_K": 363.77
+    },
+    {
+      "n": "std_main:9",
+      "m": "std:1",
+      "n_label": "CO",
+      "m_label": "CH3",
+      "beta_nm_over_K": -554.26
+    },
+    {
+      "n": "std_main:9",
+      "m": "std:9",
+      "n_label": "CO",
+      "m_label": "ACH",
+      "beta_nm_over_K": -388.71
+    },
+    {
+      "n": "std_main:9",
+      "m": "std_main:9",
+      "n_label": "CO",
+      "m_label": "CO",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std_main:9",
+      "m": "std:14",
+      "n_label": "CO",
+      "m_label": "OH",
+      "beta_nm_over_K": 70.556
+    },
+    {
+      "n": "std_main:9",
+      "m": "std:15",
+      "n_label": "CO",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -33.704
+    },
+    {
+      "n": "std:77",
+      "m": "std:2",
+      "n_label": "COO",
+      "m_label": "CH2",
+      "beta_nm_over_K": 550.27
+    },
+    {
+      "n": "std:77",
+      "m": "std:1",
+      "n_label": "COO",
+      "m_label": "CH3",
+      "beta_nm_over_K": -436.71
+    },
+    {
+      "n": "std:77",
+      "m": "std:9",
+      "n_label": "COO",
+      "m_label": "ACH",
+      "beta_nm_over_K": -9.45
+    },
+    {
+      "n": "std:77",
+      "m": "std:77",
+      "n_label": "COO",
+      "m_label": "COO",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:77",
+      "m": "std:118",
+      "n_label": "COO",
+      "m_label": "CH2SO2CH2",
+      "beta_nm_over_K": -29.992
+    },
+    {
+      "n": "std:14",
+      "m": "std:2",
+      "n_label": "OH",
+      "m_label": "CH2",
+      "beta_nm_over_K": -297.04
+    },
+    {
+      "n": "std:14",
+      "m": "std:1",
+      "n_label": "OH",
+      "m_label": "CH3",
+      "beta_nm_over_K": 1113.18
+    },
+    {
+      "n": "std:14",
+      "m": "do:78",
+      "n_label": "OH",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": 248.73
+    },
+    {
+      "n": "std:14",
+      "m": "std:9",
+      "n_label": "OH",
+      "m_label": "ACH",
+      "beta_nm_over_K": 199.98
+    },
+    {
+      "n": "std:14",
+      "m": "std_main:9",
+      "n_label": "OH",
+      "m_label": "CO",
+      "beta_nm_over_K": 777.34
+    },
+    {
+      "n": "std:14",
+      "m": "std:14",
+      "n_label": "OH",
+      "m_label": "OH",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:14",
+      "m": "visco:FCH2O",
+      "n_label": "OH",
+      "m_label": "FCH2O",
+      "beta_nm_over_K": 577.56
+    },
+    {
+      "n": "std:14",
+      "m": "std:72",
+      "n_label": "OH",
+      "m_label": "DMF",
+      "beta_nm_over_K": 175.93
+    },
+    {
+      "n": "std:14",
+      "m": "std:29",
+      "n_label": "OH",
+      "m_label": "CH2NH2",
+      "beta_nm_over_K": 1045.6
+    },
+    {
+      "n": "std:14",
+      "m": "std:32",
+      "n_label": "OH",
+      "m_label": "CH2NH",
+      "beta_nm_over_K": -483.97
+    },
+    {
+      "n": "std:14",
+      "m": "std:40",
+      "n_label": "OH",
+      "m_label": "CH3CN",
+      "beta_nm_over_K": 841.26
+    },
+    {
+      "n": "std:14",
+      "m": "std:54",
+      "n_label": "OH",
+      "m_label": "CH3NO2",
+      "beta_nm_over_K": 521.76
+    },
+    {
+      "n": "std:14",
+      "m": "std:57",
+      "n_label": "OH",
+      "m_label": "ACNO2",
+      "beta_nm_over_K": 42.219
+    },
+    {
+      "n": "std:14",
+      "m": "std:37",
+      "n_label": "OH",
+      "m_label": "C5H5N",
+      "beta_nm_over_K": 83.144
+    },
+    {
+      "n": "std:14",
+      "m": "std:67",
+      "n_label": "OH",
+      "m_label": "DMSO",
+      "beta_nm_over_K": 520.69
+    },
+    {
+      "n": "std:14",
+      "m": "visco:(CH2O)3PO",
+      "n_label": "OH",
+      "m_label": "(CH2O)3PO",
+      "beta_nm_over_K": -238.19
+    },
+    {
+      "n": "std:15",
+      "m": "std:2",
+      "n_label": "CH3OH",
+      "m_label": "CH2",
+      "beta_nm_over_K": -67.64
+    },
+    {
+      "n": "std:15",
+      "m": "std:1",
+      "n_label": "CH3OH",
+      "m_label": "CH3",
+      "beta_nm_over_K": -92.891
+    },
+    {
+      "n": "std:15",
+      "m": "std:9",
+      "n_label": "CH3OH",
+      "m_label": "ACH",
+      "beta_nm_over_K": -15.43
+    },
+    {
+      "n": "std:15",
+      "m": "std_main:9",
+      "n_label": "CH3OH",
+      "m_label": "CO",
+      "beta_nm_over_K": -38.647
+    },
+    {
+      "n": "std:15",
+      "m": "std:15",
+      "n_label": "CH3OH",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:15",
+      "m": "visco:FCH2O",
+      "n_label": "CH3OH",
+      "m_label": "FCH2O",
+      "beta_nm_over_K": 56.421
+    },
+    {
+      "n": "std:15",
+      "m": "std:72",
+      "n_label": "CH3OH",
+      "m_label": "DMF",
+      "beta_nm_over_K": -11.162
+    },
+    {
+      "n": "std:15",
+      "m": "std:40",
+      "n_label": "CH3OH",
+      "m_label": "CH3CN",
+      "beta_nm_over_K": 141.53
+    },
+    {
+      "n": "std:15",
+      "m": "std:54",
+      "n_label": "CH3OH",
+      "m_label": "CH3NO2",
+      "beta_nm_over_K": -36.789
+    },
+    {
+      "n": "std:15",
+      "m": "std:57",
+      "n_label": "CH3OH",
+      "m_label": "ACNO2",
+      "beta_nm_over_K": -321.63
+    },
+    {
+      "n": "std:15",
+      "m": "std:37",
+      "n_label": "CH3OH",
+      "m_label": "C5H5N",
+      "beta_nm_over_K": -211.61
+    },
+    {
+      "n": "std:15",
+      "m": "std:67",
+      "n_label": "CH3OH",
+      "m_label": "DMSO",
+      "beta_nm_over_K": 21.42
+    },
+    {
+      "n": "std:15",
+      "m": "visco:(CH2O)3PO",
+      "n_label": "CH3OH",
+      "m_label": "(CH2O)3PO",
+      "beta_nm_over_K": -888.74
+    },
+    {
+      "n": "std:17",
+      "m": "std:2",
+      "n_label": "ACOH",
+      "m_label": "CH2",
+      "beta_nm_over_K": 999.27
+    },
+    {
+      "n": "std:17",
+      "m": "std:1",
+      "n_label": "ACOH",
+      "m_label": "CH3",
+      "beta_nm_over_K": -824.83
+    },
+    {
+      "n": "std:17",
+      "m": "std:9",
+      "n_label": "ACOH",
+      "m_label": "ACH",
+      "beta_nm_over_K": -255.93
+    },
+    {
+      "n": "std:17",
+      "m": "std:17",
+      "n_label": "ACOH",
+      "m_label": "ACOH",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "std:17",
+      "m": "std:42",
+      "n_label": "ACOH",
+      "m_label": "COOH",
+      "beta_nm_over_K": -301.71
+    },
+    {
+      "n": "std:42",
+      "m": "std:2",
+      "n_label": "COOH",
+      "m_label": "CH2",
+      "beta_nm_over_K": 258.3
+    },
+    {
+      "n": "std:42",
+      "m": "std:1",
+      "n_label": "COOH",
+      "m_label": "CH3",
+      "beta_nm_over_K": -228.99
+    },
+    {
+      "n": "std:42",
+      "m": "std:9",
+      "n_label": "COOH",
+      "m_label": "ACH",
+      "beta_nm_over_K": 140.34
+    },
+    {
+      "n": "std:42",
+      "m": "std:17",
+      "n_label": "COOH",
+      "m_label": "ACOH",
+      "beta_nm_over_K": -623.5
+    },
+    {
+      "n": "std:42",
+      "m": "std:42",
+      "n_label": "COOH",
+      "m_label": "COOH",
+      "beta_nm_over_K": 0.0
+    },
+    {
+      "n": "visco:FCH2O",
+      "m": "std:2",
+      "n_label": "FCH2O",
+      "m_label": "CH2",
+      "beta_nm_over_K": -319.76
+    },
+    {
+      "n": "visco:FCH2O",
+      "m": "std:1",
+      "n_label": "FCH2O",
+      "m_label": "CH3",
+      "beta_nm_over_K": 9.3721
+    },
+    {
+      "n": "visco:FCH2O",
+      "m": "do:78",
+      "n_label": "FCH2O",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": 62.37
+    },
+    {
+      "n": "visco:FCH2O",
+      "m": "std:9",
+      "n_label": "FCH2O",
+      "m_label": "ACH",
+      "beta_nm_over_K": 161.48
+    },
+    {
+      "n": "visco:FCH2O",
+      "m": "std:14",
+      "n_label": "FCH2O",
+      "m_label": "OH",
+      "beta_nm_over_K": 196.39
+    },
+    {
+      "n": "visco:FCH2O",
+      "m": "std:15",
+      "n_label": "FCH2O",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": 39.973
+    },
+    {
+      "n": "std:72",
+      "m": "std:2",
+      "n_label": "DMF",
+      "m_label": "CH2",
+      "beta_nm_over_K": -260.61
+    },
+    {
+      "n": "std:72",
+      "m": "std:1",
+      "n_label": "DMF",
+      "m_label": "CH3",
+      "beta_nm_over_K": -316.51
+    },
+    {
+      "n": "std:72",
+      "m": "std:9",
+      "n_label": "DMF",
+      "m_label": "ACH",
+      "beta_nm_over_K": -212.69
+    },
+    {
+      "n": "std:72",
+      "m": "std:14",
+      "n_label": "DMF",
+      "m_label": "OH",
+      "beta_nm_over_K": 124.19
+    },
+    {
+      "n": "std:72",
+      "m": "std:15",
+      "n_label": "DMF",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -24.254
+    },
+    {
+      "n": "std:29",
+      "m": "std:2",
+      "n_label": "CH2NH2",
+      "m_label": "CH2",
+      "beta_nm_over_K": -605.43
+    },
+    {
+      "n": "std:29",
+      "m": "std:1",
+      "n_label": "CH2NH2",
+      "m_label": "CH3",
+      "beta_nm_over_K": -564.35
+    },
+    {
+      "n": "std:29",
+      "m": "std:14",
+      "n_label": "CH2NH2",
+      "m_label": "OH",
+      "beta_nm_over_K": 204.68
+    },
+    {
+      "n": "std:32",
+      "m": "std:2",
+      "n_label": "CH2NH",
+      "m_label": "CH2",
+      "beta_nm_over_K": -364.61
+    },
+    {
+      "n": "std:32",
+      "m": "std:1",
+      "n_label": "CH2NH",
+      "m_label": "CH3",
+      "beta_nm_over_K": -506.49
+    },
+    {
+      "n": "std:32",
+      "m": "std:14",
+      "n_label": "CH2NH",
+      "m_label": "OH",
+      "beta_nm_over_K": 544.66
+    },
+    {
+      "n": "std:40",
+      "m": "std:2",
+      "n_label": "CH3CN",
+      "m_label": "CH2",
+      "beta_nm_over_K": -575.2
+    },
+    {
+      "n": "std:40",
+      "m": "std:1",
+      "n_label": "CH3CN",
+      "m_label": "CH3",
+      "beta_nm_over_K": -512.23
+    },
+    {
+      "n": "std:40",
+      "m": "std:9",
+      "n_label": "CH3CN",
+      "m_label": "ACH",
+      "beta_nm_over_K": 48.276
+    },
+    {
+      "n": "std:40",
+      "m": "std:14",
+      "n_label": "CH3CN",
+      "m_label": "OH",
+      "beta_nm_over_K": 399.92
+    },
+    {
+      "n": "std:40",
+      "m": "std:15",
+      "n_label": "CH3CN",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": 8.2738
+    },
+    {
+      "n": "std:54",
+      "m": "std:2",
+      "n_label": "CH3NO2",
+      "m_label": "CH2",
+      "beta_nm_over_K": -417.47
+    },
+    {
+      "n": "std:54",
+      "m": "std:1",
+      "n_label": "CH3NO2",
+      "m_label": "CH3",
+      "beta_nm_over_K": -448.15
+    },
+    {
+      "n": "std:54",
+      "m": "std:14",
+      "n_label": "CH3NO2",
+      "m_label": "OH",
+      "beta_nm_over_K": 358.18
+    },
+    {
+      "n": "std:54",
+      "m": "std:15",
+      "n_label": "CH3NO2",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": 211.14
+    },
+    {
+      "n": "std:57",
+      "m": "std:2",
+      "n_label": "ACNO2",
+      "m_label": "CH2",
+      "beta_nm_over_K": 108.13
+    },
+    {
+      "n": "std:57",
+      "m": "std:1",
+      "n_label": "ACNO2",
+      "m_label": "CH3",
+      "beta_nm_over_K": -158.64
+    },
+    {
+      "n": "std:57",
+      "m": "std:9",
+      "n_label": "ACNO2",
+      "m_label": "ACH",
+      "beta_nm_over_K": -295.63
+    },
+    {
+      "n": "std:57",
+      "m": "std:14",
+      "n_label": "ACNO2",
+      "m_label": "OH",
+      "beta_nm_over_K": -30.333
+    },
+    {
+      "n": "std:57",
+      "m": "std:15",
+      "n_label": "ACNO2",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": 35.015
+    },
+    {
+      "n": "std:37",
+      "m": "std:2",
+      "n_label": "C5H5N",
+      "m_label": "CH2",
+      "beta_nm_over_K": -90.716
+    },
+    {
+      "n": "std:37",
+      "m": "std:1",
+      "n_label": "C5H5N",
+      "m_label": "CH3",
+      "beta_nm_over_K": 57.165
+    },
+    {
+      "n": "std:37",
+      "m": "std:9",
+      "n_label": "C5H5N",
+      "m_label": "ACH",
+      "beta_nm_over_K": 57.539
+    },
+    {
+      "n": "std:37",
+      "m": "std:14",
+      "n_label": "C5H5N",
+      "m_label": "OH",
+      "beta_nm_over_K": 372.7
+    },
+    {
+      "n": "std:37",
+      "m": "std:15",
+      "n_label": "C5H5N",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": 355.99
+    },
+    {
+      "n": "std:67",
+      "m": "std:2",
+      "n_label": "DMSO",
+      "m_label": "CH2",
+      "beta_nm_over_K": -405.03
+    },
+    {
+      "n": "std:67",
+      "m": "std:1",
+      "n_label": "DMSO",
+      "m_label": "CH3",
+      "beta_nm_over_K": -281.78
+    },
+    {
+      "n": "std:67",
+      "m": "std:9",
+      "n_label": "DMSO",
+      "m_label": "ACH",
+      "beta_nm_over_K": 45.282
+    },
+    {
+      "n": "std:67",
+      "m": "std:14",
+      "n_label": "DMSO",
+      "m_label": "OH",
+      "beta_nm_over_K": 77.956
+    },
+    {
+      "n": "std:67",
+      "m": "std:15",
+      "n_label": "DMSO",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -19.308
+    },
+    {
+      "n": "std:118",
+      "m": "std:2",
+      "n_label": "CH2SO2CH2",
+      "m_label": "CH2",
+      "beta_nm_over_K": -305.8
+    },
+    {
+      "n": "std:118",
+      "m": "std:1",
+      "n_label": "CH2SO2CH2",
+      "m_label": "CH3",
+      "beta_nm_over_K": 828.02
+    },
+    {
+      "n": "std:118",
+      "m": "std:9",
+      "n_label": "CH2SO2CH2",
+      "m_label": "ACH",
+      "beta_nm_over_K": 331.26
+    },
+    {
+      "n": "std:118",
+      "m": "std:77",
+      "n_label": "CH2SO2CH2",
+      "m_label": "COO",
+      "beta_nm_over_K": 755.65
+    },
+    {
+      "n": "visco:(CH2O)3PO",
+      "m": "std:2",
+      "n_label": "(CH2O)3PO",
+      "m_label": "CH2",
+      "beta_nm_over_K": 73.001
+    },
+    {
+      "n": "visco:(CH2O)3PO",
+      "m": "std:1",
+      "n_label": "(CH2O)3PO",
+      "m_label": "CH3",
+      "beta_nm_over_K": -543.32
+    },
+    {
+      "n": "visco:(CH2O)3PO",
+      "m": "do:78",
+      "n_label": "(CH2O)3PO",
+      "m_label": "CH2,cy",
+      "beta_nm_over_K": -219.83
+    },
+    {
+      "n": "visco:(CH2O)3PO",
+      "m": "std:9",
+      "n_label": "(CH2O)3PO",
+      "m_label": "ACH",
+      "beta_nm_over_K": -307.08
+    },
+    {
+      "n": "visco:(CH2O)3PO",
+      "m": "std:14",
+      "n_label": "(CH2O)3PO",
+      "m_label": "OH",
+      "beta_nm_over_K": 68.203
+    },
+    {
+      "n": "visco:(CH2O)3PO",
+      "m": "std:15",
+      "n_label": "(CH2O)3PO",
+      "m_label": "CH3OH",
+      "beta_nm_over_K": -211.27
+    }
+  ]
+}

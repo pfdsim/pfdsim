@@ -1,0 +1,73 @@
+# Methanol/ethanol condensate cleanup using the compact PFD syntax.
+
+PROCESS: Methanol-Ethanol Light-Gas Cleanup
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: PSRK
+DESCRIPTION: Degas a crude aqueous alcohol stream, then recover a methanol-rich distillate from ethanol and water.
+
+COMPONENTS:
+    hydrogen        | Hydrogen        | CAS=1333-74-0, MW=2.01588
+    carbon_monoxide | Carbon Monoxide | CAS=630-08-0, MW=28.0101
+    carbon_dioxide  | Carbon Dioxide  | CAS=124-38-9, MW=44.0095
+    methanol        | Methanol        | CAS=67-56-1, MW=32.0419
+    ethanol         | Ethanol         | CAS=64-17-5, MW=46.0684
+    water           | Water           | CAS=7732-18-5, MW=18.0153
+
+# A crude condensed-alcohol stream still containing dissolved synthesis gases.
+STREAM Crude-Alcohol : -> DEGAS.feed
+    T = 40 [C]
+    P = 1.5 [bar]
+    F = 100 [kmol/h]
+    x = hydrogen:0.02, carbon_monoxide:0.02, carbon_dioxide:0.04, methanol:0.44, ethanol:0.30, water:0.18
+
+# The flash overhead is primarily H2, CO, and CO2.
+STREAM Light-Gas : DEGAS.gas
+
+# The condensed alcohols are warmed before the column.
+STREAM Degassed-Alcohol : DEGAS.bottoms -> FEED-CONDITIONER.cold_in
+STREAM Column-Feed : FEED-CONDITIONER.heated -> COLUMN.f
+
+# A partial column condenser tolerates the remaining traces of dissolved gas.
+# Its methanol-rich vapor is cooled and flashed once more to recover liquid
+# methanol while giving the residual gas a dedicated vent.
+STREAM Methanol-Overhead : COLUMN.d -> PRODUCT-COOLER.hot_in
+STREAM Cooled-Overhead : PRODUCT-COOLER.cold_out -> PRODUCT-FLASH.feed
+STREAM Residual-Gas : PRODUCT-FLASH.gas
+STREAM Methanol-Product : PRODUCT-FLASH.liquid
+STREAM Ethanol-Water-Product : COLUMN.b
+
+UNIT DEGAS : Flash
+    T = 30 [C]
+    P = 1.3 [bar]
+
+UNIT FEED-CONDITIONER : Heater
+    T = 70 [C]
+    P_drop = 0.1 [bar]
+
+UNIT COLUMN : RigorousDistillation
+    N_stages = 30
+    feed_stage = 18
+    reflux_ratio = 4
+    D_to_F = 0.46
+    P_condenser = 1.2 [bar]
+    P_drop_per_stage = 0
+    condenser_type = partial
+    initializer = cheap_estimate
+    mesh_tolerance = 1e-7
+    max_iterations = 180
+
+UNIT PRODUCT-COOLER : Cooler
+    T = 25 [C]
+
+UNIT PRODUCT-FLASH : Flash
+    T = 25 [C]
+    P = 1.2 [bar]
+
+# Expected behavior:
+# - The flash removes about 97.5% H2, 98.3% CO, and 83.5% CO2.
+# - The column overhead is methanol-rich; the product flash recovers it as a
+#   roughly 95.5 mol% methanol liquid at about 91% methanol recovery while
+#   venting the last light gases.
+# - The column bottoms is about 57 mol% ethanol and 36 mol% water.
+# - Compact port aliases serialize and report as canonical port names.

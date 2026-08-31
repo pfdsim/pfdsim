@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "source": "J. Chem. Thermodynamics 1978, 10, 1173-1179",
+    "description": "Temperature-dependent NRTL and UNIQUAC parameters for 1-butanol/water.",
+    "component_order": "1 = 1-butanol, 2 = water",
+    "components": ["1-Butanol", "Water"],
+    "cas": ["71-36-3", "7732-18-5"],
+    "fit_diagnostics": {
+      "data_basis": {
+        "description": "1-atm n-butanol/water LLE data from 302.95-397.75 K, plus the supplied 298.15 K tie-line point.",
+        "pressure_atm": 1.0,
+        "temperature_range_K": [302.95, 397.75],
+        "additional_tie_line_temperature_K": 298.15,
+        "reported_ucst_K": 397.85,
+        "reported_ucst_x_butanol": 0.110
+      },
+      "NRTL": {
+        "ucst_weight_percent": 40.0,
+        "tie_line_rms_approx": 0.0105,
+        "predicted_ucst_K_approx": 399.41,
+        "predicted_critical_x_butanol_approx": 0.0987
+      },
+      "UNIQUAC": {
+        "ucst_weight_percent": 40.0,
+        "tie_line_rms_approx": 0.0120,
+        "predicted_ucst_K_approx": 399.12,
+        "predicted_critical_x_butanol_approx": 0.0924
+      },
+      "overall": "Both fits represent the measured binodal well over most of the temperature range, with the largest mismatch confined to the sharp near-critical closure. NRTL gives the slightly better overall LLE fit and critical composition; UNIQUAC gives the slightly closer UCST.",
+      "caution": "These are 1-atm fits only. The paper shows strong pressure-induced contraction of the miscibility gap, so the same fixed-gamma parameters should not be expected to reproduce the high-pressure data."
+    }
+  },
+  "parameters": {
+    "NRTL": {
+      "tau12_c": 3.07626601,
+      "tau12_d": -489.80683594,
+      "tau12_e": -60.05225941,
+      "tau21_c": 4.36302560,
+      "tau21_d": -241.22842207,
+      "tau21_e": -8.71391481,
+      "tau_tref": 298.15,
+      "alpha12": 0.45131325
+    },
+    "UNIQUAC": {
+      "tau12_a": -12.81485434,
+      "tau12_b": 1905.74507135,
+      "tau12_c": 0.02169653866,
+      "tau21_a": 8.68179405,
+      "tau21_b": -1368.13065752,
+      "tau21_c": -0.01678360690
+    }
+  }
+}

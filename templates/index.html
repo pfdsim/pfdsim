@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFD Editor - Process Flow Diagram</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --bg-elevated: #222230;
+            --border-color: #2a2a3a;
+            --border-focus: #4a6cf7;
+            --text-primary: #e8e8ef;
+            --text-secondary: #9898a8;
+            --text-muted: #5a5a6a;
+            --accent-blue: #4a6cf7;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --unit-mixer: #3b82f6;
+            --unit-reactor: #ef4444;
+            --unit-separator: #10b981;
+            --unit-exchanger: #f59e0b;
+            --unit-pump: #8b5cf6;
+            --unit-default: #6b7280;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.6);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 56px 1fr;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            fill: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn:hover {
+            background: var(--bg-elevated);
+            border-color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5b7af8;
+            border-color: #5b7af8;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .filename {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .unit-palette {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .palette-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 8px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.15s ease;
+        }
+
+        .palette-item:hover {
+            background: var(--bg-elevated);
+            border-color: var(--text-muted);
+            transform: translateY(-1px);
+        }
+
+        .palette-item:active {
+            cursor: grabbing;
+        }
+
+        .palette-icon {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 6px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .palette-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .palette-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Canvas Area */
+        .canvas-container {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 1px 1px, var(--border-color) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: default;
+        }
+
+        .canvas-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .canvas-controls button {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .canvas-controls button:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .canvas-controls button svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .zoom-level {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Properties Panel */
+        .properties-panel {
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .panel-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            color: var(--text-muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s ease;
+        }
+
+        .panel-tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .panel-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+        }
+
+        .form-unit {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 10px 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .property-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .property-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            align-items: center;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+        }
+
+        .property-item .form-input {
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-danger {
+            color: var(--accent-red);
+            border-color: transparent;
+            background: transparent;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: transparent;
+        }
+
+        /* Code Editor Panel */
+        .code-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .code-panel.active {
+            display: flex;
+        }
+
+        .code-editor {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 16px;
+            background: var(--bg-primary);
+            border: none;
+            color: var(--text-primary);
+            resize: none;
+            outline: none;
+        }
+
+        .code-status {
+            padding: 8px 16px;
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.success { background: var(--accent-green); }
+        .status-dot.warning { background: var(--accent-orange); }
+        .status-dot.error { background: var(--accent-red); }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--text-muted);
+            fill: none;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            font-size: 12px;
+            max-width: 200px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        /* Hidden file input */
+        #file-input {
+            display: none;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.error {
+            border-color: var(--accent-red);
+        }
+
+        .toast.success {
+            border-color: var(--accent-green);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Validation messages */
+        .validation-messages {
+            margin-top: 16px;
+        }
+
+        .validation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 6px;
+        }
+
+        .validation-item.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .validation-item.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .validation-item svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Simulation status */
+        .simulation-status {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .simulation-status.running {
+            background: rgba(74, 108, 247, 0.1);
+            border: 1px solid rgba(74, 108, 247, 0.3);
+            color: var(--accent-blue);
+        }
+
+        .simulation-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-green);
+        }
+
+        .simulation-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+        }
+
+        .simulation-status.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-orange);
+        }
+
+        .simulation-status h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .simulation-status .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .simulation-status .metric-value {
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Selection info on canvas */
+        .selection-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            font-size: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .selection-info strong {
+            color: var(--accent-cyan);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span>PFD Editor</span>
+            </div>
+            
+            <span class="filename" id="current-filename">untitled.pfd</span>
+            
+            <div class="header-actions">
+                <a href="/vle-chart" class="btn" style="text-decoration: none;">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 9l-5 5-4-4-3 3"/>
+                    </svg>
+                    VLE Charts
+                </a>
+                <button class="btn" onclick="loadExample()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    Example
+                </button>
+                <button class="btn" onclick="openFile()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Open
+                </button>
+                <button class="btn btn-primary" onclick="downloadFile()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar - Unit Palette -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Unit Operations</h3>
+                <div class="unit-palette" id="unit-palette">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Components</h3>
+                <button class="btn" style="width: 100%;" onclick="openComponentsModal()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Manage Components
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Validation</h3>
+                <button class="btn" style="width: 100%;" onclick="validatePFD()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <polyline points="9 11 12 14 22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Validate
+                </button>
+                <div id="validation-results" class="validation-messages"></div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Simulation</h3>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 8px;" onclick="runSimulation()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Run Simulation
+                </button>
+                <button class="btn" style="width: 100%;" onclick="downloadResults()" id="download-results-btn" disabled>
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download .pfr
+                </button>
+                <div id="simulation-status" class="simulation-status" style="display: none;"></div>
+            </div>
+        </aside>
+
+        <!-- Canvas -->
+        <main class="canvas-container" id="canvas-container">
+            <canvas id="canvas"></canvas>
+            
+            <div class="canvas-controls">
+                <button onclick="zoomIn()" title="Zoom In">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <line x1="11" y1="8" x2="11" y2="14"/>
+                        <line x1="8" y1="11" x2="14" y2="11"/>
+                    </svg>
+                </button>
+                <span class="zoom-level" id="zoom-level">100%</span>
+                <button onclick="zoomOut()" title="Zoom Out">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <line x1="8" y1="11" x2="14" y2="11"/>
+                    </svg>
+                </button>
+                <button onclick="resetView()" title="Reset View">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                </button>
+                <button onclick="fitToScreen()" title="Fit to Screen">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                </button>
+            </div>
+        </main>
+
+        <!-- Properties Panel -->
+        <aside class="properties-panel">
+            <div class="panel-tabs">
+                <button class="panel-tab active" data-tab="visual" onclick="switchTab('visual')">Visual</button>
+                <button class="panel-tab" data-tab="code" onclick="switchTab('code')">Code</button>
+            </div>
+            
+            <!-- Visual Editor -->
+            <div id="visual-panel" class="panel-content">
+                <div class="empty-state" id="no-selection">
+                    <svg viewBox="0 0 24 24" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                    </svg>
+                    <h3>No Selection</h3>
+                    <p>Click on a unit or stream to edit its properties</p>
+                </div>
+                
+                <div id="unit-properties" style="display: none;">
+                    <div class="panel-header" style="padding: 0 0 16px 0; border: none;">
+                        <div class="panel-title" id="selected-unit-name">Unit Name</div>
+                        <div class="panel-subtitle" id="selected-unit-type">Type</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Unit ID</label>
+                        <input type="text" class="form-input" id="unit-id-input" placeholder="e.g., MIX-1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Parameters</label>
+                        <div class="property-list" id="unit-params-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 8px;" onclick="addParameter()">
+                            <svg viewBox="0 0 24 24" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add Parameter
+                        </button>
+                    </div>
+                    
+                    <div class="form-group" id="reactions-section" style="display: none;">
+                        <label class="form-label">Reactions</label>
+                        <div class="property-list" id="unit-reactions-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 8px;" onclick="addReaction()">
+                            <svg viewBox="0 0 24 24" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add Reaction
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-danger" style="width: 100%; margin-top: 16px;" onclick="deleteSelected()">
+                        <svg viewBox="0 0 24 24" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Delete Unit
+                    </button>
+                </div>
+                
+                <div id="stream-properties" style="display: none;">
+                    <div class="panel-header" style="padding: 0 0 16px 0; border: none;">
+                        <div class="panel-title" id="selected-stream-name">Stream Name</div>
+                        <div class="panel-subtitle" id="selected-stream-connection">Connection</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Stream ID</label>
+                        <input type="text" class="form-input" id="stream-id-input" placeholder="e.g., S1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Properties</label>
+                        <div class="property-list" id="stream-props-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 8px;" onclick="addStreamProperty()">
+                            <svg viewBox="0 0 24 24" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add Property
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-danger" style="width: 100%; margin-top: 16px;" onclick="deleteSelected()">
+                        <svg viewBox="0 0 24 24" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Delete Stream
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Code Editor -->
+            <div id="code-panel" class="code-panel">
+                <textarea class="code-editor" id="code-editor" spellcheck="false" placeholder="# Paste or write PFD code here..."></textarea>
+                <div class="code-status">
+                    <span class="status-item">
+                        <span class="status-dot" id="code-status-dot"></span>
+                        <span id="code-status-text">Ready</span>
+                    </span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- File Input -->
+    <input type="file" id="file-input" accept=".pfd" onchange="handleFileUpload(event)">
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Components Modal -->
+    <div class="modal-overlay" id="components-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Manage Components</h2>
+                <button class="modal-close" onclick="closeModal('components-modal')">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="property-list" id="components-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="addComponent()">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Add Component
+                </button>
+                <button class="btn btn-primary" onclick="closeModal('components-modal')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+</body>
+</html>

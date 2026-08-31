@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "description": "Constant-energy NRTL and UNIQUAC liquid interaction parameters regressed with the existing acetic-acid vapor dimerization model fixed.",
+    "component1": "Acetic Acid",
+    "cas1": "64-19-7",
+    "parameter_units": "cal/mol",
+    "fit_weighting": "Equal numerical weighting of bubble-temperature residuals in K and vapor-composition residuals in mole-percentage points.",
+    "vapor_model": "Existing acetic-acid VDM parameters fixed and recalculated at every temperature, pressure, and vapor composition.",
+    "notes": [
+      "Directional parameters retain the stated component order.",
+      "The acetic-acid/water NRTL pair is one joint constant pair fitted to both supplied pressures.",
+      "The existing acetic-acid/water UNIQUAC catalog record is intentionally unchanged."
+    ]
+  },
+  "systems": [
+    {
+      "component2": "Water",
+      "cas2": "7732-18-5",
+      "source": "Industrial & Engineering Chemistry 1952, 44(8), 1864-1872",
+      "data_basis": "VLE at 101.325 and 26.664 kPa",
+      "temperature_range_K": [339.55, 389.65],
+      "parameters": {
+        "NRTL": {
+          "a12_cal_per_mol": -6.1320111905598615,
+          "a21_cal_per_mol": 590.4171250260812,
+          "alpha12": 0.3
+        }
+      },
+      "fit_diagnostics": {
+        "101.325_kPa": {
+          "temperature_RMSE_K": 0.4644991968155926,
+          "vapor_composition_RMSE_mole_percent_points": 0.9998622301627754
+        },
+        "26.664_kPa": {
+          "temperature_RMSE_K": 0.6300123758476371,
+          "vapor_composition_RMSE_mole_percent_points": 1.2416649501144406
+        }
+      }
+    },
+    {
+      "component2": "Ethyl Acetate",
+      "cas2": "141-78-6",
+      "source": "Industrial & Engineering Chemistry 1937, 29(6), 709-710",
+      "data_basis": "VLE at 740 mmHg (98.65855232 kPa)",
+      "temperature_range_K": [349.45, 390.22],
+      "parameters": {
+        "NRTL": {
+          "a12_cal_per_mol": -223.13760955083086,
+          "a21_cal_per_mol": 525.2700041929397,
+          "alpha12": 0.3
+        },
+        "UNIQUAC": {
+          "a12_cal_per_mol": -257.42432034225703,
+          "a21_cal_per_mol": 465.43722267062594,
+          "model_variant": "standard_uniquac",
+          "use_q_prime": false
+        }
+      },
+      "fit_diagnostics": {
+        "NRTL": {
+          "temperature_RMSE_K": 0.3510194236248154,
+          "vapor_composition_RMSE_mole_percent_points": 0.5128918894265054
+        },
+        "UNIQUAC": {
+          "temperature_RMSE_K": 0.38692662399882627,
+          "vapor_composition_RMSE_mole_percent_points": 0.5215157316955408
+        }
+      }
+    }
+  ]
+}

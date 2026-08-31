@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "source": "J. Chem. Eng. Data 1984, 29, 431-435",
+    "description": "Diethyl ether/water 35 C VLLE and excess-enthalpy fit.",
+    "component_order": "1 = diethyl ether, 2 = water",
+    "components": ["Diethyl ether", "Water"],
+    "cas": ["60-29-7", "7732-18-5"],
+    "temperature_K": 308.15,
+    "pressure_units": "kPa",
+    "enthalpy_units": "J/mol",
+    "notes": [
+      "NRTL and UNIQUAC parameters were fit simultaneously to pressure-composition data, three-phase pressure/compositions, LLE activity equality, and excess enthalpy.",
+      "NRTL alpha was fixed at 0.2 to avoid a lower free-alpha overfit.",
+      "The pure endpoint pressures were used as saturation pressures at 35 C: ether 103.264 kPa and water 5.633 kPa."
+    ],
+    "saturation_pressures_kPa": {
+      "diethyl_ether": 103.264,
+      "water": 5.633
+    },
+    "three_phase": {
+      "P_kPa": 104.70,
+      "x1_alpha": 0.01172,
+      "x1_beta": 0.9500,
+      "y1": 0.9463
+    }
+  },
+  "pressure_data": [
+    {"x1": 0.0000, "P_kPa": 5.633},
+    {"x1": 0.0014, "P_kPa": 18.759},
+    {"x1": 0.0028, "P_kPa": 33.033},
+    {"x1": 0.0042, "P_kPa": 45.083},
+    {"x1": 0.0055, "P_kPa": 57.298},
+    {"x1": 0.0069, "P_kPa": 68.679},
+    {"x1": 0.0083, "P_kPa": 79.064},
+    {"x1": 0.0096, "P_kPa": 89.632},
+    {"x1": 0.0111, "P_kPa": 100.205},
+    {"miscibility_gap": true},
+    {"x1": 0.9536, "P_kPa": 104.656},
+    {"x1": 0.9617, "P_kPa": 104.588},
+    {"x1": 0.9715, "P_kPa": 104.445},
+    {"x1": 0.9818, "P_kPa": 104.172},
+    {"x1": 0.9901, "P_kPa": 103.802},
+    {"x1": 1.0000, "P_kPa": 103.264}
+  ],
+  "excess_enthalpy_data": [
+    {"x1": 0.0029, "HE_J_per_mol": -43.9},
+    {"x1": 0.0046, "HE_J_per_mol": -70.1},
+    {"x1": 0.0063, "HE_J_per_mol": -93.8},
+    {"x1": 0.0078, "HE_J_per_mol": -115.3},
+    {"x1": 0.0117, "HE_J_per_mol": -158.8},
+    {"miscibility_gap": true},
+    {"x1": 0.9526, "HE_J_per_mol": 276.3},
+    {"x1": 0.9555, "HE_J_per_mol": 278.8},
+    {"x1": 0.9664, "HE_J_per_mol": 226.6},
+    {"x1": 0.9688, "HE_J_per_mol": 210.8},
+    {"x1": 0.9731, "HE_J_per_mol": 190.8},
+    {"x1": 0.9800, "HE_J_per_mol": 143.5},
+    {"x1": 0.9850, "HE_J_per_mol": 115.5},
+    {"x1": 0.9876, "HE_J_per_mol": 91.8}
+  ],
+  "fitted_parameters": {
+    "NRTL": {
+      "alpha12": 0.2,
+      "tau12_c": -2.493061384114303,
+      "tau12_d": 1244.966694786285,
+      "tau12_e": 0.0,
+      "tau21_c": 11.292344004669577,
+      "tau21_d": -2418.0824098984376,
+      "tau21_e": 0.0,
+      "tau_tref": 308.15,
+      "fit_quality": {
+        "mean_abs_relative_pressure_percent": 0.612214,
+        "max_abs_relative_pressure_percent": 3.584565,
+        "mean_abs_HE_J_per_mol": 6.834803,
+        "max_abs_HE_J_per_mol": 21.178613
+      }
+    },
+    "UNIQUAC": {
+      "tau12_a": 2.1997010332954727,
+      "tau12_b": -1293.00345,
+      "tau12_c": 0.0,
+      "tau21_a": -2.7252948162318678,
+      "tau21_b": 762.872354,
+      "tau21_c": 0.0,
+      "fit_quality": {
+        "mean_abs_relative_pressure_percent": 0.712724,
+        "max_abs_relative_pressure_percent": 5.350222,
+        "mean_abs_HE_J_per_mol": 3.856360,
+        "max_abs_HE_J_per_mol": 11.302551
+      }
+    }
+  }
+}

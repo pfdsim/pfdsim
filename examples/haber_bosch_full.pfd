@@ -1,0 +1,308 @@
+#==============================================================================
+# Haber-Bosch Phase I - Cryogenic Air Separation + Synthesis Gas Compression
+# Basis: 80,000 metric t/y NH3, 330 d/y, 24 h/d
+# Air: 79 mol% N2, 21 mol% O2
+# Rich H2: 99.9 wt% H2, 0.1 wt% CH4 at 200 C and 10 bar
+# Temporary reactor target: 100 bar, 450 C
+#==============================================================================
+
+PROCESS: Haber-Bosch Cryogenic Nitrogen + Synthesis Gas Preparation
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: RKS-BM
+RECYCLE_METHOD: WEGSTEIN | max_acceleration=-30
+TEAR_STREAMS: Recycle-LP
+RECYCLE_TRACE_TOLERANCE: 1e-6
+DESCRIPTION: Cryogenic nitrogen separation with vapor overhead compression, rich-H2 mixing, and two-stage synthesis-gas compression
+
+COMPONENTS:
+    N2  | Nitrogen | MW=28.0134
+    O2  | Oxygen   | MW=31.9988
+    H2  | Hydrogen | MW=2.01588
+    CH4 | Methane  | MW=16.0425
+    NH3 | Ammonia  | MW=17.03052
+
+INTERACTION_PARAMETERS:
+    N2/O2 | model=SRK, kij_a=0.03324, kij_c=-0.000455, Tmin_K=60, Tmax_K=125
+
+
+# Haber-Bosch kinetics split into explicit forward and reverse reactions.
+# The handout reports -r_N2, so using N2 + 3 H2 -> 2 NH3 makes the
+# PFDSim reaction-progress rate equal to the stated N2 disappearance rate.
+# Keeping forward and reverse as separate nonnegative rates lets the PFR
+# pass through the zero-net-rate point without a signed custom-rate error.
+REACTIONS:
+    haber_forward : N2 + 3 H2 -> 2 NH3 | type=custom, expression=1e4*exp(-91000/(8.314*T))*p["N2"]**0.5*p["H2"]**1.5, Ea=0, Ea_unit=J/mol, concentration_unit=kmol/m3, pressure_unit=atm, rate_unit=kmol/m3/s
+    haber_reverse : 2 NH3 -> N2 + 3 H2 | type=custom, expression=1.3e10*exp(-140000/(8.314*T))*p["NH3"], Ea=0, Ea_unit=J/mol, concentration_unit=kmol/m3, pressure_unit=atm, rate_unit=kmol/m3/s
+
+# Air flow is sized so the column N2 product is approximately the stoichiometric
+# nitrogen requirement for 80,000 t/y NH3.
+STREAM Air-Feed : FEED -> E-101.in
+    T = 30 [C]
+    P = 1.01325 [bar]
+    F = 375.45 [kmol/h]
+    x = N2:0.79, O2:0.21, H2:0, CH4:0, NH3:0
+
+STREAM Cooled-Air : E-101.out -> T-101.feed
+STREAM Cryogenic-Nitrogen-Vapor : T-101.distillate -> C-201.in
+STREAM Nitrogen-10bar : C-201.out -> M-201.nitrogen
+STREAM Oxygen-Product : T-101.bottoms -> PRODUCT
+
+# Rich-H2 amount chosen so H2/N2 is approximately 3:1 on the fresh synthesis-gas basis.
+# 99.9 wt% H2 / 0.1 wt% CH4 corresponds to x_H2 ~= 0.9998742.
+STREAM Rich-Hydrogen : FEED -> M-201.hydrogen
+    T = 200 [C]
+    P = 10 [bar]
+    F = 889.90 [kmol/h]
+    x = H2:0.9998742, CH4:0.0001258, N2:0, O2:0, NH3:0
+
+STREAM Mixed-Syngas-10bar : M-201.out -> E-201.in
+STREAM Cooled-Syngas-10bar : E-201.out -> C-202.in
+STREAM Syngas-31bar : C-202.out -> E-202.in
+STREAM Intercooled-Syngas : E-202.out -> C-203.in
+STREAM Syngas-100bar : C-203.out -> H-201.in
+STREAM Reactor-Feed : H-201.out -> R-201.in
+STREAM Bed-1-Out : R-201.out -> IC-201.in
+STREAM Bed-1-Cooled : IC-201.out -> R-202.in
+STREAM Bed-2-Out : R-202.out -> IC-202.in
+STREAM Bed-2-Cooled : IC-202.out -> M-203.fresh
+STREAM Recycle-To-Bed3 : H-302.out -> M-203.recycle
+STREAM Bed-3-Feed : M-203.out -> R-203.in
+STREAM Bed-3-Out : R-203.out -> IC-203.in
+STREAM Bed-3-Cooled : IC-203.out -> R-204.in
+STREAM Bed-4-Out : R-204.out -> IC-204.in
+STREAM Bed-4-Cooled : IC-204.out -> R-205.in
+STREAM Bed-5-Out : R-205.out -> IC-205.in
+STREAM Bed-5-Cooled : IC-205.out -> R-206.in
+STREAM Bed-6-Out : R-206.out -> IC-206.in
+STREAM Bed-6-Cooled : IC-206.out -> R-207.in
+STREAM MultiBed-Reactor-Product : R-207.out -> COND-301.in
+STREAM Condensed-Syngas : COND-301.out -> F-301.in
+STREAM Separator-Gas : F-301.vapor_out -> EX-301.in
+STREAM Expanded-Gas : EX-301.out -> F-302.in
+STREAM Expander-Vapor-10bar : F-302.vapor_out -> M-302.expander_vapor
+STREAM LowP-Ammonia : F-302.liquid_out -> M-301.expander_liquid
+STREAM Crude-Ammonia-100bar : F-301.liquid_out -> V-301.in
+STREAM Crude-Ammonia-Letdown : V-301.out -> F-303.in
+STREAM Letdown-Vapor-10bar : F-303.vapor_out -> M-302.letdown_vapor
+STREAM Letdown-Ammonia : F-303.liquid_out -> M-301.letdown_liquid
+STREAM Mixed-Recycle-TwoPhase : M-302.out -> F-304.in
+STREAM Recycle-Polish-Liquid : F-304.liquid_out -> M-301.polish_liquid
+STREAM Ammonia-Product-10bar : M-301.out -> PRODUCT
+STREAM Recycle-Candidate-10bar : F-304.vapor_out -> SPL-301.in
+STREAM Recycle-LP : SPL-301.out -> C-301R.in
+    T = -40 [C]
+    P = 10 [bar]
+    F = 2300 [kmol/h]
+    x = N2:0.234, O2:0.001, H2:0.686, CH4:0.001, NH3:0.078
+STREAM Purge-Gas : SPL-301.out2 -> PRODUCT
+STREAM Recycle-100bar : C-301R.out -> H-302.in
+
+UNIT E-101 : Cooler
+        T_out = -190 [C]
+        P_drop = 0.01325 [bar]
+
+# Partial condenser: reflux is condensed internally while the net nitrogen
+# distillate leaves as vapor, avoiding forced total condensation of the product.
+UNIT T-101 : RigorousDistillation
+        N_stages = 30
+        feed_stage = 21
+        reflux_ratio = 0.8
+        D_to_F = 0.79
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0.0
+        condenser_type = partial
+        initializer = cheap_estimate
+        mesh_tolerance = 1e-6
+        T_min = 60 [K]
+        T_max = 140 [K]
+        max_iterations = 400
+
+# Cold-vapor N2 compression to the pressure of the supplied rich-H2 feed.
+UNIT C-201 : Compressor
+        P_out = 10 [bar]
+        eta_isen = 0.80
+        eta_mech = 0.95
+
+UNIT M-201 : Mixer
+UNIT E-201 : Cooler
+        T_out = 40 [C]
+
+# Two equal-ratio high-pressure stages: 10 -> sqrt(1000) -> 100 bar.
+UNIT C-202 : Compressor
+        P_out = 31.6228 [bar]
+        eta_isen = 0.80
+        eta_mech = 0.95
+
+UNIT E-202 : Cooler
+        T_out = 40 [C]
+
+UNIT C-203 : Compressor
+        P_out = 100 [bar]
+        eta_isen = 0.80
+        eta_mech = 0.95
+
+UNIT H-201 : Heater
+        T_out = 300 [C]
+
+# Adiabatic Haber-Bosch bed 1, starting at 300 C after intercooling.
+UNIT R-201 : PFR
+        volume = 0.0154 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+UNIT IC-201 : Cooler
+        T_out = 300 [C]
+
+# Adiabatic Haber-Bosch bed 2, starting at 300 C after intercooling.
+UNIT R-202 : PFR
+        volume = 0.0174 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+UNIT IC-202 : Cooler
+        T_out = 300 [C]
+
+# Mix the conditioned recycle with the fresh gas after bed 2.
+UNIT M-203 : Mixer
+        mode = adiabatic
+
+# Adiabatic Haber-Bosch bed 3, starting at 300 C after intercooling.
+UNIT R-203 : PFR
+        volume = 0.2000 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+        relative_tolerance = 1e-9
+        absolute_tolerance = 1e-11
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+UNIT IC-203 : Cooler
+        T_out = 300 [C]
+
+# Adiabatic Haber-Bosch bed 4, starting at 300 C after intercooling.
+UNIT R-204 : PFR
+        volume = 0.2000 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+        relative_tolerance = 1e-9
+        absolute_tolerance = 1e-11
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+UNIT IC-204 : Cooler
+        T_out = 300 [C]
+
+# Adiabatic Haber-Bosch bed 5, starting at 300 C after intercooling.
+UNIT R-205 : PFR
+        volume = 0.2000 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+        relative_tolerance = 1e-9
+        absolute_tolerance = 1e-11
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+UNIT IC-205 : Cooler
+        T_out = 300 [C]
+
+# Adiabatic Haber-Bosch bed 6, starting at 300 C after intercooling.
+UNIT R-206 : PFR
+        volume = 0.2000 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+        relative_tolerance = 1e-9
+        absolute_tolerance = 1e-11
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+UNIT IC-206 : Cooler
+        T_out = 300 [C]
+
+# Adiabatic Haber-Bosch bed 7, starting at 300 C after intercooling.
+UNIT R-207 : PFR
+        volume = 0.2000 [m3]
+        diameter = 0.10 [m]
+        mode = adiabatic
+        phase = vapor
+        profile_points = 21
+        relative_tolerance = 1e-9
+        absolute_tolerance = 1e-11
+    REACTIONS:
+        @haber_forward
+        @haber_reverse
+
+# High-pressure ammonia condenser and flash separator.
+UNIT COND-301 : Cooler
+        T_out = 30 [C]
+
+UNIT F-301 : Flash
+        P = 100 [bar]
+        Q = 0 [kW]
+
+
+
+# Recover work and generate refrigeration by expanding the 100 bar separator vapor.
+UNIT EX-301 : Expander
+        P_out = 10 [bar]
+        eta_isen = 0.80
+        eta_mech = 0.95
+
+# Adiabatic 10 bar flash: split the two-phase expander discharge.
+UNIT F-302 : Flash
+        P = 10 [bar]
+        Q = 0 [kW]
+
+
+# Let down the 100 bar crude ammonia liquid to 10 bar so dissolved synthesis gas flashes out.
+UNIT V-301 : Valve
+        P_out = 10 [bar]
+
+# Adiabatic flash after crude-ammonia letdown.
+UNIT F-303 : Flash
+        P = 10 [bar]
+        Q = 0 [kW]
+
+# Combine both 10 bar ammonia-rich liquid streams into one product.
+UNIT M-301 : Mixer
+UNIT M-302 : Mixer
+UNIT F-304 : Flash
+        P = 10 [bar]
+        Q = 0 [kW]
+
+# Purge 2% of the cleaned 10 bar recycle gas to control CH4/inert buildup.
+# split_frac is the fraction sent to the first named outlet (recycle), so 0.98 recycles.
+UNIT SPL-301 : Splitter
+        split_frac = 0.98
+
+# Return the recycle gas from 10 bar to synthesis-loop pressure.
+UNIT C-301R : Compressor
+        P_out = 100 [bar]
+        eta_isen = 0.80
+        eta_mech = 0.95
+
+# Condition recycle to the 300 C bed-inlet temperature before mixing after bed 2.
+UNIT H-302 : Heater
+        T_out = 300 [C]

@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "source": "Fluid Phase Equilibria 599 (2026) 114533",
+    "description": "Methanol/water UNIQUAC temperature-dependent and pressure-dependent interaction parameters.",
+    "component_order": "1 = methanol, 2 = water",
+    "components": ["Methanol", "Water"],
+    "cas": ["67-56-1", "7732-18-5"],
+    "model": "UNIQUAC",
+    "standard_pressure_bar": 1.0
+  },
+  "temperature_dependent": {
+    "name": "UNIQUAC-TD V2",
+    "source_parameters": {
+      "A12": -68.3941517,
+      "A21": 1496.05316,
+      "B12": 2.60699317,
+      "B21": -13.0992104,
+      "C12": -0.00809695631,
+      "C21": 0.0271577229
+    },
+    "source_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T)",
+    "runtime_expression": "ln(tau_ij) = -B_ij - A_ij/T - C_ij*T"
+  },
+  "pressure_dependent": {
+    "name": "UNIQUAC-TPD V2",
+    "source_parameters": {
+      "A12": 76.0813178,
+      "A21": -79.4065590,
+      "B12": -0.895562221,
+      "B21": 1.01333434,
+      "C12": 0.000472225167,
+      "C21": 0.000213275928
+    },
+    "source_expression": "tau_ij = exp(-(A_ij + B_ij*T*(P/p0) + C_ij*(T*(P/p0))^2)/T)",
+    "standard_pressure_bar": 1.0
+  }
+}

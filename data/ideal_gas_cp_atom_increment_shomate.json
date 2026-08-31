@@ -1,0 +1,463 @@
+{
+  "category_routing": {
+    "explicit_elements": {
+      "B": "B",
+      "Br": "Br",
+      "C": "C",
+      "Cl": "Cl",
+      "D": "H",
+      "F": "F",
+      "H": "H",
+      "I": "I",
+      "N": "N",
+      "O": "O",
+      "P": "P",
+      "S": "S",
+      "Se": "Se",
+      "Si": "Si",
+      "T": "H"
+    },
+    "metal_categories": {
+      "heavy_metal": [
+        "Ac",
+        "Ag",
+        "Am",
+        "Au",
+        "Bh",
+        "Bi",
+        "Bk",
+        "Cd",
+        "Ce",
+        "Cf",
+        "Cm",
+        "Cn",
+        "Co",
+        "Cr",
+        "Cu",
+        "Db",
+        "Ds",
+        "Dy",
+        "Er",
+        "Es",
+        "Eu",
+        "Fe",
+        "Fl",
+        "Fm",
+        "Ga",
+        "Gd",
+        "Hf",
+        "Hg",
+        "Ho",
+        "Hs",
+        "In",
+        "Ir",
+        "La",
+        "Lr",
+        "Lu",
+        "Lv",
+        "Mc",
+        "Md",
+        "Mn",
+        "Mo",
+        "Mt",
+        "Nb",
+        "Nd",
+        "Nh",
+        "Ni",
+        "No",
+        "Np",
+        "Os",
+        "Pa",
+        "Pb",
+        "Pd",
+        "Pm",
+        "Pr",
+        "Pt",
+        "Pu",
+        "Re",
+        "Rf",
+        "Rg",
+        "Rh",
+        "Ru",
+        "Sg",
+        "Sm",
+        "Sn",
+        "Ta",
+        "Tb",
+        "Tc",
+        "Th",
+        "Tl",
+        "Tm",
+        "U",
+        "V",
+        "W",
+        "Y",
+        "Yb",
+        "Zn",
+        "Zr"
+      ],
+      "light_metal": [
+        "Al",
+        "Ba",
+        "Be",
+        "Ca",
+        "Cs",
+        "Fr",
+        "K",
+        "Li",
+        "Mg",
+        "Na",
+        "Ra",
+        "Rb",
+        "Sc",
+        "Sr",
+        "Ti"
+      ]
+    },
+    "metalloid_elements": [
+      "As",
+      "Ge",
+      "Po",
+      "Sb",
+      "Te"
+    ],
+    "noble_gas_elements": [
+      "Ar",
+      "He",
+      "Kr",
+      "Ne",
+      "Rn",
+      "Xe"
+    ]
+  },
+  "diagnostics": {
+    "cross_validation": {
+      "components": 2404,
+      "delta_h_298_15_to_1000_K_median_absolute_error_percent": 4.916218670472128,
+      "delta_s_298_15_to_1000_K_median_absolute_error_percent": 5.09054993603566,
+      "folds": 5,
+      "fraction_within_10_percent": 0.7832778702163061,
+      "fraction_within_20_percent": 0.93261231281198,
+      "grouping": "formula",
+      "nonpositive_predicted_curves": 0,
+      "point_median_absolute_error_percent": {
+        "1000_K": 3.61817926422906,
+        "298.15_K": 4.308037245149365,
+        "500_K": 6.335568462830604
+      },
+      "range_mape_percent": {
+        "maximum": 535.6386870938798,
+        "mean": 8.961117495782899,
+        "median": 5.621479859320152,
+        "p90": 16.623216481869722,
+        "p95": 23.80393245397947
+      },
+      "test_points_per_component": 101
+    },
+    "full_fit": {
+      "components": 2404,
+      "delta_h_298_15_to_1000_K_median_absolute_error_percent": 4.810572816799774,
+      "delta_s_298_15_to_1000_K_median_absolute_error_percent": 4.899717250255831,
+      "fraction_within_10_percent": 0.7866056572379367,
+      "fraction_within_20_percent": 0.9409317803660566,
+      "nonpositive_predicted_curves": 0,
+      "point_median_absolute_error_percent": {
+        "1000_K": 3.4470899759306004,
+        "298.15_K": 4.102023738128835,
+        "500_K": 6.179934896956024
+      },
+      "range_mape_percent": {
+        "maximum": 498.24457640359236,
+        "mean": 8.650305234370236,
+        "median": 5.380240738306226,
+        "p90": 15.99601413961728,
+        "p95": 22.40428086511487
+      }
+    }
+  },
+  "equation": "Cp(T) = sum_g n_g*(A_g + B_g*t + C_g*t^2 + D_g*t^3 + E_g/t^2), t=T/1000",
+  "generated_utc": "2026-08-13T17:58:48.889307+00:00",
+  "model": "shomate_atom_increment_ideal_gas_cp_v1",
+  "parameters": {
+    "B": {
+      "coefficients": {
+        "A": 13.967380658078099,
+        "B": 2.846677778536565,
+        "C": 0.23757389107095048,
+        "D": -0.07526691113708903,
+        "E": 0.003982169464812131
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 16.98034758601334,
+        "298.15_K": 14.880038673565725,
+        "500_K": 15.456633334081232
+      },
+      "occurrence_count": 68
+    },
+    "Br": {
+      "coefficients": {
+        "A": 19.199779604128956,
+        "B": 1.8383634463441558,
+        "C": -0.6573981823995108,
+        "D": 0.060301086975168235,
+        "E": -0.01923813059396318
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 20.42180782445481,
+        "298.15_K": 19.474629554402416,
+        "500_K": 19.8851968951972
+      },
+      "occurrence_count": 162
+    },
+    "C": {
+      "coefficients": {
+        "A": -1.75045337108781,
+        "B": 39.24392604068516,
+        "C": -16.92553604531338,
+        "D": 1.950449618044627,
+        "E": 0.0017069563422402122
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 22.52009319867084,
+        "298.15_K": 8.516450516327303,
+        "500_K": 13.890759665550963
+      },
+      "occurrence_count": 1748
+    },
+    "Cl": {
+      "coefficients": {
+        "A": 17.735144047191397,
+        "B": 5.2206078801365905,
+        "C": -1.8396602404719684,
+        "D": 0.17355543617351216,
+        "E": -0.028229342655909588
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 21.261417780373623,
+        "298.15_K": 18.815170522845676,
+        "500_K": 19.79430998603975
+      },
+      "occurrence_count": 431
+    },
+    "F": {
+      "coefficients": {
+        "A": 12.112888281689841,
+        "B": 9.161711377776138,
+        "C": -3.108593888280667,
+        "D": 0.2980196529674246,
+        "E": -0.015095117997279075
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 18.448930306155457,
+        "298.15_K": 14.406206148427012,
+        "500_K": 15.893467483139554
+      },
+      "occurrence_count": 393
+    },
+    "H": {
+      "coefficients": {
+        "A": 1.7936524669463592,
+        "B": 17.92506619535135,
+        "C": -7.235343357066791,
+        "D": 0.7513331796014103,
+        "E": 0.00016330965058768224
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 13.234871794482915,
+        "298.15_K": 6.516586673450188,
+        "500_K": 9.041919611407863
+      },
+      "occurrence_count": 1813
+    },
+    "I": {
+      "coefficients": {
+        "A": 20.0506473609444,
+        "B": 0.6261547508613367,
+        "C": -0.2418436210472897,
+        "D": 0.020159479253165368,
+        "E": -0.01833107580113881
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 20.43678689421047,
+        "298.15_K": 20.010157305777515,
+        "500_K": 20.232459462815335
+      },
+      "occurrence_count": 89
+    },
+    "N": {
+      "coefficients": {
+        "A": 9.174989300878497,
+        "B": 8.450651900022274,
+        "C": -1.7708914646622806,
+        "D": 0.09085077745433859,
+        "E": 0.004979082436343817
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 15.950579596129176,
+        "298.15_K": 11.595550252627051,
+        "500_K": 12.98886506165123
+      },
+      "occurrence_count": 270
+    },
+    "O": {
+      "coefficients": {
+        "A": 10.218307156958097,
+        "B": 8.225871094120336,
+        "C": -1.8489319231887846,
+        "D": 0.1283408833068936,
+        "E": 0.00160518508481692
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 16.725192396281358,
+        "298.15_K": 12.52795164035558,
+        "500_K": 13.891473073973698
+      },
+      "occurrence_count": 551
+    },
+    "P": {
+      "coefficients": {
+        "A": 17.691495508264865,
+        "B": -5.708884955407889,
+        "C": 2.832400750238046,
+        "D": -0.3217122047324665,
+        "E": -0.0016247581651529428
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 14.4916743401974,
+        "298.15_K": 16.214369135048262,
+        "500_K": 15.498440159868261
+      },
+      "occurrence_count": 59
+    },
+    "S": {
+      "coefficients": {
+        "A": 14.782278831470247,
+        "B": 5.926050034452242,
+        "C": -1.4792055962636044,
+        "D": 0.11676471423354155,
+        "E": -0.01436916072853347
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 19.331518823163893,
+        "298.15_K": 16.25908886963855,
+        "500_K": 17.33262139599552
+      },
+      "occurrence_count": 223
+    },
+    "Se": {
+      "coefficients": {
+        "A": 16.79310075901473,
+        "B": 3.518796902884483,
+        "C": -3.171796592537739,
+        "D": 0.74821150459149,
+        "E": 0.0007544155229060956
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 17.88906698947587,
+        "298.15_K": 17.588595221726084,
+        "500_K": 17.856094162488098
+      },
+      "occurrence_count": 14
+    },
+    "Si": {
+      "coefficients": {
+        "A": 20.87465840351891,
+        "B": -0.012088142867115632,
+        "C": 0.5770309438298045,
+        "D": -0.08013183443735604,
+        "E": -0.0253415502461204
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 21.334127819798123,
+        "298.15_K": 20.635146898806227,
+        "500_K": 20.901489387753653
+      },
+      "occurrence_count": 67
+    },
+    "heavy_metal": {
+      "coefficients": {
+        "A": 22.658094213603608,
+        "B": -2.8103610479934615,
+        "C": 1.0078917293251584,
+        "D": -0.05982481202904935,
+        "E": -0.022110477500532008
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 20.773689605405725,
+        "298.15_K": 21.659464255281524,
+        "500_K": 21.408966610432405
+      },
+      "occurrence_count": 133
+    },
+    "light_metal": {
+      "coefficients": {
+        "A": 19.932536947615727,
+        "B": -3.39014157680395,
+        "C": 1.7480001716271163,
+        "D": -0.17650976587088357,
+        "E": -0.017623169290176894
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 18.096262607277836,
+        "298.15_K": 18.87422327153382,
+        "500_K": 18.581909804225962
+      },
+      "occurrence_count": 185
+    },
+    "metalloid": {
+      "coefficients": {
+        "A": 10.285323791980474,
+        "B": 29.01976482766439,
+        "C": -18.055126983496432,
+        "D": 3.5832401804744674,
+        "E": 0.0093291720592088
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 24.842530988682103,
+        "298.15_K": 17.532501148102664,
+        "500_K": 20.766646170734703
+      },
+      "occurrence_count": 24
+    },
+    "noble_gas": {
+      "coefficients": {
+        "A": 20.86332811919557,
+        "B": -0.16264098405906616,
+        "C": 0.03539910739905771,
+        "D": -0.0012329598459703043,
+        "E": -0.0007570945252033445
+      },
+      "contribution_J_per_mol_atom_K": {
+        "1000_K": 20.73409618816439,
+        "298.15_K": 20.809433900745002,
+        "500_K": 20.787674905934242
+      },
+      "occurrence_count": 8
+    }
+  },
+  "schema_version": 1,
+  "source_database": {
+    "canonical_records": 3023,
+    "excluded_records": 619,
+    "formula_usable_records": 2404,
+    "path": "data/ideal_gas_heat_capacity.sqlite",
+    "sha256": "a58a405c72c0c8a812d81ef253aff4ea4700bd17803cdf23a843911414dffe98"
+  },
+  "training": {
+    "fit_points_per_component": 41,
+    "fit_temperature_sampling": "equally spaced over each canonical component's fitted range",
+    "formula_overrides": {
+      "12141-11-6": "HMgO"
+    },
+    "maximum_source_temperature_K": 6000.0,
+    "metal_routing": "light_heavy",
+    "minimum_source_temperature_K": 50.0,
+    "objective": "ordinary least squares on (Cp_predicted-Cp_canonical)/Cp_canonical; each component has the same number of sampled temperatures",
+    "selenium_routing": "separate"
+  },
+  "units": {
+    "atom_increment": "J/(mol-atom*K)",
+    "heat_capacity": "J/(mol*K)",
+    "temperature": "K"
+  }
+}

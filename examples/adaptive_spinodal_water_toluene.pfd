@@ -1,0 +1,74 @@
+#==============================================================================
+# ADAPTIVE VL(L)E - WATER/TOLUENE THROUGH ORDINARY EQUIPMENT
+#==============================================================================
+
+PROCESS: Adaptive Spinodal Water-Toluene Handling
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Local spinodal checking retains two liquids through mixer, splitter, heater, and cooler units
+THERMO_METHOD: UNIFNIST
+FLUID_PHASE_MODEL: VL(L)E
+
+COMPONENTS:
+    water   | Water   | MW=18.0153
+    toluene | Toluene | MW=92.1405
+
+STREAM WaterFeed : FEED -> MIX-1.water
+    T = 25 [C]
+    P = 1 [bar]
+    F = 50 [kmol/h]
+    x = water:1.0
+
+STREAM TolueneFeed : FEED -> MIX-1.toluene
+    T = 25 [C]
+    P = 1 [bar]
+    F = 50 [kmol/h]
+    x = toluene:1.0
+
+STREAM Mixed : MIX-1.out -> SPLIT-1.in
+STREAM WarmBranch : SPLIT-1.warm -> HEAT-1.in
+STREAM ColdBranch : SPLIT-1.cold -> COOL-1.in
+STREAM WarmProduct : HEAT-1.out -> PRODUCT
+STREAM ColdProduct : COOL-1.out -> PRODUCT
+
+UNIT MIX-1
+    TYPE: Mixer
+    PORTS:
+        water   : inlet
+        toluene : inlet
+        out     : outlet
+    PARAMS:
+        T_out = 25 [C]
+        P = 1 [bar]
+
+UNIT SPLIT-1
+    TYPE: Splitter
+    PORTS:
+        in   : inlet
+        warm : outlet
+        cold : outlet
+    PARAMS:
+        outlets = warm, cold
+        warm_split_frac = 0.60
+
+UNIT HEAT-1
+    TYPE: Heater
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 35 [C]
+
+UNIT COOL-1
+    TYPE: Cooler
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 15 [C]
+
+# The 50/50 mixed liquid is inside the water/toluene spinodal. VL(L)E first
+# solves constrained VLE, detects negative local Gibbs curvature, and invokes
+# the VLLE splitter. No decanter is present: both liquids remain within each
+# ordinary material stream as liquid1/liquid2 inventories.
+

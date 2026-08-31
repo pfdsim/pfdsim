@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "description": "Curated standard-UNIQUAC pure-component combinatorial r/q parameters used by the ester/alcohol interaction regressions.",
+    "notes": [
+      "Ethyl propionate and ethyl butyrate are derived by group additivity from ethyl acetate, acetic acid, and the corresponding higher acid.",
+      "The values are standard UNIQUAC r/q parameters, not extended-UNIQUAC q-prime values."
+    ]
+  },
+  "components": [
+    {
+      "name": "2-Butanol",
+      "cas": "78-92-2",
+      "formula": "C4H10O",
+      "r": 3.45,
+      "q": 3.04,
+      "source": "Ghanadzadeh Gilani, H.; Golpour, M.; Abbasi Souraki, B. Ternary equilibrium data of mixtures consisting of 2-butanol, water, and heavy alcohols at T = 298.2 K. J. Chem. Thermodyn. 2012, 49, 39-45.",
+      "doi": "10.1016/j.jct.2012.01.003"
+    },
+    {
+      "name": "n-Propyl acetate",
+      "cas": "109-60-4",
+      "formula": "C5H10O2",
+      "aliases": ["Propyl acetate", "Propyl ethanoate"],
+      "r": 4.153,
+      "q": 3.656,
+      "source": "Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258.",
+      "doi": "10.1021/je4007184"
+    },
+    {
+      "name": "1-Pentanol",
+      "cas": "71-41-0",
+      "formula": "C5H12O",
+      "aliases": ["n-Pentanol"],
+      "r": 4.129,
+      "q": 3.592,
+      "source": "Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258.",
+      "doi": "10.1021/je4007184"
+    },
+    {
+      "name": "2-Pentanol",
+      "cas": "6032-29-7",
+      "formula": "C5H12O",
+      "r": 4.283,
+      "q": 3.556,
+      "source": "Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258.",
+      "doi": "10.1021/je4007184",
+      "source_name": "1-Methyl-1-butanol"
+    },
+    {
+      "name": "3-Methyl-1-butanol",
+      "cas": "123-51-3",
+      "formula": "C5H12O",
+      "aliases": ["Isoamyl alcohol"],
+      "r": 4.273,
+      "q": 3.478,
+      "source": "Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258.",
+      "doi": "10.1021/je4007184"
+    },
+    {
+      "name": "Butyric acid",
+      "cas": "107-92-6",
+      "formula": "C4H8O2",
+      "aliases": ["Butanoic acid"],
+      "r": 3.5514,
+      "q": 3.15242,
+      "source": "Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511.",
+      "doi": "10.1021/acs.jced.4c00527"
+    },
+    {
+      "name": "2-Octanol",
+      "cas": "123-96-6",
+      "formula": "C8H18O",
+      "r": 6.15128,
+      "q": 5.20828,
+      "source": "Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511.",
+      "doi": "10.1021/acs.jced.4c00527"
+    },
+    {
+      "name": "Ethyl propionate",
+      "cas": "105-37-3",
+      "formula": "C5H10O2",
+      "aliases": ["Ethyl propanoate"],
+      "r": 4.1535,
+      "q": 3.6559,
+      "source": "Group-additive derivation in this work",
+      "derivation": {
+        "equation": "ethyl acetate - acetic acid + propionic acid",
+        "r": "3.4789 - 2.2024 + 2.8770",
+        "q": "3.1159 - 2.0720 + 2.6120"
+      }
+    },
+    {
+      "name": "Ethyl butyrate",
+      "cas": "105-54-4",
+      "formula": "C6H12O2",
+      "aliases": ["Ethyl butanoate"],
+      "r": 4.8279,
+      "q": 4.19632,
+      "source": "Group-additive derivation in this work",
+      "derivation": {
+        "equation": "ethyl acetate - acetic acid + butyric acid",
+        "r": "3.4789 - 2.2024 + 3.5514",
+        "q": "3.1159 - 2.0720 + 3.15242"
+      }
+    }
+  ]
+}

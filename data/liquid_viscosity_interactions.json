@@ -1,0 +1,4298 @@
+{
+  "metadata": {
+    "source_file": "ie9b01179_si_001.pdf",
+    "source_table": "Table S3",
+    "source_pages": [
+      "S10",
+      "S11",
+      "S12",
+      "S13",
+      "S14",
+      "S15",
+      "S16",
+      "S17",
+      "S18"
+    ],
+    "description": "CAS-keyed binary interaction parameters extracted from Table S3 pages S10-S18. McAllister columns were omitted.",
+    "key_convention": "Each interaction key is CAS_component_1|CAS_component_2, preserving the PDF Component (1)-(2) order. The Jouyban-Acree A1 parameter is order-dependent.",
+    "units": {
+      "temperature_C": "degree Celsius",
+      "temperature_K": "kelvin",
+      "jouyban_acree_A0_A1_A2": "K",
+      "ARD_pct": "percent",
+      "R2": "dimensionless",
+      "grunberg_nissan_G": "dimensionless"
+    },
+    "counts": {
+      "binary_pairs": 77,
+      "temperature_entries": 127
+    },
+    "notes": [
+      "Rows 63 (Hex-EtAc) include two separate 25 Â°C entries in the source table; both are preserved with entry_index_at_same_temperature 1 and 2.",
+      "The source table labels the Grunberg column as G12 through page S16 and G22 on pages S17-S18; the extracted value is stored as G with the source symbol preserved.",
+      "Abbreviations resolved to CAS keys include ETG=ethylene glycol, FA=formamide, HeOH=1-hexanol, and Xylene=mixed xylenes."
+    ]
+  },
+  "components": {
+    "100-66-3": {
+      "name": "anisole",
+      "labels": [
+        "anisole"
+      ]
+    },
+    "105-58-8": {
+      "name": "diethyl carbonate",
+      "labels": [
+        "DEC"
+      ]
+    },
+    "107-21-1": {
+      "name": "ethylene glycol",
+      "labels": [
+        "ETG"
+      ]
+    },
+    "108-10-1": {
+      "name": "methyl isobutyl ketone",
+      "labels": [
+        "MIBK"
+      ]
+    },
+    "108-29-2": {
+      "name": "gamma-valerolactone",
+      "labels": [
+        "GVL"
+      ]
+    },
+    "108-32-7": {
+      "name": "propylene carbonate",
+      "labels": [
+        "PPC"
+      ]
+    },
+    "108-94-1": {
+      "name": "cyclohexanone",
+      "labels": [
+        "CHN"
+      ]
+    },
+    "109-99-9": {
+      "name": "tetrahydrofuran",
+      "labels": [
+        "THF"
+      ]
+    },
+    "110-54-3": {
+      "name": "n-hexane",
+      "labels": [
+        "Hex"
+      ]
+    },
+    "110-71-4": {
+      "name": "1,2-dimethoxyethane",
+      "labels": [
+        "dimethoxyethane"
+      ]
+    },
+    "110-86-1": {
+      "name": "pyridine",
+      "labels": [
+        "Pyr"
+      ]
+    },
+    "111-27-3": {
+      "name": "1-hexanol",
+      "labels": [
+        "HeOH"
+      ]
+    },
+    "112-49-2": {
+      "name": "triglyme",
+      "labels": [
+        "triglyme"
+      ]
+    },
+    "120-92-3": {
+      "name": "cyclopentanone",
+      "labels": [
+        "CPN"
+      ]
+    },
+    "123-86-4": {
+      "name": "n-butyl acetate",
+      "labels": [
+        "BuAc"
+      ]
+    },
+    "123-92-2": {
+      "name": "isoamyl acetate",
+      "labels": [
+        "iAAc"
+      ]
+    },
+    "127-19-5": {
+      "name": "N,N-dimethylacetamide",
+      "labels": [
+        "DMA"
+      ]
+    },
+    "1330-20-7": {
+      "name": "xylene (mixed isomers)",
+      "labels": [
+        "Xylene"
+      ]
+    },
+    "141-78-6": {
+      "name": "ethyl acetate",
+      "labels": [
+        "EtAc"
+      ]
+    },
+    "142-82-5": {
+      "name": "n-heptane",
+      "labels": [
+        "Hep"
+      ]
+    },
+    "470-82-6": {
+      "name": "1,8-cineole",
+      "labels": [
+        "CIN"
+      ]
+    },
+    "616-38-6": {
+      "name": "dimethyl carbonate",
+      "labels": [
+        "DMC"
+      ]
+    },
+    "64-17-5": {
+      "name": "ethanol",
+      "labels": [
+        "EtOH"
+      ]
+    },
+    "67-56-1": {
+      "name": "methanol",
+      "labels": [
+        "MeOH"
+      ]
+    },
+    "67-63-0": {
+      "name": "2-propanol",
+      "labels": [
+        "2-PrOH"
+      ]
+    },
+    "67-64-1": {
+      "name": "acetone",
+      "labels": [
+        "Ace"
+      ]
+    },
+    "67-66-3": {
+      "name": "chloroform",
+      "labels": [
+        "CHCl3"
+      ]
+    },
+    "67-68-5": {
+      "name": "dimethyl sulfoxide",
+      "labels": [
+        "DMSO"
+      ]
+    },
+    "68-12-2": {
+      "name": "N,N-dimethylformamide",
+      "labels": [
+        "DMF"
+      ]
+    },
+    "71-23-8": {
+      "name": "1-propanol",
+      "labels": [
+        "1-PrOH"
+      ]
+    },
+    "75-05-8": {
+      "name": "acetonitrile",
+      "labels": [
+        "ACN"
+      ]
+    },
+    "75-09-2": {
+      "name": "dichloromethane",
+      "labels": [
+        "DCM"
+      ]
+    },
+    "75-12-7": {
+      "name": "formamide",
+      "labels": [
+        "FA"
+      ]
+    },
+    "75-15-0": {
+      "name": "carbon disulfide",
+      "labels": [
+        "CS2"
+      ]
+    },
+    "7732-18-5": {
+      "name": "water",
+      "labels": [
+        "water"
+      ]
+    },
+    "79-20-9": {
+      "name": "methyl acetate",
+      "labels": [
+        "MeAc"
+      ]
+    },
+    "872-50-4": {
+      "name": "N-methyl-2-pyrrolidone",
+      "labels": [
+        "NMP"
+      ]
+    },
+    "96-48-0": {
+      "name": "gamma-butyrolactone",
+      "labels": [
+        "GBL"
+      ]
+    }
+  },
+  "binary_interactions": {
+    "7732-18-5|75-05-8": {
+      "source_no": 1,
+      "source_system": "water-ACN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "ACN",
+          "name": "acetonitrile",
+          "cas": "75-05-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S10",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 10.87,
+            "A1_K": 390.17,
+            "A2_K": 203.13,
+            "ARD_pct": 1.096,
+            "R2": 0.994
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.343,
+            "ARD_pct": 8.418,
+            "R2": 0.925
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -0.275,
+            "A1_K": 384.08,
+            "A2_K": 255.55,
+            "ARD_pct": 1.333,
+            "R2": 0.995
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.05,
+            "ARD_pct": 6.652,
+            "R2": 0.906
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -0.262,
+            "A1_K": 340.49,
+            "A2_K": 315.19,
+            "ARD_pct": 1.519,
+            "R2": 0.994
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.007,
+            "ARD_pct": 5.365,
+            "R2": 0.067
+          }
+        }
+      ]
+    },
+    "7732-18-5|96-48-0": {
+      "source_no": 2,
+      "source_system": "water-GBL",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "GBL",
+          "name": "gamma-butyrolactone",
+          "cas": "96-48-0"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S10",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 462.21,
+            "A1_K": 667.06,
+            "A2_K": 360.3,
+            "ARD_pct": 1.411,
+            "R2": 0.986
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.573,
+            "ARD_pct": 12.18,
+            "R2": 0.268
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 443.22,
+            "A1_K": 628.4,
+            "A2_K": 342.92,
+            "ARD_pct": 1.256,
+            "R2": 0.99
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.437,
+            "ARD_pct": 11.03,
+            "R2": 0.445
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 426.25,
+            "A1_K": 596.35,
+            "A2_K": 331.68,
+            "ARD_pct": 1.152,
+            "R2": 0.992
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.338,
+            "ARD_pct": 10.13,
+            "R2": 0.083
+          }
+        }
+      ]
+    },
+    "7732-18-5|108-29-2": {
+      "source_no": 3,
+      "source_system": "water-GVL",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "GVL",
+          "name": "gamma-valerolactone",
+          "cas": "108-29-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S10",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 534.24,
+            "A1_K": 865.72,
+            "A2_K": 649.27,
+            "ARD_pct": 2.572,
+            "R2": 0.958
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.933,
+            "ARD_pct": 15.95,
+            "R2": -0.113
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 511.41,
+            "A1_K": 817.8,
+            "A2_K": 607.3,
+            "ARD_pct": 2.243,
+            "R2": 0.968
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.665,
+            "ARD_pct": 14.21,
+            "R2": 0.058
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 493.31,
+            "A1_K": 776.38,
+            "A2_K": 570.39,
+            "ARD_pct": 2.035,
+            "R2": 0.975
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.665,
+            "ARD_pct": 13.46,
+            "R2": 0.083
+          }
+        }
+      ]
+    },
+    "7732-18-5|109-99-9": {
+      "source_no": 4,
+      "source_system": "water-THF",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "THF",
+          "name": "tetrahydrofuran",
+          "cas": "109-99-9"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S10",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 328.2,
+            "A1_K": 946.19,
+            "A2_K": 1687.79,
+            "ARD_pct": 5.504,
+            "R2": 0.971
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.999,
+            "ARD_pct": 27.43,
+            "R2": 0.274
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 384.05,
+            "A1_K": 909.13,
+            "A2_K": 1119.62,
+            "ARD_pct": 3.873,
+            "R2": 0.976
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.983,
+            "ARD_pct": 22.03,
+            "R2": 0.045
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 352.45,
+            "A1_K": 884.51,
+            "A2_K": 1071.22,
+            "ARD_pct": 3.405,
+            "R2": 0.979
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.8,
+            "ARD_pct": 20.23,
+            "R2": 0.045
+          }
+        }
+      ]
+    },
+    "7732-18-5|67-64-1": {
+      "source_no": 5,
+      "source_system": "water-Ace",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "Ace",
+          "name": "acetone",
+          "cas": "67-64-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S10",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 337.35,
+            "A1_K": 824.59,
+            "A2_K": 878.56,
+            "ARD_pct": 2.439,
+            "R2": 0.995
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.606,
+            "ARD_pct": 22.03,
+            "R2": 0.656
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 312.74,
+            "A1_K": 745.98,
+            "A2_K": 854.63,
+            "ARD_pct": 2.121,
+            "R2": 0.996
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.61,
+            "ARD_pct": 17.51,
+            "R2": 0.045
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 336.03,
+            "A1_K": 643.51,
+            "A2_K": 780.66,
+            "ARD_pct": 1.435,
+            "R2": 0.997
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 1.61,
+            "ARD_pct": 15.03,
+            "R2": 0.045
+          }
+        }
+      ]
+    },
+    "7732-18-5|110-86-1": {
+      "source_no": 6,
+      "source_system": "Water-Pyr",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "Pyr",
+          "name": "pyridine",
+          "cas": "110-86-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S10",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 844.65,
+            "A1_K": 1009.19,
+            "A2_K": 356.72,
+            "ARD_pct": 1.99,
+            "R2": 0.991
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 20.6,
+            "ARD_pct": 3.666,
+            "R2": 0.314
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 780.76,
+            "A1_K": 920.54,
+            "A2_K": 369.69,
+            "ARD_pct": 1.764,
+            "R2": 0.991
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 3.178,
+            "ARD_pct": 18.29,
+            "R2": 0.043
+          }
+        },
+        {
+          "source_page": "S10",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 720.02,
+            "A1_K": 850.11,
+            "A2_K": 396.04,
+            "ARD_pct": 1.568,
+            "R2": 0.992
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.846,
+            "ARD_pct": 16.45,
+            "R2": 0.043
+          }
+        }
+      ]
+    },
+    "7732-18-5|68-12-2": {
+      "source_no": 7,
+      "source_system": "water-DMF",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "DMF",
+          "name": "N,N-dimethylformamide",
+          "cas": "68-12-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 938.83,
+            "A1_K": 1107.16,
+            "A2_K": 619.52,
+            "ARD_pct": 0.309,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 4.162,
+            "ARD_pct": 23.475,
+            "R2": 0.387
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 881.45,
+            "A1_K": 1015.46,
+            "A2_K": 590.57,
+            "ARD_pct": 0.295,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 3.602,
+            "ARD_pct": 20.543,
+            "R2": 0.042
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 831.02,
+            "A1_K": 934.8,
+            "A2_K": 544.36,
+            "ARD_pct": 0.346,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 3.268,
+            "ARD_pct": 18.358,
+            "R2": 0.042
+          }
+        }
+      ]
+    },
+    "7732-18-5|127-19-5": {
+      "source_no": 8,
+      "source_system": "water-DMA",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "DMA",
+          "name": "N,N-dimethylacetamide",
+          "cas": "127-19-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1246.33,
+            "A1_K": 1651.11,
+            "A2_K": 1059.85,
+            "ARD_pct": 0.782,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 5.686,
+            "ARD_pct": 35.12,
+            "R2": 0.202
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1159.04,
+            "A1_K": 1499.72,
+            "A2_K": 978.49,
+            "ARD_pct": 0.919,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 4.312,
+            "ARD_pct": 29.501,
+            "R2": 0.042
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1082.38,
+            "A1_K": 1367.16,
+            "A2_K": 909.99,
+            "ARD_pct": 0.958,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 3.895,
+            "ARD_pct": 26.37,
+            "R2": 0.042
+          }
+        }
+      ]
+    },
+    "7732-18-5|872-50-4": {
+      "source_no": 9,
+      "source_system": "water-NMP",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "NMP",
+          "name": "N-methyl-2-pyrrolidone",
+          "cas": "872-50-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1347.8,
+            "A1_K": 1630.69,
+            "A2_K": 1201.48,
+            "ARD_pct": 0.945,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 5.743,
+            "ARD_pct": 32.93,
+            "R2": 0.041
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1238.12,
+            "A1_K": 1482.39,
+            "A2_K": 1111.39,
+            "ARD_pct": 1.106,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 4.579,
+            "ARD_pct": 28.576,
+            "R2": 0.042
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1156.22,
+            "A1_K": 1338.37,
+            "A2_K": 998.23,
+            "ARD_pct": 0.989,
+            "R2": 0.997
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 4.127,
+            "ARD_pct": 25.905,
+            "R2": 0.048
+          }
+        }
+      ]
+    },
+    "7732-18-5|67-68-5": {
+      "source_no": 10,
+      "source_system": "water-DMSO",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "DMSO",
+          "name": "dimethyl sulfoxide",
+          "cas": "67-68-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1121.1,
+            "A1_K": 1141.52,
+            "A2_K": 413.7,
+            "ARD_pct": 1.588,
+            "R2": 0.998
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 4.006,
+            "ARD_pct": 20.53,
+            "R2": 0.36
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1127.89,
+            "A1_K": 1140.44,
+            "A2_K": 438.21,
+            "ARD_pct": 0.978,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 3.505,
+            "ARD_pct": 20.146,
+            "R2": 0.042
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 1040.36,
+            "A1_K": 1029.02,
+            "A2_K": 398.44,
+            "ARD_pct": 0.814,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.771,
+            "ARD_pct": 15.426,
+            "R2": 0.042
+          }
+        }
+      ]
+    },
+    "7732-18-5|67-56-1": {
+      "source_no": 11,
+      "source_system": "water-MeOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 752.07,
+            "A1_K": 511.7,
+            "A2_K": 400.86,
+            "ARD_pct": 0.841,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.523,
+            "ARD_pct": 8.487,
+            "R2": 0.835
+          }
+        }
+      ]
+    },
+    "7732-18-5|64-17-5": {
+      "source_no": 12,
+      "source_system": "Water-EtOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 774.56,
+            "A1_K": 971.31,
+            "A2_K": 942.59,
+            "ARD_pct": 2.358,
+            "R2": 0.985
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.107,
+            "ARD_pct": 15.683,
+            "R2": 0.235
+          }
+        }
+      ]
+    },
+    "7732-18-5|71-23-8": {
+      "source_no": 13,
+      "source_system": "Water-1-PrOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "1-PrOH",
+          "name": "1-propanol",
+          "cas": "71-23-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S11",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 748.14,
+            "A1_K": 1063.14,
+            "A2_K": 888.34,
+            "ARD_pct": 4.994,
+            "R2": 0.943
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.509,
+            "ARD_pct": 19.293,
+            "R2": 0.067
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 687.92,
+            "A1_K": 972.92,
+            "A2_K": 800.89,
+            "ARD_pct": 4.021,
+            "R2": 0.961
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.233,
+            "ARD_pct": 17.081,
+            "R2": 0.067
+          }
+        },
+        {
+          "source_page": "S11",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 615.91,
+            "A1_K": 900.27,
+            "A2_K": 778.22,
+            "ARD_pct": 3.217,
+            "R2": 0.972
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.003,
+            "ARD_pct": 15.23,
+            "R2": 0.37
+          }
+        }
+      ]
+    },
+    "7732-18-5|67-63-0": {
+      "source_no": 14,
+      "source_system": "water-2-PrOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "water",
+          "name": "water",
+          "cas": "7732-18-5"
+        },
+        {
+          "role": 2,
+          "label": "2-PrOH",
+          "name": "2-propanol",
+          "cas": "67-63-0"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 807.22,
+            "A1_K": 1346.43,
+            "A2_K": 1016.2,
+            "ARD_pct": 5.653,
+            "R2": 0.932
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.094,
+            "ARD_pct": 23.11,
+            "R2": 0.067
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 724.79,
+            "A1_K": 1174.64,
+            "A2_K": 966.54,
+            "ARD_pct": 4.586,
+            "R2": 0.95
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.41,
+            "ARD_pct": 20.36,
+            "R2": 0.04
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 682.4,
+            "A1_K": 1058.39,
+            "A2_K": 829.19,
+            "ARD_pct": 3.643,
+            "R2": 0.963
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 2.161,
+            "ARD_pct": 17.87,
+            "R2": 0.134
+          }
+        }
+      ]
+    },
+    "67-56-1|67-64-1": {
+      "source_no": 15,
+      "source_system": "MeOH-Ace",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "Ace",
+          "name": "acetone",
+          "cas": "67-64-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -171.3,
+            "A1_K": -118.2,
+            "A2_K": 39.77,
+            "ARD_pct": 0.441,
+            "R2": 0.998
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.424,
+            "ARD_pct": 2.503,
+            "R2": 0.965
+          }
+        }
+      ]
+    },
+    "67-56-1|75-05-8": {
+      "source_no": 16,
+      "source_system": "MeOH-ACN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "ACN",
+          "name": "acetonitrile",
+          "cas": "75-05-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -214.5,
+            "A1_K": -17.8,
+            "A2_K": -36.96,
+            "ARD_pct": 0.8,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.748,
+            "ARD_pct": 0.886,
+            "R2": 0.996
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -217.1,
+            "A1_K": -58.16,
+            "A2_K": 50.05,
+            "ARD_pct": 0.093,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.73,
+            "ARD_pct": 0.968,
+            "R2": 0.995
+          }
+        }
+      ]
+    },
+    "67-56-1|100-66-3": {
+      "source_no": 17,
+      "source_system": "MeOH-anisole",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "anisole",
+          "name": "anisole",
+          "cas": "100-66-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 95.92,
+            "A1_K": 122.2,
+            "A2_K": -6.91,
+            "ARD_pct": 0.263,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.342,
+            "ARD_pct": 2.197,
+            "R2": 0.976
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 86.24,
+            "A1_K": 115.6,
+            "A2_K": 0.15,
+            "ARD_pct": 0.153,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.28,
+            "ARD_pct": 2.011,
+            "R2": 0.98
+          }
+        }
+      ]
+    },
+    "67-56-1|108-94-1": {
+      "source_no": 18,
+      "source_system": "MeOH-CHN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "CHN",
+          "name": "cyclohexanone",
+          "cas": "108-94-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 40.0,
+            "A1_K": 44.57,
+            "A2_K": -42.09,
+            "ARD_pct": 0.264,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.091,
+            "ARD_pct": 1.006,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 40.84,
+            "A1_K": 48.12,
+            "A2_K": -47.23,
+            "ARD_pct": 0.244,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.125,
+            "ARD_pct": 1.004,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "67-56-1|120-92-3": {
+      "source_no": 19,
+      "source_system": "MeOH-CPN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "CPN",
+          "name": "cyclopentanone",
+          "cas": "120-92-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -77.0,
+            "A1_K": -21.85,
+            "A2_K": -57.43,
+            "ARD_pct": 0.047,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.282,
+            "ARD_pct": 0.52,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -71.5,
+            "A1_K": -20.38,
+            "A2_K": -46.41,
+            "ARD_pct": 0.065,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.246,
+            "ARD_pct": 0.464,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "67-56-1|67-66-3": {
+      "source_no": 20,
+      "source_system": "MeOH-CHCl3",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "CHCl3",
+          "name": "chloroform",
+          "cas": "67-66-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S12",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 177.7,
+            "A1_K": 177.2,
+            "A2_K": 54.67,
+            "ARD_pct": 0.094,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.587,
+            "ARD_pct": 3.494,
+            "R2": 0.543
+          }
+        },
+        {
+          "source_page": "S12",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 166.7,
+            "A1_K": 172.0,
+            "A2_K": 38.65,
+            "ARD_pct": 0.227,
+            "R2": 0.995
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.514,
+            "ARD_pct": 3.22,
+            "R2": 0.468
+          }
+        }
+      ]
+    },
+    "67-56-1|75-09-2": {
+      "source_no": 21,
+      "source_system": "MeOH-DCM",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "DCM",
+          "name": "dichloromethane",
+          "cas": "75-09-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 30.0,
+          "temperature_K": 303.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -11.19,
+            "A1_K": 145.7,
+            "A2_K": -36.06,
+            "ARD_pct": 0.18,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.13,
+            "ARD_pct": 2.526,
+            "R2": 0.922
+          }
+        }
+      ]
+    },
+    "67-56-1|67-68-5": {
+      "source_no": 22,
+      "source_system": "MeOH-DMSO",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "DMSO",
+          "name": "dimethyl sulfoxide",
+          "cas": "67-68-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -9.4,
+            "A1_K": -91.97,
+            "A2_K": 32.34,
+            "ARD_pct": 0.314,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.089,
+            "ARD_pct": 1.428,
+            "R2": 0.998
+          }
+        },
+        {
+          "source_page": "S13",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 22.44,
+            "A1_K": 2.92,
+            "A2_K": 31.61,
+            "ARD_pct": 0.112,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.081,
+            "ARD_pct": 0.274,
+            "R2": 1.0
+          }
+        },
+        {
+          "source_page": "S13",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 42.14,
+            "A1_K": 1.61,
+            "A2_K": 27.94,
+            "ARD_pct": 0.215,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.138,
+            "ARD_pct": 0.341,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "67-56-1|616-38-6": {
+      "source_no": 23,
+      "source_system": "MeOH-DMC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "DMC",
+          "name": "dimethyl carbonate",
+          "cas": "616-38-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -132.6,
+            "A1_K": -26.33,
+            "A2_K": -22.27,
+            "ARD_pct": 0.324,
+            "R2": 0.988
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.467,
+            "ARD_pct": 0.52,
+            "R2": 0.981
+          }
+        },
+        {
+          "source_page": "S13",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -133.6,
+            "A1_K": -12.99,
+            "A2_K": -37.76,
+            "ARD_pct": 0.393,
+            "R2": 0.978
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.451,
+            "ARD_pct": 0.557,
+            "R2": 0.971
+          }
+        }
+      ]
+    },
+    "67-56-1|127-19-5": {
+      "source_no": 24,
+      "source_system": "MeOH-DMA",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "DMA",
+          "name": "N,N-dimethylacetamide",
+          "cas": "127-19-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 23.38,
+            "A1_K": -8.04,
+            "A2_K": -5.13,
+            "ARD_pct": 0.111,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.079,
+            "ARD_pct": 0.211,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "67-56-1|68-12-2": {
+      "source_no": 25,
+      "source_system": "MeOH-DMF",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "DMF",
+          "name": "N,N-dimethylformamide",
+          "cas": "68-12-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 140.5,
+            "A1_K": 46.26,
+            "A2_K": 31.43,
+            "ARD_pct": 0.082,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.474,
+            "ARD_pct": 0.84,
+            "R2": 0.997
+          }
+        },
+        {
+          "source_page": "S13",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 34.75,
+            "A1_K": -7.42,
+            "A2_K": 0.38,
+            "ARD_pct": 0.043,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.113,
+            "ARD_pct": 0.15,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "67-56-1|141-78-6": {
+      "source_no": 26,
+      "source_system": "MeOH-EtAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "EtAc",
+          "name": "ethyl acetate",
+          "cas": "141-78-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -143.3,
+            "A1_K": -39.41,
+            "A2_K": -29.29,
+            "ARD_pct": 0.126,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.48,
+            "ARD_pct": 0.687,
+            "R2": 0.989
+          }
+        }
+      ]
+    },
+    "67-56-1|79-20-9": {
+      "source_no": 27,
+      "source_system": "MeOH-MeAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "MeAc",
+          "name": "methyl acetate",
+          "cas": "79-20-9"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -192.3,
+            "A1_K": -47.68,
+            "A2_K": -33.44,
+            "ARD_pct": 0.377,
+            "R2": 0.998
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.632,
+            "ARD_pct": 0.977,
+            "R2": 0.993
+          }
+        }
+      ]
+    },
+    "67-56-1|872-50-4": {
+      "source_no": 28,
+      "source_system": "MeOH-NMP",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "NMP",
+          "name": "N-methyl-2-pyrrolidone",
+          "cas": "872-50-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 133.7,
+            "A1_K": 60.72,
+            "A2_K": -37.29,
+            "ARD_pct": 0.24,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.485,
+            "ARD_pct": 0.909,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "67-56-1|110-86-1": {
+      "source_no": 29,
+      "source_system": "MeOH-Pyr",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "Pyr",
+          "name": "pyridine",
+          "cas": "110-86-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 72.75,
+            "A1_K": 21.88,
+            "A2_K": 17.32,
+            "ARD_pct": 0.111,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.48,
+            "ARD_pct": 0.5,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "67-56-1|108-32-7": {
+      "source_no": 30,
+      "source_system": "MeOH-PPC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "PPC",
+          "name": "propylene carbonate",
+          "cas": "108-32-7"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 51.6,
+            "A1_K": 33.37,
+            "A2_K": 4.44,
+            "ARD_pct": 0.177,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": 0.173,
+            "ARD_pct": 0.65,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "67-56-1|109-99-9": {
+      "source_no": 31,
+      "source_system": "MeOH-THF",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "MeOH",
+          "name": "methanol",
+          "cas": "67-56-1"
+        },
+        {
+          "role": 2,
+          "label": "THF",
+          "name": "tetrahydrofuran",
+          "cas": "109-99-9"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S13",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -142.1,
+            "A1_K": -26.81,
+            "A2_K": -36.78,
+            "ARD_pct": 0.146,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.501,
+            "ARD_pct": 0.727,
+            "R2": 0.986
+          }
+        }
+      ]
+    },
+    "64-17-5|67-64-1": {
+      "source_no": 32,
+      "source_system": "EtOH-Ace",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "Ace",
+          "name": "acetone",
+          "cas": "67-64-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -362.5,
+            "A1_K": -120.1,
+            "A2_K": -38.91,
+            "ARD_pct": 0.181,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.216,
+            "ARD_pct": 2.454,
+            "R2": 0.996
+          }
+        }
+      ]
+    },
+    "64-17-5|75-05-8": {
+      "source_no": 33,
+      "source_system": "EtOH-ACN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "ACN",
+          "name": "acetonitrile",
+          "cas": "75-05-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -311.8,
+            "A1_K": -61.16,
+            "A2_K": 25.42,
+            "ARD_pct": 0.258,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.023,
+            "ARD_pct": 1.187,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S14",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -289.9,
+            "A1_K": -80.1,
+            "A2_K": 25.76,
+            "ARD_pct": 0.442,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.9,
+            "ARD_pct": 1.503,
+            "R2": 0.998
+          }
+        }
+      ]
+    },
+    "64-17-5|100-66-3": {
+      "source_no": 34,
+      "source_system": "EtOH-anisole",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "anisole",
+          "name": "anisole",
+          "cas": "100-66-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -201.7,
+            "A1_K": -7.6,
+            "A2_K": -23.95,
+            "ARD_pct": 0.753,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.686,
+            "ARD_pct": 0.857,
+            "R2": 0.972
+          }
+        },
+        {
+          "source_page": "S14",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -190.9,
+            "A1_K": -0.46,
+            "A2_K": -42.94,
+            "ARD_pct": 0.909,
+            "R2": 0.947
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.66,
+            "ARD_pct": 1.012,
+            "R2": 0.946
+          }
+        }
+      ]
+    },
+    "64-17-5|123-86-4": {
+      "source_no": 35,
+      "source_system": "EtOH-BuAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "BuAc",
+          "name": "n-butyl acetate",
+          "cas": "123-86-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -280.5,
+            "A1_K": -16.93,
+            "A2_K": -31.49,
+            "ARD_pct": 0.256,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.96,
+            "ARD_pct": 0.39,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S14",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -252.3,
+            "A1_K": -60.12,
+            "A2_K": 51.95,
+            "ARD_pct": 0.223,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.84,
+            "ARD_pct": 1.107,
+            "R2": 0.992
+          }
+        }
+      ]
+    },
+    "64-17-5|108-94-1": {
+      "source_no": 36,
+      "source_system": "EtOH-CHN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "CHN",
+          "name": "cyclohexanone",
+          "cas": "108-94-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -275.5,
+            "A1_K": -85.8,
+            "A2_K": -103.5,
+            "ARD_pct": 0.098,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.954,
+            "ARD_pct": 1.653,
+            "R2": 0.965
+          }
+        },
+        {
+          "source_page": "S14",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -256.6,
+            "A1_K": -78.2,
+            "A2_K": -102.2,
+            "ARD_pct": 0.1,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.842,
+            "ARD_pct": 1.443,
+            "R2": 0.995
+          }
+        }
+      ]
+    },
+    "64-17-5|120-92-3": {
+      "source_no": 37,
+      "source_system": "EtOH-CPN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "CPN",
+          "name": "cyclopentanone",
+          "cas": "120-92-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -293.5,
+            "A1_K": -116.5,
+            "A2_K": -84.78,
+            "ARD_pct": 0.164,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.984,
+            "ARD_pct": 2.135,
+            "R2": 0.918
+          }
+        },
+        {
+          "source_page": "S14",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -280.3,
+            "A1_K": -111.7,
+            "A2_K": -77.77,
+            "ARD_pct": 0.161,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.91,
+            "ARD_pct": 1.983,
+            "R2": 0.924
+          }
+        }
+      ]
+    },
+    "64-17-5|67-66-3": {
+      "source_no": 38,
+      "source_system": "EtOH- CHCl3",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "CHCl3",
+          "name": "chloroform",
+          "cas": "67-66-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -74.86,
+            "A1_K": 171.3,
+            "A2_K": 218.3,
+            "ARD_pct": 0.363,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.223,
+            "ARD_pct": 3.358,
+            "R2": 0.959
+          }
+        },
+        {
+          "source_page": "S14",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -77.08,
+            "A1_K": 121.1,
+            "A2_K": 215.5,
+            "ARD_pct": 0.328,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.204,
+            "ARD_pct": 2.704,
+            "R2": 0.963
+          }
+        }
+      ]
+    },
+    "64-17-5|75-09-2": {
+      "source_no": 39,
+      "source_system": "EtOH-DCM",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "DCM",
+          "name": "dichloromethane",
+          "cas": "75-09-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S14",
+          "temperature_C": 30.0,
+          "temperature_K": 303.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -188.1,
+            "A1_K": 154.4,
+            "A2_K": -16.82,
+            "ARD_pct": 0.115,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.596,
+            "ARD_pct": 2.875,
+            "R2": 0.992
+          }
+        }
+      ]
+    },
+    "64-17-5|67-68-5": {
+      "source_no": 40,
+      "source_system": "EtOH-DMSO",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "DMSO",
+          "name": "dimethyl sulfoxide",
+          "cas": "67-68-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -222.4,
+            "A1_K": -118.5,
+            "A2_K": -83.8,
+            "ARD_pct": 0.412,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.771,
+            "ARD_pct": 2.456,
+            "R2": 0.988
+          }
+        },
+        {
+          "source_page": "S15",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -94.98,
+            "A1_K": 88.01,
+            "A2_K": 173.9,
+            "ARD_pct": 1.141,
+            "R2": 0.982
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.276,
+            "ARD_pct": 2.042,
+            "R2": 0.958
+          }
+        },
+        {
+          "source_page": "S15",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -92.6,
+            "A1_K": 52.12,
+            "A2_K": 118.4,
+            "ARD_pct": 0.923,
+            "R2": 0.989
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.266,
+            "ARD_pct": 1.321,
+            "R2": 0.981
+          }
+        }
+      ]
+    },
+    "64-17-5|616-38-6": {
+      "source_no": 41,
+      "source_system": "EtOH-DMC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "DMC",
+          "name": "dimethyl carbonate",
+          "cas": "616-38-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 20.0,
+          "temperature_K": 293.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -337.4,
+            "A1_K": -83.53,
+            "A2_K": -72.98,
+            "ARD_pct": 0.055,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.48,
+            "ARD_pct": 1.544,
+            "R2": 0.994
+          }
+        }
+      ]
+    },
+    "64-17-5|110-71-4": {
+      "source_no": 42,
+      "source_system": "EtOH-dimethoxyethane",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "dimethoxyethane",
+          "name": "1,2-dimethoxyethane",
+          "cas": "110-71-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 20.0,
+          "temperature_K": 293.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -322.9,
+            "A1_K": -137.8,
+            "A2_K": -56.02,
+            "ARD_pct": 0.124,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.113,
+            "ARD_pct": 2.821,
+            "R2": 0.992
+          }
+        }
+      ]
+    },
+    "64-17-5|127-19-5": {
+      "source_no": 43,
+      "source_system": "EtOH-DMA",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "DMA",
+          "name": "N,N-dimethylacetamide",
+          "cas": "127-19-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -104.3,
+            "A1_K": -92.43,
+            "A2_K": -17.04,
+            "ARD_pct": 0.082,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.352,
+            "ARD_pct": 1.585,
+            "R2": 0.867
+          }
+        }
+      ]
+    },
+    "64-17-5|68-12-2": {
+      "source_no": 44,
+      "source_system": "EtOH-DMF",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "DMF",
+          "name": "N,N-dimethylformamide",
+          "cas": "68-12-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -174.0,
+            "A1_K": -159.4,
+            "A2_K": -21.22,
+            "ARD_pct": 0.198,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.609,
+            "ARD_pct": 2.943,
+            "R2": 0.886
+          }
+        },
+        {
+          "source_page": "S15",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -147.6,
+            "A1_K": -141.6,
+            "A2_K": -5.24,
+            "ARD_pct": 0.162,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.479,
+            "ARD_pct": 2.551,
+            "R2": 0.823
+          }
+        }
+      ]
+    },
+    "64-17-5|141-78-6": {
+      "source_no": 45,
+      "source_system": "EtOH-EtAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "EtAc",
+          "name": "ethyl acetate",
+          "cas": "141-78-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -364.6,
+            "A1_K": -130.0,
+            "A2_K": -55.34,
+            "ARD_pct": 0.331,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.188,
+            "ARD_pct": 2.182,
+            "R2": 0.994
+          }
+        }
+      ]
+    },
+    "64-17-5|79-20-9": {
+      "source_no": 46,
+      "source_system": "EtOH-MeAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "MeAc",
+          "name": "methyl acetate",
+          "cas": "79-20-9"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -390.2,
+            "A1_K": -95.92,
+            "A2_K": -56.53,
+            "ARD_pct": 0.292,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.297,
+            "ARD_pct": 1.572,
+            "R2": 0.998
+          }
+        }
+      ]
+    },
+    "64-17-5|108-10-1": {
+      "source_no": 47,
+      "source_system": "EtOH-MIBK",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "MIBK",
+          "name": "methyl isobutyl ketone",
+          "cas": "108-10-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -328.7,
+            "A1_K": -62.78,
+            "A2_K": 6.86,
+            "ARD_pct": 0.394,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.076,
+            "ARD_pct": 1.195,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S15",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -324.4,
+            "A1_K": -106.6,
+            "A2_K": -41.0,
+            "ARD_pct": 0.191,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.06,
+            "ARD_pct": 2.131,
+            "R2": 0.994
+          }
+        },
+        {
+          "source_page": "S15",
+          "temperature_C": 45.0,
+          "temperature_K": 318.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -307.1,
+            "A1_K": -122.2,
+            "A2_K": -66.12,
+            "ARD_pct": 0.356,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.957,
+            "ARD_pct": 2.344,
+            "R2": 0.99
+          }
+        }
+      ]
+    },
+    "64-17-5|872-50-4": {
+      "source_no": 48,
+      "source_system": "EtOH-NMP",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "NMP",
+          "name": "N-methyl-2-pyrrolidone",
+          "cas": "872-50-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S15",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -120.9,
+            "A1_K": -84.3,
+            "A2_K": -110.3,
+            "ARD_pct": 0.246,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.474,
+            "ARD_pct": 1.796,
+            "R2": 0.983
+          }
+        }
+      ]
+    },
+    "64-17-5|110-86-1": {
+      "source_no": 49,
+      "source_system": "EtOH-Pyr",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "Pyr",
+          "name": "pyridine",
+          "cas": "110-86-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -88.22,
+            "A1_K": 88.66,
+            "A2_K": 95.84,
+            "ARD_pct": 0.23,
+            "R2": 0.998
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.296,
+            "ARD_pct": 1.319,
+            "R2": 0.946
+          }
+        }
+      ]
+    },
+    "64-17-5|108-32-7": {
+      "source_no": 50,
+      "source_system": "EtOH-PPC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        },
+        {
+          "role": 2,
+          "label": "PPC",
+          "name": "propylene carbonate",
+          "cas": "108-32-7"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -112.5,
+            "A1_K": 75.99,
+            "A2_K": 13.01,
+            "ARD_pct": 0.166,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.377,
+            "ARD_pct": 1.334,
+            "R2": 0.997
+          }
+        }
+      ]
+    },
+    "75-15-0|872-50-4": {
+      "source_no": 51,
+      "source_system": "CS2-NMP",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "CS2",
+          "name": "carbon disulfide",
+          "cas": "75-15-0"
+        },
+        {
+          "role": 2,
+          "label": "NMP",
+          "name": "N-methyl-2-pyrrolidone",
+          "cas": "872-50-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -24.86,
+            "A1_K": 19.61,
+            "A2_K": -144.0,
+            "ARD_pct": 0.455,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.144,
+            "ARD_pct": 1.282,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "107-21-1|75-12-7": {
+      "source_no": 52,
+      "source_system": "ETG-FA",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "ETG",
+          "name": "ethylene glycol",
+          "cas": "107-21-1"
+        },
+        {
+          "role": 2,
+          "label": "FA",
+          "name": "formamide",
+          "cas": "75-12-7"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 20.0,
+          "temperature_K": 293.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -70.53,
+            "A1_K": 21.19,
+            "A2_K": -9.72,
+            "ARD_pct": 0.088,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.241,
+            "ARD_pct": 0.363,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "111-27-3|112-49-2": {
+      "source_no": 53,
+      "source_system": "HeOH-triglyme",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "HeOH",
+          "name": "1-hexanol",
+          "cas": "111-27-3"
+        },
+        {
+          "role": 2,
+          "label": "triglyme",
+          "name": "triglyme",
+          "cas": "112-49-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 20.0,
+          "temperature_K": 293.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -475.2,
+            "A1_K": -263.0,
+            "A2_K": -140.0,
+            "ARD_pct": 0.486,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.606,
+            "ARD_pct": 4.907,
+            "R2": 0.967
+          }
+        }
+      ]
+    },
+    "110-54-3|67-64-1": {
+      "source_no": 54,
+      "source_system": "Hex-Ace",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "Ace",
+          "name": "acetone",
+          "cas": "67-64-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -70.43,
+            "A1_K": -19.83,
+            "A2_K": -65.38,
+            "ARD_pct": 0.062,
+            "R2": 0.998
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.246,
+            "ARD_pct": 0.428,
+            "R2": 0.942
+          }
+        }
+      ]
+    },
+    "110-54-3|100-66-3": {
+      "source_no": 55,
+      "source_system": "Hex-anisole",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "anisole",
+          "name": "anisole",
+          "cas": "100-66-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -192.0,
+            "A1_K": 4.18,
+            "A2_K": 28.36,
+            "ARD_pct": 0.221,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.623,
+            "ARD_pct": 0.304,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "110-54-3|123-86-4": {
+      "source_no": 56,
+      "source_system": "Hex-BuAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "BuAc",
+          "name": "n-butyl acetate",
+          "cas": "123-86-4"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -82.03,
+            "A1_K": 3.51,
+            "A2_K": -3.967,
+            "ARD_pct": 0.041,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.275,
+            "ARD_pct": 0.089,
+            "R2": 1.0
+          }
+        },
+        {
+          "source_page": "S16",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -39.41,
+            "A1_K": -14.47,
+            "A2_K": 5.774,
+            "ARD_pct": 0.117,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.128,
+            "ARD_pct": 0.307,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "110-54-3|108-94-1": {
+      "source_no": 57,
+      "source_system": "Hex-CHN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "CHN",
+          "name": "cyclohexanone",
+          "cas": "108-94-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S16",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -344.6,
+            "A1_K": 106.9,
+            "A2_K": -311.0,
+            "ARD_pct": 1.762,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -1.214,
+            "ARD_pct": 3.706,
+            "R2": 0.991
+          }
+        },
+        {
+          "source_page": "S16",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -274.3,
+            "A1_K": 67.85,
+            "A2_K": -60.38,
+            "ARD_pct": 0.117,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G12",
+            "G": -0.889,
+            "ARD_pct": 1.3,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "110-54-3|67-66-3": {
+      "source_no": 58,
+      "source_system": "Hex-CHCl3",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "CHCl3",
+          "name": "chloroform",
+          "cas": "67-66-3"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": 17.55,
+            "A1_K": 23.14,
+            "A2_K": 23.7,
+            "ARD_pct": 0.221,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": 0.08,
+            "ARD_pct": 0.556,
+            "R2": 0.998
+          }
+        }
+      ]
+    },
+    "110-54-3|470-82-6": {
+      "source_no": 59,
+      "source_system": "Hex-CIN",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "CIN",
+          "name": "1,8-cineole",
+          "cas": "470-82-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -238.7,
+            "A1_K": 74.13,
+            "A2_K": -59.2,
+            "ARD_pct": 0.309,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.792,
+            "ARD_pct": 1.341,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "110-54-3|616-38-6": {
+      "source_no": 60,
+      "source_system": "Hex-DMC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "DMC",
+          "name": "dimethyl carbonate",
+          "cas": "616-38-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -190.5,
+            "A1_K": -11.47,
+            "A2_K": -26.73,
+            "ARD_pct": 0.202,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.648,
+            "ARD_pct": 0.337,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "110-54-3|105-58-8": {
+      "source_no": 61,
+      "source_system": "Hex-DEC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "DEC",
+          "name": "diethyl carbonate",
+          "cas": "105-58-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -89.16,
+            "A1_K": -26.01,
+            "A2_K": 56.69,
+            "ARD_pct": 0.289,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.266,
+            "ARD_pct": 0.882,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "110-54-3|75-09-2": {
+      "source_no": 62,
+      "source_system": "Hex-DCM",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "DCM",
+          "name": "dichloromethane",
+          "cas": "75-09-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -59.92,
+            "A1_K": 49.3,
+            "A2_K": 12.47,
+            "ARD_pct": 0.11,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.211,
+            "ARD_pct": 0.772,
+            "R2": 0.987
+          }
+        }
+      ]
+    },
+    "110-54-3|141-78-6": {
+      "source_no": 63,
+      "source_system": "Hex-EtAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "EtAc",
+          "name": "ethyl acetate",
+          "cas": "141-78-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -106.5,
+            "A1_K": -12.18,
+            "A2_K": 13.82,
+            "ARD_pct": 0.183,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.36,
+            "ARD_pct": 0.324,
+            "R2": 0.998
+          }
+        },
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 2,
+          "jouyban_acree": {
+            "A0_K": -111.5,
+            "A1_K": -13.3,
+            "A2_K": 18.03,
+            "ARD_pct": 0.125,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.358,
+            "ARD_pct": 0.281,
+            "R2": 0.998
+          }
+        }
+      ]
+    },
+    "110-54-3|64-17-5": {
+      "source_no": 64,
+      "source_system": "Hex-EtOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -314.1,
+            "A1_K": -45.14,
+            "A2_K": -40.34,
+            "ARD_pct": 0.48,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -1.055,
+            "ARD_pct": 1.024,
+            "R2": 0.999
+          }
+        }
+      ]
+    },
+    "110-54-3|67-63-0": {
+      "source_no": 65,
+      "source_system": "Hex-2-PrOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "2-PrOH",
+          "name": "2-propanol",
+          "cas": "67-63-0"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -580.2,
+            "A1_K": 88.69,
+            "A2_K": -22.94,
+            "ARD_pct": 0.476,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -1.948,
+            "ARD_pct": 1.433,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S17",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -457.3,
+            "A1_K": -124.0,
+            "A2_K": -68.18,
+            "ARD_pct": 0.88,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -1.469,
+            "ARD_pct": 2.232,
+            "R2": 0.998
+          }
+        }
+      ]
+    },
+    "110-54-3|123-92-2": {
+      "source_no": 66,
+      "source_system": "Hex-iAAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "iAAc",
+          "name": "isoamyl acetate",
+          "cas": "123-92-2"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S17",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -97.97,
+            "A1_K": 46.93,
+            "A2_K": -49.54,
+            "ARD_pct": 0.447,
+            "R2": 0.998
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.339,
+            "ARD_pct": 1.125,
+            "R2": 0.995
+          }
+        },
+        {
+          "source_page": "S17",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -8.63,
+            "A1_K": -26.48,
+            "A2_K": 17.62,
+            "ARD_pct": 0.283,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.027,
+            "ARD_pct": 0.607,
+            "R2": 0.998
+          }
+        }
+      ]
+    },
+    "110-54-3|79-20-9": {
+      "source_no": 67,
+      "source_system": "Hex-MeAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "MeAc",
+          "name": "methyl acetate",
+          "cas": "79-20-9"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -117.2,
+            "A1_K": 11.64,
+            "A2_K": -13.28,
+            "ARD_pct": 0.076,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.396,
+            "ARD_pct": 0.216,
+            "R2": 0.999
+          }
+        },
+        {
+          "source_page": "S18",
+          "temperature_C": 35.0,
+          "temperature_K": 308.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -107.2,
+            "A1_K": 4.2,
+            "A2_K": -8.33,
+            "ARD_pct": 0.053,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.352,
+            "ARD_pct": 0.108,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "110-54-3|71-23-8": {
+      "source_no": 68,
+      "source_system": "Hex-1-PrOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "1-PrOH",
+          "name": "1-propanol",
+          "cas": "71-23-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -384.4,
+            "A1_K": -64.71,
+            "A2_K": 35.31,
+            "ARD_pct": 0.265,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -1.277,
+            "ARD_pct": 1.178,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "110-54-3|109-99-9": {
+      "source_no": 69,
+      "source_system": "Hex-THF",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hex",
+          "name": "n-hexane",
+          "cas": "110-54-3"
+        },
+        {
+          "role": 2,
+          "label": "THF",
+          "name": "tetrahydrofuran",
+          "cas": "109-99-9"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -58.49,
+            "A1_K": 8.73,
+            "A2_K": 21.7,
+            "ARD_pct": 0.081,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.19,
+            "ARD_pct": 0.232,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "142-82-5|67-64-1": {
+      "source_no": 70,
+      "source_system": "Hep-Ace",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "Ace",
+          "name": "acetone",
+          "cas": "67-64-1"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 22.5,
+          "temperature_K": 295.65,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -26.82,
+            "A1_K": 1.67,
+            "A2_K": -59.78,
+            "ARD_pct": 0.251,
+            "R2": 0.997
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.098,
+            "ARD_pct": 0.572,
+            "R2": 0.993
+          }
+        }
+      ]
+    },
+    "142-82-5|616-38-6": {
+      "source_no": 71,
+      "source_system": "Hep-DMC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "DMC",
+          "name": "dimethyl carbonate",
+          "cas": "616-38-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 20.0,
+          "temperature_K": 293.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -175.1,
+            "A1_K": 3.41,
+            "A2_K": -87.72,
+            "ARD_pct": 0.212,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.644,
+            "ARD_pct": 0.695,
+            "R2": 0.997
+          }
+        }
+      ]
+    },
+    "142-82-5|105-58-8": {
+      "source_no": 72,
+      "source_system": "Hep-DEC",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "DEC",
+          "name": "diethyl carbonate",
+          "cas": "105-58-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 20.0,
+          "temperature_K": 293.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -131.2,
+            "A1_K": -11.28,
+            "A2_K": -18.08,
+            "ARD_pct": 0.042,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.457,
+            "ARD_pct": 0.241,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "142-82-5|141-78-6": {
+      "source_no": 73,
+      "source_system": "Hep-EtAc",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "EtAc",
+          "name": "ethyl acetate",
+          "cas": "141-78-6"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -134.5,
+            "A1_K": 6.53,
+            "A2_K": -39.34,
+            "ARD_pct": 0.289,
+            "R2": 0.99
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.461,
+            "ARD_pct": 0.493,
+            "R2": 0.97
+          }
+        }
+      ]
+    },
+    "142-82-5|64-17-5": {
+      "source_no": 74,
+      "source_system": "Hep-EtOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "EtOH",
+          "name": "ethanol",
+          "cas": "64-17-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -287.6,
+            "A1_K": 5.23,
+            "A2_K": 35.07,
+            "ARD_pct": 0.542,
+            "R2": 0.999
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.949,
+            "ARD_pct": 0.603,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "142-82-5|71-23-8": {
+      "source_no": 75,
+      "source_system": "Hep-1-PrOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "1-PrOH",
+          "name": "1-propanol",
+          "cas": "71-23-8"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -412.6,
+            "A1_K": -5.25,
+            "A2_K": -5.08,
+            "ARD_pct": 0.165,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -1.385,
+            "ARD_pct": 0.221,
+            "R2": 1.0
+          }
+        }
+      ]
+    },
+    "142-82-5|67-63-0": {
+      "source_no": 76,
+      "source_system": "Hep-2-PrOH",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Hep",
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "role": 2,
+          "label": "2-PrOH",
+          "name": "2-propanol",
+          "cas": "67-63-0"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -522.9,
+            "A1_K": 146.7,
+            "A2_K": -81.63,
+            "ARD_pct": 0.44,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -1.756,
+            "ARD_pct": 2.612,
+            "R2": 0.997
+          }
+        }
+      ]
+    },
+    "1330-20-7|67-68-5": {
+      "source_no": 77,
+      "source_system": "Xylene-DMSO",
+      "component_order": "PDF Table S3 Component (1)-(2); key is CAS1|CAS2 in this order",
+      "components": [
+        {
+          "role": 1,
+          "label": "Xylene",
+          "name": "xylene (mixed isomers)",
+          "cas": "1330-20-7"
+        },
+        {
+          "role": 2,
+          "label": "DMSO",
+          "name": "dimethyl sulfoxide",
+          "cas": "67-68-5"
+        }
+      ],
+      "entries": [
+        {
+          "source_page": "S18",
+          "temperature_C": 25.0,
+          "temperature_K": 298.15,
+          "entry_index_at_same_temperature": 1,
+          "jouyban_acree": {
+            "A0_K": -33.13,
+            "A1_K": -7.39,
+            "A2_K": -8.81,
+            "ARD_pct": 0.01,
+            "R2": 1.0
+          },
+          "grunberg_nissan": {
+            "parameter_symbol_in_table": "G22",
+            "G": -0.113,
+            "ARD_pct": 0.138,
+            "R2": 1.0
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "note": "Rows are component i and columns are component j. Self-interactions (i == j) are omitted.",
+  "units": "tau_ij = a_ij + b_ij / T_K; c is NRTL alpha and is treated as pair-symmetric by taking the maximum directional c.",
+  "source": "User-supplied NRTL temperature-dependent matrix",
+  "disabled_pairs": [
+    {
+      "components": ["Benzene", "Chloroform"],
+      "reason": "Older ChemSep/DECHEMA energy-form NRTL record matches UNIQUAC and benzene/chloroform Txy better than this supplemental tau-form row."
+    },
+    {
+      "components": ["p-Xylene", "Chloroform"],
+      "reason": "Large deviation from UNIFNIST and structural similarity to benzene/chloroform."
+    },
+    {
+      "components": ["Benzene", "Water"],
+      "reason": "Replaced by J. Chem. Eng. Data 2003 water/aromatic solubility regression."
+    },
+    {
+      "components": ["p-Xylene", "Water"],
+      "reason": "Replaced by J. Chem. Eng. Data 2003 water/aromatic solubility regression."
+    },
+    {
+      "components": ["Toluene", "Water"],
+      "reason": "Replaced by J. Chem. Eng. Data 2003 water/aromatic solubility regression."
+    }
+  ],
+  "components": ["Methanol", "Ethanol", "Benzene", "p-Xylene", "Toluene", "Chloroform", "Water", "Acetone"],
+  "nrtl_parameters": {
+    "Methanol": {
+      "Ethanol": {"a": 4.712, "b": -1162.3, "c": 0.3},
+      "Benzene": {"a": -1.709, "b": 892.2, "c": 0.4},
+      "p-Xylene": {"a": 0.678, "b": 295.5, "c": 0.5},
+      "Toluene": {"a": 0.0, "b": 371.1, "c": 0.3},
+      "Chloroform": {"a": 0.0, "b": -71.9, "c": 0.3},
+      "Water": {"a": -0.693, "b": 173.0, "c": 0.3},
+      "Acetone": {"a": 0.0, "b": 114.1, "c": 0.3}
+    },
+    "Ethanol": {
+      "Methanol": {"a": -2.313, "b": 483.8, "c": 0.0},
+      "Benzene": {"a": 0.569, "b": -54.8, "c": 0.3},
+      "p-Xylene": {"a": 4.075, "b": -1202.4, "c": 0.3},
+      "Toluene": {"a": 1.146, "b": -113.5, "c": 0.3},
+      "Chloroform": {"a": 0.0, "b": -148.9, "c": 0.3},
+      "Water": {"a": -0.801, "b": 246.2, "c": 0.3},
+      "Acetone": {"a": -1.079, "b": 479.1, "c": 0.3}
+    },
+    "Benzene": {
+      "Methanol": {"a": 11.58, "b": -3282.6, "c": 0.0},
+      "Ethanol": {"a": -0.916, "b": 882.0, "c": 0.0},
+      "p-Xylene": {"a": 0.0, "b": 122.7, "c": 0.3},
+      "Toluene": {"a": -2.885, "b": 1124.0, "c": 0.3},
+      "Chloroform": {"a": 0.0, "b": -375.4, "c": 0.5},
+      "Water": {"a": 45.191, "b": 591.4, "c": 0.2},
+      "Acetone": {"a": 0.422, "b": -239.9, "c": 0.3}
+    },
+    "p-Xylene": {
+      "Methanol": {"a": -3.259, "b": 1677.6, "c": 0.0},
+      "Ethanol": {"a": -5.639, "b": 2504.2, "c": 0.0},
+      "Benzene": {"a": 0.0, "b": -136.5, "c": 0.0},
+      "Toluene": {"a": 0.0, "b": 75.9, "c": 0.3},
+      "Chloroform": {"a": 0.0, "b": -17.7, "c": 0.3},
+      "Water": {"a": 2.773, "b": 296.7, "c": 0.2},
+      "Acetone": {"a": 0.0, "b": 173.6, "c": 0.3}
+    },
+    "Toluene": {
+      "Methanol": {"a": 0.0, "b": 446.9, "c": 0.0},
+      "Ethanol": {"a": -1.722, "b": 992.7, "c": 0.0},
+      "Benzene": {"a": 2.191, "b": -863.7, "c": 0.0},
+      "p-Xylene": {"a": 0.0, "b": -91.1, "c": 0.0},
+      "Chloroform": {"a": 0.0, "b": -57.0, "c": 0.3},
+      "Water": {"a": -247.879, "b": 14759.8, "c": 0.2},
+      "Acetone": {"a": -1.285, "b": 630.1, "c": 0.3}
+    },
+    "Chloroform": {
+      "Methanol": {"a": 0.0, "b": 690.1, "c": 0.0},
+      "Ethanol": {"a": 0.0, "b": 690.3, "c": 0.0},
+      "Benzene": {"a": 0.0, "b": 313.0, "c": 0.0},
+      "p-Xylene": {"a": 0.0, "b": -120.2, "c": 0.0},
+      "Toluene": {"a": 0.0, "b": -25.2, "c": 0.0},
+      "Water": {"a": -7.352, "b": 3240.7, "c": 0.2},
+      "Acetone": {"a": 0.538, "b": -106.4, "c": 0.3}
+    },
+    "Water": {
+      "Methanol": {"a": 2.732, "b": -617.3, "c": 0.0},
+      "Ethanol": {"a": 3.458, "b": -586.1, "c": 0.0},
+      "Benzene": {"a": 140.087, "b": -5954.3, "c": 0.0},
+      "p-Xylene": {"a": 162.477, "b": -6046.0, "c": 0.0},
+      "Toluene": {"a": 627.053, "b": -27269.4, "c": 0.0},
+      "Chloroform": {"a": 8.844, "b": -1140.1, "c": 0.0},
+      "Acetone": {"a": 0.054, "b": 420.0, "c": 0.3}
+    },
+    "Acetone": {
+      "Methanol": {"a": 0.0, "b": 101.9, "c": 0.0},
+      "Ethanol": {"a": -0.347, "b": 206.6, "c": 0.0},
+      "Benzene": {"a": -0.102, "b": 306.1, "c": 0.0},
+      "p-Xylene": {"a": 0.0, "b": 83.2, "c": 0.0},
+      "Toluene": {"a": 1.203, "b": -400.5, "c": 0.0},
+      "Chloroform": {"a": 0.965, "b": -590.0, "c": 0.0},
+      "Water": {"a": 6.398, "b": -1809.0, "c": 0.0}
+    }
+  }
+}

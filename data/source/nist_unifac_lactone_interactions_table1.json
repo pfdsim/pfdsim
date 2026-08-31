@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "table": "Table 1",
+    "title": "Group binary interaction parameters of the NIST-UNIFAC method regressed in this work.",
+    "source_citation": {
+      "authors": [
+        "Carlos E.S. Dantas",
+        "Roberta Ceriani"
+      ],
+      "title": "NIST-UNIFAC parametrization for phase equilibrium calculation of mixtures containing lactones",
+      "journal": "Fluid Phase Equilibria",
+      "volume": "565",
+      "year": 2023,
+      "article_number": "113673",
+      "issn": "0378-3812",
+      "doi": "10.1016/j.fluid.2022.113673",
+      "url": "https://doi.org/10.1016/j.fluid.2022.113673"
+    },
+    "source_status": "User-provided transcription of Table 1 from the cited paper.",
+    "model": "NIST-UNIFAC",
+    "interaction_equation": "delta_u_mn = a1_mn + a2_mn*T + a3_mn*T^2",
+    "temperature_unit": "K",
+    "coefficient_units": {
+      "a1": "K",
+      "a2": "dimensionless",
+      "a3": "K^-1"
+    },
+    "runtime_status": "Source-only; not connected to pfdsim runtime parameter loading.",
+    "column_interpretation": "Each source row contains the m->n coefficient triplet followed by the n->m coefficient triplet.",
+    "footnotes": {
+      "a": "Main group number and name according to NIST-UNIFAC original work [19].",
+      "b": "Minimal and maximal temperatures of the systems in which the group interaction parameters were used. The absence of Tmax means data are all at the same temperature (Tmin).",
+      "c": "Present in the original NIST-UNIFAC paper but updated based on new data.",
+      "d": "Present in the original NIST-UNIFAC paper and retained."
+    },
+    "notes": [
+      "A source dash in Tmax is represented as null and temperature_basis is set to single_temperature_at_Tmin."
+    ]
+  },
+  "fixed_main_group": {
+    "number": 63,
+    "name": "Lactone"
+  },
+  "interactions": [
+    {
+      "m": 1,
+      "m_name": "CH2",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 2500.0, "a2": -4.54957, "a3": 0.0005866, "markers": []},
+      "n_to_m": {"a1": 1690.251, "a2": -8.83803, "a3": 0.009, "markers": []},
+      "Tmin_K": 288.15,
+      "Tmax_K": 480.2,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 3,
+      "m_name": "ACH",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 1174.903, "a2": -2.42211, "a3": 0.0, "markers": ["c"]},
+      "n_to_m": {"a1": -1009.548, "a2": 2.17462, "a3": 0.0, "markers": ["c"]},
+      "Tmin_K": 298.15,
+      "Tmax_K": 480.2,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 4,
+      "m_name": "ACCH2",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 1284.394, "a2": -3.00556, "a3": 0.0, "markers": ["c"]},
+      "n_to_m": {"a1": 3637.702, "a2": 4.27583, "a3": 0.0, "markers": ["c"]},
+      "Tmin_K": 298.15,
+      "Tmax_K": 480.2,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 5,
+      "m_name": "OH",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": -7.81, "a2": -1.03362, "a3": 0.0007836, "markers": []},
+      "n_to_m": {"a1": -19.753, "a2": 0.85939, "a3": 0.0008124, "markers": []},
+      "Tmin_K": 298.15,
+      "Tmax_K": 390.0,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 7,
+      "m_name": "H2O",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 39.18, "a2": 0.82729, "a3": 0.0, "markers": ["c"]},
+      "n_to_m": {"a1": -368.65, "a2": -0.44544, "a3": 0.0, "markers": ["c"]},
+      "Tmin_K": 283.15,
+      "Tmax_K": 480.2,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 9,
+      "m_name": "CH2CO",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 165.0, "a2": 10.0, "a3": 0.0, "markers": []},
+      "n_to_m": {"a1": -275.0, "a2": -0.58432, "a3": 0.0, "markers": []},
+      "Tmin_K": 298.15,
+      "Tmax_K": 530.9,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 10,
+      "m_name": "CHO",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": -581.489, "a2": 0.0, "a3": 0.0, "markers": []},
+      "n_to_m": {"a1": 1250.0, "a2": 0.0, "a3": 0.0, "markers": []},
+      "Tmin_K": 298.15,
+      "Tmax_K": null,
+      "temperature_basis": "single_temperature_at_Tmin"
+    },
+    {
+      "m": 11,
+      "m_name": "CCOO",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 3924.41, "a2": -0.256, "a3": 0.0, "markers": []},
+      "n_to_m": {"a1": -477.097, "a2": -0.676, "a3": 0.0, "markers": []},
+      "Tmin_K": 298.15,
+      "Tmax_K": 419.9,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 13,
+      "m_name": "CH2O",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 1.655, "a2": 0.0, "a3": 0.0, "markers": []},
+      "n_to_m": {"a1": 0.804, "a2": 0.0, "a3": 0.0, "markers": []},
+      "Tmin_K": 283.15,
+      "Tmax_K": 303.15,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 20,
+      "m_name": "COOH",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 12.516, "a2": 0.0, "a3": 0.0, "markers": []},
+      "n_to_m": {"a1": -98.354, "a2": 0.0, "a3": 0.0, "markers": []},
+      "Tmin_K": 298.15,
+      "Tmax_K": null,
+      "temperature_basis": "single_temperature_at_Tmin"
+    },
+    {
+      "m": 42,
+      "m_name": "c-CH2",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": -691.82, "a2": 7.72858, "a3": 0.0082567, "markers": ["d"]},
+      "n_to_m": {"a1": 1422.27, "a2": -9.50902, "a3": 0.009, "markers": ["d"]},
+      "Tmin_K": 288.15,
+      "Tmax_K": 480.2,
+      "temperature_basis": "range"
+    },
+    {
+      "m": 43,
+      "m_name": "c-CH2O",
+      "n": 63,
+      "n_name": "Lactone",
+      "m_to_n": {"a1": 1077.55, "a2": -4.68696, "a3": 0.006619, "markers": ["d"]},
+      "n_to_m": {"a1": 363.77, "a2": 22.4532, "a3": 0.00945, "markers": ["d"]},
+      "Tmin_K": 318.85,
+      "Tmax_K": 480.2,
+      "temperature_basis": "range"
+    }
+  ]
+}

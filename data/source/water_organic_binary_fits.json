@@ -1,0 +1,975 @@
+{
+  "schema_version": "1.0",
+  "description": "Consolidated water + hydrophobic-solvent binary NRTL and UNIQUAC regressions for PFDSim.",
+  "component_order_convention": {
+    "component1": "Water",
+    "component2": "Organic solvent",
+    "nrtl_tau12": "interaction from component 1 (water) toward component 2 under PFDSim convention",
+    "nrtl_tau21": "reverse interaction under PFDSim convention"
+  },
+  "model_forms": {
+    "nrtl": {
+      "Tref_K": 298.15,
+      "equation": "tau_ij = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref))",
+      "alpha_default": 0.3,
+      "complexity_policy": "Set e_ij to zero unless broad-temperature data and validation justify the additional curvature."
+    },
+    "uniquac": {
+      "equation": "tau_ij = exp(a_ij + b_ij/T + c_ij*T)",
+      "model_variant": "standard_uniquac",
+      "use_q_prime": false,
+      "complexity_policy": "Set c_ij to zero unless supported by temperature-dependent data and validation."
+    }
+  },
+  "fit_philosophy": {
+    "source_balanced": true,
+    "notes": [
+      "Dense evaluated/smoothed curves are treated as source-level information rather than allowing point count alone to dominate.",
+      "Author-rejected, superseded, duplicate, or literature-derived non-independent points are excluded or downweighted.",
+      "LLE residuals use composition-sensitive scaling appropriate for dilute branches.",
+      "Where available, VLE/VLLE pressure, vapor composition, Henry/infinite-dilution data, and excess enthalpy are used for validation or moderate thermodynamic-derivative constraints.",
+      "Extra temperature coefficients are retained only when they materially improve multi-source predictive performance without pathological parameter growth."
+    ]
+  },
+  "pairs": [
+    {
+      "pair_id": "water_cyclohexane",
+      "cas1": "7732-18-5",
+      "cas2": "110-82-7",
+      "component1": "Water",
+      "component2": "Cyclohexane",
+      "fit_status": "final_standardized",
+      "temperature_range_K": {
+        "Tmin": 283.0,
+        "Tmax": 473.15
+      },
+      "provenance": [
+        {
+          "reference": "Tsonopoulos, C.; Wilson, G. M. AIChE J. 1983, 29, 990-999.",
+          "doi": "10.1002/aic.690290618",
+          "role": "primary broad-temperature mutual-solubility and three-phase-pressure backbone",
+          "data_used": [
+            "cyclohexane-in-water LLE",
+            "water-in-cyclohexane LLE"
+          ],
+          "validation_data": [
+            "three-phase pressure"
+          ],
+          "quality": "high",
+          "notes": "Author-marked rejected solubility points excluded."
+        },
+        {
+          "reference": "Marche, C.; Ferronato, C.; de Hemptinne, J.-C.; Jose, J. J. Chem. Eng. Data 2006, 51, 355-359.",
+          "doi": "10.1021/je0502041",
+          "role": "modern organic-rich branch",
+          "data_used": [
+            "water-in-cyclohexane LLE"
+          ],
+          "quality": "high"
+        },
+        {
+          "reference": "Pereda et al. Fluid Phase Equilib. 2009.",
+          "doi": "10.1016/j.fluid.2008.09.008",
+          "role": "modern aqueous branch",
+          "data_used": [
+            "cyclohexane-in-water LLE"
+          ],
+          "quality": "high"
+        },
+        {
+          "reference": "Khudaida, S. H.; Tiwikrama, A. H.; Lee, M.-J. J. Taiwan Inst. Chem. Eng. 2023, 147, 104922.",
+          "doi": "10.1016/j.jtice.2023.104922",
+          "role": "modern VLLE validation and organic-rich constraint",
+          "data_used": [
+            "water-in-cyclohexane organic-rich VLLE composition"
+          ],
+          "validation_data": [
+            "three-phase pressure",
+            "vapor composition"
+          ],
+          "quality": "high",
+          "notes": "Aqueous hydrocarbon compositions were literature-derived/smoothed and were not double-counted as independent measurements."
+        },
+        {
+          "reference": "IUPAC/NIST Solubility Data Series and selected low-temperature literature",
+          "role": "low-temperature anchoring and consistency check",
+          "quality": "moderate_to_high"
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "LLE"
+        ],
+        "withheld_or_independent_validation": [
+          "Tsonopoulos P3",
+          "Khudaida pressure",
+          "Khudaida vapor composition"
+        ],
+        "complexity_selection": {
+          "nrtl": "full six-term retained",
+          "uniquac": "native a+b/T+cT retained",
+          "reason": "Broad ~190 K span and real curvature justify temperature flexibility; NRTL gives a clearly better aqueous-branch fit."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": 6.39516595,
+          "tau12_d": 1226.28753,
+          "tau12_e": -25.1370461,
+          "tau21_c": -2.68576395,
+          "tau21_d": 2961.81676,
+          "tau21_e": -15.1028731
+        },
+        "fit_and_validation": {
+          "aqueous_LLE_AARD_percent": 5.63,
+          "organic_LLE_AARD_percent": 17.0,
+          "tsonopoulos_P3_AARD_percent": 2.34,
+          "khudaida_P_AARD_percent": 2.1,
+          "khudaida_hydrocarbon_vapor_MAAD_mole_fraction": 0.0958
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "cyclohexane": {
+            "r": 4.0464,
+            "q": 3.24
+          }
+        },
+        "parameters": {
+          "tau12_a": -3.15782228,
+          "tau12_b": 20.7742487,
+          "tau12_c": 0.00425294628,
+          "tau21_a": -4.05659996,
+          "tau21_b": -1111.0041,
+          "tau21_c": 0.0116093247
+        },
+        "fit_and_validation": {
+          "aqueous_LLE_AARD_percent": 8.39,
+          "organic_LLE_AARD_percent": 17.62,
+          "tsonopoulos_P3_AARD_percent": 2.47,
+          "khudaida_P_AARD_percent": 2.13,
+          "khudaida_hydrocarbon_vapor_MAAD_mole_fraction": 0.0959
+        }
+      },
+      "assessment": {
+        "preferred_model": "NRTL",
+        "confidence": "high for broad process use; organic-rich branch limited by inter-source inconsistency",
+        "vapor_note": "Systematic vapor-composition discrepancy persists almost unchanged in NRTL and UNIQUAC."
+      }
+    },
+    {
+      "pair_id": "water_n_hexane",
+      "cas1": "7732-18-5",
+      "cas2": "110-54-3",
+      "component1": "Water",
+      "component2": "n-Hexane",
+      "fit_status": "final_standardized",
+      "temperature_range_K": {
+        "Tmin": 273.15,
+        "Tmax": 473.15
+      },
+      "provenance": [
+        {
+          "reference": "Polak, J.; Lu, B. C.-Y. Can. J. Chem. 1973, 51, 4018.",
+          "doi": "10.1139/v73-599",
+          "role": "low-temperature mutual-solubility anchors",
+          "data_used": [
+            "n-hexane-in-water LLE",
+            "water-in-n-hexane LLE"
+          ],
+          "quality": "high"
+        },
+        {
+          "reference": "Morgado et al. Fluid Phase Equilib. 2020, 503, 112322.",
+          "doi": "10.1016/j.fluid.2019.112322",
+          "role": "modern low-temperature organic-rich branch",
+          "data_used": [
+            "water-in-n-hexane LLE"
+          ],
+          "quality": "very_high"
+        },
+        {
+          "reference": "Pereda et al. Fluid Phase Equilib. 2009.",
+          "doi": "10.1016/j.fluid.2008.09.008",
+          "role": "modern aqueous branch",
+          "data_used": [
+            "n-hexane-in-water LLE"
+          ],
+          "quality": "high"
+        },
+        {
+          "reference": "Razzouk et al. J. Chem. Eng. Data 2010.",
+          "doi": "10.1021/je900295u",
+          "role": "corrected low-temperature mutual-solubility data",
+          "data_used": [
+            "n-hexane-in-water LLE",
+            "water-in-n-hexane LLE"
+          ],
+          "quality": "high",
+          "notes": "Corrected 2010 measurements used; superseded erroneous 2004 dataset excluded."
+        },
+        {
+          "reference": "Tsonopoulos, C.; Wilson, G. M. AIChE J. 1983, 29, 990-999.",
+          "doi": "10.1002/aic.690290618",
+          "role": "high-temperature mutual-solubility backbone",
+          "data_used": [
+            "n-hexane-in-water LLE",
+            "water-in-n-hexane LLE"
+          ],
+          "validation_data": [
+            "three-phase pressure"
+          ],
+          "quality": "high",
+          "notes": "Author-rejected aqueous points excluded."
+        },
+        {
+          "reference": "Khudaida, S. H.; Tiwikrama, A. H.; Lee, M.-J. J. Taiwan Inst. Chem. Eng. 2023, 147, 104922.",
+          "doi": "10.1016/j.jtice.2023.104922",
+          "role": "modern VLLE organic branch and validation",
+          "data_used": [
+            "water-in-n-hexane organic-rich VLLE composition"
+          ],
+          "validation_data": [
+            "three-phase pressure",
+            "vapor composition"
+          ],
+          "quality": "high",
+          "notes": "Aqueous values were literature-derived/smoothed and not double-counted."
+        },
+        {
+          "reference": "IUPAC/NIST Solubility Data Series",
+          "role": "room-temperature external validation",
+          "quality": "evaluated"
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "LLE"
+        ],
+        "withheld_or_independent_validation": [
+          "Tsonopoulos P3",
+          "Khudaida pressure",
+          "Khudaida vapor composition",
+          "IUPAC/NIST 298 K evaluation"
+        ],
+        "complexity_selection": {
+          "nrtl": "full six-term retained",
+          "uniquac": "native a+b/T+cT retained",
+          "reason": "Large temperature span captures a low-temperature solubility minimum followed by a strong high-temperature rise."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": 11.26238462,
+          "tau12_d": 232.67075634,
+          "tau12_e": -47.48429675,
+          "tau21_c": -4.85542754,
+          "tau21_d": 3670.40075578,
+          "tau21_e": -7.51657121
+        },
+        "fit_and_validation": {
+          "aqueous_LLE_AARD_percent": 7.95,
+          "organic_LLE_AARD_percent": 10.68,
+          "tsonopoulos_P3_AARD_percent": 3.4,
+          "khudaida_P_AARD_percent": 4.19,
+          "khudaida_hydrocarbon_vapor_MAAD_mole_fraction": 0.0467
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "n_hexane": {
+            "r": 4.4998,
+            "q": 3.856
+          }
+        },
+        "parameters": {
+          "tau12_a": -9.7009235,
+          "tau12_b": 1181.88008,
+          "tau12_c": 0.0127981631,
+          "tau21_a": 3.40439264,
+          "tau21_b": -2582.74738,
+          "tau21_c": 0.00231697663
+        },
+        "fit_and_validation": {
+          "aqueous_LLE_AARD_percent": 9.76,
+          "organic_LLE_AARD_percent": 10.46,
+          "tsonopoulos_P3_AARD_percent": 3.8,
+          "khudaida_P_AARD_percent": 4.23,
+          "khudaida_hydrocarbon_vapor_MAAD_mole_fraction": 0.0468
+        }
+      },
+      "assessment": {
+        "preferred_model": "NRTL",
+        "confidence": "high",
+        "vapor_note": "Vapor discrepancy is systematic and nearly model-independent."
+      }
+    },
+    {
+      "pair_id": "water_dichloromethane",
+      "cas1": "7732-18-5",
+      "cas2": "75-09-2",
+      "component1": "Water",
+      "component2": "Dichloromethane",
+      "fit_status": "final_conservative",
+      "temperature_range_K": {
+        "Tmin": 253.15,
+        "Tmax": 313.15,
+        "aqueous_branch_primary_range": [
+          273.15,
+          308.15
+        ],
+        "organic_branch_primary_range": [
+          253.15,
+          313.15
+        ]
+      },
+      "provenance": [
+        {
+          "reference": "IUPAC/NIST Solubility Data Series, Vol. 60, Dichloromethane + Water critical evaluation (system 60_242).",
+          "role": "primary regression basis for both LLE branches",
+          "quality": "critically_evaluated",
+          "notes": "Evaluation considers at least 32 groups for dichloromethane-in-water and 19 laboratories for water-in-dichloromethane, with identified outliers rejected."
+        },
+        {
+          "reference": "Atmospheric dichloromethane-water heteroazeotrope literature compilation",
+          "role": "independent process-level validation",
+          "experimental_heteroazeotrope": {
+            "temperature_K": 311.25,
+            "temperature_C": 38.1,
+            "approx_water_mass_fraction": 0.015
+          }
+        },
+        {
+          "reference": "Leighton, D. T.; Calo, J. M. J. Chem. Eng. Data 1981, 26, 382-385.",
+          "role": "available independent aqueous partition/Henry evidence",
+          "fit_use": "not assigned independent weight in the retained fit statistics"
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "critically evaluated LLE branches"
+        ],
+        "validation": [
+          "atmospheric heteroazeotrope"
+        ],
+        "complexity_selection": {
+          "nrtl": "c+d/T retained; e12=e21=0",
+          "uniquac": "exp(a+b/T) retained; c12=c21=0",
+          "reason": "Additional curvature produced negligible predictive benefit over the supported range."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": 5.42009361,
+          "tau12_d": -275.038735,
+          "tau12_e": 0.0,
+          "tau21_c": -4.38406453,
+          "tau21_d": 2448.830846,
+          "tau21_e": 0.0
+        },
+        "fit_and_validation": {
+          "organic_in_water_LLE_AARD_percent": 2.92,
+          "water_in_organic_LLE_AARD_percent": 0.57,
+          "heteroazeotrope_temperature_predicted_K": 311.32,
+          "heteroazeotrope_temperature_experimental_K": 311.25,
+          "heteroazeotrope_y_DCM_predicted": 0.9341,
+          "heteroazeotrope_y_DCM_reference_approx": 0.933
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "dichloromethane": {
+            "r": 2.2564,
+            "q": 1.988
+          }
+        },
+        "parameters": {
+          "tau12_a": -2.59569476,
+          "tau12_b": 380.964782,
+          "tau12_c": 0.0,
+          "tau21_a": 4.15075532,
+          "tau21_b": -1954.579178,
+          "tau21_c": 0.0
+        },
+        "fit_and_validation": {
+          "organic_in_water_LLE_AARD_percent": 2.82,
+          "water_in_organic_LLE_AARD_percent": 0.29,
+          "heteroazeotrope_temperature_error_K": 0.079
+        }
+      },
+      "assessment": {
+        "preferred_model": "UNIQUAC by a negligible numerical margin",
+        "confidence": "high over the evaluated temperature ranges",
+        "important_note": "No evidence that extra temperature curvature is needed."
+      }
+    },
+    {
+      "pair_id": "water_chloroform",
+      "cas1": "7732-18-5",
+      "cas2": "67-66-3",
+      "component1": "Water",
+      "component2": "Chloroform",
+      "fit_status": "final_conservative",
+      "temperature_range_K": {
+        "Tmin": 263.15,
+        "Tmax": 333.15,
+        "aqueous_branch_primary_range": [
+          273.15,
+          333.15
+        ],
+        "organic_branch_primary_range": [
+          263.15,
+          323.15
+        ],
+        "VLLE_validation_temperature_K": 328.95
+      },
+      "provenance": [
+        {
+          "reference": "IUPAC/NIST Solubility Data Series, Vol. 60, Chloroform + Water critical evaluation (system 60_146).",
+          "role": "primary LLE regression basis",
+          "quality": "critically_evaluated",
+          "notes": "Multi-laboratory evaluated aqueous and organic-rich solubility branches; aqueous chloroform shows a shallow minimum near 318 K."
+        },
+        {
+          "reference": "Hu, H.-S. Fluid Phase Equilib. 2010, 289, 80-89.",
+          "doi": "10.1016/j.fluid.2009.11.006",
+          "role": "independent 101.3 kPa VLE/VLLE validation",
+          "experimental_heteroazeotrope": {
+            "temperature_K": 328.95,
+            "temperature_C": 55.8,
+            "y_chloroform": 0.856
+          },
+          "notes": "Hu's organic-rich liquid endpoint near the heteroazeotrope is lower in water than the historical NIST trend, exposing real inter-source tension."
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "critically evaluated LLE branches"
+        ],
+        "validation": [
+          "Hu 101.3 kPa VLLE temperature, vapor composition, and liquid endpoints"
+        ],
+        "complexity_selection": {
+          "nrtl": "c+d/T retained; e12=e21=0",
+          "uniquac": "exp(a+b/T) retained; c12=c21=0",
+          "rejected_full_nrtl_behavior": {
+            "approx_e12": -13.6,
+            "approx_e21": 53.3
+          },
+          "reason": "Full forms sharply lower training residuals but chase inconsistent high-temperature liquid-endpoint data and are weakly identified."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": 6.1067819,
+          "tau12_d": -158.687099,
+          "tau12_e": 0.0,
+          "tau21_c": -4.12722444,
+          "tau21_d": 2529.390577,
+          "tau21_e": 0.0
+        },
+        "fit_and_validation": {
+          "organic_in_water_LLE_AARD_percent": 2.61,
+          "water_in_organic_LLE_AARD_percent": 9.65,
+          "heteroazeotrope_temperature_predicted_K": 329.39,
+          "heteroazeotrope_temperature_experimental_K": 328.95,
+          "heteroazeotrope_y_chloroform_predicted": 0.8351,
+          "heteroazeotrope_y_chloroform_experimental": 0.856
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "chloroform": {
+            "r": 2.87,
+            "q": 2.41
+          }
+        },
+        "parameters": {
+          "tau12_a": -2.17327415,
+          "tau12_b": 297.727891,
+          "tau12_c": 0.0,
+          "tau21_a": 4.04498984,
+          "tau21_b": -2019.912438,
+          "tau21_c": 0.0
+        },
+        "fit_and_validation": {
+          "organic_in_water_LLE_AARD_percent": 2.12,
+          "water_in_organic_LLE_AARD_percent": 9.3,
+          "heteroazeotrope_temperature_error_K": 0.452
+        }
+      },
+      "assessment": {
+        "preferred_model": "UNIQUAC by a small numerical margin",
+        "confidence": "moderate_to_high",
+        "important_note": "Organic-rich LLE near 320-330 K has genuine source inconsistency; conservative temperature dependence is preferred."
+      }
+    },
+    {
+      "pair_id": "water_carbon_tetrachloride",
+      "cas1": "7732-18-5",
+      "cas2": "56-23-5",
+      "component1": "Water",
+      "component2": "Carbon tetrachloride",
+      "fit_status": "final_conservative",
+      "temperature_range_K": {
+        "Tmin": 273.15,
+        "Tmax": 339.15,
+        "primary_high_confidence_range": [
+          283.15,
+          308.15
+        ],
+        "high_temperature_extension_confidence": "moderate_to_low"
+      },
+      "provenance": [
+        {
+          "reference": "IUPAC/NIST Solubility Data Series, Vol. 60, Carbon tetrachloride + Water critical evaluation (system 60_23).",
+          "role": "primary low-temperature LLE regression basis",
+          "quality": "critically_evaluated",
+          "notes": "CCl4-in-water data above about 308 K are classified as doubtful; high-temperature water-in-CCl4 data above 323 K come from only two investigators."
+        },
+        {
+          "reference": "Wu, X. Huaxue Shiji 1981, 221-224.",
+          "role": "high-temperature water-in-CCl4 extension",
+          "weight": "reduced",
+          "notes": "Used at reduced weight because NIST identifies Wu as one of the better high-temperature organic-phase sources, but the high-temperature evidence remains sparse."
+        },
+        {
+          "reference": "Atmospheric carbon-tetrachloride/water heteroazeotrope literature",
+          "role": "independent process-level validation",
+          "experimental_heteroazeotrope": {
+            "temperature_K": 339.15,
+            "temperature_C": 66.0,
+            "water_mass_fraction_approx": 0.041
+          }
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "critically evaluated low-temperature LLE",
+          "downweighted high-temperature organic-rich LLE"
+        ],
+        "validation": [
+          "atmospheric heteroazeotrope"
+        ],
+        "complexity_selection": {
+          "nrtl": "c+d/T retained; e12=e21=0",
+          "uniquac": "exp(a+b/T) retained; c12=c21=0",
+          "reason": "Sparse and partially doubtful high-temperature data do not justify extra curvature."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": 7.84191768,
+          "tau12_d": 141.884293,
+          "tau12_e": 0.0,
+          "tau21_c": -3.24899904,
+          "tau21_d": 2887.045158,
+          "tau21_e": 0.0
+        },
+        "fit_and_validation": {
+          "organic_in_water_LLE_AARD_percent": 4.29,
+          "water_in_organic_low_T_LLE_AARD_percent": 3.88,
+          "wu_high_T_water_in_organic_AARD_percent": 5.39,
+          "heteroazeotrope_temperature_predicted_K": 340.02,
+          "heteroazeotrope_temperature_experimental_K": 339.15,
+          "heteroazeotrope_y_CCl4_predicted": 0.7315,
+          "heteroazeotrope_y_CCl4_reference_approx": 0.7326
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "carbon_tetrachloride": {
+            "r": 3.39,
+            "q": 2.91
+          }
+        },
+        "parameters": {
+          "tau12_a": -2.0707167,
+          "tau12_b": 120.385888,
+          "tau12_c": 0.0,
+          "tau21_a": 3.22584259,
+          "tau21_b": -2151.70094,
+          "tau21_c": 0.0
+        },
+        "fit_and_validation": {
+          "organic_in_water_LLE_AARD_percent": 4.15,
+          "water_in_organic_low_T_LLE_AARD_percent": 3.56,
+          "wu_high_T_water_in_organic_AARD_percent": 5.1,
+          "heteroazeotrope_temperature_error_K": 0.871
+        }
+      },
+      "assessment": {
+        "preferred_model": "UNIQUAC by a negligible numerical margin",
+        "confidence": "high near 283-308 K; moderate toward the atmospheric heteroazeotrope",
+        "important_note": "Do not infer broad high-temperature reliability from the sparse old data."
+      }
+    },
+    {
+      "pair_id": "water_diethyl_ether",
+      "cas1": "7732-18-5",
+      "cas2": "60-29-7",
+      "component1": "Water",
+      "component2": "Diethyl ether",
+      "fit_status": "final_recommended_after_HE_validation",
+      "temperature_range_K": {
+        "Tmin": 273.15,
+        "Tmax": 373.15,
+        "finite_composition_validation_strongest_K": [
+          298.15,
+          308.15
+        ]
+      },
+      "provenance": [
+        {
+          "reference": "Ondo, D.; Dohnal, V. Fluid Phase Equilib. 2007, 262, 121-136.",
+          "doi": "10.1016/j.fluid.2007.08.013",
+          "role": "primary broad-temperature infinite-dilution thermodynamic constraint",
+          "data_used": [
+            "direct DEE limiting activity coefficients in water, 273.35-328.15 K",
+            "critically evaluated gamma_infinity(T)",
+            "infinite-dilution enthalpy/heat-capacity consistency"
+          ],
+          "quality": "very_high",
+          "notes": "Recommended correlation incorporates 45 equilibrium, 8 enthalpy, and 2 heat-capacity constraints. Signer-derived extrapolated gamma_infinity was identified as a high outlier and not used."
+        },
+        {
+          "reference": "Villamanan, M. A.; Allawi, A. J.; Van Ness, H. C. J. Chem. Eng. Data 1984, 29, 431-435.",
+          "doi": "10.1021/je00038a020",
+          "role": "finite-composition VLE/VLLE and excess-enthalpy constraint",
+          "temperature_K": 308.15,
+          "data_used": [
+            "P-x VLE both branches",
+            "VLLE pressure",
+            "miscibility endpoints",
+            "excess enthalpy"
+          ],
+          "quality": "very_high",
+          "experimental_P3_kPa": 104.7,
+          "experimental_x_DEE_aqueous": 0.01172,
+          "experimental_x_DEE_organic": 0.95,
+          "experimental_y_DEE_VLLE": 0.9463
+        },
+        {
+          "reference": "Signer, R.; Arm, H.; Daeniker, H. Helv. Chim. Acta 1969, 52, 2347-2351.",
+          "doi": "10.1002/hlca.19690520816",
+          "role": "independent 298 K LLE and three-phase-pressure check",
+          "temperature_K": 298.15,
+          "data_used": [
+            "direct miscibility endpoints",
+            "three-phase total pressure"
+          ],
+          "data_not_used": [
+            "extrapolated limiting activity coefficient"
+          ],
+          "experimental_x_DEE_aqueous": 0.0159,
+          "experimental_x_DEE_organic": 0.9502,
+          "experimental_P3_Torr": 539.2
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "LLE",
+          "VLE total pressure",
+          "limiting activity coefficient",
+          "excess enthalpy"
+        ],
+        "source_balanced": true,
+        "excess_enthalpy_weight": "moderate thermodynamic-derivative constraint",
+        "complexity_selection": {
+          "nrtl": "full six-term strongly retained",
+          "uniquac": "full native a+b/T+cT strongly retained",
+          "nrtl_delta_BIC_vs_reduced_approx": 108,
+          "uniquac_delta_BIC_vs_reduced_approx": 104,
+          "reason": "Broad-temperature gamma_infinity curvature plus finite-composition VLE and H^E strongly identify temperature dependence."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": 11.754188386,
+          "tau12_d": -2538.603239639,
+          "tau12_e": -28.215160571,
+          "tau21_c": 0.099330046,
+          "tau21_d": 635.321936037,
+          "tau21_e": -16.918834375
+        },
+        "fit_and_validation": {
+          "ondo_direct_gamma_inf_AARD_percent": 2.09,
+          "ondo_direct_gamma_inf_max_abs_relative_error_percent": 4.4,
+          "ondo_recommended_gamma_inf_AARD_percent": 2.39,
+          "villamanan_Px_RMSE_kPa": 0.559,
+          "villamanan_Px_MAE_kPa": 0.383,
+          "villamanan_Px_max_abs_error_kPa": 1.179,
+          "villamanan_Px_AARD_percent": 0.737,
+          "villamanan_HE_RMSE_J_per_mol": 14.85,
+          "villamanan_HE_MAE_J_per_mol": 13.4,
+          "P3_30815_predicted_kPa": 104.732,
+          "P3_30815_experimental_kPa": 104.7,
+          "y_DEE_VLLE_30815_predicted": 0.94637,
+          "y_DEE_VLLE_30815_experimental": 0.9463,
+          "x_DEE_aqueous_29815_predicted": 0.015889,
+          "x_DEE_aqueous_29815_experimental": 0.0159,
+          "x_water_organic_29815_predicted": 0.047532,
+          "x_water_organic_29815_experimental": 0.0498,
+          "x_DEE_aqueous_30815_predicted": 0.011948,
+          "x_DEE_aqueous_30815_experimental": 0.01172,
+          "x_water_organic_30815_predicted": 0.052278,
+          "x_water_organic_30815_experimental": 0.05,
+          "HE_infinity_29815_predicted_kJ_per_mol": -20.212,
+          "HE_infinity_29815_reference_kJ_per_mol": -19.54
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "diethyl_ether": {
+            "r": 3.395,
+            "q": 3.016
+          }
+        },
+        "parameters": {
+          "tau12_a": -12.439879602,
+          "tau12_b": 2315.818669335,
+          "tau12_c": 0.0151473563,
+          "tau21_a": 11.059254211,
+          "tau21_b": -2688.791776972,
+          "tau21_c": -0.0139451522
+        },
+        "fit_and_validation": {
+          "ondo_direct_gamma_inf_AARD_percent": 1.4,
+          "ondo_direct_gamma_inf_max_abs_relative_error_percent": 3.04,
+          "ondo_recommended_gamma_inf_AARD_percent": 1.33,
+          "villamanan_Px_RMSE_kPa": 0.417,
+          "villamanan_Px_MAE_kPa": 0.277,
+          "villamanan_Px_max_abs_error_kPa": 0.885,
+          "villamanan_Px_AARD_percent": 0.604,
+          "villamanan_HE_RMSE_J_per_mol": 12.7,
+          "villamanan_HE_MAE_J_per_mol": 9.64,
+          "P3_30815_predicted_kPa": 104.661,
+          "P3_30815_experimental_kPa": 104.7,
+          "y_DEE_VLLE_30815_predicted": 0.94634,
+          "y_DEE_VLLE_30815_experimental": 0.9463,
+          "x_DEE_aqueous_29815_predicted": 0.015877,
+          "x_DEE_aqueous_29815_experimental": 0.0159,
+          "x_water_organic_29815_predicted": 0.048127,
+          "x_water_organic_29815_experimental": 0.0498,
+          "x_DEE_aqueous_30815_predicted": 0.011805,
+          "x_DEE_aqueous_30815_experimental": 0.01172,
+          "x_water_organic_30815_predicted": 0.051727,
+          "x_water_organic_30815_experimental": 0.05,
+          "HE_infinity_29815_predicted_kJ_per_mol": -19.931,
+          "HE_infinity_29815_reference_kJ_per_mol": -19.54
+        }
+      },
+      "assessment": {
+        "preferred_model": "UNIQUAC by a small numerical margin",
+        "confidence": "high",
+        "important_note": "Both models are recommended; H^E validation materially improved parameter identifiability."
+      }
+    },
+    {
+      "pair_id": "water_diisopropyl_ether",
+      "cas1": "7732-18-5",
+      "cas2": "108-20-3",
+      "component1": "Water",
+      "component2": "Diisopropyl ether",
+      "fit_status": "final_conservative",
+      "temperature_range_K": {
+        "Tmin": 288.15,
+        "Tmax": 335.35,
+        "high_confidence_LLE_range": [
+          288.15,
+          323.15
+        ],
+        "upper_extension_basis": "atmospheric binary VLLE/heteroazeotrope",
+        "do_not_extrapolate_to_373_K_without_additional_data": true
+      },
+      "provenance": [
+        {
+          "reference": "Hwang, I.-C.; Park, S.-J.; Choi, J.-S. Fluid Phase Equilib. 2008, 269, 1-5.",
+          "doi": "10.1016/j.fluid.2008.04.010",
+          "role": "primary modern binary LLE regression source",
+          "data_used": [
+            "both liquid branches at eight temperatures, 288.15-323.15 K"
+          ],
+          "quality": "very_high",
+          "weight": "highest"
+        },
+        {
+          "reference": "Yorizane, M.; Yoshimura, S.; Yamamoto, T. Kagaku Kogaku 1967, 31, 451-456.",
+          "role": "atmospheric VLE/VLLE and high-temperature validation",
+          "data_used": [
+            "organic-rich binary VLE with moderate weight",
+            "binary heterogeneous azeotrope"
+          ],
+          "data_downweighted": [
+            "very dilute high-temperature aqueous VLE",
+            "boiling-point binary solubility endpoints"
+          ],
+          "quality": "moderate",
+          "experimental_heteroazeotrope": {
+            "temperature_K": 335.35,
+            "y_DIPE": 0.78
+          },
+          "notes": "Dilute compositions are strongly rounded and the VLE and boiling-point-solubility data show tension near the phase boundary."
+        },
+        {
+          "reference": "Sander/NIST Henry-law compilation",
+          "role": "independent 298 K infinite-dilution validation",
+          "experimental_kH_mol_per_kg_bar": 0.49
+        },
+        {
+          "reference": "Lladosa, E.; Monton, J. B.; Burguet, M. C.; de la Torre, J. J. Chem. Thermodyn. 2008, 40, 867-873.",
+          "doi": "10.1016/j.jct.2008.01.002",
+          "role": "supporting ternary VLLE provenance",
+          "notes": "ThermoML ternary VLLE is available and thermodynamically consistent, but was not treated as an independent binary LLE series."
+        }
+      ],
+      "fit_protocol": {
+        "joint_properties": [
+          "modern LLE",
+          "low-weight historical binary VLE",
+          "binary heteroazeotrope"
+        ],
+        "independent_validation": [
+          "298 K Henry constant"
+        ],
+        "complexity_selection": {
+          "nrtl": "c+d/T retained; e12=e21=0",
+          "uniquac": "exp(a+b/T) retained; c12=c21=0",
+          "rejected_candidate": "large aqueous-side curvature driven by 1967 dilute VLE",
+          "reason": "An added NRTL e12 term rose to approximately +94 and was identified mainly by one rounded historical dataset."
+        }
+      },
+      "nrtl": {
+        "recommended": true,
+        "alpha12": 0.3,
+        "tau_tref_K": 298.15,
+        "parameters": {
+          "tau12_c": -3.78924315,
+          "tau12_d": 2667.048549496,
+          "tau12_e": 0.0,
+          "tau21_c": -3.965469654,
+          "tau21_d": 2012.593549617,
+          "tau21_e": 0.0
+        },
+        "fit_and_validation": {
+          "hwang_DIPE_in_water_LLE_AARD_percent": 5.82,
+          "hwang_water_in_DIPE_LLE_AARD_percent": 1.78,
+          "heteroazeotrope_temperature_predicted_K": 335.473,
+          "heteroazeotrope_temperature_experimental_K": 335.35,
+          "heteroazeotrope_y_DIPE_predicted": 0.78216,
+          "heteroazeotrope_y_DIPE_experimental": 0.78,
+          "Henry_kH_29815_predicted_mol_per_kg_bar": 0.4793,
+          "Henry_kH_29815_reference_mol_per_kg_bar": 0.49,
+          "yorizane_organic_rich_VLE_pressure_MAE_kPa": 1.31,
+          "yorizane_organic_rich_VLE_y_MAE": 0.0266,
+          "yorizane_dilute_high_T_aqueous_VLE_pressure_MAE_kPa": 18.74,
+          "yorizane_dilute_high_T_aqueous_VLE_y_MAE": 0.299
+        }
+      },
+      "uniquac": {
+        "recommended": true,
+        "model_variant": "standard_uniquac",
+        "use_q_prime": false,
+        "structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "diisopropyl_ether": {
+            "r": 4.7421,
+            "q": 4.088
+          }
+        },
+        "parameters": {
+          "tau12_a": 1.865751407,
+          "tau12_b": -637.840022589,
+          "tau12_c": 0.0,
+          "tau21_a": -0.212099211,
+          "tau21_b": -646.935878221,
+          "tau21_c": 0.0
+        },
+        "fit_and_validation": {
+          "hwang_DIPE_in_water_LLE_AARD_percent": 5.74,
+          "hwang_water_in_DIPE_LLE_AARD_percent": 1.59,
+          "heteroazeotrope_temperature_predicted_K": 335.532,
+          "heteroazeotrope_temperature_experimental_K": 335.35,
+          "heteroazeotrope_y_DIPE_predicted": 0.78157,
+          "heteroazeotrope_y_DIPE_experimental": 0.78,
+          "Henry_kH_29815_predicted_mol_per_kg_bar": 0.491,
+          "Henry_kH_29815_reference_mol_per_kg_bar": 0.49,
+          "yorizane_organic_rich_VLE_pressure_MAE_kPa": 1.35,
+          "yorizane_organic_rich_VLE_y_MAE": 0.0275,
+          "yorizane_dilute_high_T_aqueous_VLE_pressure_MAE_kPa": 18.38,
+          "yorizane_dilute_high_T_aqueous_VLE_y_MAE": 0.295
+        }
+      },
+      "assessment": {
+        "preferred_model": "UNIQUAC by a negligible numerical margin",
+        "confidence_288_to_323_K": "high",
+        "confidence_323_to_335_K": "moderate",
+        "confidence_above_335_K": "low",
+        "important_note": "Do not let the old dilute high-temperature aqueous VLE force a large curvature coefficient without independent confirmation."
+      }
+    }
+  ]
+}

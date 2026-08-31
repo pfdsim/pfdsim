@@ -1,0 +1,3588 @@
+{
+  "aliases": {
+    "10024972": "10024-97-2",
+    "100414": "100-41-4",
+    "100425": "100-42-5",
+    "100470": "100-47-0",
+    "100516": "100-51-6",
+    "100607": "100-60-7",
+    "100630": "100-63-0",
+    "100663": "100-66-3",
+    "101815": "101-81-5",
+    "103651": "103-65-1",
+    "104518": "104-51-8",
+    "106365": "106-36-5",
+    "106423": "106-42-3",
+    "106467": "106-46-7",
+    "106978": "106-97-8",
+    "106989": "106-98-9",
+    "106990": "106-99-0",
+    "107051": "107-05-1",
+    "107062": "107-06-2",
+    "107108": "107-10-8",
+    "107120": "107-12-0",
+    "107131": "107-13-1",
+    "107153": "107-15-3",
+    "107186": "107-18-6",
+    "107211": "107-21-1",
+    "107313": "107-31-3",
+    "107460": "107-46-0",
+    "107835": "107-83-5",
+    "107879": "107-87-9",
+    "108032": "108-03-2",
+    "108054": "108-05-4",
+    "108203": "108-20-3",
+    "108383": "108-38-3",
+    "108394": "108-39-4",
+    "108485": "108-48-5",
+    "108861": "108-86-1",
+    "108872": "108-87-2",
+    "108883": "108-88-3",
+    "108894": "108-89-4",
+    "108907": "108-90-7",
+    "108918": "108-91-8",
+    "108930": "108-93-0",
+    "108941": "108-94-1",
+    "108952": "108-95-2",
+    "108996": "108-99-6",
+    "109068": "109-06-8",
+    "109604": "109-60-4",
+    "109660": "109-66-0",
+    "109693": "109-69-3",
+    "109739": "109-73-9",
+    "109864": "109-86-4",
+    "109875": "109-87-5",
+    "109897": "109-89-7",
+    "109999": "109-99-9",
+    "110021": "110-02-1",
+    "110543": "110-54-3",
+    "110634": "110-63-4",
+    "110827": "110-82-7",
+    "110838": "110-83-8",
+    "110861": "110-86-1",
+    "110883": "110-88-3",
+    "110894": "110-89-4",
+    "110918": "110-91-8",
+    "111273": "111-27-3",
+    "111433": "111-43-3",
+    "111466": "111-46-6",
+    "111659": "111-65-9",
+    "111660": "111-66-0",
+    "111762": "111-76-2",
+    "111842": "111-84-2",
+    "111trichloroethane": "71-55-6",
+    "1122tetrachloroethane": "79-34-5",
+    "112301": "112-30-1",
+    "112538": "112-53-8",
+    "112801": "112-80-1",
+    "112trichloro122trifluoroethane": "76-13-1",
+    "112trichlorotrifluoroethane": "76-13-1",
+    "115071": "115-07-1",
+    "115117": "115-11-7",
+    "119642": "119-64-2",
+    "121448": "121-44-8",
+    "123386": "123-38-6",
+    "123397": "123-39-7",
+    "123422": "123-42-2",
+    "123513": "123-51-3",
+    "123864": "123-86-4",
+    "123911": "123-91-1",
+    "123922": "123-92-2",
+    "123trimethylbenzene": "526-73-8",
+    "124185": "124-18-5",
+    "124389": "124-38-9",
+    "124403": "124-40-3",
+    "124trimethylbenzene": "95-63-6",
+    "126330": "126-33-0",
+    "127184": "127-18-4",
+    "127195": "127-19-5",
+    "12butadiene": "590-19-2",
+    "12dichloroethane": "107-06-2",
+    "12propanediol": "57-55-6",
+    "1333740": "1333-74-0",
+    "135trioxane": "110-88-3",
+    "13butadiene": "106-99-0",
+    "141786": "141-78-6",
+    "141797": "141-79-7",
+    "142825": "142-82-5",
+    "142847": "142-84-7",
+    "14butanediol": "110-63-4",
+    "14dioxane": "123-91-1",
+    "151677": "151-67-7",
+    "1574410": "1574-41-0",
+    "1634044": "1634-04-4",
+    "1butanol": "71-36-3",
+    "1butene": "106-98-9",
+    "1chlorobutane": "109-69-3",
+    "1decanol": "112-30-1",
+    "1dodecanol": "112-53-8",
+    "1hexanol": "111-27-3",
+    "1hexene": "592-41-6",
+    "1methyl2pyrrolidinone": "872-50-4",
+    "1methylnaphthalene": "90-12-0",
+    "1nitropropane": "108-03-2",
+    "1octene": "111-66-0",
+    "1pentanol": "71-41-0",
+    "1propanol": "71-23-8",
+    "2004708": "2004-70-8",
+    "224trimethylpentane": "540-84-1",
+    "22dimethylbutane": "75-83-2",
+    "23butanediol": "513-85-9",
+    "23dimethylbutane": "79-29-8",
+    "26dimethylpyridine": "108-48-5",
+    "2butanol": "78-92-2",
+    "2butoxyethanol": "111-76-2",
+    "2hexanol": "626-93-7",
+    "2methoxyethanol": "109-86-4",
+    "2methyl1propanol": "78-83-1",
+    "2methyl2butanol": "75-85-4",
+    "2methyl2butene": "513-35-9",
+    "2methyl2propanol": "75-65-0",
+    "2methylnaphthalene": "91-57-6",
+    "2methylpentane": "107-83-5",
+    "2methylpropanal": "78-84-2",
+    "2methylpyridine": "109-06-8",
+    "2nitropropane": "79-46-9",
+    "2pentanone": "107-87-9",
+    "392563": "392-56-3",
+    "3chloro1propene": "107-05-1",
+    "3methyl1butanol": "123-51-3",
+    "3methylpentane": "96-14-0",
+    "3methylpyridine": "108-99-6",
+    "3pentanone": "96-22-0",
+    "462066": "462-06-6",
+    "463581": "463-58-1",
+    "463821": "463-82-1",
+    "4methylpyridine": "108-89-4",
+    "513359": "513-35-9",
+    "513859": "513-85-9",
+    "526738": "526-73-8",
+    "540841": "540-84-1",
+    "542927": "542-92-7",
+    "544763": "544-76-3",
+    "56235": "56-23-5",
+    "563804": "563-80-4",
+    "57556": "57-55-6",
+    "590192": "590-19-2",
+    "592416": "592-41-6",
+    "60297": "60-29-7",
+    "624839": "624-83-9",
+    "62533": "62-53-3",
+    "626937": "626-93-7",
+    "630080": "630-08-0",
+    "64175": "64-17-5",
+    "64197": "64-19-7",
+    "67561": "67-56-1",
+    "67630": "67-63-0",
+    "67641": "67-64-1",
+    "67663": "67-66-3",
+    "67685": "67-68-5",
+    "68122": "68-12-2",
+    "71238": "71-23-8",
+    "71363": "71-36-3",
+    "71410": "71-41-0",
+    "71432": "71-43-2",
+    "71556": "71-55-6",
+    "7439909": "7439-90-9",
+    "7440371": "7440-37-1",
+    "7440597": "7440-59-7",
+    "7446095": "7446-09-5",
+    "74828": "74-82-8",
+    "74840": "74-84-0",
+    "74851": "74-85-1",
+    "74862": "74-86-2",
+    "74873": "74-87-3",
+    "74884": "74-88-4",
+    "74986": "74-98-6",
+    "75014": "75-01-4",
+    "75036": "75-03-6",
+    "75047": "75-04-7",
+    "75058": "75-05-8",
+    "75070": "75-07-0",
+    "75092": "75-09-2",
+    "75105": "75-10-5",
+    "75127": "75-12-7",
+    "75150": "75-15-0",
+    "75218": "75-21-8",
+    "75252": "75-25-2",
+    "75285": "75-28-5",
+    "75310": "75-31-0",
+    "75456": "75-45-6",
+    "75467": "75-46-7",
+    "75525": "75-52-5",
+    "75569": "75-56-9",
+    "75649": "75-64-9",
+    "75650": "75-65-0",
+    "75718": "75-71-8",
+    "75729": "75-72-9",
+    "75832": "75-83-2",
+    "75854": "75-85-4",
+    "76017": "76-01-7",
+    "76131": "76-13-1",
+    "76153": "76-15-3",
+    "7664417": "7664-41-7",
+    "7697372": "7697-37-2",
+    "7727379": "7727-37-9",
+    "7732185": "7732-18-5",
+    "7782447": "7782-44-7",
+    "7783064": "7783-06-4",
+    "78784": "78-78-4",
+    "78795": "78-79-5",
+    "78831": "78-83-1",
+    "78842": "78-84-2",
+    "78922": "78-92-2",
+    "78933": "78-93-3",
+    "79016": "79-01-6",
+    "79094": "79-09-4",
+    "79107": "79-10-7",
+    "79209": "79-20-9",
+    "79243": "79-24-3",
+    "79298": "79-29-8",
+    "79345": "79-34-5",
+    "79414": "79-41-4",
+    "79469": "79-46-9",
+    "80626": "80-62-6",
+    "872504": "872-50-4",
+    "90120": "90-12-0",
+    "91225": "91-22-5",
+    "91576": "91-57-6",
+    "91667": "91-66-7",
+    "92068": "92-06-8",
+    "92513": "92-51-3",
+    "95476": "95-47-6",
+    "95487": "95-48-7",
+    "95636": "95-63-6",
+    "96140": "96-14-0",
+    "96220": "96-22-0",
+    "96333": "96-33-3",
+    "98011": "98-01-1",
+    "98828": "98-82-8",
+    "98862": "98-86-2",
+    "98953": "98-95-3",
+    "99876": "99-87-6",
+    "acetaldehyde": "75-07-0",
+    "aceticacid": "64-19-7",
+    "acetone": "67-64-1",
+    "acetonitrile": "75-05-8",
+    "acetophenone": "98-86-2",
+    "acetylene": "74-86-2",
+    "acrylicacid": "79-10-7",
+    "acrylonitrile": "107-13-1",
+    "agua": "7732-18-5",
+    "allylalcohol": "107-18-6",
+    "ammonia": "7664-41-7",
+    "aniline": "62-53-3",
+    "anisole": "100-66-3",
+    "ar": "7440-37-1",
+    "argon": "7440-37-1",
+    "benzene": "71-43-2",
+    "benzeno": "71-43-2",
+    "benzonitrile": "100-47-0",
+    "benzylalcohol": "100-51-6",
+    "bicyclohexyl": "92-51-3",
+    "bromobenzene": "108-86-1",
+    "bromoform": "75-25-2",
+    "butane": "106-97-8",
+    "butylacetate": "123-86-4",
+    "butylamine": "109-73-9",
+    "butylbenzene": "104-51-8",
+    "butylchloride": "109-69-3",
+    "c2h5oh": "64-17-5",
+    "c6h14": "110-54-3",
+    "c6h6": "71-43-2",
+    "c7h16": "142-82-5",
+    "carbondioxide": "124-38-9",
+    "carbondisulfide": "75-15-0",
+    "carbonmonoxide": "630-08-0",
+    "carbontetrachloride": "56-23-5",
+    "carbonylsulfide": "463-58-1",
+    "ch3oh": "67-56-1",
+    "chlorobenzene": "108-90-7",
+    "chloroform": "67-66-3",
+    "chloropentafluoroethane": "76-15-3",
+    "chlorotrifluoromethane": "75-72-9",
+    "cis13pentadiene": "1574-41-0",
+    "co": "630-08-0",
+    "co2": "124-38-9",
+    "cumene": "98-82-8",
+    "cyclohexane": "110-82-7",
+    "cyclohexanol": "108-93-0",
+    "cyclohexanone": "108-94-1",
+    "cyclohexene": "110-83-8",
+    "cyclohexylamine": "108-91-8",
+    "cyclopentadiene": "542-92-7",
+    "decane": "124-18-5",
+    "diacetonealcohol": "123-42-2",
+    "dichlorodifluoromethane": "75-71-8",
+    "dichloromethane": "75-09-2",
+    "diethylamine": "109-89-7",
+    "diethylaniline": "91-66-7",
+    "diethyleneglycol": "111-46-6",
+    "diethylether": "60-29-7",
+    "difluorochloromethane": "75-45-6",
+    "difluoromethane": "75-10-5",
+    "diisopropylether": "108-20-3",
+    "dimethoxymethane": "109-87-5",
+    "dimethylacetamide": "127-19-5",
+    "dimethylamine": "124-40-3",
+    "dimethylformamide": "68-12-2",
+    "dimethylsulfoxide": "67-68-5",
+    "dioxidodecarbono": "124-38-9",
+    "diphenylmethane": "101-81-5",
+    "dipropylamine": "142-84-7",
+    "dipropylether": "111-43-3",
+    "etano": "74-84-0",
+    "etanol": "64-17-5",
+    "ethane": "74-84-0",
+    "ethanol": "64-17-5",
+    "ethylacetate": "141-78-6",
+    "ethylamine": "75-04-7",
+    "ethylbenzene": "100-41-4",
+    "ethylene": "74-85-1",
+    "ethylenediamine": "107-15-3",
+    "ethyleneglycol": "107-21-1",
+    "ethyleneoxide": "75-21-8",
+    "etilbenzeno": "100-41-4",
+    "fenol": "108-95-2",
+    "fluorobenzene": "462-06-6",
+    "formamide": "75-12-7",
+    "furfural": "98-01-1",
+    "h2": "1333-74-0",
+    "h2o": "7732-18-5",
+    "halothane": "151-67-7",
+    "helium": "7440-59-7",
+    "helium4": "7440-59-7",
+    "heptane": "142-82-5",
+    "hexadecane": "544-76-3",
+    "hexafluorobenzene": "392-56-3",
+    "hexamethyldisiloxane": "107-46-0",
+    "hexane": "110-54-3",
+    "hydrogen": "1333-74-0",
+    "hydrogensulfide": "7783-06-4",
+    "ibutano": "75-28-5",
+    "iodoethane": "75-03-6",
+    "ipentano": "78-78-4",
+    "isoamylacetate": "123-92-2",
+    "isobutane": "75-28-5",
+    "isobutene": "115-11-7",
+    "isopentane": "78-78-4",
+    "isopentylacetate": "123-92-2",
+    "isoprene": "78-79-5",
+    "isopropanol": "67-63-0",
+    "isopropylamine": "75-31-0",
+    "krypton": "7439-90-9",
+    "mcresol": "108-39-4",
+    "mesityloxide": "141-79-7",
+    "metano": "74-82-8",
+    "metanol": "67-56-1",
+    "methacrylicacid": "79-41-4",
+    "methane": "74-82-8",
+    "methanol": "67-56-1",
+    "methylacetate": "79-20-9",
+    "methylacrylate": "96-33-3",
+    "methylchloride": "74-87-3",
+    "methylcyclohexane": "108-87-2",
+    "methylcyclohexylamine": "100-60-7",
+    "methylethylketone": "78-93-3",
+    "methylformamide": "123-39-7",
+    "methylformate": "107-31-3",
+    "methyliodide": "74-88-4",
+    "methylisocyanate": "624-83-9",
+    "methylisopropylketone": "563-80-4",
+    "methylmethacrylate": "80-62-6",
+    "methylpyrrolidone": "872-50-4",
+    "methyltertertbutylether": "1634-04-4",
+    "metiletilcetona": "78-93-3",
+    "monochlorobenzene": "108-90-7",
+    "morpholine": "110-91-8",
+    "mterphenyl": "92-06-8",
+    "mxileno": "108-38-3",
+    "mxylene": "108-38-3",
+    "n2": "7727-37-9",
+    "nbutano": "106-97-8",
+    "ndecano": "124-18-5",
+    "neopentane": "463-82-1",
+    "nh3": "7664-41-7",
+    "nheptano": "142-82-5",
+    "nhexano": "110-54-3",
+    "nitricacid": "7697-37-2",
+    "nitrobenzene": "98-95-3",
+    "nitroethane": "79-24-3",
+    "nitrogen": "7727-37-9",
+    "nitrogenio": "7727-37-9",
+    "nitromethane": "75-52-5",
+    "nitrousoxide": "10024-97-2",
+    "nnonano": "111-84-2",
+    "noctano": "111-65-9",
+    "nonane": "111-84-2",
+    "npentano": "109-66-0",
+    "o2": "7782-44-7",
+    "ocresol": "95-48-7",
+    "octane": "111-65-9",
+    "oleicacid": "112-80-1",
+    "oxigenio": "7782-44-7",
+    "oxileno": "95-47-6",
+    "oxygen": "7782-44-7",
+    "oxylene": "95-47-6",
+    "pcymene": "99-87-6",
+    "pdichlorobenzene": "106-46-7",
+    "pentachloroethane": "76-01-7",
+    "pentane": "109-66-0",
+    "phenol": "108-95-2",
+    "phenylhydrazine": "100-63-0",
+    "piperidine": "110-89-4",
+    "propanal": "123-38-6",
+    "propane": "74-98-6",
+    "propano": "74-98-6",
+    "propionicacid": "79-09-4",
+    "propionitrile": "107-12-0",
+    "propylacetate": "109-60-4",
+    "propylamine": "107-10-8",
+    "propylbenzene": "103-65-1",
+    "propylene": "115-07-1",
+    "propyleneoxide": "75-56-9",
+    "propylpropionate": "106-36-5",
+    "pxileno": "106-42-3",
+    "pxylene": "106-42-3",
+    "pyridine": "110-86-1",
+    "quinoline": "91-22-5",
+    "styrene": "100-42-5",
+    "sulfetodehidrogenio": "7783-06-4",
+    "sulfolane": "126-33-0",
+    "sulfurdioxide": "7446-09-5",
+    "tertertbutylamine": "75-64-9",
+    "tetrachloroethylene": "127-18-4",
+    "tetrahydrofuran": "109-99-9",
+    "tetralin": "119-64-2",
+    "thiophene": "110-02-1",
+    "toluene": "108-88-3",
+    "tolueno": "108-88-3",
+    "trans13pentadiene": "2004-70-8",
+    "tribromomethane": "75-25-2",
+    "trichloroethylene": "79-01-6",
+    "triethylamine": "121-44-8",
+    "trifluoromethane": "75-46-7",
+    "vinylacetate": "108-05-4",
+    "vinylchloride": "75-01-4",
+    "water": "7732-18-5"
+  },
+  "components": {
+    "100-41-4": {
+      "aliases": [
+        "Ethylbenzene",
+        "Etilbenzeno"
+      ],
+      "cas": "100-41-4",
+      "formula": "",
+      "name": "Ethylbenzene",
+      "source_component_ids": [
+        "504"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "100-42-5": {
+      "aliases": [
+        "Styrene"
+      ],
+      "cas": "100-42-5",
+      "formula": "",
+      "name": "Styrene",
+      "source_component_ids": [
+        "601"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "100-47-0": {
+      "aliases": [
+        "Benzonitrile"
+      ],
+      "cas": "100-47-0",
+      "formula": "",
+      "name": "Benzonitrile",
+      "source_component_ids": [
+        "1790"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "100-51-6": {
+      "aliases": [
+        "Benzyl alcohol",
+        "Benzylalcohol"
+      ],
+      "cas": "100-51-6",
+      "formula": "",
+      "name": "Benzyl alcohol",
+      "source_component_ids": [
+        "1180"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "100-60-7": {
+      "aliases": [
+        "N-Methylcyclohexylamine",
+        "N-methylcyclohexylamine"
+      ],
+      "cas": "100-60-7",
+      "formula": "C7H15N",
+      "name": "N-methylcyclohexylamine",
+      "source_component_ids": [
+        "2731"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "100-63-0": {
+      "aliases": [
+        "Phenylhydrazine",
+        "phenylhydrazine"
+      ],
+      "cas": "100-63-0",
+      "formula": "",
+      "name": "phenylhydrazine",
+      "source_component_ids": [
+        "1757"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "100-66-3": {
+      "aliases": [
+        "Anisole"
+      ],
+      "cas": "100-66-3",
+      "formula": "",
+      "name": "Anisole",
+      "source_component_ids": [
+        "1461"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "10024-97-2": {
+      "aliases": [
+        "Nitrous oxide"
+      ],
+      "cas": "10024-97-2",
+      "formula": "",
+      "name": "Nitrous oxide",
+      "source_component_ids": [
+        "899"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "101-81-5": {
+      "aliases": [
+        "DiPhenylMethane",
+        "diphenylmethane"
+      ],
+      "cas": "101-81-5",
+      "formula": "",
+      "name": "diphenylmethane",
+      "source_component_ids": [
+        "563"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "103-65-1": {
+      "aliases": [
+        "N-propylbenzene",
+        "Propylbenzene"
+      ],
+      "cas": "103-65-1",
+      "formula": "",
+      "name": "Propylbenzene",
+      "source_component_ids": [
+        "509"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "104-51-8": {
+      "aliases": [
+        "Butylbenzene",
+        "N-butylbenzene"
+      ],
+      "cas": "104-51-8",
+      "formula": "",
+      "name": "Butylbenzene",
+      "source_component_ids": [
+        "518"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "106-36-5": {
+      "aliases": [
+        "Propylpropionate",
+        "propyl propionate"
+      ],
+      "cas": "106-36-5",
+      "formula": "C6H12O2",
+      "name": "propyl propionate",
+      "source_component_ids": [
+        "1324"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "106-42-3": {
+      "aliases": [
+        "P-xylene",
+        "Pxileno",
+        "p-Xylene"
+      ],
+      "cas": "106-42-3",
+      "formula": "",
+      "name": "p-Xylene",
+      "source_component_ids": [
+        "507"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "106-46-7": {
+      "aliases": [
+        "P-dichlorobenzene",
+        "p-Dichlorobenzene"
+      ],
+      "cas": "106-46-7",
+      "formula": "",
+      "name": "p-Dichlorobenzene",
+      "source_component_ids": [
+        "1574"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "106-97-8": {
+      "aliases": [
+        "N-butane",
+        "n-Butane",
+        "nButano"
+      ],
+      "cas": "106-97-8",
+      "formula": "",
+      "name": "n-Butane",
+      "source_component_ids": [
+        "5"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "106-98-9": {
+      "aliases": [
+        "1-Butene",
+        "1-butene"
+      ],
+      "cas": "106-98-9",
+      "formula": "",
+      "name": "1-Butene",
+      "source_component_ids": [
+        "204"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "106-99-0": {
+      "aliases": [
+        "1,3-Butadiene",
+        "1,3-butadiene"
+      ],
+      "cas": "106-99-0",
+      "formula": "",
+      "name": "1,3-Butadiene",
+      "source_component_ids": [
+        "303"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-05-1": {
+      "aliases": [
+        "3-chloro-1-propene"
+      ],
+      "cas": "107-05-1",
+      "formula": "C3H5Cl",
+      "name": "3-chloro-1-propene",
+      "source_component_ids": [
+        "1544"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "107-06-2": {
+      "aliases": [
+        "1,2-Dichloroethane",
+        "1,2-dichloroethane"
+      ],
+      "cas": "107-06-2",
+      "formula": "",
+      "name": "1,2-Dichloroethane",
+      "source_component_ids": [
+        "1523"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-10-8": {
+      "aliases": [
+        "propylamine"
+      ],
+      "cas": "107-10-8",
+      "formula": "C3H9N",
+      "name": "propylamine",
+      "source_component_ids": [
+        "1711",
+        "nrtl_binary_interactions.json:214:component1",
+        "uniquac_binary_interactions.json:156:component1"
+      ],
+      "sources": [
+        "manual_identity_override",
+        "manual_record_identity_override"
+      ]
+    },
+    "107-12-0": {
+      "aliases": [
+        "Propionitrile"
+      ],
+      "cas": "107-12-0",
+      "formula": "",
+      "name": "Propionitrile",
+      "source_component_ids": [
+        "1773"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-13-1": {
+      "aliases": [
+        "Acrylonitrile"
+      ],
+      "cas": "107-13-1",
+      "formula": "",
+      "name": "Acrylonitrile",
+      "source_component_ids": [
+        "1774"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-15-3": {
+      "aliases": [
+        "Ethylenediamine"
+      ],
+      "cas": "107-15-3",
+      "formula": "",
+      "name": "Ethylenediamine",
+      "source_component_ids": [
+        "1741"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-18-6": {
+      "aliases": [
+        "Allylalcohol",
+        "allyl alcohol"
+      ],
+      "cas": "107-18-6",
+      "formula": "C3H6O",
+      "name": "allyl alcohol",
+      "source_component_ids": [
+        "1167"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "107-21-1": {
+      "aliases": [
+        "Ethylene glycol"
+      ],
+      "cas": "107-21-1",
+      "formula": "",
+      "name": "Ethylene glycol",
+      "source_component_ids": [
+        "1201"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-31-3": {
+      "aliases": [
+        "Methyl formate"
+      ],
+      "cas": "107-31-3",
+      "formula": "",
+      "name": "Methyl formate",
+      "source_component_ids": [
+        "1301"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-46-0": {
+      "aliases": [
+        "Hexamethyldisiloxane",
+        "hexamethyldisiloxane"
+      ],
+      "cas": "107-46-0",
+      "formula": "C6H18OSi2",
+      "name": "hexamethyldisiloxane",
+      "source_component_ids": [
+        "1965"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "107-83-5": {
+      "aliases": [
+        "2-Methylpentane",
+        "2-methylpentane"
+      ],
+      "cas": "107-83-5",
+      "formula": "",
+      "name": "2-Methylpentane",
+      "source_component_ids": [
+        "12"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "107-87-9": {
+      "aliases": [
+        "2-Pentanone"
+      ],
+      "cas": "107-87-9",
+      "formula": "",
+      "name": "2-Pentanone",
+      "source_component_ids": [
+        "1060"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-03-2": {
+      "aliases": [
+        "1-nitropropane"
+      ],
+      "cas": "108-03-2",
+      "formula": "",
+      "name": "1-nitropropane",
+      "source_component_ids": [
+        "1762"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "108-05-4": {
+      "aliases": [
+        "Vinyl acetate"
+      ],
+      "cas": "108-05-4",
+      "formula": "",
+      "name": "Vinyl acetate",
+      "source_component_ids": [
+        "1321"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-20-3": {
+      "aliases": [
+        "Diisopropyl ether"
+      ],
+      "cas": "108-20-3",
+      "formula": "",
+      "name": "Diisopropyl ether",
+      "source_component_ids": [
+        "1403"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-38-3": {
+      "aliases": [
+        "M-xylene",
+        "Mxileno",
+        "m-Xylene"
+      ],
+      "cas": "108-38-3",
+      "formula": "",
+      "name": "m-Xylene",
+      "source_component_ids": [
+        "506"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-39-4": {
+      "aliases": [
+        "M-cresol",
+        "m-Cresol"
+      ],
+      "cas": "108-39-4",
+      "formula": "",
+      "name": "m-Cresol",
+      "source_component_ids": [
+        "1183"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-48-5": {
+      "aliases": [
+        "2,6-dimethylpyridine",
+        "2.6-Dimethylpyridine"
+      ],
+      "cas": "108-48-5",
+      "formula": "C7H9N",
+      "name": "2,6-dimethylpyridine",
+      "source_component_ids": [
+        "2796",
+        "nrtl_binary_interactions.json:192:component2",
+        "uniquac_binary_interactions.json:142:component2"
+      ],
+      "sources": [
+        "manual_identity_override",
+        "manual_record_identity_override"
+      ]
+    },
+    "108-86-1": {
+      "aliases": [
+        "Bromobenzene"
+      ],
+      "cas": "108-86-1",
+      "formula": "",
+      "name": "Bromobenzene",
+      "source_component_ids": [
+        "1680"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-87-2": {
+      "aliases": [
+        "Methylcyclohexane"
+      ],
+      "cas": "108-87-2",
+      "formula": "",
+      "name": "Methylcyclohexane",
+      "source_component_ids": [
+        "138"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-88-3": {
+      "aliases": [
+        "Toluene",
+        "Tolueno"
+      ],
+      "cas": "108-88-3",
+      "formula": "",
+      "name": "Toluene",
+      "source_component_ids": [
+        "502"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "108-89-4": {
+      "aliases": [
+        "4-Methylpyridine",
+        "4-methylpyridine"
+      ],
+      "cas": "108-89-4",
+      "formula": "C6H7N",
+      "name": "4-methylpyridine",
+      "source_component_ids": [
+        "2799"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "108-90-7": {
+      "aliases": [
+        "Chlorobenzene",
+        "Monochlorobenzene"
+      ],
+      "cas": "108-90-7",
+      "formula": "",
+      "name": "Chlorobenzene",
+      "source_component_ids": [
+        "1571"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-91-8": {
+      "aliases": [
+        "Cyclohexylamine",
+        "cyclohexylamine"
+      ],
+      "cas": "108-91-8",
+      "formula": "C6H13N",
+      "name": "cyclohexylamine",
+      "source_component_ids": [
+        "1729"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "108-93-0": {
+      "aliases": [
+        "Cyclohexanol"
+      ],
+      "cas": "108-93-0",
+      "formula": "",
+      "name": "Cyclohexanol",
+      "source_component_ids": [
+        "1151"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-94-1": {
+      "aliases": [
+        "Cyclohexanone"
+      ],
+      "cas": "108-94-1",
+      "formula": "",
+      "name": "Cyclohexanone",
+      "source_component_ids": [
+        "1080"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "108-95-2": {
+      "aliases": [
+        "Fenol",
+        "Phenol"
+      ],
+      "cas": "108-95-2",
+      "formula": "",
+      "name": "Phenol",
+      "source_component_ids": [
+        "1181"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "108-99-6": {
+      "aliases": [
+        "3-Methylpyridien",
+        "3-methylpyridine"
+      ],
+      "cas": "108-99-6",
+      "formula": "C6H7N",
+      "name": "3-methylpyridine",
+      "source_component_ids": [
+        "2797"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "109-06-8": {
+      "aliases": [
+        "2-Methylpyridine",
+        "2-methylpyridine"
+      ],
+      "cas": "109-06-8",
+      "formula": "",
+      "name": "2-methylpyridine",
+      "source_component_ids": [
+        "1797"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "109-60-4": {
+      "aliases": [
+        "N-propyl acetate",
+        "Propyl acetate"
+      ],
+      "cas": "109-60-4",
+      "formula": "",
+      "name": "Propyl acetate",
+      "source_component_ids": [
+        "1314"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "109-66-0": {
+      "aliases": [
+        "N-pentane",
+        "n-Pentane",
+        "nPentano"
+      ],
+      "cas": "109-66-0",
+      "formula": "",
+      "name": "n-Pentane",
+      "source_component_ids": [
+        "7"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "109-69-3": {
+      "aliases": [
+        "1-chlorobutane",
+        "Butylchloride"
+      ],
+      "cas": "109-69-3",
+      "formula": "",
+      "name": "1-chlorobutane",
+      "source_component_ids": [
+        "1586"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "109-73-9": {
+      "aliases": [
+        "Butylamine",
+        "butylamine"
+      ],
+      "cas": "109-73-9",
+      "formula": "C4H11N",
+      "name": "butylamine",
+      "source_component_ids": [
+        "1712"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "109-86-4": {
+      "aliases": [
+        "2-Methoxy-ethanol",
+        "2-methoxyethanol"
+      ],
+      "cas": "109-86-4",
+      "formula": "",
+      "name": "2-methoxyethanol",
+      "source_component_ids": [
+        "2860"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "109-87-5": {
+      "aliases": [
+        "dimethoxymethane"
+      ],
+      "cas": "109-87-5",
+      "formula": "C3H8O2",
+      "name": "dimethoxymethane",
+      "source_component_ids": [
+        "1431"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "109-89-7": {
+      "aliases": [
+        "Diethyl amine",
+        "Diethylamine"
+      ],
+      "cas": "109-89-7",
+      "formula": "",
+      "name": "Diethyl amine",
+      "source_component_ids": [
+        "1710"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "109-99-9": {
+      "aliases": [
+        "Tetrahydrofuran"
+      ],
+      "cas": "109-99-9",
+      "formula": "",
+      "name": "Tetrahydrofuran",
+      "source_component_ids": [
+        "1479"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "110-02-1": {
+      "aliases": [
+        "Thiophene"
+      ],
+      "cas": "110-02-1",
+      "formula": "",
+      "name": "Thiophene",
+      "source_component_ids": [
+        "1821"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "110-54-3": {
+      "aliases": [
+        "C6H14",
+        "N-hexane",
+        "nHexano"
+      ],
+      "cas": "110-54-3",
+      "formula": "",
+      "name": "C6H14",
+      "source_component_ids": [
+        "11"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "110-63-4": {
+      "aliases": [
+        "1,4-butanediol"
+      ],
+      "cas": "110-63-4",
+      "formula": "C4H10O2",
+      "name": "1,4-butanediol",
+      "source_component_ids": [
+        "1241"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "110-82-7": {
+      "aliases": [
+        "Cyclohexane"
+      ],
+      "cas": "110-82-7",
+      "formula": "",
+      "name": "Cyclohexane",
+      "source_component_ids": [
+        "137"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "110-83-8": {
+      "aliases": [
+        "Cyclohexene"
+      ],
+      "cas": "110-83-8",
+      "formula": "",
+      "name": "Cyclohexene",
+      "source_component_ids": [
+        "270"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "110-86-1": {
+      "aliases": [
+        "Pyridine"
+      ],
+      "cas": "110-86-1",
+      "formula": "",
+      "name": "Pyridine",
+      "source_component_ids": [
+        "1791"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "110-88-3": {
+      "aliases": [
+        "1,3,5-trioxane",
+        "1.3.5-trioxane"
+      ],
+      "cas": "110-88-3",
+      "formula": "C3H6O3",
+      "name": "1,3,5-trioxane",
+      "source_component_ids": [
+        "1422"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "110-89-4": {
+      "aliases": [
+        "Piperidine",
+        "piperidine"
+      ],
+      "cas": "110-89-4",
+      "formula": "",
+      "name": "piperidine",
+      "source_component_ids": [
+        "1745"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "110-91-8": {
+      "aliases": [
+        "Morpholine",
+        "morpholine"
+      ],
+      "cas": "110-91-8",
+      "formula": "C4H9NO",
+      "name": "morpholine",
+      "source_component_ids": [
+        "1765"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "111-27-3": {
+      "aliases": [
+        "1-Hexanol",
+        "1-hexanol"
+      ],
+      "cas": "111-27-3",
+      "formula": "",
+      "name": "1-Hexanol",
+      "source_component_ids": [
+        "1114"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "111-43-3": {
+      "aliases": [
+        "Dipropylether",
+        "dipropyl ether"
+      ],
+      "cas": "111-43-3",
+      "formula": "C6H14O",
+      "name": "dipropyl ether",
+      "source_component_ids": [
+        "1446"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "111-46-6": {
+      "aliases": [
+        "Diethylene glycol",
+        "diethylene glycol"
+      ],
+      "cas": "111-46-6",
+      "formula": "",
+      "name": "diethylene glycol",
+      "source_component_ids": [
+        "1202"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "111-65-9": {
+      "aliases": [
+        "N-octane",
+        "n-Octane",
+        "nOctano"
+      ],
+      "cas": "111-65-9",
+      "formula": "",
+      "name": "n-Octane",
+      "source_component_ids": [
+        "27"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "111-66-0": {
+      "aliases": [
+        "1-Octene",
+        "1-octene"
+      ],
+      "cas": "111-66-0",
+      "formula": "",
+      "name": "1-Octene",
+      "source_component_ids": [
+        "250"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "111-76-2": {
+      "aliases": [
+        "2-butoxy-ethanol",
+        "2-butoxyethanol"
+      ],
+      "cas": "111-76-2",
+      "formula": "C6H14O2",
+      "name": "2-butoxyethanol",
+      "source_component_ids": [
+        "2862"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "111-84-2": {
+      "aliases": [
+        "N-nonane",
+        "Nonane",
+        "nNonano"
+      ],
+      "cas": "111-84-2",
+      "formula": "",
+      "name": "Nonane",
+      "source_component_ids": [
+        "46"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "112-30-1": {
+      "aliases": [
+        "1-Decanol"
+      ],
+      "cas": "112-30-1",
+      "formula": "",
+      "name": "1-Decanol",
+      "source_component_ids": [
+        "1136"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "112-53-8": {
+      "aliases": [
+        "1-Dodecanol",
+        "1-dodecanol"
+      ],
+      "cas": "112-53-8",
+      "formula": "",
+      "name": "1-dodecanol",
+      "source_component_ids": [
+        "1140"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "112-80-1": {
+      "aliases": [
+        "Oleicacid",
+        "oleic acid"
+      ],
+      "cas": "112-80-1",
+      "formula": "",
+      "name": "oleic acid",
+      "source_component_ids": [
+        "1279"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "115-07-1": {
+      "aliases": [
+        "Propylene"
+      ],
+      "cas": "115-07-1",
+      "formula": "",
+      "name": "Propylene",
+      "source_component_ids": [
+        "202"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "115-11-7": {
+      "aliases": [
+        "Isobutene",
+        "isobutene"
+      ],
+      "cas": "115-11-7",
+      "formula": "",
+      "name": "isobutene",
+      "source_component_ids": [
+        "207"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "119-64-2": {
+      "aliases": [
+        "Tetralin"
+      ],
+      "cas": "119-64-2",
+      "formula": "",
+      "name": "Tetralin",
+      "source_component_ids": [
+        "706"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "121-44-8": {
+      "aliases": [
+        "Triethyl amine",
+        "Triethylamine"
+      ],
+      "cas": "121-44-8",
+      "formula": "",
+      "name": "Triethyl amine",
+      "source_component_ids": [
+        "1706"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "123-38-6": {
+      "aliases": [
+        "Propanal",
+        "propanal"
+      ],
+      "cas": "123-38-6",
+      "formula": "C3H6O",
+      "name": "propanal",
+      "source_component_ids": [
+        "1003"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "123-39-7": {
+      "aliases": [
+        "N-Methylformamide",
+        "N-methylformamide"
+      ],
+      "cas": "123-39-7",
+      "formula": "C2H5NO",
+      "name": "N-methylformamide",
+      "source_component_ids": [
+        "2852"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "123-42-2": {
+      "aliases": [
+        "Diacetonealcohol",
+        "diacetone alcohol"
+      ],
+      "cas": "123-42-2",
+      "formula": "",
+      "name": "diacetone alcohol",
+      "source_component_ids": [
+        "2854"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "123-51-3": {
+      "aliases": [
+        "3-methyl-1-butanol"
+      ],
+      "cas": "123-51-3",
+      "formula": "C5H12O",
+      "name": "3-methyl-1-butanol",
+      "source_component_ids": [
+        "1123"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "123-86-4": {
+      "aliases": [
+        "Butyl acetate",
+        "N-butyl acetate"
+      ],
+      "cas": "123-86-4",
+      "formula": "",
+      "name": "Butyl acetate",
+      "source_component_ids": [
+        "1315"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "123-91-1": {
+      "aliases": [
+        "1,4-Dioxane",
+        "1,4-dioxane"
+      ],
+      "cas": "123-91-1",
+      "formula": "",
+      "name": "1,4-Dioxane",
+      "source_component_ids": [
+        "1421"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "123-92-2": {
+      "aliases": [
+        "Isopentylacetate",
+        "isoamyl acetate"
+      ],
+      "cas": "123-92-2",
+      "formula": "",
+      "name": "isoamyl acetate",
+      "source_component_ids": [
+        "1317"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "124-18-5": {
+      "aliases": [
+        "Decane",
+        "N-decane",
+        "nDecano"
+      ],
+      "cas": "124-18-5",
+      "formula": "",
+      "name": "Decane",
+      "source_component_ids": [
+        "56"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "124-38-9": {
+      "aliases": [
+        "CO2",
+        "Carbon dioxide",
+        "DioxidoDeCarbono"
+      ],
+      "cas": "124-38-9",
+      "formula": "",
+      "name": "CO2",
+      "source_component_ids": [
+        "909"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "124-40-3": {
+      "aliases": [
+        "Dimethyl amine",
+        "Dimethylamine"
+      ],
+      "cas": "124-40-3",
+      "formula": "",
+      "name": "Dimethyl amine",
+      "source_component_ids": [
+        "1702"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "126-33-0": {
+      "aliases": [
+        "Sulfolane",
+        "sulfolane"
+      ],
+      "cas": "126-33-0",
+      "formula": "C4H8O2S",
+      "name": "sulfolane",
+      "source_component_ids": [
+        "1845"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "127-18-4": {
+      "aliases": [
+        "Tetrachloroethylene",
+        "tetrachloroethylene"
+      ],
+      "cas": "127-18-4",
+      "formula": "",
+      "name": "tetrachloroethylene",
+      "source_component_ids": [
+        "1542"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "127-19-5": {
+      "aliases": [
+        "N,N-dimethylacetamide",
+        "N,n-dimethylacetamide"
+      ],
+      "cas": "127-19-5",
+      "formula": "C4H9NO",
+      "name": "N,N-dimethylacetamide",
+      "source_component_ids": [
+        "2856"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "1333-74-0": {
+      "aliases": [
+        "H2",
+        "Hydrogen"
+      ],
+      "cas": "1333-74-0",
+      "formula": "",
+      "name": "H2",
+      "source_component_ids": [
+        "902"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "141-78-6": {
+      "aliases": [
+        "Ethyl Acetate",
+        "Ethyl acetate"
+      ],
+      "cas": "141-78-6",
+      "formula": "",
+      "name": "Ethyl Acetate",
+      "source_component_ids": [
+        "1313"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "141-79-7": {
+      "aliases": [
+        "Mesityloxide",
+        "mesityl oxide"
+      ],
+      "cas": "141-79-7",
+      "formula": "C6H10O",
+      "name": "mesityl oxide",
+      "source_component_ids": [
+        "1065"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "142-82-5": {
+      "aliases": [
+        "C7H16",
+        "N-heptane",
+        "nHeptano"
+      ],
+      "cas": "142-82-5",
+      "formula": "",
+      "name": "C7H16",
+      "source_component_ids": [
+        "17"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "142-84-7": {
+      "aliases": [
+        "Dipropyl amine",
+        "Dipropylamine"
+      ],
+      "cas": "142-84-7",
+      "formula": "",
+      "name": "Dipropyl amine",
+      "source_component_ids": [
+        "1707"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "151-67-7": {
+      "aliases": [
+        "Halothane",
+        "halothane"
+      ],
+      "cas": "151-67-7",
+      "formula": "C2HBrClF3",
+      "name": "halothane",
+      "source_component_ids": [
+        "2640"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "1574-41-0": {
+      "aliases": [
+        "cis-1,3-pentadiene"
+      ],
+      "cas": "1574-41-0",
+      "formula": "C5H8",
+      "name": "cis-1,3-pentadiene",
+      "source_component_ids": [
+        "305"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "1634-04-4": {
+      "aliases": [
+        "Methyl tert-butyl ether"
+      ],
+      "cas": "1634-04-4",
+      "formula": "",
+      "name": "Methyl tert-butyl ether",
+      "source_component_ids": [
+        "1405"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "2004-70-8": {
+      "aliases": [
+        "Trans-1.3-Pentadiene",
+        "trans-1,3-Pentadiene"
+      ],
+      "cas": "2004-70-8",
+      "formula": "",
+      "name": "trans-1,3-Pentadiene",
+      "source_component_ids": [
+        "306"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "392-56-3": {
+      "aliases": [
+        "Hexafluorobenzene",
+        "hexafluorobenzene"
+      ],
+      "cas": "392-56-3",
+      "formula": "C6F6",
+      "name": "hexafluorobenzene",
+      "source_component_ids": [
+        "1864"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "462-06-6": {
+      "aliases": [
+        "Fluorobenzene"
+      ],
+      "cas": "462-06-6",
+      "formula": "",
+      "name": "Fluorobenzene",
+      "source_component_ids": [
+        "1860"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "463-58-1": {
+      "aliases": [
+        "CarbonylSulfide",
+        "carbonyl sulfide"
+      ],
+      "cas": "463-58-1",
+      "formula": "COS",
+      "name": "carbonyl sulfide",
+      "source_component_ids": [
+        "1893"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "463-82-1": {
+      "aliases": [
+        "Neopentane",
+        "neopentane"
+      ],
+      "cas": "463-82-1",
+      "formula": "",
+      "name": "neopentane",
+      "source_component_ids": [
+        "9"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "513-35-9": {
+      "aliases": [
+        "2-Methyl-2-butene",
+        "2-methyl-2-butene"
+      ],
+      "cas": "513-35-9",
+      "formula": "",
+      "name": "2-Methyl-2-butene",
+      "source_component_ids": [
+        "214"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "513-85-9": {
+      "aliases": [
+        "2,3-butanediol",
+        "2.3-Butanediol"
+      ],
+      "cas": "513-85-9",
+      "formula": "",
+      "name": "2,3-butanediol",
+      "source_component_ids": [
+        "1238"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "526-73-8": {
+      "aliases": [
+        "1,2,3-Trimethylbenzene",
+        "1,2,3-trimethylbenzene"
+      ],
+      "cas": "526-73-8",
+      "formula": "",
+      "name": "1,2,3-Trimethylbenzene",
+      "source_component_ids": [
+        "514"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "540-84-1": {
+      "aliases": [
+        "2,2,4-Trimethylpentane",
+        "2,2,4-trimethylpentane",
+        "2.2.4-Trimethylpentane"
+      ],
+      "cas": "540-84-1",
+      "formula": "C8H18",
+      "name": "2,2,4-trimethylpentane",
+      "source_component_ids": [
+        "22",
+        "41"
+      ],
+      "sources": [
+        "manual_identity_override",
+        "perry_properties.json"
+      ]
+    },
+    "542-92-7": {
+      "aliases": [
+        "Cyclopentadiene",
+        "cyclopentadiene"
+      ],
+      "cas": "542-92-7",
+      "formula": "C5H6",
+      "name": "cyclopentadiene",
+      "source_component_ids": [
+        "315"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "544-76-3": {
+      "aliases": [
+        "Hexadecane",
+        "N-hexadecane"
+      ],
+      "cas": "544-76-3",
+      "formula": "",
+      "name": "Hexadecane",
+      "source_component_ids": [
+        "68"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "56-23-5": {
+      "aliases": [
+        "Carbon Tetrachloride",
+        "Carbon tetrachloride"
+      ],
+      "cas": "56-23-5",
+      "formula": "",
+      "name": "Carbon Tetrachloride",
+      "source_component_ids": [
+        "1501"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "563-80-4": {
+      "aliases": [
+        "Methyl isopropyl ketone",
+        "Methylisopropyl ketone"
+      ],
+      "cas": "563-80-4",
+      "formula": "",
+      "name": "Methylisopropyl ketone",
+      "source_component_ids": [
+        "1061"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "57-55-6": {
+      "aliases": [
+        "1,2-propanediol",
+        "1.2-Propanediol"
+      ],
+      "cas": "57-55-6",
+      "formula": "C3H8O2",
+      "name": "1,2-propanediol",
+      "source_component_ids": [
+        "1211"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "590-19-2": {
+      "aliases": [
+        "1,2-Butadiene",
+        "1,2-butadiene"
+      ],
+      "cas": "590-19-2",
+      "formula": "",
+      "name": "1,2-Butadiene",
+      "source_component_ids": [
+        "302"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "592-41-6": {
+      "aliases": [
+        "1-Hexene",
+        "1-hexene"
+      ],
+      "cas": "592-41-6",
+      "formula": "",
+      "name": "1-Hexene",
+      "source_component_ids": [
+        "216"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "60-29-7": {
+      "aliases": [
+        "Diethyl Ether",
+        "Diethyl ether"
+      ],
+      "cas": "60-29-7",
+      "formula": "",
+      "name": "Diethyl Ether",
+      "source_component_ids": [
+        "1402"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "62-53-3": {
+      "aliases": [
+        "Aniline"
+      ],
+      "cas": "62-53-3",
+      "formula": "",
+      "name": "Aniline",
+      "source_component_ids": [
+        "1792"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "624-83-9": {
+      "aliases": [
+        "Methyl Isocyanate",
+        "MethylIsocyanate"
+      ],
+      "cas": "624-83-9",
+      "formula": "",
+      "name": "Methyl Isocyanate",
+      "source_component_ids": [
+        "2793"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "626-93-7": {
+      "aliases": [
+        "2-Hexanol"
+      ],
+      "cas": "626-93-7",
+      "formula": "",
+      "name": "2-Hexanol",
+      "source_component_ids": [
+        "1115"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "630-08-0": {
+      "aliases": [
+        "CO",
+        "Carbon monoxide"
+      ],
+      "cas": "630-08-0",
+      "formula": "",
+      "name": "CO",
+      "source_component_ids": [
+        "908"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "64-17-5": {
+      "aliases": [
+        "C2H5OH",
+        "Etanol",
+        "Ethanol"
+      ],
+      "cas": "64-17-5",
+      "formula": "",
+      "name": "C2H5OH",
+      "source_component_ids": [
+        "1102"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "64-19-7": {
+      "aliases": [
+        "Acetic Acid",
+        "Acetic acid"
+      ],
+      "cas": "64-19-7",
+      "formula": "",
+      "name": "Acetic Acid",
+      "source_component_ids": [
+        "1252"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "67-56-1": {
+      "aliases": [
+        "CH3OH",
+        "Metanol",
+        "Methanol",
+        "methanol"
+      ],
+      "cas": "67-56-1",
+      "formula": "",
+      "name": "CH3OH",
+      "source_component_ids": [
+        "1101",
+        "nrtl_binary_interactions.json:351:component1",
+        "uniquac_binary_interactions.json:275:component1"
+      ],
+      "sources": [
+        "chemicals.json",
+        "manual_record_identity_override"
+      ]
+    },
+    "67-63-0": {
+      "aliases": [
+        "Isopropanol",
+        "isopropanol"
+      ],
+      "cas": "67-63-0",
+      "formula": "",
+      "name": "isopropanol",
+      "source_component_ids": [
+        "1104"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "67-64-1": {
+      "aliases": [
+        "Acetone"
+      ],
+      "cas": "67-64-1",
+      "formula": "",
+      "name": "Acetone",
+      "source_component_ids": [
+        "1051"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "67-66-3": {
+      "aliases": [
+        "Chloroform"
+      ],
+      "cas": "67-66-3",
+      "formula": "",
+      "name": "Chloroform",
+      "source_component_ids": [
+        "1521"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "67-68-5": {
+      "aliases": [
+        "Dimethyl sulfoxide"
+      ],
+      "cas": "67-68-5",
+      "formula": "",
+      "name": "Dimethyl sulfoxide",
+      "source_component_ids": [
+        "1844"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "68-12-2": {
+      "aliases": [
+        "N,N-Dimethyl formamide",
+        "N,n-dimethylformamide"
+      ],
+      "cas": "68-12-2",
+      "formula": "",
+      "name": "N,N-Dimethyl formamide",
+      "source_component_ids": [
+        "1876"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "71-23-8": {
+      "aliases": [
+        "1-Propanol",
+        "1-propanol"
+      ],
+      "cas": "71-23-8",
+      "formula": "",
+      "name": "1-Propanol",
+      "source_component_ids": [
+        "1103",
+        "nrtl_binary_interactions.json:214:component2",
+        "uniquac_binary_interactions.json:156:component2"
+      ],
+      "sources": [
+        "chemicals.json",
+        "manual_record_identity_override"
+      ]
+    },
+    "71-36-3": {
+      "aliases": [
+        "1-Butanol",
+        "1-butanol"
+      ],
+      "cas": "71-36-3",
+      "formula": "",
+      "name": "1-Butanol",
+      "source_component_ids": [
+        "1105"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "71-41-0": {
+      "aliases": [
+        "1-Pentanol"
+      ],
+      "cas": "71-41-0",
+      "formula": "",
+      "name": "1-Pentanol",
+      "source_component_ids": [
+        "1109"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "71-43-2": {
+      "aliases": [
+        "Benzene",
+        "Benzeno",
+        "C6H6"
+      ],
+      "cas": "71-43-2",
+      "formula": "",
+      "name": "C6H6",
+      "source_component_ids": [
+        "501"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "71-55-6": {
+      "aliases": [
+        "1,1,1-trichloroethane",
+        "1.1.1-trichloroethane"
+      ],
+      "cas": "71-55-6",
+      "formula": "C2H3Cl3",
+      "name": "1,1,1-trichloroethane",
+      "source_component_ids": [
+        "1527"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "74-82-8": {
+      "aliases": [
+        "Metano",
+        "Methane"
+      ],
+      "cas": "74-82-8",
+      "formula": "",
+      "name": "Methane",
+      "source_component_ids": [
+        "1"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "74-84-0": {
+      "aliases": [
+        "Etano",
+        "Ethane"
+      ],
+      "cas": "74-84-0",
+      "formula": "",
+      "name": "Ethane",
+      "source_component_ids": [
+        "2"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "74-85-1": {
+      "aliases": [
+        "Ethylene"
+      ],
+      "cas": "74-85-1",
+      "formula": "",
+      "name": "Ethylene",
+      "source_component_ids": [
+        "201"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "74-86-2": {
+      "aliases": [
+        "Acetylene"
+      ],
+      "cas": "74-86-2",
+      "formula": "",
+      "name": "Acetylene",
+      "source_component_ids": [
+        "401"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "74-87-3": {
+      "aliases": [
+        "Methyl chloride"
+      ],
+      "cas": "74-87-3",
+      "formula": "",
+      "name": "Methyl chloride",
+      "source_component_ids": [
+        "1502"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "74-88-4": {
+      "aliases": [
+        "Methyl iodide",
+        "methyl iodide"
+      ],
+      "cas": "74-88-4",
+      "formula": "",
+      "name": "methyl iodide",
+      "source_component_ids": [
+        "1681"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "74-98-6": {
+      "aliases": [
+        "Propane",
+        "Propano"
+      ],
+      "cas": "74-98-6",
+      "formula": "",
+      "name": "Propane",
+      "source_component_ids": [
+        "3"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "7439-90-9": {
+      "aliases": [
+        "Krypton",
+        "krypton"
+      ],
+      "cas": "7439-90-9",
+      "formula": "Kr",
+      "name": "krypton",
+      "source_component_ids": [
+        "920"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "7440-37-1": {
+      "aliases": [
+        "Ar",
+        "Argon"
+      ],
+      "cas": "7440-37-1",
+      "formula": "",
+      "name": "Ar",
+      "source_component_ids": [
+        "914"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "7440-59-7": {
+      "aliases": [
+        "Helium-4",
+        "helium"
+      ],
+      "cas": "7440-59-7",
+      "formula": "",
+      "name": "Helium-4",
+      "source_component_ids": [
+        "913"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "7446-09-5": {
+      "aliases": [
+        "Sulfur Dioxide",
+        "Sulfur dioxide"
+      ],
+      "cas": "7446-09-5",
+      "formula": "",
+      "name": "Sulfur Dioxide",
+      "source_component_ids": [
+        "910"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "75-01-4": {
+      "aliases": [
+        "Vinyl chloride"
+      ],
+      "cas": "75-01-4",
+      "formula": "",
+      "name": "Vinyl chloride",
+      "source_component_ids": [
+        "1504"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-03-6": {
+      "aliases": [
+        "iodoethane"
+      ],
+      "cas": "75-03-6",
+      "formula": "C2H5I",
+      "name": "iodoethane",
+      "source_component_ids": [
+        "1682"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "75-04-7": {
+      "aliases": [
+        "Ethyl amine",
+        "Ethylamine"
+      ],
+      "cas": "75-04-7",
+      "formula": "",
+      "name": "Ethyl amine",
+      "source_component_ids": [
+        "1704"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-05-8": {
+      "aliases": [
+        "Acetonitrile"
+      ],
+      "cas": "75-05-8",
+      "formula": "",
+      "name": "Acetonitrile",
+      "source_component_ids": [
+        "1772"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "75-07-0": {
+      "aliases": [
+        "Acetaldehyde"
+      ],
+      "cas": "75-07-0",
+      "formula": "",
+      "name": "Acetaldehyde",
+      "source_component_ids": [
+        "1002"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "75-09-2": {
+      "aliases": [
+        "Dichloromethane"
+      ],
+      "cas": "75-09-2",
+      "formula": "",
+      "name": "Dichloromethane",
+      "source_component_ids": [
+        "1511"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "75-10-5": {
+      "aliases": [
+        "DiFluoroMethane",
+        "Difluoromethane"
+      ],
+      "cas": "75-10-5",
+      "formula": "",
+      "name": "Difluoromethane",
+      "source_component_ids": [
+        "1614"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-12-7": {
+      "aliases": [
+        "formamide"
+      ],
+      "cas": "75-12-7",
+      "formula": "CH3NO",
+      "name": "formamide",
+      "source_component_ids": [
+        "2851",
+        "nrtl_binary_interactions.json:351:component2",
+        "uniquac_binary_interactions.json:275:component2"
+      ],
+      "sources": [
+        "manual_identity_override",
+        "manual_record_identity_override"
+      ]
+    },
+    "75-15-0": {
+      "aliases": [
+        "Carbon disulfide"
+      ],
+      "cas": "75-15-0",
+      "formula": "",
+      "name": "Carbon disulfide",
+      "source_component_ids": [
+        "1938"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-21-8": {
+      "aliases": [
+        "Ethylene Oxide",
+        "Ethylene oxide"
+      ],
+      "cas": "75-21-8",
+      "formula": "",
+      "name": "Ethylene Oxide",
+      "source_component_ids": [
+        "1441"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "75-25-2": {
+      "aliases": [
+        "Tribromomethane",
+        "bromoform",
+        "tribromomethane"
+      ],
+      "cas": "75-25-2",
+      "formula": "CHBr3",
+      "name": "bromoform",
+      "source_component_ids": [
+        "1698"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "75-28-5": {
+      "aliases": [
+        "Isobutane",
+        "iButano"
+      ],
+      "cas": "75-28-5",
+      "formula": "",
+      "name": "Isobutane",
+      "source_component_ids": [
+        "4"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "75-31-0": {
+      "aliases": [
+        "Isopropyl amine",
+        "Isopropylamine"
+      ],
+      "cas": "75-31-0",
+      "formula": "",
+      "name": "Isopropyl amine",
+      "source_component_ids": [
+        "1719"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-45-6": {
+      "aliases": [
+        "DiFluoroChloroMethane",
+        "difluorochloromethane"
+      ],
+      "cas": "75-45-6",
+      "formula": "",
+      "name": "difluorochloromethane",
+      "source_component_ids": [
+        "1604"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "75-46-7": {
+      "aliases": [
+        "TriFluoroMethane",
+        "trifluoromethane"
+      ],
+      "cas": "75-46-7",
+      "formula": "CHF3",
+      "name": "trifluoromethane",
+      "source_component_ids": [
+        "1615"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "75-52-5": {
+      "aliases": [
+        "Nitromethane"
+      ],
+      "cas": "75-52-5",
+      "formula": "",
+      "name": "Nitromethane",
+      "source_component_ids": [
+        "1760"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-56-9": {
+      "aliases": [
+        "propylene oxide"
+      ],
+      "cas": "75-56-9",
+      "formula": "C3H6O",
+      "name": "propylene oxide",
+      "source_component_ids": [
+        "1442"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "75-64-9": {
+      "aliases": [
+        "Tert.Butylamine",
+        "tert-butylamine"
+      ],
+      "cas": "75-64-9",
+      "formula": "C4H11N",
+      "name": "tert-butylamine",
+      "source_component_ids": [
+        "1727"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "75-65-0": {
+      "aliases": [
+        "2-Methyl-2-propanol",
+        "2-methyl-2-propanol"
+      ],
+      "cas": "75-65-0",
+      "formula": "",
+      "name": "2-Methyl-2-propanol",
+      "source_component_ids": [
+        "1108"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "75-71-8": {
+      "aliases": [
+        "DiChloroDiFlouroMethane",
+        "dichlorodifluoromethane"
+      ],
+      "cas": "75-71-8",
+      "formula": "",
+      "name": "dichlorodifluoromethane",
+      "source_component_ids": [
+        "1601"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "75-72-9": {
+      "aliases": [
+        "chlorotrifluoromethane"
+      ],
+      "cas": "75-72-9",
+      "formula": "CClF3",
+      "name": "chlorotrifluoromethane",
+      "source_component_ids": [
+        "1606"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "75-83-2": {
+      "aliases": [
+        "2,2-dimethylbutane"
+      ],
+      "cas": "75-83-2",
+      "formula": "",
+      "name": "2,2-dimethylbutane",
+      "source_component_ids": [
+        "14"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "75-85-4": {
+      "aliases": [
+        "2-methyl-2-butanol"
+      ],
+      "cas": "75-85-4",
+      "formula": "",
+      "name": "2-methyl-2-butanol",
+      "source_component_ids": [
+        "1111"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "76-01-7": {
+      "aliases": [
+        "Pentachloroethane",
+        "pentachloroethane"
+      ],
+      "cas": "76-01-7",
+      "formula": "",
+      "name": "pentachloroethane",
+      "source_component_ids": [
+        "1590"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "76-13-1": {
+      "aliases": [
+        "1,1,2-trichloro-1,2,2-trifluoroethane",
+        "1,1,2-trichlorotrifluoroethane",
+        "1.1.2-Trichloro-1.2.2-Trifluoroethane"
+      ],
+      "cas": "76-13-1",
+      "formula": "C2Cl3F3",
+      "name": "1,1,2-trichlorotrifluoroethane",
+      "source_component_ids": [
+        "2655"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "76-15-3": {
+      "aliases": [
+        "chloropentafluoroethane"
+      ],
+      "cas": "76-15-3",
+      "formula": "C2ClF5",
+      "name": "chloropentafluoroethane",
+      "source_component_ids": [
+        "2692"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "7664-41-7": {
+      "aliases": [
+        "Ammonia",
+        "NH3"
+      ],
+      "cas": "7664-41-7",
+      "formula": "",
+      "name": "NH3",
+      "source_component_ids": [
+        "1911"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "7697-37-2": {
+      "aliases": [
+        "Nitric Acid",
+        "Nitric acid"
+      ],
+      "cas": "7697-37-2",
+      "formula": "",
+      "name": "Nitric Acid",
+      "source_component_ids": [
+        "1903"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "7727-37-9": {
+      "aliases": [
+        "N2",
+        "Nitrogen",
+        "Nitrogenio",
+        "nitrogen"
+      ],
+      "cas": "7727-37-9",
+      "formula": "N2",
+      "name": "nitrogen",
+      "source_component_ids": [
+        "900",
+        "905"
+      ],
+      "sources": [
+        "chemicals.json",
+        "manual_identity_override"
+      ]
+    },
+    "7732-18-5": {
+      "aliases": [
+        "Agua",
+        "H2O",
+        "Water"
+      ],
+      "cas": "7732-18-5",
+      "formula": "",
+      "name": "H2O",
+      "source_component_ids": [
+        "1921"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "7782-44-7": {
+      "aliases": [
+        "O2",
+        "Oxigenio",
+        "Oxygen"
+      ],
+      "cas": "7782-44-7",
+      "formula": "",
+      "name": "O2",
+      "source_component_ids": [
+        "901"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "7783-06-4": {
+      "aliases": [
+        "Hydrogen Sulfide",
+        "Hydrogen sulfide",
+        "SulfetoDeHidrogenio"
+      ],
+      "cas": "7783-06-4",
+      "formula": "",
+      "name": "Hydrogen Sulfide",
+      "source_component_ids": [
+        "1922"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "78-78-4": {
+      "aliases": [
+        "Isopentane",
+        "iPentano",
+        "isopentane"
+      ],
+      "cas": "78-78-4",
+      "formula": "",
+      "name": "isopentane",
+      "source_component_ids": [
+        "8"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "78-79-5": {
+      "aliases": [
+        "Isoprene",
+        "isoprene"
+      ],
+      "cas": "78-79-5",
+      "formula": "",
+      "name": "isoprene",
+      "source_component_ids": [
+        "309"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "78-83-1": {
+      "aliases": [
+        "2-methyl-1-propanol"
+      ],
+      "cas": "78-83-1",
+      "formula": "",
+      "name": "2-methyl-1-propanol",
+      "source_component_ids": [
+        "1106"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "78-84-2": {
+      "aliases": [
+        "2-methylpropanal"
+      ],
+      "cas": "78-84-2",
+      "formula": "C4H8O",
+      "name": "2-methylpropanal",
+      "source_component_ids": [
+        "1006"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "78-92-2": {
+      "aliases": [
+        "2-butanol"
+      ],
+      "cas": "78-92-2",
+      "formula": "C4H10O",
+      "name": "2-butanol",
+      "source_component_ids": [
+        "nrtl_binary_interactions.json:126:component2",
+        "nrtl_binary_interactions.json:173:component2",
+        "uniquac_binary_interactions.json:122:component2",
+        "uniquac_binary_interactions.json:67:component2"
+      ],
+      "sources": [
+        "manual_record_identity_override"
+      ]
+    },
+    "78-93-3": {
+      "aliases": [
+        "Methyl ethyl ketone",
+        "Methylethyl ketone",
+        "MetilEtilCetona"
+      ],
+      "cas": "78-93-3",
+      "formula": "",
+      "name": "Methylethyl ketone",
+      "source_component_ids": [
+        "1052"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "79-01-6": {
+      "aliases": [
+        "Trichloroethylene",
+        "trichloroethylene"
+      ],
+      "cas": "79-01-6",
+      "formula": "",
+      "name": "trichloroethylene",
+      "source_component_ids": [
+        "1541"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "79-09-4": {
+      "aliases": [
+        "Propionic acid"
+      ],
+      "cas": "79-09-4",
+      "formula": "",
+      "name": "Propionic acid",
+      "source_component_ids": [
+        "1253"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "79-10-7": {
+      "aliases": [
+        "Acrylic acid"
+      ],
+      "cas": "79-10-7",
+      "formula": "",
+      "name": "Acrylic acid",
+      "source_component_ids": [
+        "1277"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "79-20-9": {
+      "aliases": [
+        "Methyl acetate"
+      ],
+      "cas": "79-20-9",
+      "formula": "",
+      "name": "Methyl acetate",
+      "source_component_ids": [
+        "1312"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "79-24-3": {
+      "aliases": [
+        "Nitroethane"
+      ],
+      "cas": "79-24-3",
+      "formula": "",
+      "name": "Nitroethane",
+      "source_component_ids": [
+        "1761"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "79-29-8": {
+      "aliases": [
+        "2,3-Dimethylbutane",
+        "2,3-dimethylbutane"
+      ],
+      "cas": "79-29-8",
+      "formula": "",
+      "name": "2,3-Dimethylbutane",
+      "source_component_ids": [
+        "15"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "79-34-5": {
+      "aliases": [
+        "1,1,2,2-tetrachloroethane",
+        "1.1.2.2-tetrachloroethane"
+      ],
+      "cas": "79-34-5",
+      "formula": "C2H2Cl4",
+      "name": "1,1,2,2-tetrachloroethane",
+      "source_component_ids": [
+        "1529"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "79-41-4": {
+      "aliases": [
+        "Methacrylic acid"
+      ],
+      "cas": "79-41-4",
+      "formula": "",
+      "name": "Methacrylic acid",
+      "source_component_ids": [
+        "1278"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "79-46-9": {
+      "aliases": [
+        "2-nitropropane"
+      ],
+      "cas": "79-46-9",
+      "formula": "",
+      "name": "2-nitropropane",
+      "source_component_ids": [
+        "1763"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "80-62-6": {
+      "aliases": [
+        "Methyl methacrylate"
+      ],
+      "cas": "80-62-6",
+      "formula": "",
+      "name": "Methyl methacrylate",
+      "source_component_ids": [
+        "1351"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "872-50-4": {
+      "aliases": [
+        "1-methyl-2-pyrrolidinone",
+        "N-methylpyrrolidone",
+        "n-Methylpyrrolidone"
+      ],
+      "cas": "872-50-4",
+      "formula": "C5H9NO",
+      "name": "1-methyl-2-pyrrolidinone",
+      "source_component_ids": [
+        "1767"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "90-12-0": {
+      "aliases": [
+        "1-methylnaphthalene"
+      ],
+      "cas": "90-12-0",
+      "formula": "C11H10",
+      "name": "1-methylnaphthalene",
+      "source_component_ids": [
+        "702"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "91-22-5": {
+      "aliases": [
+        "Quinoline",
+        "quinoline"
+      ],
+      "cas": "91-22-5",
+      "formula": "",
+      "name": "quinoline",
+      "source_component_ids": [
+        "1748"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "91-57-6": {
+      "aliases": [
+        "2-methylnaphthalene"
+      ],
+      "cas": "91-57-6",
+      "formula": "C11H10",
+      "name": "2-methylnaphthalene",
+      "source_component_ids": [
+        "703"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "91-66-7": {
+      "aliases": [
+        "N,N-diethylaniline",
+        "N.N-Diethylaniline"
+      ],
+      "cas": "91-66-7",
+      "formula": "C10H15N",
+      "name": "N,N-diethylaniline",
+      "source_component_ids": [
+        "1753"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "92-06-8": {
+      "aliases": [
+        "M-Terphenyl",
+        "m-terphenyl"
+      ],
+      "cas": "92-06-8",
+      "formula": "C18H14",
+      "name": "m-terphenyl",
+      "source_component_ids": [
+        "560"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "92-51-3": {
+      "aliases": [
+        "Bicyclohexyl",
+        "bicyclohexyl"
+      ],
+      "cas": "92-51-3",
+      "formula": "C12H22",
+      "name": "bicyclohexyl",
+      "source_component_ids": [
+        "155"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "95-47-6": {
+      "aliases": [
+        "O-xylene",
+        "Oxileno",
+        "o-Xylene"
+      ],
+      "cas": "95-47-6",
+      "formula": "",
+      "name": "o-Xylene",
+      "source_component_ids": [
+        "505"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "95-48-7": {
+      "aliases": [
+        "O-cresol",
+        "o-Cresol"
+      ],
+      "cas": "95-48-7",
+      "formula": "",
+      "name": "o-Cresol",
+      "source_component_ids": [
+        "1182"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "95-63-6": {
+      "aliases": [
+        "1,2,4-Trimethylbenzene",
+        "1,2,4-trimethylbenzene"
+      ],
+      "cas": "95-63-6",
+      "formula": "",
+      "name": "1,2,4-Trimethylbenzene",
+      "source_component_ids": [
+        "515"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "96-14-0": {
+      "aliases": [
+        "3-methylpentane"
+      ],
+      "cas": "96-14-0",
+      "formula": "",
+      "name": "3-methylpentane",
+      "source_component_ids": [
+        "13"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "96-22-0": {
+      "aliases": [
+        "3-Pentanone",
+        "3-pentanone"
+      ],
+      "cas": "96-22-0",
+      "formula": "",
+      "name": "3-Pentanone",
+      "source_component_ids": [
+        "1053"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "96-33-3": {
+      "aliases": [
+        "Methylacrylate",
+        "methyl acrylate"
+      ],
+      "cas": "96-33-3",
+      "formula": "C4H6O2",
+      "name": "methyl acrylate",
+      "source_component_ids": [
+        "1341"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "98-01-1": {
+      "aliases": [
+        "Furfural",
+        "furfural"
+      ],
+      "cas": "98-01-1",
+      "formula": "C5H4O2",
+      "name": "furfural",
+      "source_component_ids": [
+        "1889"
+      ],
+      "sources": [
+        "manual_identity_override"
+      ]
+    },
+    "98-82-8": {
+      "aliases": [
+        "Cumene"
+      ],
+      "cas": "98-82-8",
+      "formula": "",
+      "name": "Cumene",
+      "source_component_ids": [
+        "510"
+      ],
+      "sources": [
+        "perry_properties.json"
+      ]
+    },
+    "98-86-2": {
+      "aliases": [
+        "Acetophenone"
+      ],
+      "cas": "98-86-2",
+      "formula": "",
+      "name": "Acetophenone",
+      "source_component_ids": [
+        "1090"
+      ],
+      "sources": [
+        "chemicals.json"
+      ]
+    },
+    "98-95-3": {
+      "aliases": [
+        "Nitrobenzene",
+        "nitrobenzene"
+      ],
+      "cas": "98-95-3",
+      "formula": "",
+      "name": "nitrobenzene",
+      "source_component_ids": [
+        "1886"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "99-87-6": {
+      "aliases": [
+        "P-cymene",
+        "p-Cymene"
+      ],
+      "cas": "99-87-6",
+      "formula": "",
+      "name": "p-Cymene",
+      "source_component_ids": [
+        "524"
+      ],
+      "sources": [
+        "perry_table_2_10_vapor_pressure.json"
+      ]
+    }
+  },
+  "metadata": {
+    "description": "Component identity index generated from ChemSep IDs for CAS-keyed interaction parameters.",
+    "key_basis": "CAS"
+  }
+}

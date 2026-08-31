@@ -1,0 +1,49 @@
+
+PROCESS: Ammonia Synthesis (Single Pass)
+VERSION: 1.0
+ONLINE_LOOKUP: false
+
+COMPONENTS:
+    N2  | Nitrogen  | MW=28.01
+    H2  | Hydrogen  | MW=2.016
+    NH3 | Ammonia   | MW=17.03
+
+STREAM Feed : FEED -> R-1.in
+    T = 350 [C]
+    P = 200 [bar]
+    F = 400 [kmol/h]
+    x = N2:0.25, H2:0.75
+
+STREAM Reactor-Out : R-1.out -> COOL-1.in
+STREAM S1 : COOL-1.out -> SEP-1.in
+STREAM Vapor : SEP-1.vap -> PRODUCT
+STREAM Product : SEP-1.liq -> PRODUCT
+
+UNIT R-1
+    TYPE: Reactor
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T = 450 [C]
+        P_drop = 5 [bar]
+    REACTIONS:
+        N2 + 3 H2 -> 2 NH3 | conversion=0.25
+
+UNIT COOL-1
+    TYPE: Cooler
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = -20 [C]
+
+UNIT SEP-1
+    TYPE: Flash
+    PORTS:
+        in  : inlet
+        vap : vapor_outlet
+        liq : liquid_outlet
+    PARAMS:
+        T = -20 [C]
+        P = 195 [bar]

@@ -1,0 +1,49 @@
+# BioSTEAM MESH Hydrocarbon Distillation Translation
+#
+# BioSTEAM stage 29 is zero-based, so it maps to pfdsim stage 30.
+# The BioSTEAM bottoms flow specification B/F = 0.76 maps to D/F = 0.24.
+# The surrounding BioSTEAM tutorial configures this mixture with Peng-Robinson.
+
+PROCESS: BioSTEAM MESH Hydrocarbon Distillation
+VERSION: 1.0
+ONLINE_LOOKUP: true
+DESCRIPTION: 42-stage translation of the BioSTEAM hydrocarbon MESHDistillation example
+THERMO_METHOD: PR
+
+COMPONENTS:
+    C2H6 | Ethane
+    C3H8 | Propane
+    C4H10 | n-Butane
+    C5H12 | n-Pentane
+    C6H14 | n-Hexane
+    C7H16 | n-Heptane
+    C6H12 | Cyclohexane
+    Cycloheptane | Cycloheptane
+    C6H6 | Benzene
+    C7H8 | Toluene
+    H2 | Hydrogen
+
+STREAM Feed : FEED -> COL-1.feed
+    T = 329.54 [K]
+    P = 3.72615 [bar]
+    F = 242.5944512829 [kmol/h]
+    x = C2H6:7.539331548301256e-10, C3H8:2.560239925997764e-6, C4H10:0.005342249145215105, C5H12:0.1850413303462238, C6H14:0.3064785678601412, C7H16:0.1272081856646128, C6H12:0.03976595486411275, Cycloheptane:0.0006962236733231722, C6H6:0.3353745296718372, C7H8:9.039778067482042e-5, H2:1.000022872399062e-18
+
+STREAM Distillate : COL-1.distillate -> PRODUCT
+STREAM Bottoms : COL-1.bottoms -> PRODUCT
+
+UNIT COL-1
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 42
+        feed_stage = 30
+        reflux_ratio = 0.857
+        D_to_F = 0.24
+        P_condenser = 3.51625 [bar]
+        P_drop_per_stage = 0.0072378 [bar]
+        condenser_type = partial
+        initializer = cmo

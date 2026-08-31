@@ -1,0 +1,10 @@
+include LICENSE
+include README.md
+include pyproject.toml
+include data/source/henry_5.0.0_sql.zip
+include data/source/henry/brockbank2013_table_c2.csv
+
+recursive-include docs *.md
+recursive-include examples *.pfd *.pfr
+recursive-include tests *.py
+recursive-include data/unifac2 *.csv *.xlsx

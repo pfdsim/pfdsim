@@ -1,0 +1,1541 @@
+{
+  "aliases": {
+    "123trimethylbenzene": "526-73-8",
+    "1butanol": "71-36-3",
+    "1decanol": "112-30-1",
+    "1hexanol": "111-27-3",
+    "1methylnaphtalene": "90-12-0",
+    "1octanol": "111-87-5",
+    "1pentanol": "71-41-0",
+    "1propanol": "71-23-8",
+    "1propylamine": "107-10-8",
+    "2butanol": "78-92-2",
+    "2heptanone": "110-43-0",
+    "2hexanone": "591-78-6",
+    "2methoxyethanol": "109-86-4",
+    "2methoxypropionitrile": "78-82-0",
+    "2methyl1propanol": "78-83-1",
+    "2methyl2propanol": "75-65-0",
+    "2methyl2propylamine": "75-64-9",
+    "2methylnaphtalene": "91-57-6",
+    "2pentanone": "107-87-9",
+    "2propanol": "67-63-0",
+    "2propylamine": "75-31-0",
+    "3hexanone": "589-38-8",
+    "3pentanone": "96-22-0",
+    "5nonanone": "502-56-7",
+    "910dihydrophenanthrene": "776-35-2",
+    "aceticacid": "64-19-7",
+    "acetone": "67-64-1",
+    "acetonitrile": "75-05-8",
+    "ammonia": "7664-41-7",
+    "benzene": "71-43-2",
+    "bicyclohexyl": "92-51-3",
+    "biphenyl": "92-52-4",
+    "butane": "106-97-8",
+    "butanone": "78-93-3",
+    "carbondioxide": "124-38-9",
+    "cyclohexane": "110-82-7",
+    "decane": "124-18-5",
+    "diipropylether": "108-20-3",
+    "dimethylbutanone": "75-97-8",
+    "dimethylether": "115-10-6",
+    "dimethylformamide": "68-12-2",
+    "dinpropylether": "111-43-3",
+    "diphenylmethane": "101-81-5",
+    "dodecane": "112-40-3",
+    "ethane": "74-84-0",
+    "ethanol": "64-17-5",
+    "ethylbenzene": "100-41-4",
+    "ethylnpropylether": "628-32-0",
+    "furfural": "98-01-1",
+    "heptadecane": "629-78-7",
+    "heptane": "142-82-5",
+    "hexadecane": "544-76-3",
+    "hexafluorobenzene": "392-56-3",
+    "hexane": "110-54-3",
+    "hydrogenchloride": "7647-01-0",
+    "indane": "496-11-7",
+    "mcresol": "108-39-4",
+    "methane": "74-82-8",
+    "methanol": "67-56-1",
+    "methylbutanone": "563-80-4",
+    "methylethylether": "540-67-0",
+    "methylipropylether": "598-53-8",
+    "methylnbutylether": "628-28-4",
+    "methylnpropylether": "557-17-5",
+    "methylphenylether": "100-66-3",
+    "methyltbutylether": "1634-04-4",
+    "naphtalene": "91-20-3",
+    "neopentane": "463-82-1",
+    "nitrogen": "7727-37-9",
+    "nitromethane": "75-52-5",
+    "nmethylpyrrolidone": "872-50-4",
+    "nonane": "111-84-2",
+    "npropylbenzene": "103-65-1",
+    "octadecane": "593-45-3",
+    "octane": "111-65-9",
+    "oxygen": "7782-44-7",
+    "pentadecane": "629-62-9",
+    "pentane": "109-66-0",
+    "propane": "74-98-6",
+    "propene": "115-07-1",
+    "pxylene": "106-42-3",
+    "pyridine": "110-86-1",
+    "tetradecane": "629-59-4",
+    "tetrahydrofuran": "109-99-9",
+    "thianaphthene": "95-15-8",
+    "toluene": "108-88-3",
+    "tridecane": "629-50-5",
+    "undecane": "1120-21-4",
+    "water": "7732-18-5"
+  },
+  "components": {
+    "100-41-4": {
+      "cas": "100-41-4",
+      "identity_source": "compound_identity",
+      "name": "Ethylbenzene",
+      "prsv1": {
+        "kappa1": 0.03994
+      },
+      "prsv2": {
+        "kappa1": 0.03994,
+        "kappa2": 0.5342,
+        "kappa3": 0.519
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Ethylbenzene"
+    },
+    "100-66-3": {
+      "cas": "100-66-3",
+      "identity_source": "manual_prsv_identity_override:Anisole:compound_identity",
+      "name": "Methyl Phenyl Ether",
+      "prsv1": {
+        "kappa1": 0.0161
+      },
+      "prsv2": {
+        "kappa1": 0.0161,
+        "kappa2": 1.0478,
+        "kappa3": 0.616
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methyl Phenyl Ether"
+    },
+    "101-81-5": {
+      "cas": "101-81-5",
+      "identity_source": "compound_identity",
+      "name": "Diphenylmethane",
+      "prsv1": {
+        "kappa1": 0.05955
+      },
+      "prsv2": {
+        "kappa1": 0.05955,
+        "kappa2": 0.3703,
+        "kappa3": 0.579
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Diphenylmethane"
+    },
+    "103-65-1": {
+      "cas": "103-65-1",
+      "identity_source": "compound_identity",
+      "name": "N-Propylbenzene",
+      "prsv1": {
+        "kappa1": 0.02715
+      },
+      "prsv2": {
+        "kappa1": 0.02715,
+        "kappa2": 0.731,
+        "kappa3": 0.53
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "N-Propylbenzene"
+    },
+    "106-42-3": {
+      "cas": "106-42-3",
+      "identity_source": "compound_identity",
+      "name": "P-Xylene",
+      "prsv1": {
+        "kappa1": 0.01277
+      },
+      "prsv2": {
+        "kappa1": 0.01277,
+        "kappa2": 0.5963,
+        "kappa3": 0.524
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "P-Xylene"
+    },
+    "106-97-8": {
+      "cas": "106-97-8",
+      "identity_source": "uniquac_rq_cas.json",
+      "name": "Butane",
+      "prsv1": {
+        "kappa1": 0.03443
+      },
+      "prsv2": {
+        "kappa1": 0.03443,
+        "kappa2": 0.6767,
+        "kappa3": 0.461
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Butane"
+    },
+    "107-10-8": {
+      "cas": "107-10-8",
+      "identity_source": "manual_prsv_identity_override:n-Propylamine:perry_table_2_10_vapor_pressure.json",
+      "name": "1-Propylamine",
+      "prsv1": {
+        "kappa1": 0.14326
+      },
+      "prsv2": {
+        "kappa1": 0.14326,
+        "kappa2": 1.1002,
+        "kappa3": 0.614
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Propylamine"
+    },
+    "107-87-9": {
+      "cas": "107-87-9",
+      "identity_source": "compound_identity",
+      "name": "2-Pentanone",
+      "prsv1": {
+        "kappa1": 0.01681
+      },
+      "prsv2": {
+        "kappa1": 0.01681,
+        "kappa2": 0.7787,
+        "kappa3": 0.62
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Pentanone"
+    },
+    "108-20-3": {
+      "cas": "108-20-3",
+      "identity_source": "manual_prsv_identity_override:Diisopropyl ether:compound_identity",
+      "name": "Di-i-Propyl Ether",
+      "prsv1": {
+        "kappa1": 0.03751
+      },
+      "prsv2": {
+        "kappa1": 0.03751,
+        "kappa2": 0.881,
+        "kappa3": 0.59
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Di-i-Propyl Ether"
+    },
+    "108-39-4": {
+      "cas": "108-39-4",
+      "identity_source": "compound_identity",
+      "name": "M-Cresol",
+      "prsv1": {
+        "kappa1": 0.24705
+      },
+      "prsv2": {
+        "kappa1": 0.24705,
+        "kappa2": 5.691,
+        "kappa3": 0.597
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "M-Cresol"
+    },
+    "108-88-3": {
+      "cas": "108-88-3",
+      "identity_source": "compound_identity",
+      "name": "Toluene",
+      "prsv1": {
+        "kappa1": 0.03849
+      },
+      "prsv2": {
+        "kappa1": 0.03849,
+        "kappa2": 0.5261,
+        "kappa3": 0.51
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Toluene"
+    },
+    "109-66-0": {
+      "cas": "109-66-0",
+      "identity_source": "uniquac_rq_cas.json",
+      "name": "Pentane",
+      "prsv1": {
+        "kappa1": 0.03946
+      },
+      "prsv2": {
+        "kappa1": 0.03946,
+        "kappa2": 0.394,
+        "kappa3": 0.457
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Pentane"
+    },
+    "109-86-4": {
+      "cas": "109-86-4",
+      "identity_source": "compound_identity",
+      "name": "2-Methoxyethanol",
+      "prsv1": {
+        "kappa1": -0.42503
+      },
+      "prsv2": {
+        "kappa1": -0.42503,
+        "kappa2": 0.002,
+        "kappa3": 0.407
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Methoxyethanol"
+    },
+    "109-99-9": {
+      "cas": "109-99-9",
+      "identity_source": "compound_identity",
+      "name": "Tetrahydrofuran",
+      "prsv1": {
+        "kappa1": 0.03961
+      },
+      "prsv2": {
+        "kappa1": 0.03961,
+        "kappa2": 0.5029,
+        "kappa3": 0.573
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Tetrahydrofuran"
+    },
+    "110-43-0": {
+      "cas": "110-43-0",
+      "identity_source": "perry_properties.json",
+      "name": "2-Heptanone",
+      "prsv1": {
+        "kappa1": 0.02731
+      },
+      "prsv2": {
+        "kappa1": 0.02731,
+        "kappa2": 0.9236,
+        "kappa3": 0.561
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Heptanone"
+    },
+    "110-54-3": {
+      "cas": "110-54-3",
+      "identity_source": "uniquac_rq_cas.json",
+      "name": "Hexane",
+      "prsv1": {
+        "kappa1": 0.05104
+      },
+      "prsv2": {
+        "kappa1": 0.05104,
+        "kappa2": 0.8634,
+        "kappa3": 0.46
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Hexane"
+    },
+    "110-82-7": {
+      "cas": "110-82-7",
+      "identity_source": "compound_identity",
+      "name": "Cyclohexane",
+      "prsv1": {
+        "kappa1": 0.07023
+      },
+      "prsv2": {
+        "kappa1": 0.07023,
+        "kappa2": 0.6146,
+        "kappa3": 0.53
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Cyclohexane"
+    },
+    "110-86-1": {
+      "cas": "110-86-1",
+      "identity_source": "compound_identity",
+      "name": "Pyridine",
+      "prsv1": {
+        "kappa1": 0.06946
+      },
+      "prsv2": {
+        "kappa1": 0.06946,
+        "kappa2": 0.4241,
+        "kappa3": 0.575
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Pyridine"
+    },
+    "111-27-3": {
+      "cas": "111-27-3",
+      "identity_source": "compound_identity",
+      "name": "1-Hexanol",
+      "prsv1": {
+        "kappa1": -0.00237
+      },
+      "prsv2": {
+        "kappa1": -0.00237,
+        "kappa2": -3.3938,
+        "kappa3": 0.551
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Hexanol"
+    },
+    "111-43-3": {
+      "cas": "111-43-3",
+      "identity_source": "perry_table_2_10_vapor_pressure.json",
+      "name": "Di-n-Propyl Ether",
+      "prsv1": {
+        "kappa1": -0.03162
+      },
+      "prsv2": {
+        "kappa1": -0.03162,
+        "kappa2": 1.4094,
+        "kappa3": 0.577
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Di-n-Propyl Ether"
+    },
+    "111-65-9": {
+      "cas": "111-65-9",
+      "identity_source": "uniquac_rq_cas.json",
+      "name": "Octane",
+      "prsv1": {
+        "kappa1": 0.04464
+      },
+      "prsv2": {
+        "kappa1": 0.04464,
+        "kappa2": 0.6214,
+        "kappa3": 0.509
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Octane"
+    },
+    "111-84-2": {
+      "cas": "111-84-2",
+      "identity_source": "compound_identity",
+      "name": "Nonane",
+      "prsv1": {
+        "kappa1": 0.04104
+      },
+      "prsv2": {
+        "kappa1": 0.04104,
+        "kappa2": 0.6621,
+        "kappa3": 0.519
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Nonane"
+    },
+    "111-87-5": {
+      "cas": "111-87-5",
+      "identity_source": "perry_properties.json",
+      "name": "1-Octanol",
+      "prsv1": {
+        "kappa1": 0.8294
+      },
+      "prsv2": {
+        "kappa1": 0.8294,
+        "kappa2": 2.7372,
+        "kappa3": 0.543
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Octanol"
+    },
+    "112-30-1": {
+      "cas": "112-30-1",
+      "identity_source": "compound_identity",
+      "name": "1-Decanol",
+      "prsv1": {
+        "kappa1": 0.80898
+      },
+      "prsv2": {
+        "kappa1": 0.80898,
+        "kappa2": 1.4978,
+        "kappa3": 0.47
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Decanol"
+    },
+    "112-40-3": {
+      "cas": "112-40-3",
+      "identity_source": "perry_properties.json",
+      "name": "Dodecane",
+      "prsv1": {
+        "kappa1": 0.05426
+      },
+      "prsv2": {
+        "kappa1": 0.05426,
+        "kappa2": 0.8744,
+        "kappa3": 0.505
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Dodecane"
+    },
+    "1120-21-4": {
+      "cas": "1120-21-4",
+      "identity_source": "perry_properties.json",
+      "name": "Undecane",
+      "prsv1": {
+        "kappa1": 0.02919
+      },
+      "prsv2": {
+        "kappa1": 0.02919,
+        "kappa2": 1.3288,
+        "kappa3": 0.568
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Undecane"
+    },
+    "115-07-1": {
+      "cas": "115-07-1",
+      "identity_source": "perry_table_2_10_vapor_pressure.json",
+      "name": "Propene",
+      "prsv1": {
+        "kappa1": 0.044
+      },
+      "prsv2": {
+        "kappa1": 0.044,
+        "kappa2": 0.261,
+        "kappa3": 0.424
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Propene"
+    },
+    "115-10-6": {
+      "cas": "115-10-6",
+      "identity_source": "perry_properties.json",
+      "name": "Dimethyl Ether",
+      "prsv1": {
+        "kappa1": 0.05717
+      },
+      "prsv2": {
+        "kappa1": 0.05717,
+        "kappa2": -0.1211,
+        "kappa3": 0.481
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Dimethyl Ether"
+    },
+    "124-18-5": {
+      "cas": "124-18-5",
+      "identity_source": "compound_identity",
+      "name": "Decane",
+      "prsv1": {
+        "kappa1": 0.0451
+      },
+      "prsv2": {
+        "kappa1": 0.0451,
+        "kappa2": 0.8549,
+        "kappa3": 0.527
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Decane"
+    },
+    "124-38-9": {
+      "cas": "124-38-9",
+      "identity_source": "compound_identity",
+      "name": "Carbon dioxide",
+      "prsv1": {
+        "kappa1": 0.04285
+      },
+      "prsv2": {
+        "kappa1": 0.04285,
+        "kappa2": 0.0,
+        "kappa3": 0.0
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Carbon dioxide"
+    },
+    "142-82-5": {
+      "cas": "142-82-5",
+      "identity_source": "uniquac_rq_cas.json",
+      "name": "Heptane",
+      "prsv1": {
+        "kappa1": 0.04648
+      },
+      "prsv2": {
+        "kappa1": 0.04648,
+        "kappa2": 0.9331,
+        "kappa3": 0.496
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Heptane"
+    },
+    "1634-04-4": {
+      "cas": "1634-04-4",
+      "identity_source": "manual_prsv_identity_override:Methyl tert-butyl ether:compound_identity",
+      "name": "Methyl t-Butyl Ether",
+      "prsv1": {
+        "kappa1": 0.05129
+      },
+      "prsv2": {
+        "kappa1": 0.05129,
+        "kappa2": -0.2022,
+        "kappa3": 0.585
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methyl t-Butyl Ether"
+    },
+    "392-56-3": {
+      "cas": "392-56-3",
+      "identity_source": "compound_identity",
+      "name": "Hexafluorobenzene",
+      "prsv1": {
+        "kappa1": 0.02752
+      },
+      "prsv2": {
+        "kappa1": 0.02752,
+        "kappa2": 0.8172,
+        "kappa3": 0.565
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Hexafluorobenzene"
+    },
+    "463-82-1": {
+      "cas": "463-82-1",
+      "identity_source": "compound_identity",
+      "name": "Neopentane",
+      "prsv1": {
+        "kappa1": 0.04303
+      },
+      "prsv2": {
+        "kappa1": 0.04303,
+        "kappa2": 0.8697,
+        "kappa3": 0.615
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Neopentane"
+    },
+    "496-11-7": {
+      "cas": "496-11-7",
+      "identity_source": "manual_prsv_identity_override",
+      "name": "Indane",
+      "prsv1": {
+        "kappa1": 0.01173
+      },
+      "prsv2": {
+        "kappa1": 0.01173,
+        "kappa2": 0.9246,
+        "kappa3": 0.548
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Indane"
+    },
+    "502-56-7": {
+      "cas": "502-56-7",
+      "identity_source": "manual_prsv_identity_override",
+      "name": "5-Nonanone",
+      "prsv1": {
+        "kappa1": 0.02002
+      },
+      "prsv2": {
+        "kappa1": 0.02002,
+        "kappa2": 0.9649,
+        "kappa3": 0.579
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "5-Nonanone"
+    },
+    "526-73-8": {
+      "cas": "526-73-8",
+      "identity_source": "compound_identity",
+      "name": "1,2,3-Trimethylbenzene",
+      "prsv1": {
+        "kappa1": -0.01384
+      },
+      "prsv2": {
+        "kappa1": -0.01384,
+        "kappa2": 0.4777,
+        "kappa3": 0.538
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1,2,3-Trimethylbenzene"
+    },
+    "540-67-0": {
+      "cas": "540-67-0",
+      "identity_source": "perry_properties.json",
+      "name": "Methyl Ethyl Ether",
+      "prsv1": {
+        "kappa1": 0.16948
+      },
+      "prsv2": {
+        "kappa1": 0.16948,
+        "kappa2": 0.0515,
+        "kappa3": 0.768
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methyl Ethyl Ether"
+    },
+    "544-76-3": {
+      "cas": "544-76-3",
+      "identity_source": "compound_identity",
+      "name": "Hexadecane",
+      "prsv1": {
+        "kappa1": 0.02665
+      },
+      "prsv2": {
+        "kappa1": 0.02665,
+        "kappa2": 0.0334,
+        "kappa3": 0.767
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Hexadecane"
+    },
+    "557-17-5": {
+      "cas": "557-17-5",
+      "identity_source": "manual_prsv_identity_override:Methylpropyl ether:perry_properties.json",
+      "name": "Methyl n-Propyl Ether",
+      "prsv1": {
+        "kappa1": 0.023
+      },
+      "prsv2": {
+        "kappa1": 0.023,
+        "kappa2": 0.9179,
+        "kappa3": 0.558
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methyl n-Propyl Ether"
+    },
+    "563-80-4": {
+      "cas": "563-80-4",
+      "identity_source": "manual_prsv_identity_override:3-methyl-2-butanone:perry_table_2_10_vapor_pressure.json",
+      "name": "Methylbutanone",
+      "prsv1": {
+        "kappa1": 0.04113
+      },
+      "prsv2": {
+        "kappa1": 0.04113,
+        "kappa2": 0.5138,
+        "kappa3": 0.615
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methylbutanone"
+    },
+    "589-38-8": {
+      "cas": "589-38-8",
+      "identity_source": "perry_properties.json",
+      "name": "3-Hexanone",
+      "prsv1": {
+        "kappa1": 0.02321
+      },
+      "prsv2": {
+        "kappa1": 0.02321,
+        "kappa2": 0.8891,
+        "kappa3": 0.619
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "3-Hexanone"
+    },
+    "591-78-6": {
+      "cas": "591-78-6",
+      "identity_source": "perry_properties.json",
+      "name": "2-Hexanone",
+      "prsv1": {
+        "kappa1": 0.00984
+      },
+      "prsv2": {
+        "kappa1": 0.00984,
+        "kappa2": 0.8448,
+        "kappa3": 0.55
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Hexanone"
+    },
+    "593-45-3": {
+      "cas": "593-45-3",
+      "identity_source": "perry_properties.json",
+      "name": "Octadecane",
+      "prsv1": {
+        "kappa1": 0.08291
+      },
+      "prsv2": {
+        "kappa1": 0.08291,
+        "kappa2": 4.1441,
+        "kappa3": 0.577
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Octadecane"
+    },
+    "598-53-8": {
+      "cas": "598-53-8",
+      "identity_source": "manual_prsv_identity_override:Methylisopropyl ether:perry_properties.json",
+      "name": "Methyl i-Propyl Ether",
+      "prsv1": {
+        "kappa1": 0.04123
+      },
+      "prsv2": {
+        "kappa1": 0.04123,
+        "kappa2": 0.3833,
+        "kappa3": 0.562
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methyl i-Propyl Ether"
+    },
+    "628-28-4": {
+      "cas": "628-28-4",
+      "identity_source": "manual_prsv_identity_override:Methylbutyl ether:perry_properties.json",
+      "name": "Methyl n-Butyl Ether",
+      "prsv1": {
+        "kappa1": 0.01622
+      },
+      "prsv2": {
+        "kappa1": 0.01622,
+        "kappa2": 0.614,
+        "kappa3": 0.548
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methyl n-Butyl Ether"
+    },
+    "628-32-0": {
+      "cas": "628-32-0",
+      "identity_source": "manual_prsv_identity_override:Ethylpropyl ether:perry_properties.json",
+      "name": "Ethyl n-Propyl Ether",
+      "prsv1": {
+        "kappa1": -0.01668
+      },
+      "prsv2": {
+        "kappa1": -0.01668,
+        "kappa2": 1.1679,
+        "kappa3": 0.553
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Ethyl n-Propyl Ether"
+    },
+    "629-50-5": {
+      "cas": "629-50-5",
+      "identity_source": "perry_properties.json",
+      "name": "Tridecane",
+      "prsv1": {
+        "kappa1": 0.04157
+      },
+      "prsv2": {
+        "kappa1": 0.04157,
+        "kappa2": 0.9387,
+        "kappa3": 0.528
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Tridecane"
+    },
+    "629-59-4": {
+      "cas": "629-59-4",
+      "identity_source": "perry_properties.json",
+      "name": "Tetradecane",
+      "prsv1": {
+        "kappa1": 0.02686
+      },
+      "prsv2": {
+        "kappa1": 0.02686,
+        "kappa2": 0.9408,
+        "kappa3": 0.528
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Tetradecane"
+    },
+    "629-62-9": {
+      "cas": "629-62-9",
+      "identity_source": "perry_properties.json",
+      "name": "Pentadecane",
+      "prsv1": {
+        "kappa1": 0.01892
+      },
+      "prsv2": {
+        "kappa1": 0.01892,
+        "kappa2": 1.0908,
+        "kappa3": 0.559
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Pentadecane"
+    },
+    "629-78-7": {
+      "cas": "629-78-7",
+      "identity_source": "perry_properties.json",
+      "name": "Heptadecane",
+      "prsv1": {
+        "kappa1": 0.04048
+      },
+      "prsv2": {
+        "kappa1": 0.04048,
+        "kappa2": 2.9805,
+        "kappa3": 0.571
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Heptadecane"
+    },
+    "64-17-5": {
+      "cas": "64-17-5",
+      "identity_source": "compound_identity",
+      "name": "Ethanol",
+      "prsv1": {
+        "kappa1": -0.03374
+      },
+      "prsv2": {
+        "kappa1": -0.03374,
+        "kappa2": -2.6846,
+        "kappa3": 0.592
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Ethanol"
+    },
+    "64-19-7": {
+      "cas": "64-19-7",
+      "identity_source": "compound_identity",
+      "name": "Acetic Acid",
+      "prsv1": {
+        "kappa1": -0.19724
+      },
+      "prsv2": {
+        "kappa1": -0.19724,
+        "kappa2": 0.8136,
+        "kappa3": 0.541
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Acetic Acid"
+    },
+    "67-56-1": {
+      "cas": "67-56-1",
+      "identity_source": "compound_identity",
+      "name": "Methanol",
+      "prsv1": {
+        "kappa1": -0.16816
+      },
+      "prsv2": {
+        "kappa1": -0.16816,
+        "kappa2": -1.34,
+        "kappa3": 0.588
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methanol"
+    },
+    "67-63-0": {
+      "cas": "67-63-0",
+      "identity_source": "compound_identity",
+      "name": "2-Propanol",
+      "prsv1": {
+        "kappa1": 0.23264
+      },
+      "prsv2": {
+        "kappa1": 0.23264,
+        "kappa2": -3.5578,
+        "kappa3": 0.652
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Propanol"
+    },
+    "67-64-1": {
+      "cas": "67-64-1",
+      "identity_source": "compound_identity",
+      "name": "Acetone",
+      "prsv1": {
+        "kappa1": -0.00888
+      },
+      "prsv2": {
+        "kappa1": -0.00888,
+        "kappa2": 0.2871,
+        "kappa3": 0.537
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Acetone"
+    },
+    "68-12-2": {
+      "cas": "68-12-2",
+      "identity_source": "manual_prsv_identity_override:N,N-Dimethyl formamide:compound_identity",
+      "name": "Dimethylformamide",
+      "prsv1": {
+        "kappa1": 0.18999
+      },
+      "prsv2": {
+        "kappa1": 0.18999,
+        "kappa2": -0.1857,
+        "kappa3": 0.47
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Dimethylformamide"
+    },
+    "71-23-8": {
+      "cas": "71-23-8",
+      "identity_source": "compound_identity",
+      "name": "1-Propanol",
+      "prsv1": {
+        "kappa1": 0.21419
+      },
+      "prsv2": {
+        "kappa1": 0.21419,
+        "kappa2": -3.6816,
+        "kappa3": 0.64
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Propanol"
+    },
+    "71-36-3": {
+      "cas": "71-36-3",
+      "identity_source": "compound_identity",
+      "name": "1-Butanol",
+      "prsv1": {
+        "kappa1": 0.33431
+      },
+      "prsv2": {
+        "kappa1": 0.33431,
+        "kappa2": -1.1748,
+        "kappa3": 0.642
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Butanol"
+    },
+    "71-41-0": {
+      "cas": "71-41-0",
+      "identity_source": "compound_identity",
+      "name": "1-Pentanol",
+      "prsv1": {
+        "kappa1": 0.36781
+      },
+      "prsv2": {
+        "kappa1": 0.36781,
+        "kappa2": 0.2918,
+        "kappa3": 0.621
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Pentanol"
+    },
+    "71-43-2": {
+      "cas": "71-43-2",
+      "identity_source": "compound_identity",
+      "name": "Benzene",
+      "prsv1": {
+        "kappa1": 0.07019
+      },
+      "prsv2": {
+        "kappa1": 0.07019,
+        "kappa2": 0.7939,
+        "kappa3": 0.523
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Benzene"
+    },
+    "74-82-8": {
+      "cas": "74-82-8",
+      "identity_source": "compound_identity",
+      "name": "Methane",
+      "prsv1": {
+        "kappa1": -0.00159
+      },
+      "prsv2": {
+        "kappa1": -0.00159,
+        "kappa2": 0.1521,
+        "kappa3": 0.517
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Methane"
+    },
+    "74-84-0": {
+      "cas": "74-84-0",
+      "identity_source": "compound_identity",
+      "name": "Ethane",
+      "prsv1": {
+        "kappa1": 0.02669
+      },
+      "prsv2": {
+        "kappa1": 0.02669,
+        "kappa2": 0.1358,
+        "kappa3": 0.424
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Ethane"
+    },
+    "74-98-6": {
+      "cas": "74-98-6",
+      "identity_source": "compound_identity",
+      "name": "Propane",
+      "prsv1": {
+        "kappa1": 0.03136
+      },
+      "prsv2": {
+        "kappa1": 0.03136,
+        "kappa2": 0.2757,
+        "kappa3": 0.447
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Propane"
+    },
+    "75-05-8": {
+      "cas": "75-05-8",
+      "identity_source": "compound_identity",
+      "name": "Acetonitrile",
+      "prsv1": {
+        "kappa1": -0.13991
+      },
+      "prsv2": {
+        "kappa1": -0.13991,
+        "kappa2": -0.3777,
+        "kappa3": 0.522
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Acetonitrile"
+    },
+    "75-31-0": {
+      "cas": "75-31-0",
+      "identity_source": "manual_prsv_identity_override:Isopropyl amine:compound_identity",
+      "name": "2-Propylamine",
+      "prsv1": {
+        "kappa1": 0.06001
+      },
+      "prsv2": {
+        "kappa1": 0.06001,
+        "kappa2": 2.2851,
+        "kappa3": 0.603
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Propylamine"
+    },
+    "75-52-5": {
+      "cas": "75-52-5",
+      "identity_source": "compound_identity",
+      "name": "Nitromethane",
+      "prsv1": {
+        "kappa1": -0.10299
+      },
+      "prsv2": {
+        "kappa1": -0.10299,
+        "kappa2": 0.5905,
+        "kappa3": 0.463
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Nitromethane"
+    },
+    "75-64-9": {
+      "cas": "75-64-9",
+      "identity_source": "manual_prsv_identity_override:tert-butylamine:compound_identity",
+      "name": "2-Methyl-2-Propylamine",
+      "prsv1": {
+        "kappa1": 0.1344
+      },
+      "prsv2": {
+        "kappa1": 0.1344,
+        "kappa2": 0.9308,
+        "kappa3": 0.635
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Methyl-2-Propylamine"
+    },
+    "75-65-0": {
+      "cas": "75-65-0",
+      "identity_source": "compound_identity",
+      "name": "2-Methyl-2-Propanol",
+      "prsv1": {
+        "kappa1": 0.43099
+      },
+      "prsv2": {
+        "kappa1": 0.43099,
+        "kappa2": -0.048,
+        "kappa3": 0.658
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Methyl-2-Propanol"
+    },
+    "75-97-8": {
+      "cas": "75-97-8",
+      "identity_source": "manual_prsv_identity_override",
+      "name": "Dimethylbutanone",
+      "prsv1": {
+        "kappa1": 0.4005
+      },
+      "prsv2": {
+        "kappa1": 0.4005,
+        "kappa2": 0.7451,
+        "kappa3": 0.535
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Dimethylbutanone"
+    },
+    "7647-01-0": {
+      "cas": "7647-01-0",
+      "identity_source": "compound_identity",
+      "name": "Hydrogen chloride",
+      "prsv1": {
+        "kappa1": 0.01989
+      },
+      "prsv2": {
+        "kappa1": 0.01989,
+        "kappa2": -0.0036,
+        "kappa3": 0.31
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Hydrogen chloride"
+    },
+    "7664-41-7": {
+      "cas": "7664-41-7",
+      "identity_source": "compound_identity",
+      "name": "Ammonia",
+      "prsv1": {
+        "kappa1": 0.001
+      },
+      "prsv2": {
+        "kappa1": 0.001,
+        "kappa2": -0.1265,
+        "kappa3": 0.51
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Ammonia"
+    },
+    "7727-37-9": {
+      "cas": "7727-37-9",
+      "identity_source": "compound_identity",
+      "name": "Nitrogen",
+      "prsv1": {
+        "kappa1": 0.01996
+      },
+      "prsv2": {
+        "kappa1": 0.01996,
+        "kappa2": 0.3162,
+        "kappa3": 0.535
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Nitrogen"
+    },
+    "7732-18-5": {
+      "cas": "7732-18-5",
+      "identity_source": "compound_identity",
+      "name": "Water",
+      "prsv1": {
+        "kappa1": -0.06635
+      },
+      "prsv2": {
+        "kappa1": -0.06635,
+        "kappa2": 0.0199,
+        "kappa3": 0.443
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Water"
+    },
+    "776-35-2": {
+      "cas": "776-35-2",
+      "identity_source": "manual_prsv_identity_override",
+      "name": "9,10-Dihydrophenanthrene",
+      "prsv1": {
+        "kappa1": -0.01393
+      },
+      "prsv2": {
+        "kappa1": -0.01393,
+        "kappa2": -5.8256,
+        "kappa3": 0.587
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "9,10-Dihydrophenanthrene"
+    },
+    "7782-44-7": {
+      "cas": "7782-44-7",
+      "identity_source": "compound_identity",
+      "name": "Oxygen",
+      "prsv1": {
+        "kappa1": 0.01512
+      },
+      "prsv2": {
+        "kappa1": 0.01512,
+        "kappa2": -0.009,
+        "kappa3": 0.49
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Oxygen"
+    },
+    "78-82-0": {
+      "cas": "78-82-0",
+      "identity_source": "manual_prsv_identity_override",
+      "name": "2-methylpropanenitrile",
+      "prsv1": {
+        "kappa1": -0.09508
+      },
+      "prsv2": {
+        "kappa1": -0.09508,
+        "kappa2": 0.0033,
+        "kappa3": 0.931
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Methoxypropionitrile"
+    },
+    "78-83-1": {
+      "cas": "78-83-1",
+      "identity_source": "compound_identity",
+      "name": "2-Methyl-1-Propanol",
+      "prsv1": {
+        "kappa1": 0.372
+      },
+      "prsv2": {
+        "kappa1": 0.372,
+        "kappa2": -1.2792,
+        "kappa3": 0.642
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Methyl-1-Propanol"
+    },
+    "78-92-2": {
+      "cas": "78-92-2",
+      "identity_source": "compound_identity",
+      "name": "2-Butanol",
+      "prsv1": {
+        "kappa1": 0.39045
+      },
+      "prsv2": {
+        "kappa1": 0.39045,
+        "kappa2": 0.0026,
+        "kappa3": 0.676
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Butanol"
+    },
+    "78-93-3": {
+      "cas": "78-93-3",
+      "identity_source": "manual_prsv_identity_override:2-Butanone:perry_table_2_10_vapor_pressure.json",
+      "name": "Butanone",
+      "prsv1": {
+        "kappa1": 0.00554
+      },
+      "prsv2": {
+        "kappa1": 0.00554,
+        "kappa2": 0.6847,
+        "kappa3": 0.613
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Butanone"
+    },
+    "872-50-4": {
+      "cas": "872-50-4",
+      "identity_source": "compound_identity",
+      "name": "N-Methylpyrrolidone",
+      "prsv1": {
+        "kappa1": 0.11367
+      },
+      "prsv2": {
+        "kappa1": 0.11367,
+        "kappa2": -0.7871,
+        "kappa3": 0.537
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "N-Methylpyrrolidone"
+    },
+    "90-12-0": {
+      "cas": "90-12-0",
+      "identity_source": "manual_prsv_identity_override:1-methylnaphthalene:compound_identity",
+      "name": "1-Methyl-naphtalene",
+      "prsv1": {
+        "kappa1": -0.01842
+      },
+      "prsv2": {
+        "kappa1": -0.01842,
+        "kappa2": -0.814,
+        "kappa3": 0.577
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "1-Methyl-naphtalene"
+    },
+    "91-20-3": {
+      "cas": "91-20-3",
+      "identity_source": "manual_prsv_identity_override:Naphthalene:perry_properties.json",
+      "name": "Naphtalene",
+      "prsv1": {
+        "kappa1": 0.03297
+      },
+      "prsv2": {
+        "kappa1": 0.03297,
+        "kappa2": 0.6634,
+        "kappa3": 0.51
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Naphtalene"
+    },
+    "91-57-6": {
+      "cas": "91-57-6",
+      "identity_source": "manual_prsv_identity_override:2-methylnaphthalene:compound_identity",
+      "name": "2-Methyl-naphtalene",
+      "prsv1": {
+        "kappa1": -0.01639
+      },
+      "prsv2": {
+        "kappa1": -0.01639,
+        "kappa2": -0.075,
+        "kappa3": 0.597
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "2-Methyl-naphtalene"
+    },
+    "92-51-3": {
+      "cas": "92-51-3",
+      "identity_source": "compound_identity",
+      "name": "Bicyclohexyl",
+      "prsv1": {
+        "kappa1": 0.01805
+      },
+      "prsv2": {
+        "kappa1": 0.01805,
+        "kappa2": 3.0438,
+        "kappa3": 0.606
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Bicyclohexyl"
+    },
+    "92-52-4": {
+      "cas": "92-52-4",
+      "identity_source": "perry_properties.json",
+      "name": "Biphenyl",
+      "prsv1": {
+        "kappa1": 0.11487
+      },
+      "prsv2": {
+        "kappa1": 0.11487,
+        "kappa2": 0.1077,
+        "kappa3": 0.407
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Biphenyl"
+    },
+    "95-15-8": {
+      "cas": "95-15-8",
+      "identity_source": "manual_prsv_identity_override",
+      "name": "Thianaphthene",
+      "prsv1": {
+        "kappa1": 0.06043
+      },
+      "prsv2": {
+        "kappa1": 0.06043,
+        "kappa2": -0.121,
+        "kappa3": 0.592
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Thianaphthene"
+    },
+    "96-22-0": {
+      "cas": "96-22-0",
+      "identity_source": "compound_identity",
+      "name": "3-Pentanone",
+      "prsv1": {
+        "kappa1": 0.03558
+      },
+      "prsv2": {
+        "kappa1": 0.03558,
+        "kappa2": 0.618,
+        "kappa3": 0.61
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "3-Pentanone"
+    },
+    "98-01-1": {
+      "cas": "98-01-1",
+      "identity_source": "compound_identity",
+      "name": "Furfural",
+      "prsv1": {
+        "kappa1": -0.03471
+      },
+      "prsv2": {
+        "kappa1": -0.03471,
+        "kappa2": 4.5512,
+        "kappa3": 0.539
+      },
+      "source": "DWSIM PRSV2 parameter table",
+      "source_file": "data/source/prsv2.dat",
+      "source_name": "Furfural"
+    }
+  },
+  "metadata": {
+    "component_count": 89,
+    "description": "CAS-keyed PRSV1/PRSV2 pure-component alpha parameters from DWSIM.",
+    "key_basis": "CAS",
+    "notes": [
+      "PRSV1 uses kappa1.",
+      "PRSV2 uses kappa1, kappa2, and kappa3.",
+      "CAS resolution uses compound_identity first, then existing local CAS-keyed indexes, then audited PRSV source-name overrides."
+    ],
+    "source_files": [
+      "data/source/prsv2.dat"
+    ],
+    "source_row_count": 90,
+    "unresolved_component_count": 1,
+    "unresolved_components": [
+      {
+        "notes": "Generic Nitrotoluene row best matches 4-nitrotoluene by PRSV2 saturation checks, but is excluded because predicted Tsat errors are about 2.4 C at 1 atm and 3.6 C at 0.2666 bar.",
+        "reason": "excluded_after_saturation_check",
+        "source_name": "Nitrotoluene"
+      }
+    ]
+  }
+}

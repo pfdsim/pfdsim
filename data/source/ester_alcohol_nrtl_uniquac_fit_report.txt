@@ -1,0 +1,264 @@
+RECOMMENDED NRTL / UNIQUAC FITS FOR THE 1185-POINT BINARY DATASET
+==================================================================================
+
+tau_ij(T) = Aij + Bij/T + Cij*ln(T) + Dij*T; Gij = exp(-alpha*tau_ij).
+U_ij(T)=(u_ij-u_jj)/(R*T)=Aij + Bij/T + Cij*ln(T) + Dij*T; UNIQUAC interaction factor tau_ij = exp(-U_ij).
+
+C and D are zero in every recommended fit because they were not independently identifiable.
+NRTL alpha = 0.30 except ethyl acetate + water (0.20).
+B parameters are in kelvin; A and C are dimensionless; D is K^-1.
+
+ETHYL ACETATE + 1-PROPANOL
+  NRTL    form=B/T   vapor=PR    A12=0 B12=-9.85192565 A21=0 B21=157.647439 alpha=0.300 | P AARD=1.122% y1 AAD=0.01023
+  UNIQUAC form=B/T   vapor=PR    A12=0 B12=27.7294197 A21=0 B21=26.7492256 | P AARD=1.110% y1 AAD=0.00992
+  Selection: B/T preferred: A+B/T strongly overfit source-to-source temperature/pressure differences; PR retained for high-pressure data.
+
+ETHYL ACETATE + 2-BUTANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=122.069693 A21=0 B21=25.7868516 alpha=0.300 | P AARD=0.425% y1 AAD=0.00698
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=-6.0684197 A21=0 B21=48.8224161 | P AARD=0.424% y1 AAD=0.00699
+  Selection: Single-source set; no independently defensible temperature dependence, so conservative B/T form retained.
+
+ETHYL ACETATE + 2-PROPANOL
+  NRTL    form=A+B/T vapor=PR    A12=0.0382278914 B12=131.235075 A21=-1.78073007 B21=708.198654 alpha=0.300 | P AARD=0.681% y1 AAD=0.00688
+  UNIQUAC form=A+B/T vapor=PR    A12=0.550816679 B12=-54.2712342 A21=-0.988050034 B21=302.489844 | P AARD=0.658% y1 AAD=0.00696
+  Selection: A+B/T strongly preferred to B/T by leave-one-source-out validation; PR vapor improves high-pressure fit.
+
+ETHYL ACETATE + ETHANOL
+  NRTL    form=A+B/T vapor=ideal A12=-2.2179516 B12=889.4061 A21=0.7257094 B21=-54.9981 alpha=0.300 | P AARD=0.540% y1 AAD=0.00658
+  UNIQUAC form=A+B/T vapor=ideal A12=-0.8014757 B12=488.343 A21=0.0240097 B21=-53.3274 | P AARD=0.542% y1 AAD=0.00660
+  Selection: Retained prior global 291-point fit; rerun reproduced its fit quality.
+
+ETHYL ACETATE + METHANOL
+  NRTL    form=A+B/T vapor=ideal A12=-2.60313772 B12=1128.42347 A21=1.01861659 B21=-197.575874 alpha=0.300 | P AARD=1.480% y1 AAD=0.00949
+  UNIQUAC form=A+B/T vapor=ideal A12=-1.16665684 B12=810.833019 A21=0.0236053108 B21=-89.7920946 | P AARD=1.491% y1 AAD=0.00944
+  Selection: A+B/T improves leave-one-source-out validation and global fit; ideal vapor outperformed PR.
+
+ETHYL ACETATE + WATER
+  NRTL    form=A+B/T vapor=ideal A12=-3.861 B12=1331.1 A21=9.2994 B21=-1657.4 alpha=0.200 | P AARD=1.689% y1 AAD=0.01573
+  UNIQUAC form=A+B/T vapor=ideal A12=-2.9475 B12=1282.8 A21=2.1565 B21=-562.48 | P AARD=1.230% y1 AAD=0.01376
+  Selection: Retained Hong/DECHEMA temperature-dependent binary fit; independent VLLE validation.
+
+ETHYL BUTANOATE + 2-BUTANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=53.601075 A21=0 B21=96.7519671 alpha=0.300 | P AARD=0.737% y1 AAD=0.00448
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=59.3826583 A21=0 B21=-22.4614175 | P AARD=0.737% y1 AAD=0.00455
+  Selection: Single-source set; no independently defensible temperature dependence, so conservative B/T form retained.
+
+ETHYL BUTANOATE + 2-PROPANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=-35.251545 A21=0 B21=262.192341 alpha=0.300 | P AARD=0.353% y1 AAD=0.00909
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=135.284099 A21=0 B21=-44.2866845 | P AARD=0.344% y1 AAD=0.00892
+  Selection: Single-source set; no independently defensible temperature dependence, so conservative B/T form retained.
+
+ETHYL BUTANOATE + METHANOL
+  NRTL    form=A+B/T vapor=ideal A12=-0.335975513 B12=215.905149 A21=-6.12912663 B21=2528.48103 alpha=0.300 | P AARD=0.504% y1 AAD=0.00333
+  UNIQUAC form=A+B/T vapor=ideal A12=1.12260119 B12=67.7252761 A21=-2.90423505 B21=950.48607 | P AARD=0.462% y1 AAD=0.00398
+  Selection: Single-source set; A+B/T strongly improved composition-block validation. Treat T dependence as provisional outside measured range.
+
+ETHYL METHANOATE + METHANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=219.996655 A21=0 B21=177.516143 alpha=0.300 | P AARD=0.468% y1 AAD=0.00682
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=348.094039 A21=0 B21=-46.6783448 | P AARD=0.483% y1 AAD=0.00699
+  Selection: Single-source set; no independently defensible temperature dependence, so conservative B/T form retained.
+
+ETHYL PROPANOATE + 2-BUTANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=382.584287 A21=0 B21=-151.700168 alpha=0.300 | P AARD=0.631% y1 AAD=0.00887
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=205.901784 A21=0 B21=-125.671721 | P AARD=0.618% y1 AAD=0.00875
+  Selection: Single-source set; no independently defensible temperature dependence, so conservative B/T form retained.
+
+ETHYL PROPANOATE + 2-PROPANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=69.2790673 A21=0 B21=165.762129 alpha=0.300 | P AARD=0.419% y1 AAD=0.01092
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=143.740607 A21=0 B21=-46.4488238 | P AARD=0.417% y1 AAD=0.01089
+  Selection: Single-source set; no independently defensible temperature dependence, so conservative B/T form retained.
+
+ETHYL PROPANOATE + METHANOL
+  NRTL    form=A+B/T vapor=ideal A12=-3.20073259 B12=1195.81495 A21=-0.531131307 B21=539.365237 alpha=0.300 | P AARD=0.404% y1 AAD=0.00359
+  UNIQUAC form=A+B/T vapor=ideal A12=-1.45638823 B12=883.169954 A21=-0.50312078 B21=128.015677 | P AARD=0.404% y1 AAD=0.00361
+  Selection: Single-source set; A+B/T strongly improved composition-block validation. Treat T dependence as provisional outside measured range.
+
+METHYL ACETATE + 1-BUTANOL
+  NRTL    form=A+B/T vapor=PR    A12=-13.1534833 B12=5514.37289 A21=3.32776209 B21=313.950812 alpha=0.300 | P AARD=0.759% y1 AAD=0.00885
+  UNIQUAC form=A+B/T vapor=PR    A12=-3.92695354 B12=1385.93439 A21=-6.2086779 B21=4167.3683 | P AARD=0.805% y1 AAD=0.00684
+  Selection: Single-source high-pressure set; A+B/T required for an adequate in-range fit and supported by composition-block CV; PR vapor essential. Treat T dependence as provisional.
+
+METHYL ACETATE + 1-PROPANOL
+  NRTL    form=B/T   vapor=PR    A12=0 B12=134.525418 A21=0 B21=-16.6950754 alpha=0.300 | P AARD=0.963% y1 AAD=0.01364
+  UNIQUAC form=B/T   vapor=PR    A12=0 B12=61.3253765 A21=0 B21=-15.4188284 | P AARD=0.996% y1 AAD=0.01356
+  Selection: B/T preferred: A+B/T strongly failed leave-one-source-out validation; PR materially improves high-pressure fit.
+
+METHYL ACETATE + 2-PROPANOL
+  NRTL    form=B/T   vapor=ideal A12=0 B12=102.462586 A21=0 B21=46.2324073 alpha=0.300 | P AARD=1.647% y1 AAD=0.00943
+  UNIQUAC form=B/T   vapor=ideal A12=0 B12=45.7771592 A21=0 B21=11.9940663 | P AARD=1.652% y1 AAD=0.00935
+  Selection: B/T preferred: A+B/T improved in-sample fit but worsened leave-one-source-out validation; ideal vapor outperformed PR.
+
+PROPYL ACETATE + 1-PROPANOL
+  NRTL    form=A+B/T vapor=ideal A12=19.8239127 B12=-8004.3913 A21=-15.6324125 B21=6453.95507 alpha=0.300 | P AARD=0.287% y1 AAD=0.00358
+  UNIQUAC form=A+B/T vapor=ideal A12=9.81765751 B12=-3878.3074 A21=-6.74586112 B21=2698.99232 | P AARD=0.286% y1 AAD=0.00346
+  Selection: Single-source set; A+B/T strongly improved composition-block validation. Treat T dependence as provisional outside measured range.
+
+
+FULL REFERENCES FOR ESTER/ALCOHOL VLE COMPILATION AND REGRESSION
+====================================================================
+
+This bibliography corresponds to the 1,185-point binary VLE/VLLE compilation
+and the recommended global NRTL/UNIQUAC regressions. Source IDs S01-S15 match
+the source registry used in the compiled data files.
+
+PRIMARY EXPERIMENTAL DATA SOURCES
+---------------------------------
+
+[S01] Hong, G.-B.; Lee, M.-J.; Lin, H.-m.
+Multiphase coexistence for mixtures containing water, 2-propanol, and ethyl acetate.
+Fluid Phase Equilibria 2002, 203, 227-245.
+DOI: 10.1016/S0378-3812(02)00187-5
+Used for: ethyl acetate + 2-propanol isothermal VLE; ethyl acetate + water VLLE.
+
+[S02] Susial, P.; Rodríguez-Henríquez, J. J.; Sosa-Rosario, A.; Rios-Santana, R.
+Vapor-Liquid Equilibrium of Ethyl Acetate + CnH2n+1OH (n = 1, 2, 3)
+Binary Systems at 0.3 MPa.
+Chinese Journal of Chemical Engineering 2012, 20 (4), 723-730.
+DOI: 10.1016/S1004-9541(11)60241-3
+Used for: ethyl acetate + methanol; ethyl acetate + ethanol;
+ethyl acetate + 1-propanol at 0.3 MPa.
+
+[S03] Gomes, C. S. M.; Oliveira, H. N. M.; Chiavone-Filho, O.; Foletto, E. L.
+Vapor-liquid equilibria for ethyl acetate + methanol and ethyl acetate + ethanol
+mixtures: Experimental verification and prediction.
+Chemical Engineering Research and Design 2014, 92, 2861-2866.
+DOI: 10.1016/j.cherd.2014.07.010
+Used for: ethyl acetate + methanol; ethyl acetate + ethanol at 70 kPa.
+
+[S04] Figurski, G.; Malanowski, S. K.
+Vapor-liquid equilibrium studies of the ethanol + ethyl acetate system.
+Fluid Phase Equilibria 1998, 148, 161-169.
+DOI: 10.1016/S0378-3812(97)00341-5
+Used for: ethyl acetate + ethanol total-pressure P(T,x) data over a broad
+temperature and pressure range.
+
+[S05] Blanco, A. M.; Ortega, J.
+Densities and Vapor-Liquid Equilibrium Values for Binary Mixtures Composed of
+Methanol + an Ethyl Ester at 141.3 kPa with Application of an Extended
+Correlation Equation for Isobaric VLE Data.
+Journal of Chemical & Engineering Data 1998, 43 (4), 638-645.
+DOI: 10.1021/je980012o
+Used for: methanol + ethyl formate; methanol + ethyl acetate;
+methanol + ethyl propionate; methanol + ethyl butyrate at 141.3 kPa.
+
+[S06] Hernández, P.; Ortega, J.
+Vapor-Liquid Equilibria and Densities for Ethyl Esters (Ethanoate to Butanoate)
+and Alkan-2-ol (C3-C4) at 101.32 kPa.
+Journal of Chemical & Engineering Data 1997, 42 (6), 1090-1100.
+DOI: 10.1021/je970077b
+Used for: ethyl acetate, ethyl propionate, and ethyl butyrate with
+2-propanol and 2-butanol at 101.32 kPa.
+
+[S07] Susial, P.; García-Vera, D.; Susial, R.; Castillo, V. D.; Estupiñan, E. J.;
+Apolinario, J. C.; Rodríguez-Henríquez, J. J.
+Experimental Determination of Vapor-Liquid Equilibria. Binary Systems of
+Methyl Acetate, Ethyl Acetate, and Propyl Acetate with 1-Propanol at 0.6 MPa.
+Journal of Chemical & Engineering Data 2013, 58, 2861-2867.
+DOI: 10.1021/je400622g
+Used for: methyl acetate + 1-propanol; ethyl acetate + 1-propanol;
+n-propyl acetate + 1-propanol at 0.6 MPa.
+
+[S08] Susial, P.; Sosa-Rosario, A.; Rios-Santana, R.
+Vapor-Liquid Equilibria for Ethyl Acetate + Methanol at (0.1, 0.5, and 0.7) MPa.
+Measurements with a New Ebulliometer.
+Journal of Chemical & Engineering Data 2010, 55, 5701-5706.
+DOI: 10.1021/je100614r
+Used for: ethyl acetate + methanol at 0.1, 0.5, and 0.7 MPa.
+
+[S09] Susial, P.; Susial, R.; Estupiñan, E. J.; Castillo, V. D.;
+Rodríguez-Henríquez, J. J.; Apolinario, J. C.
+Determination and thermodynamic evaluation of isobaric VLE of methyl acetate
+or ethyl acetate with 2-propanol at 0.3 and 0.6 MPa.
+Fluid Phase Equilibria 2014, 375, 1-10.
+DOI: 10.1016/j.fluid.2014.04.033
+Used for: methyl acetate + 2-propanol and ethyl acetate + 2-propanol
+at 0.3 and 0.6 MPa.
+
+[S10] Susial, R.; Susial, P.
+High pressure vapor-liquid equilibria of methyl acetate or ethyl acetate with
+2-propanol at 1.5 MPa. Experimental data and predictions.
+Chemical Engineering Research and Design 2015, 102, 337-344.
+DOI: 10.1016/j.cherd.2015.06.032
+Used for: methyl acetate + 2-propanol; ethyl acetate + 2-propanol at 1.5 MPa.
+
+[S11] Susial, P.; García Vera, D.; Montesdeoca, I.; Susial, R.;
+Díaz Stevenson, S.; Pulido Melián, N.
+Measurements by using an automatic pressure control and predictions of isobaric
+VLE at 1.5 MPa for binary mixtures of methyl acetate, ethyl acetate,
+1-propanol and 1-butanol.
+Chemical Engineering Research and Design 2019, 152, 242-253.
+DOI: 10.1016/j.cherd.2019.09.044
+Used for: methyl acetate + 1-propanol; methyl acetate + 1-butanol;
+ethyl acetate + 1-propanol at 1.5 MPa.
+
+[S12] Susial, P.; Sosa-Rosario, A.; Rodríguez-Henríquez, J. J.; Rios-Santana, R.
+Vapor Pressure and VLE Data Measurements on Ethyl Acetate/Ethanol Binary System
+at 0.1, 0.5, and 0.7 MPa.
+Journal of Chemical Engineering of Japan 2011, 44 (3), 155-163.
+DOI: 10.1252/jcej.10we176
+Used for: ethyl acetate + ethanol at 0.1, 0.5, and 0.7 MPa.
+
+[S13] Calvar, N.; Domínguez, A.; Tojo, J.
+Vapor-liquid equilibria for the quaternary reactive system ethyl acetate +
+ethanol + water + acetic acid and some of the constituent binary systems
+at 101.3 kPa.
+Fluid Phase Equilibria 2005, 235 (2), 215-222.
+DOI: 10.1016/j.fluid.2005.07.010
+Used for: ethyl acetate + ethanol binary VLE at 101.3 kPa.
+
+[S14] Orchillés, A. V.; Miguel, P. J.; Vercher, E.; Martínez-Andreu, A.
+Isobaric Vapor-Liquid Equilibria for Ethyl Acetate + Ethanol +
+1-Ethyl-3-methylimidazolium Trifluoromethanesulfonate at 100 kPa.
+Journal of Chemical & Engineering Data 2007, 52 (6), 2325-2330.
+DOI: 10.1021/je700322p
+Used for: ethyl acetate + ethanol binary VLE at 100 kPa.
+
+[S15] Navarro-Espinosa, I. R.; Cardona, C. A.; López, J. A.
+Experimental measurements of vapor-liquid equilibria at low pressure:
+Systems containing alcohols, esters and organic acids.
+Fluid Phase Equilibria 2010, 287 (2), 141-145.
+DOI: 10.1016/j.fluid.2009.10.002
+Used for: ethyl acetate + ethanol low-pressure binary VLE at 580 mmHg
+(approximately 77.3 kPa).
+
+
+ADDITIONAL PARAMETER / MODEL REFERENCES
+---------------------------------------
+
+[P01] Sørensen, J. M.; Arlt, W.
+Liquid-Liquid Equilibrium Data Collection: Binary Systems.
+Chemistry Data Series, Vol. V, Part 1; DECHEMA: Frankfurt, 1979.
+Role: underlying mutual-solubility parameter source used by Hong et al. for the
+temperature-dependent ethyl acetate + water NRTL and UNIQUAC correlations.
+
+[M01] Renon, H.; Prausnitz, J. M.
+Local compositions in thermodynamic excess functions for liquid mixtures.
+AIChE Journal 1968, 14, 135-144.
+Role: original NRTL model reference.
+
+[M02] Abrams, D. S.; Prausnitz, J. M.
+Statistical thermodynamics of liquid mixtures: A new expression for the excess
+Gibbs energy of partly or completely miscible systems.
+AIChE Journal 1975, 21, 116-128.
+Role: original UNIQUAC model reference.
+
+[M03] Peng, D.-Y.; Robinson, D. B.
+A New Two-Constant Equation of State.
+Industrial & Engineering Chemistry Fundamentals 1976, 15 (1), 59-64.
+DOI: 10.1021/i160057a011
+Role: vapor-phase fugacity model tested/retained for selected high-pressure fits.
+
+
+NOTES
+-----
+
+1. The 15 S-series papers are the experimental data sources represented in the
+   compiled regression dataset.
+2. Pure-component property correlations (Psat, critical properties, UNIQUAC r/q)
+   were supplied separately by the user and are therefore not assigned literature
+   references in this bibliography.
+3. The ethyl acetate + water recommended interaction parameters are intentionally
+   retained from the Hong/DECHEMA temperature-dependent treatment rather than
+   regressed only to Hong's nine VLLE points.
+4. The bibliography records the source paper even when only the relevant binary
+   subset of a larger ternary/quaternary study was used.

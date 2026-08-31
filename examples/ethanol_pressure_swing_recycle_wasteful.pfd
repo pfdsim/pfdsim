@@ -1,0 +1,109 @@
+#==============================================================================
+# Primitive Pressure-Swing Ethanol Dehydration With Recycle
+#==============================================================================
+
+PROCESS: Wasteful Ethanol-Water Pressure Swing Recycle
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFNIST-RK
+RECYCLE_METHOD: BROYDEN
+TEAR_STREAMS: Recycle
+RECYCLE_TRACE_TOLERANCE: 1e-6
+DESCRIPTION: 90 mol% ethanol feed, pressure-swing recycle loop, 10 bar product column and 1 bar recycle column
+
+COMPONENTS:
+    C2H5OH | Ethanol | MW=46.07
+    H2O    | Water   | MW=18.02
+
+# Fresh feed stays cold/subcooled before mixing so the combined low-pressure
+# stream can be pumped as liquid. The mixed stream is heated only after pumping.
+STREAM Fresh-Feed : FEED -> MIX-100.fresh
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 100 [kmol/h]
+    x = C2H5OH:0.90, H2O:0.10
+
+STREAM Recycle : COL-200.distillate -> MIX-100.recycle
+STREAM Mixed-LP : MIX-100.out -> P-100.in
+STREAM Mixed-HP : P-100.out -> H-COL100.in
+STREAM Column-100-Feed : H-COL100.out -> COL-100.feed
+
+STREAM Ethanol-Product : COL-100.bottoms -> PRODUCT
+STREAM Column-100-Overhead : COL-100.distillate -> V-100.in
+STREAM Column-200-Feed : V-100.out -> COL-200.feed
+STREAM Waste-Bottoms : COL-200.bottoms -> PRODUCT
+
+UNIT MIX-100
+    TYPE: Mixer
+    PORTS:
+        fresh : inlet
+        recycle : inlet
+        out : outlet
+    PARAMS:
+        mode = adiabatic
+
+UNIT P-100
+    TYPE: Pump
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        P_out = 10 [bar]
+        eta = 0.75
+        eta_mech = 0.95
+
+UNIT H-COL100
+    TYPE: Heater
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        vap_frac = 0.0
+
+UNIT COL-100
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 60
+        feed_stage = 16
+        reflux_ratio = 5.0
+        D_to_F = 0.8
+        P_condenser = 10 [bar]
+        P_drop_per_stage = 0.0
+        condenser_type = total
+        initializer = cheap_estimate
+        mesh_tolerance = 1e-6
+        T_min = 360 [K]
+        T_max = 460 [K]
+        max_iterations = 400
+
+UNIT V-100
+    TYPE: Valve
+    PORTS:
+        in : inlet
+        out : outlet
+    PARAMS:
+        P_out = 1 [bar]
+
+UNIT COL-200
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 60
+        feed_stage = 34
+        reflux_ratio = 4.5
+        D_to_F = 0.97
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0.0
+        condenser_type = total
+        initializer = coarse_rigorous
+        mesh_tolerance = 1e-6
+        T_min = 330 [K]
+        T_max = 390 [K]
+        max_iterations = 400

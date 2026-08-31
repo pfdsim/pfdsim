@@ -1,0 +1,2308 @@
+{
+  "_metadata": {
+    "description": "Chemical properties database for PFD simulator",
+    "sources": [
+      "NIST Chemistry WebBook",
+      "Perry's Chemical Engineers' Handbook",
+      "Poling, Prausnitz, O'Connell - Properties of Gases and Liquids"
+    ],
+    "units": {
+      "Gf": "kJ/mol",
+      "Gf_liquid": "kJ/mol",
+      "Gf_solid": "kJ/mol",
+      "Hf": "kJ/mol",
+      "Hf_liquid": "kJ/mol",
+      "Hf_solid": "kJ/mol",
+      "MW": "g/mol",
+      "Pc": "bar",
+      "Tb": "K",
+      "Tc": "K",
+      "Tm": "K",
+      "Vc": "cm3/mol",
+      "omega": "dimensionless",
+      "Hcomb": "kJ/mol",
+      "Hcomb_gross": "kJ/mol",
+      "Hfus": "kJ/mol",
+      "Hsub": "kJ/mol",
+      "S": "J/mol/K",
+      "S_liquid": "J/mol/K",
+      "Zc": "dimensionless",
+      "property_correlations": "portable equation definitions with per-entry units_note"
+    },
+    "version": "1.2"
+  },
+  "chemicals": {
+    "(C2H5)2O": {
+      "CAS": "60-29-7",
+      "Gf": -122.2,
+      "Hf_liquid": -271.2,
+      "Hvap": 26.52,
+      "MW": 74.12,
+      "Pc": 36.4,
+      "Tb": 307.6,
+      "Tc": 466.7,
+      "Tm": 156.9,
+      "Vc": 280.0,
+      "formula": "(C2H5)2O",
+      "name": "Diethyl Ether",
+      "omega": 0.281,
+      "phase_at_STP": "liquid"
+    },
+    "Ar": {
+      "CAS": "7440-37-1",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "Hvap": 6.43,
+      "MW": 39.95,
+      "Pc": 48.7,
+      "Tb": 87.3,
+      "Tc": 150.9,
+      "Tm": 83.8,
+      "Vc": 74.6,
+      "formula": "Ar",
+      "name": "Argon",
+      "omega": 0.0,
+      "phase_at_STP": "gas"
+    },
+    "C2H3COOH": {
+      "CAS": "79-10-7",
+      "Hf": -321.0,
+      "S": 315.0,
+      "MW": 72.06,
+      "Tb": 414.2,
+      "Tm": 285.7,
+      "formula": "C3H4O2",
+      "name": "Acrylic acid",
+      "phase_at_STP": "liquid"
+    },
+    "C2H4": {
+      "CAS": "74-85-1",
+      "Gf": 68.1,
+      "Hf": 52.3,
+      "MW": 28.05,
+      "Pc": 50.4,
+      "Tb": 169.4,
+      "Tc": 282.4,
+      "Tm": 104.0,
+      "Vc": 131.1,
+      "formula": "C2H4",
+      "name": "Ethylene",
+      "omega": 0.087,
+      "phase_at_STP": "gas"
+    },
+    "C2H4O": {
+      "CAS": "75-21-8",
+      "Gf": -13.0,
+      "Hf": -52.6,
+      "Hvap": 25.5,
+      "MW": 44.05,
+      "Pc": 71.9,
+      "Tb": 283.6,
+      "Tc": 469.0,
+      "Tm": 161.5,
+      "Vc": 140.0,
+      "formula": "C2H4O",
+      "name": "Ethylene Oxide",
+      "omega": 0.2,
+      "phase_at_STP": "gas"
+    },
+    "C2H5COOH": {
+      "CAS": "79-09-4",
+      "Hf": -455.8,
+      "MW": 74.08,
+      "Pc": 46.68,
+      "Tb": 414.0,
+      "Tc": 600.8,
+      "Tm": 252.0,
+      "Vc": 232.0,
+      "formula": "C3H6O2",
+      "name": "Propionic acid",
+      "omega": 0.536,
+      "phase_at_STP": "liquid"
+    },
+    "C2H5OH": {
+      "CAS": "64-17-5",
+      "Gf_liquid": -174.8,
+      "Hf_liquid": -277.0,
+      "Hvap": 38.56,
+      "MW": 46.07,
+      "Pc": 61.4,
+      "Tb": 351.5,
+      "Tc": 513.9,
+      "Tm": 159.1,
+      "Vc": 167.0,
+      "formula": "C2H5OH",
+      "name": "Ethanol",
+      "omega": 0.644,
+      "phase_at_STP": "liquid"
+    },
+    "C2H6": {
+      "CAS": "74-84-0",
+      "Gf": -31.9,
+      "Hf": -83.8,
+      "Hvap": 14.69,
+      "MW": 30.07,
+      "Pc": 48.8,
+      "Tb": 184.6,
+      "Tc": 305.4,
+      "Tm": 90.4,
+      "Vc": 148.3,
+      "formula": "C2H6",
+      "name": "Ethane",
+      "omega": 0.099,
+      "phase_at_STP": "gas"
+    },
+    "C3H6": {
+      "CAS": "115-07-1",
+      "Gf": 62.7,
+      "Hf": 20.4,
+      "MW": 42.08,
+      "Pc": 46.0,
+      "Tb": 225.5,
+      "Tc": 365.0,
+      "Tm": 87.9,
+      "Vc": 181.0,
+      "formula": "C3H6",
+      "name": "Propylene",
+      "omega": 0.144,
+      "phase_at_STP": "gas"
+    },
+    "C3H6O3": {
+      "CAS": "79-33-4",
+      "Gf": -502.55,
+      "Hcomb_gross": -1338.4,
+      "Hf": -615.9,
+      "Hf_liquid": -685.0,
+      "Hf_solid": -699.7,
+      "Hfus": 16.05,
+      "Hsub": 83.8,
+      "MW": 90.078,
+      "S": 336.68,
+      "Tb": 505.2,
+      "Tm": 330.4,
+      "formula": "C3H6O3",
+      "name": "(S)-Lactic acid",
+      "phase_at_STP": "solid",
+      "smiles": "C[C@H](O)C(=O)O",
+      "solid_material_form": "anhydrous",
+      "fusion_transitions": [
+        {
+          "enthalpy_kJ_mol": 16.05,
+          "temperature_K": 330.4,
+          "material_form": "anhydrous",
+          "stereochemistry": "S",
+          "source": "Emel'yanenko et al., Russian Journal of Physical Chemistry A 84 (2010) 1491-1497",
+          "method": "differential_scanning_calorimetry",
+          "quality": 0.98,
+          "reference": "doi:10.1134/S0036024410090074",
+          "comment": "Measured with a PerkinElmer DSC-2C calibrated against high-purity indium; uncertainty is +/-0.2 kJ/mol. The same paper reports 14.7 +/- 0.2 kJ/mol after extrapolation to 298.15 K."
+        }
+      ],
+      "melting_transitions": [
+        {
+          "temperature_K": 330.4,
+          "material_form": "anhydrous",
+          "stereochemistry": "S",
+          "source": "Emel'yanenko et al., Russian Journal of Physical Chemistry A 84 (2010) 1491-1497",
+          "method": "differential_scanning_calorimetry",
+          "quality": 0.98,
+          "reference": "doi:10.1134/S0036024410090074",
+          "comment": "Measured melting temperature; uncertainty is +/-0.5 K."
+        }
+      ],
+      "property_correlations": {
+        "rhol": {
+          "equation": "density_reference",
+          "rho_kg_m3": 1206.0,
+          "T_ref_K": 293.15,
+          "quality": 0.90,
+          "quality_note": "Single reported liquid-density datum at 20 degC; this is a point value, not a temperature-dependent density fit.",
+          "units_note": "rho_kg_m3 in kg/m^3 at T_ref_K",
+          "source": "PubChem"
+        },
+        "Psat": {
+          "equation": "exp_poly_x",
+          "Tmin_K": 333.8,
+          "Tmax_K": 368.4,
+          "quality": 0.98,
+          "quality_note": "Experimental transpiration correlation; portable polynomial is a numerical refit of the paper's published equation with maximum relative pressure error below 3e-8 over the declared range.",
+          "units_note": "ln(Psat/bar) = A + B*x + C*x^2 + D*x^3 + E*x^4 + F*x^5, x = (T - 298.15 K)/100",
+          "coefficients": {
+            "A": -11.097456592946184,
+            "B": 9.344421340202725,
+            "C": -3.533427299275413,
+            "D": 1.179694997372327,
+            "E": -0.3278377047995367,
+            "F": 0.053651432092861114
+          },
+          "source": "Emel'yanenko et al., Russian Journal of Physical Chemistry A 84 (2010) 1491-1497, doi:10.1134/S0036024410090074; refit of ln(p/Pa)=297.2/R-87581.1/(R*T)-(62.0/R)*ln(T/298.15)",
+          "data_points": [
+            {"T_K": 333.8, "P_Pa": 27.97, "P_expt_minus_P_calcd_Pa": -0.46, "Hvap_kJ_mol": 66.89},
+            {"T_K": 338.8, "P_Pa": 39.86, "P_expt_minus_P_calcd_Pa": -0.68, "Hvap_kJ_mol": 66.58},
+            {"T_K": 343.4, "P_Pa": 58.47, "P_expt_minus_P_calcd_Pa": 2.67, "Hvap_kJ_mol": 66.29},
+            {"T_K": 348.4, "P_Pa": 79.73, "P_expt_minus_P_calcd_Pa": 2.18, "Hvap_kJ_mol": 65.98},
+            {"T_K": 353.4, "P_Pa": 104.0, "P_expt_minus_P_calcd_Pa": -3.02, "Hvap_kJ_mol": 65.67},
+            {"T_K": 358.4, "P_Pa": 142.1, "P_expt_minus_P_calcd_Pa": -3.90, "Hvap_kJ_mol": 65.36},
+            {"T_K": 363.4, "P_Pa": 200.1, "P_expt_minus_P_calcd_Pa": 2.72, "Hvap_kJ_mol": 65.05},
+            {"T_K": 368.4, "P_Pa": 264.5, "P_expt_minus_P_calcd_Pa": 0.36, "Hvap_kJ_mol": 64.74}
+          ]
+        },
+        "Hvap": {
+          "equation": "poly_x",
+          "Tmin_K": 298.15,
+          "Tmax_K": 368.4,
+          "quality": 0.96,
+          "quality_note": "Linear temperature relation implied by the paper's tabulated vaporization enthalpies and adopted constant liquid-to-gas heat-capacity difference of 62.0 J/mol/K. The 333.8-368.4 K portion is supported by transpiration measurements; 298.15-333.8 K is the authors' extrapolation.",
+          "units_note": "Hvap[kJ/mol] = A + B*x, x = (T - 298.15 K)/100",
+          "coefficients": {
+            "A": 69.1,
+            "B": -6.2
+          },
+          "source": "Emel'yanenko et al., Russian Journal of Physical Chemistry A 84 (2010) 1491-1497, doi:10.1134/S0036024410090074; Hvap(T)=69.1-0.0620*(T-298.15) kJ/mol"
+        },
+        "Cpg": {
+          "equation": "exp_poly_x",
+          "Tmin_K": 100.0,
+          "Tmax_K": 1500.0,
+          "quality": 0.90,
+          "quality_note": "Degree-5 least-squares fit in ln(Cp) to the paper's calculated ideal-gas heat capacities. Maximum tabulated-point relative error is 0.619%, MAPE is 0.139%, and RMS absolute error is 0.180 J/mol/K. These source values are molecular/statistical-mechanical results, not direct calorimetric measurements.",
+          "units_note": "Cp[J/mol/K] = exp(A + B*x + C*x^2 + D*x^3 + E*x^4 + F*x^5), x = (T - 298.15 K)/100",
+          "coefficients": {
+            "A": 4.698464221741285,
+            "B": 0.25669385642911585,
+            "C": -0.045277201220837546,
+            "D": 0.004930573175408374,
+            "E": -0.00028915496890228806,
+            "F": 6.91259432622493e-06
+          },
+          "source": "Emel'yanenko et al., Russian Journal of Physical Chemistry A 84 (2010) 1491-1497, doi:10.1134/S0036024410090074; exponential polynomial refit of Table 5",
+          "data_points": [
+            {"T_K": 100.0, "Cp_J_mol_K": 52.71},
+            {"T_K": 150.0, "Cp_J_mol_K": 67.19},
+            {"T_K": 200.0, "Cp_J_mol_K": 81.50},
+            {"T_K": 273.16, "Cp_J_mol_K": 102.42},
+            {"T_K": 298.15, "Cp_J_mol_K": 109.53},
+            {"T_K": 300.0, "Cp_J_mol_K": 110.05},
+            {"T_K": 400.0, "Cp_J_mol_K": 136.81},
+            {"T_K": 500.0, "Cp_J_mol_K": 159.10},
+            {"T_K": 600.0, "Cp_J_mol_K": 176.72},
+            {"T_K": 700.0, "Cp_J_mol_K": 190.66},
+            {"T_K": 800.0, "Cp_J_mol_K": 201.96},
+            {"T_K": 900.0, "Cp_J_mol_K": 211.35},
+            {"T_K": 1000.0, "Cp_J_mol_K": 219.30},
+            {"T_K": 1100.0, "Cp_J_mol_K": 226.11},
+            {"T_K": 1200.0, "Cp_J_mol_K": 231.99},
+            {"T_K": 1300.0, "Cp_J_mol_K": 237.09},
+            {"T_K": 1400.0, "Cp_J_mol_K": 241.54},
+            {"T_K": 1500.0, "Cp_J_mol_K": 245.42}
+          ]
+        }
+      },
+      "source_measurements": {
+        "sample": {
+          "starting_material": "Alfa Aesar dehydrated S-lactic acid, stated purity >98%",
+          "purification": "vacuum sublimation",
+          "final_major_component_mass_fraction_min": 0.998,
+          "water_ppm": 417
+        },
+        "combustion": {
+          "temperature_K": 298.15,
+          "standard_pressure_MPa": 0.1,
+          "mean_negative_internal_energy_J_g": 14857.9,
+          "uncertainty_J_g": 3.0,
+          "standard_molar_combustion_enthalpy_kJ_mol": -1338.4,
+          "uncertainty_kJ_mol": 0.6,
+          "method": "modified V-08MA isothermal-shell bomb calorimeter calibrated with NIST SRM 39j benzoic acid"
+        },
+        "phase_change_at_298_15_K": {
+          "Hfus_kJ_mol": 14.7,
+          "Hfus_uncertainty_kJ_mol": 0.2,
+          "Hvap_kJ_mol": 69.1,
+          "Hvap_uncertainty_kJ_mol": 1.0,
+          "Hsub_kJ_mol": 83.8,
+          "Hsub_uncertainty_kJ_mol": 1.0
+        },
+        "vaporization_midrange": {
+          "temperature_K": 351.1,
+          "Hvap_kJ_mol": 65.9,
+          "uncertainty_kJ_mol": 1.0,
+          "nitrogen_carrier_flow_dm3_h": 4.0
+        }
+      },
+      "property_sources": {
+        "Hcomb_gross": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "combustion_calorimetry",
+          "quality": 0.98,
+          "notes": "Table 3 value at 298.15 K. The abstract instead prints -1337.9 +/-0.8 kJ/mol; the internally used result is -1338.4 +/-0.6 kJ/mol."
+        },
+        "Hf_solid": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "derived_from_combustion_calorimetry",
+          "quality": 0.98,
+          "notes": "Crystalline standard formation enthalpy at 298.15 K, +/-0.7 kJ/mol. The abstract instead prints -700.1 +/-0.9 kJ/mol; Table 3 and Results give -699.7 +/-0.7 kJ/mol."
+        },
+        "Hf_liquid": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "derived_phase_conversion",
+          "quality": 0.96,
+          "notes": "Metastable-liquid value at 298.15 K derived as Hf_solid + Hfus(298.15 K) = -699.7 + 14.7 kJ/mol."
+        },
+        "Hf": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "derived_phase_conversion",
+          "quality": 0.96,
+          "notes": "Ideal-gas standard formation enthalpy at 298.15 K from the measured crystalline formation enthalpy and phase-change enthalpies, +/-1.3 kJ/mol."
+        },
+        "Gf": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "molecular_statistical_thermodynamics",
+          "quality": 0.90,
+          "notes": "Ideal-gas standard Gibbs formation energy at 298.15 K from Table 5; calculated, not directly measured."
+        },
+        "S": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "molecular_and_spectral_statistical_thermodynamics",
+          "quality": 0.90,
+          "notes": "Ideal-gas standard molar entropy at 298.15 K; calculated from conformer, molecular, and spectral data rather than directly measured."
+        },
+        "Tm": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "differential_scanning_calorimetry",
+          "quality": 0.98,
+          "notes": "Measured melting temperature, +/-0.5 K."
+        },
+        "Tb": {
+          "source": "estimated",
+          "method": "estimated_normal_boiling_point",
+          "quality": 0.75,
+          "notes": "Low-confidence normal-boiling estimate of 232 degC (505.2 K; Clausius-Clapeyron and Ambrose-Walton); not an experimental hard anchor."
+        },
+        "Hfus": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "differential_scanning_calorimetry",
+          "quality": 0.98,
+          "notes": "Measured at Tm=330.4 K, +/-0.2 kJ/mol; the extrapolated 298.15 K value is 14.7 +/-0.2 kJ/mol."
+        },
+        "Hsub": {
+          "source": "doi:10.1134/S0036024410090074",
+          "method": "derived_phase_change_sum",
+          "quality": 0.96,
+          "notes": "At 298.15 K, Hsub = Hfus + Hvap = 83.8 +/-1.0 kJ/mol."
+        },
+        "dataset": {
+          "source": "data/reference/S0036024410090074.pdf",
+          "method": "manual_transcription_and_declared_fits",
+          "quality": 0.98,
+          "notes": "S-(+)-lactic acid property card. Combustion, vapor pressure, fusion, purity, and moisture are experimental; ideal-gas functions and conformer results are calculated. No normal boiling point or true critical constants are reported."
+        }
+      }
+    },
+    "C3H7OH": {
+      "CAS": "67-63-0",
+      "Hf": -272.0,
+      "Hvap": 39.85,
+      "MW": 60.1,
+      "Pc": 47.6,
+      "Tb": 355.39,
+      "Tc": 508.3,
+      "formula": "C3H7OH",
+      "name": "2-Propanol",
+      "omega": 0.665,
+      "phase_at_STP": "liquid"
+    },
+    "C3H8": {
+      "CAS": "74-98-6",
+      "Gf": -24.3,
+      "Hf": -104.7,
+      "Hvap": 19.04,
+      "MW": 44.1,
+      "Pc": 42.5,
+      "Tb": 231.1,
+      "Tc": 369.8,
+      "Tm": 85.5,
+      "Vc": 203.0,
+      "formula": "C3H8",
+      "name": "Propane",
+      "omega": 0.152,
+      "phase_at_STP": "gas"
+    },
+    "C3H8O": {
+      "CAS": "71-23-8",
+      "Hf": -254.6,
+      "Hvap": 41.44,
+      "MW": 60.1,
+      "Pc": 51.7,
+      "Tb": 370.35,
+      "Tc": 536.8,
+      "formula": "C3H8O",
+      "name": "1-Propanol",
+      "omega": 0.623,
+      "phase_at_STP": "liquid"
+    },
+    "C4H10": {
+      "CAS": "106-97-8",
+      "Gf": -16.6,
+      "Hf": -125.6,
+      "Hvap": 22.44,
+      "MW": 58.12,
+      "Pc": 38.0,
+      "Tb": 272.7,
+      "Tc": 425.2,
+      "Tm": 134.9,
+      "Vc": 255.0,
+      "formula": "C4H10",
+      "name": "n-Butane",
+      "omega": 0.199,
+      "phase_at_STP": "gas"
+    },
+    "C4H8O2": {
+      "CAS": "141-78-6",
+      "Hfus": 10.48,
+      "Hvap": 31.94,
+      "MW": 88.106,
+      "Pc": 38.8,
+      "Tb": 350.2,
+      "Tc": 523.3,
+      "Tm": 189.6,
+      "Vc": 286.0,
+      "formula": "C4H8O2",
+      "name": "Ethyl Acetate",
+      "omega": 0.366,
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      },
+      "phase_at_STP": "liquid"
+    },
+    "C4H9OH": {
+      "CAS": "71-36-3",
+      "Hf": -275.1,
+      "Hvap": 43.29,
+      "MW": 74.12,
+      "Pc": 44.2,
+      "Tb": 390.88,
+      "Tc": 563.1,
+      "Tm": 183.3,
+      "formula": "C4H9OH",
+      "name": "1-Butanol",
+      "omega": 0.59,
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      },
+      "phase_at_STP": "liquid"
+    },
+    "106-98-9": {
+      "CAS": "106-98-9",
+      "Tm": 87.8,
+      "formula": "C4H8",
+      "name": "1-Butene",
+      "phase_at_STP": "gas",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "107-92-6": {
+      "CAS": "107-92-6",
+      "Tm": 268.0,
+      "formula": "C4H8O2",
+      "name": "Butyric acid",
+      "phase_at_STP": "liquid",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "503-17-3": {
+      "CAS": "503-17-3",
+      "Tm": 240.7,
+      "formula": "C4H6",
+      "name": "2-Butyne",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "C5H12": {
+      "CAS": "109-66-0",
+      "Gf": -8.4,
+      "Hf": -146.4,
+      "Hvap": 25.79,
+      "MW": 72.15,
+      "Pc": 33.7,
+      "Tb": 309.2,
+      "Tc": 469.7,
+      "Tm": 143.4,
+      "Vc": 311.0,
+      "formula": "C5H12",
+      "name": "n-Pentane",
+      "omega": 0.251,
+      "phase_at_STP": "liquid"
+    },
+    "C6H12": {
+      "CAS": "110-82-7",
+      "Hf_liquid": -156.0,
+      "Hvap": 29.97,
+      "MW": 84.16,
+      "Pc": 40.7,
+      "Tb": 353.87,
+      "Tc": 553.5,
+      "formula": "C6H12",
+      "name": "Cyclohexane",
+      "omega": 0.212,
+      "phase_at_STP": "liquid"
+    },
+    "C6H14": {
+      "CAS": "110-54-3",
+      "Gf": -0.3,
+      "Hf": -166.9,
+      "Hvap": 28.85,
+      "MW": 86.18,
+      "Pc": 30.1,
+      "Tb": 341.9,
+      "Tc": 507.4,
+      "Tm": 177.8,
+      "Vc": 370.0,
+      "formula": "C6H14",
+      "name": "n-Hexane",
+      "omega": 0.299,
+      "phase_at_STP": "liquid"
+    },
+    "3-methylpentane": {
+      "CAS": "96-14-0",
+      "Cp_coeffs": [
+        -10.5484,
+        0.59575,
+        -0.00031438,
+        6.5331e-08
+      ],
+      "Cp_liquid": 190.9,
+      "Gf": -2.77965,
+      "Gf_liquid": -6.204895,
+      "Hcomb_gross": -4160.0,
+      "Hcomb": -3852.18,
+      "Hf": -171.65,
+      "Hf_liquid": -202.0,
+      "Hfus": 5.31,
+      "Hvap": 28.08,
+      "MW": 86.18,
+      "Pc": 31.2,
+      "S": 382.87,
+      "S_liquid": 292.5,
+      "Tb": 336.421,
+      "Tc": 504.35,
+      "Tm": 110.25,
+      "Vc": 368.0,
+      "Zc": 0.27380173920571316,
+      "antoine_A": 3.974761287430068,
+      "antoine_B": 1152.368,
+      "antoine_C": 227.129,
+      "antoine_Tmax": 362.15,
+      "antoine_Tmin": 244.15,
+      "formula": "C6H14",
+      "name": "3-methylpentane",
+      "omega": 0.274,
+      "phase_at_STP": "liquid",
+      "property_sources": {
+        "dataset": {
+          "source": "NIST scalar properties and heat-of-vaporization fit + J. Chem. Eng. Data 2017 density/viscosity + local Antoine refit",
+          "method": "Manual 3-methylpentane property card",
+          "notes": "Cp_coeffs, Hf, Hfus, Vc, S, and Hvap(T) from NIST; scalar Hvap is the normal-boiling value from the NIST fit; Gf derived from Hf and S using graphite C and H2 standard entropies at 298.15 K; density and viscosity from J. Chem. Eng. Data 2017, 62, 3, 1146-1152; Antoine A adjusted to match Psat=18.0 kPa at 17 C and Psat=1 atm near stored Tb."
+        }
+      },
+      "property_correlations": {
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "theta_cubic",
+          "quality_note": "User-provided fit",
+          "Tmin_K": 273.15,
+          "Tmax_K": 343.15,
+          "units_note": "rho in kg/m^3; x=(T-298.15 K)/100; converted from theta=T-298.15 K cubic",
+          "coefficients": {
+            "A": 659.784837,
+            "B": -91.7722216,
+            "C": -6.9520879,
+            "D": -4.30685841
+          },
+          "source": "J. Chem. Eng. Data 2017, 62, 3, 1146-1152; https://pubs.acs.org/doi/10.1021/acs.jced.6b01024"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "theta_cubic",
+          "quality_note": "User-provided fit",
+          "Tmin_K": 273.15,
+          "Tmax_K": 343.15,
+          "units_note": "mu in Pa*s; x=(T-298.15 K)/100; converted from theta=T-298.15 K cubic in mPa*s",
+          "coefficients": {
+            "A": -8.132345868982137,
+            "B": -0.987148807,
+            "C": 0.204523824,
+            "D": -0.0325020356
+          },
+          "source": "J. Chem. Eng. Data 2017, 62, 3, 1146-1152; https://pubs.acs.org/doi/10.1021/acs.jced.6b01024"
+        },
+        "Hvap": {
+          "equation": "reduced_hvap_log",
+          "selected_model": "reduced-temperature log fit, D=0",
+          "quality_note": "Manual fit to consistent NIST tabulated Hvap values",
+          "Tmin_K": 250.0,
+          "Tmax_K": 425.0,
+          "units_note": "Hvap in kJ/mol; T,Tc in K",
+          "coefficients": {
+            "A": 3.62561102,
+            "B": 0.3170188,
+            "C": 0.17271114,
+            "D": 0.0
+          },
+          "source": "NIST",
+          "Tc_K": 504.35
+        }
+      },
+      "smiles": "CCC(C)CC"
+    },
+    "C6H5OH": {
+      "CAS": "108-95-2",
+      "Hf": -96.4,
+      "Hvap": 46.18,
+      "Hfus": 11.5,
+      "MW": 94.11,
+      "Pc": 61.3,
+      "Tm": 313.6,
+      "Tb": 454.99,
+      "Tc": 694.2,
+      "formula": "C6H5OH",
+      "name": "Phenol",
+      "omega": 0.444,
+      "phase_at_STP": "solid"
+    },
+    "C6H6": {
+      "CAS": "71-43-2",
+      "Gf": 129.7,
+      "Hf": 82.9,
+      "Hvap": 30.72,
+      "MW": 78.11,
+      "Pc": 48.9,
+      "Tb": 353.3,
+      "Tc": 562.2,
+      "Tm": 278.7,
+      "Vc": 259.0,
+      "formula": "C6H6",
+      "name": "Benzene",
+      "omega": 0.21,
+      "phase_at_STP": "liquid"
+    },
+    "C7H16": {
+      "CAS": "142-82-5",
+      "Hf": -187.8,
+      "Hvap": 31.77,
+      "MW": 100.204,
+      "Pc": 27.4,
+      "Tb": 371.552,
+      "Tc": 540.2,
+      "Tm": 182.59,
+      "Vc": 428.0,
+      "formula": "C7H16",
+      "name": "n-Heptane",
+      "omega": 0.349,
+      "phase_at_STP": "liquid"
+    },
+    "C7H8": {
+      "CAS": "108-88-3",
+      "Gf": 122.0,
+      "Hf": 50.0,
+      "Hvap": 33.18,
+      "MW": 92.14,
+      "Pc": 41.0,
+      "Tb": 383.8,
+      "Tc": 591.8,
+      "Tm": 178.2,
+      "Vc": 316.0,
+      "formula": "C7H8",
+      "name": "Toluene",
+      "omega": 0.264,
+      "phase_at_STP": "liquid"
+    },
+    "C8H18": {
+      "CAS": "111-65-9",
+      "Gf": 16.0,
+      "Hf": -208.5,
+      "Hvap": 34.41,
+      "MW": 114.23,
+      "Pc": 24.9,
+      "Tb": 398.8,
+      "Tc": 568.8,
+      "Tm": 216.4,
+      "Vc": 492.0,
+      "formula": "C8H18",
+      "name": "n-Octane",
+      "omega": 0.398,
+      "phase_at_STP": "liquid"
+    },
+    "1067-08-9": {
+      "CAS": "1067-08-9",
+      "Tm": 182.5,
+      "formula": "C8H18",
+      "name": "3-Methyl-3-ethylpentane",
+      "phase_at_STP": "liquid",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "527-53-7": {
+      "CAS": "527-53-7",
+      "Tm": 249.5,
+      "formula": "C10H14",
+      "name": "1,2,3,5-Tetramethylbenzene",
+      "phase_at_STP": "liquid",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "594-82-1": {
+      "CAS": "594-82-1",
+      "Tm": 373.8,
+      "formula": "C8H18",
+      "name": "2,2,3,3-Tetramethylbutane",
+      "phase_at_STP": "solid",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "79-43-6": {
+      "CAS": "79-43-6",
+      "Tm": 282.9,
+      "formula": "C2H2Cl2O2",
+      "name": "Dichloroacetic acid",
+      "phase_at_STP": "liquid",
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      }
+    },
+    "CCl4": {
+      "CAS": "56-23-5",
+      "Gf_liquid": -65.3,
+      "Hf_liquid": -128.2,
+      "Hvap": 29.82,
+      "MW": 153.82,
+      "Pc": 45.6,
+      "Tb": 349.9,
+      "Tc": 556.4,
+      "Tm": 250.2,
+      "Vc": 276.0,
+      "formula": "CCl4",
+      "name": "Carbon Tetrachloride",
+      "omega": 0.193,
+      "phase_at_STP": "liquid"
+    },
+    "CF3COOH": {
+      "CAS": "76-05-1",
+      "Hvap": 30.41,
+      "MW": 114.02,
+      "Pc": 32.58,
+      "Tb": 344.91,
+      "Tc": 491.3,
+      "Tm": 257.75,
+      "formula": "C2HF3O2",
+      "name": "Trifluoroacetic acid",
+      "omega": 0.533,
+      "phase_at_STP": "liquid"
+    },
+    "CH2Cl2": {
+      "CAS": "75-09-2",
+      "Gf_liquid": -68.7,
+      "Hf_liquid": -124.2,
+      "Hvap": 28.06,
+      "MW": 84.93,
+      "Pc": 60.8,
+      "Tb": 312.9,
+      "Tc": 510.0,
+      "Tm": 176.0,
+      "Vc": 185.0,
+      "formula": "CH2Cl2",
+      "name": "Dichloromethane",
+      "omega": 0.199,
+      "phase_at_STP": "liquid"
+    },
+    "CH3CHO": {
+      "CAS": "75-07-0",
+      "Gf": -137.8,
+      "Hf": -171.0,
+      "MW": 44.05,
+      "Pc": 55.7,
+      "Tb": 294.0,
+      "Tc": 466.0,
+      "Tm": 150.2,
+      "Vc": 154.0,
+      "formula": "CH3CHO",
+      "name": "Acetaldehyde",
+      "omega": 0.303,
+      "phase_at_STP": "gas"
+    },
+    "CH3CN": {
+      "CAS": "75-05-8",
+      "Hf": 64.67,
+      "Hvap": 30.19,
+      "MW": 41.05,
+      "Pc": 48.3,
+      "Tb": 354.75,
+      "Tc": 545.5,
+      "formula": "CH3CN",
+      "name": "Acetonitrile",
+      "omega": 0.321,
+      "phase_at_STP": "liquid"
+    },
+    "CH3COCH3": {
+      "CAS": "67-64-1",
+      "Gf_liquid": -155.4,
+      "Hf_liquid": -248.4,
+      "Hvap": 29.1,
+      "MW": 58.08,
+      "Pc": 47.0,
+      "Tb": 329.4,
+      "Tc": 508.1,
+      "Tm": 178.5,
+      "Vc": 209.0,
+      "formula": "C3H6O",
+      "name": "Acetone",
+      "omega": 0.307,
+      "phase_at_STP": "liquid"
+    },
+    "CH3COOH": {
+      "CAS": "64-19-7",
+      "Gf_liquid": -389.9,
+      "Hf_liquid": -484.5,
+      "Hvap": 23.7,
+      "MW": 60.05,
+      "Pc": 57.9,
+      "Tb": 391.1,
+      "Tc": 591.9,
+      "Tm": 289.8,
+      "Vc": 171.0,
+      "formula": "C2H4O2",
+      "name": "Acetic Acid",
+      "omega": 0.447,
+      "phase_at_STP": "liquid"
+    },
+    "CH3OH": {
+      "CAS": "67-56-1",
+      "Gf_liquid": -166.3,
+      "Hf_liquid": -238.7,
+      "Hvap": 35.21,
+      "MW": 32.04,
+      "Pc": 80.9,
+      "Tb": 337.9,
+      "Tc": 512.6,
+      "Tm": 175.5,
+      "Vc": 118.0,
+      "formula": "CH3OH",
+      "name": "Methanol",
+      "omega": 0.566,
+      "phase_at_STP": "liquid"
+    },
+    "CH4": {
+      "CAS": "74-82-8",
+      "Gf": -50.8,
+      "Hf": -74.8,
+      "Hvap": 8.18,
+      "MW": 16.04,
+      "Pc": 46.0,
+      "Tb": 111.7,
+      "Tc": 190.6,
+      "Tm": 90.7,
+      "Vc": 99.2,
+      "formula": "CH4",
+      "name": "Methane",
+      "omega": 0.011,
+      "phase_at_STP": "gas"
+    },
+    "CHCl3": {
+      "CAS": "67-66-3",
+      "Gf_liquid": -73.7,
+      "Hf_liquid": -134.5,
+      "Hvap": 29.24,
+      "MW": 119.38,
+      "Tb": 334.3,
+      "Tm": 209.6,
+      "formula": "CHCl3",
+      "name": "Chloroform",
+      "phase_at_STP": "liquid"
+    },
+    "CO": {
+      "CAS": "630-08-0",
+      "Gf": -137.2,
+      "Hf": -110.5,
+      "Hvap": 6.04,
+      "MW": 28.01,
+      "Pc": 35.0,
+      "Tb": 81.7,
+      "Tc": 132.9,
+      "Tm": 68.1,
+      "Vc": 93.1,
+      "formula": "CO",
+      "name": "Carbon Monoxide",
+      "omega": 0.066,
+      "phase_at_STP": "gas"
+    },
+    "CO2": {
+      "CAS": "124-38-9",
+      "Gf": -394.4,
+      "Hf": -393.5,
+      "Hfus": 9.02,
+      "Hsub": 25.2,
+      "MW": 44.01,
+      "Pc": 73.8,
+      "Tb": 194.7,
+      "Tc": 304.2,
+      "Tm": 216.6,
+      "Vc": 94.0,
+      "formula": "CO2",
+      "name": "Carbon Dioxide",
+      "omega": 0.224,
+      "phase_at_STP": "gas"
+    },
+    "Cl2": {
+      "CAS": "7782-50-5",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "MW": 70.91,
+      "Pc": 77.0,
+      "Tb": 239.1,
+      "Tc": 417.0,
+      "Tm": 172.2,
+      "Vc": 124.0,
+      "formula": "Cl2",
+      "name": "Chlorine",
+      "omega": 0.073,
+      "phase_at_STP": "gas"
+    },
+    "H2": {
+      "CAS": "1333-74-0",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "Hvap": 0.9,
+      "MW": 2.016,
+      "Pc": 13.0,
+      "Tb": 20.4,
+      "Tc": 33.2,
+      "Tm": 14.0,
+      "Vc": 65.0,
+      "formula": "H2",
+      "name": "Hydrogen",
+      "omega": -0.216,
+      "phase_at_STP": "gas"
+    },
+    "H2O": {
+      "CAS": "7732-18-5",
+      "Gf_liquid": -237.1,
+      "Gf": -228.6,
+      "Hf_liquid": -285.83,
+      "Hf": -241.83,
+      "Hvap": 40.66,
+      "Hfus": 6.01,
+      "S_liquid": 69.95,
+      "S": 188.84,
+      "MW": 18.0153,
+      "Pc": 220.6,
+      "Tb": 373.2,
+      "Tc": 647.1,
+      "Tm": 273.2,
+      "Vc": 55.9,
+      "formula": "H2O",
+      "name": "Water",
+      "omega": 0.344,
+      "phase_at_STP": "liquid"
+    },
+    "H2S": {
+      "CAS": "7783-06-4",
+      "Gf": -33.4,
+      "Hf": -20.6,
+      "MW": 34.08,
+      "Pc": 89.4,
+      "Tb": 212.8,
+      "Tc": 373.2,
+      "Tm": 187.7,
+      "Vc": 98.5,
+      "formula": "H2S",
+      "name": "Hydrogen Sulfide",
+      "omega": 0.1,
+      "phase_at_STP": "gas"
+    },
+    "H2SO4": {
+      "CAS": "7664-93-9",
+      "Gf_liquid": -690.0,
+      "Hf": -735.13,
+      "Hf_liquid": -814.0,
+      "Hvap": 56.0,
+      "MW": 98.08,
+      "S": 298.78,
+      "Tb": 610.0,
+      "Tm": 283.5,
+      "Pc": 64.0,
+      "Tc": 924.0,
+      "Vc": 177.0,
+      "Zc": 0.147,
+      "omega": 0.462,
+      "antoine_A": 5.410279885818804,
+      "antoine_B": 2976.8367826472872,
+      "antoine_C": 213.95,
+      "antoine_Tmax": 610.0,
+      "antoine_Tmin": 298.15,
+      "antoine_source": "Yaws Antoine vapor-pressure fit via Cheméo; ln(P_kPa)=17.0628-6854.42/(T_K-59.2), converted exactly to local bar form",
+      "formula": "H2SO4",
+      "name": "Sulfuric Acid",
+      "phase_at_STP": "liquid",
+      "property_correlations": {
+        "Cpl": {
+          "equation": "poly_x",
+          "selected_model": "NIST JANAF liquid heat capacity linear fit",
+          "quality": 0.97,
+          "quality_note": "Linear fit to liquid sulfuric-acid heat capacity over 10-300 C",
+          "Tmin_K": 283.15,
+          "Tmax_K": 573.15,
+          "units_note": "Cp in J/mol/K; x=(T-298.15 K)/100; converted exactly from Cp=133.695+0.1939145*t_C",
+          "coefficients": {
+            "A": 138.5428625,
+            "B": 19.39145
+          },
+          "source": "NIST JANAF"
+        },
+        "Cpg": {
+          "equation": "shomate",
+          "selected_model": "NIST Shomate gas heat capacity",
+          "quality": 0.97,
+          "quality_note": "NIST gas-phase heat capacity; stored for future evaluator support",
+          "Tmin_K": 298.0,
+          "Tmax_K": 1200.0,
+          "units_note": "Cp in J/mol/K; t = T(K)/1000",
+          "coefficients": {
+            "A": 47.28924,
+            "B": 190.3314,
+            "C": -148.1299,
+            "D": 43.86631,
+            "E": -0.740016
+          },
+          "source": "NIST Chemistry WebBook"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "Perry Table 2-55 liquid density quadratic fit",
+          "quality": 0.98,
+          "quality_note": "Pure sulfuric-acid density fit over 0-100 C",
+          "Tmin_K": 273.15,
+          "Tmax_K": 373.15,
+          "units_note": "rho in kg/m^3; x=(T-298.15 K)/100; converted exactly from rho(g/cm3)=1.8517-1.09e-3*t_C+1.64e-6*t_C^2",
+          "coefficients": {
+            "A": 1825.475,
+            "B": -100.8,
+            "C": 16.4
+          },
+          "source": "Perry Table 2-55"
+        }
+      }
+    },
+    "HCHO": {
+      "CAS": "50-00-0",
+      "Gf": -102.6,
+      "Hf": -108.6,
+      "MW": 30.03,
+      "Pc": 65.9,
+      "Tb": 254.1,
+      "Tc": 420.0,
+      "Tm": 181.2,
+      "Vc": 85.1,
+      "formula": "HCHO",
+      "name": "Formaldehyde",
+      "omega": 0.168,
+      "phase_at_STP": "gas"
+    },
+    "HCOOH": {
+      "CAS": "64-18-6",
+      "Hf": -378.6,
+      "Hvap": 22.7,
+      "MW": 46.03,
+      "Pc": 58.1,
+      "Tb": 373.71,
+      "Tc": 588.0,
+      "formula": "HCOOH",
+      "name": "Formic Acid",
+      "omega": 0.316,
+      "phase_at_STP": "liquid"
+    },
+    "HCl": {
+      "CAS": "7647-01-0",
+      "Gf": -95.3,
+      "Hf": -92.3,
+      "MW": 36.46,
+      "Pc": 83.1,
+      "Tb": 188.1,
+      "Tc": 324.7,
+      "Tm": 158.9,
+      "Vc": 81.0,
+      "formula": "HCl",
+      "name": "Hydrogen Chloride",
+      "omega": 0.132,
+      "phase_at_STP": "gas"
+    },
+    "HNO3": {
+      "CAS": "7697-37-2",
+      "Gf_liquid": -79.62,
+      "Gf": -74.01,
+      "Hf_liquid": -173.00,
+      "Hf": -134.3,
+      "S_liquid": 155.60,
+      "S": 266.39,
+      "Hfus": 10.47,
+      "Hvap": 35.79,
+      "MW": 63.01,
+      "Pc": 68.901,
+      "Tb": 356.04,
+      "Tc": 520.0,
+      "Tm": 231.6,
+      "Vc": 145.0,
+      "Zc": 0.231,
+      "formula": "HNO3",
+      "name": "Nitric Acid",
+      "omega": 0.7144,
+      "phase_at_STP": "liquid",
+      "property_correlations": {
+        "Psat": {
+          "equation": "canonical_psat_af",
+          "selected_model": "A-F refit of non-extrapolated nitric acid saturation pressures",
+          "quality": 0.97,
+          "quality_note": "Unconstrained ln(P/bar) fit to all 17 source points from 231.55 K through 376.1 K; MARD 9.6e-8%, maximum relative error 3.5e-7%; extrapolated points above 376.1 K excluded",
+          "Tmin_K": 231.55,
+          "Tmax_K": 376.1,
+          "units_note": "ln(P_bar)=A+B/T+C*ln(T)+D*T+E*T^2+F*T^5; T in K",
+          "coefficients": {
+            "A": 158.62938156274666,
+            "B": -10078.038988647033,
+            "C": -22.769458991855192,
+            "D": 1.8637883872774733e-06,
+            "E": 2.729866308381498e-05,
+            "F": 8.679121224437697e-19
+          },
+          "source": "Wang et al., Fluid Phase Equilibria 407 (2016) 105-116, Table 3 extended Antoine from Aspen Plus databank; fit restricted through 376.1 K"
+        },
+        "Cpl": {
+          "equation": "poly_x",
+          "selected_model": "Stern-Mullhaupt-Kay liquid Cp polynomial",
+          "quality": 0.98,
+          "quality_note": "Critically evaluated review correlation; fits Forsythe-Giauque liquid Cp table within 0.05%",
+          "Tmin_K": 230.0,
+          "Tmax_K": 300.0,
+          "units_note": "Cp in J/mol/K; x=(T-298.15 K)/100; converted from Cp(cal/mol/K)=25.64+1.427e-2*T-4.090e-5*T^2",
+          "coefficients": {
+            "A": 109.867068230634,
+            "B": -4.233651527999999,
+            "C": -1.7112559999999999
+          },
+          "source": "Stern, Mullhaupt, and Kay, Chem. Rev. 1960, The Physicochemical Properties of Pure Nitric Acid"
+        },
+        "Cpg": {
+          "equation": "poly_x",
+          "selected_model": "Stern-Mullhaupt-Kay ideal-gas Cp polynomial",
+          "quality": 0.98,
+          "quality_note": "Critically evaluated review correlation; fits Palm-Kilpatrick ideal-gas thermodynamic table within 0.1%",
+          "Tmin_K": 298.16,
+          "Tmax_K": 500.0,
+          "units_note": "Cp in J/mol/K; x=(T-298.15 K)/100; converted from Cp(cal/mol/K)=2.88+4.047e-2*T-2.407e-5*T^2",
+          "coefficients": {
+            "A": 53.582252992658205,
+            "B": 10.9273774856,
+            "C": -1.0070888000000002
+          },
+          "source": "Stern, Mullhaupt, and Kay, Chem. Rev. 1960, The Physicochemical Properties of Pure Nitric Acid"
+        },
+        "Hvap": {
+          "equation": "poly_x",
+          "selected_model": "Stern-Mullhaupt-Kay vaporization enthalpy polynomial",
+          "quality": 0.97,
+          "quality_note": "Critically evaluated thermodynamic correlation",
+          "Tmin_K": 273.16,
+          "Tmax_K": 373.16,
+          "units_note": "Hvap in kJ/mol; x=(T-298.15 K)/100; converted from Hvap(cal/mol)=14744-22.759*T+1.3100e-2*T^2+5.6116e-6*T^3",
+          "coefficients": {
+            "A": 38.79252268158908,
+            "B": -5.627884597359305,
+            "C": 0.7581113287408,
+            "D": 0.023478934400000002
+          },
+          "source": "Stern, Mullhaupt, and Kay, Chem. Rev. 1960, The Physicochemical Properties of Pure Nitric Acid"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "Stern-Kay liquid density linear correlation",
+          "quality": 0.98,
+          "quality_note": "Pure-acid density correlation; stated accuracy +/-0.0001 g/cm3",
+          "Tmin_K": 274.16,
+          "Tmax_K": 305.16,
+          "units_note": "rho in kg/m^3; x=(T-298.15 K)/100; converted from rho(g/cm3)=1.5492-0.00182*t_C",
+          "coefficients": {
+            "A": 1503.7182,
+            "B": -182.0
+          },
+          "source": "Stern, Mullhaupt, and Kay, Chem. Rev. 1960, The Physicochemical Properties of Pure Nitric Acid"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "Stern-Mullhaupt-Kay Table 13 averaged liquid-viscosity fit",
+          "quality": 0.95,
+          "quality_note": "Fit to averaged pure nitric acid liquid-viscosity table values",
+          "Tmin_K": 273.15,
+          "Tmax_K": 313.15,
+          "units_note": "mu in Pa*s; x=(T-298.15 K)/100; fit to ln(mu)",
+          "coefficients": {
+            "A": -7.11657137,
+            "B": -1.40481056
+          },
+          "source": "Stern, Mullhaupt, and Kay, Chem. Rev. 1960, The Physicochemical Properties of Pure Nitric Acid"
+        }
+      }
+    },
+    "He": {
+      "CAS": "7440-59-7",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "MW": 4.003,
+      "Pc": 2.27,
+      "Tb": 4.2,
+      "Tc": 5.2,
+      "Tm": null,
+      "Vc": 57.3,
+      "formula": "He",
+      "name": "Helium",
+      "omega": -0.39,
+      "phase_at_STP": "gas"
+    },
+    "N2": {
+      "CAS": "7727-37-9",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "Hvap": 5.58,
+      "MW": 28.01,
+      "Pc": 33.9,
+      "Tb": 77.4,
+      "Tc": 126.2,
+      "Tm": 63.2,
+      "Vc": 89.8,
+      "formula": "N2",
+      "name": "Nitrogen",
+      "omega": 0.039,
+      "phase_at_STP": "gas"
+    },
+    "NH3": {
+      "CAS": "7664-41-7",
+      "Gf": -16.4,
+      "Hf": -45.9,
+      "Hvap": 23.33,
+      "MW": 17.03,
+      "Pc": 113.5,
+      "Tb": 239.8,
+      "Tc": 405.5,
+      "Tm": 195.4,
+      "Vc": 72.5,
+      "formula": "NH3",
+      "name": "Ammonia",
+      "omega": 0.253,
+      "phase_at_STP": "gas"
+    },
+    "NaCl": {
+      "CAS": "7647-14-5",
+      "Gf_solid": -384.1,
+      "Hf_solid": -411.2,
+      "Hfus": 30.4,
+      "MW": 58.44,
+      "Pc": null,
+      "Tb": 1738.0,
+      "Tc": null,
+      "Tm": 1074.0,
+      "Vc": null,
+      "critical_properties_unavailable": true,
+      "formula": "NaCl",
+      "name": "Sodium Chloride",
+      "omega": null,
+      "phase_at_STP": "solid"
+    },
+    "NaOH": {
+      "CAS": "1310-73-2",
+      "Gf_solid": -379.5,
+      "Hf_solid": -425.9,
+      "Hfus": 9.05,
+      "MW": 40.0,
+      "Pc": null,
+      "Tb": 1661.0,
+      "Tc": null,
+      "Tm": 596.0,
+      "Vc": null,
+      "critical_properties_unavailable": true,
+      "formula": "NaOH",
+      "name": "Sodium Hydroxide",
+      "omega": null,
+      "phase_at_STP": "solid"
+    },
+    "O2": {
+      "CAS": "7782-44-7",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "Hvap": 6.82,
+      "MW": 32.0,
+      "Pc": 50.4,
+      "Tb": 90.2,
+      "Tc": 154.6,
+      "Tm": 54.4,
+      "Vc": 73.4,
+      "formula": "O2",
+      "name": "Oxygen",
+      "omega": 0.022,
+      "phase_at_STP": "gas"
+    },
+    "SO2": {
+      "CAS": "7446-09-5",
+      "Gf": -300.1,
+      "Hf": -296.8,
+      "MW": 64.06,
+      "Pc": 78.8,
+      "Tb": 263.1,
+      "Tc": 430.8,
+      "Tm": 197.7,
+      "Vc": 122.0,
+      "formula": "SO2",
+      "name": "Sulfur Dioxide",
+      "omega": 0.245,
+      "phase_at_STP": "gas"
+    },
+    "iC4H10": {
+      "CAS": "75-28-5",
+      "Gf": -20.9,
+      "Hf": -134.2,
+      "MW": 58.12,
+      "Pc": 36.5,
+      "Tb": 261.4,
+      "Tc": 408.1,
+      "Tm": 113.73,
+      "Vc": 263.0,
+      "formula": "C4H10",
+      "name": "Isobutane",
+      "omega": 0.183,
+      "property_sources": {
+        "Tm": {
+          "method": "curated_tm_override",
+          "notes": "Reliable override for Perry Table 2-10/Table 2-68 disagreement.",
+          "quality": 0.98,
+          "source": "curated local override"
+        }
+      },
+      "phase_at_STP": "gas"
+    },
+    "C3H8O3": {
+      "CAS": "56-81-5",
+      "Gf": -439.890424370777,
+      "Gf_liquid": -475.11953599644875,
+      "Hcomb_gross": -1654.122,
+      "Hcomb": -1478.23, 
+      "Hf": -577.4,
+      "Hf_liquid": -669.6,
+      "MW": 92.09,
+      "Pc": 62.607,
+      "S_liquid": 195.41,
+      "Tb": 563.15,
+      "Tc": 824.854,
+      "Tm": 290.93,
+      "Vc": 240.22,
+      "formula": "C3H8O3",
+      "name": "Glycerol",
+      "omega": 0.718734,
+      "phase_at_STP": "liquid",
+      "Hfus": 18.3,
+      "Hvap": 66.08307102835258,
+      "Zc": 0.21929246420025608,
+      "property_correlations": {
+        "Psat": {
+          "equation": "reduced_vapor_pressure",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 293.15,
+          "Tmax_K": 765,
+          "units_note": "P, Pc in Pa; T,Tc in K",
+          "coefficients": {
+            "A": -6.553108759361042,
+            "B": -1.8973933471828763,
+            "C": -5.969120377692061,
+            "D": 0.12086960781796616
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 850,
+          "Pc_Pa": 7500000
+        },
+        "Hvap": {
+          "equation": "reduced_hvap_log",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 293.15,
+          "Tmax_K": 765,
+          "units_note": "Hvap in kJ/mol; T,Tc in K",
+          "coefficients": {
+            "A": 4.381817092236338,
+            "B": 0.37874052203704645,
+            "C": 0.9685610085683587,
+            "D": -0.9338099876729863
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 850
+        },
+        "Cpg": {
+          "equation": "shomate",
+          "Tmin_K": 250.0,
+          "Tmax_K": 1000.0,
+          "quality": 0.90,
+          "units_note": "Shomate: Cp[J/mol/K] = A + B*t + C*t^2 + D*t^3 + E/t^2, t = T/1000",
+          "coefficients": {
+            "A": 42.693702,
+            "B": 393.376527,
+            "C": -295.718230,
+            "D": 94.575454,
+            "E": -0.398238
+          },
+          "source": "Burcat/ReSpecTh NASA-9 curve (based on statistical mechanics, 2-3% uncertainty), Shomate refit for 250-1000K (<0.1% fit error)"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 293.15,
+          "Tmax_K": 765,
+          "units_note": "rho in kg/m^3; T in K",
+          "coefficients": {
+            "A": 1259.721890563981,
+            "B": -71.18792822567607,
+            "C": 2.7601346197831544,
+            "D": -1.6526551158671323
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 293.15,
+          "Tmax_K": 516.4080562711873,
+          "units_note": "mu in Pa*s; T in K",
+          "coefficients": {
+            "A": -0.07553121953056813,
+            "B": -8.388181235318127,
+            "C": 5.04343607911661,
+            "D": -2.0356971732527063,
+            "E": 0.5310904602862176,
+            "F": -0.058876842290594845
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mug": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 250,
+          "Tmax_K": 1000,
+          "units_note": "mu in microPa*s; T in K",
+          "coefficients": {
+            "A": 6.772424942579998,
+            "B": 2.28615864,
+            "C": 0.0032800000000028397,
+            "D": -1.92323369040518e-15,
+            "E": 3.638644415362785e-16,
+            "F": -2.050682936426987e-17
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        }
+      },
+      "property_sources": {
+        "Tc": {
+          "source": "local",
+          "method": "effective_critical",
+          "quality": 0.88,
+          "replaceable": false,
+          "notes": "EOS-effective critical temperature from effective_criticals.sqlite."
+        },
+        "Pc": {
+          "source": "local",
+          "method": "effective_critical",
+          "quality": 0.88,
+          "replaceable": false,
+          "notes": "EOS-effective critical pressure from effective_criticals.sqlite."
+        },
+        "Vc": {
+          "source": "local",
+          "method": "effective_critical",
+          "quality": 0.92,
+          "replaceable": false,
+          "notes": "EOS-effective critical molar volume from effective_criticals.sqlite."
+        },
+        "Zc": {
+          "source": "local",
+          "method": "effective_critical",
+          "quality": 0.88,
+          "replaceable": false,
+          "notes": "EOS-effective critical compressibility from effective_criticals.sqlite."
+        },
+        "omega": {
+          "source": "local",
+          "method": "effective_critical",
+          "quality": 0.86,
+          "replaceable": false,
+          "notes": "EOS-effective acentric factor from effective_criticals.sqlite."
+        },
+        "Tb": {
+          "source": "data/source/thermophysical_property_completion 2.xlsx",
+          "method": "online-first + literature overrides + workbook completion",
+          "quality": 0.88,
+          "notes": "Normal boiling point is uncertain because reported values disagree."
+        },
+        "Cpl": {
+          "source": "data/liquid_heat_capacity.sqlite",
+          "method": "canonical_liquid_cp_database",
+          "quality": 0.9,
+          "notes": "Duplicate Zabransky constant-pressure Cpl fit removed from chemicals.json; the audited canonical liquid-Cp record preserves the class-V source quality and analytic primitives."
+        },
+        "dataset": {
+          "source": "data/source/thermophysical_property_completion 2.xlsx",
+          "method": "online-first + literature overrides + workbook completion",
+          "notes": "Scalar constants stored in chemicals.json; portable fits stored in property_correlations."
+        }
+      }
+    },
+    "C6H7N": {
+      "CAS": "62-53-3",
+      "Gf": 167.68895378743102,
+      "Gf_liquid": 150.3579951871996,
+      "Hcomb_gross": -3392.8315,
+      "Hcomb": -3238.92,
+      "Hf": 83.2,
+      "Hf_liquid": 31.6,
+      "MW": 93.13,
+      "Pc": 53.1,
+      "S_liquid": 191.3,
+      "Tb": 457.2,
+      "Tc": 698.8,
+      "Tm": 267.0,
+      "Vc": 287.36,
+      "formula": "C6H7N",
+      "name": "Aniline",
+      "omega": 0.37663,
+      "phase_at_STP": "liquid",
+      "Hfus": 10.54,
+      "Hvap": 44.5,
+      "Zc": 0.2626,
+      "property_correlations": {
+        "Psat": {
+          "equation": "reduced_vapor_pressure",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 269.15,
+          "Tmax_K": 634.5,
+          "units_note": "P, Pc in Pa; T,Tc in K",
+          "coefficients": {
+            "A": -7.5792573453628505,
+            "B": 1.1147661123068657,
+            "C": -3.9078967957284654,
+            "D": -1.0694880596560008
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 705,
+          "Pc_Pa": 5630000
+        },
+        "Hvap": {
+          "equation": "reduced_hvap_log",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 269.15,
+          "Tmax_K": 634.5,
+          "units_note": "Hvap in kJ/mol; T,Tc in K",
+          "coefficients": {
+            "A": 4.450612240386634,
+            "B": 0.4866440014552167,
+            "C": -0.48375984762783386,
+            "D": 0.21580004249468565
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 705
+        },
+        "Cpg": {
+          "equation": "poly_x",
+          "selected_model": "TRCIG",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 250,
+          "Tmax_K": 1000,
+          "units_note": "Cp in J/mol/K; T in K",
+          "coefficients": {
+            "A": 108.25571705359563,
+            "B": 36.30907878159318,
+            "C": -2.98512671567527,
+            "D": 0.058131372461285614,
+            "E": 0.004958449498807699
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 269.15,
+          "Tmax_K": 634.5,
+          "units_note": "rho in kg/m^3; T in K",
+          "coefficients": {
+            "A": 1016.0418862578765,
+            "B": -84.13972282789646,
+            "C": 2.18404882556745,
+            "D": -2.7374904034830094
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 269.15,
+          "Tmax_K": 461.01099999999997,
+          "units_note": "mu in Pa*s; T in K",
+          "coefficients": {
+            "A": -5.564489966431147,
+            "B": -3.215283165757826,
+            "C": 2.5014251839308375,
+            "D": -1.8808093506405108,
+            "E": 1.059869879601775,
+            "F": -0.27787724537751474
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mug": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 250,
+          "Tmax_K": 1000,
+          "units_note": "mu in microPa*s; T in K",
+          "coefficients": {
+            "A": 6.6531223061524996,
+            "B": 2.4324944700000097,
+            "C": -0.03931000000000887,
+            "D": 3.5397822937266153e-15,
+            "E": -6.741902458982817e-16,
+            "F": 4.7444982604310815e-17
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        }
+      },
+      "property_sources": {
+        "Cpl": {
+          "source": "data/liquid_heat_capacity.sqlite",
+          "method": "canonical_liquid_cp_database",
+          "quality": 0.96,
+          "notes": "Duplicate Zabransky constant-pressure Cpl fit removed from chemicals.json; the audited canonical liquid-Cp quasipolynomial avoids the approximation penalty of the former multi-segment poly_x fit."
+        },
+        "dataset": {
+          "source": "data/source/thermophysical_property_completion 2.xlsx",
+          "method": "online-first + literature overrides + workbook completion",
+          "notes": "Scalar constants stored in chemicals.json; portable fits stored in property_correlations."
+        }
+      }
+    },
+    "C5H5N": {
+      "CAS": "110-86-1",
+      "Gf": 190.66305341176783,
+      "Gf_liquid": 181.7790708743403,
+      "Hcomb_gross": -2782.1325,
+      "Hcomb": -2672.20, 
+      "Hf": 140.4,
+      "Hf_liquid": 100.2,
+      "MW": 79.1,
+      "Pc": 56.5,
+      "S_liquid": 177.4324555614948,
+      "Tb": 388.15,
+      "Tc": 620.0,
+      "Tm": 230.92777777777775,
+      "Vc": 247.0,
+      "formula": "C5H5N",
+      "name": "Pyridine",
+      "omega": 0.24133,
+      "phase_at_STP": "liquid",
+      "Hfus": 8.28,
+      "Hvap": 35.392456497318335,
+      "Zc": 0.271,
+      "property_correlations": {
+        "Psat": {
+          "equation": "reduced_vapor_pressure",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 233.15,
+          "Tmax_K": 558,
+          "units_note": "P, Pc in Pa; T,Tc in K",
+          "coefficients": {
+            "A": -7.075847042326766,
+            "B": 1.2389548469165423,
+            "C": -2.9114950257885694,
+            "D": -2.4585989803363946
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 620,
+          "Pc_Pa": 5650000
+        },
+        "Hvap": {
+          "equation": "reduced_hvap_log",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 233.15,
+          "Tmax_K": 558,
+          "units_note": "Hvap in kJ/mol; T,Tc in K",
+          "coefficients": {
+            "A": 4.102329358826295,
+            "B": 0.44088445570867907,
+            "C": -0.38075107437460803,
+            "D": 0.2876040933513258
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 620
+        },
+        "Cpg": {
+          "equation": "poly_x",
+          "selected_model": "TRCIG",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 298,
+          "Tmax_K": 1000,
+          "units_note": "Cp in J/mol/K; T in K",
+          "coefficients": {
+            "A": 77.24870415051147,
+            "B": 30.447117357628912,
+            "C": -2.4586160458546753,
+            "D": 0.03366147596591362,
+            "E": 0.0056052037535843785
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 233.15,
+          "Tmax_K": 558,
+          "units_note": "rho in kg/m^3; T in K",
+          "coefficients": {
+            "A": 977.2017387844273,
+            "B": -101.25604351950862,
+            "C": -2.942528243352838,
+            "D": -3.495455036843202
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 233.15,
+          "Tmax_K": 465,
+          "units_note": "mu in Pa*s; T in K",
+          "coefficients": {
+            "A": -7.030147108612156,
+            "B": -1.5224830294057763,
+            "C": 0.8332939452115392,
+            "D": -0.3341396632747978,
+            "E": 0.11646724364452575,
+            "F": -0.01889933224107003
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mug": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 250,
+          "Tmax_K": 1000,
+          "units_note": "mu in microPa*s; T in K",
+          "coefficients": {
+            "A": 7.331636276014999,
+            "B": 2.634089619999997,
+            "C": -0.020259999999996663,
+            "D": -1.654546260188036e-15,
+            "E": 2.994197856783545e-16,
+            "F": -1.5600166347865586e-17
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        }
+      },
+      "property_sources": {
+        "Cpl": {
+          "source": "data/liquid_heat_capacity.sqlite",
+          "method": "canonical_liquid_cp_database",
+          "quality": 0.96,
+          "notes": "Duplicate Zabransky constant-pressure Cpl fit removed from chemicals.json; the audited canonical liquid-Cp spline has lower fit error and authoritative source-quality metadata."
+        },
+        "dataset": {
+          "source": "data/source/thermophysical_property_completion 2.xlsx",
+          "method": "online-first + literature overrides + workbook completion",
+          "notes": "Scalar constants stored in chemicals.json; portable fits stored in property_correlations."
+        }
+      }
+    },
+    "C3H6O_PO": {
+      "CAS": "75-56-9",
+      "Gf": -28.632783270706348,
+      "Gf_liquid": -29.166924510871016,
+      "Hcomb_gross": -1914.6262,
+      "Hcomb": -1782.70,
+      "Hf": -94.68,
+      "Hf_liquid": -123.27080000000001,
+      "MW": 58.08,
+      "Pc": 54.366,
+      "S_liquid": 196.17405504233102,
+      "Tb": 307.37777777777774,
+      "Tc": 488.11,
+      "Tm": 161.02222222222218,
+      "Vc": 193.99,
+      "formula": "C3H6O",
+      "name": "Propylene oxide",
+      "omega": 0.249,
+      "phase_at_STP": "liquid",
+      "Hfus": 6.57,
+      "Hvap": 27.6942864,
+      "Zc": 0.25986921441476046,
+      "property_correlations": {
+        "Psat": {
+          "equation": "reduced_vapor_pressure",
+          "selected_model": "HEOS_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 180,
+          "Tmax_K": 439.29900000000004,
+          "units_note": "P, Pc in Pa; T,Tc in K",
+          "coefficients": {
+            "A": -7.301881996553912,
+            "B": 1.6101944300766498,
+            "C": -3.1542240059196542,
+            "D": -1.6701896676050643
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 488.11,
+          "Pc_Pa": 5436600
+        },
+        "Hvap": {
+          "equation": "reduced_hvap_log",
+          "selected_model": "HEOS_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 180,
+          "Tmax_K": 439.29900000000004,
+          "units_note": "Hvap in kJ/mol; T,Tc in K",
+          "coefficients": {
+            "A": 3.8949836339296566,
+            "B": 0.44231516693801654,
+            "C": -0.5502890464115607,
+            "D": 0.4723740489931949
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 488.11
+        },
+        "Cpl": {
+          "equation": "poly_x",
+          "selected_model": "HEOS_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 180,
+          "Tmax_K": 439.29900000000004,
+          "units_note": "Cp in J/mol/K; T in K",
+          "coefficients": {
+            "A": 120.6790027874246,
+            "B": 19.14461472929355,
+            "C": 5.36966643980397,
+            "D": 1.0817105846866408,
+            "E": 3.107834185701487
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "Cpg": {
+          "equation": "poly_x",
+          "selected_model": "HEOS_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 250,
+          "Tmax_K": 489,
+          "units_note": "Cp in J/mol/K; T in K",
+          "coefficients": {
+            "A": 73.02125554968148,
+            "B": 19.80329031045379,
+            "C": 0.7948012190892733,
+            "D": -1.0606822751850289,
+            "E": 0.19641965121673552
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "HEOS_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 180,
+          "Tmax_K": 439.29900000000004,
+          "units_note": "rho in kg/m^3; T in K",
+          "coefficients": {
+            "A": 824.2145341464819,
+            "B": -124.88670236690304,
+            "C": -14.035127108609318,
+            "D": -7.9414002015274265
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "REFPROP_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 180,
+          "Tmax_K": 366.0825,
+          "units_note": "mu in Pa*s; T in K",
+          "coefficients": {
+            "A": -8.082690148344078,
+            "B": -1.060433358009875,
+            "C": 0.21116889096380773,
+            "D": -0.0900286097487892,
+            "E": 0.05627110415345469,
+            "F": -0.07669721468931182
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mug": {
+          "equation": "poly_x",
+          "selected_model": "REFPROP_FIT",
+          "quality_note": "Public correlation / fitted data",
+          "quality": 0.99,
+          "Tmin_K": 250,
+          "Tmax_K": 489,
+          "units_note": "mu in microPa*s; T in K",
+          "coefficients": {
+            "A": 8.373022240505156,
+            "B": 2.8937541295422093,
+            "C": 0.11370358688861752,
+            "D": -0.06533898350158676,
+            "E": -0.018942981611058687,
+            "F": 0.010915057945004423
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        }
+      },
+      "property_sources": {
+        "Tc": {
+          "source": "NIST REFPROP",
+          "method": "refprop_critical",
+          "quality": 0.995,
+          "notes": "Critical temperature from the validated REFPROP pure-fluid model."
+        },
+        "Pc": {
+          "source": "NIST REFPROP",
+          "method": "refprop_critical",
+          "quality": 0.995,
+          "notes": "Critical pressure from the validated REFPROP pure-fluid model."
+        },
+        "Vc": {
+          "source": "NIST REFPROP",
+          "method": "refprop_critical",
+          "quality": 0.995,
+          "notes": "Critical molar volume from the validated REFPROP pure-fluid model."
+        },
+        "Zc": {
+          "source": "calculated",
+          "method": "critical_volume_identity",
+          "quality": 0.995,
+          "notes": "Zc = Pc*Vc/(R*Tc) from the REFPROP propylene oxide critical bundle."
+        },
+        "dataset": {
+          "source": "data/source/thermophysical_property_completion 2.xlsx",
+          "method": "online-first + literature overrides + workbook completion",
+          "notes": "Scalar constants stored in chemicals.json; portable fits stored in property_correlations."
+        }
+      }
+    },
+    "C8H8O": {
+      "CAS": "98-86-2",
+      "Gf": 1.8534383275946098,
+      "Gf_liquid": -16.315789965080373,
+      "Hcomb_gross": -4148.592,
+      "Hcomb": -3972.70,
+      "Hf": -86.7,
+      "Hf_liquid": -142.5,
+      "MW": 120.15,
+      "Pc": 40.1,
+      "S_liquid": 247.77608574569967,
+      "Tb": 474.8722222222222,
+      "Tc": 709.6,
+      "Tm": 292.8722222222222,
+      "Vc": 388.0,
+      "formula": "C8H8O",
+      "name": "Acetophenone",
+      "omega": 0.39332,
+      "phase_at_STP": "liquid",
+      "Hfus": 16.65,
+      "Hvap": 44.18790279278115,
+      "Zc": 0.264,
+      "property_correlations": {
+        "Psat": {
+          "equation": "reduced_vapor_pressure",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 295.15,
+          "Tmax_K": 638.64,
+          "units_note": "P, Pc in Pa; T,Tc in K",
+          "coefficients": {
+            "A": -7.768041097527823,
+            "B": 1.1357396883826967,
+            "C": -3.176806255121706,
+            "D": -3.2765936792892023
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 709.6,
+          "Pc_Pa": 4010000
+        },
+        "Hvap": {
+          "equation": "reduced_hvap_log",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 295.15,
+          "Tmax_K": 638.64,
+          "units_note": "Hvap in kJ/mol; T,Tc in K",
+          "coefficients": {
+            "A": 4.729783690524241,
+            "B": 0.577506906316976,
+            "C": -1.1572365181597561,
+            "D": 0.734315746223048
+          },
+          "source": "thermophysical_property_completion 2.xlsx",
+          "Tc_K": 709.6
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 295.15,
+          "Tmax_K": 638.64,
+          "units_note": "rho in kg/m^3; T in K",
+          "coefficients": {
+            "A": 1024.256237702994,
+            "B": -89.95441958049668,
+            "C": 3.0361942881790616,
+            "D": -2.771259651535499
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mul": {
+          "equation": "exp_poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 295.15,
+          "Tmax_K": 510,
+          "units_note": "mu in Pa*s; T in K",
+          "coefficients": {
+            "A": -6.408752527392717,
+            "B": -1.9015826796579272,
+            "C": 1.249986168284807,
+            "D": -0.8272309550924708,
+            "E": 0.35842882752910254,
+            "F": -0.07011823640350581
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        },
+        "mug": {
+          "equation": "poly_x",
+          "selected_model": "VDI_PPDS",
+          "quality_note": "Public correlation / fitted data",
+          "Tmin_K": 250,
+          "Tmax_K": 1000,
+          "units_note": "mu in microPa*s; T in K",
+          "coefficients": {
+            "A": 6.504985731915002,
+            "B": 2.3232268199999986,
+            "C": -0.015859999999998684,
+            "D": -6.514028295018814e-16,
+            "E": 1.4475261161933694e-16,
+            "F": -9.483253615679139e-18
+          },
+          "source": "thermophysical_property_completion 2.xlsx"
+        }
+      },
+      "property_sources": {
+        "Cpl": {
+          "source": "data/liquid_heat_capacity.sqlite",
+          "method": "canonical_liquid_cp_database",
+          "quality": 0.96,
+          "notes": "Duplicate Zabransky constant-pressure Cpl fit removed from chemicals.json; the audited canonical liquid-Cp quasipolynomial remains authoritative beyond the former single-segment JSON range."
+        },
+        "dataset": {
+          "source": "data/source/thermophysical_property_completion 2.xlsx",
+          "method": "online-first + literature overrides + workbook completion",
+          "notes": "Scalar constants stored in chemicals.json; portable fits stored in property_correlations."
+        }
+      }
+    },
+    "Hg": {
+      "CAS": "7439-97-6",
+      "name": "Mercury",
+      "formula": "Hg",
+      "MW": 200.59,
+      "phase_at_STP": "liquid",
+      "Tm": 234.32,
+      "Tb": 629.88,
+      "Tc": 1764.0,
+      "Pc": 1670.0,
+      "Vc": 42.7,
+      "Zc": 0.4862,
+      "omega": -0.195,
+      "Hfus": 2.29,
+      "Hvap": 59.11,
+      "Hf_liquid": 0.0,
+      "Gf_liquid": 0.0,
+      "S_liquid": 75.9,
+      "Hf": 61.38,
+      "Gf": 31.82,
+      "S": 174.97,
+      "property_correlations": {
+        "Psat": {
+          "equation": "psat_mercury",
+          "Tmin_K": 234.32,
+          "Tmax_K": 1764.0,
+          "Tc_K": 1764.0,
+          "Pc_bar": 1670.0,
+          "quality": 0.95,
+          "units_note": "ln(P/Pc) = (Tc/T) * sum(a_i * tau^b_i), tau = 1 - T/Tc; exponents b = (1, 1.89, 2, 8, 8.5, 9); P in bar",
+          "coefficients": {
+            "A": -4.57618368,
+            "B": -1.40726277,
+            "C": 2.36263541,
+            "D": -31.0889985,
+            "E": 58.0183959,
+            "F": -27.6304546
+          },
+          "source": "Huber, Laesecke, Friend, Ind. Eng. Chem. Res. 2006, 45, 7351-7361"
+        },
+        "rhol": {
+          "equation": "poly_x",
+          "Tmin_K": 273.15,
+          "Tmax_K": 979.0,
+          "quality": 0.97,
+          "units_note": "rho in kg/m^3; x = (T - 298.15 K)/100; degree-2 fit",
+          "coefficients": {
+            "A": 13525.3818,
+            "B": -221.81,
+            "C": -2.71552
+          },
+          "source": "Mercury liquid density: reference tables (0-250 C) + high-temperature data (691-979 K)"
+        },
+        "mul": {
+          "equation": "dippr_eq101",
+          "Tmin_K": 250.0,
+          "Tmax_K": 979.0,
+          "quality": 0.93,
+          "units_note": "ln(mu[Pa.s]) = A + B/T + C*ln(T); Arrhenius-with-log (DIPPR 101, D=0)",
+          "coefficients": {
+            "A": -5.16511,
+            "B": 187.63279,
+            "C": -0.33994
+          },
+          "source": "Mercury liquid dynamic viscosity: high-quality data (250-500 K) + dynamic measurements (691-979 K)"
+        },
+        "Cpg": {
+          "equation": "shomate",
+          "Tmin_K": 629.839,
+          "Tmax_K": 6000.0,
+          "quality": 0.98,
+          "units_note": "Shomate: Cp[J/mol/K] = A + B*t + C*t^2 + D*t^3 + E/t^2, t = T/1000; monatomic vapor near 5/2 R",
+          "coefficients": {
+            "A": 20.67243,
+            "B": 0.179353,
+            "C": -0.080120,
+            "D": 0.010547,
+            "E": 0.007013
+          },
+          "source": "NIST Chemistry WebBook, Shomate equation for Hg(g)"
+        },
+        "Cpl": {
+          "equation": "poly_x",
+          "Tmin_K": 250.0,
+          "Tmax_K": 500.0,
+          "quality": 0.97,
+          "units_note": "Cp in J/mol/K; x = (T - 298.15 K)/100; degree-2 fit",
+          "coefficients": {
+            "A": 27.96647,
+            "B": -0.77194,
+            "C": 0.176915
+          },
+          "source": "Engineering Toolbox mercury liquid heat capacity, 250-500 K"
+        },
+        "Hvap": {
+          "equation": "dippr_eq106",
+          "Tmin_K": 234.32,
+          "Tmax_K": 630.0,
+          "Tc_K": 1764.0,
+          "quality": 0.9,
+          "units_note": "DIPPR 106: Hvap[kJ/mol] = A*(1-Tr)^(B + C*Tr + D*Tr^2), Tr = T/Tc; liquid range only (Tm to Tb), must NOT be extrapolated toward Tc (fit does not close there)",
+          "coefficients": {
+            "A": 63.759482,
+            "B": 0.238551,
+            "C": -0.201126,
+            "D": -0.039841
+          },
+          "source": "Clausius-Clapeyron from the curated Hg Psat correlation (ideal-gas dZ); consistent with measured Hvap(Tb)=59.11 to 0.4% and Hf(Hg,g) at 298 K to 0.03%"
+        }
+      },
+      "property_sources": {
+        "Tc": {"source": "literature", "method": "measured_critical", "quality": 0.995, "notes": "Mercury critical temperature"},
+        "Pc": {"source": "literature", "method": "measured_critical", "quality": 0.98, "notes": "Mercury critical pressure"},
+        "Vc": {"source": "literature", "method": "estimated_critical", "quality": 0.9, "notes": "Mercury critical molar volume; uncertain"},
+        "Zc": {"source": "literature", "method": "derived_critical", "quality": 0.9, "notes": "Zc = Pc*Vc/(R*Tc) from curated Tc/Pc/Vc"},
+        "omega": {"source": "literature", "method": "measured_critical", "quality": 0.93, "notes": "Mercury acentric factor (non-corresponding-states)"},
+        "dataset": {
+          "source": "Curated mercury property card (PFDSim) + Huber-Laesecke-Friend 2006 Psat",
+          "method": "Manual mercury property card",
+          "notes": "Monatomic liquid metal; standard state is liquid (Hf_liquid=Gf_liquid=0); gas-phase Hf/Gf/S are formation values. Gas-phase Cp is the NIST Shomate portable fit (Cpg, above Tb); liquid Cp is a poly_x fit (Cpl, 250-500 K)."
+        }
+      }
+    }
+  }
+}

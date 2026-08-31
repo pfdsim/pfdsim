@@ -1,0 +1,776 @@
+{
+  "schema_version": "1.0",
+  "metadata": {
+    "description": "Recommended acid-acid liquid activity parameters with vapor homo-dimerization fixed from pure-component parameters and vapor hetero-dimerization defaulting to statistical cross-association.",
+    "fit_date": "2026-08-30",
+    "gas_constant_J_mol_K": 8.314462618,
+    "vapor_association_standard_state_kPa": 101.3,
+
+    "fit_philosophy": {
+      "description": "Pure-component vapor dimerization is fixed independently. Acid-acid heterodimerization defaults to the statistical cross rule. Binary VLE is used only to regress residual liquid nonideality. Vapor cross H/S and liquid activity parameters are not simultaneously regressed.",
+      "statistical_cross_rule": "K_ij(T) = 2*sqrt(K_i(T)*K_j(T))",
+      "pfdsim_cross_parameterization": "PFDSim stores residual heterodimer delta_H and delta_S relative to the statistical expectation. Blank or zero residual interaction therefore means statistical cross-association.",
+      "preferred_regression_sequence": [
+        "Fix pure-component homo-dimerization parameters.",
+        "Set acid-acid vapor cross residual delta_H and delta_S to zero.",
+        "Back-calculate residual liquid activity coefficients from VLE.",
+        "Fit NRTL or UNIQUAC only to the residual liquid nonideality."
+      ]
+    },
+
+    "vapor_association_model": {
+      "homo_dimer_equilibrium": "K_i(T) = exp(delta_S_i/R - delta_H_i/(R*T))",
+      "homo_dimer_pressure": "p_ii = K_i*p_i_m^2/P0",
+      "hetero_dimer_default": "K_ij(T) = 2*sqrt(K_i*K_j)",
+      "hetero_dimer_pressure": "p_ij = K_ij*p_i_m*p_j_m/P0",
+      "pure_saturated_monomer_reference": "P_sat = p_m_sat + K_i*(p_m_sat^2)/P0",
+      "vle_monomer_relation": "p_i_m = gamma_i*x_i*p_i_m_sat"
+    },
+
+    "pure_component_vapor_dimerization": {
+      "acetic_acid": {
+        "delta_H_J_mol": -65500.0,
+        "delta_S_J_mol_K": -155.5,
+        "provenance": "PFDSim/user-selected pure-component vapor association parameters"
+      },
+      "propionic_acid": {
+        "delta_H_J_mol": -63490.0,
+        "delta_S_J_mol_K": -152.4,
+        "provenance": "PFDSim/user-selected pure-component vapor association parameters"
+      },
+      "acrylic_acid": {
+        "delta_H_J_mol": -67000.0,
+        "delta_S_J_mol_K": -161.4,
+        "provenance": "PFDSim/user-selected pure-component vapor association parameters"
+      }
+    },
+
+    "activity_model_conventions": {
+      "NRTL": {
+        "tau_form": "tau_ij(T) = A_ij/T",
+        "A_units": "K",
+        "G_form": "G_ij = exp(-alpha_ij*tau_ij)",
+        "default_alpha": 0.3,
+        "temperature_units": "K",
+        "temperature_dependence": "constant interaction energy"
+      },
+      "UNIQUAC": {
+        "tau_form": "tau_ij(T) = exp(-A_ij/T)",
+        "A_units": "K",
+        "temperature_units": "K",
+        "coordination_number_z": 10.0,
+        "temperature_dependence": "constant interchange energy"
+      }
+    },
+
+    "UNIQUAC_structural_parameters": {
+      "acetic_acid": {
+        "r": 2.2024,
+        "q": 2.0720
+      },
+      "propionic_acid": {
+        "r": 2.8770,
+        "q": 2.6120
+      },
+      "acrylic_acid": {
+        "r": 2.6467,
+        "q": 2.4000
+      }
+    }
+  },
+
+  "systems": [
+    {
+      "component_1": {
+        "name": "Acetic acid",
+        "symbol": "CH3COOH",
+        "r": 2.2024,
+        "q": 2.0720
+      },
+      "component_2": {
+        "name": "Propionic acid",
+        "symbol": "C2H5COOH",
+        "r": 2.8770,
+        "q": 2.6120
+      },
+
+      "recommendation": {
+        "preferred_liquid_behavior": "weakly nonideal",
+        "preferred_vapor_behavior": "statistical homo/heterodimer association",
+        "confidence": "high",
+        "quality_class": "direct regression with independent validation",
+        "recommended_models": [
+          "NRTL",
+          "UNIQUAC"
+        ]
+      },
+
+      "vapor_cross_association": {
+        "residual_delta_H_J_mol": 0.0,
+        "residual_delta_S_J_mol_K": 0.0,
+
+        "effective_statistical_parameters": {
+          "delta_H_J_mol": -64495.0,
+          "delta_S_J_mol_K": -148.186853,
+          "definition": [
+            "delta_H_12 = (delta_H_11 + delta_H_22)/2",
+            "delta_S_12 = (delta_S_11 + delta_S_22)/2 + R*ln(2)"
+          ]
+        },
+
+        "note": "PFDSim should leave vapor cross residual H/S blank or zero."
+      },
+
+      "fit_source": {
+        "authors": [
+          "Shinji Miyamoto",
+          "Shinichi Nakamura",
+          "Yoshio Iwai",
+          "Yasuhiko Arai"
+        ],
+        "title": "Measurement of Isothermal Vapor-Liquid Equilibria for Monocarboxylic Acid + Monocarboxylic Acid Binary Systems with a Flow-Type Apparatus",
+        "journal": "Journal of Chemical & Engineering Data",
+        "year": 2001,
+        "volume": 46,
+        "pages": "405-409",
+        "doi": "10.1021/je000205n",
+
+        "data_type": "isothermal p-x-y",
+        "temperature_K": 343.2,
+        "number_of_points": 9,
+
+        "experimental_uncertainty": {
+          "temperature_K": 0.1,
+          "pressure_kPa": 0.5,
+          "mole_fraction": 0.003
+        },
+
+        "points": [
+          [0.019, 0.039, 6.7],
+          [0.048, 0.093, 7.1],
+          [0.096, 0.179, 7.6],
+          [0.289, 0.447, 9.9],
+          [0.486, 0.647, 12.0],
+          [0.692, 0.807, 14.6],
+          [0.897, 0.940, 17.4],
+          [0.948, 0.970, 18.0],
+          [0.980, 0.988, 18.4]
+        ],
+
+        "point_columns": [
+          "x_acetic_acid",
+          "y_acetic_acid",
+          "pressure_kPa"
+        ],
+
+        "pure_vapor_pressure_correlations_used": {
+          "form": "ln(P_sat/kPa) = A - B/(T/K - C)",
+
+          "acetic_acid": {
+            "A": 15.19234,
+            "B": 3654.622,
+            "C": 45.392,
+            "source_in_paper": "Ambrose and Ghiassee"
+          },
+
+          "propionic_acid": {
+            "A": 15.29686,
+            "B": 3670.949,
+            "C": 70.545,
+            "source_in_paper": "Ambrose and Ghiassee"
+          }
+        }
+      },
+
+      "models": {
+        "NRTL": {
+          "recommended": true,
+          "confidence": "high",
+
+          "tau_form": "tau_12 = A_12/T; tau_21 = A_21/T",
+          "alpha": 0.3,
+
+          "parameters": {
+            "A_12_K": 54.069030,
+            "A_21_K": -11.326834
+          },
+
+          "equivalent_constant_energy_parameters_J_mol": {
+            "g_12_minus_g_22": 449.555,
+            "g_21_minus_g_11": -94.177
+          },
+
+          "fit_metrics_ln_gamma": {
+            "MAE": 0.012544,
+            "RMSE": 0.015832,
+            "max_abs_error": 0.031610
+          },
+
+          "forward_fit_metrics": {
+            "pressure_kPa": {
+              "MAE": 0.185222,
+              "RMSE": 0.209103,
+              "max_abs_error": 0.306253
+            },
+
+            "y_acetic_acid": {
+              "MAE": 0.001724,
+              "RMSE": 0.002142,
+              "max_abs_error": 0.003600
+            }
+          },
+
+          "independent_validation": {
+            "source": {
+              "authors": [
+                "Abraham Tamir",
+                "Jaime Wisniak"
+              ],
+              "title": "Vapour-Liquid Equilibria in Associating Solutions",
+              "journal": "Chemical Engineering Science",
+              "year": 1975,
+              "volume": 30,
+              "pages": "335-342",
+              "doi": "10.1016/0009-2509(75)80083-2"
+            },
+
+            "condition": {
+              "pressure_mmHg": 760.0,
+              "number_of_points": 23
+            },
+
+            "fit_status": "not used in parameter regression",
+
+            "metrics": {
+              "temperature_K": {
+                "MAE": 0.387773,
+                "RMSE": 0.489411,
+                "max_abs_error": 1.341500
+              },
+
+              "y_acetic_acid": {
+                "MAE": 0.017915,
+                "RMSE": 0.021101,
+                "max_abs_error": 0.038169
+              }
+            },
+
+            "experimental_composition_accuracy_note": "Approximately 0.02 mole-fraction units, so the validation y error is comparable to experimental composition accuracy."
+          },
+
+          "published_model_comparison": {
+            "source": "Miyamoto et al. 2001",
+
+            "note": "Published parameters use different pure-acid vapor association constants and are therefore not directly interchangeable with the present PFDSim association split.",
+
+            "published_A_12_K": 161.157,
+            "published_A_21_K": -83.963,
+            "published_alpha": 0.716,
+            "published_forward_deviation_y": 0.001,
+            "published_forward_deviation_pressure_kPa": 0.21
+          }
+        },
+
+        "UNIQUAC": {
+          "recommended": true,
+          "confidence": "high",
+
+          "tau_form": "tau_12 = exp(-A_12/T); tau_21 = exp(-A_21/T)",
+
+          "parameters": {
+            "A_12_K": -37.313184,
+            "A_21_K": 63.157388
+          },
+
+          "equivalent_interchange_energy_parameters_J_mol": {
+            "u_12_minus_u_22": -310.239,
+            "u_21_minus_u_11": 525.120
+          },
+
+          "structural_parameters": {
+            "component_1_r": 2.2024,
+            "component_1_q": 2.0720,
+            "component_2_r": 2.8770,
+            "component_2_q": 2.6120,
+            "z": 10.0
+          },
+
+          "fit_metrics_ln_gamma": {
+            "MAE": 0.012548,
+            "RMSE": 0.015835,
+            "max_abs_error": 0.031611
+          },
+
+          "forward_fit_metrics": {
+            "pressure_kPa": {
+              "MAE": 0.185128,
+              "RMSE": 0.209102,
+              "max_abs_error": 0.306388
+            },
+
+            "y_acetic_acid": {
+              "MAE": 0.001721,
+              "RMSE": 0.002141,
+              "max_abs_error": 0.003615
+            }
+          },
+
+          "independent_validation": {
+            "source": {
+              "authors": [
+                "Abraham Tamir",
+                "Jaime Wisniak"
+              ],
+              "title": "Vapour-Liquid Equilibria in Associating Solutions",
+              "journal": "Chemical Engineering Science",
+              "year": 1975,
+              "volume": 30,
+              "pages": "335-342",
+              "doi": "10.1016/0009-2509(75)80083-2"
+            },
+
+            "condition": {
+              "pressure_mmHg": 760.0,
+              "number_of_points": 23
+            },
+
+            "fit_status": "not used in parameter regression",
+
+            "metrics": {
+              "temperature_K": {
+                "MAE": 0.394489,
+                "RMSE": 0.496345,
+                "max_abs_error": 1.340105
+              },
+
+              "y_acetic_acid": {
+                "MAE": 0.017801,
+                "RMSE": 0.020961,
+                "max_abs_error": 0.037862
+              }
+            },
+
+            "experimental_composition_accuracy_note": "Approximately 0.02 mole-fraction units."
+          }
+        }
+      }
+    },
+
+    {
+      "component_1": {
+        "name": "Acetic acid",
+        "symbol": "CH3COOH",
+        "r": 2.2024,
+        "q": 2.0720
+      },
+
+      "component_2": {
+        "name": "Acrylic acid",
+        "symbol": "C2H3COOH",
+        "r": 2.6467,
+        "q": 2.4000
+      },
+
+      "recommendation": {
+        "preferred_liquid_behavior": "weakly nonideal",
+        "preferred_vapor_behavior": "statistical homo/heterodimer association",
+        "confidence": "high",
+        "quality_class": "direct regression",
+        "recommended_models": [
+          "NRTL",
+          "UNIQUAC"
+        ]
+      },
+
+      "vapor_cross_association": {
+        "residual_delta_H_J_mol": 0.0,
+        "residual_delta_S_J_mol_K": 0.0,
+
+        "effective_statistical_parameters": {
+          "delta_H_J_mol": -66250.0,
+          "delta_S_J_mol_K": -152.686853
+        },
+
+        "note": "PFDSim should leave vapor cross residual H/S blank or zero."
+      },
+
+      "fit_source": {
+        "authors": [
+          "J. Linek",
+          "I. Wichterle"
+        ],
+        "title": "Liquid-Vapour Equilibrium. LX. The System Acetic Acid-Acrylic Acid at 200 Torr",
+        "journal": "Collection of Czechoslovak Chemical Communications",
+        "year": 1973,
+        "volume": 38,
+        "pages": "1853-1857",
+
+        "data_type": "isobaric T-x-y",
+        "pressure_Torr": 200.0,
+        "pressure_kPa": 26.664474,
+        "number_of_points": 16,
+
+        "experimental_uncertainty": {
+          "temperature_C": 0.02,
+          "composition_analysis": "better than 1 percent"
+        },
+
+        "points": [
+          [0.030, 0.048, 100.85],
+          [0.086, 0.154, 98.95],
+          [0.192, 0.295, 96.10],
+          [0.268, 0.388, 94.20],
+          [0.288, 0.423, 93.80],
+          [0.345, 0.480, 92.30],
+          [0.408, 0.540, 91.00],
+          [0.411, 0.543, 90.65],
+          [0.464, 0.596, 89.40],
+          [0.514, 0.631, 88.40],
+          [0.563, 0.676, 87.25],
+          [0.604, 0.722, 86.25],
+          [0.677, 0.775, 85.05],
+          [0.717, 0.813, 84.25],
+          [0.790, 0.861, 82.80],
+          [0.889, 0.934, 81.10]
+        ],
+
+        "point_columns": [
+          "x_acetic_acid",
+          "y_acetic_acid",
+          "temperature_C"
+        ],
+
+        "pure_vapor_pressure_correlations_used": {
+          "form": "log10(P_sat/Torr) = A - B/(t_C + C)",
+
+          "acetic_acid": {
+            "A": 7.18807,
+            "B": 1416.70,
+            "C": 211.00,
+            "provenance": "Literature correlation adopted by Linek and Wichterle"
+          },
+
+          "acrylic_acid": {
+            "A": 7.80806,
+            "B": 1827.90,
+            "C": 230.00,
+            "provenance": "Remeasured by Linek and Wichterle in the same equilibrium apparatus over approximately 45-260 Torr"
+          }
+        }
+      },
+
+      "models": {
+        "NRTL": {
+          "recommended": true,
+          "confidence": "high",
+
+          "tau_form": "tau_12 = A_12/T; tau_21 = A_21/T",
+          "alpha": 0.3,
+
+          "parameters": {
+            "A_12_K": -161.713961,
+            "A_21_K": 214.850470
+          },
+
+          "equivalent_constant_energy_parameters_J_mol": {
+            "g_12_minus_g_22": -1344.565,
+            "g_21_minus_g_11": 1786.366
+          },
+
+          "fit_metrics_ln_gamma": {
+            "MAE": 0.016900,
+            "RMSE": 0.027148,
+            "max_abs_error": 0.095884
+          },
+
+          "forward_fit_metrics": {
+            "temperature_K": {
+              "MAE": 0.158505,
+              "RMSE": 0.187598,
+              "max_abs_error": 0.373520
+            },
+
+            "y_acetic_acid": {
+              "MAE": 0.004960,
+              "RMSE": 0.006284,
+              "max_abs_error": 0.013830
+            }
+          },
+
+          "independent_validation": {
+            "available": false,
+            "note": "No second comparably trustworthy independent acetic-acid/acrylic-acid VLE dataset was used."
+          }
+        },
+
+        "UNIQUAC": {
+          "recommended": true,
+          "confidence": "high",
+
+          "tau_form": "tau_12 = exp(-A_12/T); tau_21 = exp(-A_21/T)",
+
+          "parameters": {
+            "A_12_K": -109.310634,
+            "A_21_K": 143.338996
+          },
+
+          "equivalent_interchange_energy_parameters_J_mol": {
+            "u_12_minus_u_22": -908.859,
+            "u_21_minus_u_11": 1191.787
+          },
+
+          "structural_parameters": {
+            "component_1_r": 2.2024,
+            "component_1_q": 2.0720,
+            "component_2_r": 2.6467,
+            "component_2_q": 2.4000,
+            "z": 10.0
+          },
+
+          "fit_metrics_ln_gamma": {
+            "MAE": 0.016926,
+            "RMSE": 0.027152,
+            "max_abs_error": 0.095748
+          },
+
+          "forward_fit_metrics": {
+            "temperature_K": {
+              "MAE": 0.158058,
+              "RMSE": 0.187028,
+              "max_abs_error": 0.374036
+            },
+
+            "y_acetic_acid": {
+              "MAE": 0.004997,
+              "RMSE": 0.006315,
+              "max_abs_error": 0.013932
+            }
+          },
+
+          "independent_validation": {
+            "available": false,
+            "note": "No second comparably trustworthy independent acetic-acid/acrylic-acid VLE dataset was used."
+          }
+        }
+      }
+    },
+
+    {
+      "component_1": {
+        "name": "Propionic acid",
+        "symbol": "C2H5COOH",
+        "r": 2.8770,
+        "q": 2.6120
+      },
+
+      "component_2": {
+        "name": "Acrylic acid",
+        "symbol": "C2H3COOH",
+        "r": 2.6467,
+        "q": 2.4000
+      },
+
+      "recommendation": {
+        "preferred_liquid_behavior": "effectively ideal",
+        "preferred_vapor_behavior": "statistical homo/heterodimer association",
+        "recommended_liquid_interaction": "zero",
+        "confidence": "moderate-low",
+        "quality_class": "physically motivated fallback",
+
+        "reason": "The available acrylic-acid + propionic-acid binary VLE has questionable absolute pure-component endpoint behavior. Its normalized x-y information is already consistent with statistical vapor cross-association, and adding two liquid parameters improves the residual shape only modestly. Zero liquid interaction is therefore preferred over overfitting."
+      },
+
+      "vapor_cross_association": {
+        "residual_delta_H_J_mol": 0.0,
+        "residual_delta_S_J_mol_K": 0.0,
+
+        "effective_statistical_parameters": {
+          "delta_H_J_mol": -65245.0,
+          "delta_S_J_mol_K": -151.136853,
+
+          "definition": [
+            "delta_H_12 = (delta_H_11 + delta_H_22)/2",
+            "delta_S_12 = (delta_S_11 + delta_S_22)/2 + R*ln(2)"
+          ]
+        },
+
+        "confidence": "moderate-high",
+
+        "note": "The normalized direct binary information implies a heterodimer strength approximately equal to the statistical expectation. PFDSim should leave vapor cross residual H/S blank or zero."
+      },
+
+      "direct_data_provenance": {
+        "system": "Propionic acid + Acrylic acid",
+        "data_type": "low-pressure T-x-y",
+        "conditions": [
+          "approximately 0.10 bar",
+          "approximately 0.25 bar"
+        ],
+
+        "use_in_recommendation": "relative and normalized composition information only",
+
+        "excluded_from_parameter_regression": [
+          "absolute pure-component boiling endpoints",
+          "absolute pure-component Psat ratio implied by the endpoints",
+          "absolute T-x-y surface"
+        ],
+
+        "exclusion_reason": "The reported pure-component endpoint ordering and temperatures conflict with more reliable pure-component vapor-pressure correlations."
+      },
+
+      "models": {
+        "NRTL": {
+          "recommended": true,
+          "recommendation_type": "zero_interaction_fallback",
+          "confidence": "moderate-low",
+
+          "tau_form": "tau_12 = A_12/T; tau_21 = A_21/T",
+          "alpha": 0.3,
+
+          "parameters": {
+            "A_12_K": 0.0,
+            "A_21_K": 0.0
+          },
+
+          "equivalent_constant_energy_parameters_J_mol": {
+            "g_12_minus_g_22": 0.0,
+            "g_21_minus_g_11": 0.0
+          },
+
+          "interpretation": "gamma_1 = gamma_2 = 1",
+
+          "direct_fit_metrics": null,
+          "forward_fit_metrics": null,
+
+          "evidence_from_normalized_questionable_data": {
+            "metric": "centered normalized relative-fugacity/activity shape",
+
+            "zero_interaction": {
+              "MAE_ln_ratio": 0.01231,
+              "RMSE_ln_ratio": 0.01568,
+              "max_abs_error_ln_ratio": 0.04017
+            },
+
+            "best_two_parameter_fit": {
+              "A_12_K": 303.38,
+              "A_21_K": -240.36,
+              "alpha": 0.3,
+              "MAE_ln_ratio": 0.01033,
+              "RMSE_ln_ratio": 0.01342,
+              "max_abs_error_ln_ratio": 0.03269
+            },
+
+            "improvement_from_nonzero_fit": {
+              "RMSE_reduction_fraction": 0.144,
+              "qualitative_significance": "small"
+            },
+
+            "model_selection": {
+              "delta_AICc_approximately": 0.3,
+              "interpretation": "No meaningful statistical preference for the nonzero two-parameter model."
+            },
+
+            "implied_activity_range_for_nonzero_fit": "approximately 0.989 to 1.019",
+
+            "reason_nonzero_fit_rejected": "Only approximately 1-2% liquid corrections are implied, most of the apparent signal comes from the less trustworthy 0.25 bar data, and the two extra parameters are not statistically justified."
+          }
+        },
+
+        "UNIQUAC": {
+          "recommended": true,
+          "recommendation_type": "zero_residual_interaction_fallback",
+          "confidence": "moderate-low",
+
+          "tau_form": "tau_12 = exp(-A_12/T); tau_21 = exp(-A_21/T)",
+
+          "parameters": {
+            "A_12_K": 0.0,
+            "A_21_K": 0.0
+          },
+
+          "equivalent_interchange_energy_parameters_J_mol": {
+            "u_12_minus_u_22": 0.0,
+            "u_21_minus_u_11": 0.0
+          },
+
+          "structural_parameters": {
+            "component_1_r": 2.8770,
+            "component_1_q": 2.6120,
+            "component_2_r": 2.6467,
+            "component_2_q": 2.4000,
+            "z": 10.0
+          },
+
+          "interpretation": "Zero UNIQUAC residual interaction. Only the very small combinatorial size/shape contribution remains.",
+
+          "combinatorial_term_magnitude": {
+            "equimolar_gamma_component_1_approx": 0.99916,
+            "equimolar_gamma_component_2_approx": 0.99911,
+            "infinite_dilution_gamma_component_1_approx": 0.99644,
+            "infinite_dilution_gamma_component_2_approx": 0.99663,
+            "conclusion": "The combinatorial term is below about 0.4%, so zero UNIQUAC residual interaction is effectively equivalent to an ideal liquid for this pair."
+          },
+
+          "direct_fit_metrics": null,
+          "forward_fit_metrics": null,
+
+          "evidence_from_normalized_questionable_data": {
+            "metric": "centered normalized relative-fugacity/activity shape",
+
+            "zero_interaction": {
+              "MAE_ln_ratio": 0.01276,
+              "RMSE_ln_ratio": 0.01596,
+              "max_abs_error_ln_ratio": 0.04101
+            },
+
+            "best_two_parameter_fit": {
+              "A_12_K": 176.24,
+              "A_21_K": -140.57,
+              "MAE_ln_ratio": 0.01042,
+              "RMSE_ln_ratio": 0.01349,
+              "max_abs_error_ln_ratio": 0.03247
+            },
+
+            "improvement_from_nonzero_fit": {
+              "RMSE_reduction_fraction": 0.155,
+              "qualitative_significance": "small"
+            },
+
+            "reason_nonzero_fit_rejected": "The improvement is too small relative to the quality of the direct data to justify assigning fitted residual interaction energies."
+          }
+        }
+      },
+
+      "supporting_analogy": [
+        {
+          "system": "Acetic acid + Propionic acid",
+          "finding": "Statistical vapor heterodimerization accounts for the dominant nonideality; only a small residual liquid activity correction remains.",
+          "confidence": "high"
+        },
+        {
+          "system": "Acetic acid + Acrylic acid",
+          "finding": "Statistical vapor heterodimerization captures most of the VLE behavior; the fitted residual liquid correction is small.",
+          "confidence": "high"
+        }
+      ],
+
+      "evidence_summary": {
+        "strongest_supported_statement": "Propionic acid and acrylic acid should use statistical acid-acid vapor cross-dimerization.",
+        "supported_but_weaker_statement": "The liquid mixture is probably extremely close to ideal.",
+        "unsupported_statement": "The available data do not justify precise nonzero NRTL or UNIQUAC parameters.",
+        "expected_scale_of_unmodeled_liquid_nonideality": "probably about 1-2% or less in activity coefficient",
+        "preferred_database_action": "store zero NRTL and zero UNIQUAC residual interaction parameters, with lower confidence than the other two pairs"
+      },
+
+      "future_update_rule": {
+        "replace_zero_liquid_parameters_if": [
+          "A new independent acrylic-acid + propionic-acid VLE dataset has trustworthy pure-component endpoints or independently validated Psat correlations.",
+          "Statistical vapor cross-association is fixed before fitting liquid interactions.",
+          "A nonzero liquid model improves the observations beyond stated experimental uncertainty.",
+          "The fitted parameters are statistically preferred over zero interaction.",
+          "Preferably the parameters reproduce more than one pressure or temperature condition."
+        ]
+      }
+    }
+  ]
+}

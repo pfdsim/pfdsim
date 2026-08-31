@@ -1,0 +1,908 @@
+{
+  "components": {
+    "1": {
+      "dwsim_name": "Metano",
+      "id": "1",
+      "name": "Methane"
+    },
+    "1001": {
+      "id": "1001",
+      "name": "Formaldehyde"
+    },
+    "1002": {
+      "id": "1002",
+      "name": "Acetaldehyde"
+    },
+    "1003": {
+      "id": "1003",
+      "name": "Propanal"
+    },
+    "1006": {
+      "id": "1006",
+      "name": "2-methylpropanal"
+    },
+    "104": {
+      "id": "104",
+      "name": "Cyclopentane"
+    },
+    "105": {
+      "id": "105",
+      "name": "Methylcyclopentane"
+    },
+    "1051": {
+      "id": "1051",
+      "name": "Acetone"
+    },
+    "1052": {
+      "dwsim_name": "MetilEtilCetona",
+      "id": "1052",
+      "name": "Methyl ethyl ketone"
+    },
+    "1053": {
+      "id": "1053",
+      "name": "3-pentanone"
+    },
+    "1054": {
+      "id": "1054",
+      "name": "Methyl isobutyl ketone"
+    },
+    "1061": {
+      "id": "1061",
+      "name": "Methyl isopropyl ketone"
+    },
+    "107": {
+      "id": "107",
+      "name": "Ethylcyclopentane"
+    },
+    "1080": {
+      "id": "1080",
+      "name": "Cyclohexanone"
+    },
+    "11": {
+      "dwsim_name": "nHexano",
+      "id": "11",
+      "name": "N-hexane"
+    },
+    "1101": {
+      "dwsim_name": "Metanol",
+      "id": "1101",
+      "name": "Methanol"
+    },
+    "1102": {
+      "dwsim_name": "Etanol",
+      "id": "1102",
+      "name": "Ethanol"
+    },
+    "1103": {
+      "id": "1103",
+      "name": "1-propanol"
+    },
+    "1104": {
+      "dwsim_name": "Isopropanol",
+      "id": "1104",
+      "name": "Isopropanol"
+    },
+    "1105": {
+      "id": "1105",
+      "name": "1-butanol"
+    },
+    "1106": {
+      "id": "1106",
+      "name": "2-methyl-1-propanol"
+    },
+    "1107": {
+      "id": "1107",
+      "name": "2-butanol"
+    },
+    "1108": {
+      "id": "1108",
+      "name": "2-methyl-2-propanol"
+    },
+    "1111": {
+      "id": "1111",
+      "name": "2-methyl-2-butanol"
+    },
+    "1114": {
+      "id": "1114",
+      "name": "1-hexanol"
+    },
+    "114": {
+      "id": "114",
+      "name": "N-propylcyclopentane"
+    },
+    "1151": {
+      "id": "1151",
+      "name": "Cyclohexanol"
+    },
+    "1181": {
+      "dwsim_name": "Fenol",
+      "id": "1181",
+      "name": "Phenol"
+    },
+    "1182": {
+      "id": "1182",
+      "name": "O-cresol"
+    },
+    "1183": {
+      "id": "1183",
+      "name": "M-cresol"
+    },
+    "1184": {
+      "id": "1184",
+      "name": "P-cresol"
+    },
+    "12": {
+      "id": "12",
+      "name": "2-methylpentane"
+    },
+    "1201": {
+      "id": "1201",
+      "name": "Ethylene glycol"
+    },
+    "1202": {
+      "id": "1202",
+      "name": "Diethylene glycol"
+    },
+    "1203": {
+      "id": "1203",
+      "name": "Triethylene glycol"
+    },
+    "1204": {
+      "id": "1204",
+      "name": "Tetraethylene glycol"
+    },
+    "1241": {
+      "id": "1241",
+      "name": "1,4-butanediol"
+    },
+    "1252": {
+      "id": "1252",
+      "name": "Acetic acid"
+    },
+    "1253": {
+      "id": "1253",
+      "name": "Propionic acid"
+    },
+    "1256": {
+      "id": "1256",
+      "name": "N-butyric acid"
+    },
+    "1277": {
+      "id": "1277",
+      "name": "Acrylic acid"
+    },
+    "1278": {
+      "id": "1278",
+      "name": "Methacrylic acid"
+    },
+    "13": {
+      "id": "13",
+      "name": "3-methylpentane"
+    },
+    "1301": {
+      "id": "1301",
+      "name": "Methyl formate"
+    },
+    "1302": {
+      "id": "1302",
+      "name": "Ethyl formate"
+    },
+    "1303": {
+      "id": "1303",
+      "name": "N-propyl formate"
+    },
+    "1312": {
+      "id": "1312",
+      "name": "Methyl acetate"
+    },
+    "1313": {
+      "id": "1313",
+      "name": "Ethyl acetate"
+    },
+    "1314": {
+      "id": "1314",
+      "name": "N-propyl acetate"
+    },
+    "1315": {
+      "id": "1315",
+      "name": "N-butyl acetate"
+    },
+    "1321": {
+      "id": "1321",
+      "name": "Vinyl acetate"
+    },
+    "1322": {
+      "id": "1322",
+      "name": "Methyl propionate"
+    },
+    "1351": {
+      "id": "1351",
+      "name": "Methyl methacrylate"
+    },
+    "137": {
+      "id": "137",
+      "name": "Cyclohexane"
+    },
+    "138": {
+      "id": "138",
+      "name": "Methylcyclohexane"
+    },
+    "14": {
+      "id": "14",
+      "name": "2,2-dimethylbutane"
+    },
+    "140": {
+      "id": "140",
+      "name": "Ethylcyclohexane"
+    },
+    "1401": {
+      "id": "1401",
+      "name": "Dimethyl ether"
+    },
+    "1402": {
+      "id": "1402",
+      "name": "Diethyl ether"
+    },
+    "1403": {
+      "id": "1403",
+      "name": "Diisopropyl ether"
+    },
+    "1405": {
+      "id": "1405",
+      "name": "Methyl tert-butyl ether"
+    },
+    "1421": {
+      "id": "1421",
+      "name": "1,4-dioxane"
+    },
+    "1427": {
+      "id": "1427",
+      "name": "Methyl tert-pentyl ether"
+    },
+    "1431": {
+      "id": "1431",
+      "name": "Methylal"
+    },
+    "1441": {
+      "id": "1441",
+      "name": "Ethylene oxide"
+    },
+    "1442": {
+      "id": "1442",
+      "name": "1,2-propylene oxide"
+    },
+    "1461": {
+      "id": "1461",
+      "name": "Anisole"
+    },
+    "1479": {
+      "id": "1479",
+      "name": "Tetrahydrofuran"
+    },
+    "149": {
+      "id": "149",
+      "name": "N-propylcyclohexane"
+    },
+    "15": {
+      "id": "15",
+      "name": "2,3-dimethylbutane"
+    },
+    "1501": {
+      "id": "1501",
+      "name": "Carbon tetrachloride"
+    },
+    "1502": {
+      "id": "1502",
+      "name": "Methyl chloride"
+    },
+    "1503": {
+      "id": "1503",
+      "name": "Ethyl chloride"
+    },
+    "1504": {
+      "id": "1504",
+      "name": "Vinyl chloride"
+    },
+    "152": {
+      "id": "152",
+      "name": "N-butylcyclohexane"
+    },
+    "1521": {
+      "id": "1521",
+      "name": "Chloroform"
+    },
+    "1522": {
+      "id": "1522",
+      "name": "1,1-dichloroethane"
+    },
+    "1523": {
+      "id": "1523",
+      "name": "1,2-dichloroethane"
+    },
+    "1524": {
+      "id": "1524",
+      "name": "1,1,2-trichloroethane"
+    },
+    "153": {
+      "id": "153",
+      "name": "Cis-decahydronaphthalene"
+    },
+    "154": {
+      "id": "154",
+      "name": "Trans-decahydronaphthalene"
+    },
+    "1541": {
+      "id": "1541",
+      "name": "Trichloroethylene"
+    },
+    "1571": {
+      "id": "1571",
+      "name": "Monochlorobenzene"
+    },
+    "1572": {
+      "id": "1572",
+      "name": "O-dichlorobenzene"
+    },
+    "1573": {
+      "id": "1573",
+      "name": "M-dichlorobenzene"
+    },
+    "1574": {
+      "id": "1574",
+      "name": "P-dichlorobenzene"
+    },
+    "1592": {
+      "id": "1592",
+      "name": "1,2,4-trichlorobenzene"
+    },
+    "1680": {
+      "id": "1680",
+      "name": "Bromobenzene"
+    },
+    "1681": {
+      "id": "1681",
+      "name": "Methyl iodide"
+    },
+    "1691": {
+      "id": "1691",
+      "name": "Iodobenzene"
+    },
+    "17": {
+      "dwsim_name": "nHeptano",
+      "id": "17",
+      "name": "N-heptane"
+    },
+    "1701": {
+      "id": "1701",
+      "name": "Methylamine"
+    },
+    "1703": {
+      "id": "1703",
+      "name": "Trimethylamine"
+    },
+    "1704": {
+      "id": "1704",
+      "name": "Ethylamine"
+    },
+    "1706": {
+      "id": "1706",
+      "name": "Triethylamine"
+    },
+    "1710": {
+      "id": "1710",
+      "name": "Diethylamine"
+    },
+    "1741": {
+      "id": "1741",
+      "name": "Ethylenediamine"
+    },
+    "1760": {
+      "id": "1760",
+      "name": "Nitromethane"
+    },
+    "1761": {
+      "id": "1761",
+      "name": "Nitroethane"
+    },
+    "1762": {
+      "id": "1762",
+      "name": "1-nitropropane"
+    },
+    "1763": {
+      "id": "1763",
+      "name": "2-nitropropane"
+    },
+    "1771": {
+      "id": "1771",
+      "name": "Hydrogen cyanide"
+    },
+    "1772": {
+      "id": "1772",
+      "name": "Acetonitrile"
+    },
+    "1773": {
+      "id": "1773",
+      "name": "Propionitrile"
+    },
+    "1774": {
+      "id": "1774",
+      "name": "Acrylonitrile"
+    },
+    "1775": {
+      "id": "1775",
+      "name": "Methacrylonitrile"
+    },
+    "1791": {
+      "id": "1791",
+      "name": "Pyridine"
+    },
+    "1792": {
+      "id": "1792",
+      "name": "Aniline"
+    },
+    "1802": {
+      "id": "1802",
+      "name": "Ethyl mercaptan"
+    },
+    "1820": {
+      "id": "1820",
+      "name": "Dimethyl sulfide"
+    },
+    "1821": {
+      "id": "1821",
+      "name": "Thiophene"
+    },
+    "1844": {
+      "id": "1844",
+      "name": "Dimethyl sulfoxide"
+    },
+    "1845": {
+      "id": "1845",
+      "name": "Sulfolane"
+    },
+    "1851": {
+      "id": "1851",
+      "name": "Acetyl chloride"
+    },
+    "1854": {
+      "id": "1854",
+      "name": "Dichloroacetyl chloride"
+    },
+    "1855": {
+      "id": "1855",
+      "name": "Trichloroacetyl chloride"
+    },
+    "1876": {
+      "id": "1876",
+      "name": "N,n-dimethylformamide"
+    },
+    "1886": {
+      "id": "1886",
+      "name": "Nitrobenzene"
+    },
+    "1889": {
+      "id": "1889",
+      "name": "Furfural"
+    },
+    "1894": {
+      "id": "1894",
+      "name": "Phosgene"
+    },
+    "1903": {
+      "id": "1903",
+      "name": "Nitric acid"
+    },
+    "1904": {
+      "id": "1904",
+      "name": "Hydrogen chloride"
+    },
+    "1907": {
+      "id": "1907",
+      "name": "Hydrogen iodide"
+    },
+    "1911": {
+      "id": "1911",
+      "name": "Ammonia"
+    },
+    "1921": {
+      "dwsim_name": "Agua",
+      "id": "1921",
+      "name": "Water"
+    },
+    "1922": {
+      "dwsim_name": "SulfetoDeHidrogenio",
+      "id": "1922",
+      "name": "Hydrogen sulfide"
+    },
+    "1938": {
+      "id": "1938",
+      "name": "Carbon disulfide"
+    },
+    "2": {
+      "dwsim_name": "Etano",
+      "id": "2",
+      "name": "Ethane"
+    },
+    "201": {
+      "id": "201",
+      "name": "Ethylene"
+    },
+    "202": {
+      "id": "202",
+      "name": "Propylene"
+    },
+    "204": {
+      "id": "204",
+      "name": "1-butene"
+    },
+    "205": {
+      "id": "205",
+      "name": "Cis-2-butene"
+    },
+    "206": {
+      "id": "206",
+      "name": "Trans-2-butene"
+    },
+    "207": {
+      "id": "207",
+      "name": "Isobutene"
+    },
+    "209": {
+      "id": "209",
+      "name": "1-pentene"
+    },
+    "210": {
+      "id": "210",
+      "name": "Cis-2-pentene"
+    },
+    "211": {
+      "id": "211",
+      "name": "Trans-2-pentene"
+    },
+    "212": {
+      "id": "212",
+      "name": "2-methyl-1-butene"
+    },
+    "213": {
+      "id": "213",
+      "name": "3-methyl-1-butene"
+    },
+    "214": {
+      "id": "214",
+      "name": "2-methyl-2-butene"
+    },
+    "216": {
+      "id": "216",
+      "name": "1-hexene"
+    },
+    "234": {
+      "id": "234",
+      "name": "1-heptene"
+    },
+    "250": {
+      "id": "250",
+      "name": "1-octene"
+    },
+    "27": {
+      "dwsim_name": "nOctano",
+      "id": "27",
+      "name": "N-octane"
+    },
+    "270": {
+      "id": "270",
+      "name": "Cyclohexene"
+    },
+    "2856": {
+      "id": "2856",
+      "name": "N,n-dimethylacetamide"
+    },
+    "3": {
+      "dwsim_name": "Propano",
+      "id": "3",
+      "name": "Propane"
+    },
+    "301": {
+      "id": "301",
+      "name": "Propadiene"
+    },
+    "302": {
+      "id": "302",
+      "name": "1,2-butadiene"
+    },
+    "303": {
+      "id": "303",
+      "name": "1,3-butadiene"
+    },
+    "309": {
+      "id": "309",
+      "name": "Isoprene"
+    },
+    "316": {
+      "id": "316",
+      "name": "Dicyclopentadiene"
+    },
+    "4": {
+      "dwsim_name": "iButano",
+      "id": "4",
+      "name": "Isobutane"
+    },
+    "40": {
+      "id": "40",
+      "name": "2,2,3-trimethylpentane"
+    },
+    "401": {
+      "id": "401",
+      "name": "Acetylene"
+    },
+    "402": {
+      "id": "402",
+      "name": "Methylacetylene"
+    },
+    "403": {
+      "id": "403",
+      "name": "Ethylacetylene"
+    },
+    "404": {
+      "id": "404",
+      "name": "Dimethylacetylene"
+    },
+    "41": {
+      "id": "41",
+      "name": "2,2,4-trimethylpentane"
+    },
+    "418": {
+      "id": "418",
+      "name": "Vinylacetylene"
+    },
+    "42": {
+      "id": "42",
+      "name": "2,3,3-trimethylpentane"
+    },
+    "43": {
+      "id": "43",
+      "name": "2,3,4-trimethylpentane"
+    },
+    "46": {
+      "dwsim_name": "nNonano",
+      "id": "46",
+      "name": "N-nonane"
+    },
+    "4865": {
+      "id": "4865",
+      "name": "Trichloroacetaldehyde"
+    },
+    "4868": {
+      "id": "4868",
+      "name": "Dichloroacetaldehyde"
+    },
+    "5": {
+      "dwsim_name": "nButano",
+      "id": "5",
+      "name": "N-butane"
+    },
+    "501": {
+      "dwsim_name": "Benzeno",
+      "id": "501",
+      "name": "Benzene"
+    },
+    "502": {
+      "dwsim_name": "Tolueno",
+      "id": "502",
+      "name": "Toluene"
+    },
+    "504": {
+      "dwsim_name": "Etilbenzeno",
+      "id": "504",
+      "name": "Ethylbenzene"
+    },
+    "505": {
+      "dwsim_name": "Oxileno",
+      "id": "505",
+      "name": "O-xylene"
+    },
+    "506": {
+      "dwsim_name": "Mxileno",
+      "id": "506",
+      "name": "M-xylene"
+    },
+    "507": {
+      "dwsim_name": "Pxileno",
+      "id": "507",
+      "name": "P-xylene"
+    },
+    "509": {
+      "id": "509",
+      "name": "N-propylbenzene"
+    },
+    "510": {
+      "id": "510",
+      "name": "Cumene"
+    },
+    "514": {
+      "id": "514",
+      "name": "1,2,3-trimethylbenzene"
+    },
+    "515": {
+      "id": "515",
+      "name": "1,2,4-trimethylbenzene"
+    },
+    "518": {
+      "id": "518",
+      "name": "N-butylbenzene"
+    },
+    "524": {
+      "id": "524",
+      "name": "P-cymene"
+    },
+    "558": {
+      "id": "558",
+      "name": "Biphenyl"
+    },
+    "56": {
+      "dwsim_name": "nDecano",
+      "id": "56",
+      "name": "N-decane"
+    },
+    "601": {
+      "id": "601",
+      "name": "Styrene"
+    },
+    "63": {
+      "id": "63",
+      "name": "N-undecane"
+    },
+    "64": {
+      "id": "64",
+      "name": "N-dodecane"
+    },
+    "65": {
+      "id": "65",
+      "name": "N-tridecane"
+    },
+    "66": {
+      "id": "66",
+      "name": "N-tetradecane"
+    },
+    "67": {
+      "id": "67",
+      "name": "N-pentadecane"
+    },
+    "68": {
+      "id": "68",
+      "name": "N-hexadecane"
+    },
+    "7": {
+      "dwsim_name": "nPentano",
+      "id": "7",
+      "name": "N-pentane"
+    },
+    "701": {
+      "id": "701",
+      "name": "Naphthalene"
+    },
+    "702": {
+      "id": "702",
+      "name": "1-methylnaphthalene"
+    },
+    "703": {
+      "id": "703",
+      "name": "2-methylnaphthalene"
+    },
+    "710": {
+      "id": "710",
+      "name": "1-phenylnaphthalene"
+    },
+    "717": {
+      "id": "717",
+      "name": "Fluoranthene"
+    },
+    "723": {
+      "id": "723",
+      "name": "1-methylindene"
+    },
+    "724": {
+      "id": "724",
+      "name": "2-methylindene"
+    },
+    "738": {
+      "id": "738",
+      "name": "Fluorene"
+    },
+    "8": {
+      "dwsim_name": "iPentano",
+      "id": "8",
+      "name": "Isopentane"
+    },
+    "803": {
+      "id": "803",
+      "name": "Indene"
+    },
+    "805": {
+      "id": "805",
+      "name": "Phenanthrene"
+    },
+    "806": {
+      "id": "806",
+      "name": "Chrysene"
+    },
+    "807": {
+      "id": "807",
+      "name": "Pyrene"
+    },
+    "808": {
+      "id": "808",
+      "name": "Acenaphthene"
+    },
+    "820": {
+      "id": "820",
+      "name": "Indane"
+    },
+    "899": {
+      "id": "899",
+      "name": "Nitrous oxide"
+    },
+    "9": {
+      "id": "9",
+      "name": "Neopentane"
+    },
+    "900": {
+      "id": "900",
+      "name": "Nitrogen dioxide"
+    },
+    "901": {
+      "dwsim_name": "Oxigenio",
+      "id": "901",
+      "name": "Oxygen"
+    },
+    "902": {
+      "id": "902",
+      "name": "Hydrogen"
+    },
+    "905": {
+      "dwsim_name": "Nitrogenio",
+      "id": "905",
+      "name": "Nitrogen"
+    },
+    "908": {
+      "id": "908",
+      "name": "Carbon monoxide"
+    },
+    "909": {
+      "dwsim_name": "DioxidoDeCarbono",
+      "id": "909",
+      "name": "Carbon dioxide"
+    },
+    "910": {
+      "id": "910",
+      "name": "Sulfur dioxide"
+    },
+    "911": {
+      "id": "911",
+      "name": "Sulfur trioxide"
+    },
+    "912": {
+      "id": "912",
+      "name": "Nitric oxide"
+    },
+    "914": {
+      "id": "914",
+      "name": "Argon"
+    },
+    "915": {
+      "id": "915",
+      "name": "Air"
+    },
+    "918": {
+      "id": "918",
+      "name": "Chlorine"
+    },
+    "919": {
+      "id": "919",
+      "name": "Neon"
+    },
+    "922": {
+      "id": "922",
+      "name": "Bromine"
+    }
+  }
+}

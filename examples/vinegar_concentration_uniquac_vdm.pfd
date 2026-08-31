@@ -1,0 +1,48 @@
+#==============================================================================
+# Vinegar Concentration With UNIQUAC-VDM
+#==============================================================================
+
+PROCESS: Vinegar Concentration UNIQUAC-VDM
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIQUAC-VDM
+DESCRIPTION: 5 wt% acetic acid in water concentrated in a 30-stage rigorous column with vapor-phase acid dimerization
+
+COMPONENTS:
+    CH3COOH | Acetic Acid | MW=60.052
+    H2O     | Water       | MW=18.015
+
+# 5 wt% acetic acid vinegar, expressed as mole fractions.
+STREAM Vinegar-Feed : FEED -> T-100.feed
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 100 [kmol/h]
+    x = CH3COOH:0.01554377, H2O:0.98445623
+
+STREAM Water-Rich-Distillate : T-100.distillate -> PRODUCT
+STREAM Acid-Rich-Bottoms : T-100.bottoms -> PRODUCT
+
+UNIT T-100
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 30
+        feed_stage = 16
+        reflux_ratio = 2.0
+        D_to_F = 0.975
+        P_condenser = 1.01325 [bar]
+        P_drop_per_stage = 0.0
+        condenser_type = total
+        initializer = cmo
+        mesh_tolerance = 1e-6
+        T_min = 300 [K]
+        T_max = 405 [K]
+        max_iterations = 400
+
+# Expected behavior:
+# - Water-rich distillate with a small acetic acid loss.
+# - Concentrated acetic-acid bottoms near 84 wt% for this high D/F case.
+# - This is a thermodynamic stress test, not a practical vinegar process design.

@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "description": "Per-record identity corrections for ChemSep interaction rows where source component IDs disagree with the row comment.",
+    "notes": [
+      "Keys are zero-based interaction record indexes in the archived JSON files generated from the ChemSep .dat sources.",
+      "Used only by scripts/build_cas_interaction_parameters.py when generating CAS-keyed interaction tables."
+    ]
+  },
+  "records": {
+    "nrtl_binary_interactions.json": {
+      "126": {
+        "component2": {"cas": "78-92-2", "name": "2-butanol", "formula": "C4H10O", "query": "2-butanol", "source": "manual_record_identity_override"}
+      },
+      "173": {
+        "component2": {"cas": "78-92-2", "name": "2-butanol", "formula": "C4H10O", "query": "2-butanol", "source": "manual_record_identity_override"}
+      },
+      "192": {
+        "component2": {"cas": "108-48-5", "name": "2,6-dimethylpyridine", "formula": "C7H9N", "query": "2,6-dimethylpyridine", "source": "manual_record_identity_override"}
+      },
+      "214": {
+        "component1": {"cas": "107-10-8", "name": "propylamine", "formula": "C3H9N", "query": "propylamine", "source": "manual_record_identity_override"},
+        "component2": {"cas": "71-23-8", "name": "1-propanol", "formula": "C3H8O", "query": "1-propanol", "source": "manual_record_identity_override"}
+      },
+      "262": {
+        "disabled": true,
+        "disabled_reason": "Archived row source IDs resolve to methyl chloride/benzene while the comment says chloroform/benzene; disabled pending source verification."
+      },
+      "351": {
+        "component1": {"cas": "67-56-1", "name": "methanol", "formula": "CH4O", "query": "methanol", "source": "manual_record_identity_override"},
+        "component2": {"cas": "75-12-7", "name": "formamide", "formula": "CH3NO", "query": "formamide", "source": "manual_record_identity_override"}
+      }
+    },
+    "uniquac_binary_interactions.json": {
+      "67": {
+        "component2": {"cas": "78-92-2", "name": "2-butanol", "formula": "C4H10O", "query": "2-butanol", "source": "manual_record_identity_override"}
+      },
+      "122": {
+        "component2": {"cas": "78-92-2", "name": "2-butanol", "formula": "C4H10O", "query": "2-butanol", "source": "manual_record_identity_override"}
+      },
+      "142": {
+        "component2": {"cas": "108-48-5", "name": "2,6-dimethylpyridine", "formula": "C7H9N", "query": "2,6-dimethylpyridine", "source": "manual_record_identity_override"}
+      },
+      "156": {
+        "component1": {"cas": "107-10-8", "name": "propylamine", "formula": "C3H9N", "query": "propylamine", "source": "manual_record_identity_override"},
+        "component2": {"cas": "71-23-8", "name": "1-propanol", "formula": "C3H8O", "query": "1-propanol", "source": "manual_record_identity_override"}
+      },
+      "275": {
+        "component1": {"cas": "67-56-1", "name": "methanol", "formula": "CH4O", "query": "methanol", "source": "manual_record_identity_override"},
+        "component2": {"cas": "75-12-7", "name": "formamide", "formula": "CH3NO", "query": "formamide", "source": "manual_record_identity_override"}
+      }
+    }
+  }
+}

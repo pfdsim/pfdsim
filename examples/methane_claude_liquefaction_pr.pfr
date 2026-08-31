@@ -1,0 +1,761 @@
+#==============================================================================
+# PROCESS FLOW RESULTS
+#==============================================================================
+
+RESULTS_FOR: Methane Claude Liquefaction PR
+VERSION: 1.0
+GENERATED: 2026-06-21 00:53:46
+SIMULATOR: PFD-Editor v1.0
+THERMO_METHOD: PR
+CONVERGED: yes
+ITERATIONS: 8
+
+#------------------------------------------------------------------------------
+# SIMULATION SUMMARY
+#------------------------------------------------------------------------------
+
+SUMMARY:
+    convergence_status = converged
+    iterations = 8
+    overall_mass_balance_error = 0.0000 [%]
+    overall_energy_balance_error = 0.0000 [%]
+    total_heating_duty = 0.00 [kW]
+    total_cooling_duty = 0.00 [kW]
+    total_net_heat_duty = 0.00 [kW]
+    total_work = -0.23 [kW]
+    total_process_work = -0.23 [kW]
+
+#------------------------------------------------------------------------------
+# STREAM RESULTS
+#------------------------------------------------------------------------------
+
+STREAM_RESULT Exchanger-Feed:
+    T = 26.85 [C]
+    T_K = 300.00 [K]
+    P = 60.0000 [bar]
+    F = 1.0000 [kmol/h]
+    F_mass = 16.04 [kg/h]
+    F_vol = 0.3680 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -75814.66 [kJ/kmol]
+    S = 149.9830 [kJ/kmol-K]
+    Cp = 0.0357 [kJ/mol-K]
+    rho = 2.7174 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=1.0000 [kmol/h]
+
+STREAM_RESULT Expander-Draw-Point:
+    T = -18.29 [C]
+    T_K = 254.86 [K]
+    P = 60.0000 [bar]
+    F = 1.0000 [kmol/h]
+    F_mass = 16.04 [kg/h]
+    F_vol = 0.2797 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -77823.28 [kJ/kmol]
+    S = 142.7166 [kJ/kmol-K]
+    Cp = 0.0343 [kJ/mol-K]
+    rho = 3.5748 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=1.0000 [kmol/h]
+
+STREAM_RESULT Expander-Branch:
+    T = -18.29 [C]
+    T_K = 254.86 [K]
+    P = 60.0000 [bar]
+    F = 0.2500 [kmol/h]
+    F_mass = 4.01 [kg/h]
+    F_vol = 0.0699 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -77823.28 [kJ/kmol]
+    S = 142.7166 [kJ/kmol-K]
+    Cp = 0.0343 [kJ/mol-K]
+    rho = 3.5748 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.2500 [kmol/h]
+
+STREAM_RESULT Throttle-Branch:
+    T = -18.29 [C]
+    T_K = 254.86 [K]
+    P = 60.0000 [bar]
+    F = 0.7500 [kmol/h]
+    F_mass = 12.03 [kg/h]
+    F_vol = 0.2098 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -77823.28 [kJ/kmol]
+    S = 142.7166 [kJ/kmol-K]
+    Cp = 0.0343 [kJ/mol-K]
+    rho = 3.5748 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.7500 [kmol/h]
+
+STREAM_RESULT Valve-Inlet:
+    T = -75.08 [C]
+    T_K = 198.07 [K]
+    P = 60.0000 [bar]
+    F = 0.7500 [kmol/h]
+    F_mass = 12.03 [kg/h]
+    F_vol = 0.0735 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 16.04 [kg/kmol]
+    H = -82503.03 [kJ/kmol]
+    S = 121.1872 [kJ/kmol-K]
+    Cp = 0.0089 [kJ/mol-K]
+    rho = 10.2099 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.7500 [kmol/h]
+
+STREAM_RESULT Expander-Exhaust:
+    T = -161.73 [C]
+    T_K = 111.42 [K]
+    P = 1.0000 [bar]
+    F = 0.2500 [kmol/h]
+    F_mass = 4.01 [kg/h]
+    F_vol = 2.2401 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -81196.87 [kJ/kmol]
+    S = 152.8098 [kJ/kmol-K]
+    Cp = 0.0333 [kJ/mol-K]
+    rho = 0.1116 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.2500 [kmol/h]
+
+STREAM_RESULT Throttle-Exhaust:
+    T = -161.73 [C]
+    T_K = 111.42 [K]
+    P = 1.0000 [bar]
+    F = 0.7500 [kmol/h]
+    F_mass = 12.03 [kg/h]
+    F_vol = 5.6556 [m3/h]
+    vapor_fraction = 0.8409
+    MW = 16.04 [kg/kmol]
+    H = -82503.03 [kJ/kmol]
+    S = 141.0864 [kJ/kmol-K]
+    Cp = 0.0294 [kJ/mol-K]
+    rho = 0.1326 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.7500 [kmol/h]
+    LIQUID_COMPOSITION:
+        CH4: 1.000000
+    VAPOR_COMPOSITION:
+        CH4: 1.000000
+
+STREAM_RESULT JT-Vapor-Return:
+    T = -161.73 [C]
+    T_K = 111.42 [K]
+    P = 1.0000 [bar]
+    F = 0.6307 [kmol/h]
+    F_mass = 10.12 [kg/h]
+    F_vol = 5.6511 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -81196.87 [kJ/kmol]
+    S = 152.8098 [kJ/kmol-K]
+    Cp = 0.0333 [kJ/mol-K]
+    rho = 0.1116 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.6307 [kmol/h]
+
+STREAM_RESULT LNG-Product:
+    T = -161.73 [C]
+    T_K = 111.42 [K]
+    P = 1.0000 [bar]
+    F = 0.1193 [kmol/h]
+    F_mass = 1.91 [kg/h]
+    F_vol = 0.0045 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 16.04 [kg/kmol]
+    H = -89405.96 [kJ/kmol]
+    S = 79.1295 [kJ/kmol-K]
+    Cp = 0.0089 [kJ/mol-K]
+    rho = 26.3596 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.1193 [kmol/h]
+
+STREAM_RESULT Cold-Return-Mixed:
+    T = -161.73 [C]
+    T_K = 111.42 [K]
+    P = 1.0000 [bar]
+    F = 0.8807 [kmol/h]
+    F_mass = 14.13 [kg/h]
+    F_vol = 7.8912 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -81196.87 [kJ/kmol]
+    S = 152.8098 [kJ/kmol-K]
+    Cp = 0.0333 [kJ/mol-K]
+    rho = 0.1116 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.8807 [kmol/h]
+
+STREAM_RESULT Cold-Return-After-Cold-HX:
+    T = -43.84 [C]
+    T_K = 229.31 [K]
+    P = 1.0000 [bar]
+    F = 0.8807 [kmol/h]
+    F_mass = 14.13 [kg/h]
+    F_vol = 16.7063 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -77211.47 [kJ/kmol]
+    S = 177.2201 [kJ/kmol-K]
+    Cp = 0.0338 [kJ/mol-K]
+    rho = 0.0527 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.8807 [kmol/h]
+
+STREAM_RESULT Warm-Recycle:
+    T = 21.85 [C]
+    T_K = 295.00 [K]
+    P = 1.0000 [bar]
+    F = 0.8807 [kmol/h]
+    F_mass = 14.13 [kg/h]
+    F_vol = 21.5499 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 16.04 [kg/kmol]
+    H = -74930.66 [kJ/kmol]
+    S = 185.9576 [kJ/kmol-K]
+    Cp = 0.0356 [kJ/mol-K]
+    rho = 0.0409 [kmol/m3]
+    COMPOSITION:
+        CH4: x=1.000000, F=0.8807 [kmol/h]
+
+#------------------------------------------------------------------------------
+# UNIT OPERATION RESULTS
+#------------------------------------------------------------------------------
+
+UNIT_RESULT HX-WARM:
+    type = HeatExchanger
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        duty_kW = 0.5580
+        heat_transferred_kW = 0.5580
+        hot_side_duty_kW = -0.5580
+        cold_side_duty_kW = 0.5580
+        LMTD = 11.9879
+        equivalent_delta_T_K = 11.9879
+        UA_required_W_per_K = 46.5430
+        UA_required_kW_per_K = 0.0465
+        min_approach_K = 5.0000
+        approach_T = 5.0000
+        temperature_cross = False
+        curve_metrics_delayed = False
+        flow_pattern = countercurrent
+        curve_segments = 40
+        T_hot_in = 26.8500
+        T_hot_out = -18.2878
+        T_cold_in = -43.8435
+        T_cold_out = 21.8500
+        P_hot_in_bar = 60.0000
+        P_hot_out_bar = 60.0000
+        P_cold_in_bar = 1.0000
+        P_cold_out_bar = 1.0000
+        P_drop_hot_bar = 0.0000
+        P_drop_cold_bar = 0.0000
+        hot_in_port = hot_in
+        cold_in_port = cold_in
+        hot_out_port = hot_out
+        cold_out_port = cold_out
+        profile_heat_fraction:
+            - 0.0
+            - 0.025
+            - 0.05
+            - 0.075
+            - 0.1
+            - 0.125
+            - 0.15
+            - 0.175
+            - 0.2
+            - 0.225
+            - 0.25
+            - 0.275
+            - 0.3
+            - 0.325
+            - 0.35
+            - 0.375
+            - 0.4
+            - 0.425
+            - 0.45
+            - 0.475
+            - 0.5
+            - 0.525
+            - 0.55
+            - 0.575
+            - 0.6
+            - 0.625
+            - 0.65
+            - 0.675
+            - 0.7
+            - 0.725
+            - 0.75
+            - 0.775
+            - 0.8
+            - 0.825
+            - 0.85
+            - 0.875
+            - 0.9
+            - 0.925
+            - 0.95
+            - 0.975
+            - 1.0
+        profile_hot_T_C:
+            - 26.850000000000023
+            - 25.675581662451577
+            - 24.50251590852298
+            - 23.330868058732847
+            - 22.16070475112099
+            - 20.992093964934384
+            - 19.825105044795635
+            - 18.659808725483856
+            - 17.49627715730651
+            - 16.334583932110718
+            - 15.174804109945967
+            - 14.017014246403505
+            - 12.861292420637767
+            - 11.70771826412431
+            - 10.55637299013506
+            - 9.407339423980773
+            - 8.260702034024462
+            - 7.11654696349143
+            - 5.974962063086139
+            - 4.836036924443874
+            - 3.699862914414325
+            - 2.5665332101964395
+            - 1.4361428353469705
+            - 0.3087886966425799
+            - -0.8154303781812473
+            - -1.9364136018219256
+            - -3.0540581879344018
+            - -4.168259310806775
+            - -5.278910064196566
+            - -6.385901419344918
+            - -7.489122182214885
+            - -8.588458949975575
+            - -9.683796066784282
+            - -10.775015578926741
+            - -11.861997189382805
+            - -12.944618211897762
+            - -14.022753524650113
+            - -15.096275523643499
+            - -16.165054075924616
+            - -17.22895647280083
+            - -18.287847383211272
+        profile_cold_T_C:
+            - 21.850000002318268
+            - 20.24980076284976
+            - 18.64706461563361
+            - 17.0418147429711
+            - 15.434075081490732
+            - 13.82387032080959
+            - 12.211225901292096
+            - 10.596168010860367
+            - 8.978723580858116
+            - 7.358920280923087
+            - 5.736786512840979
+            - 4.112351403379932
+            - 2.4856447960669357
+            - 0.8566972418910836
+            - -0.7744600110657416
+            - -2.4077950291145385
+            - -4.043275205528516
+            - -5.680867274265154
+            - -7.320537324757311
+            - -8.962250817885092
+            - -10.60597260302086
+            - -12.251666936204856
+            - -13.899297499437296
+            - -15.54882742105167
+            - -17.200219297160203
+            - -18.85343521416928
+            - -20.50843677230924
+            - -22.16518511018569
+            - -23.823640930279538
+            - -25.483764525389688
+            - -27.145515805963583
+            - -28.80885432826142
+            - -30.47373932333045
+            - -32.140129726689395
+            - -33.807984208715794
+            - -35.47726120562842
+            - -37.14791895100524
+            - -38.81991550780418
+            - -40.493208800739865
+            - -42.16775664899649
+            - -43.84351679795364
+        profile_delta_T_K:
+            - 4.999999997681755
+            - 5.425780899601818
+            - 5.85545129288937
+            - 6.289053315761748
+            - 6.726629669630256
+            - 7.168223644124794
+            - 7.613879143503539
+            - 8.063640714623489
+            - 8.517553576448393
+            - 8.97566365118763
+            - 9.438017597104988
+            - 9.904662843023573
+            - 10.375647624570831
+            - 10.851021022233226
+            - 11.330833001200801
+            - 11.815134453095311
+            - 12.303977239552978
+            - 12.797414237756584
+            - 13.29549938784345
+            - 13.798287742328966
+            - 14.305835517435185
+            - 14.818200146401296
+            - 15.335440334784266
+            - 15.85761611769425
+            - 16.384788918978956
+            - 16.917021612347355
+            - 17.454378584374837
+            - 17.996925799378914
+            - 18.544730866082972
+            - 19.09786310604477
+            - 19.6563936237487
+            - 20.220395378285843
+            - 20.789943256546167
+            - 21.365114147762654
+            - 21.94598701933299
+            - 22.53264299373066
+            - 23.125165426355125
+            - 23.723639984160684
+            - 24.32815472481525
+            - 24.938800176195656
+            - 25.55566941474237
+        auto_U_estimation = False
+
+UNIT_RESULT SPLIT-100:
+    type = Splitter
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = bulk_split
+        outlet_names:
+            - expander
+            - throttle
+        split_fractions:
+            - 0.25
+            - 0.75
+        component_splits:
+        implicit_state_change_duty_kW = 0.0000
+
+UNIT_RESULT HX-COLD:
+    type = HeatExchanger
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        duty_kW = 0.9749
+        heat_transferred_kW = 0.9749
+        hot_side_duty_kW = -0.9749
+        cold_side_duty_kW = 0.9749
+        LMTD = 42.1539
+        equivalent_delta_T_K = 42.1539
+        UA_required_W_per_K = 23.1283
+        UA_required_kW_per_K = 0.0231
+        min_approach_K = 25.5557
+        approach_T = 25.5557
+        temperature_cross = False
+        curve_metrics_delayed = False
+        flow_pattern = countercurrent
+        curve_segments = 40
+        T_hot_in = -18.2878
+        T_hot_out = -75.0795
+        T_cold_in = -161.7349
+        T_cold_out = -43.8435
+        P_hot_in_bar = 60.0000
+        P_hot_out_bar = 60.0000
+        P_cold_in_bar = 1.0000
+        P_cold_out_bar = 1.0000
+        P_drop_hot_bar = 0.0000
+        P_drop_cold_bar = 0.0000
+        hot_in_port = hot_in
+        cold_in_port = cold_in
+        hot_out_port = hot_out
+        cold_out_port = cold_out
+        profile_heat_fraction:
+            - 0.0
+            - 0.025
+            - 0.05
+            - 0.075
+            - 0.1
+            - 0.125
+            - 0.15
+            - 0.175
+            - 0.2
+            - 0.225
+            - 0.25
+            - 0.275
+            - 0.3
+            - 0.325
+            - 0.35
+            - 0.375
+            - 0.4
+            - 0.425
+            - 0.45
+            - 0.475
+            - 0.5
+            - 0.525
+            - 0.55
+            - 0.575
+            - 0.6
+            - 0.625
+            - 0.65
+            - 0.675
+            - 0.7
+            - 0.725
+            - 0.75
+            - 0.775
+            - 0.8
+            - 0.825
+            - 0.85
+            - 0.875
+            - 0.9
+            - 0.925
+            - 0.95
+            - 0.975
+            - 1.0
+        profile_hot_T_C:
+            - -18.287847383353977
+            - -20.734660768667595
+            - -23.151713911504373
+            - -25.537120826694945
+            - -27.88890981240425
+            - -30.20502105386987
+            - -32.4833048340262
+            - -34.72152056384911
+            - -36.917336929040204
+            - -39.06833351991759
+            - -41.17200439313589
+            - -43.22576410710545
+            - -45.226956876381564
+            - -47.17286960776485
+            - -49.06074967697802
+            - -50.88782841304922
+            - -52.65135136798935
+            - -54.34861644713925
+            - -55.977020972896895
+            - -57.5341185885637
+            - -59.0176866897732
+            - -60.4258042236047
+            - -61.756939823726555
+            - -63.01004858050942
+            - -64.18467303735943
+            - -65.28104682379055
+            - -66.30019274985841
+            - -67.24400889434335
+            - -68.11533374272977
+            - -68.9179826216376
+            - -69.65674696418671
+            - -70.3373509945076
+            - -70.96636348126722
+            - -71.55106644069537
+            - -72.09928717330698
+            - -72.6192040786037
+            - -73.11913922710971
+            - -73.60735267239733
+            - -74.09185081302886
+            - -74.58022094019856
+            - -75.07949884039891
+        profile_cold_T_C:
+            - -43.84351680031497
+            - -46.77447066558969
+            - -49.70877131528269
+            - -52.646193625627376
+            - -55.58651348307575
+            - -58.52950830168405
+            - -61.47495752543804
+            - -64.42264310807332
+            - -67.37234996471798
+            - -70.32386638968558
+            - -73.27698443467438
+            - -76.23150024171761
+            - -79.18721432526468
+            - -82.14393179792518
+            - -85.10146253454235
+            - -88.05962126946991
+            - -91.0182276221226
+            - -93.97710604592152
+            - -96.93608569714388
+            - -99.895000216922
+            - -102.85368742553743
+            - -105.81198892255392
+            - -108.76974958979687
+            - -111.72681699296058
+            - -114.68304067751149
+            - -117.63827135420843
+            - -120.59235996880898
+            - -123.54515664962406
+            - -126.49650952514338
+            - -129.44626340221214
+            - -132.39425828337417
+            - -135.34032776244197
+            - -138.2842971474093
+            - -141.22598145691322
+            - -144.16518313480847
+            - -147.10168949199235
+            - -150.0352698178541
+            - -152.9656721362981
+            - -155.89261930592124
+            - -158.81580489841684
+            - -161.73488803218336
+        profile_delta_T_K:
+            - 25.555669416960995
+            - 26.039809896922094
+            - 26.557057403778316
+            - 27.10907279893243
+            - 27.697603670671498
+            - 28.324487247814176
+            - 28.991652691411844
+            - 29.701122544224205
+            - 30.45501303567778
+            - 31.25553286976799
+            - 32.10498004153848
+            - 33.005736134612164
+            - 33.96025744888311
+            - 34.971062190160325
+            - 36.04071285756433
+            - 37.171792856420694
+            - 38.366876254133246
+            - 39.62848959878227
+            - 40.959064724246986
+            - 42.3608816283583
+            - 43.83600073576423
+            - 45.38618469894922
+            - 47.01280976607032
+            - 48.71676841245116
+            - 50.498367640152054
+            - 52.35722453041788
+            - 54.29216721895057
+            - 56.30114775528071
+            - 58.38117578241361
+            - 60.52828078057453
+            - 62.73751131918746
+            - 65.00297676793437
+            - 67.31793366614207
+            - 69.67491501621785
+            - 72.0658959615015
+            - 74.48248541338864
+            - 76.91613059074439
+            - 79.3583194639008
+            - 81.8007684928924
+            - 84.23558395821827
+            - 86.65538919178445
+        auto_U_estimation = False
+
+UNIT_RESULT EXP-100:
+    type = Expander
+    heat_duty = 0.0000 [kW]
+    work = -0.2343 [kW]
+    process_work = -0.2343 [kW]
+    PERFORMANCE:
+        pressure_spec = P_out
+        expansion_ratio = 60.0000
+        P_in_bar = 60.0000
+        P_out_bar = 1.0000
+        isentropic_efficiency = 0.7500
+        mechanical_efficiency = 1.0000
+        T_isentropic_C = -161.7349
+        T_outlet_C = -161.7349
+        isentropic_work_output_kJ_per_kmol = 4498.1123
+        fluid_work_output_kJ_per_kmol = 3373.5842
+        shaft_work_output_kJ_per_kmol = 3373.5842
+        mechanical_loss_kJ_per_kmol = 0.0000
+        fluid_power_output_kW = 0.2343
+        shaft_power_output_kW = 0.2343
+        mechanical_loss_kW = 0.0000
+        power_recovered_kW = 0.2343
+        entropy_in_kJ_per_kmol_K = 142.7166
+        entropy_out_kJ_per_kmol_K = 152.8098
+        entropy_generation_kJ_per_kmol_K = 10.0931
+        outlet_vapor_frac = 1.0000
+        enthalpy_residual_kJ_per_kmol = 0.0000
+
+UNIT_RESULT JT-FLASH:
+    type = Flash
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        T_C = -161.7349
+        P_bar = 1.0000
+        vapor_fraction = 0.8409
+        duty_kW = 0.0000
+        liquid_composition:
+            CH4: 1.000000
+        vapor_composition:
+            CH4: 1.000000
+        vapor_flow_kmol_hr = 0.6307
+        liquid_flow_kmol_hr = 0.1193
+        duty_residual_kW = 0.0000
+
+UNIT_RESULT RETURN-MIX:
+    type = Mixer
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = adiabatic
+        n_inlets = 2
+        pressure_policy = auto_valve_to_lowest_inlet_pressure
+        P_out = 1.0000
+        T_out_C = -161.7349
+        duty_kW = 0.0000
+        inlet_pressure_range_bar:
+            - 1.0
+            - 1.0
+
+UNIT_RESULT JT-100:
+    type = Valve
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        pressure_drop = 59.0000
+        inlet_vapor_frac = 0.0000
+        outlet_vapor_frac = 0.8409
+        joule_thomson_dT = -86.6554
+        enthalpy_error_kJ_per_kmol = 0.0000
+
+#------------------------------------------------------------------------------
+# RECYCLE INFORMATION
+#------------------------------------------------------------------------------
+
+RECYCLE:
+    tear_streams = Cold-Return-After-Cold-HX, JT-Vapor-Return
+    calculation_order = HX-WARM, SPLIT-100, EXP-100, RETURN-MIX, HX-COLD, JT-100, JT-FLASH
+    method = WEGSTEIN
+    variable_basis = total_flow_component_flows_pressure_enthalpy
+    trace_tolerance = 1e-06
+    manual_tears = Cold-Return-After-Cold-HX, JT-Vapor-Return
+    worst_variable = Cold-Return-After-Cold-HX.H
+    worst_error = 1.92238e-14
+    failed_evaluations = 0
+
+#------------------------------------------------------------------------------
+# WARNINGS
+#------------------------------------------------------------------------------
+
+WARNINGS:
+    - Recycle detected: tearing stream(s) Cold-Return-After-Cold-HX, JT-Vapor-Return
+
+#------------------------------------------------------------------------------
+# QUALITY REPORT
+#------------------------------------------------------------------------------
+
+QUALITY_REPORT:
+    status = no_flagged_property_resolution_quality_issues
+
+#==============================================================================
+# END OF RESULTS
+#==============================================================================

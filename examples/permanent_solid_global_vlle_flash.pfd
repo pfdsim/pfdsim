@@ -1,0 +1,49 @@
+#==============================================================================
+# PERMANENT SOLID - VAPOR + TWO LIQUIDS + SOLID THROUGH ORDINARY FLASH
+#==============================================================================
+
+PROCESS: Permanent-Solid Global VLLE Flash
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: NRTL solves only water-methanol-benzene while ordinary Flash retains NaCl with both liquids
+THERMO_METHOD: NRTL
+FLUID_PHASE_MODEL: VLLE
+
+COMPONENTS:
+    water    | Water    | MW=18.0153
+    methanol | Methanol | MW=32.0419
+    benzene  | Benzene  | MW=78.1118
+    salt     | Sodium chloride | CAS=7647-14-5, MW=58.4428, phase_behavior=permanent_solid, solid_material_form=crystalline, particle_diameter=0.0001
+
+STREAM Feed : FEED -> HEAT-1.in
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 100 [kmol/h]
+    x = water:0.18, methanol:0.27, benzene:0.45, salt:0.10
+
+STREAM Heated : HEAT-1.out -> FLASH-1.in
+STREAM VaporProduct : FLASH-1.vap -> PRODUCT
+STREAM CondensedProduct : FLASH-1.liq -> PRODUCT
+
+UNIT HEAT-1
+    TYPE: Heater
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 59.85 [C]
+
+UNIT FLASH-1
+    TYPE: Flash
+    PORTS:
+        in        : inlet
+        vap       : vapor_outlet
+        liq       : liquid_outlet
+    PARAMS:
+        T = 59.85 [C]
+        P = 1.01325 [bar]
+
+# The fluid subtotal has the same 20/30/50 water/methanol/benzene composition
+# as the solid-free global-VLLE example. NRTL never sees NaCl. The vapor outlet
+# contains no salt; the ordinary Flash condensed outlet retains liquid-1,
+# liquid-2, and the complete permanent-solid inventory in one material stream.

@@ -1,0 +1,51 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - Ammonia Oxidation PFR
+#==============================================================================
+# Ostwald Process: 4 NH3 + 5 O2 -> 4 NO + 6 H2O
+# Demonstrates PFR with kinetics and adiabatic operation
+
+PROCESS: Ammonia Oxidation (Ostwald Process)
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: IDEAL
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    NH3  | Ammonia        | MW=17.03
+    O2   | Oxygen         | MW=32.00
+    NO   | Nitric Oxide   | MW=30.01
+    H2O  | Water          | MW=18.02
+    N2   | Nitrogen       | MW=28.01
+
+#------------------------------------------------------------------------------
+# STREAMS
+#------------------------------------------------------------------------------
+STREAM Feed : FEED -> PFR-1.in
+    T = 300 [C]
+    P = 8 [bar]
+    F = 200 [kmol/h]
+    x = NH3:0.11, O2:0.18, N2:0.71
+
+STREAM Product : PFR-1.out -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNITS
+#------------------------------------------------------------------------------
+UNIT PFR-1
+    TYPE: PFR
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        volume = 0.5 [m3]
+        diameter = 0.2 [m]
+        mode = adiabatic
+        phase = vapor
+    REACTIONS:
+        4 NH3 + 5 O2 -> 4 NO + 6 H2O | A=2.5e15, Ea=167000, Ea_unit=J/mol, rate_basis=concentration, concentration_unit=kmol/m3, pressure_unit=bar, rate_unit=kmol/m3/h
+
+#------------------------------------------------------------------------------
+# END OF FILE
+#------------------------------------------------------------------------------

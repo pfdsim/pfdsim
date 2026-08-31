@@ -1,0 +1,52 @@
+#==============================================================================
+# Mixed Carboxylic Acid Dehydration With UNIQUAC-VDM
+#==============================================================================
+
+PROCESS: Mixed Acid Dehydration UNIQUAC-VDM
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIQUAC-VDM
+DESCRIPTION: Water/acetic/propionic/acrylic acid feed dehydrated in a 30-stage rigorous column with vapor-phase acid association
+
+COMPONENTS:
+    H2O       | Water          | MW=18.015
+    CH3COOH   | Acetic Acid    | MW=60.052
+    C2H5COOH  | Propionic Acid | MW=74.079
+    C2H3COOH  | Acrylic Acid   | MW=72.060
+
+# 40/20/20/20 wt% water/acetic/propionic/acrylic acid, expressed as
+# mole fractions. The feed temperature is the UNIQUAC-VDM bubble point at 1 atm.
+STREAM Mixed-Acid-Feed : FEED -> T-200.feed
+    T = 102.200164 [C]
+    P = 1.01325 [bar]
+    F = 100 [kmol/h]
+    x = H2O:0.7160306973, CH3COOH:0.1074010275, C2H5COOH:0.0870644380, C2H3COOH:0.0895038372
+
+STREAM Water-Rich-Distillate : T-200.distillate -> PRODUCT
+STREAM Acid-Rich-Bottoms : T-200.bottoms -> PRODUCT
+
+UNIT T-200
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 30
+        feed_stage = 15
+        reflux_ratio = 2.0
+        D_to_F = 0.7
+        P_condenser = 1.01325 [bar]
+        P_drop_per_stage = 0.0
+        condenser_type = total
+        initializer = cheap_estimate
+        mesh_tolerance = 1e-6
+        acceptable_mesh_residual = 5e-5
+        T_min = 300 [K]
+        T_max = 430 [K]
+        max_iterations = 120
+
+# Expected behavior:
+# - Distillate is water-rich, with propionic acid partially following the
+#   water-rich top because of its minor water azeotrope.
+# - Acetic and acrylic acids are strongly retained in the bottoms.

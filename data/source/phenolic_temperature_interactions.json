@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
+    "source_url": "https://pubs.acs.org/doi/10.1021/ie071214t",
+    "description": "Temperature-dependent NRTL and UNIQUAC parameters for phenol/cresol systems, manually transcribed from Table 5.",
+    "temperature_units": "K",
+    "temperature_reference_K": 273.15,
+    "interpretation_status": "confirmed_from_paper_equation_5",
+    "parameter_expression": "Cij_K = CijC_K + CijT*(T_K - 273.15)",
+    "nrtl_expression": "tau_ij = Cij_K/T_K",
+    "uniquac_expression": "tau_ij = exp(-Cij_K/T_K)",
+    "notes": [
+      "C12C and C21C are tabulated in K.",
+      "C12T and C21T are the second temperature terms from Table 5.",
+      "Rows are kept in the component order printed in the binary system column.",
+      "The runtime generator converts these Cij values into existing NRTL direct-tau and UNIQUAC direct-ln(tau) coefficient fields."
+    ]
+  },
+  "interactions": [
+    {
+      "components": ["Toluene", "Phenol"],
+      "cas": ["108-88-3", "108-95-2"],
+      "fitted_data": "this work, 23, 24",
+      "models": {
+        "NRTL": {"alpha12": 0.20, "C12C_K": 857.14, "C21C_K": -308.41, "C12T": -4.3775, "C21T": 2.8430, "average_residuals": {"delta_P_percent": 1.83, "delta_y": 0.0051}},
+        "UNIQUAC": {"C12C_K": 369.57, "C21C_K": -146.32, "C12T": -1.6642, "C21T": 0.9573, "average_residuals": {"delta_P_percent": 1.84, "delta_y": 0.0051}}
+      }
+    },
+    {
+      "components": ["Toluene", "2-Cresol"],
+      "cas": ["108-88-3", "95-48-7"],
+      "fitted_data": "this work",
+      "models": {
+        "NRTL": {"alpha12": 0.20, "C12C_K": 942.67, "C21C_K": -416.16, "C12T": -5.9518, "C21T": 2.9683, "average_residuals": {"delta_P_percent": 0.78, "delta_y": 0.0054}},
+        "UNIQUAC": {"C12C_K": 372.85, "C21C_K": -191.68, "C12T": -2.7563, "C21T": 1.6261, "average_residuals": {"delta_P_percent": 0.75, "delta_y": 0.0054}}
+      }
+    },
+    {
+      "components": ["Toluene", "3-Cresol"],
+      "cas": ["108-88-3", "108-39-4"],
+      "fitted_data": "this work, 25",
+      "models": {
+        "NRTL": {"alpha12": 0.20, "C12C_K": 909.79, "C21C_K": -303.03, "C12T": -5.1134, "C21T": 2.2854, "average_residuals": {"delta_P_percent": 2.01, "delta_y": 0.0015}},
+        "UNIQUAC": {"C12C_K": 352.72, "C21C_K": -149.49, "C12T": -2.4085, "C21T": 1.3615, "average_residuals": {"delta_P_percent": 1.73, "delta_y": 0.0015}}
+      }
+    },
+    {
+      "components": ["Toluene", "4-Cresol"],
+      "cas": ["108-88-3", "106-44-5"],
+      "fitted_data": "this work, 26",
+      "models": {
+        "NRTL": {"alpha12": 0.20, "C12C_K": 443.83, "C21C_K": -50.11, "C12T": 1.6730, "C21T": -1.6607, "average_residuals": {"delta_P_percent": 1.46, "delta_y": 0.0042}},
+        "UNIQUAC": {"C12C_K": 108.66, "C21C_K": 4.74, "C12T": 0.9399, "C21T": -0.8258, "average_residuals": {"delta_P_percent": 1.48, "delta_y": 0.0042}}
+      }
+    },
+    {
+      "components": ["n-Octane", "2-Cresol"],
+      "cas": ["111-65-9", "95-48-7"],
+      "fitted_data": "this work",
+      "models": {
+        "NRTL": {"alpha12": 0.51, "C12C_K": 707.78, "C21C_K": 579.79, "C12T": -2.8088, "C21T": -1.4006, "average_residuals": {"delta_P_percent": 1.06, "delta_y": 0.0019}},
+        "UNIQUAC": {"C12C_K": 286.41, "C21C_K": -57.92, "C12T": 0.0066, "C21T": -0.2871, "average_residuals": {"delta_P_percent": 1.35, "delta_y": 0.0014}}
+      }
+    },
+    {
+      "components": ["n-Octane", "3-Cresol"],
+      "cas": ["111-65-9", "108-39-4"],
+      "fitted_data": "this work",
+      "models": {
+        "NRTL": {"alpha12": 0.40, "C12C_K": 606.70, "C21C_K": -244.16, "C12T": -1.2432, "C21T": 7.3141, "average_residuals": {"delta_P_percent": 2.31, "delta_y": 0.0031}},
+        "UNIQUAC": {"C12C_K": 519.83, "C21C_K": -266.85, "C12T": -2.7093, "C21T": 2.3092, "average_residuals": {"delta_P_percent": 1.86, "delta_y": 0.0027}}
+      }
+    },
+    {
+      "components": ["Water", "Phenol"],
+      "cas": ["7732-18-5", "108-95-2"],
+      "fitted_data": "this work, 14, 27",
+      "models": {
+        "NRTL": {"alpha12": 0.20, "C12C_K": 1821.63, "C21C_K": -557.19, "C12T": -5.0783, "C21T": 1.5755, "average_residuals": {"delta_P_percent": 6.35, "delta_y": 0.0185, "delta_x": 0.0250}},
+        "UNIQUAC": {"C12C_K": 467.34, "C21C_K": -216.70, "C12T": 0.6408, "C21T": -0.9202, "average_residuals": {"delta_P_percent": 5.03, "delta_y": 0.0189, "delta_x": 0.0116}}
+      }
+    },
+    {
+      "components": ["Water", "2-Cresol"],
+      "cas": ["7732-18-5", "95-48-7"],
+      "fitted_data": "this work",
+      "models": {
+        "NRTL": {"alpha12": 0.40, "C12C_K": 1470.53, "C21C_K": 439.33, "C12T": 1.8177, "C21T": -3.1878, "average_residuals": {"delta_P_percent": 0.67, "delta_y": 0.0017, "delta_x": 0.0030}},
+        "UNIQUAC": {"C12C_K": 569.14, "C21C_K": -181.64, "C12T": -1.4436, "C21T": 0.1756, "average_residuals": {"delta_P_percent": 0.86, "delta_y": 0.0012, "delta_x": 0.0411}}
+      }
+    },
+    {
+      "components": ["Water", "3-Cresol"],
+      "cas": ["7732-18-5", "108-39-4"],
+      "fitted_data": "this work, 14",
+      "models": {
+        "NRTL": {"alpha12": 0.40, "C12C_K": 1170.12, "C21C_K": 294.50, "C12T": 4.0054, "C21T": -2.0853, "average_residuals": {"delta_P_percent": 2.00, "delta_y": 0.0036, "delta_x": 0.0059}},
+        "UNIQUAC": {"C12C_K": 41.34, "C21C_K": 74.19, "C12T": -1.5048, "C21T": 1.7006, "average_residuals": {"delta_P_percent": 2.72, "delta_y": 0.0033, "delta_x": 0.0086}}
+      }
+    },
+    {
+      "components": ["Water", "4-Cresol"],
+      "cas": ["7732-18-5", "106-44-5"],
+      "fitted_data": "this work, 14",
+      "models": {
+        "NRTL": {"alpha12": 0.20, "C12C_K": 1502.87, "C21C_K": -307.39, "C12T": 4.4922, "C21T": -1.8663, "average_residuals": {"delta_P_percent": 0.61, "delta_y": 0.0110, "delta_x": 0.0119}},
+        "UNIQUAC": {"C12C_K": 243.42, "C21C_K": -87.22, "C12T": 0.6966, "C21T": -0.7445, "average_residuals": {"delta_P_percent": 0.98, "delta_y": 0.0105, "delta_x": 0.0068}}
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+#==============================================================================
+# ROBUST GLOBAL VLLE - WATER/METHANOL/BENZENE HEATER AND FLASH
+#==============================================================================
+
+PROCESS: Global VLLE Water-Methanol-Benzene Flash
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Robust global stability search finds VLLE missed by the local spinodal test
+THERMO_METHOD: NRTL
+FLUID_PHASE_MODEL: VLLE
+
+COMPONENTS:
+    water    | Water    | MW=18.0153
+    methanol | Methanol | MW=32.0419
+    benzene  | Benzene  | MW=78.1118
+
+STREAM Feed : FEED -> HEAT-1.in
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 100 [kmol/h]
+    x = water:0.20, methanol:0.30, benzene:0.50
+
+STREAM Heated : HEAT-1.out -> FLASH-1.in
+STREAM VaporProduct : FLASH-1.vap -> PRODUCT
+STREAM MultiliquidProduct : FLASH-1.liq -> PRODUCT
+
+UNIT HEAT-1
+    TYPE: Heater
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 59.85 [C]
+
+UNIT FLASH-1
+    TYPE: Flash
+    PORTS:
+        in  : inlet
+        vap : vapor_outlet
+        liq : liquid_outlet
+    PARAMS:
+        T = 59.85 [C]
+        P = 1.01325 [bar]
+
+# Near 333 K, the ordinary VLE liquid is locally stable but globally unstable.
+# VL(L)E intentionally retains that metastable VLE result; robust VLLE finds a
+# vapor plus two liquids. The ordinary Flash routes vapor separately and keeps
+# liquid1/liquid2 together in MultiliquidProduct. Use Flash3 to route the two
+# liquid phases to distinct equipment outlets.
+

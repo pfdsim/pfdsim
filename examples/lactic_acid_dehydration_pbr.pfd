@@ -1,0 +1,185 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - L-Lactic Acid Dehydration and Primary Condensation
+#==============================================================================
+# Four simultaneous irreversible vapor-phase pathways are represented:
+#
+#   LLA   -> AA + H2O
+#   LLA   -> AcH + CO + H2O
+#   2 LLA -> PA + AcH + CO2 + H2O
+#   2 LLA -> PD23 + CO2 + 2 H2O
+#
+# The fitted rates are reported on a lactic-acid-consumption basis in
+# mmol_LA/(h*m2_catalyst). The K-ZSM-5 BET area converts them to the PBR's
+# catalyst-mass basis:
+#
+#   1 mmol/(h*m2) * 208 m2/g = 0.208 kmol/(kg_cat*h)
+#
+# For the PA and PD23 pathways, one reaction extent consumes two LLA, so their
+# catalyst-mass extent prefactors are 0.5*k_ref*0.208. All four extents are
+# integrated simultaneously against the same local LLA and H2O partial
+# pressures; selectivity is not imposed after conversion.
+#
+# The reported rates are treated as apparent catalyst rates. No additional
+# pellet effectiveness factor is applied because no effective diffusivity was
+# supplied and an extra correction could double-count transport already present
+# in the measured BET-area-normalized rates.
+#==============================================================================
+
+PROCESS: L-Lactic Acid Dehydration and Primary Condensation
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIQUAC-VDM
+ACTIVITY_INTERACTION_MAX_PSAT: 10 [bar]
+ACTIVITY_INTERACTION_MAX_TEMPERATURE: 423.15 [K]
+DESCRIPTION: Jacketed vapor PBR followed by a 40 C aqueous product condenser
+
+# UNIQUAC-VDM supplies the liquid activity model and acid vapor association.
+# The hot dilute reactor result remains effectively identical to IDEAL, while
+# the model also supports the strongly nonideal aqueous condenser downstream.
+#
+# Formation enthalpies are resolved through the normal offline property system.
+# Conversion and selectivity are kinetic; the jacket heat balance uses the
+# selected thermochemical provenance reported by the simulator.
+
+COMPONENTS:
+    LLA  | 79-33-4          | formula=C3H6O3, MW=90.078, SMILES=C[C@H](O)C(=O)O
+    H2O  | Water            | formula=H2O, MW=18.015
+    AA   | Acrylic Acid     | CAS=79-10-7, formula=C3H4O2, MW=72.063
+    AcH  | Acetaldehyde     | CAS=75-07-0, formula=C2H4O, MW=44.053
+    PA   | Propionic Acid   | CAS=79-09-4, formula=C3H6O2, MW=74.079
+    PD23 | 600-14-6         | formula=C5H8O2, MW=100.117, SMILES=CCC(=O)C(=O)C
+    CO   | Carbon Monoxide  | formula=CO, MW=28.010
+    CO2  | Carbon Dioxide   | formula=CO2, MW=44.009
+    CYH  | 110-82-7         | formula=C6H12, MW=84.162
+    DIPE | 108-20-3         | formula=C6H14O, MW=102.177
+
+# No full water/2,3-pentanedione VLE dataset is available. This directional
+# UNIQUAC interaction is anchored to measured PD23-in-water infinite-dilution
+# activity coefficients of 172, 195, and 207 at 313.15, 318.15, and 323.15 K.
+# The unmeasured water-in-PD23 direction retains the UNIFDMD infinite-dilution
+# prediction. At the three measured temperatures, the anchored PD23 limits are
+# 173.63, 191.22, and 209.10, within the reported 7-9% experimental RSD.
+INTERACTION_PARAMETERS:
+    H2O/PD23 | model=UNIQUAC, tau12_a=-3.89191887, tau12_b=1040.281856, tau12_c=0, tau21_a=2.40611711, tau21_b=-974.287676, tau21_c=0, model_variant=standard_uniquac, use_q_prime=false, comment=PD23-in-water infinite-dilution anchor; reverse direction retained from UNIFDMD
+
+# Explicit PFD and curated database interactions take priority. Remaining
+# missing liquid binaries are fitted once from UNIFDMD during initialization
+# and remain frozen for the complete reactor/condenser simulation.
+INTERACTION_ESTIMATION:
+    UNIQUAC | source=UNIFDMD, policy=missing_only, parameter_order=source, Tmin=293.15 [K], Tmax=423.15 [K]
+
+# The centered Arrhenius expression is evaluated directly:
+#
+#   R = k_mass_ref * exp[-Ea/Rgas * (1/T - 1/Tref)]
+#       * (P_LLA/P_LLA_ref)^alpha * (P_H2O/P_H2O_ref)^beta
+#
+# T is K, p[...] is kPa, and the resulting extent rate is kmol/(kg_cat*h).
+REACTIONS:
+    acrylic_path : LLA -> AA + H2O | type=custom, A=1, Ea=0, Ea_unit=J/mol, rate_basis=pressure, concentration_unit=kmol/m3, pressure_unit=kPa, rate_unit=kmol/kg_cat/h, param_k_mass_ref=0.0644592, param_Ea=152300, param_Tref=633.15, param_PLAref=7.4, param_PH2Oref=66.9, param_alpha=0.212, param_beta=0.356, expression=k_mass_ref*exp(-(Ea/8.314462618)*(1/T-1/Tref))*(p['LLA']/PLAref)**alpha*(p['H2O']/PH2Oref)**beta
+    acetaldehyde_path : LLA -> AcH + CO + H2O | type=custom, A=1, Ea=0, Ea_unit=J/mol, rate_basis=pressure, concentration_unit=kmol/m3, pressure_unit=kPa, rate_unit=kmol/kg_cat/h, param_k_mass_ref=0.01380704, param_Ea=185800, param_Tref=633.15, param_PLAref=7.4, param_PH2Oref=66.9, param_alpha=0.496, param_beta=1.125, expression=k_mass_ref*exp(-(Ea/8.314462618)*(1/T-1/Tref))*(p['LLA']/PLAref)**alpha*(p['H2O']/PH2Oref)**beta
+    propionic_path : 2 LLA -> PA + AcH + CO2 + H2O | type=custom, A=1, Ea=0, Ea_unit=J/mol, rate_basis=pressure, concentration_unit=kmol/m3, pressure_unit=kPa, rate_unit=kmol/kg_cat/h, param_k_mass_ref=0.0020904, param_Ea=96900, param_Tref=633.15, param_PLAref=7.4, param_PH2Oref=66.9, param_alpha=1.116, param_beta=-0.124, expression=k_mass_ref*exp(-(Ea/8.314462618)*(1/T-1/Tref))*(p['LLA']/PLAref)**alpha*(p['H2O']/PH2Oref)**beta
+    pentanedione_path : 2 LLA -> PD23 + CO2 + 2 H2O | type=custom, A=1, Ea=0, Ea_unit=J/mol, rate_basis=pressure, concentration_unit=kmol/m3, pressure_unit=kPa, rate_unit=kmol/kg_cat/h, param_k_mass_ref=0.000514904, param_Ea=225500, param_Tref=633.15, param_PLAref=7.4, param_PH2Oref=66.9, param_alpha=1.213, param_beta=0.370, expression=k_mass_ref*exp(-(Ea/8.314462618)*(1/T-1/Tref))*(p['LLA']/PLAref)**alpha*(p['H2O']/PH2Oref)**beta
+
+# At the inlet, P_LLA=15.19875 kPa and P_H2O=86.12625 kPa. These differ from
+# the kinetic reference pressures because the requested feed is 15 mol% LLA.
+STREAM Wet-Lactic-Feed : FEED -> R-101.in
+    T = 360 [C]
+    P = 1.01325 [bar]
+    F_mass = 5000 [kg/h]
+    x = LLA:0.15, H2O:0.85
+
+STREAM Reactor-Effluent : R-101.out -> E-201.in
+STREAM Cooled-Effluent : E-201.out -> F-201.feed
+STREAM Condenser-Vent : F-201.gas
+STREAM Condensed-Product : F-201.liquid -> C-201.feed
+STREAM Column-Overhead : C-201.distillate
+STREAM Column-Bottoms : C-201.bottoms -> P-301.in
+STREAM Pressurized-Concentrate : P-301.out -> E-301.in
+STREAM Extraction-Feed : E-301.out -> X-301.feed
+STREAM Extraction-Solvent : -> X-301.solvent
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F_mass = 2290.6986 [kg/h]
+    w = CYH:0.5, DIPE:0.5
+STREAM Extraction-Raffinate : X-301.raffinate
+STREAM Extraction-Extract : X-301.extract
+
+# Supplied catalyst properties and preliminary bed assumptions:
+#   catalyst particle density = 1050 kg/m3
+#   particle diameter         = 0.6 mm
+#   bed void fraction         = 0.40 (preliminary assumption)
+#
+# The PBR requires catalyst mass per total packed-bed volume, so:
+#
+#   bulk catalyst density = (1 - 0.40)*1050 = 630 kg/m3
+#
+# The 5000 kg/h feed is 173.46 kmol/h at the specified composition. The
+# jacketed design uses 550 kg catalyst and about 114.4 million m2 of BET area.
+# A 1536-tube, 0.05 m-ID assembly provides about 3.016 m2 total flow area,
+# 0.8730 m3 packed volume, 69.84 m2 tube-wall area, and a derived packed depth
+# near 0.2895 m. With U=50 W/(m2*K), UA is about 3.49 kW/K. A constant 470 C
+# jacket is a preliminary mean-temperature representation of a circulating
+# high-temperature molten-salt loop.
+UNIT R-101 : PackedBedReactor
+    catalyst_mass = 550 [kg]
+    bulk_catalyst_density = 630 [kg/m3]
+    bed_void_fraction = 0.40
+    diameter = 0.05 [m]
+    n_tubes = 1536
+    particle_diameter = 0.6 [mm]
+    phase = vapor
+    mode = jacketed
+    U = 50 [W/m2/K]
+    T_jacket = 470 [C]
+    pressure_drop_model = ergun
+    kinetic_basis = apparent
+    profile_points = 21
+    solver = auto
+    REACTIONS:
+        @acrylic_path
+        @acetaldehyde_path
+        @propionic_path
+        @pentanedione_path
+
+# Primary condensation is performed by a 40 C cooler, followed by an adiabatic
+# equilibrium separator at the inherited cooler-outlet pressure. CO and CO2
+# use explicit pure-water Henry standard states in both units. This remains
+# provisional because the solved condensate is about 87.4 mol% water, below
+# the model's nominal 95 mol% pure-water cutoff. Acetaldehyde/water uses the
+# curated apparent experimental UNIQUAC regression, while missing acetaldehyde
+# cross-pairs use the frozen UNIFDMD-derived estimates declared above.
+UNIT E-201 : Cooler
+    T = 40 [C]
+    henry_components = CO,CO2
+
+UNIT F-201 : Flash
+    Q = 0 [kW]
+    henry_components = CO,CO2
+
+# Preliminary water/light-ends removal probe. The partial condenser allows the
+# trace CO and CO2 remaining after F-201 to leave with the vapor distillate.
+# Column pressure defaults to the condensed-product feed pressure.
+UNIT C-201 : RigorousDistillation
+    N_stages = 15
+    feed_stage = 8
+    reflux_ratio = 1.0
+    D_to_F = 0.03
+    P_drop_per_stage = 0
+    condenser_type = partial
+    initializer = cheap_estimate
+
+# The concentrated aqueous acid product is raised to atmospheric pressure,
+# cooled to room temperature, and contacted counter-currently with a 50/50
+# mass blend of cyclohexane and diisopropyl ether. Total solvent mass is one
+# half of the current C-201-bottoms mass flow.
+UNIT P-301 : Pump
+    P_out = 1.01325 [bar]
+
+UNIT E-301 : Cooler
+    T = 25 [C]
+
+UNIT X-301 : RigorousLiquidLiquidExtractor
+    N_stages = 20
+    mode = isothermal
+    T = 25 [C]
+    solver_algorithm = equation_oriented

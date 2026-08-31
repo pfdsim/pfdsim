@@ -1,0 +1,49 @@
+# Methanol-Diethyl Ether Distillation at 5 bar with NRTL-RK
+
+PROCESS: Methanol-Diethyl Ether 5 bar Distillation
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: NRTL-RK rigorous distillation of a 50/50 methanol/diethyl ether feed at 5 bar using 20 stages, reflux ratio 1.0, and D/F 0.5
+THERMO_METHOD: NRTL-RK
+
+COMPONENTS:
+    CH3OH      | Methanol       | MW=32.04
+    (C2H5)2O  | Diethyl Ether  | MW=74.12
+
+STREAM Raw-Feed : FEED -> FEED-HEATER.in
+    T = 25 [C]
+    P = 5 [bar]
+    F = 100 [kmol/h]
+    x = CH3OH:0.50, (C2H5)2O:0.50
+
+STREAM Saturated-Feed : FEED-HEATER.out -> COL-1.feed
+
+STREAM Distillate : COL-1.distillate -> PRODUCT
+STREAM Bottoms : COL-1.bottoms -> PRODUCT
+
+UNIT FEED-HEATER
+    TYPE: Heater
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        vap_frac = 0.0
+        P_drop = 0 [bar]
+
+UNIT COL-1
+    TYPE: RigorousDistillation
+    PORTS:
+        feed : inlet
+        distillate : outlet
+        bottoms : outlet
+    PARAMS:
+        N_stages = 20
+        feed_stage = 10
+        reflux_ratio = 1.0
+        D_to_F = 0.5
+        P_condenser = 5 [bar]
+        P_drop_per_stage = 0 [bar]
+        condenser_type = total
+        initializer = cheap_estimate
+        mesh_tolerance = 1e-7
+        max_iterations = 180

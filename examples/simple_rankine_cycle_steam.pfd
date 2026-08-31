@@ -1,0 +1,74 @@
+#==============================================================================
+# Simple Rankine Cycle - Steam / IF97
+#==============================================================================
+#
+# Textbook-style simple Rankine cycle with steam-table thermodynamics:
+#
+#   - Water flow: 84.75 kg/s = 16935.886761 kmol/h
+#   - Condenser pressure: 0.1 bar
+#   - Boiler / turbine inlet: 86 bar, 500 C
+#   - Pump hydraulic efficiency: 0.75
+#   - Turbine isentropic efficiency: 0.75
+#   - Mechanical efficiencies: 1.0
+#
+# The feed stream is specified directly as saturated liquid at the condenser
+# pressure, so this acyclic .pfd represents the closed Rankine state point
+# without requiring a recycle tear stream.
+
+PROCESS: Simple Rankine Cycle STEAM
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: STEAM
+DESCRIPTION: Simple Rankine cycle using CoolProp IF97 steam properties
+
+COMPONENTS:
+    H2O | Water | MW=18.015
+
+STREAM Pump-Inlet : FEED -> PUMP-100.in
+    P = 0.1 [bar]
+    F = 16935.886761032474 [kmol/h]
+    vap_frac = 0
+    x = H2O:1.0
+
+STREAM Pump-Outlet : PUMP-100.out -> BOILER-100.in
+STREAM Turbine-Inlet : BOILER-100.out -> TURB-100.in
+STREAM Turbine-Outlet : TURB-100.out -> COND-100.in
+STREAM Condensate : COND-100.out -> PRODUCT
+
+UNIT PUMP-100
+    TYPE: Pump
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        P_out = 86 [bar]
+        eta = 0.75
+        eta_mech = 1.0
+
+UNIT BOILER-100
+    TYPE: Heater
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        T_out = 500 [C]
+        P_drop = 0 [bar]
+
+UNIT TURB-100
+    TYPE: Expander
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        P_out = 0.1 [bar]
+        eta_isen = 0.75
+        eta_mech = 1.0
+
+UNIT COND-100
+    TYPE: Cooler
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        vap_frac = 0
+        P_drop = 0 [bar]

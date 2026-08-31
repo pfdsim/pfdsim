@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
+    "description": "Extended UNIQUAC binary parameters from simultaneous gE/hE correlation.",
+    "model": "UNIQUAC",
+    "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
+    "temperature_units": "K",
+    "notes": [
+      "Values were manually transcribed from data/reference/main50.pdf because OCR is unreliable for Table 2.",
+      "use_q_prime=true means the extended UNIQUAC q_prime residual surface parameter should be used for this pair."
+    ]
+  },
+  "interactions": [
+    {"component1": "Methyl acetate", "component2": "Benzene", "A12": 476.00, "B12": -2.5693, "C12": 0.0046, "A21": 550.40, "B21": -2.8994, "C21": 0.0031},
+    {"component1": "Methyl acetate", "component2": "Cyclohexane", "A12": 1892.78, "B12": -7.9123, "C12": 0.0097, "A21": 1670.18, "B21": -4.1599, "C21": 0.0022},
+    {"component1": "Methanol", "component2": "Ethyl acetate", "A12": 366.70, "B12": -1.7227, "C12": 0.0000, "A21": 1182.37, "B21": -0.6814, "C21": 0.0000},
+    {"component1": "Ethanol", "component2": "Ethyl acetate", "A12": 501.77, "B12": -1.2057, "C12": 0.0000, "A21": 1534.40, "B21": -2.6188, "C21": 0.0000},
+    {"component1": "2-Propanol", "component2": "Ethyl acetate", "A12": 900.57, "B12": -2.6358, "C12": 0.0025, "A21": 1609.05, "B21": -2.9432, "C21": -0.0028},
+    {"component1": "1-Propanol", "component2": "Ethyl acetate", "A12": 640.79, "B12": -1.2203, "C12": 0.0002, "A21": 1749.91, "B21": -3.9396, "C21": -0.0001},
+    {"component1": "Ethyl formate", "component2": "Methanol", "A12": 544.15, "B12": 2.5103, "C12": -0.0045, "A21": -364.68, "B21": 3.3034, "C21": -0.0068},
+    {"component1": "Ethyl formate", "component2": "Ethanol", "A12": 1203.79, "B12": -1.5092, "C12": -0.0005, "A21": -509.79, "B21": 6.1256, "C21": -0.0115},
+    {"component1": "Ethyl formate", "component2": "1-Propanol", "A12": 1057.46, "B12": -0.8209, "C12": -0.0041, "A21": 883.49, "B21": -1.9333, "C21": 0.0017},
+    {"component1": "Ethyl formate", "component2": "2-Propanol", "A12": 1643.86, "B12": -4.5664, "C12": 0.0003, "A21": 732.30, "B21": 0.1757, "C21": -0.0009},
+    {"component1": "Methyl acetate", "component2": "Methanol", "A12": 1264.52, "B12": -1.4120, "C12": -0.0009, "A21": 77.32, "B21": 0.1694, "C21": -0.0008},
+    {"component1": "Methyl acetate", "component2": "Ethanol", "A12": 1665.93, "B12": -3.6562, "C12": 0.0000, "A21": 505.46, "B21": -0.5440, "C21": 0.0000},
+    {"component1": "Acetonitrile", "component2": "Benzene", "A12": 642.78, "B12": -2.1421, "C12": 0.0000, "A21": -187.02, "B21": 2.4439, "C21": 0.0000},
+    {"component1": "Benzene", "component2": "n-Heptane", "A12": 140.55, "B12": 0.2728, "C12": 0.0000, "A21": 550.58, "B21": -1.5135, "C21": 0.0000},
+    {"component1": "Acetonitrile", "component2": "n-Heptane", "A12": 2339.02, "B12": -5.2098, "C12": 0.0000, "A21": 2772.58, "B21": -4.1622, "C21": 0.0000},
+    {"component1": "Ethanol", "component2": "Toluene", "A12": -361.59, "B12": 3.4347, "C12": -0.0059, "A21": 3679.65, "B21": -6.3200, "C21": -0.0011},
+    {"component1": "2-Propanol", "component2": "n-Heptane", "A12": -389.71, "B12": 5.9264, "C12": -0.0110, "A21": 5504.39, "B21": -13.9138, "C21": 0.0082},
+    {"component1": "Ethanol", "component2": "Cyclohexane", "A12": 708.11, "B12": -1.7271, "C12": 0.0018, "A21": -2190.70, "B21": 30.7960, "C21": -0.0562},
+    {"component1": "1-Propanol", "component2": "Cyclohexane", "A12": -1310.24, "B12": 11.3511, "C12": -0.0197, "A21": 4394.90, "B21": -12.1486, "C21": 0.0130},
+    {"component1": "2-Propanol", "component2": "Cyclohexane", "A12": -347.64, "B12": 4.9795, "C12": -0.0095, "A21": 4013.42, "B21": -6.7299, "C21": -0.0011},
+    {"component1": "Methanol", "component2": "Benzene", "A12": -137.18, "B12": 1.6962, "C12": -0.0034, "A21": 3655.54, "B21": -6.2237, "C21": 0.0008},
+    {"component1": "Ethanol", "component2": "Benzene", "A12": -216.07, "B12": 2.5229, "C12": 0.0041, "A21": 3670.22, "B21": -7.2273, "C21": 0.0000},
+    {"component1": "1-Propanol", "component2": "Benzene", "A12": -635.26, "B12": 6.1030, "C12": -0.0103, "A21": 3954.95, "B21": -12.0891, "C21": 0.0090},
+    {"component1": "2-Propanol", "component2": "Benzene", "A12": 538.55, "B12": -0.2666, "C12": -0.0015, "A21": 3474.07, "B21": -7.4151, "C21": 0.0003},
+    {"component1": "1-Butanol", "component2": "Benzene", "A12": -247.89, "B12": 3.4054, "C12": -0.0052, "A21": 3822.00, "B21": -10.7400, "C21": 0.0043},
+    {"component1": "Methanol", "component2": "Acetonitrile", "A12": 344.21, "B12": -0.4233, "C12": 0.0001, "A21": 1286.18, "B21": -2.4383, "C21": -0.0001},
+    {"component1": "Ethanol", "component2": "Acetonitrile", "A12": 757.28, "B12": -0.4548, "C12": 0.0000, "A21": 1732.52, "B21": -4.4667, "C21": 0.0000},
+    {"component1": "1-Propanol", "component2": "Acetonitrile", "A12": 1688.45, "B12": -2.9122, "C12": 0.0016, "A21": 1734.37, "B21": -4.3198, "C21": -0.0012},
+    {"component1": "Ethanol", "component2": "1,4-Dioxane", "A12": -1407.68, "B12": 11.5000, "C12": -0.0197, "A21": 886.80, "B21": -0.0306, "C21": -0.0046}
+  ]
+}

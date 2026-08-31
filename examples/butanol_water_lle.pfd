@@ -1,0 +1,34 @@
+# Butanol-Water Liquid-Liquid Separation
+# This example demonstrates the Decanter unit with UNIFAC thermodynamics
+# for liquid-liquid equilibrium (LLE) calculations
+
+PROCESS: Butanol-Water LLE Separation
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFAC
+
+COMPONENTS:
+    butanol | 1-Butanol | MW=74.12
+    water | Water | MW=18.02
+
+# Feed stream - mixture of butanol and water
+STREAM Feed : FEED -> DECANT-1.in
+    T = 25 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = butanol:0.3, water:0.7
+
+# Product streams
+STREAM Organic : DECANT-1.light -> PRODUCT
+STREAM Aqueous : DECANT-1.heavy -> PRODUCT
+
+# Decanter unit for liquid-liquid separation
+UNIT DECANT-1
+    TYPE: Decanter
+    PORTS:
+        in : inlet
+        light : outlet    # Organic-rich phase
+        heavy : outlet    # Water-rich phase
+    PARAMS:
+        T = 25 [C]
+        P = 1 [bar]

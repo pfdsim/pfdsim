@@ -1,0 +1,175 @@
+{
+  "source": "J. Chem. Eng. Data 2003, 48, 750-752",
+  "temperature_units": "K",
+  "pressure_units": "kPa",
+  "component_order": "water -> organic",
+  "nrtl_form": "tau_ij = c_ij + d_ij/T + e_ij*((Tref - T)/T + ln(T/Tref)); Tref = 298.15 K",
+  "uniquac_form": "ln(tau_ij) = a_ij + b_ij/T + c_ij*T",
+  "residual_basis": {
+    "composition": "runtime LLE split mean abs ln(predicted/table)",
+    "pressure": "mean abs relative pressure residual at tabulated liquid compositions"
+  },
+  "systems": [
+    {
+      "components": ["Water", "Benzene"],
+      "cas": ["7732-18-5", "71-43-2"],
+      "applicable_temperature_range_K": [279.15, 453.15],
+      "solubility_table": {
+        "x1": "water mole fraction in benzene-rich liquid, reported as 1e3*x1",
+        "x2": "benzene mole fraction in water-rich liquid, reported as 1e4*x2",
+        "rows": [
+          {"T_K": 279.15, "P_kPa": 5.8, "x1_scaled": 1.68, "x2_scaled": 4.06},
+          {"T_K": 288.15, "P_kPa": 9.5, "x1_scaled": 2.28, "x2_scaled": 4.08},
+          {"T_K": 298.15, "P_kPa": 16.0, "x1_scaled": 3.20, "x2_scaled": 4.06},
+          {"T_K": 313.15, "P_kPa": 32.0, "x1_scaled": 4.92, "x2_scaled": 4.41},
+          {"T_K": 333.15, "P_kPa": 70.0, "x1_scaled": 9.01, "x2_scaled": 5.31},
+          {"T_K": 343.15, "P_kPa": 104.0, "x1_scaled": 11.3, "x2_scaled": 6.10},
+          {"T_K": 353.15, "P_kPa": 146.0, "x1_scaled": 15.7, "x2_scaled": 6.73},
+          {"T_K": 363.15, "P_kPa": 205.0, "x1_scaled": 20.4, "x2_scaled": 7.59},
+          {"T_K": 373.15, "P_kPa": 280.0, "x1_scaled": 25.8, "x2_scaled": 8.79},
+          {"T_K": 398.15, "P_kPa": 565.0, "x1_scaled": 46.1, "x2_scaled": 13.2},
+          {"T_K": 413.15, "P_kPa": 830.0, "x1_scaled": 63.0, "x2_scaled": 17.9},
+          {"T_K": 433.15, "P_kPa": 1320.0, "x1_scaled": 87.1, "x2_scaled": 26.1},
+          {"T_K": 453.15, "P_kPa": 2020.0, "x1_scaled": 130.0, "x2_scaled": 38.4}
+        ]
+      },
+      "fitted_parameters": {
+        "NRTL": {
+          "alpha12": 0.2,
+          "tau12_c": 5.42158455,
+          "tau12_d": 170.495590,
+          "tau12_e": -9.18065486,
+          "tau21_c": -5.18998243,
+          "tau21_d": 2745.777555,
+          "tau21_e": -4.35588624,
+          "average_residuals": {
+            "mean_abs_log_x_water_in_organic_rich": 0.033764,
+            "mean_abs_log_x_organic_in_water_rich": 0.021793,
+            "combined_mean_abs_log_composition": 0.027779,
+            "mean_abs_relative_pressure": 0.015333
+          }
+        },
+        "UNIQUAC": {
+          "tau12_a": -4.26152099,
+          "tau12_b": 410.757318,
+          "tau12_c": 0.00557446,
+          "tau21_a": 2.89513893,
+          "tau21_b": -1851.910186,
+          "tau21_c": 0.00151181,
+          "average_residuals": {
+            "mean_abs_log_x_water_in_organic_rich": 0.041402,
+            "mean_abs_log_x_organic_in_water_rich": 0.026324,
+            "combined_mean_abs_log_composition": 0.033863,
+            "mean_abs_relative_pressure": 0.015977
+          }
+        }
+      }
+    },
+    {
+      "components": ["Water", "Toluene"],
+      "cas": ["7732-18-5", "108-88-3"],
+      "applicable_temperature_range_K": [273.15, 458.15],
+      "solubility_table": {
+        "x1": "water mole fraction in toluene-rich liquid, reported as 1e3*x1",
+        "x2": "toluene mole fraction in water-rich liquid, reported as 1e4*x2",
+        "rows": [
+          {"T_K": 273.15, "P_kPa": 1.5, "x1_scaled": 1.18, "x2_scaled": 1.24},
+          {"T_K": 283.15, "P_kPa": 2.9, "x1_scaled": 1.69, "x2_scaled": 1.14},
+          {"T_K": 298.15, "P_kPa": 7.0, "x1_scaled": 2.73, "x2_scaled": 1.14},
+          {"T_K": 305.35, "P_kPa": 10.2, "x1_scaled": 3.34, "x2_scaled": 1.20},
+          {"T_K": 313.15, "P_kPa": 15.0, "x1_scaled": 4.32, "x2_scaled": 1.23},
+          {"T_K": 333.15, "P_kPa": 38.0, "x1_scaled": 7.92, "x2_scaled": 1.52},
+          {"T_K": 348.15, "P_kPa": 71.0, "x1_scaled": 12.2, "x2_scaled": 1.89},
+          {"T_K": 373.15, "P_kPa": 175.0, "x1_scaled": 23.3, "x2_scaled": 2.84},
+          {"T_K": 398.15, "P_kPa": 383.0, "x1_scaled": 42.6, "x2_scaled": 4.45},
+          {"T_K": 413.15, "P_kPa": 580.0, "x1_scaled": 59.8, "x2_scaled": 6.60},
+          {"T_K": 423.15, "P_kPa": 750.0, "x1_scaled": 69.2, "x2_scaled": 8.28},
+          {"T_K": 453.15, "P_kPa": 1520.0, "x1_scaled": 120.0, "x2_scaled": 15.1},
+          {"T_K": 458.15, "P_kPa": 1700.0, "x1_scaled": 133.0, "x2_scaled": 17.0}
+        ]
+      },
+      "fitted_parameters": {
+        "NRTL": {
+          "alpha12": 0.2,
+          "tau12_c": 6.44255915,
+          "tau12_d": 230.691712,
+          "tau12_e": -13.97875967,
+          "tau21_c": -5.59819164,
+          "tau21_d": 2931.226806,
+          "tau21_e": -3.33064985,
+          "average_residuals": {
+            "mean_abs_log_x_water_in_organic_rich": 0.033639,
+            "mean_abs_log_x_organic_in_water_rich": 0.042579,
+            "combined_mean_abs_log_composition": 0.038109,
+            "mean_abs_relative_pressure": 0.019286
+          }
+        },
+        "UNIQUAC": {
+          "tau12_a": -5.02820679,
+          "tau12_b": 546.919292,
+          "tau12_c": 0.00691596,
+          "tau21_a": 4.86379009,
+          "tau21_b": -2243.653045,
+          "tau21_c": -0.00141886,
+          "average_residuals": {
+            "mean_abs_log_x_water_in_organic_rich": 0.046140,
+            "mean_abs_log_x_organic_in_water_rich": 0.054189,
+            "combined_mean_abs_log_composition": 0.050165,
+            "mean_abs_relative_pressure": 0.022247
+          }
+        }
+      }
+    },
+    {
+      "components": ["Water", "p-Xylene"],
+      "cas": ["7732-18-5", "106-42-3"],
+      "applicable_temperature_range_K": [288.15, 448.15],
+      "solubility_table": {
+        "x1": "water mole fraction in p-xylene-rich liquid, reported as 1e3*x1",
+        "x2": "p-xylene mole fraction in water-rich liquid, reported as 1e5*x2",
+        "rows": [
+          {"T_K": 288.15, "P_kPa": 2.4, "x1_scaled": 2.45, "x2_scaled": 2.98},
+          {"T_K": 298.15, "P_kPa": 4.4, "x1_scaled": 3.28, "x2_scaled": 3.15},
+          {"T_K": 313.15, "P_kPa": 10.3, "x1_scaled": 4.65, "x2_scaled": 3.98},
+          {"T_K": 333.15, "P_kPa": 27.0, "x1_scaled": 8.22, "x2_scaled": 5.30},
+          {"T_K": 348.15, "P_kPa": 52.0, "x1_scaled": 12.4, "x2_scaled": 6.38},
+          {"T_K": 373.15, "P_kPa": 136.0, "x1_scaled": 21.6, "x2_scaled": 9.29},
+          {"T_K": 398.15, "P_kPa": 310.0, "x1_scaled": 39.8, "x2_scaled": 15.3},
+          {"T_K": 423.15, "P_kPa": 630.0, "x1_scaled": 65.6, "x2_scaled": 29.1},
+          {"T_K": 448.15, "P_kPa": 1170.0, "x1_scaled": 102.0, "x2_scaled": 56.0}
+        ]
+      },
+      "fitted_parameters": {
+        "NRTL": {
+          "alpha12": 0.2,
+          "tau12_c": 6.31561607,
+          "tau12_d": 656.278436,
+          "tau12_e": -13.72537271,
+          "tau21_c": -4.15861986,
+          "tau21_d": 2511.056983,
+          "tau21_e": -8.55762685,
+          "average_residuals": {
+            "mean_abs_log_x_water_in_organic_rich": 0.029182,
+            "mean_abs_log_x_organic_in_water_rich": 0.039200,
+            "combined_mean_abs_log_composition": 0.034191,
+            "mean_abs_relative_pressure": 0.019416
+          }
+        },
+        "UNIQUAC": {
+          "tau12_a": -3.49453499,
+          "tau12_b": 263.479577,
+          "tau12_c": 0.00502872,
+          "tau21_a": 0.11693990,
+          "tau21_b": -1355.069752,
+          "tau21_c": 0.00443349,
+          "average_residuals": {
+            "mean_abs_log_x_water_in_organic_rich": 0.032031,
+            "mean_abs_log_x_organic_in_water_rich": 0.032909,
+            "combined_mean_abs_log_composition": 0.032470,
+            "mean_abs_relative_pressure": 0.018362
+          }
+        }
+      }
+    }
+  ]
+}

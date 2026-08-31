@@ -1,0 +1,606 @@
+{
+  "metadata": {
+    "description": "Curated temperature-dependent UNIQUAC-VDM and NRTL-VDM fits for water with three-carbon carboxylic acids.",
+    "created_date": "2026-08-30",
+    "component1": {
+      "name": "Water",
+      "symbol": "H2O",
+      "cas": "7732-18-5"
+    },
+    "systems": [
+      "water_acrylic_acid",
+      "water_propionic_acid"
+    ]
+  },
+  "systems": {
+    "water_acrylic_acid": {
+  "metadata": {
+    "description": "Temperature-dependent NRTL and UNIQUAC liquid interaction parameters regressed with pfdsim's acrylic-acid vapor dimerization model fixed.",
+    "created_date": "2026-08-30",
+    "components": [
+      {
+        "name": "Water",
+        "symbol": "H2O",
+        "cas": "7732-18-5",
+        "role": "component1"
+      },
+      {
+        "name": "Acrylic acid",
+        "symbol": "C2H3COOH",
+        "cas": "79-10-7",
+        "role": "component2"
+      }
+    ],
+    "source": {
+      "citation": "Olson, J. D.; Morrison, R. E.; Wilson, L. C. Thermodynamics of Hydrogen-Bonding Mixtures. 5. GE, HE, and TSE and Zeotropy of Water + Acrylic Acid. Ind. Eng. Chem. Res. 2008, 47, 5127-5131.",
+      "doi": "10.1021/ie0712277",
+      "reference_file": "data/reference/acid_water_vle/ie0712277.pdf"
+    },
+    "fit_basis": {
+      "objective": "Unweighted ln(sum_i x_i K_i) bubble-closure residual at each measured temperature, pressure, and corrected liquid composition.",
+      "measured_points": 88,
+      "temperature_range_K": [
+        320.03,
+        399.57
+      ],
+      "pressure_range_kPa": [
+        10.0,
+        101.325
+      ],
+      "tables": {
+        "Table 1": {
+          "use": "regression",
+          "points": 72,
+          "description": "Measured mixture PTx data at eight pressures. Pure-component endpoints were excluded because they contain no binary-interaction information.",
+          "calculated_y": "Diagnostic only; the paper reports calculated rather than experimental vapor compositions."
+        },
+        "Table 2": {
+          "use": "diagnostic",
+          "points": 9,
+          "description": "Derived Pxy interpolation at 75 C. Excluded from the objective to avoid double-counting Table 1."
+        },
+        "Table 3": {
+          "use": "context only",
+          "description": "Published UNIQUAC parameter fits; not an experimental observation table."
+        },
+        "Table 4": {
+          "use": "regression",
+          "points": 16,
+          "description": "Measured dilute water-rich PTx data at 101.325 kPa: 7 inhibited and 9 uninhibited acrylic-acid mixtures. Pure-water baselines were excluded."
+        }
+      },
+      "vapor_composition_policy": "Paper-calculated vapor compositions were never included in the regression objective; temperature and pressure metrics govern model selection.",
+      "validation_limit": "All measured PTx points are in-sample. Table 2 is derived from Table 1 and therefore is not independent validation."
+    },
+    "fixed_vapor_model": {
+      "model": "VDM",
+      "reaction": "2 acrylic acid monomers <=> acrylic acid dimer",
+      "delta_H_J_per_mol": -67000.0,
+      "delta_S_J_per_mol_K": -161.4,
+      "source": "data/acid_dimerization.json",
+      "treatment": "Fixed during every liquid-parameter regression and recalculated at every temperature, pressure, and vapor composition."
+    },
+    "uniquac_structural_parameters": {
+      "water": {
+        "r": 0.92,
+        "q": 1.4
+      },
+      "acrylic_acid": {
+        "r": 2.6467,
+        "q": 2.4
+      },
+      "source": "data/uniquac_rq_cas.json"
+    },
+    "regression_script": "scripts/fit_water_acrylic_activity_vdm.py"
+  },
+  "recommended_fit": "UNIQUAC-VDM",
+  "selection_reason": "Temperature-dependent UNIQUAC-VDM gives the lowest measured-temperature RMSE and maximum absolute temperature error. NRTL alpha=0.5 is the best of the four tested fixed-alpha candidates but remains less accurate on measured bubble temperatures; values above the physical ceiling of 0.5 were not tested.",
+  "fitted_parameters": {
+    "UNIQUAC-VDM": {
+      "recommended": true,
+      "model_variant": "standard_uniquac",
+      "use_q_prime": false,
+      "functional_form": {
+        "tau12": "exp(tau12_a + tau12_b/T)",
+        "tau21": "exp(tau21_a + tau21_b/T)",
+        "tau12_c": 0.0,
+        "tau21_c": 0.0
+      },
+      "parameters": {
+        "tau12_a": -0.2292745181471927,
+        "tau12_b": 253.61822922421456,
+        "tau12_c": 0.0,
+        "tau21_a": 1.9096130681691217,
+        "tau21_b": -1086.1508008365538,
+        "tau21_c": 0.0
+      },
+      "parameter_units": {
+        "tau_a": "dimensionless",
+        "tau_b": "K",
+        "tau_c": "1/K"
+      },
+      "fit_metrics": {
+        "bubble_closure_ln": {
+          "ME": -0.0040450174330465905,
+          "MAE": 0.009863267081658121,
+          "RMSE": 0.011228120212190789,
+          "MaxAE": 0.020585318348791463
+        },
+        "Tables 1 and 4 measured temperature_error_K": {
+          "n": 88,
+          "ME": 0.1078477549247752,
+          "MAE": 0.2732516075034035,
+          "RMSE": 0.3152534959208959,
+          "MaxAE": 0.6808878166114596
+        },
+        "Table 1 measured temperature_error_K": {
+          "n": 72,
+          "ME": 0.08866798279418554,
+          "MAE": 0.2908282470569535,
+          "RMSE": 0.3281881055428246,
+          "MaxAE": 0.6808878166114596
+        },
+        "Table 4 measured temperature_error_K": {
+          "n": 16,
+          "ME": 0.19415672951242868,
+          "MAE": 0.19415672951242868,
+          "RMSE": 0.24886295426973035,
+          "MaxAE": 0.508429313987051
+        },
+        "Table 1 paper_calculated_y_error_percentage_points": {
+          "n": 72,
+          "ME": -0.7576259482519826,
+          "MAE": 1.0244311394664336,
+          "RMSE": 1.4764381973189677,
+          "MaxAE": 4.229474873344053
+        },
+        "Table 2 derived pressure_error_kPa": {
+          "n": 9,
+          "ME": -0.21614519563377066,
+          "MAE": 0.3471650224146406,
+          "RMSE": 0.40564442006319734,
+          "MaxAE": 0.6640688142374671
+        },
+        "Table 2 paper_calculated_y_error_percentage_points": {
+          "n": 9,
+          "ME": -0.9526601231239707,
+          "MAE": 1.2078458701759178,
+          "RMSE": 1.6348912916294023,
+          "MaxAE": 3.3902121871434487
+        }
+      }
+    },
+    "NRTL-VDM": {
+      "recommended": false,
+      "selected_alpha12": 0.5,
+      "alpha_candidate_ceiling": 0.5,
+      "alpha_selection": "Best measured-temperature RMSE among the explicitly tested fixed values 0.2, 0.3, 0.4, and 0.5. Values above the stated physical ceiling of 0.5 were not tested.",
+      "functional_form": {
+        "tau12": "tau12_c + tau12_d/T",
+        "tau21": "tau21_c + tau21_d/T",
+        "tau12_e": 0.0,
+        "tau12_f": 0.0,
+        "tau21_e": 0.0,
+        "tau21_f": 0.0,
+        "tau_tref": 298.15
+      },
+      "parameters": {
+        "alpha12": 0.5,
+        "tau12_c": 2.524131826641469,
+        "tau12_d": -483.44757985154956,
+        "tau12_e": 0.0,
+        "tau12_f": 0.0,
+        "tau21_c": -1.9801650300280798,
+        "tau21_d": 836.6800879723412,
+        "tau21_e": 0.0,
+        "tau21_f": 0.0,
+        "tau_tref": 298.15
+      },
+      "parameter_units": {
+        "alpha12": "dimensionless",
+        "tau_c": "dimensionless",
+        "tau_d": "K",
+        "tau_e": "dimensionless",
+        "tau_f": "1/K",
+        "tau_tref": "K"
+      },
+      "fit_metrics": {
+        "bubble_closure_ln": {
+          "ME": -0.004509218316441429,
+          "MAE": 0.014145541329810845,
+          "RMSE": 0.01646906794655682,
+          "MaxAE": 0.04143207004764901
+        },
+        "Tables 1 and 4 measured temperature_error_K": {
+          "n": 88,
+          "ME": 0.12482485645375684,
+          "MAE": 0.39311190589745915,
+          "RMSE": 0.46982760951943303,
+          "MaxAE": 1.253273913833425
+        },
+        "Table 1 measured temperature_error_K": {
+          "n": 72,
+          "ME": 0.10360436400485658,
+          "MAE": 0.43151075776938164,
+          "RMSE": 0.5020179870994573,
+          "MaxAE": 1.253273913833425
+        },
+        "Table 4 measured temperature_error_K": {
+          "n": 16,
+          "ME": 0.22031707247380794,
+          "MAE": 0.22031707247380794,
+          "RMSE": 0.28277135197158393,
+          "MaxAE": 0.5798903444891721
+        },
+        "Table 1 paper_calculated_y_error_percentage_points": {
+          "n": 72,
+          "ME": -0.6589734999531641,
+          "MAE": 0.9027371754063763,
+          "RMSE": 1.4450872932234158,
+          "MaxAE": 5.412818396718361
+        },
+        "Table 2 derived pressure_error_kPa": {
+          "n": 9,
+          "ME": -0.2634058528748901,
+          "MAE": 0.5289786060804603,
+          "RMSE": 0.576427757873273,
+          "MaxAE": 0.8747494746420585
+        },
+        "Table 2 paper_calculated_y_error_percentage_points": {
+          "n": 9,
+          "ME": -0.8748894045860274,
+          "MAE": 1.0017500951477933,
+          "RMSE": 1.7316557290477748,
+          "MaxAE": 4.429612413038775
+        }
+      },
+      "alpha_candidates": [
+        {
+          "alpha12": 0.2,
+          "parameters": {
+            "tau12_c": 5.10991209920498,
+            "tau12_d": -1262.3799495194914,
+            "tau21_c": -3.796180324535485,
+            "tau21_d": 1299.8120150745356
+          },
+          "Tables 1 and 4 temperature_RMSE_K": 0.529146227431624,
+          "Table 1 temperature_RMSE_K": 0.5664358776682281,
+          "Table 4 temperature_RMSE_K": 0.31008595459028415
+        },
+        {
+          "alpha12": 0.3,
+          "parameters": {
+            "tau12_c": 3.7336906572602597,
+            "tau12_d": -860.3884317546035,
+            "tau21_c": -2.771904363464242,
+            "tau21_d": 1027.5200728529999
+          },
+          "Tables 1 and 4 temperature_RMSE_K": 0.5173405465511673,
+          "Table 1 temperature_RMSE_K": 0.5537676476690443,
+          "Table 4 temperature_RMSE_K": 0.30341900378874137
+        },
+        {
+          "alpha12": 0.4,
+          "parameters": {
+            "tau12_c": 2.986961786480634,
+            "tau12_d": -632.822381324325,
+            "tau21_c": -2.254652049404524,
+            "tau21_d": 896.3080347873098
+          },
+          "Tables 1 and 4 temperature_RMSE_K": 0.4983218621423831,
+          "Table 1 temperature_RMSE_K": 0.5330997746358819,
+          "Table 4 temperature_RMSE_K": 0.29479919752954126
+        },
+        {
+          "alpha12": 0.5,
+          "parameters": {
+            "tau12_c": 2.524131826641469,
+            "tau12_d": -483.44757985154956,
+            "tau21_c": -1.9801650300280798,
+            "tau21_d": 836.6800879723412
+          },
+          "Tables 1 and 4 temperature_RMSE_K": 0.46982760951943303,
+          "Table 1 temperature_RMSE_K": 0.5020179870994573,
+          "Table 4 temperature_RMSE_K": 0.28277135197158393
+        }
+      ]
+    }
+  }
+    },
+    "water_propionic_acid": {
+      "metadata": {
+        "description": "Hard-azeotrope-constrained temperature-dependent NRTL and UNIQUAC liquid interaction parameters fitted to modern salt-free water/propionic-acid VLE with pfdsim's propionic-acid vapor dimerization model fixed.",
+        "created_date": "2026-08-30",
+        "components": [
+          {
+            "name": "Water",
+            "symbol": "H2O",
+            "cas": "7732-18-5",
+            "role": "component1"
+          },
+          {
+            "name": "Propionic acid",
+            "symbol": "C2H5COOH",
+            "cas": "79-09-4",
+            "role": "component2"
+          }
+        ],
+        "sources": [
+          {
+            "citation": "Olson, J. D.; Morrison, R. E.; Wilson, L. C. Thermodynamics of Hydrogen-Bonding Mixtures. 5. GE, HE, and TSE and Zeotropy of Water + Acrylic Acid. Ind. Eng. Chem. Res. 2008, 47, 5127-5131.",
+            "doi": "10.1021/ie0712277",
+            "reference_file": "data/reference/acid_water_vle/ie0712277.pdf",
+            "used_data": "Table 4 water (1) + propanoic acid (2): 58 non-pure dilute PTx points at 101.325, 40.00, and 13.33 kPa.",
+            "notes": "The three pure-water baselines were excluded because they contain no binary-interaction information."
+          },
+          {
+            "citation": "Banat, F.; Al-Asheh, S.; Simandl, J. Vapor-liquid equilibria of propionic acid-water system in the presence of different types of inorganic salts: effect of temperature and salt concentration. Chemical Engineering and Processing 2003, 42, 917-923.",
+            "doi": "10.1016/S0255-2701(02)00156-3",
+            "reference_file": "data/reference/acid_water_vle/main 3.pdf",
+            "used_data": "Tables 1 and 2 no-salt columns: 8 salt-free x_acid/y_acid points at 40 C and 8 at 50 C.",
+            "notes": "Compositions are reported on a salt-free basis. The authors state that vial pressure could not be measured precisely and therefore did not present P-x-y diagrams; only the no-salt x-y observations were fitted."
+          },
+          {
+            "citation": "Banat, F.; Al-Asheh, S.; Simandl, J. Effect of dissolved inorganic salts on the isothermal vapor-liquid equilibrium of the propionic acid-water mixture. Chemical Engineering and Processing 2002, 41, 793-798.",
+            "doi": "10.1016/S0255-2701(02)00011-9",
+            "reference_file": "data/reference/acid_water_vle/main 4.pdf",
+            "used_data": "Table 3 salt-free column: 9 x_acid/y_acid points at 60 C.",
+            "notes": "Only the binary no-salt column was fitted; every salted observation and every empirical salt-effect quantity was excluded."
+          }
+        ],
+        "fit_basis": {
+          "regression_data": {
+            "dilute_PTx": {
+              "points": 58,
+              "blocks": {
+                "101.325_kPa": 33,
+                "40.00_kPa": 14,
+                "13.33_kPa": 11
+              },
+              "observable": "Bubble-temperature error in K",
+              "implementation": "Locally linearized bubble-temperature residual during optimization; exact bubble temperatures for reported metrics."
+            },
+            "modern_salt_free_xy": {
+              "points": 25,
+              "blocks": {
+                "40_C": 8,
+                "50_C": 8,
+                "60_C": 9
+              },
+              "observable": "Propionic-acid vapor mole-fraction error in percentage points at the model-calculated isothermal bubble pressure."
+            }
+          },
+          "weighting": "The dilute PTx and modern salt-free x-y sources receive equal total weight. Their three pressure or temperature blocks receive equal weight within each source.",
+          "excluded_data": [
+            "The incompatible 1961 broad-composition Txy table.",
+            "Every salted x-y column from the 2002 and 2003 papers.",
+            "Published or derived activity coefficients, enhancement factors, and salt-effect correlations."
+          ],
+          "hard_azeotrope_constraint": {
+            "pressure_kPa": 101.325,
+            "temperature_C": 99.8,
+            "x_water": 0.95,
+            "y_water": 0.95,
+            "x_propionic_acid": 0.05,
+            "implementation": "Exact SLSQP equality constraints ln(K_water)=0 and ln(K_propionic_acid)=0.",
+            "support": "Consistent with the Olson dilute atmospheric temperature minimum near x_propionic_acid=0.05 and established minimum-boiling azeotropy."
+          },
+          "parallelism": "Five worker processes: one UNIQUAC-VDM fit and four NRTL-VDM fits with alpha fixed at 0.2, 0.3, 0.4, or 0.5.",
+          "regression_script": "scripts/fit_water_propionic_activity_vdm.py"
+        },
+        "fixed_vapor_model": {
+          "model": "VDM",
+          "reaction": "2 propionic acid monomers <=> propionic acid dimer",
+          "delta_H_J_per_mol": -63490.0,
+          "delta_S_J_per_mol_K": -152.4,
+          "source": "data/acid_dimerization.json",
+          "treatment": "Fixed during every liquid-parameter regression and recalculated at every temperature, pressure, and vapor composition."
+        },
+        "uniquac_structural_parameters": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "propionic_acid": {
+            "r": 2.877,
+            "q": 2.612
+          },
+          "source": "data/uniquac_rq_cas.json"
+        }
+      },
+      "recommended_fit": "NRTL-VDM",
+      "selection_reason": "Hard-constrained NRTL-VDM with alpha=0.4 minimizes the balanced modern-data objective. It reproduces the single established atmospheric azeotrope exactly, gives 0.745 percentage-point RMSE for the 25 modern salt-free x-y observations, and gives 0.087 K RMSE for the 58 dilute PTx temperatures. The hard constraint raises its objective by only 17.6% while materially improving dilute-temperature accuracy.",
+      "fitted_parameters": {
+        "NRTL-VDM": {
+          "recommended": true,
+          "functional_form": {
+            "tau12": "tau12_c + tau12_d/T",
+            "tau21": "tau21_c + tau21_d/T",
+            "tau12_e": 0.0,
+            "tau12_f": 0.0,
+            "tau21_e": 0.0,
+            "tau21_f": 0.0,
+            "tau_tref": 298.15
+          },
+          "parameters": {
+            "alpha12": 0.4,
+            "tau12_c": 9.080831096551332,
+            "tau12_d": -2392.892338323224,
+            "tau12_e": 0.0,
+            "tau12_f": 0.0,
+            "tau21_c": -4.609797001050538,
+            "tau21_d": 1612.8341217031916,
+            "tau21_e": 0.0,
+            "tau21_f": 0.0,
+            "tau_tref": 298.15
+          },
+          "parameter_units": {
+            "alpha12": "dimensionless",
+            "tau_c": "dimensionless",
+            "tau_d": "K",
+            "tau_e": "dimensionless",
+            "tau_f": "1/K",
+            "tau_tref": "K"
+          },
+          "optimizer": {
+            "method": "SLSQP with two exact azeotrope equality constraints",
+            "success": true,
+            "cost": 0.14003811421849927,
+            "constraint_ln_K": {
+              "water": -2.1649348980190786e-14,
+              "propionic_acid": -3.5316194413332465e-13
+            }
+          },
+          "fit_metrics": {
+            "modern_salt_free_xy": {
+              "n": 25,
+              "ME_percentage_points": 0.1173995779459585,
+              "MAE_percentage_points": 0.5968230900965403,
+              "RMSE_percentage_points": 0.7446419553364912,
+              "MaxAE_percentage_points": 2.1497903086399455,
+              "RMSE_by_temperature_percentage_points": {
+                "40_C": 0.7203534662370348,
+                "50_C": 0.6215645960122531,
+                "60_C": 0.8576633459256312
+              }
+            },
+            "dilute_PTx_temperature": {
+              "n": 58,
+              "ME_K": -0.02820185401160043,
+              "MAE_K": 0.04694791477240693,
+              "RMSE_K": 0.08741741227496473,
+              "MaxAE_K": 0.2974822764749092,
+              "RMSE_by_pressure_K": {
+                "101.325_kPa": 0.01179565927580322,
+                "40.00_kPa": 0.041084282778146096,
+                "13.33_kPa": 0.19423561934555475
+              }
+            },
+            "azeotrope_at_101.325_kPa": {
+              "x_water": 0.9499999999259002,
+              "x_propionic_acid": 0.05000000007409977,
+              "y_water": 0.9499999999258482,
+              "temperature_C": 99.7999999519838,
+              "type": "minimum-boiling",
+              "additional_roots_found": false
+            }
+          },
+          "constraint_cost": {
+            "unconstrained_cost": 0.11908485370173601,
+            "constrained_cost": 0.14003811421849927,
+            "absolute_increase": 0.02095326051676326,
+            "relative_increase_percent": 17.59523555299778,
+            "unconstrained_modern_xy_RMSE_percentage_points": 0.6709787745444064,
+            "constrained_modern_xy_RMSE_percentage_points": 0.7446419553364912,
+            "unconstrained_dilute_PTx_RMSE_K": 0.1571348419194124,
+            "constrained_dilute_PTx_RMSE_K": 0.08741741227496473,
+            "unconstrained_azeotrope": null,
+            "interpretation": "The constraint modestly worsens salt-free x-y error, substantially improves dilute PTx temperature error, and restores the established single atmospheric azeotrope."
+          },
+          "alpha_candidates": [
+            {
+              "alpha12": 0.2,
+              "parameters": {
+                "tau12_c": 17.108436129829922,
+                "tau12_d": -4830.8768773727425,
+                "tau21_c": -8.941393313375382,
+                "tau21_d": 2820.7175176352134
+              },
+              "constrained_cost": 0.1692193178266799,
+              "modern_xy_RMSE_percentage_points": 0.8260449272967679,
+              "dilute_PTx_RMSE_K": 0.0825533583638638,
+              "constraint_cost_increase_percent": 42.42626399341505
+            },
+            {
+              "alpha12": 0.3,
+              "parameters": {
+                "tau12_c": 12.149753661648113,
+                "tau12_d": -3342.0664714587037,
+                "tau21_c": -6.175944702367911,
+                "tau21_d": 2046.5851345479095
+              },
+              "constrained_cost": 0.14928781026962357,
+              "modern_xy_RMSE_percentage_points": 0.7729028495614693,
+              "dilute_PTx_RMSE_K": 0.08402389107709875,
+              "constraint_cost_increase_percent": 27.5122812021674
+            },
+            {
+              "alpha12": 0.4,
+              "parameters": {
+                "tau12_c": 9.080831096551332,
+                "tau12_d": -2392.892338323224,
+                "tau21_c": -4.609797001050538,
+                "tau21_d": 1612.8341217031916
+              },
+              "constrained_cost": 0.14003811421849927,
+              "modern_xy_RMSE_percentage_points": 0.7446419553364912,
+              "dilute_PTx_RMSE_K": 0.08741741227496473,
+              "constraint_cost_increase_percent": 17.59523555299778
+            },
+            {
+              "alpha12": 0.5,
+              "parameters": {
+                "tau12_c": 6.73242361731777,
+                "tau12_d": -1639.9983276694413,
+                "tau21_c": -3.571714240217561,
+                "tau21_d": 1336.948504220357
+              },
+              "constrained_cost": 0.14571405435560886,
+              "modern_xy_RMSE_percentage_points": 0.753888452486104,
+              "dilute_PTx_RMSE_K": 0.09451108213774392,
+              "constraint_cost_increase_percent": 9.0000794437484
+            }
+          ]
+        },
+        "UNIQUAC-VDM": {
+          "recommended": false,
+          "model_variant": "standard_uniquac",
+          "use_q_prime": false,
+          "functional_form": {
+            "tau12": "exp(tau12_a + tau12_b/T)",
+            "tau21": "exp(tau21_a + tau21_b/T)",
+            "tau12_c": 0.0,
+            "tau21_c": 0.0
+          },
+          "parameters": {
+            "tau12_a": -6.398698130332292,
+            "tau12_b": 2085.207612703263,
+            "tau12_c": 0.0,
+            "tau21_a": 6.517269802152079,
+            "tau21_b": -2324.4916848820835,
+            "tau21_c": 0.0
+          },
+          "fit_metrics": {
+            "constrained_cost": 0.3876281818525909,
+            "modern_xy_RMSE_percentage_points": 1.2394710017656687,
+            "dilute_PTx_RMSE_K": 0.1695389923543771,
+            "azeotrope_x_water": 0.9499999998454572,
+            "azeotrope_temperature_C": 99.79999996408031
+          },
+          "constraint_cost": {
+            "unconstrained_cost": 0.12906329603353492,
+            "constrained_cost": 0.3876281818525909,
+            "relative_increase_percent": 200.33959596992803
+          },
+          "rejection_reason": "Its balanced constrained objective is 2.77 times the recommended NRTL value, its modern x-y RMSE is 66% larger, and its azeotrope constraint costs approximately 200%."
+        }
+      },
+      "existing_runtime_record_comparison": {
+        "model": "UNIQUAC-VDM",
+        "parameters": {
+          "a12_cal_per_mol": 486.4688,
+          "a21_cal_per_mol": -146.6582
+        },
+        "source_label": "Water/Propionicacid p215 1/1a",
+        "modern_xy_RMSE_percentage_points": 2.624202565323737,
+        "dilute_PTx_RMSE_K": 0.14412999447412925,
+        "predicted_azeotrope": {
+          "x_water": 0.9594533897210636,
+          "x_propionic_acid": 0.04054661027893636,
+          "temperature_C": 99.89502624810808
+        },
+        "recommendation": "Supersede for water/propionic-acid UNIQUAC-VDM use if the recommended NRTL-VDM method is available; retain as historical provenance until runtime databases are deliberately rebuilt."
+      }
+    }
+  }
+}

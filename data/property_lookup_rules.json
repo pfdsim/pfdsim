@@ -1,0 +1,39 @@
+{
+  "reference_temperature_K": 298.15,
+  "vaporization": {
+    "max_hvap_kj_per_mol": 150.0,
+    "max_hvap_kj_per_mol_per_mw": 1.5
+  },
+  "critical_properties": {
+    "min_Tc_over_Tb": 1.05,
+    "max_Tc_over_Tb": 2.5
+  },
+  "nonvolatile_ionic": {
+    "name_tokens": [
+      "sodium",
+      "potassium",
+      "lithium",
+      "calcium",
+      "magnesium",
+      "ammonium"
+    ],
+    "formula_element_tokens": [
+      "Li",
+      "Na",
+      "K",
+      "Rb",
+      "Cs",
+      "Mg",
+      "Ca",
+      "Sr",
+      "Ba",
+      "Al",
+      "Fe",
+      "Cu",
+      "Zn",
+      "Ag",
+      "Pb",
+      "Hg"
+    ]
+  }
+}

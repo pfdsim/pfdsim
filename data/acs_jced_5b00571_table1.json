@@ -1,0 +1,6006 @@
+{
+  "chemicals": {
+    "100-18-5": {
+      "article_name": "1,4 bis(1-methylethyl)benzene",
+      "article_table2_line": 1145,
+      "article_table2_name": "1,4-Bis(1-METHYLETHYL)BENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.35,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 676.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 617.0,
+        "Zc": 0.258,
+        "rho_c_g_cm3": 0.263,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C12H18",
+      "molar_mass_g_mol": 162.276,
+      "name": "1,4 bis(1-methylethyl)benzene",
+      "source_table1_line": 214
+    },
+    "100-41-4": {
+      "article_name": "ethylbenzene",
+      "article_table2_line": 1075,
+      "article_table2_name": "ETHYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.609,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 617.15,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 373.8,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.284,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C8H10",
+      "molar_mass_g_mol": 106.168,
+      "name": "ethylbenzene",
+      "source_table1_line": 199
+    },
+    "100-42-5": {
+      "article_name": "ethenylbenzene",
+      "article_table2_line": 1173,
+      "article_table2_name": "ETHENYLBENZENE(Styrene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.95,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 637.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 353.1,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.295,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C8H8",
+      "molar_mass_g_mol": 104.152,
+      "name": "ethenylbenzene",
+      "source_table1_line": 236
+    },
+    "100-47-0": {
+      "article_name": "benzonitrile",
+      "article_table2_line": 1886,
+      "article_table2_name": "BENZONITRILE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.2,
+        "Pc_uncertainty_MPa": 0.5,
+        "Tc_K": 700.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C7H5N",
+      "molar_mass_g_mol": 103.124,
+      "name": "benzonitrile",
+      "source_table1_line": 484
+    },
+    "100-51-6": {
+      "article_name": "phenylmethanol",
+      "article_table2_line": 1753,
+      "article_table2_name": "PHENYLMETHANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.3,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 714.0,
+        "Tc_uncertainty_K": 3.0
+      },
+      "formula": "C7H8O",
+      "molar_mass_g_mol": 108.14,
+      "name": "phenylmethanol",
+      "source_table1_line": 417
+    },
+    "100-52-7": {
+      "article_name": "Benzaldehyde",
+      "article_table2_line": 1841,
+      "article_table2_name": "BENZALDEHYDE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.41,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 693.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C7H6O",
+      "molar_mass_g_mol": 106.124,
+      "name": "Benzaldehyde",
+      "source_table1_line": 467
+    },
+    "100-68-5": {
+      "article_name": "methylthiobenzene",
+      "article_table2_line": 1866,
+      "article_table2_name": "METHYLTHIOBENZENE (Thioanisole)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.05,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 706.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C7H8S",
+      "molar_mass_g_mol": 124.201,
+      "name": "methylthiobenzene",
+      "source_table1_line": 477
+    },
+    "1002-84-2": {
+      "article_name": "pentadecanoic acid",
+      "article_table2_line": 1487,
+      "article_table2_name": "PENTADECANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.57,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 777.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C15H30O2",
+      "molar_mass_g_mol": 242.403,
+      "name": "pentadecanoic acid",
+      "source_table1_line": 324
+    },
+    "101-81-5": {
+      "article_name": "diphenylmethane",
+      "article_table2_line": 1179,
+      "article_table2_name": "DIPHENYLMETHANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.9,
+        "Pc_uncertainty_MPa": 0.3,
+        "Tc_K": 770.0,
+        "Tc_uncertainty_K": 10.0,
+        "Vc_cm3_mol": 560.8,
+        "Zc": 0.256,
+        "rho_c_g_cm3": 0.3,
+        "rho_c_uncertainty_g_cm3": 0.03
+      },
+      "formula": "C13H12",
+      "molar_mass_g_mol": 168.239,
+      "name": "diphenylmethane",
+      "source_table1_line": 238
+    },
+    "1012-72-2": {
+      "article_name": "1,4-bis(1,1-dimethylethyl)benzene",
+      "article_table2_line": 1163,
+      "article_table2_name": "1,4-Bis(1,1-DIMETHYLETHYL)BENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.3,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 708.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 732.0,
+        "Zc": 0.286,
+        "rho_c_g_cm3": 0.26,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C14H22",
+      "molar_mass_g_mol": 190.33,
+      "name": "1,4-bis(1,1-dimethylethyl)benzene",
+      "source_table1_line": 217
+    },
+    "1014-60-4": {
+      "article_name": "1,3-bis(1,1-dimethylethyl)benzene",
+      "article_table2_line": 1151,
+      "article_table2_name": "1,3-Bis(1,1-DIMETHYLETHYL)BENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 687.6,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C14H22",
+      "molar_mass_g_mol": 190.33,
+      "name": "1,3-bis(1,1-dimethylethyl)benzene",
+      "source_table1_line": 216
+    },
+    "102-25-0": {
+      "article_name": "1,3,5-triethylbenzene",
+      "article_table2_line": 1149,
+      "article_table2_name": "1,3,5-TRIETHYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.435,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 679.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 624.1,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.26,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C12H18",
+      "molar_mass_g_mol": 162.276,
+      "name": "1,3,5-triethylbenzene",
+      "source_table1_line": 215
+    },
+    "102-54-5": {
+      "article_name": "bis(eta-cyclopentadienyl) iron",
+      "article_table2_line": 1869,
+      "article_table2_name": "Bis(eta-CYCLOPENTADIENYL) IRON (Ferrocene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.61,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 785.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C10H10Fe",
+      "molar_mass_g_mol": 186.035,
+      "name": "bis(eta-cyclopentadienyl) iron",
+      "source_table1_line": 479
+    },
+    "102687-65-0": {
+      "article_name": "(E)-1-chloro-3,3,3-trifluoropropene",
+      "article_table2_line": 1993,
+      "article_table2_name": "(E)-1-CHLORO-3,3,3-TRIFLUOROPROPENE (HCFO-1233zd(E))",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.77,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 438.75,
+        "Tc_uncertainty_K": 0.1
+      },
+      "formula": "C3H2ClF3",
+      "molar_mass_g_mol": 130.493,
+      "name": "(E)-1-chloro-3,3,3-trifluoropropene",
+      "source_table1_line": 508
+    },
+    "103-82-2": {
+      "article_name": "phenylethanoic acid",
+      "article_table2_line": 1770,
+      "article_table2_name": "PHENYLETHANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.95,
+        "Pc_uncertainty_MPa": 0.14,
+        "Tc_K": 766.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C8H8O2",
+      "molar_mass_g_mol": 136.15,
+      "name": "phenylethanoic acid",
+      "source_table1_line": 423
+    },
+    "104-51-8": {
+      "article_name": "butylbenzene",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 2.89,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 660.5,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 497.1,
+        "Zc": 0.262,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C10H14",
+      "molar_mass_g_mol": 134.222,
+      "name": "butylbenzene",
+      "source_table1_line": 200
+    },
+    "104-72-3": {
+      "article_name": "decylbenzene",
+      "article_table2_line": 1107,
+      "article_table2_name": "DECYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.72,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 752.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C16H26",
+      "molar_mass_g_mol": 218.384,
+      "name": "decylbenzene",
+      "source_table1_line": 205
+    },
+    "104-87-0": {
+      "article_name": "4-methylbenzaldehyde",
+      "article_table2_line": 1845,
+      "article_table2_name": "4-METHYLBENZALDEHYDE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.8,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 712.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C7H6O",
+      "molar_mass_g_mol": 120.151,
+      "name": "4-methylbenzaldehyde",
+      "source_table1_line": 468
+    },
+    "105-37-3": {
+      "article_name": "ethyl propanoate",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.39,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 546.3,
+        "Tc_uncertainty_K": 0.4,
+        "Vc_cm3_mol": 340.4,
+        "Zc": 0.254,
+        "rho_c_g_cm3": 0.3,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C5H10O2",
+      "molar_mass_g_mol": 102.133,
+      "name": "ethyl propanoate",
+      "source_table1_line": 354
+    },
+    "105-53-3": {
+      "article_name": "diethyl propanedioate",
+      "article_table2_line": 1676,
+      "article_table2_name": "DIETHYL PROPANEDIOATE (Diethyl Malonate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.67,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 652.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C7H12O4",
+      "molar_mass_g_mol": 160.169,
+      "name": "diethyl propanedioate",
+      "source_table1_line": 395
+    },
+    "105-54-4": {
+      "article_name": "ethyl butanoate",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 2.9,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 569.6,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 414.9,
+        "Zc": 0.254,
+        "rho_c_g_cm3": 0.28,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C6H12O2",
+      "molar_mass_g_mol": 116.16,
+      "name": "ethyl butanoate",
+      "source_table1_line": 356
+    },
+    "10585-24-7": {
+      "article_name": "tetrapentoxytitanium",
+      "article_table2_line": 2054,
+      "article_table2_name": "TETRAPENTOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.91,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 751.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C20H44O4Ti",
+      "molar_mass_g_mol": 396.435,
+      "name": "tetrapentoxytitanium",
+      "source_table1_line": 539
+    },
+    "106-30-9": {
+      "article_name": "ethyl heptanoate",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 2.36,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 635.0,
+        "Tc_uncertainty_K": 0.5
+      },
+      "formula": "C9H18O2",
+      "molar_mass_g_mol": 158.241,
+      "name": "ethyl heptanoate",
+      "source_table1_line": 361
+    },
+    "106-32-1": {
+      "article_name": "ethyl octanoate",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 2.16,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 655.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C10H20O2",
+      "molar_mass_g_mol": 172.268,
+      "name": "ethyl octanoate",
+      "source_table1_line": 363
+    },
+    "106-42-3": {
+      "article_name": "1,4-dimethylbenzene",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.511,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 616.2,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 377.8,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.281,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C8H10",
+      "molar_mass_g_mol": 106.168,
+      "name": "1,4-dimethylbenzene",
+      "source_table1_line": 210
+    },
+    "106-46-7": {
+      "article_name": "1,4-dichlorobenzene",
+      "article_table2_line": 2028,
+      "article_table2_name": "1,4-DICHLOROBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 669.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C6H4Cl2",
+      "molar_mass_g_mol": 184.865,
+      "name": "1,4-dichlorobenzene",
+      "source_table1_line": 529
+    },
+    "106-65-0": {
+      "article_name": "dimethyl butanedioate",
+      "article_table2_line": 1668,
+      "article_table2_name": "DIMETHYL BUTANEDIOATE (Dimethyl Succinate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.06,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 662.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C6H10O4",
+      "molar_mass_g_mol": 146.142,
+      "name": "dimethyl butanedioate",
+      "source_table1_line": 392
+    },
+    "106-70-7": {
+      "article_name": "methyl hexanoate",
+      "article_table2_line": 1601,
+      "article_table2_name": "METHYL HEXANOATE (Methyl Caproate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.88,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 612.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C7H14O2",
+      "molar_mass_g_mol": 130.187,
+      "name": "methyl hexanoate",
+      "source_table1_line": 358
+    },
+    "106-73-0": {
+      "article_name": "methyl heptanoate",
+      "article_table2_line": 1607,
+      "article_table2_name": "METHYL HEPTANOATE (Methyl Enanthate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.53,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 628.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C8H16O2",
+      "molar_mass_g_mol": 144.214,
+      "name": "methyl heptanoate",
+      "source_table1_line": 360
+    },
+    "106-79-6": {
+      "article_name": "dimethyl decanedioate",
+      "article_table2_line": 1693,
+      "article_table2_name": "DIMETHYL DECANEDIOATE (Dimethyl Sebacate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.08,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 742.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H22O4",
+      "molar_mass_g_mol": 230.304,
+      "name": "dimethyl decanedioate",
+      "source_table1_line": 402
+    },
+    "106-97-8": {
+      "article_name": "butane",
+      "article_table2_line": 631,
+      "article_table2_name": "BUTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.792,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 425.1,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 254.9,
+        "Zc": 0.274,
+        "rho_c_g_cm3": 0.228,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C4H10",
+      "molar_mass_g_mol": 58.124,
+      "name": "butane",
+      "source_table1_line": 90
+    },
+    "106-98-9": {
+      "article_name": "1-butene",
+      "article_table2_line": 937,
+      "article_table2_name": "1-BUTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.015,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 419.4,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 238.8,
+        "Zc": 0.275,
+        "rho_c_g_cm3": 0.235,
+        "rho_c_uncertainty_g_cm3": 0.007
+      },
+      "formula": "C4H8",
+      "molar_mass_g_mol": 56.108,
+      "name": "1-butene",
+      "source_table1_line": 142
+    },
+    "107-18-6": {
+      "article_name": "2-propen-1-ol",
+      "article_table2_line": 1338,
+      "article_table2_name": "2-PROPEN-1-OL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.7,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 543.0,
+        "Tc_uncertainty_K": 5.0
+      },
+      "formula": "C3H6O",
+      "molar_mass_g_mol": 58.08,
+      "name": "2-propen-1-ol",
+      "source_table1_line": 270
+    },
+    "107-39-1": {
+      "article_name": "2,4,4-trimethyl-1-pentene",
+      "article_table2_line": 1044,
+      "article_table2_name": "2,4,4-TRIMETHYL-1-PENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.73,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 550.7,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "2,4,4-trimethyl-1-pentene",
+      "source_table1_line": 193
+    },
+    "107-88-0": {
+      "article_name": "1,3-butanediol",
+      "article_table2_line": 1396,
+      "article_table2_name": "1,3-BUTANEDIOL (1,3-Butylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.0,
+        "Pc_uncertainty_MPa": 0.3,
+        "Tc_K": 690.0,
+        "Tc_uncertainty_K": 8.0,
+        "Vc_cm3_mol": 253.7,
+        "Zc": 0.221,
+        "rho_c_g_cm3": 0.3,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C4H10O2",
+      "molar_mass_g_mol": 76.095,
+      "name": "1,3-butanediol",
+      "source_table1_line": 280
+    },
+    "1077-16-3": {
+      "article_name": "hexylbenzene",
+      "article_table2_line": 1101,
+      "article_table2_name": "HEXYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.35,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 695.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H18",
+      "molar_mass_g_mol": 162.276,
+      "name": "hexylbenzene",
+      "source_table1_line": 202
+    },
+    "1078-71-3": {
+      "article_name": "heptybenzene",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 2.14,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 708.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "extraction_notes": [
+        "Table 1 text appears to omit the l in heptylbenzene."
+      ],
+      "formula": "C13H20",
+      "molar_mass_g_mol": 176.303,
+      "name": "heptybenzene",
+      "source_table1_line": 203
+    },
+    "108-05-4": {
+      "article_name": "ethenyl ethanoate",
+      "article_table2_line": 1564,
+      "article_table2_name": "ETHENYL ETHANOATE (Vinyl Acetate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.16,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 519.2,
+        "Tc_uncertainty_K": 0.1
+      },
+      "formula": "C4H6O2",
+      "molar_mass_g_mol": 86.09,
+      "name": "ethenyl ethanoate",
+      "source_table1_line": 350
+    },
+    "108-32-7": {
+      "article_name": "propylene carbonate",
+      "article_table2_line": 1853,
+      "article_table2_name": "PROPYLENE CARBONATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.14,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 763.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C4H6O3",
+      "molar_mass_g_mol": 102.089,
+      "name": "propylene carbonate",
+      "source_table1_line": 472
+    },
+    "108-38-3": {
+      "article_name": "1,3-dimethylbenzene",
+      "article_table2_line": 1119,
+      "article_table2_name": "1,3-DIMETHYLBENZENE (m-Xylene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.541,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 617.0,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 375.2,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.283,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C8H10",
+      "molar_mass_g_mol": 106.168,
+      "name": "1,3-dimethylbenzene",
+      "source_table1_line": 209
+    },
+    "108-46-3": {
+      "article_name": "1,3-benzenediol",
+      "article_table2_line": 1751,
+      "article_table2_name": "1,3-BENZENEDIOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 6.24,
+        "Pc_uncertainty_MPa": 0.12,
+        "Tc_K": 836.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C6H6O2",
+      "molar_mass_g_mol": 110.112,
+      "name": "1,3-benzenediol",
+      "source_table1_line": 416
+    },
+    "108-59-8": {
+      "article_name": "dimethyl propanedioate",
+      "article_table2_line": 1664,
+      "article_table2_name": "DIMETHYL PROPANEDIOATE (Dimethyl Malonate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.56,
+        "Pc_uncertainty_MPa": 0.15,
+        "Tc_K": 646.0,
+        "Tc_uncertainty_K": 4.0,
+        "Vc_cm3_mol": 377.5,
+        "Zc": 0.25,
+        "rho_c_g_cm3": 0.35,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C5H8O4",
+      "molar_mass_g_mol": 132.115,
+      "name": "dimethyl propanedioate",
+      "source_table1_line": 391
+    },
+    "108-87-2": {
+      "article_name": "methylcyclohexane",
+      "article_table2_line": 861,
+      "article_table2_name": "METHYLCYCLOHEXANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.48,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 572.2,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 367.7,
+        "Zc": 0.268,
+        "rho_c_g_cm3": 0.267,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "methylcyclohexane",
+      "source_table1_line": 124
+    },
+    "108-88-3": {
+      "article_name": "methylbenzene",
+      "article_table2_line": 1064,
+      "article_table2_name": "METHYLBENZENE (Toluene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.108,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 591.75,
+        "Tc_uncertainty_K": 0.15,
+        "Vc_cm3_mol": 315.6,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.292,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C7H8",
+      "molar_mass_g_mol": 92.141,
+      "name": "methylbenzene",
+      "source_table1_line": 198
+    },
+    "108-93-0": {
+      "article_name": "cyclohexanol",
+      "article_table2_line": 1378,
+      "article_table2_name": "CYCLOHEXANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.25,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 648.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 333.9,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.3,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C6H12O",
+      "molar_mass_g_mol": 100.161,
+      "name": "cyclohexanol",
+      "source_table1_line": 276
+    },
+    "108-95-2": {
+      "article_name": "phenol",
+      "article_table2_line": 1747,
+      "article_table2_name": "PHENOL (Hydroxybenzene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.93,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 694.2,
+        "Tc_uncertainty_K": 0.2
+      },
+      "formula": "C6H6O",
+      "molar_mass_g_mol": 94.113,
+      "name": "phenol",
+      "source_table1_line": 415
+    },
+    "109-49-9": {
+      "article_name": "5-hexene-2-one",
+      "article_table2_line": 1461,
+      "article_table2_name": "5-HEXENE-2-ONE (Allyl Acetone)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.6,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 593.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H10O",
+      "molar_mass_g_mol": 98.145,
+      "name": "5-hexene-2-one",
+      "source_table1_line": 315
+    },
+    "109-66-0": {
+      "article_name": "pentane",
+      "article_table2_line": 643,
+      "article_table2_name": "PENTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.37,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 469.7,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 311.0,
+        "Zc": 0.268,
+        "rho_c_g_cm3": 0.232,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C5H12",
+      "molar_mass_g_mol": 72.151,
+      "name": "pentane",
+      "source_table1_line": 91
+    },
+    "109-94-4": {
+      "article_name": "ethyl methanoate",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 4.74,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 507.5,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 229.3,
+        "Zc": 0.258,
+        "rho_c_g_cm3": 0.323,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3H6O2",
+      "molar_mass_g_mol": 74.079,
+      "name": "ethyl methanoate",
+      "source_table1_line": 340
+    },
+    "110-15-6": {
+      "article_name": "butanedioic acid",
+      "article_table2_line": 1499,
+      "article_table2_name": "BUTANEDIOIC ACID (Succinic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 6.59,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 851.0,
+        "Tc_uncertainty_K": 20.0
+      },
+      "formula": "C4H6O4",
+      "molar_mass_g_mol": 118.088,
+      "name": "butanedioic acid",
+      "source_table1_line": 330
+    },
+    "110-42-9": {
+      "article_name": "methyl decanoate",
+      "article_table2_line": 1623,
+      "article_table2_name": "METHYL DECANOATE (Methyl Caprate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.93,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 675.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C11H22O2",
+      "molar_mass_g_mol": 186.295,
+      "name": "methyl decanoate",
+      "source_table1_line": 380
+    },
+    "110-54-3": {
+      "article_name": "hexane",
+      "article_table2_line": 665,
+      "article_table2_name": "HEXANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.027,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 507.6,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 368.3,
+        "Zc": 0.264,
+        "rho_c_g_cm3": 0.234,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C6H14",
+      "molar_mass_g_mol": 86.178,
+      "name": "hexane",
+      "source_table1_line": 92
+    },
+    "110-63-4": {
+      "article_name": "1,4-butanediol",
+      "article_table2_line": 1400,
+      "article_table2_name": "1,4-BUTANEDIOL (Tetramethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.8,
+        "Pc_uncertainty_MPa": 0.4,
+        "Tc_K": 725.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C4H10O2",
+      "molar_mass_g_mol": 76.095,
+      "name": "1,4-butanediol",
+      "source_table1_line": 281
+    },
+    "110-71-4": {
+      "article_name": "1,2-dimethoxyethane",
+      "article_table2_line": 1716,
+      "article_table2_name": "1,2-DIMETHOXYETHANE (Ethylene Glycol Dimethyl Ether)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.88,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 537.0,
+        "Tc_uncertainty_K": 3.0,
+        "Vc_cm3_mol": 308.6,
+        "Zc": 0.268,
+        "rho_c_g_cm3": 0.292,
+        "rho_c_uncertainty_g_cm3": 0.008
+      },
+      "formula": "C4H10O2",
+      "molar_mass_g_mol": 90.122,
+      "name": "1,2-dimethoxyethane",
+      "source_table1_line": 408
+    },
+    "110-74-7": {
+      "article_name": "propyl methanoate",
+      "article_table2_line": 1531,
+      "article_table2_name": "PROPYL METHANOATE (Propyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.06,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 538.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 285.1,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.309,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C4H8O2",
+      "molar_mass_g_mol": 88.106,
+      "name": "propyl methanoate",
+      "source_table1_line": 341
+    },
+    "110-82-7": {
+      "article_name": "cyclohexane",
+      "article_table2_line": 846,
+      "article_table2_name": "CYCLOHEXANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.08,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 553.6,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 308.3,
+        "Zc": 0.273,
+        "rho_c_g_cm3": 0.273,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "cyclohexane",
+      "source_table1_line": 122
+    },
+    "110-83-8": {
+      "article_name": "cyclohexene",
+      "article_table2_line": 1050,
+      "article_table2_name": "CYCLOHEXENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.45,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 560.4,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 293.4,
+        "Zc": 0.28,
+        "rho_c_g_cm3": 0.28,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C6H10",
+      "molar_mass_g_mol": 82.146,
+      "name": "cyclohexene",
+      "source_table1_line": 195
+    },
+    "110-85-0": {
+      "article_name": "piperazine",
+      "article_table2_line": 1892,
+      "article_table2_name": "PIPERAZINE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.5,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 657.0,
+        "Tc_uncertainty_K": 3.0,
+        "Vc_cm3_mol": 269.2,
+        "Zc": 0.271,
+        "rho_c_g_cm3": 0.32,
+        "rho_c_uncertainty_g_cm3": 0.03
+      },
+      "formula": "C4H10N2",
+      "molar_mass_g_mol": 86.138,
+      "name": "piperazine",
+      "source_table1_line": 486
+    },
+    "110-94-1": {
+      "article_name": "pentanedioic acid",
+      "article_table2_line": 1501,
+      "article_table2_name": "PENTANEDIOIC ACID (Glutaric Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.27,
+        "Pc_uncertainty_MPa": 0.3,
+        "Tc_K": 840.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C5H8O4",
+      "molar_mass_g_mol": 132.115,
+      "name": "pentanedioic acid",
+      "source_table1_line": 331
+    },
+    "111-01-3": {
+      "article_name": "2,6,10,15,19,23-hexamethyltetracosane",
+      "article_table2_line": 836,
+      "article_table2_name": "2,6,10,15,19,23-HEXAMETHYLTETRACOSANE (Squalane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.728,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 810.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C30H62",
+      "molar_mass_g_mol": 422.826,
+      "name": "2,6,10,15,19,23-hexamethyltetracosane",
+      "source_table1_line": 119
+    },
+    "111-11-5": {
+      "article_name": "methyl octanoate",
+      "article_table2_line": 1615,
+      "article_table2_name": "METHYL OCTANOATE (Methyl Caprylate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.34,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 646.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C9H18O2",
+      "molar_mass_g_mol": 158.241,
+      "name": "methyl octanoate",
+      "source_table1_line": 362
+    },
+    "111-16-0": {
+      "article_name": "heptanedioic acid",
+      "article_table2_line": 1505,
+      "article_table2_name": "HEPTANEDIOIC ACID (Pimelic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.28,
+        "Pc_uncertainty_MPa": 0.15,
+        "Tc_K": 842.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C7H12O4",
+      "molar_mass_g_mol": 160.169,
+      "name": "heptanedioic acid",
+      "source_table1_line": 333
+    },
+    "111-20-6": {
+      "article_name": "decanedioic acid",
+      "article_table2_line": 1511,
+      "article_table2_name": "DECANEDIOIC ACID (Sebacic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.5,
+        "Pc_uncertainty_MPa": 0.11,
+        "Tc_K": 845.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C10H18O4",
+      "molar_mass_g_mol": 202.25,
+      "name": "decanedioic acid",
+      "source_table1_line": 336
+    },
+    "111-27-3": {
+      "article_name": "1-hexanol",
+      "article_table2_line": 1291,
+      "article_table2_name": "1-HEXANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.417,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 610.3,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 387.0,
+        "Zc": 0.261,
+        "rho_c_g_cm3": 0.264,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C6H14O",
+      "molar_mass_g_mol": 102.177,
+      "name": "1-hexanol",
+      "source_table1_line": 258
+    },
+    "111-29-5": {
+      "article_name": "1,5-pentanediol",
+      "article_table2_line": 1407,
+      "article_table2_name": "1,5-PENTANEDIOL (Pentamethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.0,
+        "Pc_uncertainty_MPa": 0.16,
+        "Tc_K": 731.0,
+        "Tc_uncertainty_K": 11.0
+      },
+      "formula": "C5H12O2",
+      "molar_mass_g_mol": 90.122,
+      "name": "1,5-pentanediol",
+      "source_table1_line": 283
+    },
+    "111-43-3": {
+      "article_name": "dipropyl ether",
+      "article_table2_line": 1720,
+      "article_table2_name": "DIPROPYL ETHER (1-Propoxypropane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.03,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 531.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H14O",
+      "molar_mass_g_mol": 102.177,
+      "name": "dipropyl ether",
+      "source_table1_line": 409
+    },
+    "111-46-6": {
+      "article_name": "3-oxa-1,5-pentanediol",
+      "article_table2_line": 1411,
+      "article_table2_name": "3-OXA-1,5-PENTANEDIOL (Diethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.77,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 753.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "extraction_notes": [
+        "Article Table 1 prints the 3-oxa-1,5-pentanediol (diethylene glycol) row with Tc/pc identical to the preceding 2,2-dimethyl-1,3-propanediol row (687 K, 4.20 MPa) -- a typesetting duplication; the values also break the DEG/TEG/tetraEG homologous trend.  Replaced with Nikitin's pulse-heating measurements: Tc = 753 +/- 8 K, pc = 4.77 +/- 0.2 MPa (verified by PFDSim, 2026-07-09)."
+      ],
+      "formula": "C4H10O3",
+      "molar_mass_g_mol": 104.149,
+      "name": "3-oxa-1,5-pentanediol",
+      "source_table1_line": 285
+    },
+    "111-65-9": {
+      "article_name": "octane",
+      "article_table2_line": 700,
+      "article_table2_name": "OCTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.49,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 568.7,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 492.4,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.232,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C8H18",
+      "molar_mass_g_mol": 114.232,
+      "name": "octane",
+      "source_table1_line": 94
+    },
+    "111-70-6": {
+      "article_name": "1-heptanol",
+      "article_table2_line": 1306,
+      "article_table2_name": "1-HEPTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.058,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 632.6,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 435.2,
+        "Zc": 0.253,
+        "rho_c_g_cm3": 0.267,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C7H16O",
+      "molar_mass_g_mol": 116.204,
+      "name": "1-heptanol",
+      "source_table1_line": 259
+    },
+    "111-82-0": {
+      "article_name": "methyl dodecanoate",
+      "article_table2_line": 1627,
+      "article_table2_name": "METHYL DODECANOATE (Methyl Laurate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.52,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 712.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C13H26O2",
+      "molar_mass_g_mol": 214.349,
+      "name": "methyl dodecanoate",
+      "source_table1_line": 382
+    },
+    "111-84-2": {
+      "article_name": "nonane",
+      "article_table2_line": 710,
+      "article_table2_name": "NONANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.29,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 594.6,
+        "Tc_uncertainty_K": 0.6,
+        "Vc_cm3_mol": 555.2,
+        "Zc": 0.257,
+        "rho_c_g_cm3": 0.231,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C9H20",
+      "molar_mass_g_mol": 128.259,
+      "name": "nonane",
+      "source_table1_line": 95
+    },
+    "1119-40-0": {
+      "article_name": "dimethyl pentanedioate",
+      "article_table2_line": 1670,
+      "article_table2_name": "DIMETHYL PENTANEDIOATE (Dimethyl Glutarate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.77,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 682.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C7H12O4",
+      "molar_mass_g_mol": 160.169,
+      "name": "dimethyl pentanedioate",
+      "source_table1_line": 393
+    },
+    "112-15-2": {
+      "article_name": "2-(2-ethoxyethoxy)ethyl ethanoate",
+      "article_table2_line": 1569,
+      "article_table2_name": "2-(2-ETHOXYETHOXY)ETHYL ETHANOATE (Diethylene Glycol Monoethyl Ether Acetate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.63,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 668.0,
+        "Tc_uncertainty_K": 5.0
+      },
+      "formula": "C8H16O4",
+      "molar_mass_g_mol": 176.212,
+      "name": "2-(2-ethoxyethoxy)ethyl ethanoate",
+      "source_table1_line": 352
+    },
+    "112-23-2": {
+      "article_name": "heptyl methanoate",
+      "article_table2_line": 1555,
+      "article_table2_name": "HEPTYL METHANOATE (Heptyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 636.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C8H16O2",
+      "molar_mass_g_mol": 144.214,
+      "name": "heptyl methanoate",
+      "source_table1_line": 347
+    },
+    "112-32-3": {
+      "article_name": "octyl methanoate",
+      "article_table2_line": 1557,
+      "article_table2_name": "OCTYL METHANOATE (Octyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 654.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C9H18O2",
+      "molar_mass_g_mol": 158.241,
+      "name": "octyl methanoate",
+      "source_table1_line": 348
+    },
+    "112-37-8": {
+      "article_name": "undecanoic acid",
+      "article_table2_line": 1481,
+      "article_table2_name": "UNDECANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.13,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 728.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C11H22O2",
+      "molar_mass_g_mol": 186.295,
+      "name": "undecanoic acid",
+      "source_table1_line": 321
+    },
+    "112-39-0": {
+      "article_name": "methyl hexadecanoate",
+      "article_table2_line": 1633,
+      "article_table2_name": "METHYL HEXADECANOATE (Methyl Palmitate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.17,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 760.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C17H34O2",
+      "molar_mass_g_mol": 270.457,
+      "name": "methyl hexadecanoate",
+      "source_table1_line": 384
+    },
+    "112-40-3": {
+      "article_name": "dodecane",
+      "article_table2_line": 724,
+      "article_table2_name": "DODECANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.81,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 658.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 753.7,
+        "Zc": 0.249,
+        "rho_c_g_cm3": 0.226,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C12H26",
+      "molar_mass_g_mol": 170.34,
+      "name": "dodecane",
+      "source_table1_line": 97
+    },
+    "112-47-0": {
+      "article_name": "1,10-decanediol",
+      "article_table2_line": 1425,
+      "article_table2_name": "1,10-DECANEDIOL (Decamethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.2,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 770.0,
+        "Tc_uncertainty_K": 12.0
+      },
+      "formula": "C10H22O2",
+      "molar_mass_g_mol": 174.284,
+      "name": "1,10-decanediol",
+      "source_table1_line": 290
+    },
+    "112-55-0": {
+      "article_name": "1-dodecanethiol",
+      "article_table2_line": 1864,
+      "article_table2_name": "1-DODECANETHIOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.81,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 734.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C12H26S",
+      "molar_mass_g_mol": 202.4,
+      "name": "1-dodecanethiol",
+      "source_table1_line": 476
+    },
+    "112-58-3": {
+      "article_name": "dihexyl ether",
+      "article_table2_line": 1740,
+      "article_table2_name": "DIHEXYL ETHER (1-Hexoxyhexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.44,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 665.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H26O",
+      "molar_mass_g_mol": 186.339,
+      "name": "dihexyl ether",
+      "source_table1_line": 411
+    },
+    "112-61-8": {
+      "article_name": "methyl octadecanoate",
+      "article_table2_line": 1635,
+      "article_table2_name": "METHYL OCTADECANOATE (Methyl Stearate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.08,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 785.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C19H38O2",
+      "molar_mass_g_mol": 298.511,
+      "name": "methyl octadecanoate",
+      "source_table1_line": 385
+    },
+    "112-62-9": {
+      "article_name": "(Z)-9-methyl 2-octadecenoate",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 1.21,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 777.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "extraction_notes": [
+        "Resolved from Table 2 heading (Z)-9-METHYL OCTADECENOATE (Methyl Oleate)."
+      ],
+      "formula": "C19H36O2",
+      "molar_mass_g_mol": 296.495,
+      "name": "(Z)-9-methyl 2-octadecenoate",
+      "source_table1_line": 389
+    },
+    "112-70-9": {
+      "article_name": "1-tridecanol",
+      "article_table2_line": 1310,
+      "article_table2_name": "1-TRIDECANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.79,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 732.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C13H28O",
+      "molar_mass_g_mol": 200.366,
+      "name": "1-tridecanol",
+      "source_table1_line": 260
+    },
+    "112-72-1": {
+      "article_name": "1-tetradecanol",
+      "article_table2_line": 1312,
+      "article_table2_name": "1-TETRADECANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.67,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 743.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C14H30O",
+      "molar_mass_g_mol": 214.393,
+      "name": "1-tetradecanol",
+      "source_table1_line": 261
+    },
+    "112-85-6": {
+      "article_name": "docosanoic acid",
+      "article_table2_line": 1497,
+      "article_table2_name": "DOCOSANOIC ACID (Behenic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.11,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 837.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C22H44O2",
+      "molar_mass_g_mol": 340.592,
+      "name": "docosanoic acid",
+      "source_table1_line": 329
+    },
+    "112-92-5": {
+      "article_name": "1-octadecanol",
+      "article_table2_line": 1320,
+      "article_table2_name": "1-OCTADECANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.28,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 790.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C18H38O",
+      "molar_mass_g_mol": 270.501,
+      "name": "1-octadecanol",
+      "source_table1_line": 265
+    },
+    "112-95-8": {
+      "article_name": "eicosane",
+      "article_table2_line": 743,
+      "article_table2_name": "EICOSANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.08,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 768.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C20H42",
+      "molar_mass_g_mol": 282.556,
+      "name": "eicosane",
+      "source_table1_line": 99
+    },
+    "115-07-1": {
+      "article_name": "propene",
+      "article_table2_line": 931,
+      "article_table2_name": "PROPENE (Propylene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.6,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 364.9,
+        "Tc_uncertainty_K": 0.4,
+        "Vc_cm3_mol": 184.6,
+        "Zc": 0.28,
+        "rho_c_g_cm3": 0.228,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3H6",
+      "molar_mass_g_mol": 42.081,
+      "name": "propene",
+      "source_table1_line": 141
+    },
+    "115-10-6": {
+      "article_name": "dimethyl ether",
+      "article_table2_line": 1698,
+      "article_table2_name": "DIMETHYL ETHER (Methoxymethane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.34,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 403.3,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 168.1,
+        "Zc": 0.268,
+        "rho_c_g_cm3": 0.274,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C2H6O",
+      "molar_mass_g_mol": 46.069,
+      "name": "dimethyl ether",
+      "source_table1_line": 405
+    },
+    "115-11-7": {
+      "article_name": "2-methyl-1-propene",
+      "article_table2_line": 986,
+      "article_table2_name": "2-METHYL-1-PROPENE (Isobutene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.005,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 418.0,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 239.8,
+        "Zc": 0.276,
+        "rho_c_g_cm3": 0.234,
+        "rho_c_uncertainty_g_cm3": 0.001
+      },
+      "formula": "C4H8",
+      "molar_mass_g_mol": 56.108,
+      "name": "2-methyl-1-propene",
+      "source_table1_line": 170
+    },
+    "116-15-4": {
+      "article_name": "hexafluoropropene",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.134,
+        "Pc_uncertainty_MPa": 0.005,
+        "Tc_K": 359.0,
+        "Tc_uncertainty_K": 0.08,
+        "Vc_cm3_mol": 259.1,
+        "Zc": 0.272,
+        "rho_c_g_cm3": 0.579,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C3F6",
+      "molar_mass_g_mol": 150.021,
+      "name": "hexafluoropropene",
+      "source_table1_line": 506
+    },
+    "117-81-7": {
+      "article_name": "bis(2-ethylhexyl)-1,2-benzenedicarboxylate",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 1.07,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 835.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "extraction_notes": [
+        "Resolved from wrapped Table 2 heading for bis(2-ethylhexyl) phthalate."
+      ],
+      "formula": "C24H38O4",
+      "molar_mass_g_mol": 390.564,
+      "name": "bis(2-ethylhexyl)-1,2-benzenedicarboxylate",
+      "source_table1_line": 463
+    },
+    "117-84-0": {
+      "article_name": "dioctyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1830,
+      "article_table2_name": "DIOCTYL-1,2-BENZENEDICARBOXYLATE (Dioctyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.08,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 840.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C24H38O4",
+      "molar_mass_g_mol": 390.564,
+      "name": "dioctyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 462
+    },
+    "118-90-1": {
+      "article_name": "2-methylbenzoic acid",
+      "article_table2_line": 1772,
+      "article_table2_name": "2-METHYLBENZOIC (o-Toluic) ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.92,
+        "Pc_uncertainty_MPa": 0.12,
+        "Tc_K": 763.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C8H8O2",
+      "molar_mass_g_mol": 136.15,
+      "name": "2-methylbenzoic acid",
+      "source_table1_line": 424
+    },
+    "119-64-2": {
+      "article_name": "1,2,3,4-tetrahydronaphthalene",
+      "article_table2_line": 1221,
+      "article_table2_name": "1,2,3,4-TETRAHYDRONAPHTHALENE (Tetralin)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.65,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 720.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 621.2,
+        "Zc": 0.379,
+        "rho_c_g_cm3": 0.324,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C10H12",
+      "molar_mass_g_mol": 132.206,
+      "name": "1,2,3,4-tetrahydronaphthalene",
+      "source_table1_line": 250
+    },
+    "119-67-5": {
+      "article_name": "2-carboxybenzaldehyde",
+      "article_table2_line": 1788,
+      "article_table2_name": "2-CARBOXYBENZALDEHYDE (Phthalaldehydic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.8,
+        "Pc_uncertainty_MPa": 0.15,
+        "Tc_K": 864.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C8H6O3",
+      "molar_mass_g_mol": 150.133,
+      "name": "2-carboxybenzaldehyde",
+      "source_table1_line": 432
+    },
+    "120-12-7": {
+      "article_name": "anthracene",
+      "article_table2_line": 1213,
+      "article_table2_name": "ANTHRACENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.17,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 894.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C14H10",
+      "molar_mass_g_mol": 178.234,
+      "name": "anthracene",
+      "source_table1_line": 247
+    },
+    "120-94-5": {
+      "article_name": "1-methylpyrrolidine",
+      "article_table2_line": 1890,
+      "article_table2_name": "1-METHYLPYRROLIDINE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.0,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 548.6,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 302.0,
+        "Zc": 0.265,
+        "rho_c_g_cm3": 0.282,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C5H11N",
+      "molar_mass_g_mol": 85.15,
+      "name": "1-methylpyrrolidine",
+      "source_table1_line": 485
+    },
+    "122-79-2": {
+      "article_name": "phenyl ethanoate",
+      "article_table2_line": 1814,
+      "article_table2_name": "PHENYL ETHANOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.59,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 686.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C8H8O2",
+      "molar_mass_g_mol": 136.15,
+      "name": "phenyl ethanoate",
+      "source_table1_line": 454
+    },
+    "122-97-4": {
+      "article_name": "3-phenyl-1-propanol",
+      "article_table2_line": 1761,
+      "article_table2_name": "3-PHENYL-1-PROPANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.46,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 732.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C9H12O",
+      "molar_mass_g_mol": 136.194,
+      "name": "3-phenyl-1-propanol",
+      "source_table1_line": 419
+    },
+    "123-02-4": {
+      "article_name": "tridecylbenzene",
+      "article_table2_line": 1111,
+      "article_table2_name": "TRIDECYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.54,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 790.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C19H32",
+      "molar_mass_g_mol": 260.465,
+      "name": "tridecylbenzene",
+      "source_table1_line": 207
+    },
+    "123-25-1": {
+      "article_name": "diethyl butanedioate",
+      "article_table2_line": 1680,
+      "article_table2_name": "DIETHYL BUTANEDIOATE (Diethyl Succinate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.2,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 665.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C8H14O4",
+      "molar_mass_g_mol": 174.196,
+      "name": "diethyl butanedioate",
+      "source_table1_line": 397
+    },
+    "123-38-6": {
+      "article_name": "propanal",
+      "article_table2_line": 1430,
+      "article_table2_name": "PROPANAL (Propionaldehyde)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.15,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 504.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 203.8,
+        "Zc": 0.25,
+        "rho_c_g_cm3": 0.285,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3H6O",
+      "molar_mass_g_mol": 58.08,
+      "name": "propanal",
+      "source_table1_line": 308
+    },
+    "123-51-3": {
+      "article_name": "3-methyl-1-butanol",
+      "article_table2_line": 1359,
+      "article_table2_name": "3-METHYL-1-BUTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.93,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 577.2,
+        "Tc_uncertainty_K": 0.5
+      },
+      "formula": "C5H12O",
+      "molar_mass_g_mol": 88.15,
+      "name": "3-methyl-1-butanol",
+      "source_table1_line": 274
+    },
+    "123-63-7": {
+      "article_name": "paraldehyde",
+      "article_table2_line": 1450,
+      "article_table2_name": "PARALDEHYDE(ethanal trimer)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.04,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 534.43,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C6H12O3",
+      "molar_mass_g_mol": 132.159,
+      "name": "paraldehyde",
+      "source_table1_line": 311
+    },
+    "123-66-0": {
+      "article_name": "ethyl hexanoate",
+      "article_table2_line": 1603,
+      "article_table2_name": "ETHYL HEXANOATE (Ethyl Caproate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.53,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 615.2,
+        "Tc_uncertainty_K": 0.1
+      },
+      "formula": "C8H16O2",
+      "molar_mass_g_mol": 144.214,
+      "name": "ethyl hexanoate",
+      "source_table1_line": 359
+    },
+    "123-72-8": {
+      "article_name": "butanal",
+      "article_table2_line": 1434,
+      "article_table2_name": "BUTANAL (Butyraldehyde)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.32,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 537.0,
+        "Tc_uncertainty_K": 3.0,
+        "Vc_cm3_mol": 257.5,
+        "Zc": 0.249,
+        "rho_c_g_cm3": 0.28,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C4H8O",
+      "molar_mass_g_mol": 72.107,
+      "name": "butanal",
+      "source_table1_line": 309
+    },
+    "123-99-9": {
+      "article_name": "nonanedioic acid",
+      "article_table2_line": 1509,
+      "article_table2_name": "NONANEDIOIC ACID (Azelaic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.72,
+        "Pc_uncertainty_MPa": 0.12,
+        "Tc_K": 844.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C9H16O4",
+      "molar_mass_g_mol": 188.223,
+      "name": "nonanedioic acid",
+      "source_table1_line": 335
+    },
+    "124-04-9": {
+      "article_name": "hexanedioic acid",
+      "article_table2_line": 1503,
+      "article_table2_name": "HEXANEDIOIC ACID (Adipic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.85,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 841.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C6H10O4",
+      "molar_mass_g_mol": 146.142,
+      "name": "hexanedioic acid",
+      "source_table1_line": 332
+    },
+    "124-07-2": {
+      "article_name": "octanoic acid",
+      "article_table2_line": 1477,
+      "article_table2_name": "OCTANOIC ACID (Caprylic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.87,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 693.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 518.8,
+        "Zc": 0.258,
+        "rho_c_g_cm3": 0.278,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16O2",
+      "molar_mass_g_mol": 144.214,
+      "name": "octanoic acid",
+      "source_table1_line": 320
+    },
+    "124-10-7": {
+      "article_name": "methyl tetradecanoate",
+      "article_table2_line": 1631,
+      "article_table2_name": "METHYL TETRADECANOATE (Methyl Myristate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.32,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 730.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C15H30O2",
+      "molar_mass_g_mol": 242.403,
+      "name": "methyl tetradecanoate",
+      "source_table1_line": 383
+    },
+    "124-17-4": {
+      "article_name": "2-(2-butoxyethoxy)ethyl ethanoate",
+      "article_table2_line": 1573,
+      "article_table2_name": "2-(2-BUTOXYETHOXY)ETHYL ETHANOATE (Diethylene Glycol Monobutyl Ether Acetate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.35,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 688.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C10H20O4",
+      "molar_mass_g_mol": 204.266,
+      "name": "2-(2-butoxyethoxy)ethyl ethanoate",
+      "source_table1_line": 353
+    },
+    "124-18-5": {
+      "article_name": "decane",
+      "article_table2_line": 716,
+      "article_table2_name": "DECANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.11,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 617.7,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 624.1,
+        "Zc": 0.256,
+        "rho_c_g_cm3": 0.228,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C10H22",
+      "molar_mass_g_mol": 142.286,
+      "name": "decane",
+      "source_table1_line": 96
+    },
+    "126-30-7": {
+      "article_name": "2,2-dimethyl-1,3-propanediol",
+      "article_table2_line": 1409,
+      "article_table2_name": "2,2-DIMETHYL-1,3-PROPANEDIOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.2,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 687.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C5H12O2",
+      "molar_mass_g_mol": 90.122,
+      "name": "2,2-dimethyl-1,3-propanediol",
+      "source_table1_line": 284
+    },
+    "1271-55-2": {
+      "article_name": "1-acetylferrocene",
+      "article_table2_line": 1879,
+      "article_table2_name": "1-ACETYLFERROCENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.28,
+        "Pc_uncertainty_MPa": 0.13,
+        "Tc_K": 847.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C12H12FeO",
+      "molar_mass_g_mol": 228.072,
+      "name": "1-acetylferrocene",
+      "source_table1_line": 480
+    },
+    "1272-44-2": {
+      "article_name": "benzoylferrocene",
+      "article_table2_line": 1883,
+      "article_table2_name": "BENZOYLFERROCENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.59,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 886.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C17H14FeO",
+      "molar_mass_g_mol": 290.143,
+      "name": "benzoylferrocene",
+      "source_table1_line": 482
+    },
+    "129-00-0": {
+      "article_name": "pyrene",
+      "article_table2_line": 1219,
+      "article_table2_name": "PYRENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.03,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 974.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C16H10",
+      "molar_mass_g_mol": 202.256,
+      "name": "pyrene",
+      "source_table1_line": 249
+    },
+    "131-11-3": {
+      "article_name": "dimethyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1816,
+      "article_table2_name": "DIMETHYL-1,2-BENZENEDICARBOXYLATE (Dimethyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.77,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 772.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C10H10O4",
+      "molar_mass_g_mol": 194.186,
+      "name": "dimethyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 455
+    },
+    "131-16-6": {
+      "article_name": "dipropyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1820,
+      "article_table2_name": "DIPROPYL-1,2-BENZENEDICARBOXYLATE (Dipropyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.9,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 784.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C14H18O4",
+      "molar_mass_g_mol": 250.294,
+      "name": "dipropyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 457
+    },
+    "131-18-0": {
+      "article_name": "dipentyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1824,
+      "article_table2_name": "DIPENTYL-1,2-BENZENEDICARBOXYLATE (Dipentyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.43,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 811.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "extraction_notes": [
+        "Article text extraction reports the dibutyl phthalate CAS for dipentyl phthalate; corrected with chemicals metadata."
+      ],
+      "formula": "C18H26O4",
+      "molar_mass_g_mol": 306.402,
+      "name": "dipentyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 459
+    },
+    "13269-52-8": {
+      "article_name": "(E)-3-hexene",
+      "article_table2_line": 996,
+      "article_table2_name": "(E)-3-HEXENE (trans-3-Hexene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 507.4,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "(E)-3-hexene",
+      "source_table1_line": 174
+    },
+    "13360-61-7": {
+      "article_name": "1-pentadecene",
+      "article_table2_line": 966,
+      "article_table2_name": "1-PENTADECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.54,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 705.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C15H30",
+      "molar_mass_g_mol": 210.405,
+      "name": "1-pentadecene",
+      "source_table1_line": 162
+    },
+    "13389-42-9": {
+      "article_name": "(E)-2-octene",
+      "article_table2_line": 1036,
+      "article_table2_name": "(E)-2-OCTENE (trans-2-Octene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 569.8,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(E)-2-octene",
+      "source_table1_line": 189
+    },
+    "135-98-8": {
+      "article_name": "(1-methylpropyl)benzene",
+      "article_table2_line": 1136,
+      "article_table2_name": "(1-METHYLPROPYL)BENZENE (sec-Butylbenzene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.027,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 652.8,
+        "Tc_uncertainty_K": 0.4,
+        "Vc_cm3_mol": 482.8,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.278,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C10H14",
+      "molar_mass_g_mol": 134.222,
+      "name": "(1-methylpropyl)benzene",
+      "source_table1_line": 212
+    },
+    "136-60-7": {
+      "article_name": "butyl benzoate",
+      "article_table2_line": 1808,
+      "article_table2_name": "BUTYL BENZOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.4,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 725.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C11H14O2",
+      "molar_mass_g_mol": 178.231,
+      "name": "butyl benzoate",
+      "source_table1_line": 436
+    },
+    "141-28-6": {
+      "article_name": "diethyl hexanedioate",
+      "article_table2_line": 1691,
+      "article_table2_name": "DIETHYL HEXANEDIOATE (Diethyl Adipate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.05,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 696.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C10H18O4",
+      "molar_mass_g_mol": 202.25,
+      "name": "diethyl hexanedioate",
+      "source_table1_line": 401
+    },
+    "141-32-2": {
+      "article_name": "butyl propenoate",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 2.91,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 598.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "extraction_notes": [
+        "Resolved from Table 2 heading BUTYL 2-PROPENOATE (Butyl Acrylate)."
+      ],
+      "formula": "C7H12O2",
+      "molar_mass_g_mol": 128.171,
+      "name": "butyl propenoate",
+      "source_table1_line": 387
+    },
+    "141-78-6": {
+      "article_name": "ethyl ethanoate",
+      "article_table2_line": 1559,
+      "article_table2_name": "ETHYL ETHANOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.84,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 523.3,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 286.1,
+        "Zc": 0.252,
+        "rho_c_g_cm3": 0.308,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C4H8O2",
+      "molar_mass_g_mol": 88.106,
+      "name": "ethyl ethanoate",
+      "source_table1_line": 349
+    },
+    "142-29-0": {
+      "article_name": "cyclopentane",
+      "article_table2_line": 1046,
+      "article_table2_name": "CYCLOPENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.8,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 506.5,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 245.0,
+        "Zc": 0.279,
+        "rho_c_g_cm3": 0.278,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "extraction_notes": [
+        "Table 1 text extracts/prints cyclopentane with C5H8 molar mass; resolved as cyclopentene."
+      ],
+      "formula": "C5H8",
+      "molar_mass_g_mol": 68.119,
+      "name": "cyclopentene",
+      "source_table1_line": 194
+    },
+    "142-62-1": {
+      "article_name": "hexanoic acid",
+      "article_table2_line": 1473,
+      "article_table2_name": "HEXANOIC ACID (Caproic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.38,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 655.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 413.4,
+        "Zc": 0.257,
+        "rho_c_g_cm3": 0.281,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C6H12O2",
+      "molar_mass_g_mol": 116.16,
+      "name": "hexanoic acid",
+      "source_table1_line": 319
+    },
+    "142-82-5": {
+      "article_name": "heptane",
+      "article_table2_line": 686,
+      "article_table2_name": "HEPTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.74,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 540.2,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 428.2,
+        "Zc": 0.261,
+        "rho_c_g_cm3": 0.234,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C7H16",
+      "molar_mass_g_mol": 100.205,
+      "name": "heptane",
+      "source_table1_line": 93
+    },
+    "143-07-7": {
+      "article_name": "dodecanoic acid",
+      "article_table2_line": 1483,
+      "article_table2_name": "DODECANOIC ACID (Lauric Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.93,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 743.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H24O2",
+      "molar_mass_g_mol": 200.322,
+      "name": "dodecanoic acid",
+      "source_table1_line": 322
+    },
+    "1454-85-9": {
+      "article_name": "1-heptadecanol",
+      "article_table2_line": 1318,
+      "article_table2_name": "1-HEPTADECANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.35,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 780.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C17H36O",
+      "molar_mass_g_mol": 256.474,
+      "name": "1-heptadecanol",
+      "source_table1_line": 264
+    },
+    "1460-02-2": {
+      "article_name": "1,3,5-tris(1,1-dimethylethyl)benzene",
+      "article_table2_line": 1169,
+      "article_table2_name": "1,3,5-Tris(1,1-DIMETHYLETHYL)BENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 700.5,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C18H30",
+      "molar_mass_g_mol": 246.438,
+      "name": "1,3,5-tris(1,1-dimethylethyl)benzene",
+      "source_table1_line": 234
+    },
+    "14686-13-6": {
+      "article_name": "(E)-2-heptene",
+      "article_table2_line": 1024,
+      "article_table2_name": "(E)-2-HEPTENE (trans-2-Heptene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 542.8,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "(E)-2-heptene",
+      "source_table1_line": 183
+    },
+    "14696-14-7": {
+      "article_name": "(E)-3-heptene",
+      "article_table2_line": 1026,
+      "article_table2_name": "(E)-3-HEPTENE (trans-3-Heptene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 538.6,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "(E)-3-heptene",
+      "source_table1_line": 184
+    },
+    "14850-23-8": {
+      "article_name": "(E)-4-octene",
+      "article_table2_line": 1038,
+      "article_table2_name": "(E)-4-OCTENE (trans-4-Octene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 566.3,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(E)-4-octene",
+      "source_table1_line": 190
+    },
+    "15181-11-0": {
+      "article_name": "1,3-bis(1,1-dimethylethyl)-5-methylbenzene",
+      "article_table2_line": 1167,
+      "article_table2_name": "1,3-Bis(1,1-DIMETHYLETHYL)-5-METHYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 695.5,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C15H24",
+      "molar_mass_g_mol": 204.357,
+      "name": "1,3-bis(1,1-dimethylethyl)-5-methylbenzene",
+      "source_table1_line": 233
+    },
+    "15870-10-7": {
+      "article_name": "2-methyl-1-heptene",
+      "article_table2_line": 1040,
+      "article_table2_name": "2-METHYL-1-HEPTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 567.5,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "2-methyl-1-heptene",
+      "source_table1_line": 191
+    },
+    "1634-04-4": {
+      "article_name": "2-methoxy-2-methylpropane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.43,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 497.1,
+        "Tc_uncertainty_K": 0.2
+      },
+      "formula": "C5H12O",
+      "molar_mass_g_mol": 80.15,
+      "name": "2-methoxy-2-methylpropane",
+      "source_table1_line": 407
+    },
+    "1636-39-1": {
+      "article_name": "1,1'-bicyclopentyl",
+      "article_table2_line": 914,
+      "article_table2_name": "1,1'-BICYCLOPENTYL (Cyclopentylcyclopentane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.3,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 690.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 512.1,
+        "Zc": 0.295,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C10H18",
+      "molar_mass_g_mol": 138.254,
+      "name": "1,1'-bicyclopentyl",
+      "source_table1_line": 136
+    },
+    "1678-91-7": {
+      "article_name": "ethylcyclohexane",
+      "article_table2_line": 865,
+      "article_table2_name": "ETHYLCYCLOHEXANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.13,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 606.5,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 433.3,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.259,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "ethylcyclohexane",
+      "source_table1_line": 125
+    },
+    "1678-92-8": {
+      "article_name": "propylcyclohexane",
+      "article_table2_line": 895,
+      "article_table2_name": "PROPYLCYCLOHEXANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.86,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 631.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C9H18",
+      "molar_mass_g_mol": 126.243,
+      "name": "propylcyclohexane",
+      "source_table1_line": 131
+    },
+    "1678-93-9": {
+      "article_name": "butylcyclohexane",
+      "article_table2_line": 903,
+      "article_table2_name": "BUTYLCYCLOHEXANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.53,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 650.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 561.1,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.25,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C10H20",
+      "molar_mass_g_mol": 140.27,
+      "name": "butylcyclohexane",
+      "source_table1_line": 133
+    },
+    "1678-98-4": {
+      "article_name": "(2-methylpropyl)cyclohexane",
+      "article_table2_line": 908,
+      "article_table2_name": "(2-METHYLPROPYL)CYCLOHEXANE (Isobutylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 642.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C10H20",
+      "molar_mass_g_mol": 140.27,
+      "name": "(2-methylpropyl)cyclohexane",
+      "source_table1_line": 134
+    },
+    "1731-84-6": {
+      "article_name": "methyl nonanoate",
+      "article_table2_line": 1621,
+      "article_table2_name": "METHYL NONANOATE (Methyl Pelargonate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.06,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 665.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C10H20O2",
+      "molar_mass_g_mol": 172.268,
+      "name": "methyl nonanoate",
+      "source_table1_line": 379
+    },
+    "1731-86-8": {
+      "article_name": "methyl undecanoate",
+      "article_table2_line": 1625,
+      "article_table2_name": "METHYL UNDECANOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.75,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 694.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H24O2",
+      "molar_mass_g_mol": 200.322,
+      "name": "methyl undecanoate",
+      "source_table1_line": 381
+    },
+    "1732-08-7": {
+      "article_name": "dimethyl heptanedioate",
+      "article_table2_line": 1685,
+      "article_table2_name": "DIMETHYL HEPTANEDIOATE (Dimethyl Pimelate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.37,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 711.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C9H16O4",
+      "molar_mass_g_mol": 188.223,
+      "name": "dimethyl heptanedioate",
+      "source_table1_line": 398
+    },
+    "1732-09-8": {
+      "article_name": "dimethyl octanedioate",
+      "article_table2_line": 1689,
+      "article_table2_name": "DIMETHYL OCTANEDIOATE (Dimethyl Suberate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.3,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 723.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C10H18O4",
+      "molar_mass_g_mol": 202.25,
+      "name": "dimethyl octanedioate",
+      "source_table1_line": 400
+    },
+    "1821-12-1": {
+      "article_name": "4-phenylbutanoic acid",
+      "article_table2_line": 1780,
+      "article_table2_name": "4-PHENYLBUTANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.21,
+        "Pc_uncertainty_MPa": 0.11,
+        "Tc_K": 783.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C10H12O2",
+      "molar_mass_g_mol": 164.204,
+      "name": "4-phenylbutanoic acid",
+      "source_table1_line": 428
+    },
+    "18435-45-5": {
+      "article_name": "1-nonadecene",
+      "article_table2_line": 974,
+      "article_table2_name": "1-NONADECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.19,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 755.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C19H38",
+      "molar_mass_g_mol": 266.513,
+      "name": "1-nonadecene",
+      "source_table1_line": 166
+    },
+    "1992-48-9": {
+      "article_name": "tetraisopropoxysilane",
+      "article_table2_line": 2041,
+      "article_table2_name": "TETRAISOPROPOXYSILANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.31,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 587.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C12H28O4Si",
+      "molar_mass_g_mol": 264.437,
+      "name": "tetraisopropoxysilane",
+      "source_table1_line": 532
+    },
+    "2049-96-9": {
+      "article_name": "pentyl benzoate",
+      "article_table2_line": 1810,
+      "article_table2_name": "PENTYL BENZOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.19,
+        "Pc_uncertainty_MPa": 0.07,
+        "Tc_K": 736.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H16O2",
+      "molar_mass_g_mol": 192.258,
+      "name": "pentyl benzoate",
+      "source_table1_line": 452
+    },
+    "2163-42-0": {
+      "article_name": "2-methyl-1,3-propanediol",
+      "article_table2_line": 1405,
+      "article_table2_name": "2-METHYL-1,3-PROPANEDIOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.4,
+        "Pc_uncertainty_MPa": 0.4,
+        "Tc_K": 708.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C4H10O2",
+      "molar_mass_g_mol": 90.122,
+      "name": "2-methyl-1,3-propanediol",
+      "source_table1_line": 282
+    },
+    "2189-60-8": {
+      "article_name": "octylbenzene",
+      "article_table2_line": 1105,
+      "article_table2_name": "OCTYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.98,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 725.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C14H22",
+      "molar_mass_g_mol": 190.33,
+      "name": "octylbenzene",
+      "source_table1_line": 204
+    },
+    "22063-06-5": {
+      "article_name": "tetraheptoxytitanium",
+      "article_table2_line": 2058,
+      "article_table2_name": "TETRAHEPTOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.73,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 808.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C28H60O4Ti",
+      "molar_mass_g_mol": 508.651,
+      "name": "tetraheptoxytitanium",
+      "source_table1_line": 541
+    },
+    "2207-01-4": {
+      "article_name": "(Z)-1,2-dimethylcyclohexane",
+      "article_table2_line": 878,
+      "article_table2_name": "(Z)-1,2-DIMETHYLCYCLOHEXANE(cis-1,2-Dimethylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.35,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 607.3,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 406.6,
+        "Zc": 0.27,
+        "rho_c_g_cm3": 0.276,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(Z)-1,2-dimethylcyclohexane",
+      "source_table1_line": 126
+    },
+    "2207-04-7": {
+      "article_name": "(E)-1,4-dimethylcyclohexane",
+      "article_table2_line": 888,
+      "article_table2_name": "(E)-1,4-DIMETHYLCYCLOHEXANE (trans-1,4-Dimethylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.06,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 587.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 420.3,
+        "Zc": 0.264,
+        "rho_c_g_cm3": 0.267,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(E)-1,4-dimethylcyclohexane",
+      "source_table1_line": 130
+    },
+    "2270-20-4": {
+      "article_name": "5-phenylpentanoic",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 2.95,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 790.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "extraction_notes": [
+        "Table 1 text omits acid; resolved as 5-phenylpentanoic acid."
+      ],
+      "formula": "C11H14O2",
+      "molar_mass_g_mol": 178.231,
+      "name": "5-phenylpentanoic",
+      "source_table1_line": 429
+    },
+    "2315-68-6": {
+      "article_name": "propyl benzoate",
+      "article_table2_line": 1796,
+      "article_table2_name": "PROPYL BENZOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.6,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 710.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C10H12O2",
+      "molar_mass_g_mol": 164.204,
+      "name": "propyl benzoate",
+      "source_table1_line": 435
+    },
+    "2437-56-1": {
+      "article_name": "1-tridecene",
+      "article_table2_line": 962,
+      "article_table2_name": "1-TRIDECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.73,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 673.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C13H26",
+      "molar_mass_g_mol": 182.351,
+      "name": "1-tridecene",
+      "source_table1_line": 160
+    },
+    "2456-28-2": {
+      "article_name": "didecyl ether",
+      "article_table2_line": 1744,
+      "article_table2_name": "DIDECYL ETHER (1-Decoxydecane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.03,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 768.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C20H42O",
+      "molar_mass_g_mol": 298.555,
+      "name": "didecyl ether",
+      "source_table1_line": 413
+    },
+    "25265-71-8": {
+      "article_name": "4-oxa-1,7-heptanediol",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 3.4,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 705.0,
+        "Tc_uncertainty_K": 3.0
+      },
+      "extraction_notes": [
+        "Resolved from Table 2 heading alias Dipropylene Glycol."
+      ],
+      "formula": "C6H14O3",
+      "molar_mass_g_mol": 134.175,
+      "name": "4-oxa-1,7-heptanediol",
+      "source_table1_line": 287
+    },
+    "26952-13-6": {
+      "article_name": "1-tetradecene",
+      "article_table2_line": 964,
+      "article_table2_name": "1-TETRADECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.59,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 691.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C14H28",
+      "molar_mass_g_mol": 196.378,
+      "name": "1-tetradecene",
+      "source_table1_line": 161
+    },
+    "26952-14-7": {
+      "article_name": "1-hexadecene",
+      "article_table2_line": 968,
+      "article_table2_name": "1-HEXADECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.39,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 718.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C16H32",
+      "molar_mass_g_mol": 224.432,
+      "name": "1-hexadecene",
+      "source_table1_line": 163
+    },
+    "27070-58-2": {
+      "article_name": "1-octadecene",
+      "article_table2_line": 972,
+      "article_table2_name": "1-OCTADECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.3,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 748.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C18H36",
+      "molar_mass_g_mol": 252.486,
+      "name": "1-octadecene",
+      "source_table1_line": 165
+    },
+    "287-92-3": {
+      "article_name": "cyclopentane",
+      "article_table2_line": 841,
+      "article_table2_name": "CYCLOPENTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.51,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 511.7,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 259.8,
+        "Zc": 0.275,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C5H10",
+      "molar_mass_g_mol": 70.135,
+      "name": "cyclopentane",
+      "source_table1_line": 121
+    },
+    "29118-24-9": {
+      "article_name": "(E)-1,3,3,3-tetrafluoropropene",
+      "article_table2_line": 1995,
+      "article_table2_name": "(E)-1,3,3,3-TETRAFLUOROPROPENE (HFO-1234ze(E))",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.64,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 382.4,
+        "Tc_uncertainty_K": 0.02,
+        "Vc_cm3_mol": 234.7,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.486,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C3H2F4",
+      "molar_mass_g_mol": 114.041,
+      "name": "(E)-1,3,3,3-tetrafluoropropene",
+      "source_table1_line": 509
+    },
+    "29118-25-0": {
+      "article_name": "(Z)-1,3,3,3-tetrafluoropropene",
+      "article_table2_line": 2000,
+      "article_table2_name": "(Z)-1,3,3,3-TETRAFLUOROPROPENE (HFO-1234ze(Z))",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.533,
+        "Pc_uncertainty_MPa": 0.006,
+        "Tc_K": 423.3,
+        "Tc_uncertainty_K": 0.03,
+        "Vc_cm3_mol": 242.6,
+        "Zc": 0.244,
+        "rho_c_g_cm3": 0.47,
+        "rho_c_uncertainty_g_cm3": 0.008
+      },
+      "formula": "C3H2F4",
+      "molar_mass_g_mol": 114.041,
+      "name": "(Z)-1,3,3,3-tetrafluoropropene",
+      "source_table1_line": 525
+    },
+    "292-64-8": {
+      "article_name": "cyclooctane",
+      "article_table2_line": 857,
+      "article_table2_name": "CYCLOOCTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.56,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 647.4,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 409.5,
+        "Zc": 0.271,
+        "rho_c_g_cm3": 0.274,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "cyclooctane",
+      "source_table1_line": 123
+    },
+    "3061-42-5": {
+      "article_name": "tetraoctoxytitanium",
+      "article_table2_line": 2060,
+      "article_table2_name": "TETRAOCTOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.66,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 831.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C32H68O4Ti",
+      "molar_mass_g_mol": 564.759,
+      "name": "tetraoctoxytitanium",
+      "source_table1_line": 542
+    },
+    "307-34-6": {
+      "article_name": "octadecafluorooctane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 1.5,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 497.0,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 730.1,
+        "Zc": 0.265,
+        "rho_c_g_cm3": 0.6,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8F18",
+      "molar_mass_g_mol": 438.052,
+      "name": "octadecafluorooctane",
+      "source_table1_line": 504
+    },
+    "3087-36-3": {
+      "article_name": "tetraethoxytitanium",
+      "article_table2_line": 2044,
+      "article_table2_name": "TETRAETHOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.4,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 647.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C8H20O4Ti",
+      "molar_mass_g_mol": 228.111,
+      "name": "tetraethoxytitanium",
+      "source_table1_line": 534
+    },
+    "3087-37-4": {
+      "article_name": "tetrapropoxytitanium",
+      "article_table2_line": 2046,
+      "article_table2_name": "TETRAPROPOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.15,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 685.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C12H28O4Ti",
+      "molar_mass_g_mol": 284.219,
+      "name": "tetrapropoxytitanium",
+      "source_table1_line": 535
+    },
+    "3087-39-6": {
+      "article_name": "tetra-tert-butoxytitanium",
+      "article_table2_line": 2052,
+      "article_table2_name": "TETRA-TERT-BUTOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.07,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 657.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C16H36O4Ti",
+      "molar_mass_g_mol": 340.327,
+      "name": "tetra-tert-butoxytitanium",
+      "source_table1_line": 538
+    },
+    "3178-22-1": {
+      "article_name": "(1,1-dimethylethyl)cyclohexane",
+      "article_table2_line": 910,
+      "article_table2_name": "(1,1-DIMETHYLETHYL)CYCLOHEXANE (tert-Butylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.77,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 648.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 504.6,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.278,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C10H20",
+      "molar_mass_g_mol": 140.27,
+      "name": "(1,1-dimethylethyl)cyclohexane",
+      "source_table1_line": 135
+    },
+    "31904-29-7": {
+      "article_name": "Butylferrocene",
+      "article_table2_line": 1881,
+      "article_table2_name": "BUTYLFERROCENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.18,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 784.0,
+        "Tc_uncertainty_K": 12.0
+      },
+      "formula": "C14H18Fe",
+      "molar_mass_g_mol": 242.143,
+      "name": "Butylferrocene",
+      "source_table1_line": 481
+    },
+    "3221-61-2": {
+      "article_name": "2-methyloctane",
+      "article_table2_line": 832,
+      "article_table2_name": "2-METHYLOCTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.31,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 582.8,
+        "Tc_uncertainty_K": 0.1
+      },
+      "formula": "C9H20",
+      "molar_mass_g_mol": 128.258,
+      "name": "2-methyloctane",
+      "source_table1_line": 118
+    },
+    "3360-41-6": {
+      "article_name": "4-phenyl-1-butanol",
+      "article_table2_line": 1763,
+      "article_table2_name": "4-PHENYL-1-BUTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.07,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 746.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C10H14O",
+      "molar_mass_g_mol": 150.221,
+      "name": "4-phenyl-1-butanol",
+      "source_table1_line": 420
+    },
+    "3404-72-6": {
+      "article_name": "2,3-dimethyl-1-pentene",
+      "article_table2_line": 1032,
+      "article_table2_name": "2,3-DIMETHYL-1-PENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 533.6,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "2,3-dimethyl-1-pentene",
+      "source_table1_line": 187
+    },
+    "3452-07-1": {
+      "article_name": "1-eicosene",
+      "article_table2_line": 976,
+      "article_table2_name": "1-EICOSENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.14,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 772.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C20H40",
+      "molar_mass_g_mol": 280.54,
+      "name": "1-eicosene",
+      "source_table1_line": 167
+    },
+    "3524-73-0": {
+      "article_name": "5-methyl-1-hexene",
+      "article_table2_line": 1030,
+      "article_table2_name": "5-METHYL-1-HEXENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 528.7,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "5-methyl-1-hexene",
+      "source_table1_line": 186
+    },
+    "354-33-6": {
+      "article_name": "pentafluoroethane",
+      "article_table2_line": 1914,
+      "article_table2_name": "PENTAFLUOROETHANE (R125)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.625,
+        "Pc_uncertainty_MPa": 0.006,
+        "Tc_K": 339.3,
+        "Tc_uncertainty_K": 0.05,
+        "Vc_cm3_mol": 210.6,
+        "Zc": 0.271,
+        "rho_c_g_cm3": 0.57,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C2HF5",
+      "molar_mass_g_mol": 120.02,
+      "name": "pentafluoroethane",
+      "source_table1_line": 492
+    },
+    "355-25-9": {
+      "article_name": "decafluorobutane",
+      "article_table2_line": 1969,
+      "article_table2_name": "DECAFLUOROBUTANE (R610)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.302,
+        "Pc_uncertainty_MPa": 0.006,
+        "Tc_K": 386.33,
+        "Tc_uncertainty_K": 0.05,
+        "Vc_cm3_mol": 377.8,
+        "Zc": 0.271,
+        "rho_c_g_cm3": 0.63,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C4F10",
+      "molar_mass_g_mol": 238.024,
+      "name": "decafluorobutane",
+      "source_table1_line": 502
+    },
+    "363-72-4": {
+      "article_name": "pentafluorobenzene",
+      "article_table2_line": 2023,
+      "article_table2_name": "PENTAFLUOROBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.53,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 531.0,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 324.4,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.518,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C6HF5",
+      "molar_mass_g_mol": 168.064,
+      "name": "pentafluorobenzene",
+      "source_table1_line": 528
+    },
+    "3648-20-2": {
+      "article_name": "diundecyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1839,
+      "article_table2_name": "DIUNDECYL-1,2-BENZENEDICARBOXYLATE (Diundecyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.89,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 886.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C30H50O4",
+      "molar_mass_g_mol": 474.726,
+      "name": "diundecyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 466
+    },
+    "3648-21-3": {
+      "article_name": "diheptyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1828,
+      "article_table2_name": "DIHEPTYL-1,2-BENZENEDICARBOXYLATE (Diheptyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.24,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 830.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C22H34O4",
+      "molar_mass_g_mol": 362.51,
+      "name": "diheptyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 461
+    },
+    "36653-82-4": {
+      "article_name": "1-hexadecanol",
+      "article_table2_line": 1316,
+      "article_table2_name": "1-HEXADECANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.46,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 770.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C16H34O",
+      "molar_mass_g_mol": 242.447,
+      "name": "1-hexadecanol",
+      "source_table1_line": 263
+    },
+    "392-56-3": {
+      "article_name": "hexafluorobenzene",
+      "article_table2_line": 2010,
+      "article_table2_name": "HEXAFLUOROBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.28,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 516.7,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 337.1,
+        "Zc": 0.257,
+        "rho_c_g_cm3": 0.552,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C6F6",
+      "molar_mass_g_mol": 186.054,
+      "name": "hexafluorobenzene",
+      "source_table1_line": 527
+    },
+    "3937-56-2": {
+      "article_name": "1,9-nonanediol",
+      "article_table2_line": 1423,
+      "article_table2_name": "1,9-NONANEDIOL (Nonamethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.4,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 760.0,
+        "Tc_uncertainty_K": 11.0
+      },
+      "formula": "C9H20O2",
+      "molar_mass_g_mol": 160.257,
+      "name": "1,9-nonanediol",
+      "source_table1_line": 289
+    },
+    "3938-95-2": {
+      "article_name": "ethyl-2,2-dimethyl propanoate",
+      "article_table2_line": 1581,
+      "article_table2_name": "ETHYL-2,2-DIMETHYL PROPANOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.95,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 566.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 465.0,
+        "Zc": 0.291,
+        "rho_c_g_cm3": 0.28,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C7H14O2",
+      "molar_mass_g_mol": 130.187,
+      "name": "ethyl-2,2-dimethyl propanoate",
+      "source_table1_line": 355
+    },
+    "40228-90-8": {
+      "article_name": "7-phenylheptanoic acid",
+      "article_table2_line": 1786,
+      "article_table2_name": "7-PHENYLHEPTANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.47,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 798.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C13H18O2",
+      "molar_mass_g_mol": 206.285,
+      "name": "7-phenylheptanoic acid",
+      "source_table1_line": 431
+    },
+    "4050-45-7": {
+      "article_name": "(E)-2-hexene",
+      "article_table2_line": 994,
+      "article_table2_name": "(E)-2-HEXENE (trans-2-Hexene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 509.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "(E)-2-hexene",
+      "source_table1_line": 173
+    },
+    "406-58-6": {
+      "article_name": "1,1,1,3,3-pentafluorobutane",
+      "article_table2_line": 1974,
+      "article_table2_name": "1,1,1,3,3-PENTAFLUOROBUTANE (R365mfc)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.2,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 459.9,
+        "Tc_uncertainty_K": 0.2
+      },
+      "formula": "C4H5F5",
+      "molar_mass_g_mol": 148.074,
+      "name": "1,1,1,3,3-pentafluorobutane",
+      "source_table1_line": 503
+    },
+    "4181-95-7": {
+      "article_name": "tetracontane",
+      "article_table2_line": 782,
+      "article_table2_name": "TETRACONTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.52,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 904.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C40H82",
+      "molar_mass_g_mol": 563.096,
+      "name": "tetracontane",
+      "source_table1_line": 108
+    },
+    "420-46-2": {
+      "article_name": "1,1,1-trifluoroethane",
+      "article_table2_line": 1930,
+      "article_table2_name": "1,1,1-TRIFLUOROETHANE (R-143a)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.768,
+        "Pc_uncertainty_MPa": 0.006,
+        "Tc_K": 345.86,
+        "Tc_uncertainty_K": 0.02,
+        "Vc_cm3_mol": 193.6,
+        "Zc": 0.254,
+        "rho_c_g_cm3": 0.434,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C2H3F3",
+      "molar_mass_g_mol": 84.04,
+      "name": "1,1,1-trifluoroethane",
+      "source_table1_line": 494
+    },
+    "428-59-1": {
+      "article_name": "trifluoro(trifluoromethyl)oxirane",
+      "article_table2_line": 2032,
+      "article_table2_name": "TRIFLUORO(TRIFLUOROMETHYL)OXIRANE (1,2-Epoxy-1,1,2,3,3,3-hexafluoropropane, HFPO)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.93,
+        "Pc_uncertainty_MPa": 0.007,
+        "Tc_K": 359.4,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 283.8,
+        "Zc": 0.278,
+        "rho_c_g_cm3": 0.585,
+        "rho_c_uncertainty_g_cm3": 0.008
+      },
+      "formula": "C3F6O",
+      "molar_mass_g_mol": 166.02,
+      "name": "trifluoro(trifluoromethyl)oxirane",
+      "source_table1_line": 530
+    },
+    "431-63-0": {
+      "article_name": "1,1,1,2,3,3-hexafluoropropane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.42,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 412.44,
+        "Tc_uncertainty_K": 0.02,
+        "Vc_cm3_mol": 269.1,
+        "Zc": 0.268,
+        "rho_c_g_cm3": 0.565,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C3H2F6",
+      "molar_mass_g_mol": 152.037,
+      "name": "1,1,1,2,3,3-hexafluoropropane",
+      "source_table1_line": 500
+    },
+    "431-89-0": {
+      "article_name": "1,1,1,2,3,3,3-heptafluoropropane",
+      "article_table2_line": 1954,
+      "article_table2_name": "1,1,1,2,3,3,3-HEPTAFLUOROPROPANE (R227ea)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.93,
+        "Pc_uncertainty_MPa": 0.005,
+        "Tc_K": 374.96,
+        "Tc_uncertainty_K": 0.05,
+        "Vc_cm3_mol": 285.8,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.595,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3HF7",
+      "molar_mass_g_mol": 170.027,
+      "name": "1,1,1,2,3,3,3-heptafluoropropane",
+      "source_table1_line": 499
+    },
+    "460-73-1": {
+      "alternate_table1_rows": [
+        {
+          "article_name": "1,1,1,3,3-pentafluoropropane",
+          "article_table2_line": 1962,
+          "article_table2_name": "1,1,1,3,3-PENTAFLUOROPROPANE (R245fa)",
+          "cas_resolution_method": "article_table2_heading",
+          "critical_properties": {
+            "Pc_MPa": 3.648,
+            "Pc_uncertainty_MPa": 0.005,
+            "Tc_K": 427.09,
+            "Tc_uncertainty_K": 0.08,
+            "Vc_cm3_mol": 259.3,
+            "Zc": 0.266,
+            "rho_c_g_cm3": 0.517,
+            "rho_c_uncertainty_g_cm3": 0.006
+          },
+          "formula": "C3H3F5",
+          "molar_mass_g_mol": 134.047,
+          "name": "1,1,1,3,3-pentafluoropropane",
+          "source_table1_line": 501
+        }
+      ],
+      "article_name": "1,1,1,3,3-pentafluoropropane",
+      "article_table2_line": 1962,
+      "article_table2_name": "1,1,1,3,3-PENTAFLUOROPROPANE (R245fa)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.655,
+        "Pc_uncertainty_MPa": 0.004,
+        "Tc_K": 427.1,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 257.8,
+        "Zc": 0.265,
+        "rho_c_g_cm3": 0.52,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "extraction_notes": [
+        "Table 1 contains another row with the same CAS but different values at line 501; preserved under alternate_table1_rows."
+      ],
+      "formula": "C3H3F5",
+      "molar_mass_g_mol": 134.047,
+      "name": "1,1,1,3,3-pentafluoropropane",
+      "source_table1_line": 497
+    },
+    "463-82-1": {
+      "article_name": "2,2-dimethylpropane",
+      "article_table2_line": 813,
+      "article_table2_name": "2,2-DIMETHYLPROPANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.196,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 433.8,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 307.0,
+        "Zc": 0.272,
+        "rho_c_g_cm3": 0.235,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C5H12",
+      "molar_mass_g_mol": 72.151,
+      "name": "2,2-dimethylpropane",
+      "source_table1_line": 114
+    },
+    "501-52-0": {
+      "article_name": "3-phenylpropanoic acid",
+      "article_table2_line": 1778,
+      "article_table2_name": "3-PHENYLPROPANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.46,
+        "Pc_uncertainty_MPa": 0.12,
+        "Tc_K": 776.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C9H10O2",
+      "molar_mass_g_mol": 150.177,
+      "name": "3-phenylpropanoic acid",
+      "source_table1_line": 427
+    },
+    "504-63-2": {
+      "article_name": "1,3-propanediol",
+      "article_table2_line": 1391,
+      "article_table2_name": "1,3-PROPANEDIOL (Trimethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 6.4,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 720.0,
+        "Tc_uncertainty_K": 3.0
+      },
+      "formula": "C3H8O2",
+      "molar_mass_g_mol": 76.095,
+      "name": "1,3-propanediol",
+      "source_table1_line": 279
+    },
+    "505-48-6": {
+      "article_name": "octanedioic acid",
+      "article_table2_line": 1507,
+      "article_table2_name": "OCTANEDIOIC ACID (Suberic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.97,
+        "Pc_uncertainty_MPa": 0.13,
+        "Tc_K": 843.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C8H14O4",
+      "molar_mass_g_mol": 174.196,
+      "name": "octanedioic acid",
+      "source_table1_line": 334
+    },
+    "506-12-7": {
+      "article_name": "heptadecanoic acid",
+      "article_table2_line": 1491,
+      "article_table2_name": "HEPTADECANOIC ACID (Margaric Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.37,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 792.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C17H34O2",
+      "molar_mass_g_mol": 270.457,
+      "name": "heptadecanoic acid",
+      "source_table1_line": 326
+    },
+    "506-30-9": {
+      "article_name": "eicosanoic acid",
+      "article_table2_line": 1495,
+      "article_table2_name": "EICOSANOIC ACID (Arachic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.2,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 820.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C20H40O2",
+      "molar_mass_g_mol": 312.538,
+      "name": "eicosanoic acid",
+      "source_table1_line": 328
+    },
+    "538-68-1": {
+      "article_name": "pentylbenzene",
+      "article_table2_line": 1099,
+      "article_table2_name": "PENTYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.58,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 675.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C11H16",
+      "molar_mass_g_mol": 148.249,
+      "name": "pentylbenzene",
+      "source_table1_line": 201
+    },
+    "539-82-2": {
+      "article_name": "ethyl pentanoate",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 2.73,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 594.0,
+        "Tc_uncertainty_K": 0.1
+      },
+      "formula": "C7H14O2",
+      "molar_mass_g_mol": 130.187,
+      "name": "ethyl pentanoate",
+      "source_table1_line": 357
+    },
+    "540-84-1": {
+      "article_name": "2,2,4-trimethylpentane",
+      "article_table2_line": 827,
+      "article_table2_name": "2,2,4-TRIMETHYLPENTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.57,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 544.0,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 468.2,
+        "Zc": 0.266,
+        "rho_c_g_cm3": 0.244,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C8H18",
+      "molar_mass_g_mol": 114.232,
+      "name": "2,2,4-trimethylpentane",
+      "source_table1_line": 117
+    },
+    "540-88-5": {
+      "article_name": "1,1-dimethylethyl ethanoate",
+      "article_table2_line": 1567,
+      "article_table2_name": "1,1-DIMETHYLETHYL ETHANOATE (tert-Butyl Acetate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.04,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 541.2,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C6H12O2",
+      "molar_mass_g_mol": 116.16,
+      "name": "1,1-dimethylethyl ethanoate",
+      "source_table1_line": 351
+    },
+    "542-10-9": {
+      "article_name": "1,1-diacetoxyethane",
+      "article_table2_line": 1695,
+      "article_table2_name": "1,1-DIACETOXYETHANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.97,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 618.2,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C6H10O4",
+      "molar_mass_g_mol": 146.142,
+      "name": "1,1-diacetoxyethane",
+      "source_table1_line": 403
+    },
+    "542-55-2": {
+      "article_name": "2-methylpropyl methanoate",
+      "article_table2_line": 1543,
+      "article_table2_name": "2-METHYLPROPYL METHANOATE (Isobutyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 552.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C5H10O2",
+      "molar_mass_g_mol": 102.133,
+      "name": "2-methylpropyl methanoate",
+      "source_table1_line": 344
+    },
+    "544-63-8": {
+      "article_name": "tetradecanoic acid",
+      "article_table2_line": 1485,
+      "article_table2_name": "TETRADECANOIC ACID (Myristic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.64,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 763.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C14H28O2",
+      "molar_mass_g_mol": 228.376,
+      "name": "tetradecanoic acid",
+      "source_table1_line": 323
+    },
+    "546-68-9": {
+      "article_name": "tetraisopropoxytitanium",
+      "article_table2_line": 2048,
+      "article_table2_name": "TETRAISOPROPOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.15,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 641.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C12H28O4Ti",
+      "molar_mass_g_mol": 284.219,
+      "name": "tetraisopropoxytitanium",
+      "source_table1_line": 536
+    },
+    "553-90-2": {
+      "article_name": "dimethyl ethanedioate",
+      "article_table2_line": 1649,
+      "article_table2_name": "DIMETHYL ETHANEDIOATE (Dimethyl Oxalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.0,
+        "Pc_uncertainty_MPa": 0.15,
+        "Tc_K": 637.0,
+        "Tc_uncertainty_K": 6.0
+      },
+      "formula": "C4H6O4",
+      "molar_mass_g_mol": 118.088,
+      "name": "dimethyl ethanedioate",
+      "source_table1_line": 390
+    },
+    "558-30-5": {
+      "article_name": "1,2-epoxy-2-methylpropane",
+      "article_table2_line": 1847,
+      "article_table2_name": "1,2-EPOXY-2-METHYLPROPANE (2,2-Dimethyloxirane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.35,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 500.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C4H8O",
+      "molar_mass_g_mol": 72.107,
+      "name": "1,2-epoxy-2-methylpropane",
+      "source_table1_line": 470
+    },
+    "558-37-2": {
+      "article_name": "3,3-dimethyl-1-butene",
+      "article_table2_line": 1010,
+      "article_table2_name": "3,3-DIMETHYL-1-BUTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 477.4,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "3,3-dimethyl-1-butene",
+      "source_table1_line": 180
+    },
+    "5581-75-9": {
+      "article_name": "6-phenylhexanoic acid",
+      "article_table2_line": 1784,
+      "article_table2_name": "6-PHENYLHEXANOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.6,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 794.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C12H16O2",
+      "molar_mass_g_mol": 192.258,
+      "name": "6-phenylhexanoic acid",
+      "source_table1_line": 430
+    },
+    "5593-70-4": {
+      "article_name": "tetrabutoxytitanium",
+      "article_table2_line": 2050,
+      "article_table2_name": "TETRABUTOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.02,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 719.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C16H36O4Ti",
+      "molar_mass_g_mol": 340.327,
+      "name": "tetrabutoxytitanium",
+      "source_table1_line": 537
+    },
+    "563-78-0": {
+      "article_name": "2,3-dimethyl-1-butene",
+      "article_table2_line": 1008,
+      "article_table2_name": "2,3-DIMETHYL-1-BUTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 497.7,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "2,3-dimethyl-1-butene",
+      "source_table1_line": 179
+    },
+    "563-79-1": {
+      "article_name": "2,3-dimethyl-2-butene",
+      "article_table2_line": 1020,
+      "article_table2_name": "2,3-DIMETHYL-2-BUTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 521.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "2,3-dimethyl-2-butene",
+      "source_table1_line": 181
+    },
+    "5675-51-4": {
+      "article_name": "1,12-dodecanediol",
+      "article_table2_line": 1427,
+      "article_table2_name": "1,12-DODECANEDIOL (Dodecamethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.93,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 798.0,
+        "Tc_uncertainty_K": 12.0
+      },
+      "formula": "C12H26O2",
+      "molar_mass_g_mol": 202.338,
+      "name": "1,12-dodecanediol",
+      "source_table1_line": 306
+    },
+    "57-10-3": {
+      "article_name": "hexadecanoic acid",
+      "article_table2_line": 1489,
+      "article_table2_name": "HEXADECANOIC ACID (Palmitic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.49,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 785.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C16H32O2",
+      "molar_mass_g_mol": 256.43,
+      "name": "hexadecanoic acid",
+      "source_table1_line": 325
+    },
+    "57-11-4": {
+      "article_name": "octadecanoic acid",
+      "article_table2_line": 1493,
+      "article_table2_name": "OCTADECANOIC ACID (Stearic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.33,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 803.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C18H36O2",
+      "molar_mass_g_mol": 284.484,
+      "name": "octadecanoic acid",
+      "source_table1_line": 327
+    },
+    "57-55-6": {
+      "article_name": "1,2-propanediol",
+      "article_table2_line": 1387,
+      "article_table2_name": "1,2-PROPANEDIOL (Propylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 6.0,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 676.4,
+        "Tc_uncertainty_K": 0.6,
+        "Vc_cm3_mol": 245.5,
+        "Zc": 0.262,
+        "rho_c_g_cm3": 0.31,
+        "rho_c_uncertainty_g_cm3": 0.03
+      },
+      "formula": "C3H8O2",
+      "molar_mass_g_mol": 76.095,
+      "name": "1,2-propanediol",
+      "source_table1_line": 278
+    },
+    "57018-52-7": {
+      "article_name": "1-(1,1-dimethylethoxy)-2-propanol",
+      "article_table2_line": 1384,
+      "article_table2_name": "1-(1,1-DIMETHYLETHOXY)-2-PROPANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.72,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 600.7,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C7H16O2",
+      "molar_mass_g_mol": 132.203,
+      "name": "1-(1,1-dimethylethoxy)-2-propanol",
+      "source_table1_line": 277
+    },
+    "571-58-4": {
+      "article_name": "1,4-dimethylnaphthalene",
+      "article_table2_line": 1207,
+      "article_table2_name": "1,4-DIMETHYLNAPHTHALENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.79,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 778.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C12H12",
+      "molar_mass_g_mol": 156.228,
+      "name": "1,4-dimethylnaphthalene",
+      "source_table1_line": 244
+    },
+    "575-41-7": {
+      "article_name": "1,3-dimethylnaphthalene",
+      "article_table2_line": 1205,
+      "article_table2_name": "1,3-DIMETHYLNAPHTHALENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.74,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 772.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C12H12",
+      "molar_mass_g_mol": 156.228,
+      "name": "1,3-dimethylnaphthalene",
+      "source_table1_line": 243
+    },
+    "589-18-4": {
+      "article_name": "4-(methylphenyl)methanol",
+      "article_table2_line": 1765,
+      "article_table2_name": "4-(METHYLPHENYL)METHANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.61,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 719.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C8H10O",
+      "molar_mass_g_mol": 122.167,
+      "name": "4-(methylphenyl)methanol",
+      "source_table1_line": 421
+    },
+    "590-18-1": {
+      "article_name": "(Z)-2-butene",
+      "article_table2_line": 978,
+      "article_table2_name": "(Z)-2-BUTENE (cis-2-Butene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.215,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 435.65,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 234.8,
+        "Zc": 0.273,
+        "rho_c_g_cm3": 0.239,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C4H8",
+      "molar_mass_g_mol": 56.108,
+      "name": "(Z)-2-butene",
+      "source_table1_line": 168
+    },
+    "592-27-8": {
+      "article_name": "2-methylheptane",
+      "article_table2_line": 823,
+      "article_table2_name": "2-METHYLHEPTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.5,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 559.7,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 488.2,
+        "Zc": 0.262,
+        "rho_c_g_cm3": 0.234,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C8H18",
+      "molar_mass_g_mol": 114.232,
+      "name": "2-methylheptane",
+      "source_table1_line": 116
+    },
+    "592-41-6": {
+      "article_name": "1-hexene",
+      "article_table2_line": 951,
+      "article_table2_name": "1-HEXENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.21,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 504.0,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 355.1,
+        "Zc": 0.272,
+        "rho_c_g_cm3": 0.237,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "1-hexene",
+      "source_table1_line": 143
+    },
+    "592-76-7": {
+      "article_name": "1-heptene",
+      "article_table2_line": 956,
+      "article_table2_name": "1-HEPTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.92,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 537.3,
+        "Tc_uncertainty_K": 0.4,
+        "Vc_cm3_mol": 409.1,
+        "Zc": 0.267,
+        "rho_c_g_cm3": 0.24,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "1-heptene",
+      "source_table1_line": 144
+    },
+    "592-84-7": {
+      "article_name": "butyl methanoate",
+      "article_table2_line": 1541,
+      "article_table2_name": "BUTYL METHANOATE (Butyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 566.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C5H10O2",
+      "molar_mass_g_mol": 102.133,
+      "name": "butyl methanoate",
+      "source_table1_line": 343
+    },
+    "60-12-8": {
+      "article_name": "2-phenyl-1-ethanol",
+      "article_table2_line": 1757,
+      "article_table2_name": "2-PHENYL-1-ETHANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.95,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 724.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C8H10O",
+      "molar_mass_g_mol": 122.167,
+      "name": "2-phenyl-1-ethanol",
+      "source_table1_line": 418
+    },
+    "60-29-7": {
+      "article_name": "diethyl ether",
+      "article_table2_line": 1705,
+      "article_table2_name": "DIETHYL ETHER (Ethoxyethane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.63,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 466.8,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 284.0,
+        "Zc": 0.266,
+        "rho_c_g_cm3": 0.261,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C4H10O",
+      "molar_mass_g_mol": 74.123,
+      "name": "diethyl ether",
+      "source_table1_line": 406
+    },
+    "6032-29-7": {
+      "article_name": "2-pentanol",
+      "article_table2_line": 1355,
+      "article_table2_name": "2-PENTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.675,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 560.3,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 328.9,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.268,
+        "rho_c_uncertainty_g_cm3": 0.015
+      },
+      "formula": "C5H12O",
+      "molar_mass_g_mol": 88.15,
+      "name": "2-pentanol",
+      "source_table1_line": 273
+    },
+    "6094-02-6": {
+      "article_name": "2-methyl-1-hexene",
+      "article_table2_line": 1028,
+      "article_table2_name": "2-METHYL-1-HEXENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 541.8,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "2-methyl-1-hexene",
+      "source_table1_line": 185
+    },
+    "6167-42-6": {
+      "article_name": "tetranonoxytitanium",
+      "article_table2_line": 2062,
+      "article_table2_name": "TETRANONOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.63,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 855.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C36H76O4Ti",
+      "molar_mass_g_mol": 620.867,
+      "name": "tetranonoxytitanium",
+      "source_table1_line": 543
+    },
+    "623-37-0": {
+      "article_name": "3-hexanol",
+      "article_table2_line": 1363,
+      "article_table2_name": "3-HEXANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.33,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 582.4,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 377.0,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.271,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C6H14O",
+      "molar_mass_g_mol": 102.177,
+      "name": "3-hexanol",
+      "source_table1_line": 275
+    },
+    "623-70-1": {
+      "article_name": "(E)-ethyl 2-butenoate",
+      "article_table2_line": 1637,
+      "article_table2_name": "(E)-ETHYL 2-BUTENOATE (Ethyl trans-2-Butenoate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.67,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 593.8,
+        "Tc_uncertainty_K": 0.5
+      },
+      "formula": "C6H10O2",
+      "molar_mass_g_mol": 114.14,
+      "name": "(E)-ethyl 2-butenoate",
+      "source_table1_line": 386
+    },
+    "624-29-3": {
+      "article_name": "(Z)-1,4-dimethylcyclohexane",
+      "article_table2_line": 884,
+      "article_table2_name": "(Z)-1,4-DIMETHYLCYCLOHEXANE (cis-1,4-Dimethylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.16,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 603.2,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 434.9,
+        "Zc": 0.274,
+        "rho_c_g_cm3": 0.258,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(Z)-1,4-dimethylcyclohexane",
+      "source_table1_line": 128
+    },
+    "624-64-6": {
+      "article_name": "(E)-2-butene",
+      "article_table2_line": 982,
+      "article_table2_name": "(E)-2-BUTENE (trans-2-Butene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.07,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 428.6,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 237.7,
+        "Zc": 0.271,
+        "rho_c_g_cm3": 0.236,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C4H8",
+      "molar_mass_g_mol": 56.108,
+      "name": "(E)-2-butene",
+      "source_table1_line": 169
+    },
+    "624-92-0": {
+      "article_name": "dimethyl disulfide",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 5.07,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 608.0,
+        "Tc_uncertainty_K": 3.0
+      },
+      "formula": "C2H6S2",
+      "molar_mass_g_mol": 94.19,
+      "name": "dimethyl disulfide",
+      "source_table1_line": 475
+    },
+    "625-27-4": {
+      "article_name": "2-methyl-2-pentene",
+      "article_table2_line": 1004,
+      "article_table2_name": "2-METHYL-2-PENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 509.3,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "2-methyl-2-pentene",
+      "source_table1_line": 177
+    },
+    "625-55-8": {
+      "article_name": "1-methylethyl methanoate",
+      "article_table2_line": 1536,
+      "article_table2_name": "1-METHYLETHYL METHANOATE (Isopropyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.9,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 520.0,
+        "Tc_uncertainty_K": 3.0
+      },
+      "formula": "C4H8O2",
+      "molar_mass_g_mol": 88.106,
+      "name": "1-methylethyl methanoate",
+      "source_table1_line": 342
+    },
+    "627-93-0": {
+      "article_name": "dimethyl hexanedioate",
+      "article_table2_line": 1678,
+      "article_table2_name": "DIMETHYL HEXANEDIOATE (Dimethyl Adipate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.5,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 692.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C8H14O4",
+      "molar_mass_g_mol": 174.196,
+      "name": "dimethyl hexanedioate",
+      "source_table1_line": 396
+    },
+    "627-97-4": {
+      "article_name": "2-methyl-2-heptene",
+      "article_table2_line": 1042,
+      "article_table2_name": "2-METHYL-2-HEPTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 568.9,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "2-methyl-2-heptene",
+      "source_table1_line": 192
+    },
+    "629-11-8": {
+      "article_name": "1,6-hexanediol",
+      "article_table2_line": 1415,
+      "article_table2_name": "1,6-HEXANEDIOL (Hexamethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.0,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 740.0,
+        "Tc_uncertainty_K": 3.0
+      },
+      "formula": "C6H14O2",
+      "molar_mass_g_mol": 118.176,
+      "name": "1,6-hexanediol",
+      "source_table1_line": 286
+    },
+    "629-33-4": {
+      "article_name": "hexyl methanoate",
+      "article_table2_line": 1553,
+      "article_table2_name": "HEXYL METHANOATE (Hexyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 614.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C7H14O2",
+      "molar_mass_g_mol": 130.187,
+      "name": "hexyl methanoate",
+      "source_table1_line": 346
+    },
+    "629-41-4": {
+      "article_name": "1,8-octanediol",
+      "article_table2_line": 1421,
+      "article_table2_name": "1,8-OCTANEDIOL (Octamethylene Glycol)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.7,
+        "Pc_uncertainty_MPa": 0.14,
+        "Tc_K": 752.0,
+        "Tc_uncertainty_K": 11.0
+      },
+      "formula": "C8H18O2",
+      "molar_mass_g_mol": 146.23,
+      "name": "1,8-octanediol",
+      "source_table1_line": 288
+    },
+    "629-76-5": {
+      "article_name": "1-pentadecanol",
+      "article_table2_line": 1314,
+      "article_table2_name": "1-PENTADECANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.6,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 757.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C15H32O",
+      "molar_mass_g_mol": 228.42,
+      "name": "1-pentadecanol",
+      "source_table1_line": 262
+    },
+    "629-82-3": {
+      "article_name": "dioctyl ether",
+      "article_table2_line": 1742,
+      "article_table2_name": "DIOCTYL ETHER (1-Octoxyoctane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.19,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 723.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C16H34O",
+      "molar_mass_g_mol": 242.447,
+      "name": "dioctyl ether",
+      "source_table1_line": 412
+    },
+    "629-92-5": {
+      "article_name": "nonadecane",
+      "article_table2_line": 738,
+      "article_table2_name": "NONADECANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.16,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 756.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C19H40",
+      "molar_mass_g_mol": 268.529,
+      "name": "nonadecane",
+      "source_table1_line": 98
+    },
+    "629-94-7": {
+      "article_name": "heneicosane",
+      "article_table2_line": 748,
+      "article_table2_name": "HENEICOSANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.04,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 779.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C21H44",
+      "molar_mass_g_mol": 296.583,
+      "name": "heneicosane",
+      "source_table1_line": 100
+    },
+    "629-96-9": {
+      "article_name": "1-eicosanol",
+      "article_table2_line": 1322,
+      "article_table2_name": "1-EICOSANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.15,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 808.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C20H42O",
+      "molar_mass_g_mol": 298.555,
+      "name": "1-eicosanol",
+      "source_table1_line": 266
+    },
+    "629-97-0": {
+      "article_name": "docasane",
+      "cas_resolution_method": "manual_pdf_name_correction",
+      "critical_properties": {
+        "Pc_MPa": 0.99,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 787.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "extraction_notes": [
+        "Table 1 text spells docasane; Table 2 heading/common name is docosane."
+      ],
+      "formula": "C22H46",
+      "molar_mass_g_mol": 310.61,
+      "name": "docasane",
+      "source_table1_line": 101
+    },
+    "630-01-3": {
+      "article_name": "hexacosane",
+      "article_table2_line": 766,
+      "article_table2_name": "HEXACOSANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.81,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 819.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C26H54",
+      "molar_mass_g_mol": 366.718,
+      "name": "hexacosane",
+      "source_table1_line": 104
+    },
+    "630-02-4": {
+      "article_name": "octacosane",
+      "article_table2_line": 770,
+      "article_table2_name": "OCTACOSANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.75,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 836.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C28H58",
+      "molar_mass_g_mol": 394.772,
+      "name": "octacosane",
+      "source_table1_line": 105
+    },
+    "630-06-8": {
+      "article_name": "hexatriacontane",
+      "article_table2_line": 778,
+      "article_table2_name": "HEXATRIACONTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.58,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 888.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C36H74",
+      "molar_mass_g_mol": 506.988,
+      "name": "hexatriacontane",
+      "source_table1_line": 107
+    },
+    "635-11-0": {
+      "article_name": "1,2,4,5-tetrakis(1-methylethyl)benzene",
+      "article_table2_line": 1171,
+      "article_table2_name": "1,2,4,5-Tetrakis(1-METHYLETHYL)BENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.6,
+        "Pc_uncertainty_MPa": 0.3,
+        "Tc_K": 703.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 912.7,
+        "Zc": 0.25,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.03
+      },
+      "formula": "C18H30",
+      "molar_mass_g_mol": 246.438,
+      "name": "1,2,4,5-tetrakis(1-methylethyl)benzene",
+      "source_table1_line": 235
+    },
+    "638-04-0": {
+      "article_name": "(Z)-1,3-dimethylcyclohexane",
+      "article_table2_line": 880,
+      "article_table2_name": "(Z)-1,3-DIMETHYLCYCLOHEXANE (cis-1,3-Dimethylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.03,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 587.0,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 423.5,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.265,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(Z)-1,3-dimethylcyclohexane",
+      "source_table1_line": 127
+    },
+    "638-49-3": {
+      "article_name": "pentyl methanoate",
+      "article_table2_line": 1548,
+      "article_table2_name": "PENTYL METHANOATE (Pentyl Formate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.46,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 589.0,
+        "Tc_uncertainty_K": 8.0,
+        "Vc_cm3_mol": 400.6,
+        "Zc": 0.283,
+        "rho_c_g_cm3": 0.29,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C6H12O2",
+      "molar_mass_g_mol": 116.16,
+      "name": "pentyl methanoate",
+      "source_table1_line": 345
+    },
+    "638-67-5": {
+      "article_name": "tricosane",
+      "article_table2_line": 757,
+      "article_table2_name": "TRICOSANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.92,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 791.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C23H48",
+      "molar_mass_g_mol": 324.637,
+      "name": "tricosane",
+      "source_table1_line": 102
+    },
+    "638-68-6": {
+      "article_name": "triacontane",
+      "article_table2_line": 774,
+      "article_table2_name": "TRIACONTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.69,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 850.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C30H62",
+      "molar_mass_g_mol": 422.826,
+      "name": "triacontane",
+      "source_table1_line": 106
+    },
+    "64-17-5": {
+      "article_name": "ethanol",
+      "article_table2_line": 1248,
+      "article_table2_name": "ETHANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 6.14,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 513.9,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 167.5,
+        "Zc": 0.241,
+        "rho_c_g_cm3": 0.275,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C2H6O",
+      "molar_mass_g_mol": 46.069,
+      "name": "ethanol",
+      "source_table1_line": 254
+    },
+    "64-19-7": {
+      "article_name": "ethanoic acid",
+      "article_table2_line": 1464,
+      "article_table2_name": "ETHANOIC ACID (Acetic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.78,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 590.7,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 171.1,
+        "Zc": 0.201,
+        "rho_c_g_cm3": 0.351,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C2H4O2",
+      "molar_mass_g_mol": 60.052,
+      "name": "ethanoic acid",
+      "source_table1_line": 317
+    },
+    "6443-92-1": {
+      "article_name": "(Z)-2-heptene",
+      "article_table2_line": 1022,
+      "article_table2_name": "(Z)-2-HEPTENE (cis-2-Heptene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 548.5,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "(Z)-2-heptene",
+      "source_table1_line": 182
+    },
+    "646-31-1": {
+      "article_name": "tetracosane",
+      "article_table2_line": 761,
+      "article_table2_name": "TETRACOSANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.87,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 800.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C24H50",
+      "molar_mass_g_mol": 338.664,
+      "name": "tetracosane",
+      "source_table1_line": 103
+    },
+    "65-85-0": {
+      "article_name": "phenylmethanoic acid",
+      "article_table2_line": 1768,
+      "article_table2_name": "PHENYLMETHANOIC (Benzoic) ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.53,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 755.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C7H6O2",
+      "molar_mass_g_mol": 122.123,
+      "name": "phenylmethanoic acid",
+      "source_table1_line": 422
+    },
+    "661-19-8": {
+      "article_name": "1-docosanol",
+      "article_table2_line": 1324,
+      "article_table2_name": "1-DOCOSANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.07,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 827.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C22H46O",
+      "molar_mass_g_mol": 326.609,
+      "name": "1-docosanol",
+      "source_table1_line": 267
+    },
+    "67-56-1": {
+      "article_name": "methanol",
+      "article_table2_line": 1236,
+      "article_table2_name": "METHANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 8.084,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 512.5,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 117.4,
+        "Zc": 0.223,
+        "rho_c_g_cm3": 0.273,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "CH4O",
+      "molar_mass_g_mol": 32.042,
+      "name": "methanol",
+      "source_table1_line": 253
+    },
+    "67-63-0": {
+      "article_name": "2-propanol",
+      "article_table2_line": 1327,
+      "article_table2_name": "2-PROPANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.764,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 508.3,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 221.8,
+        "Zc": 0.25,
+        "rho_c_g_cm3": 0.271,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C3H8O",
+      "molar_mass_g_mol": 60.096,
+      "name": "2-propanol",
+      "source_table1_line": 269
+    },
+    "67-64-1": {
+      "article_name": "2-propanone",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 4.7,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 508.1,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 212.7,
+        "Zc": 0.237,
+        "rho_c_g_cm3": 0.273,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3H6O",
+      "molar_mass_g_mol": 58.08,
+      "name": "2-propanone",
+      "source_table1_line": 313
+    },
+    "6742-54-7": {
+      "article_name": "undecylbenzene",
+      "article_table2_line": 1109,
+      "article_table2_name": "UNDECYLBENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.64,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 763.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C17H28",
+      "molar_mass_g_mol": 232.411,
+      "name": "undecylbenzene",
+      "source_table1_line": 206
+    },
+    "6765-39-5": {
+      "article_name": "1-heptadecene",
+      "article_table2_line": 970,
+      "article_table2_name": "1-HEPTADECENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.34,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 734.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C17H34",
+      "molar_mass_g_mol": 238.459,
+      "name": "1-heptadecene",
+      "source_table1_line": 164
+    },
+    "677-21-4": {
+      "article_name": "3,3,3-trifluoro-1-propene",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.65,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 377.8,
+        "Tc_uncertainty_K": 0.8,
+        "Vc_cm3_mol": 208.8,
+        "Zc": 0.243,
+        "rho_c_g_cm3": 0.46,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C3H3F3",
+      "molar_mass_g_mol": 96.051,
+      "name": "3,3,3-trifluoro-1-propene",
+      "source_table1_line": 507
+    },
+    "6789-88-4": {
+      "article_name": "hexyl benzoate",
+      "article_table2_line": 1812,
+      "article_table2_name": "HEXYL BENZOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.98,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 748.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C13H18O2",
+      "molar_mass_g_mol": 206.285,
+      "name": "hexyl benzoate",
+      "source_table1_line": 453
+    },
+    "6876-23-9": {
+      "article_name": "(E)-1,2-dimethylcyclohexane",
+      "article_table2_line": 886,
+      "article_table2_name": "(E)-1,2-DIMETHYLCYCLOHEXANE (trans-1,2-Dimethylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.08,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 596.3,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 434.9,
+        "Zc": 0.333,
+        "rho_c_g_cm3": 0.258,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C8H16",
+      "molar_mass_g_mol": 112.216,
+      "name": "(E)-1,2-dimethylcyclohexane",
+      "source_table1_line": 129
+    },
+    "691-37-2": {
+      "article_name": "4-methyl-1-pentene",
+      "article_table2_line": 1000,
+      "article_table2_name": "4-METHYL-1-PENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.29,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 494.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 353.6,
+        "Zc": 0.283,
+        "rho_c_g_cm3": 0.238,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "4-methyl-1-pentene",
+      "source_table1_line": 176
+    },
+    "691-38-3": {
+      "article_name": "(Z)-4-methyl-2-pentene",
+      "article_table2_line": 1006,
+      "article_table2_name": "(Z)-4-METHYL-2-PENTENE (cis-4-Methyl-2-pentene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 496.3,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "(Z)-4-methyl-2-pentene",
+      "source_table1_line": 178
+    },
+    "693-23-2": {
+      "article_name": "dodecanedioic acid",
+      "article_table2_line": 1521,
+      "article_table2_name": "DODECANEDIOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.15,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 859.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C12H22O4",
+      "molar_mass_g_mol": 230.304,
+      "name": "dodecanedioic acid",
+      "source_table1_line": 337
+    },
+    "696-29-7": {
+      "article_name": "(1-methylethyl)cyclohexane",
+      "article_table2_line": 899,
+      "article_table2_name": "(1-METHYLETHYL)CYCLOHEXANE (Isopropylcyclohexane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.95,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 632.0,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 485.6,
+        "Zc": 0.273,
+        "rho_c_g_cm3": 0.26,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C9H18",
+      "molar_mass_g_mol": 126.243,
+      "name": "(1-methylethyl)cyclohexane",
+      "source_table1_line": 132
+    },
+    "702-79-4": {
+      "article_name": "1,3-dimethyltricyclo[3.3.1.1(3,7)]decane",
+      "article_table2_line": 916,
+      "article_table2_name": "1,3-DIMETHYLTRICYCLO[3.3.1.1(3,7)]DECANE (1,3-Dimethyladamantane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.0,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 707.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 566.5,
+        "Zc": 0.289,
+        "rho_c_g_cm3": 0.29,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C12H20",
+      "molar_mass_g_mol": 164.292,
+      "name": "1,3-dimethyltricyclo[3.3.1.1(3,7)]decane",
+      "source_table1_line": 137
+    },
+    "707-35-7": {
+      "article_name": "1,3,5-trimethyltricyclo[3.3.1.1(3,7)]decane",
+      "article_table2_line": 920,
+      "article_table2_name": "1,3,5-TRIMETHYLTRICYCLO[3.3.1.1(3,7)]DECANE (1,3,5-Trimethyladamantane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 702.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C13H22",
+      "molar_mass_g_mol": 178.319,
+      "name": "1,3,5-trimethyltricyclo[3.3.1.1(3,7)]decane",
+      "source_table1_line": 138
+    },
+    "7098-22-8": {
+      "article_name": "tetratetracontane",
+      "article_table2_line": 784,
+      "article_table2_name": "TETRATETRACONTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.48,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 919.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C44H90",
+      "molar_mass_g_mol": 619.204,
+      "name": "tetratetracontane",
+      "source_table1_line": 109
+    },
+    "71-23-8": {
+      "article_name": "1-propanol",
+      "article_table2_line": 1263,
+      "article_table2_name": "1-PROPANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.175,
+        "Pc_uncertainty_MPa": 0.007,
+        "Tc_K": 536.8,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 217.7,
+        "Zc": 0.252,
+        "rho_c_g_cm3": 0.276,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C3H8O",
+      "molar_mass_g_mol": 60.096,
+      "name": "1-propanol",
+      "source_table1_line": 255
+    },
+    "71-36-3": {
+      "article_name": "1-butanol",
+      "article_table2_line": 1274,
+      "article_table2_name": "1-BUTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.41,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 563.1,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 274.5,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C4H10O",
+      "molar_mass_g_mol": 74.123,
+      "name": "1-butanol",
+      "source_table1_line": 256
+    },
+    "71-41-0": {
+      "article_name": "1-pentanol",
+      "article_table2_line": 1287,
+      "article_table2_name": "1-PENTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.897,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 588.1,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 326.5,
+        "Zc": 0.26,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C5H12O",
+      "molar_mass_g_mol": 88.15,
+      "name": "1-pentanol",
+      "source_table1_line": 257
+    },
+    "71-43-2": {
+      "article_name": "benzene",
+      "article_table2_line": 1056,
+      "article_table2_name": "BENZENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.895,
+        "Pc_uncertainty_MPa": 0.006,
+        "Tc_K": 562.05,
+        "Tc_uncertainty_K": 0.07,
+        "Vc_cm3_mol": 256.1,
+        "Zc": 0.268,
+        "rho_c_g_cm3": 0.305,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C6H6",
+      "molar_mass_g_mol": 78.114,
+      "name": "benzene",
+      "source_table1_line": 197
+    },
+    "7360-52-3": {
+      "article_name": "tetrahexoxytitanium",
+      "article_table2_line": 2056,
+      "article_table2_name": "TETRAHEXOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.78,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 780.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C24H52O4Ti",
+      "molar_mass_g_mol": 452.543,
+      "name": "tetrahexoxytitanium",
+      "source_table1_line": 540
+    },
+    "74-82-8": {
+      "article_name": "methane",
+      "article_table2_line": 595,
+      "article_table2_name": "METHANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.599,
+        "Pc_uncertainty_MPa": 0.003,
+        "Tc_K": 190.564,
+        "Tc_uncertainty_K": 0.015,
+        "Vc_cm3_mol": 98.6,
+        "Zc": 0.286,
+        "rho_c_g_cm3": 0.1627,
+        "rho_c_uncertainty_g_cm3": 0.0005
+      },
+      "formula": "CH4",
+      "molar_mass_g_mol": 16.043,
+      "name": "methane",
+      "source_table1_line": 87
+    },
+    "74-84-0": {
+      "article_name": "ethane",
+      "article_table2_line": 600,
+      "article_table2_name": "ETHANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.872,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 305.32,
+        "Tc_uncertainty_K": 0.04,
+        "Vc_cm3_mol": 145.8,
+        "Zc": 0.28,
+        "rho_c_g_cm3": 0.2062,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C2H6",
+      "molar_mass_g_mol": 30.07,
+      "name": "ethane",
+      "source_table1_line": 88
+    },
+    "74-85-1": {
+      "article_name": "ethene",
+      "article_table2_line": 923,
+      "article_table2_name": "ETHENE (Ethylene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.041,
+        "Pc_uncertainty_MPa": 0.004,
+        "Tc_K": 282.34,
+        "Tc_uncertainty_K": 0.02,
+        "Vc_cm3_mol": 131.1,
+        "Zc": 0.282,
+        "rho_c_g_cm3": 0.214,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C2H4",
+      "molar_mass_g_mol": 28.054,
+      "name": "ethene",
+      "source_table1_line": 140
+    },
+    "74-98-6": {
+      "article_name": "propane",
+      "article_table2_line": 613,
+      "article_table2_name": "PROPANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.248,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 369.83,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 199.5,
+        "Zc": 0.276,
+        "rho_c_g_cm3": 0.221,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C3H8",
+      "molar_mass_g_mol": 44.097,
+      "name": "propane",
+      "source_table1_line": 89
+    },
+    "75-10-5": {
+      "article_name": "difluoromethane",
+      "article_table2_line": 1909,
+      "article_table2_name": "DIFLUOROMETHANE (R-32)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.783,
+        "Pc_uncertainty_MPa": 0.005,
+        "Tc_K": 351.25,
+        "Tc_uncertainty_K": 0.03,
+        "Vc_cm3_mol": 122.4,
+        "Zc": 0.242,
+        "rho_c_g_cm3": 0.425,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "CH2F2",
+      "molar_mass_g_mol": 52.023,
+      "name": "difluoromethane",
+      "source_table1_line": 491
+    },
+    "75-18-3": {
+      "article_name": "dimethyl sulfide",
+      "article_table2_line": 1856,
+      "article_table2_name": "DIMETHYL SULFIDE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.53,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 503.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 203.7,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.305,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C2H6S",
+      "molar_mass_g_mol": 62.13,
+      "name": "dimethyl sulfide",
+      "source_table1_line": 474
+    },
+    "75-28-5": {
+      "article_name": "2-methylpropane",
+      "article_table2_line": 789,
+      "article_table2_name": "2-METHYLPROPANE (Isobutane)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.633,
+        "Pc_uncertainty_MPa": 0.005,
+        "Tc_K": 407.81,
+        "Tc_uncertainty_K": 0.05,
+        "Vc_cm3_mol": 257.2,
+        "Zc": 0.276,
+        "rho_c_g_cm3": 0.226,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C4H10",
+      "molar_mass_g_mol": 58.124,
+      "name": "2-methylpropane",
+      "source_table1_line": 112
+    },
+    "75-37-6": {
+      "article_name": "1,1-difluoroethane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 4.52,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 386.43,
+        "Tc_uncertainty_K": 0.04,
+        "Vc_cm3_mol": 179.5,
+        "Zc": 0.252,
+        "rho_c_g_cm3": 0.368,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C2H4F2",
+      "molar_mass_g_mol": 66.05,
+      "name": "1,1-difluoroethane",
+      "source_table1_line": 495
+    },
+    "75-45-6": {
+      "article_name": "chlorodifluoromethane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 4.99,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 369.25,
+        "Tc_uncertainty_K": 0.15,
+        "Vc_cm3_mol": 165.3,
+        "Zc": 0.269,
+        "rho_c_g_cm3": 0.523,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "CHClF2",
+      "molar_mass_g_mol": 86.465,
+      "name": "chlorodifluoromethane",
+      "source_table1_line": 490
+    },
+    "75-65-0": {
+      "article_name": "2-methyl-2-propanol",
+      "article_table2_line": 1350,
+      "article_table2_name": "2-METHYL-2-PROPANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.972,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 506.2,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 274.5,
+        "Zc": 0.259,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C4H10O",
+      "molar_mass_g_mol": 74.123,
+      "name": "2-methyl-2-propanol",
+      "source_table1_line": 272
+    },
+    "75-72-9": {
+      "article_name": "chlorotrifluoromethane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 3.88,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 301.95,
+        "Tc_uncertainty_K": 0.05,
+        "Vc_cm3_mol": 180.1,
+        "Zc": 0.278,
+        "rho_c_g_cm3": 0.58,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "CClF3",
+      "molar_mass_g_mol": 104.456,
+      "name": "chlorotrifluoromethane",
+      "source_table1_line": 489
+    },
+    "75-83-2": {
+      "article_name": "2,2-dimethylbutane",
+      "article_table2_line": 819,
+      "article_table2_name": "2,2-DIMETHYLBUTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.1,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 489.0,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 357.6,
+        "Zc": 0.273,
+        "rho_c_g_cm3": 0.241,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C6H14",
+      "molar_mass_g_mol": 86.178,
+      "name": "2,2-dimethylbutane",
+      "source_table1_line": 115
+    },
+    "754-12-1": {
+      "article_name": "2,3,3,3-tetrafluoro-1-propene",
+      "article_table2_line": 2002,
+      "article_table2_name": "2,3,3,3-TETRAFLUORO-1-PROPENE (HFO-1234yf)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.381,
+        "Pc_uncertainty_MPa": 0.004,
+        "Tc_K": 367.85,
+        "Tc_uncertainty_K": 0.06,
+        "Vc_cm3_mol": 239.6,
+        "Zc": 0.265,
+        "rho_c_g_cm3": 0.476,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C3H2F4",
+      "molar_mass_g_mol": 114.041,
+      "name": "2,3,3,3-tetrafluoro-1-propene",
+      "source_table1_line": 526
+    },
+    "76-16-4": {
+      "article_name": "hexafluoroethane",
+      "article_table2_line": 1938,
+      "article_table2_name": "HEXAFLUOROETHANE (R-116)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.04,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 293.02,
+        "Tc_uncertainty_K": 0.02,
+        "Vc_cm3_mol": 223.0,
+        "Zc": 0.278,
+        "rho_c_g_cm3": 0.619,
+        "rho_c_uncertainty_g_cm3": 0.01
+      },
+      "formula": "C2F6",
+      "molar_mass_g_mol": 138.012,
+      "name": "hexafluoroethane",
+      "source_table1_line": 496
+    },
+    "76-19-7": {
+      "article_name": "octafluoropropane",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 2.66,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 345.0,
+        "Tc_uncertainty_K": 0.2,
+        "Vc_cm3_mol": 299.9,
+        "Zc": 0.278,
+        "rho_c_g_cm3": 0.627,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3F8",
+      "molar_mass_g_mol": 188.017,
+      "name": "octafluoropropane",
+      "source_table1_line": 498
+    },
+    "762-62-9": {
+      "article_name": "4,4-dimethyl-1-pentene",
+      "article_table2_line": 1034,
+      "article_table2_name": "4,4-DIMETHYL-1-PENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 516.0,
+        "Tc_uncertainty_K": 2.0
+      },
+      "formula": "C7H14",
+      "molar_mass_g_mol": 98.189,
+      "name": "4,4-dimethyl-1-pentene",
+      "source_table1_line": 188
+    },
+    "763-29-1": {
+      "article_name": "2-methyl-1-pentene",
+      "article_table2_line": 998,
+      "article_table2_name": "2-METHYL-1-PENTENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 521.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "2-methyl-1-pentene",
+      "source_table1_line": 175
+    },
+    "7642-09-3": {
+      "article_name": "(Z)-3-hexene",
+      "article_table2_line": 992,
+      "article_table2_name": "(Z)-3-HEXENE (cis-3-Hexene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 510.2,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "(Z)-3-hexene",
+      "source_table1_line": 172
+    },
+    "7667-80-3": {
+      "article_name": "hexacontane",
+      "article_table2_line": 786,
+      "article_table2_name": "HEXACONTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.36,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 974.0,
+        "Tc_uncertainty_K": 15.0
+      },
+      "formula": "C60H122",
+      "molar_mass_g_mol": 843.636,
+      "name": "hexacontane",
+      "source_table1_line": 110
+    },
+    "7688-21-3": {
+      "article_name": "(Z)-2-hexene",
+      "article_table2_line": 990,
+      "article_table2_name": "(Z)-2-HEXENE (cis-2-Hexene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Tc_K": 513.4,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C6H12",
+      "molar_mass_g_mol": 84.162,
+      "name": "(Z)-2-hexene",
+      "source_table1_line": 171
+    },
+    "78-78-4": {
+      "article_name": "2-methylbutane",
+      "article_table2_line": 809,
+      "article_table2_name": "2-METHYLBUTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.41,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 460.4,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 305.7,
+        "Zc": 0.272,
+        "rho_c_g_cm3": 0.236,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C5H12",
+      "molar_mass_g_mol": 72.151,
+      "name": "2-methylbutane",
+      "source_table1_line": 113
+    },
+    "78-92-2": {
+      "article_name": "2-butanol",
+      "article_table2_line": 1344,
+      "article_table2_name": "2-BUTANOL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.202,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 536.2,
+        "Tc_uncertainty_K": 0.3,
+        "Vc_cm3_mol": 268.6,
+        "Zc": 0.253,
+        "rho_c_g_cm3": 0.276,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C4H10O",
+      "molar_mass_g_mol": 74.123,
+      "name": "2-butanol",
+      "source_table1_line": 271
+    },
+    "78-93-3": {
+      "article_name": "2-butanone",
+      "cas_resolution_method": "chemicals_search_name",
+      "critical_properties": {
+        "Pc_MPa": 4.207,
+        "Pc_uncertainty_MPa": 0.01,
+        "Tc_K": 536.7,
+        "Tc_uncertainty_K": 0.1,
+        "Vc_cm3_mol": 267.1,
+        "Zc": 0.252,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.025
+      },
+      "formula": "C4H8O",
+      "molar_mass_g_mol": 72.107,
+      "name": "2-butanone",
+      "source_table1_line": 314
+    },
+    "79-09-4": {
+      "article_name": "propanoic acid",
+      "article_table2_line": 1469,
+      "article_table2_name": "PROPANOIC ACID (Propionic Acid)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.67,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 598.5,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 233.0,
+        "Zc": 0.219,
+        "rho_c_g_cm3": 0.318,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C3H6O2",
+      "molar_mass_g_mol": 74.079,
+      "name": "propanoic acid",
+      "source_table1_line": 318
+    },
+    "80-62-6": {
+      "article_name": "methyl 2-methyl-2-propenoate",
+      "article_table2_line": 1645,
+      "article_table2_name": "METHYL 2-METHYL-2-PROPENOATE (Methyl Metacrylate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.87,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 540.3,
+        "Tc_uncertainty_K": 0.5
+      },
+      "formula": "C5H8O2",
+      "molar_mass_g_mol": 100.117,
+      "name": "methyl 2-methyl-2-propenoate",
+      "source_table1_line": 388
+    },
+    "811-97-2": {
+      "article_name": "1,1,1,2-tetrafluoroethane",
+      "article_table2_line": 1920,
+      "article_table2_name": "1,1,1,2-TETRAFLUOROETHANE (R134a)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.05,
+        "Pc_uncertainty_MPa": 0.006,
+        "Tc_K": 374.14,
+        "Tc_uncertainty_K": 0.05,
+        "Vc_cm3_mol": 200.1,
+        "Zc": 0.26,
+        "rho_c_g_cm3": 0.51,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C2H2F4",
+      "molar_mass_g_mol": 102.03,
+      "name": "1,1,1,2-tetrafluoroethane",
+      "source_table1_line": 493
+    },
+    "818-38-2": {
+      "article_name": "diethyl pentanedioate",
+      "article_table2_line": 1687,
+      "article_table2_name": "DIETHYL PENTANEDIOATE (Diethyl Glutarate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.11,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 683.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C9H16O4",
+      "molar_mass_g_mol": 188.223,
+      "name": "diethyl pentanedioate",
+      "source_table1_line": 399
+    },
+    "821-38-5": {
+      "article_name": "tetradecanedioic acid",
+      "article_table2_line": 1523,
+      "article_table2_name": "TETRADECANEDIOIC ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.9,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 862.0,
+        "Tc_uncertainty_K": 13.0
+      },
+      "formula": "C14H26O4",
+      "molar_mass_g_mol": 258.358,
+      "name": "tetradecanedioic acid",
+      "source_table1_line": 338
+    },
+    "83-32-9": {
+      "article_name": "acenaphthene",
+      "article_table2_line": 1211,
+      "article_table2_name": "ACENAPHTHENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.7,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 820.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C12H10",
+      "molar_mass_g_mol": 154.212,
+      "name": "acenaphthene",
+      "source_table1_line": 246
+    },
+    "83877-93-4": {
+      "article_name": "tetradecoxytitanium",
+      "article_table2_line": 2064,
+      "article_table2_name": "TETRADECOXYTITANIUM",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.61,
+        "Pc_uncertainty_MPa": 0.02,
+        "Tc_K": 882.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C40H84O4Ti",
+      "molar_mass_g_mol": 676.975,
+      "name": "tetradecoxytitanium",
+      "source_table1_line": 544
+    },
+    "84-66-2": {
+      "article_name": "diethyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1818,
+      "article_table2_name": "DIETHYL-1,2-BENZENEDICARBOXYLATE (Diethyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.26,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 776.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C12H14O4",
+      "molar_mass_g_mol": 222.24,
+      "name": "diethyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 456
+    },
+    "84-74-2": {
+      "article_name": "dibutyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1822,
+      "article_table2_name": "DIBUTYL-1,2-BENZENEDICARBOXYLATE (Dibutyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.66,
+        "Pc_uncertainty_MPa": 0.06,
+        "Tc_K": 797.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C16H22O4",
+      "molar_mass_g_mol": 278.348,
+      "name": "dibutyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 458
+    },
+    "84-75-3": {
+      "article_name": "dihexyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1826,
+      "article_table2_name": "DIHEXYL-1,2-BENZENEDICARBOXYLATE (Dihexyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.34,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 817.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C20H30O4",
+      "molar_mass_g_mol": 334.456,
+      "name": "dihexyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 460
+    },
+    "84-76-4": {
+      "article_name": "dinonyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1835,
+      "article_table2_name": "DINONYL-1,2-BENZENEDICARBOXYLATE (Dinonyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 1.02,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 858.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C26H42O4",
+      "molar_mass_g_mol": 418.618,
+      "name": "dinonyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 464
+    },
+    "84-77-5": {
+      "article_name": "didecyl-1,2-benzenedicarboxylate",
+      "article_table2_line": 1837,
+      "article_table2_name": "DIDECYL-1,2-BENZENEDICARBOXYLATE (Didecyl Phthalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 0.94,
+        "Pc_uncertainty_MPa": 0.03,
+        "Tc_K": 870.0,
+        "Tc_uncertainty_K": 10.0
+      },
+      "formula": "C28H46O4",
+      "molar_mass_g_mol": 446.672,
+      "name": "didecyl-1,2-benzenedicarboxylate",
+      "source_table1_line": 465
+    },
+    "85-01-8": {
+      "article_name": "phenanthrene",
+      "article_table2_line": 1215,
+      "article_table2_name": "PHENANTHRENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.25,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 893.0,
+        "Tc_uncertainty_K": 9.0
+      },
+      "formula": "C14H10",
+      "molar_mass_g_mol": 178.234,
+      "name": "phenanthrene",
+      "source_table1_line": 248
+    },
+    "86-73-7": {
+      "article_name": "fluorene",
+      "article_table2_line": 1177,
+      "article_table2_name": "FLUORENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.18,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 836.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C13H10",
+      "molar_mass_g_mol": 166.223,
+      "name": "fluorene",
+      "source_table1_line": 237
+    },
+    "877-43-0": {
+      "article_name": "2, 6-dimethylquinoline",
+      "article_table2_line": 1896,
+      "article_table2_name": "2,6-DIMETHYLQUINOLINE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.48,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 786.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 510.4,
+        "Zc": 0.272,
+        "rho_c_g_cm3": 0.308,
+        "rho_c_uncertainty_g_cm3": 0.003
+      },
+      "formula": "C11H11N",
+      "molar_mass_g_mol": 157.216,
+      "name": "2, 6-dimethylquinoline",
+      "source_table1_line": 487
+    },
+    "90-12-0": {
+      "article_name": "1-methylnaphthalene",
+      "article_table2_line": 1196,
+      "article_table2_name": "1-METHYLNAPHTHALENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.57,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 772.0,
+        "Tc_uncertainty_K": 1.0
+      },
+      "formula": "C11H10",
+      "molar_mass_g_mol": 142.201,
+      "name": "1-methylnaphthalene",
+      "source_table1_line": 241
+    },
+    "91-20-3": {
+      "article_name": "naphthalene",
+      "article_table2_line": 1188,
+      "article_table2_name": "NAPHTHALENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 4.05,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 748.4,
+        "Tc_uncertainty_K": 0.5,
+        "rho_c_g_cm3": 0.315,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C10H8",
+      "molar_mass_g_mol": 128.174,
+      "name": "naphthalene",
+      "source_table1_line": 240
+    },
+    "91-57-6": {
+      "article_name": "2-methylnaphthalene",
+      "article_table2_line": 1200,
+      "article_table2_name": "2-METHYLNAPHTHALENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.3,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 761.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 461.7,
+        "Zc": 0.241,
+        "rho_c_g_cm3": 0.308,
+        "rho_c_uncertainty_g_cm3": 0.002
+      },
+      "formula": "C11H10",
+      "molar_mass_g_mol": 142.201,
+      "name": "2-methylnaphthalene",
+      "source_table1_line": 242
+    },
+    "92-06-8": {
+      "article_name": "1,3-diphenylbenzene",
+      "article_table2_line": 1184,
+      "article_table2_name": "1,3-DIPHENYLBENZENE (m-Terphenyl)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.2,
+        "Pc_uncertainty_MPa": 0.3,
+        "Tc_K": 882.0,
+        "Tc_uncertainty_K": 10.0,
+        "Vc_cm3_mol": 719.7,
+        "Zc": 0.216,
+        "rho_c_g_cm3": 0.32,
+        "rho_c_uncertainty_g_cm3": 0.04
+      },
+      "formula": "C18H14",
+      "molar_mass_g_mol": 230.31,
+      "name": "1,3-diphenylbenzene",
+      "source_table1_line": 239
+    },
+    "93-58-3": {
+      "article_name": "methyl benzoate",
+      "article_table2_line": 1790,
+      "article_table2_name": "METHYL BENZOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.6,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 700.0,
+        "Tc_uncertainty_K": 5.0
+      },
+      "formula": "C8H8O2",
+      "molar_mass_g_mol": 136.15,
+      "name": "methyl benzoate",
+      "source_table1_line": 433
+    },
+    "93-89-0": {
+      "article_name": "ethyl benzoate",
+      "article_table2_line": 1794,
+      "article_table2_name": "ETHYL BENZOATE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.05,
+        "Pc_uncertainty_MPa": 0.09,
+        "Tc_K": 700.0,
+        "Tc_uncertainty_K": 7.0
+      },
+      "formula": "C9H10O2",
+      "molar_mass_g_mol": 150.177,
+      "name": "ethyl benzoate",
+      "source_table1_line": 434
+    },
+    "939-27-5": {
+      "article_name": "2-ethylnaphthalene",
+      "article_table2_line": 1209,
+      "article_table2_name": "2-ETHYLNAPHTHALENE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.79,
+        "Pc_uncertainty_MPa": 0.08,
+        "Tc_K": 763.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C12H12",
+      "molar_mass_g_mol": 156.228,
+      "name": "2-ethylnaphthalene",
+      "source_table1_line": 245
+    },
+    "95-47-6": {
+      "article_name": "1,2-dimethylbenzene",
+      "article_table2_line": 1113,
+      "article_table2_name": "1,2-DIMETHYLBENZENE (o-Xylene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.732,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 630.3,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 369.9,
+        "Zc": 0.263,
+        "rho_c_g_cm3": 0.287,
+        "rho_c_uncertainty_g_cm3": 0.004
+      },
+      "formula": "C8H10",
+      "molar_mass_g_mol": 106.168,
+      "name": "1,2-dimethylbenzene",
+      "source_table1_line": 208
+    },
+    "95-92-1": {
+      "article_name": "diethyl ethanedioate",
+      "article_table2_line": 1672,
+      "article_table2_name": "DIETHYL ETHANEDIOATE (Diethyl Oxalate)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.1,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 646.0,
+        "Tc_uncertainty_K": 2.0,
+        "Vc_cm3_mol": 442.9,
+        "Zc": 0.256,
+        "rho_c_g_cm3": 0.33,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C6H10O4",
+      "molar_mass_g_mol": 146.142,
+      "name": "diethyl ethanedioate",
+      "source_table1_line": 394
+    },
+    "96-17-3": {
+      "article_name": "2-methylbutanal",
+      "article_table2_line": 1438,
+      "article_table2_name": "2-METHYLBUTANAL",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.71,
+        "Pc_uncertainty_MPa": 0.2,
+        "Tc_K": 532.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C5H10O",
+      "molar_mass_g_mol": 86.134,
+      "name": "2-methylbutanal",
+      "source_table1_line": 310
+    },
+    "96-48-0": {
+      "article_name": "gamma-butyrolactone",
+      "article_table2_line": 1849,
+      "article_table2_name": "gamma-BUTYROLACTONE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 5.11,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 731.3,
+        "Tc_uncertainty_K": 0.04
+      },
+      "formula": "C4H6O2",
+      "molar_mass_g_mol": 86.09,
+      "name": "gamma-butyrolactone",
+      "source_table1_line": 471
+    },
+    "98-06-6": {
+      "article_name": "(1,1-dimethylethyl)benzene",
+      "article_table2_line": 1140,
+      "article_table2_name": "(1,1-DIMETHYLETHYL)BENZENE (tert-Butylbenzene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 2.95,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 648.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 479.4,
+        "Zc": 0.262,
+        "rho_c_g_cm3": 0.28,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "extraction_notes": [
+        "PDF text extraction includes an extra zero in tert-butylbenzene CASRN."
+      ],
+      "formula": "C10H14",
+      "molar_mass_g_mol": 134.222,
+      "name": "(1,1-dimethylethyl)benzene",
+      "source_table1_line": 213
+    },
+    "98-82-8": {
+      "article_name": "(1-methylethyl)benzene",
+      "article_table2_line": 1131,
+      "article_table2_name": "(1-METHYLETHYL)BENZENE (Isopropylbenzene, Cumene)",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.209,
+        "Pc_uncertainty_MPa": 0.04,
+        "Tc_K": 631.0,
+        "Tc_uncertainty_K": 0.5,
+        "Vc_cm3_mol": 426.2,
+        "Zc": 0.261,
+        "rho_c_g_cm3": 0.282,
+        "rho_c_uncertainty_g_cm3": 0.005
+      },
+      "formula": "C9H12",
+      "molar_mass_g_mol": 120.195,
+      "name": "(1-methylethyl)benzene",
+      "source_table1_line": 211
+    },
+    "99-04-7": {
+      "article_name": "3-methylbenzoic acid",
+      "article_table2_line": 1774,
+      "article_table2_name": "3-METHYLBENZOIC (m-Toluic) ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.85,
+        "Pc_uncertainty_MPa": 0.12,
+        "Tc_K": 771.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C8H8O2",
+      "molar_mass_g_mol": 136.15,
+      "name": "3-methylbenzoic acid",
+      "source_table1_line": 425
+    },
+    "99-94-5": {
+      "article_name": "4-methylbenzoic acid",
+      "article_table2_line": 1776,
+      "article_table2_name": "4-METHYLBENZOIC (p-Toluic) ACID",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.8,
+        "Pc_uncertainty_MPa": 0.1,
+        "Tc_K": 775.0,
+        "Tc_uncertainty_K": 8.0
+      },
+      "formula": "C8H8O2",
+      "molar_mass_g_mol": 136.15,
+      "name": "4-methylbenzoic acid",
+      "source_table1_line": 426
+    },
+    "994-05-8": {
+      "article_name": "2-methoxy-2-methylbutane",
+      "article_table2_line": 1736,
+      "article_table2_name": "2-METHOXY-2-METHYLBUTANE",
+      "cas_resolution_method": "article_table2_heading",
+      "critical_properties": {
+        "Pc_MPa": 3.2,
+        "Pc_uncertainty_MPa": 0.05,
+        "Tc_K": 535.0,
+        "Tc_uncertainty_K": 1.0,
+        "Vc_cm3_mol": 380.6,
+        "Zc": 0.274,
+        "rho_c_g_cm3": 0.27,
+        "rho_c_uncertainty_g_cm3": 0.02
+      },
+      "formula": "C6H14O",
+      "molar_mass_g_mol": 102.77,
+      "name": "2-methoxy-2-methylbutane",
+      "source_table1_line": 410
+    }
+  },
+  "metadata": {
+    "cas_key_count": 346,
+    "extraction_method": "pdftotext -layout plus Table 2 CAS heading resolution",
+    "pdf": "data/reference/acs.jced.5b00571.pdf",
+    "property_counts": {
+      "Pc": 315,
+      "Tc": 347,
+      "Vc": 125
+    },
+    "source": {
+      "doi": "10.1021/acs.jced.5b00571",
+      "journal": "J. Chem. Eng. Data",
+      "pages": "3444-3482",
+      "table": "Table 1",
+      "title": "Vapor-Liquid Critical Properties of Elements and Compounds. 12. Review of Recent Data for Hydrocarbons and Non-hydrocarbons",
+      "volume": 60,
+      "year": 2015
+    },
+    "table1_row_count": 347,
+    "units": {
+      "Pc": "MPa",
+      "Tc": "K",
+      "Vc": "cm^3/mol",
+      "Zc": "dimensionless",
+      "critical_density": "g/cm^3",
+      "molar_mass": "g/mol"
+    }
+  }
+}

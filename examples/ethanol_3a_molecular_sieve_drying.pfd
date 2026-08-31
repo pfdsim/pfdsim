@@ -1,0 +1,32 @@
+PROCESS: Ethanol 3A Molecular Sieve Drying
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Pseudo-continuous 3A molecular sieve drying of 1000 kg/h of 95 wt% ethanol at 25 C using 400 kg/h regenerated sieve.
+THERMO_METHOD: UNIQUAC
+
+COMPONENTS:
+    ethanol | Ethanol | MW=46.06844
+    water   | Water   | MW=18.01528
+
+STREAM Wet-Ethanol : FEED -> MS-100.feed
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F = 23.39691447131492 [kmol/h]
+    x = ethanol:0.8813765910674964, water:0.11862340893250353
+
+STREAM Dry-Ethanol : MS-100.product -> PRODUCT
+STREAM Adsorbed-Water : MS-100.adsorbate -> PRODUCT
+
+UNIT MS-100
+    TYPE: MolecularSieveDryer
+    PORTS:
+        feed      : inlet
+        product   : outlet
+        adsorbate : outlet
+    PARAMS:
+        sieve_type = 3A
+        adsorbent_mass_flow = 400 [kg/h]
+
+# Expected behavior:
+# - 3A sieve selectively adsorbs water using the GSTA water isotherm.
+# - Product water is below 100 ppmw at 25 C for this sieve/feed rate.

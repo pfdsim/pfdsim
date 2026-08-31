@@ -1,0 +1,1014 @@
+{
+  "system": {
+    "component_1": {
+      "name": "Acetaldehyde",
+      "formula": "C2H4O",
+      "r": 1.900,
+      "q": 1.800
+    },
+    "component_2": {
+      "name": "Water",
+      "formula": "H2O",
+      "r": 0.9200,
+      "q": 1.4000
+    },
+    "model": "UNIQUAC",
+    "coordination_number_z": 10.0,
+    "parameter_convention": {
+      "tau_ij": "exp(A_ij + B_ij / T)",
+      "temperature_unit": "K",
+      "A_unit": "dimensionless",
+      "B_unit": "K",
+      "residual_term": "ln(gamma_i^R) = q_i * [1 - ln(sum_j(theta_j*tau_ji)) - sum_j(theta_j*tau_ij / sum_k(theta_k*tau_kj))]"
+    },
+    "recommended_temperature_range_K": [
+      280.0,
+      375.0
+    ],
+    "cautious_extrapolation_limit_K": 400.0
+  },
+
+  "preferred_fit": {
+    "description": "Recommended source-balanced process-simulation fit. D'Avila and Silva (1970) provide the broad-composition activity-coefficient backbone. Morozov (1934), Suska (1979), and Washburn (1933) constrain temperature dependence and low-pressure P-x-y behavior. Byk, Bareggi, Pascal, Dobrinskaya, and Wusong are used primarily for validation.",
+    "A_12": 3.71393,
+    "B_12_K": -1316.43,
+    "A_21": -4.45833,
+    "B_21_K": 1338.28,
+    "equations": {
+      "ln_tau_12": "3.71393 - 1316.43 / T",
+      "ln_tau_21": "-4.45833 + 1338.28 / T",
+      "tau_12": "exp(3.71393 - 1316.43 / T)",
+      "tau_21": "exp(-4.45833 + 1338.28 / T)"
+    },
+    "objective": {
+      "basis": "ln(activity coefficient)",
+      "source_weighting": "Each primary experimental source was approximately source-balanced so that D'Avila's larger number of tabulated points did not numerically overwhelm Morozov, Suska, and Washburn.",
+      "primary_sources": [
+        "D'Avila and Silva (1970)",
+        "Morozov (1934)",
+        "Suska (1979)",
+        "Washburn (1933)"
+      ]
+    }
+  },
+
+  "interaction_values": [
+    {
+      "T_K": 283.15,
+      "ln_tau_12": -0.93529,
+      "tau_12": 0.39247,
+      "ln_tau_21": 0.26807,
+      "tau_21": 1.30744
+    },
+    {
+      "T_K": 298.15,
+      "ln_tau_12": -0.70139,
+      "tau_12": 0.49590,
+      "ln_tau_21": 0.03029,
+      "tau_21": 1.03075
+    },
+    {
+      "T_K": 330.0,
+      "ln_tau_12": -0.27524,
+      "tau_12": 0.75939,
+      "ln_tau_21": -0.40293,
+      "tau_21": 0.66836
+    },
+    {
+      "T_K": 348.15,
+      "ln_tau_12": -0.06728,
+      "tau_12": 0.93494,
+      "ln_tau_21": -0.61435,
+      "tau_21": 0.54099
+    },
+    {
+      "T_K": 373.15,
+      "ln_tau_12": 0.18605,
+      "tau_12": 1.20449,
+      "ln_tau_21": -0.87189,
+      "tau_21": 0.41816
+    }
+  ],
+
+  "apparent_infinite_dilution_behavior": [
+    {
+      "T_K": 283.15,
+      "gamma_inf_acetaldehyde_in_water": 4.32,
+      "gamma_inf_water_in_acetaldehyde": 3.84
+    },
+    {
+      "T_K": 298.15,
+      "gamma_inf_acetaldehyde_in_water": 5.50,
+      "gamma_inf_water_in_acetaldehyde": 4.07
+    },
+    {
+      "T_K": 330.0,
+      "gamma_inf_acetaldehyde_in_water": 7.46,
+      "gamma_inf_water_in_acetaldehyde": 3.73
+    },
+    {
+      "T_K": 348.15,
+      "gamma_inf_acetaldehyde_in_water": 7.96,
+      "gamma_inf_water_in_acetaldehyde": 3.33
+    },
+    {
+      "T_K": 373.15,
+      "gamma_inf_acetaldehyde_in_water": 7.79,
+      "gamma_inf_water_in_acetaldehyde": 2.77
+    }
+  ],
+
+  "model_selection": {
+    "candidate_models": [
+      {
+        "form": "constant_tau",
+        "number_of_parameters": 2,
+        "training_ln_gamma_RMSE": 0.28597,
+        "AICc": -246.25,
+        "leave_one_source_out_ln_gamma_RMSE_approx": 0.333
+      },
+      {
+        "form": "B_over_T_only",
+        "definition": "tau_ij = exp(B_ij/T)",
+        "number_of_parameters": 2,
+        "training_ln_gamma_RMSE": 0.29601,
+        "AICc": -239.35,
+        "leave_one_source_out_ln_gamma_RMSE_approx": 0.381
+      },
+      {
+        "form": "A_plus_B_over_T",
+        "definition": "tau_ij = exp(A_ij + B_ij/T)",
+        "number_of_parameters": 4,
+        "training_ln_gamma_RMSE": 0.27300,
+        "AICc": -251.24,
+        "leave_one_source_out_ln_gamma_RMSE_approx": 0.31,
+        "selected": true
+      }
+    ],
+    "conclusion": "A+B/T is preferred. The improvement over constant tau is moderate but survives source-wise cross-validation. The restricted B/T-only form performs worst.",
+    "identifiability_note": "The four temperature coefficients are strongly correlated and multiple near-degenerate UNIQUAC parameter branches exist. The reported preferred branch has the lowest source-balanced regression objective. Predictions within the data range are substantially more robust than the individual A and B coefficients."
+  },
+
+  "fit_metrics": {
+    "D_Avila_1970": {
+      "number_of_liquid_compositions": 25,
+      "temperature_range_K": [
+        283.15,
+        303.15
+      ],
+      "ln_gamma_RMSE_preferred_combined_fit": 0.1406,
+      "note": "A D'Avila-only UNIQUAC regression can achieve ln(gamma) RMSE about 0.0206, but extrapolates very poorly to the higher-temperature P-x-y literature. It was therefore rejected as the recommended process-simulation fit."
+    },
+    "all_primary_training_data": {
+      "ln_gamma_RMSE": 0.2730,
+      "note": "The larger value relative to D'Avila alone is caused primarily by systematic disagreement between historical experimental sources."
+    }
+  },
+
+  "direct_Pxy_validation": [
+    {
+      "source": "Morozov (1934)",
+      "role": "primary fit/support",
+      "number_of_points": 12,
+      "pressure_MAPE_percent": 10.08,
+      "acetaldehyde_vapor_fraction_MAE": 0.0310
+    },
+    {
+      "source": "Suska (1979)",
+      "role": "primary fit/support",
+      "number_of_points": 8,
+      "pressure_MAPE_percent": 13.50,
+      "acetaldehyde_vapor_fraction_MAE": 0.0336
+    },
+    {
+      "source": "Washburn (1933)",
+      "role": "primary fit/support",
+      "number_of_points": 5,
+      "pressure_MAPE_percent": 7.92,
+      "acetaldehyde_vapor_fraction_MAE": 0.0296
+    },
+    {
+      "source": "Byk / Bull-Seregrennaja-Tsherbakora (1963)",
+      "role": "validation / downweighted",
+      "number_of_points": 16,
+      "pressure_MAPE_percent": 9.38,
+      "acetaldehyde_vapor_fraction_MAE": 0.0425,
+      "note": "High-temperature datasets have been flagged as thermodynamically inconsistent in later evaluations and were not allowed to control the regression."
+    },
+    {
+      "source": "Bareggi et al. (1968)",
+      "role": "high-pressure validation",
+      "number_of_points_used_in_reported_metric": 14,
+      "pressure_MAPE_percent": 27.09,
+      "acetaldehyde_vapor_fraction_MAE": 0.0945,
+      "note": "Predominantly 303.98 and 506.63 kPa data. The 419.65 K point was omitted from the quoted summary metric because it lies well outside the recommended correlation range."
+    },
+    {
+      "source": "Pascal (1921)",
+      "role": "outlier validation",
+      "number_of_direct_Pxy_points": 4,
+      "pressure_MAPE_percent": 34.07,
+      "acetaldehyde_vapor_fraction_MAE": 0.0745,
+      "note": "Strong systematic disagreement with the better-supported experimental source family."
+    }
+  ],
+
+  "summary_Pxy_metrics": {
+    "primary_low_pressure_training_sources": {
+      "sources": [
+        "Morozov (1934)",
+        "Suska (1979)",
+        "Washburn (1933)"
+      ],
+      "source_averaged_pressure_MAPE_percent": 10.50,
+      "source_averaged_acetaldehyde_vapor_fraction_MAE": 0.0314
+    },
+    "all_direct_Pxy_sources": {
+      "source_averaged_pressure_MAPE_percent": 17.01,
+      "source_averaged_acetaldehyde_vapor_fraction_MAE": 0.0510
+    },
+    "excluding_Pascal_1921": {
+      "source_averaged_pressure_MAPE_percent": 13.59,
+      "source_averaged_acetaldehyde_vapor_fraction_MAE": 0.0463
+    }
+  },
+
+  "independent_pressure_only_validation": [
+    {
+      "source": "Dobrinskaya (1953)",
+      "number_of_non_endpoint_points": 24,
+      "pressure_MAPE_percent": 12.26
+    },
+    {
+      "source": "Wusong (1976)",
+      "number_of_points": 4,
+      "pressure_MAPE_percent": 6.94
+    },
+    {
+      "source": "Pascal (1921)",
+      "number_of_pressure_only_points": 23,
+      "pressure_MAPE_percent": 15.16,
+      "pressure_APE_median_percent": 4.19,
+      "note": "A few severe Pascal outliers dominate the MAPE."
+    }
+  ],
+
+  "vapor_phase_treatment": {
+    "framework": "gamma-phi",
+    "EOS": "Peng-Robinson",
+    "PR_k12_default": 0.0,
+    "pure_component_vapor_pressure": {
+      "acetaldehyde": {
+        "source": "NIST Chemistry WebBook",
+        "low_temperature_correlation": "Coles and Popper (1950)",
+        "higher_temperature_correlation": "Bull, Seregrennaja, and Tsherbakora (1963)"
+      },
+      "water": {
+        "source": "NIST Chemistry WebBook",
+        "correlations": "Piecewise Bridgeman and Aldrich Antoine equations"
+      }
+    },
+    "poynting_correction": true,
+    "note": "Vapor-phase corrections are small at the principal low-pressure fitting conditions. Experimental source disagreement is much larger than uncertainty associated with the vapor EOS."
+  },
+
+  "parameter_uncertainty": {
+    "method": "Local covariance approximation around the preferred source-balanced optimum",
+    "approximate_1sigma_parameter_uncertainties": {
+      "A_12": 2.09,
+      "B_12_K": 613.4,
+      "A_21": 2.50,
+      "B_21_K": 695.5
+    },
+    "important_correlations": {
+      "corr_A12_B12": -0.974,
+      "corr_A21_B21": -0.995
+    },
+    "approximate_1sigma_ln_tau_uncertainty": [
+      {
+        "T_K": 283.15,
+        "ln_tau_12": -0.9353,
+        "sigma_ln_tau_12": 0.494,
+        "ln_tau_21": 0.2681,
+        "sigma_ln_tau_21": 0.251
+      },
+      {
+        "T_K": 298.15,
+        "ln_tau_12": -0.7014,
+        "sigma_ln_tau_12": 0.478,
+        "ln_tau_21": 0.0303,
+        "sigma_ln_tau_21": 0.295
+      },
+      {
+        "T_K": 330.0,
+        "ln_tau_12": -0.2752,
+        "sigma_ln_tau_12": 0.509,
+        "ln_tau_21": -0.4029,
+        "sigma_ln_tau_21": 0.458
+      },
+      {
+        "T_K": 348.15,
+        "ln_tau_12": -0.0673,
+        "sigma_ln_tau_12": 0.551,
+        "ln_tau_21": -0.6144,
+        "sigma_ln_tau_21": 0.553
+      },
+      {
+        "T_K": 373.15,
+        "ln_tau_12": 0.1861,
+        "sigma_ln_tau_12": 0.618,
+        "ln_tau_21": -0.8719,
+        "sigma_ln_tau_21": 0.675
+      }
+    ],
+    "interpretation": "Do not interpret individual A and B uncertainties independently. Their strong anticorrelation means tau(T), gamma(T,x), and predicted VLE are better determined than the raw parameter standard deviations imply."
+  },
+
+  "experimental_sources": [
+    {
+      "authors": "S. G. D'Avila; R. S. F. Silva",
+      "year": 1970,
+      "title": "Isothermal Vapor-Liquid Equilibrium Data by Total Pressure Method. Systems Acetaldehyde-Ethanol, Acetaldehyde-Water, and Ethanol-Water",
+      "journal": "Journal of Chemical and Engineering Data",
+      "volume": 15,
+      "pages": "421-424",
+      "doi": "10.1021/je60046a010",
+      "data_type": "Isothermal total-pressure VLE; Barker reduction; published activity coefficients and Redlich-Kister coefficients",
+      "temperatures_K": [
+        283.15,
+        288.15,
+        293.15,
+        298.15,
+        303.15
+      ],
+      "liquid_acetaldehyde_mole_fractions": [
+        0.1,
+        0.3,
+        0.5,
+        0.7,
+        0.9
+      ],
+      "number_of_points": 25,
+      "role": "principal broad-composition anchor"
+    },
+    {
+      "author": "Josef Suska",
+      "year": 1979,
+      "title": "Phase Equilibria in Binary Systems Containing Acetaldehyde",
+      "journal": "Collection of Czechoslovak Chemical Communications",
+      "volume": 44,
+      "pages": "1852-1856",
+      "pressure_kPa": 101.32,
+      "DDBST_ID": 7645,
+      "role": "primary P-x-y supporting dataset"
+    },
+    {
+      "source_label": "Morozov (1934)",
+      "year": 1934,
+      "DDBST_IDs": [
+        981,
+        982
+      ],
+      "temperatures_K": [
+        283.15,
+        293.15
+      ],
+      "role": "primary P-x-y supporting dataset",
+      "provenance": "Numerical values reproduced in the Springer/DDBST table supplied in the conversation."
+    },
+    {
+      "source_label": "Washburn (1933)",
+      "year": 1933,
+      "DDBST_ID": 983,
+      "pressure_kPa": 101.33,
+      "role": "primary P-x-y supporting dataset",
+      "provenance": "Numerical values reproduced in the Springer/DDBST table supplied in the conversation."
+    },
+    {
+      "authors": "S. Sh. Bull; I. I. Seregrennaja; P. R. Tsherbakora",
+      "year": 1963,
+      "title": "Isothermic Equilibrium of Liquid-Steam in System Water-Acetoaldehyde",
+      "journal": "Khimicheskaya Promyshlennost",
+      "issue": 7,
+      "pages": "507-509",
+      "DDBST_IDs": [
+        984,
+        985,
+        986
+      ],
+      "role": "validation / downweighted high-temperature data"
+    },
+    {
+      "source_label": "Bareggi et al. (1968)",
+      "year": 1968,
+      "title": "Liquid-vapor equilibrium of acetaldehyde-water systems under pressure",
+      "journal": "Chimica e l'Industria",
+      "volume": 50,
+      "pages": "1224-1226",
+      "DDBST_IDs": [
+        6029,
+        6030
+      ],
+      "nominal_pressures_kPa": [
+        303.98,
+        506.63
+      ],
+      "role": "high-pressure validation"
+    },
+    {
+      "source_label": "Dobrinskaya (1953)",
+      "year": 1953,
+      "DDBST_IDs": [
+        9050,
+        9051,
+        9052
+      ],
+      "role": "independent P-x validation"
+    },
+    {
+      "source_label": "Pascal (1921)",
+      "year": 1921,
+      "DDBST_IDs": [
+        8388,
+        8389,
+        8391
+      ],
+      "role": "outlier / independent validation"
+    },
+    {
+      "source_label": "Wusong (1976)",
+      "year": 1976,
+      "DDBST_ID": 10733,
+      "role": "independent P-x validation"
+    }
+  ],
+
+  "chemical_behavior_caveat": {
+    "reactive_pseudobinary": true,
+    "description": "Acetaldehyde hydrates and oligomerizes in aqueous solution. The fitted UNIQUAC interaction therefore represents apparent acetaldehyde + water behavior rather than a strictly nonreactive two-molecular-species liquid.",
+    "implication": "Temperature dependence can absorb both conventional liquid-phase nonideality and changing chemical speciation.",
+    "recommended_use": "Process-simulation pseudobinary VLE correlation over approximately 280-375 K."
+  },
+
+  "comparison_with_recommended_NRTL_fit": {
+    "NRTL_primary_low_pressure_source_averaged_pressure_MAPE_percent": 9.1,
+    "UNIQUAC_primary_low_pressure_source_averaged_pressure_MAPE_percent": 10.5,
+    "NRTL_primary_low_pressure_y_MAE_approx": 0.031,
+    "UNIQUAC_primary_low_pressure_y_MAE": 0.0314,
+    "NRTL_D_Avila_ln_gamma_RMSE_approx": 0.110,
+    "UNIQUAC_D_Avila_ln_gamma_RMSE": 0.141,
+    "conclusion": "NRTL is modestly better overall, but UNIQUAC is fully respectable and reproduces vapor compositions essentially as well in the main process-relevant low-pressure datasets."
+  },
+
+  "quality_assessment": {
+    "recommended_reliability": 0.86,
+    "suggested_reliability_range": [
+      0.83,
+      0.89
+    ],
+    "classification": "good experimental pseudobinary correlation",
+    "reasons": [
+      "Uses broad-composition D'Avila experimental activity-coefficient information.",
+      "Uses several independent historical P-x-y sources to constrain temperature dependence.",
+      "A+B/T improves AICc and source-wise cross-validation.",
+      "Independent Dobrinskaya and Wusong pressure data are predicted reasonably well.",
+      "Historical datasets disagree systematically.",
+      "UNIQUAC temperature parameters are strongly correlated.",
+      "High-temperature water-in-acetaldehyde infinite-dilution behavior is weakly constrained.",
+      "Acetaldehyde-water is chemically reactive through hydration and oligomerization."
+    ]
+  },
+
+  "recommended_database_entry": {
+    "component_1": "Acetaldehyde",
+    "component_2": "Water",
+    "model": "UNIQUAC",
+    "r_1": 1.900,
+    "q_1": 1.800,
+    "r_2": 0.9200,
+    "q_2": 1.4000,
+    "tau_form": "exp(A + B/T)",
+    "A_12": 3.71393,
+    "B_12": -1316.43,
+    "A_21": -4.45833,
+    "B_21": 1338.28,
+    "B_unit": "K",
+    "Tmin_K": 280.0,
+    "Tmax_K": 375.0,
+    "reliability": 0.86,
+    "source": "Source-balanced regression of D'Avila and Silva (1970), Morozov (1934), Suska (1979), and Washburn (1933), validated against Byk/Bull et al. (1963), Bareggi et al. (1968), Dobrinskaya (1953), Pascal (1921), and Wusong (1976).",
+    "notes": "Effective pseudobinary parameters for apparent acetaldehyde-water VLE. Prefer NRTL slightly if only one activity model is required; UNIQUAC gives comparable vapor-composition predictions."
+  },
+
+  "recommended_NRTL_fit": {
+  "system": {
+    "component_1": {
+      "name": "Acetaldehyde",
+      "formula": "C2H4O"
+    },
+    "component_2": {
+      "name": "Water",
+      "formula": "H2O"
+    },
+    "model": "NRTL",
+    "parameter_convention": {
+      "tau_ij": "A_ij + B_ij / T",
+      "G_ij": "exp(-alpha_ij * tau_ij)",
+      "temperature_unit": "K",
+      "B_unit": "K"
+    },
+    "recommended_temperature_range_K": [
+      280.0,
+      375.0
+    ],
+    "cautious_extrapolation_limit_K": 400.0
+  },
+
+  "preferred_fit": {
+    "description": "Recommended process-simulation fit. D'Avila broad-composition data used as the principal anchor; Morozov, Suska, and Washburn used to constrain direct P-x-y behavior. Known contradictory datasets were retained primarily for validation rather than allowed to dominate the regression.",
+    "alpha_12": 0.3,
+    "alpha_21": 0.3,
+    "A_12": 5.25487,
+    "B_12_K": -1310.86,
+    "A_21": 2.10302,
+    "B_21_K": -363.638,
+    "equations": {
+      "tau_12": "5.25487 - 1310.86 / T",
+      "tau_21": "2.10302 - 363.638 / T"
+    }
+  },
+
+  "alternative_global_weighted_fit": {
+    "description": "Source-weighted regression in which Byk, Bareggi, and Pascal were allowed reduced influence instead of being treated primarily as validation datasets.",
+    "alpha_12": 0.3,
+    "alpha_21": 0.3,
+    "A_12": 5.01663,
+    "B_12_K": -1243.60,
+    "A_21": 2.06778,
+    "B_21_K": -353.233
+  },
+
+  "infinite_dilution_behavior_preferred_fit": [
+    {
+      "T_K": 283.15,
+      "tau_12": 0.625,
+      "tau_21": 0.819,
+      "gamma_inf_acetaldehyde": 3.81,
+      "gamma_inf_water": 3.55
+    },
+    {
+      "T_K": 298.15,
+      "tau_12": 0.858,
+      "tau_21": 0.883,
+      "gamma_inf_acetaldehyde": 4.70,
+      "gamma_inf_water": 4.65
+    },
+    {
+      "T_K": 303.15,
+      "tau_12": 0.931,
+      "tau_21": 0.903,
+      "gamma_inf_acetaldehyde": 4.99,
+      "gamma_inf_water": 5.05
+    },
+    {
+      "T_K": 330.0,
+      "tau_12": 1.283,
+      "tau_21": 1.001,
+      "gamma_inf_acetaldehyde": 6.51,
+      "gamma_inf_water": 7.57
+    },
+    {
+      "T_K": 348.15,
+      "tau_12": 1.490,
+      "tau_21": 1.059,
+      "gamma_inf_acetaldehyde": 7.47,
+      "gamma_inf_water": 9.58
+    },
+    {
+      "T_K": 373.15,
+      "tau_12": 1.742,
+      "tau_21": 1.129,
+      "gamma_inf_acetaldehyde": 8.68,
+      "gamma_inf_water": 12.76
+    }
+  ],
+
+  "model_selection": {
+    "alpha_handling": {
+      "selected_value": 0.3,
+      "reason": "Allowing alpha to float resulted in poor identifiability and drove alpha toward the imposed lower bound while strongly trading against tau parameters. Alpha was therefore fixed at the conventional value 0.30."
+    },
+    "candidate_models": [
+      {
+        "form": "constant_tau",
+        "number_of_parameters": 2,
+        "AICc": -866.2,
+        "leave_one_source_out_RMSE": 0.323
+      },
+      {
+        "form": "B_over_T_only",
+        "number_of_parameters": 2,
+        "AICc": -841.6,
+        "leave_one_source_out_RMSE": 0.353
+      },
+      {
+        "form": "A_plus_B_over_T",
+        "number_of_parameters": 4,
+        "AICc": -882.6,
+        "leave_one_source_out_RMSE": 0.304,
+        "selected": true
+      }
+    ],
+    "conclusion": "The four-parameter A+B/T form provides the best balance of fit quality and source-wise predictive performance. The improvement over constant tau is meaningful but not enormous. The B/T-only restriction performs worst."
+  },
+
+  "vapor_phase_treatment": {
+    "method": "gamma-phi",
+    "vapor_EOS": "Peng-Robinson",
+    "poynting_correction": true,
+    "pure_saturated_vapor_fugacity_correction": true,
+    "vapor_pressure_sources": {
+      "acetaldehyde": "NIST Antoine correlations, including Bull et al. in the higher-temperature region",
+      "water": "NIST piecewise Antoine correlations"
+    },
+    "observed_correction_ranges": {
+      "phi_acetaldehyde": [
+        0.924,
+        0.997
+      ],
+      "phi_water": [
+        0.956,
+        0.998
+      ],
+      "poynting_acetaldehyde": [
+        0.984,
+        1.000
+      ],
+      "poynting_water": [
+        1.000,
+        1.003
+      ]
+    },
+    "PR_binary_interaction_sensitivity": {
+      "tested_k12_range": [
+        -0.10,
+        0.10
+      ],
+      "fit_at_k12_minus_0_10": {
+        "A_12": 5.039,
+        "B_12_K": -1249.8,
+        "A_21": 2.057,
+        "B_21_K": -350.4
+      },
+      "fit_at_k12_plus_0_10": {
+        "A_12": 4.994,
+        "B_12_K": -1237.4,
+        "A_21": 2.079,
+        "B_21_K": -356.1
+      },
+      "conclusion": "Vapor-EOS binary-interaction uncertainty changes fitted NRTL parameters by only approximately 1-2%; disagreement among experimental datasets is much more important."
+    }
+  },
+
+  "fit_and_validation_metrics": {
+    "direct_Pxy_validation_preferred_fit": [
+      {
+        "source": "Morozov (1934)",
+        "pressure_MAPE_percent": 6.6,
+        "acetaldehyde_vapor_fraction_MAE": 0.028
+      },
+      {
+        "source": "Suska (1979)",
+        "pressure_MAPE_percent": 13.1,
+        "acetaldehyde_vapor_fraction_MAE": 0.032
+      },
+      {
+        "source": "Washburn (1933)",
+        "pressure_MAPE_percent": 7.5,
+        "acetaldehyde_vapor_fraction_MAE": 0.032
+      },
+      {
+        "source": "Byk (1963)",
+        "pressure_MAPE_percent": 16.1,
+        "acetaldehyde_vapor_fraction_MAE": 0.049,
+        "note": "Higher-temperature data; later thermodynamic-consistency evaluations report problems with the 348 K and 373 K datasets."
+      },
+      {
+        "source": "Bareggi et al. (1968)",
+        "pressure_MAPE_percent": 14.0,
+        "acetaldehyde_vapor_fraction_MAE": 0.031,
+        "note": "Elevated-pressure data; treated cautiously because of disagreement with the lower-pressure source family."
+      },
+      {
+        "source": "Pascal (1921)",
+        "pressure_MAPE_percent": 39.1,
+        "acetaldehyde_vapor_fraction_MAE": 0.059,
+        "note": "Strong outlier relative to the other literature datasets; not recommended as a primary regression target."
+      }
+    ],
+
+    "overall_direct_Pxy_metrics": {
+      "all_sources": {
+        "source_averaged_pressure_MAPE_percent": 16.1,
+        "source_averaged_acetaldehyde_vapor_fraction_MAE": 0.038
+      },
+      "excluding_Pascal_1921": {
+        "source_averaged_pressure_MAPE_percent": 11.5,
+        "source_averaged_acetaldehyde_vapor_fraction_MAE": 0.034
+      }
+    },
+
+    "published_Faundez_2004_comparison": {
+      "source_averaged_pressure_MAPE_percent": 21.4,
+      "source_averaged_acetaldehyde_vapor_fraction_MAE": 0.067,
+      "note": "Calculated using the same validation framework for comparison."
+    },
+
+    "independent_pressure_only_validation": [
+      {
+        "source": "Dobrinskaya (1953)",
+        "preferred_A_plus_B_over_T_pressure_MAPE_percent": 11.9,
+        "constant_tau_pressure_MAPE_percent": 21.5
+      },
+      {
+        "source": "Wusong (1976)",
+        "preferred_A_plus_B_over_T_pressure_MAPE_percent": 6.3,
+        "constant_tau_pressure_MAPE_percent": 10.4
+      },
+      {
+        "source": "Pascal (1921)",
+        "preferred_A_plus_B_over_T_pressure_MAPE_percent": 18.3,
+        "constant_tau_pressure_MAPE_percent": 14.1,
+        "note": "Pascal is the principal source for which the constant-tau form performs better."
+      }
+    ]
+  },
+
+  "parameter_uncertainty": {
+    "important_note": "A and B within each directional interaction are very strongly anticorrelated. Individual parameter standard errors substantially exaggerate uncertainty in the physically relevant tau(T) curves.",
+    "parameter_correlations": {
+      "corr_A12_B12": -0.997,
+      "corr_A21_B21": -0.993
+    },
+    "approximate_local_1sigma_tau_uncertainty_global_fit": [
+      {
+        "T_K": 283.0,
+        "tau_12": 0.625,
+        "tau_12_sigma": 0.357,
+        "tau_21": 0.820,
+        "tau_21_sigma": 0.335
+      },
+      {
+        "T_K": 298.0,
+        "tau_12": 0.846,
+        "tau_12_sigma": 0.297,
+        "tau_21": 0.883,
+        "tau_21_sigma": 0.268
+      },
+      {
+        "T_K": 330.0,
+        "tau_12": 1.248,
+        "tau_12_sigma": 0.456,
+        "tau_21": 0.997,
+        "tau_21_sigma": 0.253
+      },
+      {
+        "T_K": 348.0,
+        "tau_12": 1.445,
+        "tau_12_sigma": 0.596,
+        "tau_21": 1.053,
+        "tau_21_sigma": 0.302
+      },
+      {
+        "T_K": 373.0,
+        "tau_12": 1.684,
+        "tau_12_sigma": 0.784,
+        "tau_21": 1.121,
+        "tau_21_sigma": 0.388
+      }
+    ],
+    "interpretation": "The interaction surface is best constrained around approximately 298-330 K. Temperature extrapolation toward 373 K carries substantially greater uncertainty."
+  },
+
+  "experimental_sources": [
+    {
+      "author": "Morozov",
+      "year": 1934,
+      "DDBST_IDs": [
+        981,
+        982
+      ],
+      "data_type": "isothermal P-x-y",
+      "temperatures_K": [
+        283.15,
+        293.15
+      ],
+      "use_in_fit": "primary supporting dataset",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation"
+    },
+    {
+      "author": "Washburn",
+      "year": 1933,
+      "DDBST_ID": 983,
+      "data_type": "isobaric T-x-y",
+      "pressure_kPa": 101.33,
+      "use_in_fit": "primary supporting dataset",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation"
+    },
+    {
+      "author": "Byk",
+      "year": 1963,
+      "DDBST_IDs": [
+        984,
+        985,
+        986
+      ],
+      "data_type": "isothermal P-x-y",
+      "temperatures_K": [
+        313.15,
+        348.15,
+        373.15
+      ],
+      "use_in_fit": "downweighted / validation",
+      "quality_note": "The higher-temperature acetaldehyde-water datasets have been reported as thermodynamically inconsistent in later evaluations.",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation"
+    },
+    {
+      "author": "Bareggi et al.",
+      "year": 1968,
+      "DDBST_IDs": [
+        6029,
+        6030
+      ],
+      "data_type": "high-pressure T-P-x-y",
+      "nominal_pressures_kPa": [
+        303.98,
+        506.63
+      ],
+      "use_in_fit": "downweighted / validation",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation",
+      "citation": "Bareggi, A.; Mori, G.; Schwarz, A.; Beltrame, P. Liquid-vapor equilibrium of acetaldehyde-water systems under pressure. Chimica e l'Industria 50 (1968), 1224-1226."
+    },
+    {
+      "author": "Suska",
+      "year": 1979,
+      "DDBST_ID": 7645,
+      "data_type": "isobaric T-x-y",
+      "pressure_kPa": 101.33,
+      "use_in_fit": "primary supporting dataset",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation",
+      "citation": "Suska, J. Phase Equilibria in Binary Systems Containing Acetaldehyde. Collection of Czechoslovak Chemical Communications 44 (1979), 1852-1856."
+    },
+    {
+      "author": "Pascal",
+      "year": 1921,
+      "DDBST_IDs": [
+        8388,
+        8389,
+        8391
+      ],
+      "data_type": "primarily isobaric T-x and selected T-x-y",
+      "use_in_fit": "outlier / validation only",
+      "quality_note": "Shows large systematic disagreement with the better-supported source family.",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation"
+    },
+    {
+      "author": "Dobrinskaya",
+      "year": 1953,
+      "DDBST_IDs": [
+        9050,
+        9051,
+        9052
+      ],
+      "data_type": "isothermal P-x",
+      "temperatures_K": [
+        273.15,
+        285.19,
+        297.92
+      ],
+      "use_in_fit": "independent pressure-only validation",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation"
+    },
+    {
+      "author": "Wusong",
+      "year": 1976,
+      "DDBST_ID": 10733,
+      "data_type": "isobaric T-x",
+      "pressure_kPa": 101.33,
+      "use_in_fit": "independent pressure-only validation",
+      "data_provenance": "Springer/DDBST reproduction supplied in conversation"
+    },
+    {
+      "author": "D'Avila and Silva",
+      "year": 1970,
+      "data_type": "isothermal total-pressure VLE with Barker reduction and Redlich-Kister correlation",
+      "temperatures_C": [
+        10,
+        15,
+        20,
+        25,
+        30
+      ],
+      "temperatures_K": [
+        283.15,
+        288.15,
+        293.15,
+        298.15,
+        303.15
+      ],
+      "liquid_acetaldehyde_mole_fractions": [
+        0.1,
+        0.3,
+        0.5,
+        0.7,
+        0.9
+      ],
+      "number_of_points": 25,
+      "use_in_fit": "principal broad-composition anchor",
+      "citation": "D'Avila, S. G.; Silva, R. S. F. Isothermal Vapor-Liquid Equilibrium Data by Total Pressure Method. Systems Acetaldehyde-Ethanol and Acetaldehyde-Water. Journal of Chemical and Engineering Data 15 (1970), 421-424.",
+      "note": "Published temperature-specific Redlich-Kister correlations were used to reconstruct the smooth activity-coefficient surface."
+    }
+  ],
+
+  "published_comparison_fit": {
+    "source": "Faundez and Valderrama",
+    "year": 2004,
+    "model": "NRTL",
+    "convention": "tau_ij = B_ij / T",
+    "alpha": 0.28877,
+    "B_12_K": 116.42,
+    "B_21_K": 528.32,
+    "reported_range": {
+      "temperature_C": [
+        33,
+        100
+      ],
+      "pressure_kPa": 101.3,
+      "liquid_acetaldehyde_mole_fraction": [
+        0.0,
+        0.20
+      ],
+      "vapor_acetaldehyde_mole_fraction": [
+        0.0,
+        0.93
+      ]
+    },
+    "reported_errors": {
+      "temperature_mean_absolute_relative_deviation_percent": 2.3,
+      "acetaldehyde_vapor_fraction_mean_absolute_relative_deviation_percent": 7.9
+    },
+    "citation": "Faundez, C. A.; Valderrama, J. O. Phase equilibrium in binary aqueous mixtures containing acetaldehyde. Journal of Food Engineering (2004)."
+  },
+
+  "chemical_behavior_caveat": {
+    "reactive_system": true,
+    "description": "Acetaldehyde and water form hydrated and oligomeric species in the liquid phase. A two-component NRTL fit should therefore be interpreted as an effective or apparent pseudobinary correlation rather than a fundamental nonreactive molecular interaction model.",
+    "relevant_chemistry": [
+      "CH3CHO + H2O <=> CH3CH(OH)2",
+      "higher acetaldehyde-water oligomerization reactions"
+    ],
+    "modeling_implication": "The fitted temperature dependence may absorb both conventional liquid nonideality and temperature-dependent chemical speciation.",
+    "supporting_source": {
+      "description": "The retrieved dissertation contains dedicated sections on acetaldehyde/water chemical equilibria, nonideal excess-Gibbs modeling, and both preliminary and extended VLE models.",
+      "citation": "Retrieved acetaldehyde dissertation, sections 4.2.2 and C.2.2.1-C.2.2.2."
+    }
+  },
+
+  "quality_assessment": {
+    "recommended_reliability": 0.88,
+    "suggested_reliability_range": [
+      0.85,
+      0.90
+    ],
+    "classification": "good experimental correlation, but not a hard/high-confidence binary parameter set",
+    "reasons": [
+      "Broad-composition low-temperature data are comparatively well constrained.",
+      "Several independent low-pressure source families are reproduced reasonably well.",
+      "A+B/T improves both information criteria and leave-one-source-out validation.",
+      "Independent Dobrinskaya and Wusong pressure data favor the temperature-dependent model.",
+      "High-temperature literature is mutually inconsistent.",
+      "A and B parameters are strongly correlated.",
+      "The physical binary is chemically reactive, making the NRTL parameters effective rather than fundamental."
+    ]
+  },
+
+  "recommended_database_entry": {
+    "component_1": "Acetaldehyde",
+    "component_2": "Water",
+    "model": "NRTL",
+    "alpha_12": 0.3,
+    "alpha_21": 0.3,
+    "A_12": 5.25487,
+    "B_12": -1310.86,
+    "A_21": 2.10302,
+    "B_21": -363.638,
+    "B_unit": "K",
+    "tau_form": "A + B/T",
+    "Tmin_K": 280.0,
+    "Tmax_K": 375.0,
+    "reliability": 0.88,
+    "source": "Regression of multiple experimental acetaldehyde-water VLE datasets; D'Avila and Silva (1970) used as broad-composition anchor with Morozov (1934), Washburn (1933), and Suska (1979) supporting direct P-x-y behavior.",
+    "notes": "Effective pseudobinary parameters. Acetaldehyde hydration/oligomerization occurs in aqueous solution. High-temperature Byk and high-pressure Bareggi data were treated cautiously; Pascal data were treated as outlying validation data."
+  }
+  }
+}

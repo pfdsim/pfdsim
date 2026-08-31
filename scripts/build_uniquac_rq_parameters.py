@@ -1,0 +1,323 @@
+#!/usr/bin/env python3
+"""Build CAS-keyed UNIQUAC pure-component r/q parameters."""
+
+from __future__ import annotations
+
+import csv
+import json
+import math
+import re
+from pathlib import Path
+from typing import Any, Optional
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "data"
+SOURCE_DATA = DATA / "source"
+CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
+
+
+def normalize_name(value: str) -> str:
+    text = value.lower().strip()
+    text = text.replace("n,n-", "")
+    text = text.replace("n.n-", "")
+    text = text.replace("n-", "")
+    text = text.replace("normal ", "")
+    text = text.replace("iso-", "iso")
+    text = text.replace("p-", "p")
+    text = text.replace("m-", "m")
+    text = text.replace("o-", "o")
+    return re.sub(r"[^a-z0-9]+", "", text)
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text())
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+
+
+def parse_float(value: Any) -> Optional[float]:
+    try:
+        result = float(value)
+    except (TypeError, ValueError):
+        return None
+    return result if math.isfinite(result) else None
+
+
+def valid_cas(value: Any) -> Optional[str]:
+    text = str(value or "").strip()
+    return text if CAS_RE.match(text) else None
+
+
+def source_priority(source: str) -> tuple[int, str]:
+    if "in this work" in source or "ester_uniquac_combinatorial" in source:
+        return (-1, source)
+    if "DWSIM.Thermodynamics" in source:
+        return (0, source)
+    if "Nagata and Gmehling" in source:
+        return (2, source)
+    if "water_organic_binary_fits" in source:
+        return (3, source)
+    return (1, source)
+
+
+def add_alias(aliases: dict[str, Optional[str]], alias: Optional[str], cas: str) -> None:
+    if not alias:
+        return
+    for key in {normalize_name(str(alias)), normalize_name(cas)}:
+        if not key:
+            continue
+        existing = aliases.get(key)
+        if existing is None and key in aliases:
+            continue
+        if existing is not None and existing != cas:
+            aliases[key] = None
+        else:
+            aliases[key] = cas
+
+
+def add_record(components: dict[str, dict], aliases: dict[str, Optional[str]], record: dict) -> None:
+    cas = valid_cas(record.get("cas"))
+    r = parse_float(record.get("r"))
+    q = parse_float(record.get("q"))
+    if not cas or r is None or q is None or r <= 0.0 or q <= 0.0:
+        return
+    source = str(record.get("source", "") or "unknown")
+    name = str(record.get("name", "") or "")
+    entry = components.setdefault(
+        cas,
+        {
+            "cas": cas,
+            "name": name,
+            "formula": str(record.get("formula", "") or ""),
+            "r": r,
+            "q": q,
+            "source": source,
+            "records": [],
+            "aliases": [],
+        },
+    )
+    source_record = {
+        "name": name,
+        "formula": str(record.get("formula", "") or ""),
+        "r": r,
+        "q": q,
+        "source": source,
+    }
+    if record.get("dwsim_id"):
+        source_record["dwsim_id"] = str(record["dwsim_id"])
+    entry["records"].append(source_record)
+    if source_priority(source) < source_priority(entry["source"]):
+        entry.update({
+            "name": name,
+            "formula": str(record.get("formula", "") or ""),
+            "r": r,
+            "q": q,
+            "source": source,
+        })
+    entry["aliases"] = sorted(
+        set(entry.get("aliases", []))
+        | {value for value in (name, record.get("formula"), record.get("dwsim_id")) if value}
+    )
+    for alias in (name, cas, record.get("dwsim_id")):
+        add_alias(aliases, alias, cas)
+
+
+def csv_records() -> list[dict]:
+    path = SOURCE_DATA / "dwsim_uniquac_combinatorial_parameters.csv"
+    records = []
+    with open(path, newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            records.append({
+                "cas": row.get("cas"),
+                "name": row.get("name"),
+                "formula": row.get("formula"),
+                "dwsim_id": row.get("dwsim_id"),
+                "r": row.get("UNIQUAC_r"),
+                "q": row.get("UNIQUAC_q"),
+                "source": row.get("source") or "DWSIM UNIQUAC parameters",
+            })
+    return records
+
+
+def nagata_records() -> list[dict]:
+    payload = load_json(SOURCE_DATA / "nagata_gmehling_extended_uniquac_rq.json")
+    source = payload["metadata"]["source"]
+    records = []
+    for item in payload["components"]:
+        q = float(item["q"])
+        q_prime = item.get("q_prime")
+        q_prime_expression = item.get("q_prime_expression")
+        if q_prime is None and q_prime_expression == "q^0.1":
+            q_prime = q ** 0.1
+        record = {
+            "cas": item["cas"],
+            "name": item["name"],
+            "formula": item.get("formula", ""),
+            "r": item["r"],
+            "q": q,
+            "source": source,
+            "q_prime": q_prime,
+            "q_prime_expression": q_prime_expression,
+            "antoine": {
+                "A": item["antoine_A"],
+                "B": item["antoine_B"],
+                "C": item["antoine_C"],
+                "pressure_units": "mmHg",
+                "temperature_units": "degC",
+            },
+        }
+        records.append(record)
+    return records
+
+
+def water_ethylene_oxide_records() -> list[dict]:
+    path = SOURCE_DATA / "water_ethylene_oxide_interactions.json"
+    if not path.exists():
+        return []
+    payload = load_json(path)
+    metadata = payload["metadata"]
+    parameters = payload["fitted_parameters"]["UNIQUAC"]
+    return [{
+        "cas": metadata["cas"][1],
+        "name": metadata["components"][1],
+        "formula": "C2H4O",
+        "r": parameters["component2_r"],
+        "q": parameters["component2_q"],
+        "source": metadata["source"],
+    }]
+
+
+def water_organic_binary_fit_records() -> list[dict]:
+    path = SOURCE_DATA / "water_organic_binary_fits.json"
+    if not path.exists():
+        return []
+    payload = load_json(path)
+    records_by_cas: dict[str, dict] = {}
+    for pair in payload.get("pairs", []):
+        structural = pair.get("uniquac", {}).get("structural_parameters", {})
+        for index, component_key in ((1, "component1"), (2, "component2")):
+            name = pair[component_key]
+            keys = {
+                normalize_name(name),
+                normalize_name(name.replace("-", "_")),
+            }
+            parameters = next(
+                (
+                    values for structural_name, values in structural.items()
+                    if normalize_name(structural_name) in keys
+                ),
+                None,
+            )
+            if parameters is None:
+                raise ValueError(
+                    f"Missing UNIQUAC structural parameters for {name!r} in "
+                    f"{pair['pair_id']}"
+                )
+            cas = pair[f"cas{index}"]
+            record = {
+                "cas": cas,
+                "name": name,
+                "r": parameters["r"],
+                "q": parameters["q"],
+                "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters",
+            }
+            previous = records_by_cas.get(cas)
+            if previous is not None and (
+                float(previous["r"]) != float(record["r"])
+                or float(previous["q"]) != float(record["q"])
+            ):
+                raise ValueError(
+                    f"Conflicting UNIQUAC structural parameters for CAS {cas}"
+                )
+            records_by_cas[cas] = record
+    return list(records_by_cas.values())
+
+
+def ester_combinatorial_records() -> list[dict]:
+    path = SOURCE_DATA / "ester_uniquac_combinatorial_parameters.json"
+    if not path.exists():
+        return []
+    payload = load_json(path)
+    records = []
+    for item in payload.get("components", []):
+        record = dict(item)
+        aliases = list(record.pop("aliases", []))
+        record["source"] = (
+            f"ester_uniquac_combinatorial_parameters.json; {record['source']}"
+        )
+        records.append(record)
+        for alias in aliases:
+            alias_record = dict(record)
+            alias_record["name"] = alias
+            records.append(alias_record)
+    return records
+
+
+def apply_extended_metadata(components: dict[str, dict], aliases: dict[str, Optional[str]], records: list[dict]) -> None:
+    for record in records:
+        add_record(components, aliases, record)
+        cas = valid_cas(record.get("cas"))
+        if not cas or cas not in components:
+            continue
+        extended = {
+            "r": float(record["r"]),
+            "q": float(record["q"]),
+            "q_prime": float(record["q_prime"]),
+            "source": record["source"],
+            "antoine": record["antoine"],
+        }
+        if record.get("q_prime_expression"):
+            extended["q_prime_expression"] = record["q_prime_expression"]
+        components[cas]["extended_uniquac"] = extended
+
+
+def build_uniquac_rq_payload() -> dict[str, Any]:
+    components: dict[str, dict] = {}
+    aliases: dict[str, Optional[str]] = {}
+
+    for record in csv_records():
+        add_record(components, aliases, record)
+    for record in water_ethylene_oxide_records():
+        add_record(components, aliases, record)
+    for record in water_organic_binary_fit_records():
+        add_record(components, aliases, record)
+    for record in ester_combinatorial_records():
+        add_record(components, aliases, record)
+    apply_extended_metadata(components, aliases, nagata_records())
+
+    ambiguous_aliases = sorted(key for key, cas in aliases.items() if cas is None)
+    payload = {
+        "metadata": {
+            "key_basis": "CAS",
+            "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
+            "source_files": [
+                "data/source/dwsim_uniquac_combinatorial_parameters.csv",
+                "data/source/water_ethylene_oxide_interactions.json",
+                "data/source/water_organic_binary_fits.json",
+                "data/source/nagata_gmehling_extended_uniquac_rq.json",
+                "data/source/ester_uniquac_combinatorial_parameters.json",
+            ],
+            "component_count": len(components),
+            "ambiguous_alias_count": len(ambiguous_aliases),
+            "ambiguous_aliases": ambiguous_aliases,
+        },
+        "components": dict(sorted(components.items())),
+        "aliases": dict(sorted((key, cas) for key, cas in aliases.items() if cas is not None)),
+    }
+    return payload
+
+
+def main() -> None:
+    payload = build_uniquac_rq_payload()
+    write_json(DATA / "uniquac_rq_cas.json", payload)
+    print(
+        f"Wrote {len(payload['components'])} UNIQUAC r/q CAS entries; "
+        f"ambiguous_aliases={payload['metadata']['ambiguous_alias_count']}"
+    )
+
+
+if __name__ == "__main__":
+    main()

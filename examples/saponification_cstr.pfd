@@ -1,0 +1,49 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - Saponification CSTR
+#==============================================================================
+# Ethyl Acetate + NaOH -> Sodium Acetate + Ethanol
+# Classic liquid-phase second-order reaction
+
+PROCESS: Saponification Reaction (CSTR)
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: IDEAL
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    EA    | Ethyl Acetate   | MW=88.11
+    NaOH  | Sodium Hydroxide| MW=40.00
+    NaAc  | Sodium Acetate  | MW=82.03
+    EtOH  | Ethanol         | MW=46.07
+    H2O   | Water           | MW=18.02
+
+#------------------------------------------------------------------------------
+# STREAMS
+#------------------------------------------------------------------------------
+STREAM Feed : FEED -> CSTR-1.in
+    T = 25 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = EA:0.05, NaOH:0.05, H2O:0.90
+
+STREAM Product : CSTR-1.out -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNITS
+#------------------------------------------------------------------------------
+UNIT CSTR-1
+    TYPE: CSTR
+    PORTS:
+        in  : inlet
+        out : outlet
+    PARAMS:
+        volume = 2.0 [m3]
+        T = 25 [C]
+    REACTIONS:
+        EA + NaOH -> NaAc + EtOH | A=5.4e7, Ea=47600, order_EA=1, order_NaOH=1
+
+#------------------------------------------------------------------------------
+# END OF FILE
+#------------------------------------------------------------------------------

@@ -1,0 +1,52 @@
+# Jacketed CSTR multiplicity: identical specifications, different stable branches
+PROCESS: Jacketed CSTR ignition and extinction branches
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: IDEAL
+
+COMPONENTS:
+    C2H4O | Ethylene oxide | formula=C2H4O
+    CH3CHO | Acetaldehyde | formula=C2H4O
+
+REACTIONS:
+    isomerization : C2H4O -> CH3CHO | A=1e5, Ea=60000, Ea_unit=J/mol, rate_basis=concentration, concentration_unit=kmol/m3, pressure_unit=bar, rate_unit=kmol/m3/h
+
+STREAM LowFeed : -> CSTR-LOW.in
+    T = 350 [K]
+    P = 2 [bar]
+    F = 10 [kmol/h]
+    x = C2H4O:1
+STREAM LowBranch : CSTR-LOW.out
+
+STREAM HighFeed : -> CSTR-HIGH.in
+    T = 350 [K]
+    P = 2 [bar]
+    F = 10 [kmol/h]
+    x = C2H4O:1
+STREAM HighBranch : CSTR-HIGH.out
+
+UNIT CSTR-LOW : CSTR
+    volume = 10 [m3]
+    mode = jacketed
+    UA = 10 [W/K]
+    T_jacket = 350 [K]
+    phase = vapor
+    T_min = 250 [K]
+    T_max = 1500 [K]
+    thermal_scan_points = 81
+    thermal_branch = lowest
+    REACTIONS:
+        @isomerization
+
+UNIT CSTR-HIGH : CSTR
+    volume = 10 [m3]
+    mode = jacketed
+    UA = 10 [W/K]
+    T_jacket = 350 [K]
+    phase = vapor
+    T_min = 250 [K]
+    T_max = 1500 [K]
+    thermal_scan_points = 81
+    thermal_branch = highest
+    REACTIONS:
+        @isomerization

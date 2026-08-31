@@ -1,0 +1,125 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - Ethanol Dehydration with Benzene Entrainer
+#==============================================================================
+
+PROCESS: Anhydrous Ethanol by Benzene Azeotropic Distillation
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Rigorous MESH beer and azeotropic columns, overhead decanting, and molecular-sieve polishing to anhydrous ethanol
+THERMO_METHOD: UNIFAC
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    ethanol | Ethanol | MW=46.07
+    water   | Water   | MW=18.02
+    benzene | Benzene | MW=78.11
+
+#------------------------------------------------------------------------------
+# STREAMS
+#------------------------------------------------------------------------------
+STREAM Fermentation-Broth : FEED -> ETH-COL.feed
+    T = 25 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = ethanol:0.10, water:0.90
+
+STREAM Azeotrope-Rich : ETH-COL.distillate -> MIX-ENTRAINER.ethanol_feed
+
+STREAM Water-Bottoms : ETH-COL.bottoms -> PRODUCT
+
+STREAM Benzene-Makeup : FEED -> MIX-ENTRAINER.benzene_feed
+    T = 25 [C]
+    P = 1 [bar]
+    F = 6 [kmol/h]
+    x = benzene:1.0
+
+STREAM Azeotropic-Feed : MIX-ENTRAINER.out -> AZE-COL.feed
+
+STREAM Benzene-Water-Overhead : AZE-COL.distillate -> OVERHEAD-DECANTER.in
+
+STREAM Organic-Entrainer-Recovery : OVERHEAD-DECANTER.light -> PRODUCT
+
+STREAM Aqueous-Purge : OVERHEAD-DECANTER.heavy -> PRODUCT
+
+STREAM Dehydrated-Ethanol : AZE-COL.bottoms -> FINAL-DRYER.feed
+
+STREAM Anhydrous-Ethanol : FINAL-DRYER.product -> PRODUCT
+
+STREAM Sieve-Regeneration-Water : FINAL-DRYER.adsorbate -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNITS
+#------------------------------------------------------------------------------
+UNIT ETH-COL
+    TYPE: RigorousDistillation
+    PORTS:
+        feed       : inlet
+        distillate : outlet
+        bottoms    : outlet
+    PARAMS:
+        N_stages = 30
+        feed_stage = 21
+        reflux_ratio = 8
+        D = 11.0 [kmol/h]
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0 [bar]
+        initializer = cmo
+
+UNIT MIX-ENTRAINER
+    TYPE: Mixer
+    PORTS:
+        ethanol_feed : inlet
+        benzene_feed : inlet
+        out          : outlet
+    PARAMS:
+        mode = adiabatic
+
+UNIT AZE-COL
+    TYPE: RigorousDistillation
+    PORTS:
+        feed       : inlet
+        distillate : outlet
+        bottoms    : outlet
+    PARAMS:
+        N_stages = 16
+        feed_stage = 8
+        reflux_ratio = 4
+        D = 10.8 [kmol/h]
+        P_condenser = 1 [bar]
+        P_drop_per_stage = 0 [bar]
+        stage_phase_model = VLLE
+        initializer = cmo
+        inside_out_evaluations = 20
+        max_jacobian_evaluations = 300
+        max_evaluations = 300
+
+UNIT OVERHEAD-DECANTER
+    TYPE: Decanter
+    PORTS:
+        in    : inlet
+        light : outlet
+        heavy : outlet
+    PARAMS:
+        P = 1 [bar]
+
+UNIT FINAL-DRYER
+    TYPE: MolecularSieveDryer
+    PORTS:
+        feed      : inlet
+        product   : outlet
+        adsorbate : outlet
+    PARAMS:
+        water_component = water
+        target_water_mole_fraction = 0.0005
+
+#------------------------------------------------------------------------------
+# Expected behavior with the current UNIFAC property model:
+# - ETH-COL concentrates dilute fermentation broth toward the ethanol-water azeotrope.
+# - AZE-COL uses benzene to carry water overhead and produces a benzene-free,
+#   ethanol-rich bottoms stream beyond the ethanol-water azeotropic limit.
+# - OVERHEAD-DECANTER separates the condensed benzene/water overhead into organic
+#   entrainer recovery and aqueous purge cuts.
+# - FINAL-DRYER polishes residual water to anhydrous ethanol specification.
+#------------------------------------------------------------------------------

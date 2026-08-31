@@ -1,0 +1,53 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - UNIFAC Activity Coefficient Flash
+#==============================================================================
+
+PROCESS: Ethanol-Water UNIFAC Flash
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Flash separation using UNIFAC activity coefficients
+
+#------------------------------------------------------------------------------
+# THERMODYNAMIC METHOD
+#------------------------------------------------------------------------------
+THERMO_METHOD: UNIFAC
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    ethanol | Ethanol | MW=46.07
+    water | Water | MW=18.02
+
+#------------------------------------------------------------------------------
+# STREAMS
+#------------------------------------------------------------------------------
+STREAM Feed : FEED -> FLASH-1.in
+    T = 95 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = ethanol:0.3, water:0.7
+
+STREAM Vapor : FLASH-1.vap -> PRODUCT
+
+STREAM Liquid : FLASH-1.liq -> PRODUCT
+
+#------------------------------------------------------------------------------
+# UNITS
+#------------------------------------------------------------------------------
+UNIT FLASH-1
+    TYPE: Flash
+    PORTS:
+        in  : inlet
+        vap : vapor_outlet
+        liq : liquid_outlet
+    PARAMS:
+        T = 85 [C]
+        P = 1 [bar]
+
+#------------------------------------------------------------------------------
+# EXPECTED RESULTS (with UNIFAC activity coefficients):
+# - Vapor: ~35.5 kmol/h, 54.3% ethanol
+# - Liquid: ~64.5 kmol/h, 16.6% ethanol
+# - Activity coefficients at 85°C: γ_ethanol ≈ 1.67, γ_water ≈ 1.22
+#------------------------------------------------------------------------------

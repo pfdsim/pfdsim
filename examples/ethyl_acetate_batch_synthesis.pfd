@@ -1,0 +1,86 @@
+#==============================================================================
+# PROCESS FLOW DIAGRAM - Batch Ethyl Acetate Synthesis
+#==============================================================================
+# Liquid esterification:
+#     Acetic acid + Ethanol -> Ethyl acetate + Water
+#
+# Empirical sulfuric-acid-catalyzed rate law:
+#     r = (4.195 Ck + 0.08815) exp(-6500.1/T)
+#         * (C_AcOH C_EtOH - C_EtOAc C_H2O/(7.558 - 0.012 T))
+#
+# r is in mol/m3/s, concentrations are in mol/m3, T is in K, and Ck is the
+# sulfuric-acid loading in vol%. The kinetic expression reads Ck directly from
+# the real inert H2SO4 component through volpct['H2SO4'].
+#==============================================================================
+
+PROCESS: Batch Ethyl Acetate Synthesis
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: NRTL
+DESCRIPTION: Isothermal sulfuric-acid-catalyzed batch esterification of acetic acid with ethanol
+
+# Missing NRTL binary pairs intentionally use the simulator's zero-interaction
+# fallback. Replace them with supplied interaction parameters when available.
+
+#------------------------------------------------------------------------------
+# COMPONENTS
+#------------------------------------------------------------------------------
+COMPONENTS:
+    AcOH  | Acetic Acid   | formula=C2H4O2, MW=60.052
+    EtOH  | Ethanol       | formula=C2H6O, MW=46.069
+    EtOAc | Ethyl Acetate | formula=C4H8O2, MW=88.106
+    H2O   | Water         | formula=H2O, MW=18.015
+    H2SO4 | Sulfuric Acid | formula=H2SO4, MW=98.079
+
+# Ea/R = 6500.1 K with the simulator's R = 8.314 J/mol/K. The empirical
+# bracket is a complete signed net rate, so custom_net is used instead of the
+# automatic thermodynamic Q/K reversible-rate form.
+REACTIONS:
+    esterification : AcOH + EtOH -> EtOAc + H2O | type=custom_net, A=1, Ea=54041.8314, Ea_unit=J/mol, concentration_unit=mol/m3, pressure_unit=bar, rate_unit=mol/m3/s, expression=(4.195*volpct['H2SO4']+0.08815)*k*(C['AcOH']*C['EtOH']-C['EtOAc']*C['H2O']/(7.558-0.012*T))
+
+#------------------------------------------------------------------------------
+# CONTINUOUS-EQUIVALENT FEEDS AND PRODUCT
+#------------------------------------------------------------------------------
+STREAM Acetic-Acid-Feed : FEED -> B-101.acid
+    T = 60 [C]
+    P = 2 [bar]
+    F = 10 [kmol/h]
+    x = AcOH:1
+
+STREAM Ethanol-Feed : FEED -> B-101.ethanol
+    T = 60 [C]
+    P = 2 [bar]
+    F = 10 [kmol/h]
+    x = EtOH:1
+
+# At 60 C, 0.2230186892 kmol/h of pure H2SO4 gives 1.0 raw vol% relative
+# to the dynamic mixed liquid volume for the two 10 kmol/h reactant feeds.
+STREAM Sulfuric-Acid-Catalyst : FEED -> B-101.catalyst
+    T = 60 [C]
+    P = 2 [bar]
+    F = 0.2230186892 [kmol/h]
+    x = H2SO4:1
+
+STREAM Batch-Product : B-101.out -> PRODUCT
+
+#------------------------------------------------------------------------------
+# BATCH REACTOR
+#------------------------------------------------------------------------------
+# V_batch and t_rxn determine the continuous-equivalent batch frequency and
+# integer vessel count. A 3 m3 vessel at 80% fill has 2.4 m3 usable capacity.
+UNIT B-101 : BatchReactor
+    V_batch = 2 [m3]
+    t_rxn = 3 [h]
+    V_vessel = 3 [m3]
+    fill_fraction = 0.8
+    phase = liquid
+    pressure_mode = constant_pressure
+    mode = isothermal
+    T = 60 [C]
+    profile_points = 13
+    REACTIONS:
+        @esterification
+
+#------------------------------------------------------------------------------
+# END OF FILE
+#------------------------------------------------------------------------------

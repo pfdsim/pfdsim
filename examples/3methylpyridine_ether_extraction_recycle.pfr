@@ -1,0 +1,915 @@
+#==============================================================================
+# PROCESS FLOW RESULTS
+#==============================================================================
+
+RESULTS_FOR: 3-Methylpyridine Ether Extraction With Solvent Recycle
+VERSION: 1.0
+GENERATED: 2026-07-03 13:13:54
+SIMULATOR: PFD-Editor v1.0
+THERMO_METHOD: UNIFNIST
+CONVERGED: yes
+ITERATIONS: 5
+
+#------------------------------------------------------------------------------
+# SIMULATION SUMMARY
+#------------------------------------------------------------------------------
+
+SUMMARY:
+    convergence_status = converged
+    iterations = 5
+    overall_mass_balance_error = 0.0012 [%]
+    overall_energy_balance_error = 0.0003 [%]
+    total_heating_duty = 102.43 [kW]
+    total_cooling_duty = 77.70 [kW]
+    total_net_heat_duty = 24.72 [kW]
+    total_work = 0.00 [kW]
+    total_process_work = 0.00 [kW]
+
+#------------------------------------------------------------------------------
+# STREAM RESULTS
+#------------------------------------------------------------------------------
+
+STREAM_RESULT AqueousFeed:
+    T = 30.00 [C]
+    T_K = 303.15 [K]
+    P = 1.0000 [bar]
+    F = 48.7936 [kmol/h]
+    F_mass = 1000.00 [kg/h]
+    F_vol = 1.0113 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 20.49 [kg/kmol]
+    H = -277461.04 [kJ/kmol]
+    S = 65.5592 [kJ/kmol-K]
+    Cp = 0.0742 [kJ/mol-K]
+    rho = 48.2482 [kmol/m3]
+    COMPOSITION:
+        water: x=0.966990, F=47.1829 [kmol/h]
+        3-methylpyridine: x=0.033010, F=1.6107 [kmol/h]
+
+STREAM_RESULT FreshEther:
+    T = 20.00 [C]
+    T_K = 293.15 [K]
+    P = 1.0000 [bar]
+    F = 0.3373 [kmol/h]
+    F_mass = 25.00 [kg/h]
+    F_vol = 0.0350 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 74.12 [kg/kmol]
+    H = -280165.83 [kJ/kmol]
+    S = 250.8481 [kJ/kmol-K]
+    Cp = 0.1739 [kJ/mol-K]
+    rho = 9.6300 [kmol/m3]
+    COMPOSITION:
+        diethyl ether: x=1.000000, F=0.3373 [kmol/h]
+
+STREAM_RESULT Recycle:
+    T = 33.16 [C]
+    T_K = 306.31 [K]
+    P = 1.0000 [bar]
+    F = 5.5798 [kmol/h]
+    F_mass = 390.34 [kg/h]
+    F_vol = 0.5558 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 69.96 [kg/kmol]
+    H = -277710.55 [kJ/kmol]
+    S = 247.1992 [kJ/kmol-K]
+    Cp = 0.1710 [kJ/mol-K]
+    rho = 10.0401 [kmol/m3]
+    COMPOSITION:
+        diethyl ether: x=0.925770, F=5.1656 [kmol/h]
+        water: x=0.074230, F=0.4142 [kmol/h]
+        3-methylpyridine: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Solvent:
+    T = 32.38 [C]
+    T_K = 305.53 [K]
+    P = 1.0000 [bar]
+    F = 5.9169 [kmol/h]
+    F_mass = 415.33 [kg/h]
+    F_vol = 0.5908 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 70.19 [kg/kmol]
+    H = -277850.52 [kJ/kmol]
+    S = 247.4468 [kJ/kmol-K]
+    Cp = 0.1712 [kJ/mol-K]
+    rho = 10.0158 [kmol/m3]
+    COMPOSITION:
+        diethyl ether: x=0.930000, F=5.5028 [kmol/h]
+        water: x=0.070000, F=0.4142 [kmol/h]
+        3-methylpyridine: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Raffinate:
+    T = 29.59 [C]
+    T_K = 302.74 [K]
+    P = 1.0000 [bar]
+    F = 46.3716 [kmol/h]
+    F_mass = 849.62 [kg/h]
+    F_vol = 0.8611 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 18.32 [kg/kmol]
+    H = -285419.56 [kJ/kmol]
+    S = 72.2490 [kJ/kmol-K]
+    Cp = 0.0759 [kJ/mol-K]
+    rho = 53.8492 [kmol/m3]
+    COMPOSITION:
+        water: x=0.994529, F=46.1179 [kmol/h]
+        diethyl ether: x=0.005471, F=0.2537 [kmol/h]
+        3-methylpyridine: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Extract:
+    T = 28.05 [C]
+    T_K = 301.20 [K]
+    P = 1.0000 [bar]
+    F = 8.3389 [kmol/h]
+    F_mass = 565.71 [kg/h]
+    F_vol = 0.7363 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 67.84 [kg/kmol]
+    H = -233481.20 [kJ/kmol]
+    S = 160.0875 [kJ/kmol-K]
+    Cp = 0.1329 [kJ/mol-K]
+    rho = 11.3248 [kmol/m3]
+    COMPOSITION:
+        diethyl ether: x=0.629462, F=5.2490 [kmol/h]
+        3-methylpyridine: x=0.193149, F=1.6107 [kmol/h]
+        water: x=0.177389, F=1.4792 [kmol/h]
+
+STREAM_RESULT RecoveryBottoms:
+    T = 92.34 [C]
+    T_K = 365.49 [K]
+    P = 1.0000 [bar]
+    F = 2.7591 [kmol/h]
+    F_mass = 175.37 [kg/h]
+    F_vol = 0.1976 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 63.56 [kg/kmol]
+    H = -133818.97 [kJ/kmol]
+    S = -7.7643 [kJ/kmol-K]
+    Cp = 0.0608 [kJ/mol-K]
+    rho = 13.9635 [kmol/m3]
+    COMPOSITION:
+        3-methylpyridine: x=0.583758, F=1.6107 [kmol/h]
+        water: x=0.386010, F=1.0650 [kmol/h]
+        diethyl ether: x=0.030231, F=0.0834 [kmol/h]
+
+STREAM_RESULT EtherLossWaterCut:
+    T = 93.51 [C]
+    T_K = 366.66 [K]
+    P = 1.0000 [bar]
+    F = 1.2841 [kmol/h]
+    F_mass = 40.43 [kg/h]
+    F_vol = 39.1437 [m3/h]
+    vapor_fraction = 1.0000
+    MW = 31.48 [kg/kmol]
+    H = -208153.92 [kJ/kmol]
+    S = 187.4403 [kJ/kmol-K]
+    Cp = 0.0403 [kJ/mol-K]
+    rho = 0.0328 [kmol/m3]
+    COMPOSITION:
+        water: x=0.804245, F=1.0327 [kmol/h]
+        3-methylpyridine: x=0.130795, F=0.1679 [kmol/h]
+        diethyl ether: x=0.064960, F=0.0834 [kmol/h]
+
+STREAM_RESULT Product3MP:
+    T = 134.19 [C]
+    T_K = 407.34 [K]
+    P = 1.0000 [bar]
+    F = 1.4751 [kmol/h]
+    F_mass = 134.94 [kg/h]
+    F_vol = 0.1583 [m3/h]
+    vapor_fraction = 0.0000
+    MW = 91.48 [kg/kmol]
+    H = -27883.72 [kJ/kmol]
+    S = -80.3333 [kJ/kmol-K]
+    Cp = 0.0436 [kJ/mol-K]
+    rho = 9.3158 [kmol/m3]
+    COMPOSITION:
+        3-methylpyridine: x=0.978069, F=1.4427 [kmol/h]
+        water: x=0.021931, F=0.0323 [kmol/h]
+        diethyl ether: x=0.000000, F=0.0000 [kmol/h]
+
+#------------------------------------------------------------------------------
+# UNIT OPERATION RESULTS
+#------------------------------------------------------------------------------
+
+UNIT_RESULT MIX-100:
+    type = Mixer
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = adiabatic
+        n_inlets = 2
+        pressure_policy = auto_valve_to_lowest_inlet_pressure
+        P_out = 1.0000
+        T_out_C = 32.3788
+        duty_kW = 0.0000
+        inlet_pressure_range_bar:
+            - 1.0
+            - 1.0
+
+UNIT_RESULT EX-100:
+    type = RigorousExtractor
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        N_stages = 20
+        mode = adiabatic
+        solver = sparse_damped_newton
+        solver_algorithm = equation_oriented
+        initializer = previous_recycle
+        requested_initializer = auto
+        jacobian_method = semi_analytic_flow
+        T_C = 25.0000
+        raffinate_T_C = 29.5922
+        extract_T_C = 28.0516
+        mesh_residual = 5.831024e-07
+        residual_diagnostics:
+            component: 0.000000
+            activity: 0.000001
+            energy: 0.000000
+        component_balance_error = 1.958637e-09
+        max_stage_energy_residual_kJ_h = 0.1408
+        max_stage_energy_relative_error = 9.276376e-09
+        overall_energy_residual_kJ_h = 0.0532
+        overall_energy_relative_error = 3.503745e-09
+        solver_iterations = 2
+        function_evaluations = 33
+        jacobian_evaluations = 2
+        terminal_raffinate_stage_flow = 46.3716
+        terminal_raffinate_stage_composition:
+            3-methylpyridine: 0.000000
+            water: 0.994529
+            diethyl ether: 0.005471
+        raffinate_flows:
+            - 46.476156253199164
+            - 46.22739733123205
+            - 46.16121553356143
+            - 46.14165692856079
+            - 46.13567322930803
+            - 46.13382331467915
+            - 46.133249550322816
+            - 46.13307141950276
+            - 46.13301611431324
+            - 46.132998991343754
+            - 46.13299385994556
+            - 46.13299290799349
+            - 46.13299481457529
+            - 46.133002967950894
+            - 46.13303145610033
+            - 46.13312939810381
+            - 46.1334659578647
+            - 46.13462552608749
+            - 46.13865852261976
+            - 46.371568801542715
+        extract_flows:
+            - 8.33892679347755
+            - 6.021528134350701
+            - 5.7727692124898375
+            - 5.706587414894443
+            - 5.687028809932231
+            - 5.681045110696765
+            - 5.679195196074759
+            - 5.678621431720992
+            - 5.678443300902165
+            - 5.678387995712957
+            - 5.6783708727433355
+            - 5.678365741344852
+            - 5.6783647893935845
+            - 5.678366695976591
+            - 5.678374849348527
+            - 5.678403337550267
+            - 5.678501279554442
+            - 5.67883783937134
+            - 5.679997407537883
+            - 5.684030404023054
+        stage_temperatures_C:
+            - 28.051608302791635
+            - 27.756499929512643
+            - 27.68029870836284
+            - 27.657879237268787
+            - 27.651029929108518
+            - 27.648913381137618
+            - 27.648257141513966
+            - 27.64805387887361
+            - 27.647992374442424
+            - 27.647978821174377
+            - 27.647993666091793
+            - 27.648063676914205
+            - 27.64830984475384
+            - 27.649156257962716
+            - 27.65206266711897
+            - 27.66203860158123
+            - 27.696266246752714
+            - 27.813693633534513
+            - 28.216222975043138
+            - 29.59223064940761
+        stage_energy_residuals_kJ_h:
+            - 0.00022500497289001942
+            - 1.1936062946915627e-05
+            - 4.365108907222748e-05
+            - 6.0265883803367615e-06
+            - -7.932540029287338e-07
+            - 1.413724385201931e-05
+            - -5.413778126239777e-06
+            - -9.523937478661537e-06
+            - 1.0140938684344292e-05
+            - -8.25151801109314e-06
+            - -1.1465977877378464e-05
+            - 8.878996595740318e-06
+            - 0.00021110475063323975
+            - -0.0012224598322063684
+            - -0.0019729812629520893
+            - 0.004583355272188783
+            - -0.003143306588754058
+            - 0.0006226038094609976
+            - -0.0870046648196876
+            - 0.14083705772645772
+        stage_raffinate_compositions:
+            3-methylpyridine: 0.004618610100735104
+            water: 0.9892864912562147
+            diethyl ether: 0.006094898643050119
+            3-methylpyridine: 0.001269281065374793
+            water: 0.9930420900173285
+            diethyl ether: 0.0056886289172969375
+            3-methylpyridine: 0.0003812041872305823
+            water: 0.9940933090619493
+            diethyl ether: 0.005525486750820077
+            3-methylpyridine: 0.00011721756839955388
+            water: 0.9944074737663052
+            diethyl ether: 0.005475308665295159
+            3-methylpyridine: 3.6296149653014095e-05
+            water: 0.994503903776123
+            diethyl ether: 0.005459800074224115
+            3-methylpyridine: 1.1263100976016164e-05
+            water: 0.9945337458322252
+            diethyl ether: 0.005454991066798745
+            3-methylpyridine: 3.4974059391943765e-06
+            water: 0.9945430044435561
+            diethyl ether: 0.005453498150504445
+            3-methylpyridine: 1.086261844636311e-06
+            water: 0.9945458792172108
+            diethyl ether: 0.00545303452094454
+            3-methylpyridine: 3.3743274220235153e-07
+            water: 0.9945467720311024
+            diethyl ether: 0.00545289053615548
+            3-methylpyridine: 1.0484946018585178e-07
+            water: 0.9945470492864272
+            diethyl ether: 0.00545284586411263
+            3-methylpyridine: 3.260817845164927e-08
+            water: 0.9945471352314119
+            diethyl ether: 0.005452832160409565
+            3-methylpyridine: 1.0169620082623965e-08
+            water: 0.9945471613371011
+            diethyl ether: 0.005452828493278828
+            3-methylpyridine: 3.200214270072125e-09
+            water: 0.9945471674231973
+            diethyl ether: 0.005452829376588388
+            3-methylpyridine: 1.0360198023090267e-09
+            water: 0.9945471623744574
+            diethyl ether: 0.005452836589522662
+            3-methylpyridine: 3.655113537043599e-10
+            water: 0.9945471369791583
+            diethyl ether: 0.005452862655330367
+            3-methylpyridine: 1.6149224738832923e-10
+            water: 0.9945470472772844
+            diethyl ether: 0.005452952561223446
+            3-methylpyridine: 1.0282825808646728e-10
+            water: 0.99454673832349
+            diethyl ether: 0.005453261573681603
+            3-methylpyridine: 7.33592335168486e-11
+            water: 0.9945456732199773
+            diethyl ether: 0.005454326706663319
+            3-methylpyridine: 7.368957090679025e-11
+            water: 0.9945419639894104
+            diethyl ether: 0.005458035936900007
+            3-methylpyridine: 2.37598619453744e-09
+            water: 0.9945286036598388
+            diethyl ether: 0.005471393964175158
+        stage_extract_compositions:
+            3-methylpyridine: 0.19314856969425484
+            water: 0.1773891890887438
+            diethyl ether: 0.6294622412170015
+            3-methylpyridine: 0.03564796942756316
+            water: 0.04559737434587908
+            diethyl ether: 0.9187546562265578
+            3-methylpyridine: 0.010164197476438748
+            water: 0.03500635139730701
+            diethyl ether: 0.9548294511262543
+            3-methylpyridine: 0.0030836038238363306
+            water: 0.0323990175517859
+            diethyl ether: 0.9645173786243777
+            3-methylpyridine: 0.0009510447600290261
+            water: 0.03164056899817337
+            diethyl ether: 0.9674083862417977
+            3-methylpyridine: 0.00029476150762015966
+            water: 0.031409617796906986
+            diethyl ether: 0.9682956206954729
+            3-methylpyridine: 9.14946596911026e-05
+            water: 0.03133832000626524
+            diethyl ether: 0.9685701853340437
+            3-methylpyridine: 2.8414083261473185e-05
+            water: 0.03131621651145031
+            diethyl ether: 0.9686553694052882
+            3-methylpyridine: 8.826136648204616e-06
+            water: 0.031309355786001886
+            diethyl ether: 0.96868181807735
+            3-methylpyridine: 2.7424881925953442e-06
+            water: 0.031307227755744696
+            diethyl ether: 0.9686900297560627
+            3-methylpyridine: 8.529108841093726e-07
+            water: 0.031306575649327054
+            diethyl ether: 0.9686925714397888
+            3-methylpyridine: 2.659999761043319e-07
+            water: 0.031306403439456884
+            diethyl ether: 0.968693330560567
+            3-methylpyridine: 8.370599077197787e-08
+            water: 0.031306454048576716
+            diethyl ether: 0.9686934622454325
+            3-methylpyridine: 2.7098678106030006e-08
+            water: 0.03130682691512004
+            diethyl ether: 0.9686931459862018
+            3-methylpyridine: 9.560703980535671e-09
+            water: 0.03130816898262012
+            diethyl ether: 0.968691821456676
+            3-methylpyridine: 4.22446228980123e-09
+            water: 0.0313127951849533
+            diethyl ether: 0.9686872005905843
+            3-methylpyridine: 2.6905293218734897e-09
+            water: 0.031328680203380796
+            diethyl ether: 0.9686713171060899
+            3-methylpyridine: 1.92106148973332e-09
+            water: 0.03138325613325569
+            diethyl ether: 0.9686167419456829
+            3-methylpyridine: 1.9351858968485384e-09
+            water: 0.03157123422712421
+            diethyl ether: 0.9684287638376899
+            3-methylpyridine: 6.29901442667555e-08
+            water: 0.032224383916545335
+            diethyl ether: 0.9677755530933103
+
+UNIT_RESULT COL-100:
+    type = RigorousDistillation
+    heating_duty = 71.2790 [kW]
+    cooling_duty = 63.4493 [kW]
+    net_heat_duty = 7.8297 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        N_stages = 10
+        feed_stage = 7
+        feeds:
+            port: feed
+            stage: 7
+            flow: 8.33892679347755
+            composition: {'3-methylpyridine': 0.19314856969425484, 'diethyl ether': 0.6294622412170015, 'water': 0.1773891890887438}
+            temperature_C: 28.051608302791635
+            pressure_bar: 1.0
+            vapor_fraction: 0.0
+        feed_thermal_condition_q = 1.0420
+        condenser_type = total
+        distillate_vapor_fraction = 0.0000
+        reflux_ratio = 0.5000
+        distillate_flow = 5.5798
+        distillate_liquid_flow = 5.5798
+        distillate_vapor_flow = 0.0000
+        bottoms_flow = 2.7591
+        mesh_residual = 3.737413e-07
+        component_balance_error = 4.844036e-09
+        solver = sparse_damped_newton
+        initializer = previous_recycle
+        jacobian_method = semi_analytic_local_thermo
+        jacobian_fallback = False
+        jacobian_dense_mb = 0.0206
+        solver_iterations = 1
+        function_evaluations = 2
+        jacobian_evaluations = 1
+        finite_difference_rel_step = 1.000000e-06
+        T_top_C = 33.1552
+        T_bottom_C = 92.3430
+        stage_temperatures_C:
+            - 33.15516250428948
+            - 33.22482077276163
+            - 33.26544211135308
+            - 33.282956927741736
+            - 33.29918095885449
+            - 33.46411383370099
+            - 36.423860346952324
+            - 36.509366805241825
+            - 51.50550676860985
+            - 92.34300080272146
+        stage_pressures_bar:
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+        stage_liquid_compositions:
+            3-methylpyridine: 1.5915121065396408e-09
+            diethyl ether: 0.9257697762337861
+            water: 0.07423022217470174
+            3-methylpyridine: 8.40016999991572e-08
+            diethyl ether: 0.9425939150611392
+            water: 0.05740600093716095
+            3-methylpyridine: 1.4580671340877861e-06
+            diethyl ether: 0.9490406769289785
+            water: 0.050957865003887326
+            3-methylpyridine: 2.3994622574352888e-05
+            diethyl ether: 0.9513402958484312
+            water: 0.04863570952899429
+            3-methylpyridine: 0.0003918091532404531
+            diethyl ether: 0.9516261772653373
+            water: 0.047982013581422144
+            3-methylpyridine: 0.006472977239132562
+            diethyl ether: 0.9429416514254978
+            water: 0.050585371335369785
+            3-methylpyridine: 0.14141367021097276
+            diethyl ether: 0.7120485715618085
+            water: 0.14653775822721868
+            3-methylpyridine: 0.15843509865581779
+            diethyl ether: 0.6407043605719721
+            water: 0.20086054077221016
+            3-methylpyridine: 0.277401912742726
+            diethyl ether: 0.1567307211738635
+            water: 0.5658673660834105
+            3-methylpyridine: 0.5837582061179698
+            diethyl ether: 0.030231403146349166
+            water: 0.386010390735681
+        stage_vapor_compositions:
+            3-methylpyridine: 2.6336322565806883e-11
+            diethyl ether: 0.9133428178948713
+            water: 0.08665718207879247
+            3-methylpyridine: 1.591512106659098e-09
+            diethyl ether: 0.9257697762375887
+            water: 0.07423022217089915
+            3-methylpyridine: 2.9161233489291646e-08
+            diethyl ether: 0.9313981679672463
+            water: 0.06860180287152022
+            3-methylpyridine: 4.895105532396537e-07
+            diethyl ether: 0.9335655233012341
+            water: 0.06643398718821258
+            3-methylpyridine: 8.042506681547713e-06
+            diethyl ether: 0.9343393637366716
+            water: 0.0656525937566468
+            3-methylpyridine: 0.0001311394359686039
+            diethyl ether: 0.9344239039980221
+            water: 0.06544495656600932
+            3-methylpyridine: 0.0021088782537991638
+            diethyl ether: 0.9313643233394129
+            water: 0.06652679840678795
+            3-methylpyridine: 0.00204727207921245
+            diethyl ether: 0.9268639418067725
+            water: 0.07108878611401513
+            3-methylpyridine: 0.010391711959616643
+            diethyl ether: 0.8531933141792447
+            water: 0.13641497386113868
+            3-methylpyridine: 0.13332855238054092
+            diethyl ether: 0.2162208765922286
+            water: 0.6504505710272305
+        liquid_flows:
+            - 2.789909556940612
+            - 2.805119432967693
+            - 2.8108837886819633
+            - 2.8125956741490508
+            - 2.807098034679343
+            - 2.6963527533514275
+            - 11.516428284816023
+            - 10.685919801763456
+            - 8.626048839201005
+            - 2.7591076826414205
+        vapor_flows:
+            - 5.579819113881224
+            - 8.369728670821846
+            - 8.384938546848915
+            - 8.390702902563186
+            - 8.392414788030287
+            - 8.386917148560572
+            - 8.276171867232286
+            - 8.757320602395481
+            - 7.926812148250297
+            - 5.866941156562467
+        internal_vapor_to_condenser = 8.3697
+        condenser_duty_kW = -63.4493
+        reboiler_duty_kW = 71.2790
+        residual_diagnostics:
+            component: {'count': 30, 'max_scaled_abs': 3.7374128421411554e-07, 'rms_scaled': 1.0278335339303303e-07, 'max_unscaled_abs': 5.528513611352537e-07, 'max_stage': 9, 'max_component': 'water'}
+            energy: {'count': 10, 'max_scaled_abs': 1.9347699958165694e-08, 'rms_scaled': 7.194487490832659e-09, 'max_unscaled_abs': 0.037669635377824306, 'max_stage': 8, 'max_component': None}
+            bubble: {'count': 10, 'max_scaled_abs': 1.69698032292942e-07, 'rms_scaled': 6.377692820000413e-08, 'max_unscaled_abs': 1.69698032292942e-07, 'max_stage': 9, 'max_component': None}
+            distillate_spec: {'count': 1, 'max_scaled_abs': 3.0514484543158533e-10, 'rms_scaled': 3.0514484543158533e-10, 'max_unscaled_abs': 1.7800679122387557e-07, 'max_stage': None, 'max_component': None}
+            reflux_spec: {'count': 1, 'max_scaled_abs': 0.0, 'rms_scaled': 0.0, 'max_unscaled_abs': 0.0, 'max_stage': None, 'max_component': None}
+        component_classification:
+            reference_condenser_temperature_K: 310.730173
+            reference_condenser_temperature_C: 37.580173
+            noncondensables: []
+            volatile_components: []
+            heavy_components: ['3-methylpyridine']
+        side_draws:
+        distillate_enthalpy_basis = -277710.5544
+        top_decanter = None
+
+UNIT_RESULT COL-200:
+    type = RigorousDistillation
+    heating_duty = 31.1469 [kW]
+    cooling_duty = 14.2553 [kW]
+    net_heat_duty = 16.8916 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        N_stages = 20
+        feed_stage = 10
+        feeds:
+            port: feed
+            stage: 10
+            flow: 2.7591076826414205
+            composition: {'water': 0.386010390735681, 'diethyl ether': 0.030231403146349166, '3-methylpyridine': 0.5837582061179698}
+            temperature_C: 92.34300080272146
+            pressure_bar: 1.0
+            vapor_fraction: 0.0
+        feed_thermal_condition_q = 1.0000
+        condenser_type = partial
+        distillate_vapor_fraction = 1.0000
+        reflux_ratio = 1.0000
+        distillate_flow = 1.2841
+        distillate_liquid_flow = 0.0000
+        distillate_vapor_flow = 1.2841
+        bottoms_flow = 1.4751
+        mesh_residual = 7.302766e-07
+        component_balance_error = 2.724456e-10
+        solver = sparse_damped_newton
+        initializer = _legacy_cmo_estimate
+        jacobian_method = semi_analytic_local_thermo
+        jacobian_fallback = False
+        jacobian_dense_mb = 0.0794
+        solver_iterations = 21
+        function_evaluations = 25
+        jacobian_evaluations = 21
+        finite_difference_rel_step = 1.000000e-06
+        T_top_C = 93.5139
+        T_bottom_C = 134.1902
+        stage_temperatures_C:
+            - 93.51386455754613
+            - 94.37823555972972
+            - 94.39204874747236
+            - 94.392268610428
+            - 94.39227693816315
+            - 94.39226524951823
+            - 94.39228601056982
+            - 94.39221192892796
+            - 94.39223944822413
+            - 94.95735274072649
+            - 95.63608971304421
+            - 95.76631060242255
+            - 95.7916912665766
+            - 95.79669798984958
+            - 95.79824380312573
+            - 95.8057486518
+            - 95.8995070604742
+            - 97.15609258272514
+            - 109.42373282433607
+            - 134.19023161418818
+        stage_pressures_bar:
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+            - 1.0
+        stage_liquid_compositions:
+            water: 0.855887408774489
+            diethyl ether: 0.0019818851039201365
+            3-methylpyridine: 0.1421307061215907
+            water: 0.8566718612281476
+            diethyl ether: 0.0010120123061498898
+            3-methylpyridine: 0.14231612646570263
+            water: 0.8567072626143972
+            diethyl ether: 0.0009961855815030685
+            3-methylpyridine: 0.1422965518040997
+            water: 0.8566568389276129
+            diethyl ether: 0.0009964549013437827
+            3-methylpyridine: 0.14234670617104325
+            water: 0.8567700848923641
+            diethyl ether: 0.0009952878333531565
+            3-methylpyridine: 0.1422346272742827
+            water: 0.8565165883451719
+            diethyl ether: 0.0009978917960717928
+            3-methylpyridine: 0.1424855198587564
+            water: 0.8570830219967204
+            diethyl ether: 0.000992075855506627
+            3-methylpyridine: 0.14192490214777298
+            water: 0.8558121790687182
+            diethyl ether: 0.0010051380644950224
+            3-methylpyridine: 0.14318268286678681
+            water: 0.858637902065457
+            diethyl ether: 0.0009761618234073007
+            3-methylpyridine: 0.14038593611113573
+            water: 0.5497482097353141
+            diethyl ether: 0.00407050462470545
+            3-methylpyridine: 0.4461812856399804
+            water: 0.552791231619044
+            diethyl ether: 0.0007958811904790783
+            3-methylpyridine: 0.446412887190477
+            water: 0.5533840632054856
+            diethyl ether: 0.0001557025434527291
+            3-methylpyridine: 0.4464602342510616
+            water: 0.5534995760239798
+            diethyl ether: 3.0464688539542542e-05
+            3-methylpyridine: 0.4464699592874807
+            water: 0.5535173162647757
+            diethyl ether: 5.960891893588535e-06
+            3-methylpyridine: 0.4464767228433306
+            water: 0.5534590636697309
+            diethyl ether: 1.1664533074759039e-06
+            3-methylpyridine: 0.4465397698769617
+            water: 0.5526653984680132
+            diethyl ether: 2.2852905967895204e-07
+            3-methylpyridine: 0.44733437300292705
+            water: 0.5429023253337224
+            diethyl ether: 4.541436087690258e-08
+            3-methylpyridine: 0.45709762925191677
+            water: 0.4519746003456909
+            diethyl ether: 9.80854841495443e-09
+            3-methylpyridine: 0.5480253898457607
+            water: 0.16806697848123298
+            diethyl ether: 3.977413593916989e-09
+            3-methylpyridine: 0.8319330175413535
+            water: 0.021930502612624105
+            diethyl ether: 6.237802458963301e-10
+            3-methylpyridine: 0.9780694967635957
+        stage_vapor_compositions:
+            water: 0.8042452639159997
+            diethyl ether: 0.06495956975505963
+            3-methylpyridine: 0.1307951663289406
+            water: 0.8300663363452445
+            diethyl ether: 0.033470727429489776
+            3-methylpyridine: 0.13646293622526576
+            water: 0.8304799840679068
+            diethyl ether: 0.03295966207305885
+            3-methylpyridine: 0.1365603538590343
+            water: 0.8304979757139216
+            diethyl ether: 0.032951405140861444
+            3-methylpyridine: 0.136550619145217
+            water: 0.8304728934439348
+            diethyl ether: 0.03295135631243202
+            3-methylpyridine: 0.13657575024363325
+            water: 0.8305292388057622
+            diethyl ether: 0.03295116784868516
+            3-methylpyridine: 0.1365195933455526
+            water: 0.8304031104018028
+            diethyl ether: 0.03295158504649063
+            3-methylpyridine: 0.13664530455170656
+            water: 0.8306849332124473
+            diethyl ether: 0.032950653293408176
+            3-methylpyridine: 0.1363644134941446
+            water: 0.8300525941490222
+            diethyl ether: 0.03295274651159733
+            3-methylpyridine: 0.13699465933938046
+            water: 0.8314440522735983
+            diethyl ether: 0.03296496111061232
+            3-methylpyridine: 0.1355909866157894
+            water: 0.8537808894688693
+            diethyl ether: 0.006415189877838269
+            3-methylpyridine: 0.13980392065329234
+            water: 0.8581202007900037
+            diethyl ether: 0.0012536388194396794
+            3-methylpyridine: 0.14062616039055656
+            water: 0.8589677906599904
+            diethyl ether: 0.0002452308338698164
+            3-methylpyridine: 0.1407869785061398
+            water: 0.8591329317520607
+            diethyl ether: 4.798073784023502e-05
+            3-methylpyridine: 0.14081908751009903
+            water: 0.8591570166593976
+            diethyl ether: 9.388084351745334e-06
+            3-methylpyridine: 0.14083359525625067
+            water: 0.859057217621184
+            diethyl ether: 1.837030797426332e-06
+            3-methylpyridine: 0.14094094534801857
+            water: 0.8577135253856164
+            diethyl ether: 3.598140680955523e-07
+            3-methylpyridine: 0.1422861148003155
+            water: 0.8412314025839338
+            diethyl ether: 7.143981105281393e-08
+            3-methylpyridine: 0.15876852597625518
+            water: 0.6892454117944677
+            diethyl ether: 3.802339797629884e-08
+            3-methylpyridine: 0.3107545501821342
+            water: 0.23425690273863484
+            diethyl ether: 1.2289080357515391e-08
+            3-methylpyridine: 0.7657430849722849
+        liquid_flows:
+            - 1.2840555567753515
+            - 1.286155932444532
+            - 1.2861830462060875
+            - 1.2861978137474597
+            - 1.2861659986099276
+            - 1.2862372528934691
+            - 1.2860781156109269
+            - 1.2864355498954896
+            - 1.284288748943056
+            - 4.035824973136339
+            - 4.039654000916825
+            - 4.040377547036374
+            - 4.040518483082337
+            - 4.040550843902373
+            - 4.040618454692107
+            - 4.041406636207593
+            - 4.050934441821765
+            - 4.1485264317563
+            - 4.73172473544563
+            - 1.4750521258683125
+        vapor_flows:
+            - 1.2840555567753518
+            - 2.5681111135507035
+            - 2.5702114892198846
+            - 2.570238602981439
+            - 2.5702533705228117
+            - 2.5702215553852805
+            - 2.570292809668822
+            - 2.57013367238628
+            - 2.570491106670843
+            - 2.568344305718409
+            - 2.5607728472702718
+            - 2.56460187505076
+            - 2.5653254211703076
+            - 2.5654663572162706
+            - 2.5654987180363054
+            - 2.5655663288260406
+            - 2.566354510341526
+            - 2.5758823159551025
+            - 2.6734743059135733
+            - 3.2566726096255745
+        internal_vapor_to_condenser = 2.5681
+        condenser_duty_kW = -14.2553
+        reboiler_duty_kW = 31.1469
+        residual_diagnostics:
+            component: {'count': 60, 'max_scaled_abs': 7.302765711033487e-07, 'rms_scaled': 1.1789258790941001e-07, 'max_unscaled_abs': 6.091360784001151e-08, 'max_stage': 18, 'max_component': 'diethyl ether'}
+            energy: {'count': 20, 'max_scaled_abs': 1.2492478544274932e-08, 'rms_scaled': 3.80663808295949e-09, 'max_unscaled_abs': 0.004612484714016318, 'max_stage': 18, 'max_component': None}
+            bubble: {'count': 20, 'max_scaled_abs': 2.0030031633311296e-08, 'rms_scaled': 4.948668060783175e-09, 'max_unscaled_abs': 2.0030031633311296e-08, 'max_stage': 19, 'max_component': None}
+            distillate_spec: {'count': 1, 'max_scaled_abs': 2.453859284612424e-16, 'rms_scaled': 2.453859284612424e-16, 'max_unscaled_abs': 4.6252294296915824e-14, 'max_stage': None, 'max_component': None}
+            reflux_spec: {'count': 1, 'max_scaled_abs': 8.047696228820537e-17, 'rms_scaled': 8.047696228820537e-17, 'max_unscaled_abs': 2.220446049250313e-16, 'max_stage': None, 'max_component': None}
+        component_classification:
+            reference_condenser_temperature_K: 365.492998
+            reference_condenser_temperature_C: 92.342998
+            noncondensables: []
+            volatile_components: ['diethyl ether']
+            heavy_components: []
+        side_draws:
+        distillate_enthalpy_basis = -208153.9190
+        top_decanter = None
+
+#------------------------------------------------------------------------------
+# RECYCLE INFORMATION
+#------------------------------------------------------------------------------
+
+RECYCLE:
+    tear_streams = Recycle
+    calculation_order = MIX-100, EX-100, COL-100, COL-200
+    method = BROYDEN
+    variable_basis = total_flow_component_flows_pressure_enthalpy
+    trace_tolerance = 1e-06
+    manual_tears = Recycle
+    worst_variable = Recycle.n_diethyl ether
+    worst_error = 3.13821e-05
+    failed_evaluations = 0
+
+#------------------------------------------------------------------------------
+# WARNINGS
+#------------------------------------------------------------------------------
+
+WARNINGS:
+    - Recycle detected: tearing stream(s) Recycle
+
+#------------------------------------------------------------------------------
+# QUALITY REPORT
+#------------------------------------------------------------------------------
+
+QUALITY_REPORT:
+    flagged_properties = 2
+    - watch: 3-methylpyridine.Vc quality=0.940 source=local method=effective_critical
+      notes = EOS-effective critical parameter from effective_criticals.sqlite for 3-methylpyridine (108-99-6); physical-critical-equivalent quality score
+    - watch: 3-methylpyridine.Zc quality=0.940 source=local method=effective_critical
+      notes = EOS-effective critical parameter from effective_criticals.sqlite for 3-methylpyridine (108-99-6); physical-critical-equivalent quality score
+
+#==============================================================================
+# END OF RESULTS
+#==============================================================================

@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pfdsim"
+version = "0.2.0.dev3"
+description = "Command-line chemical process simulator for text-based flowsheets"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "AGPL-3.0-only"
+dependencies = [
+    "Flask>=3.1.2",
+    "Werkzeug>=3.1.4",
+    "Gunicorn",
+    "numpy",
+    "pandas",
+    "openpyxl",
+    "scipy",
+    "numba",
+    "pypdf",
+    "CoolProp==7.2.0",
+    "rdkit",
+    "chemicals",
+]
+
+[project.scripts]
+pfdsim = "pfdsim.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-xdist",
+    "ruff",
+]
+
+[tool.uv]
+package = true
+
+[tool.setuptools]
+packages = ["pfdsim", "pfdsim.property_resolution", "pfdsim.thermodynamics_models"]
+package-dir = {pfdsim = "."}
+
+[tool.setuptools.package-data]
+pfdsim = [
+    "data/*.json",
+    "data/*.sqlite",
+    "data/*.txt",
+    "data/*.xlsx",
+    "data/unifac2/*.csv",
+    "data/unifac2/*.xlsx",
+    "data/psrk/*.json",
+    "examples/*.pfd",
+    "examples/*.pfr",
+    "static/js/*.js",
+    "templates/*.html",
+]

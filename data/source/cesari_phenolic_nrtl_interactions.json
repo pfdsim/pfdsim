@@ -1,0 +1,142 @@
+{
+  "metadata": {
+    "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
+    "doi": "10.1016/j.fluid.2017.09.008",
+    "description": "NRTL parameters for phenolic compound systems in water or ethanol from Cesari et al.",
+    "model": "NRTL",
+    "alpha12": 0.3,
+    "parameter_expression": "Delta_g_ij = a_ij + b_ij*T",
+    "tau_expression": "tau_ij = Delta_g_ij/(R*T)",
+    "parameter_units": {
+      "a12": "J/mol",
+      "a21": "J/mol",
+      "b12": "J/mol/K",
+      "b21": "J/mol/K"
+    },
+    "notes": [
+      "Equation (1) in section 3.1 defines tau_ij = Delta_g_ij/(R*T) and Delta_g_ij = a_ij + b_ij*T.",
+      "The source paper sets the NRTL non-randomness parameter alpha to 0.3.",
+      "Water-phenolic compound rows in Table 5 are low-temperature 20-50 C solubility fits; the source table includes LLE and SLE systems.",
+      "Ethanol-phenolic compound rows in Table 7 are VLE fits.",
+      "Water-cresol rows from Table 5 are retained here with emit_runtime=false because higher-scope water-cresol parameters from IE071214T are already present in runtime data."
+    ]
+  },
+  "interactions": [
+    {
+      "components": ["Water", "Guaiacol"],
+      "cas": ["7732-18-5", "90-05-1"],
+      "table": 5,
+      "fitted_equilibrium": "LLE",
+      "a12_J_per_mol": -2904.47,
+      "a21_J_per_mol": 14631.14,
+      "b12_J_per_mol_K": 50.56,
+      "b21_J_per_mol_K": -41.82,
+      "rmsd_percent": 0.1363
+    },
+    {
+      "components": ["Water", "2-Cresol"],
+      "cas": ["7732-18-5", "95-48-7"],
+      "table": 5,
+      "fitted_equilibrium": "LLE",
+      "emit_runtime": false,
+      "skip_reason": "IE071214T water-cresol VLE/VLLE parameters are preferred in the runtime table for now.",
+      "a12_J_per_mol": 2238.76,
+      "a21_J_per_mol": 4062.37,
+      "b12_J_per_mol_K": 36.27,
+      "b21_J_per_mol_K": -14.81,
+      "rmsd_percent": 0.0403
+    },
+    {
+      "components": ["Water", "3-Cresol"],
+      "cas": ["7732-18-5", "108-39-4"],
+      "table": 5,
+      "fitted_equilibrium": "LLE",
+      "emit_runtime": false,
+      "skip_reason": "IE071214T water-cresol VLE/VLLE parameters are preferred in the runtime table for now.",
+      "a12_J_per_mol": -678.03,
+      "a21_J_per_mol": 8057.33,
+      "b12_J_per_mol_K": 46.23,
+      "b21_J_per_mol_K": -27.99,
+      "rmsd_percent": 0.0298
+    },
+    {
+      "components": ["Water", "4-Cresol"],
+      "cas": ["7732-18-5", "106-44-5"],
+      "table": 5,
+      "fitted_equilibrium": "LLE",
+      "emit_runtime": false,
+      "skip_reason": "IE071214T water-cresol VLE/VLLE parameters are preferred in the runtime table for now.",
+      "a12_J_per_mol": -839.66,
+      "a21_J_per_mol": 6804.87,
+      "b12_J_per_mol_K": 48.39,
+      "b21_J_per_mol_K": -25.14,
+      "rmsd_percent": 0.0399
+    },
+    {
+      "components": ["Water", "Syringol"],
+      "cas": ["7732-18-5", "91-10-1"],
+      "table": 5,
+      "fitted_equilibrium": "SLE",
+      "a12_J_per_mol": -4.48,
+      "a21_J_per_mol": -4.73,
+      "b12_J_per_mol_K": 40.04,
+      "b21_J_per_mol_K": 92.25,
+      "rmsd_percent": 0.0041
+    },
+    {
+      "components": ["Water", "Pyrocatechol"],
+      "cas": ["7732-18-5", "120-80-9"],
+      "table": 5,
+      "fitted_equilibrium": "SLE",
+      "a12_J_per_mol": 2049.51,
+      "a21_J_per_mol": 18565.35,
+      "b12_J_per_mol_K": 182.94,
+      "b21_J_per_mol_K": -60.35,
+      "rmsd_percent": 0.1488
+    },
+    {
+      "components": ["Water", "Vanillin"],
+      "cas": ["7732-18-5", "121-33-5"],
+      "table": 5,
+      "fitted_equilibrium": "SLE",
+      "a12_J_per_mol": 23464.72,
+      "a21_J_per_mol": 5611.93,
+      "b12_J_per_mol_K": -30.50,
+      "b21_J_per_mol_K": 2754755.83,
+      "rmsd_percent": 0.0085
+    },
+    {
+      "components": ["Ethanol", "Phenol"],
+      "cas": ["64-17-5", "108-95-2"],
+      "table": 7,
+      "fitted_equilibrium": "VLE",
+      "a12_J_per_mol": -0.04,
+      "a21_J_per_mol": -10.99,
+      "b12_J_per_mol_K": 0.01,
+      "b21_J_per_mol_K": 5.47,
+      "rmsd_bar": 0.021
+    },
+    {
+      "components": ["Ethanol", "Guaiacol"],
+      "cas": ["64-17-5", "90-05-1"],
+      "table": 7,
+      "fitted_equilibrium": "VLE",
+      "a12_J_per_mol": 3327.95,
+      "a21_J_per_mol": -9.21,
+      "b12_J_per_mol_K": 2215.75,
+      "b21_J_per_mol_K": -1.38,
+      "rmsd_bar": 0.022
+    },
+    {
+      "components": ["Ethanol", "2-Cresol"],
+      "cas": ["64-17-5", "95-48-7"],
+      "table": 7,
+      "fitted_equilibrium": "VLE",
+      "a12_J_per_mol": 142951.43,
+      "a21_J_per_mol": -4.65,
+      "b12_J_per_mol_K": -4284.01,
+      "b21_J_per_mol_K": 5.11,
+      "rmsd_bar": 0.025
+    }
+  ]
+}

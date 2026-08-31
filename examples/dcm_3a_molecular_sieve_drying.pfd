@@ -1,0 +1,33 @@
+PROCESS: Dichloromethane 3A Molecular Sieve Drying
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Pseudo-continuous 3A molecular sieve drying of 1000 kg/h 99.6 wt% dichloromethane-water azeotrope at 38.8 C using 30 kg/h regenerated sieve.
+THERMO_METHOD: UNIFNIST
+
+COMPONENTS:
+    dichloromethane | Dichloromethane | MW=84.93258
+    water           | Water           | MW=18.01528
+
+STREAM Wet-DCM : FEED -> MS-200.feed
+    T = 38.8 [C]
+    P = 1.01325 [bar]
+    F = 11.948982338770843 [kmol/h]
+    x = dichloromethane:0.9814181882647248, water:0.018581811735275185
+
+STREAM Dry-DCM : MS-200.product -> PRODUCT
+STREAM Adsorbed-Water : MS-200.adsorbate -> PRODUCT
+
+UNIT MS-200
+    TYPE: MolecularSieveDryer
+    PORTS:
+        feed      : inlet
+        product   : outlet
+        adsorbate : outlet
+    PARAMS:
+        sieve_type = 3A
+        adsorbent_mass_flow = 30 [kg/h]
+
+# Expected behavior:
+# - NIST modified UNIFAC has a dedicated CH2Cl2 subgroup and best matches the
+#   38.8 C DCM-water azeotrope among the local UNIFAC variants.
+# - Product water is below 10 ppmw for this pseudo-continuous 3A sieve rate.
