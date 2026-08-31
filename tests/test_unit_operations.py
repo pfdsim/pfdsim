@@ -5070,7 +5070,11 @@ class UnitOperationSmokeTests(unittest.TestCase):
                 {'methanol': 0.4, 'water': 0.595, 'acetaldehyde': 0.005},
                 13,
                 'acetaldehyde',
-                {'condenser_type': 'mixed', 'condenser_vapor_fraction': 0.01},
+                {
+                    'condenser_type': 'mixed',
+                    'condenser_vapor_fraction': 0.01,
+                    'initializer': 'cheap_estimate',
+                },
             ),
         ]
         for components, composition, feed_stage, light_trace, column_options in cases:

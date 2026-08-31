@@ -18,6 +18,7 @@ dependencies = [
     "pypdf>=6.16",
     "CoolProp>=7.2,<8.0",
     "rdkit>=2026.3",
+    "py2opsin>=1.2",
     "chemicals>=1.5",
 ]
 

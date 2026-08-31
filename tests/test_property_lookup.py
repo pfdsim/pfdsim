@@ -77,6 +77,40 @@ def relative_component_balance(inlets, outlets):
 
 
 class PropertyLookupCacheTests(unittest.TestCase):
+    def test_smiles_cache_schema_version_invalidates_legacy_rows(self):
+        cache_path = Path(tempfile.mkdtemp()) / 'smiles.sqlite'
+        with sqlite3.connect(cache_path) as connection:
+            connection.execute(
+                """
+                CREATE TABLE smiles_cache (
+                    identifier TEXT PRIMARY KEY,
+                    smiles TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    quality REAL NOT NULL,
+                    notes TEXT NOT NULL DEFAULT ''
+                )
+                """
+            )
+            connection.execute(
+                """
+                INSERT INTO smiles_cache
+                    (identifier, smiles, source, quality, notes)
+                VALUES ('x', 'CO', 'chemicals', 0.99, 'legacy poisoned row')
+                """
+            )
+
+        db = ChemicalDatabase(enable_online=False)
+        db._smiles_cache_path = cache_path
+        db._ensure_smiles_cache()
+
+        with sqlite3.connect(cache_path) as connection:
+            version = connection.execute('PRAGMA user_version').fetchone()[0]
+            count = connection.execute(
+                "SELECT count(*) FROM smiles_cache WHERE identifier = 'x'"
+            ).fetchone()[0]
+        self.assertEqual(version, db._SMILES_CACHE_SCHEMA_VERSION)
+        self.assertEqual(count, 0)
+
     def test_provided_smiles_override_is_not_persisted(self):
         db = ChemicalDatabase(enable_online=False)
         db._smiles_cache_path = Path(tempfile.mkdtemp()) / 'smiles.sqlite'

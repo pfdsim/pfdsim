@@ -1411,6 +1411,8 @@ class OnlinePropertyFetcher:
 
 class ChemicalDatabase:
     """Database of chemical properties with online fallback"""
+
+    _SMILES_CACHE_SCHEMA_VERSION = 2
     
     def __init__(self, db_path: Optional[str] = None, enable_online: bool = True):
         """
@@ -1824,6 +1826,16 @@ class ChemicalDatabase:
         path = Path(self._smiles_cache_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         with sqlite3.connect(path) as conn:
+            conn.execute("PRAGMA busy_timeout = 30000")
+            version = int(conn.execute("PRAGMA user_version").fetchone()[0])
+            if version == self._SMILES_CACHE_SCHEMA_VERSION:
+                return
+            conn.execute("BEGIN IMMEDIATE")
+            version = int(conn.execute("PRAGMA user_version").fetchone()[0])
+            if version == self._SMILES_CACHE_SCHEMA_VERSION:
+                return
+            conn.execute("DROP TABLE IF EXISTS smiles_cache")
+            conn.execute("DROP TABLE IF EXISTS opsin_negative_cache")
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS smiles_cache (
@@ -1842,6 +1854,9 @@ class ChemicalDatabase:
                     opsin_version TEXT NOT NULL DEFAULT ''
                 )
                 """
+            )
+            conn.execute(
+                f"PRAGMA user_version = {self._SMILES_CACHE_SCHEMA_VERSION}"
             )
 
     @staticmethod
