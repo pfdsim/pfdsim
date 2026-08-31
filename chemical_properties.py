@@ -1412,7 +1412,7 @@ class OnlinePropertyFetcher:
 class ChemicalDatabase:
     """Database of chemical properties with online fallback"""
 
-    _SMILES_CACHE_SCHEMA_VERSION = 2
+    _SMILES_CACHE_SCHEMA_VERSION = 3
     
     def __init__(self, db_path: Optional[str] = None, enable_online: bool = True):
         """
@@ -2148,7 +2148,10 @@ class ChemicalDatabase:
                 identifier=identifier,
             )
 
-        if identifier in getattr(self, '_smiles_aliases', {}):
+        if (
+            not self._looks_like_formula(identifier)
+            and identifier in getattr(self, '_smiles_aliases', {})
+        ):
             symbol = self._smiles_aliases[identifier]
             aliased = self.chemicals.get(symbol)
             if aliased is not None:

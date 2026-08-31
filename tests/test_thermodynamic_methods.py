@@ -167,6 +167,48 @@ class ThermodynamicMethodTests(unittest.TestCase):
         self.assertIsNotNone(liquid_rho.liquid)
         self.assertIsNone(liquid_rho.vapor)
 
+    def test_liquid_transport_omits_only_solver_floor_trace_components(self):
+        thermo = create_thermodynamics(['water', 'CO'], 'IDEAL')
+        trace = 1.0e-12
+        composition = {'water': 1.0 - trace, 'CO': trace}
+
+        state = thermo.calculate_state(
+            298.15,
+            1.01325,
+            1.0,
+            composition,
+            phase='liquid',
+            flash=False,
+            include=('rho', 'mu'),
+        )
+        water = create_thermodynamics(['water'], 'IDEAL').calculate_state(
+            298.15,
+            1.01325,
+            1.0,
+            {'water': 1.0},
+            phase='liquid',
+            flash=False,
+            include=('rho', 'mu'),
+        )
+
+        self.assertEqual(state.composition, composition)
+        self.assertAlmostEqual(state.rho, water.rho, places=12)
+        self.assertAlmostEqual(state.mu, water.mu, places=12)
+        self.assertIn(
+            'Trace component(s) omitted from liquid density/viscosity mixing',
+            ' '.join(thermo.warnings),
+        )
+
+        with self.assertRaisesRegex(
+            ThermodynamicsError,
+            'Cannot resolve liquid viscosity for CO',
+        ):
+            thermo._mixture_liquid_viscosity(
+                {'water': 1.0 - 1.0e-5, 'CO': 1.0e-5},
+                298.15,
+                1.01325,
+            )
+
     def test_calculate_state_can_include_vapor_mixture_viscosity(self):
         thermo = create_thermodynamics(['C3H8', 'C4H10'], 'IDEAL')
         composition = {'C3H8': 0.4, 'C4H10': 0.6}

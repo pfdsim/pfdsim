@@ -341,6 +341,31 @@ class HenryThermodynamicsTests(unittest.TestCase):
             thermo.aqueous_liquid_enthalpy(composition, 298.15, 1.01325, context)
         ))
 
+    def test_uniquac_excludes_formula_symbol_carbon_monoxide_from_liquid(self):
+        components = ['water', 'acrylic acid', 'propionic acid', 'CO']
+        thermo = create_thermodynamics(components, 'UNIQUAC-VDM')
+        composition = {
+            'water': 0.85,
+            'acrylic acid': 0.10,
+            'propionic acid': 0.047,
+            'CO': 0.003,
+        }
+
+        self.assertNotIn('CO', thermo.r)
+        self.assertIn('CO', thermo._deferred_uniquac_rq_errors)
+        gamma = thermo.activity_coefficients(626.45, composition)
+        self.assertEqual(gamma['CO'], 1.0)
+        self.assertGreater(thermo.K_values(626.45, 1.0, composition)['CO'], 1.0)
+
+        flashed = thermo.calculate_state(
+            626.45,
+            1.0,
+            1.0,
+            composition,
+            include=(),
+        )
+        self.assertEqual(flashed.fluid_vapor_fraction, 1.0)
+
     def test_uniquac_henry_context_uses_normalized_non_henry_submixture(self):
         full = create_thermodynamics(
             ['water', 'ethanol', 'carbon monoxide'],

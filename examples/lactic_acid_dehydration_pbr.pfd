@@ -29,6 +29,8 @@ PROCESS: L-Lactic Acid Dehydration and Primary Condensation
 VERSION: 1.0
 ONLINE_LOOKUP: false
 THERMO_METHOD: UNIQUAC-VDM
+THERMO_SCOPES:
+    extraction | method=NRTL
 ACTIVITY_INTERACTION_MAX_PSAT: 10 [bar]
 ACTIVITY_INTERACTION_MAX_TEMPERATURE: 423.15 [K]
 DESCRIPTION: Jacketed vapor PBR followed by a 40 C aqueous product condenser
@@ -50,8 +52,7 @@ COMPONENTS:
     PD23 | 600-14-6         | formula=C5H8O2, MW=100.117, SMILES=CCC(=O)C(=O)C
     CO   | Carbon Monoxide  | formula=CO, MW=28.010
     CO2  | Carbon Dioxide   | formula=CO2, MW=44.009
-    CYH  | 110-82-7         | formula=C6H12, MW=84.162
-    DIPE | 108-20-3         | formula=C6H14O, MW=102.177
+    MIBK | 108-10-1         | formula=C6H12O, MW=100.161
 
 # No full water/2,3-pentanedione VLE dataset is available. This directional
 # UNIQUAC interaction is anchored to measured PD23-in-water infinite-dilution
@@ -61,6 +62,19 @@ COMPONENTS:
 # 173.63, 191.22, and 209.10, within the reported 7-9% experimental RSD.
 INTERACTION_PARAMETERS:
     H2O/PD23 | model=UNIQUAC, tau12_a=-3.89191887, tau12_b=1040.281856, tau12_c=0, tau21_a=2.40611711, tau21_b=-974.287676, tau21_c=0, model_variant=standard_uniquac, use_q_prime=false, comment=PD23-in-water infinite-dilution anchor; reverse direction retained from UNIFDMD
+
+    # The 25 C water/propanoic-acid/MIBK constants are energy parameters, not
+    # direct tau values, and are interpreted in the PFD's cal/mol convention.
+    # The shared water/MIBK pair instead uses the acrylic-acid regression below
+    # because acrylic acid dominates the concentrated extraction feed.
+    H2O/PA   | model=NRTL, scope=extraction, alpha=0.1, a12=2105.30, a21=-1124.50, comment=25 C water-propanoic acid-MIBK extraction regression
+    PA/MIBK  | model=NRTL, scope=extraction, alpha=0.1, a12=-1297.70, a21=2043.30, comment=25 C water-propanoic acid-MIBK extraction regression
+
+    # Constant-tau NRTL parameters fitted against the paper's raw ternary LLE
+    # data for water/acrylic acid/MIBK.
+    H2O/AA   | model=NRTL, scope=extraction, alpha=0.450, tau12_c=6.468, tau21_c=2.524, comment=constant-tau fit to raw water-acrylic acid-MIBK LLE data
+    H2O/MIBK | model=NRTL, scope=extraction, alpha=0.378, tau12_c=5.338, tau21_c=3.156, comment=constant-tau fit to raw water-acrylic acid-MIBK LLE data
+    AA/MIBK  | model=NRTL, scope=extraction, alpha=0.239, tau12_c=6.061, tau21_c=1.229, comment=constant-tau fit to raw water-acrylic acid-MIBK LLE data
 
 # Explicit PFD and curated database interactions take priority. Remaining
 # missing liquid binaries are fitted once from UNIFDMD during initialization
@@ -100,7 +114,7 @@ STREAM Extraction-Solvent : -> X-301.solvent
     T = 25 [C]
     P = 1.01325 [bar]
     F_mass = 2290.6986 [kg/h]
-    w = CYH:0.5, DIPE:0.5
+    w = MIBK:1.0
 STREAM Extraction-Raffinate : X-301.raffinate
 STREAM Extraction-Extract : X-301.extract
 
@@ -169,9 +183,10 @@ UNIT C-201 : RigorousDistillation
     initializer = cheap_estimate
 
 # The concentrated aqueous acid product is raised to atmospheric pressure,
-# cooled to room temperature, and contacted counter-currently with a 50/50
-# mass blend of cyclohexane and diisopropyl ether. Total solvent mass is one
-# half of the current C-201-bottoms mass flow.
+# cooled to room temperature, and contacted counter-currently with MIBK. Total
+# solvent mass is one half of the current C-201-bottoms mass flow. The
+# extractor uses its isolated NRTL scope so these LLE regressions do not alter
+# the upstream UNIQUAC-VDM vapor-liquid calculations.
 UNIT P-301 : Pump
     P_out = 1.01325 [bar]
 
@@ -183,3 +198,4 @@ UNIT X-301 : RigorousLiquidLiquidExtractor
     mode = isothermal
     T = 25 [C]
     solver_algorithm = equation_oriented
+    thermo_scope = extraction

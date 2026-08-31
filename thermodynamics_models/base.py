@@ -262,6 +262,8 @@ class IdealThermodynamics:
     - Raoult's law for VLE
     - Ideal mixing rules
     """
+
+    LIQUID_TRANSPORT_TRACE_CUTOFF = 1.0e-6
     
     def __init__(
         self,
@@ -3693,6 +3695,7 @@ class IdealThermodynamics:
 
     def mixture_liquid_molar_volume(self, composition: dict[str, float], T: float) -> float:
         """Mixture liquid molar volume [m3/kmol] using resolver-backed pure volumes."""
+        composition = self._normalized_liquid_transport_composition(composition)
         V_molar = 0.0
         for comp, x in composition.items():
             if comp not in self.props:
@@ -3774,6 +3777,29 @@ class IdealThermodynamics:
             raise ThermodynamicsError("Cannot calculate mixture property for empty composition")
         return {comp: value / total for comp, value in values.items() if value > 0.0}
 
+    def _normalized_liquid_transport_composition(
+        self,
+        composition: dict[str, float],
+    ) -> dict[str, float]:
+        """Drop solver-floor traces before resolving pure-liquid properties."""
+        normalized = self._normalized_positive_composition(composition)
+        retained = {
+            comp: value
+            for comp, value in normalized.items()
+            if value > self.LIQUID_TRANSPORT_TRACE_CUTOFF
+        }
+        if not retained:
+            retained = {max(normalized, key=normalized.get): 1.0}
+        excluded = sorted(set(normalized) - set(retained))
+        if excluded:
+            self.add_warning(
+                "Trace component(s) omitted from liquid density/viscosity mixing "
+                f"at x <= {self.LIQUID_TRANSPORT_TRACE_CUTOFF:g}: "
+                + ", ".join(self._component_label(comp) for comp in excluded)
+            )
+        total = sum(retained.values())
+        return {comp: value / total for comp, value in retained.items()}
+
     def _mixture_vapor_viscosity(self, composition: dict[str, float], T: float, P: float) -> float:
         """Gas mixture viscosity [Pa*s] from Wilke's rule."""
         y = self._normalized_positive_composition(composition)
@@ -3810,7 +3836,7 @@ class IdealThermodynamics:
 
     def _mixture_liquid_viscosity(self, composition: dict[str, float], T: float, P: float) -> float:
         """Liquid mixture viscosity [Pa*s] from the configured mixture hierarchy."""
-        x = self._normalized_positive_composition(composition)
+        x = self._normalized_liquid_transport_composition(composition)
         pure_viscosities = {
             comp: self._pure_viscosity(comp, T, P, 'liquid')
             for comp in x

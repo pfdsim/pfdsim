@@ -111,6 +111,27 @@ class PropertyLookupCacheTests(unittest.TestCase):
         self.assertEqual(version, db._SMILES_CACHE_SCHEMA_VERSION)
         self.assertEqual(count, 0)
 
+    def test_valid_formula_is_never_reinterpreted_as_local_smiles_alias(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db = ChemicalDatabase(enable_online=False)
+            db._smiles_cache_path = Path(tmpdir) / 'smiles_cache.sqlite'
+
+            carbon_monoxide = db.get('CO', fetch_online=False)
+            resolved = db.resolve_smiles_info(
+                'CO',
+                fetch_online=False,
+                props=carbon_monoxide,
+            )
+
+            self.assertIsNotNone(resolved)
+            self.assertEqual(resolved.smiles, '[C-]#[O+]')
+            with sqlite3.connect(db._smiles_cache_path) as connection:
+                rows = connection.execute(
+                    "SELECT identifier, smiles FROM smiles_cache"
+                ).fetchall()
+            self.assertTrue(rows)
+            self.assertEqual({smiles for _identifier, smiles in rows}, {'[C-]#[O+]'})
+
     def test_provided_smiles_override_is_not_persisted(self):
         db = ChemicalDatabase(enable_online=False)
         db._smiles_cache_path = Path(tempfile.mkdtemp()) / 'smiles.sqlite'
