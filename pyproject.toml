@@ -7,21 +7,25 @@ name = "pfdsim"
 version = "0.2.0.dev3"
 description = "Command-line chemical process simulator for text-based flowsheets"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = "AGPL-3.0-only"
 dependencies = [
-    "Flask>=3.1.2",
-    "Werkzeug>=3.1.4",
-    "Gunicorn",
-    "numpy",
-    "pandas",
-    "openpyxl",
-    "scipy",
-    "numba",
-    "pypdf",
-    "CoolProp==7.2.0",
-    "rdkit",
-    "chemicals",
+    "numpy>=2.5",
+    "pandas>=3.0",
+    "openpyxl>=3.1",
+    "scipy>=1.18",
+    "numba>=0.67",
+    "pypdf>=6.16",
+    "CoolProp>=7.2,<8.0",
+    "rdkit>=2026.3",
+    "chemicals>=1.5",
+]
+
+[project.optional-dependencies]
+web = [
+    "Flask>=3.1",
+    "Werkzeug>=3.1",
+    "Gunicorn>=26.2",
 ]
 
 [project.scripts]
@@ -29,9 +33,9 @@ pfdsim = "pfdsim.cli:main"
 
 [dependency-groups]
 dev = [
-    "pytest",
-    "pytest-xdist",
-    "ruff",
+    "pytest>=9.1",
+    "pytest-xdist>=3.8",
+    "ruff>=0.16",
 ]
 
 [tool.uv]

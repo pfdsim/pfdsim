@@ -23,7 +23,7 @@ and simulation library.
 
 ## Installation
 
-Use Python 3.10 or newer.
+Use Python 3.12 or newer.
 
 ```bash
 cd pfdsim
@@ -34,6 +34,12 @@ uv sync
 editable mode, and installs the locked runtime and development dependencies.
 Use `uv sync --no-dev` when only the runtime package is needed. The dependency
 declarations in `pyproject.toml` and the resolved `uv.lock` are authoritative.
+
+The optional web application dependencies are installed explicitly:
+
+```bash
+uv sync --extra web
+```
 
 ## CLI Usage
 
