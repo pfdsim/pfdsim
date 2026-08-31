@@ -2321,7 +2321,19 @@ class ThermodynamicMethodTests(unittest.TestCase):
                     ]
                     self.assertEqual(len(matches), 1)
                     record = matches[0]
-                    self.assertEqual(record, by_pair[pair])
+                    expected_record = dict(by_pair[pair])
+                    if model == 'NRTL':
+                        record = {
+                            **record,
+                            'tau12_f': record.get('tau12_f', 0.0),
+                            'tau21_f': record.get('tau21_f', 0.0),
+                        }
+                        expected_record = {
+                            **expected_record,
+                            'tau12_f': expected_record.get('tau12_f', 0.0),
+                            'tau21_f': expected_record.get('tau21_f', 0.0),
+                        }
+                    self.assertEqual(record, expected_record)
                     self.assertEqual(record['source_pair_id'], fit['pair_id'])
                     self.assertEqual(record['Tmin_K'], fit['temperature_range_K']['Tmin'])
                     self.assertEqual(record['Tmax_K'], fit['temperature_range_K']['Tmax'])

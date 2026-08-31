@@ -1,3 +1,4 @@
+import importlib.util
 import subprocess
 import sys
 import unittest
@@ -28,6 +29,10 @@ class PackageImportTests(unittest.TestCase):
             msg=f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}",
         )
 
+    @unittest.skipUnless(
+        importlib.util.find_spec('flask') is not None,
+        'requires the optional pfdsim[web] dependency group',
+    )
     def test_package_imports_use_only_package_module_identities(self):
         completed = run_python(
             """

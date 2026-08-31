@@ -1,3 +1,4 @@
+import importlib.util
 import json
 import os
 import sys
@@ -214,6 +215,10 @@ NIST_COLLIDING_ID_CASES = {
 
 
 class NativeUNIFACFragmenterTests(unittest.TestCase):
+    @unittest.skipUnless(
+        importlib.util.find_spec('flask') is not None,
+        'requires the optional pfdsim[web] dependency group',
+    )
     def test_flask_api_routes_explicit_smiles_to_native_fragmenter(self):
         from app import app
 
