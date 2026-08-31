@@ -28,20 +28,21 @@ A PFD file consists of top-level directives and indented block sections:
 
 1. **Metadata and policies** - Process identity, property method, lookup policy,
    and recycle controls
-2. **Components** - Chemical species definitions
-3. **Property correlations** - Optional pure-component correlation overrides
-4. **Interaction parameters** - Optional binary-parameter overrides
-5. **Streams** - Material flow definitions
-6. **Units** - Unit operation, port, parameter, and reaction definitions
+2. **Thermodynamic scopes** - Optional named property-method contexts
+3. **Components** - Chemical species definitions
+4. **Property correlations** - Optional pure-component correlation overrides
+5. **Interaction parameters** - Optional binary-parameter overrides
+6. **Streams** - Material flow definitions
+7. **Units** - Unit operation, port, parameter, and reaction definitions
 
 `COMPONENTS:` must precede `PROPERTY_CORRELATIONS:` because correlation rows
 are resolved against components as they are parsed. Put `INTERACTION_PARAMETERS:`
 after `COMPONENTS:` as well. Streams and units may appear in either order.
 
 Top-level keywords and section headers are case-sensitive. Entries belonging to
-`COMPONENTS:`, `PROPERTY_CORRELATIONS:`, `INTERACTION_PARAMETERS:`, `STREAM`, or
-`UNIT` must be indented with spaces or tabs. An unindented non-comment line ends
-the current block.
+`THERMO_SCOPES:`, `COMPONENTS:`, `PROPERTY_CORRELATIONS:`,
+`INTERACTION_PARAMETERS:`, `STREAM`, or `UNIT` must be indented with spaces or
+tabs. An unindented non-comment line ends the current block.
 
 ### Comments
 
@@ -193,6 +194,45 @@ capabilities. Ordinary VLE does not compile optional LLE/VLLE kernels; LLE,
 VLLE, and VDM kernels are prepared only when the phase model or unit operations
 can call them. The compilation step does not perform a sacrificial property or
 equilibrium calculation, and `run()` introduces no new compiled signatures.
+
+#### Thermodynamic Scopes
+
+Named scopes allow different units to use independent thermodynamic packages:
+
+```pfd
+THERMO_METHOD: UNIQUAC-VDM
+
+THERMO_SCOPES:
+    extraction | method=NRTL
+    recovery   | method=UNIQUAC, inherit=global
+    polishing  | method=UNIQUAC, inherit=recovery
+```
+
+`global` is reserved for the process-level `THERMO_METHOD`. A unit uses the
+global package unless it explicitly selects a named scope:
+
+```pfd
+UNIT X-301 : RigorousLiquidLiquidExtractor
+    thermo_scope = extraction
+```
+
+Scope names are unique identifiers. Multiple scopes may use the same method;
+each scope still owns a distinct immutable package. Omitting `inherit` creates
+an isolated scope. `inherit=global` or `inherit=<scope>` imports the parent's
+effective interaction records. A child record for the same model/component
+pair replaces the inherited records for that pair. Unknown parents and
+inheritance cycles are errors.
+
+Material streams are recomputed only where their source and destination scopes
+differ. Adjacent units in the same scope share the existing state directly.
+At a boundary, temperature, pressure, total flow, and component flows remain
+fixed while context-owned properties (`H`, `S`, `Cp`, phase equilibrium,
+density, and viscosity) are evaluated using the receiving package. This lets
+scoped liquid-viscosity interactions—and future excess-volume interactions—
+remain isolated to their intended units. The
+enthalpy-flow difference is reported as a thermodynamic-scope correction and
+is included in overall energy reconciliation without being assigned to a unit
+duty.
 
 #### Fluid Phase Model
 
@@ -656,12 +696,19 @@ INTERACTION_ESTIMATION:
     UNIQUAC | source=UNIFDMD, policy=missing_only,
                parameter_order=source, Tmin=293.15 [K], Tmax=423.15 [K]
     H2O/PD23 | model=UNIQUAC, Tmin=303.15 [K], Tmax=393.15 [K]
+    UNIQUAC | scope=extraction, source=UNIFNIST,
+               Tmin=293.15 [K], Tmax=373.15 [K]
 ```
 
 Global rows begin with the destination molecular activity model (`UNIQUAC` or
 `NRTL`). Pair-specific rows begin with a PFD component pair and require
 `model=UNIQUAC` or `model=NRTL`. Pair rows inherit the global rule and may
 override `source`, `Tmin`, `Tmax`, `T_ref`, and, for NRTL, `alpha`.
+Without `scope=...`, a rule belongs to the global thermodynamic context.
+Records in different scopes may repeat the same model and component pair.
+Within one scope, duplicate global rules or duplicate pair rules are errors.
+A scope with `inherit=...` may inherit its parent's estimation rule and
+override it locally.
 
 Supported sources are `UNIFAC`, `UNIFAC2`, `UNIFDMD`, `UNIFM2`, and
 `UNIFNIST`. `policy=missing_only` estimates only pairs absent from the bundled
@@ -717,6 +764,12 @@ components present in the PFD. User-supplied interaction parameters override
 database parameters for the same pair and model. For EOS `k_ij` rows with
 `Tmin_K`/`Tmax_K`, the override applies only inside that temperature range; use
 an unranged row for an all-temperature override.
+
+`scope=<name>` assigns a row to a named thermodynamic scope. A row without a
+scope belongs only to `global`, unless a child scope explicitly inherits that
+context. Duplicate pair/model records are allowed across different scopes but
+remain errors within the same scope. `LIQUID_VISCOSITY` records follow the same
+scope and inheritance rules.
 
 Each interaction model has a closed parameter schema. Unknown parameter names
 are fatal parse errors, with a close match suggestion when one is available.
@@ -1034,6 +1087,10 @@ Ports are material-connection labels; heat and work are unit results rather than
 connectable `heat_in`/`heat_out` ports in format 1.0.
 
 #### Parameters
+
+Every unit accepts the common optional parameter `thermo_scope=<name>`. When
+omitted, the unit uses `global`. The named scope must be declared earlier in a
+top-level `THERMO_SCOPES:` section.
 
 Common parameters by unit type:
 

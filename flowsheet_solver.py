@@ -70,6 +70,8 @@ class SimulationResult:
     warnings: list[str] = field(default_factory=list)
     mass_balance_error: float = 0.0
     energy_balance_error: float = 0.0
+    thermo_scope_enthalpy_correction: float = 0.0
+    thermo_scope_corrections: list[dict] = field(default_factory=list)
     recycle_info: dict = field(default_factory=dict)
     
     def to_dict(self) -> dict:
@@ -82,6 +84,10 @@ class SimulationResult:
             'warnings': self.warnings,
             'mass_balance_error': self.mass_balance_error,
             'energy_balance_error': self.energy_balance_error,
+            'thermo_scope_enthalpy_correction': (
+                self.thermo_scope_enthalpy_correction
+            ),
+            'thermo_scope_corrections': list(self.thermo_scope_corrections),
             'recycle_info': self.recycle_info,
         }
 
@@ -107,7 +113,8 @@ class FlowsheetSolver:
     for recycle convergence.
     """
     
-    def __init__(self, pfd, thermo: Optional[IdealThermodynamics] = None):
+    def __init__(self, pfd, thermo: Optional[IdealThermodynamics] = None,
+                 thermo_packages: Optional[dict[str, IdealThermodynamics]] = None):
         """
         Initialize solver with a PFD object.
         
@@ -125,9 +132,12 @@ class FlowsheetSolver:
             self.thermo = IdealThermodynamics(self.components)
         else:
             self.thermo = thermo
+        self.thermo_packages = dict(thermo_packages or {'global': self.thermo})
+        self.thermo_packages.setdefault('global', self.thermo)
         
         # Build connectivity
         self._build_graph()
+        self._build_thermo_scope_topology()
         
         # Create unit operation instances
         self._create_units()
@@ -154,6 +164,7 @@ class FlowsheetSolver:
         self._recycle_method_options: dict[str, float | int] = (
             resolved_recycle_options('WEGSTEIN', {})
         )
+        self._thermo_scope_corrections: dict[str, dict] = {}
 
     def _emit_progress(self, message: str):
         """Send a progress message to the caller if progress reporting is enabled."""
@@ -215,6 +226,46 @@ class FlowsheetSolver:
             if src_unit != 'FEED' and dst_unit != 'PRODUCT':
                 self.upstream[dst_unit].append(src_unit)
                 self.downstream[src_unit].append(dst_unit)
+
+    @staticmethod
+    def _declared_unit_thermo_scope(unit) -> str:
+        values = [
+            str(param.value).strip()
+            for param in unit.params
+            if str(param.name).strip().lower() == 'thermo_scope'
+        ]
+        return values[-1] if values else 'global'
+
+    def _build_thermo_scope_topology(self) -> None:
+        """Resolve unit package assignments and material-stream boundaries."""
+        self.unit_thermo_scopes = {
+            unit.id: self._declared_unit_thermo_scope(unit)
+            for unit in self.pfd.units
+        }
+        for unit_id, scope in self.unit_thermo_scopes.items():
+            if scope not in self.thermo_packages:
+                raise FlowsheetError(
+                    f"Unit '{unit_id}' references unavailable thermodynamic "
+                    f"scope '{scope}'"
+                )
+
+        self.stream_thermo_scopes = {}
+        self.thermo_scope_boundaries = {}
+        for stream in self.pfd.streams:
+            source_scope = (
+                'global'
+                if stream.source.is_feed
+                else self.unit_thermo_scopes[stream.source.unit_id]
+            )
+            destination_scope = (
+                'global'
+                if stream.destination.is_product
+                else self.unit_thermo_scopes[stream.destination.unit_id]
+            )
+            pair = (source_scope, destination_scope)
+            self.stream_thermo_scopes[stream.id] = pair
+            if source_scope != destination_scope:
+                self.thermo_scope_boundaries[stream.id] = pair
     
     def _create_units(self):
         """Create unit operation instances"""
@@ -224,6 +275,8 @@ class FlowsheetSolver:
             # Collect parameters
             params = {}
             for param in unit.params:
+                if str(param.name).strip().lower() == 'thermo_scope':
+                    continue
                 value = param.value
                 # Try to convert to number
                 try:
@@ -269,7 +322,10 @@ class FlowsheetSolver:
             # Create unit
             try:
                 self.units[unit.id] = create_unit(
-                    unit.unit_type, unit.id, self.thermo, params
+                    unit.unit_type,
+                    unit.id,
+                    self.thermo_packages[self.unit_thermo_scopes[unit.id]],
+                    params,
                 )
             except UnitOperationError as e:
                 raise FlowsheetError(f"Cannot create unit '{unit.id}': {e}")
@@ -691,6 +747,105 @@ class FlowsheetSolver:
                                 300, 1.0, 100, composition
                             )
     
+    @staticmethod
+    def _scope_phase_constraint(state: StreamState) -> Optional[str]:
+        if (
+            state.phase_stability != 'explicit_phase_constraint'
+            and not str(state.phase_status).startswith('forced_')
+        ):
+            return None
+        fractions = state.phase_fractions()
+        fluid_total = (
+            fractions['vapor']
+            + fractions['liquid1']
+            + fractions['liquid2']
+        )
+        if fluid_total <= 1.0e-15:
+            return None
+        vapor = fractions['vapor'] / fluid_total
+        liquid2 = fractions['liquid2'] / fluid_total
+        if vapor >= 1.0 - 1.0e-12 and liquid2 <= 1.0e-12:
+            return 'vapor'
+        if vapor <= 1.0e-12 and liquid2 <= 1.0e-12:
+            return 'liquid'
+        return None
+
+    def _state_in_thermo_scope(
+        self,
+        state: StreamState,
+        scope: str,
+    ) -> StreamState:
+        """Re-evaluate thermodynamic state fields without transport properties."""
+        thermo = self.thermo_packages[scope]
+        phase = self._scope_phase_constraint(state)
+        include = ['H', 'S', 'Cp', 'rho', 'mu']
+        converted = thermo.calculate_state(
+            state.T,
+            state.P,
+            state.F,
+            dict(state.composition),
+            phase=phase,
+            flash=phase is None,
+            include=include,
+        )
+        converted.thermo_scope = scope
+        return converted
+
+    def _transition_stream_state(
+        self,
+        stream_id: str,
+        state: StreamState,
+        destination_scope: str,
+    ) -> StreamState:
+        source_scope = getattr(state, 'thermo_scope', None) or 'global'
+        if source_scope == destination_scope:
+            self._thermo_scope_corrections.pop(stream_id, None)
+            return state
+        if source_scope not in self.thermo_packages:
+            raise FlowsheetError(
+                f"Stream '{stream_id}' carries unknown thermodynamic scope "
+                f"'{source_scope}'"
+            )
+
+        source_view = state
+        if (
+            source_view.H is None
+            or source_view.S is None
+            or source_view.Cp is None
+            or source_view.rho is None
+            or source_view.mu is None
+        ):
+            source_view = self._state_in_thermo_scope(state, source_scope)
+        destination_view = self._state_in_thermo_scope(
+            state,
+            destination_scope,
+        )
+        if source_view.H is None or destination_view.H is None:
+            raise FlowsheetError(
+                f"Thermodynamic scope transition for stream '{stream_id}' "
+                "could not calculate enthalpy on both sides"
+            )
+
+        correction = state.F * (destination_view.H - source_view.H)
+        self._thermo_scope_corrections[stream_id] = {
+            'stream_id': stream_id,
+            'source_scope': source_scope,
+            'destination_scope': destination_scope,
+            'flow_kmol_per_h': state.F,
+            'source_H_kJ_per_kmol': source_view.H,
+            'destination_H_kJ_per_kmol': destination_view.H,
+            'enthalpy_flow_correction_kJ_per_h': correction,
+            'source_S_kJ_per_kmol_K': source_view.S,
+            'destination_S_kJ_per_kmol_K': destination_view.S,
+            'source_Cp_kJ_per_kmol_K': source_view.Cp,
+            'destination_Cp_kJ_per_kmol_K': destination_view.Cp,
+            'source_density_kmol_per_m3': source_view.rho,
+            'destination_density_kmol_per_m3': destination_view.rho,
+            'source_viscosity_Pa_s': source_view.mu,
+            'destination_viscosity_Pa_s': destination_view.mu,
+        }
+        return destination_view
+
     def _calculate_unit(self, unit_id: str, solve_context: Optional[dict] = None) -> UnitResult:
         """Calculate a single unit operation"""
         unit = self.units[unit_id]
@@ -708,7 +863,12 @@ class FlowsheetSolver:
                     f"Stream '{stream_id}' not calculated before unit '{unit_id}'"
                 )
             
-            inlets[port_id] = self.streams[stream_id]
+            destination_scope = self.unit_thermo_scopes[unit_id]
+            inlets[port_id] = self._transition_stream_state(
+                stream_id,
+                self.streams[stream_id],
+                destination_scope,
+            )
         
         # Solve unit
         context = dict(solve_context or {})
@@ -718,7 +878,7 @@ class FlowsheetSolver:
             affects_result = context.get('recycle_final_pass') is True
         unit.solve_context = context
         try:
-            quality_context = getattr(self.thermo, 'quality_context', None)
+            quality_context = getattr(unit.thermo, 'quality_context', None)
             if quality_context is None:
                 result = unit.solve(inlets)
             else:
@@ -740,19 +900,27 @@ class FlowsheetSolver:
             
             # Find matching outlet
             if port_id in result.outlet_streams:
-                self.streams[stream_id] = result.outlet_streams[port_id]
+                outlet_state = result.outlet_streams[port_id]
             elif len(result.outlet_streams) == 1:
                 # Single outlet - use it regardless of port name
-                self.streams[stream_id] = list(result.outlet_streams.values())[0]
+                outlet_state = list(result.outlet_streams.values())[0]
             else:
                 # Try to match by common names
                 for out_port, state in result.outlet_streams.items():
                     if out_port.lower() in port_id.lower() or port_id.lower() in out_port.lower():
-                        self.streams[stream_id] = state
+                        outlet_state = state
                         break
                 else:
                     # Use first available
-                    self.streams[stream_id] = list(result.outlet_streams.values())[0]
+                    outlet_state = list(result.outlet_streams.values())[0]
+            source_scope = self.unit_thermo_scopes[unit_id]
+            outlet_state.thermo_scope = source_scope
+            destination_scope = self.stream_thermo_scopes[stream_id][1]
+            self.streams[stream_id] = self._transition_stream_state(
+                stream_id,
+                outlet_state,
+                destination_scope,
+            ) if destination_scope == 'global' and source_scope != 'global' else outlet_state
         
         elapsed = time.perf_counter() - start
         outlet_summary = []
@@ -916,7 +1084,11 @@ class FlowsheetSolver:
         """Aspen-like tear variables: total flow, component flows, pressure, enthalpy."""
         H = state.H
         if H is None:
-            H = self.thermo.mixture_enthalpy(
+            thermo = self.thermo_packages.get(
+                getattr(state, 'thermo_scope', 'global'),
+                self.thermo,
+            )
+            H = thermo.mixture_enthalpy(
                 state.composition,
                 state.T,
                 state.vapor_fraction,
@@ -943,15 +1115,19 @@ class FlowsheetSolver:
     def _enthalpy_state_from_PH(self, P: float, F: float,
                                 composition: dict[str, float],
                                 H_target: float,
-                                fallback: StreamState) -> StreamState:
+                                fallback: StreamState,
+                                thermo,
+                                thermo_scope: str) -> StreamState:
         """Build a stream state from P, component composition, and molar enthalpy."""
         from scipy.optimize import brentq
 
         def candidate_state(T: float, include=None) -> StreamState:
-            return self.thermo.calculate_state(
+            state = thermo.calculate_state(
                 T, P, F, composition,
                 include=include,
             )
+            state.thermo_scope = thermo_scope
+            return state
 
         def residual(T: float) -> float:
             state = candidate_state(T, include=('H',))
@@ -981,7 +1157,7 @@ class FlowsheetSolver:
         for comp, z_i in composition.items():
             if z_i <= 1e-8:
                 continue
-            props = getattr(self.thermo, 'props', {}).get(comp)
+            props = getattr(thermo, 'props', {}).get(comp)
             if props:
                 for value in (props.Tb, props.Tc):
                     if value:
@@ -1005,10 +1181,13 @@ class FlowsheetSolver:
         if values:
             T = min(values, key=lambda item: abs(item[1]))[0]
             return candidate_state(T)
-        return self.thermo.calculate_state(fallback.T, P, F, composition)
+        state = thermo.calculate_state(fallback.T, P, F, composition)
+        state.thermo_scope = thermo_scope
+        return state
     
     def _vector_to_state(self, vector: list[float],
-                         fallback: StreamState) -> StreamState:
+                         fallback: StreamState,
+                         thermo_scope: str = 'global') -> StreamState:
         F = max(0.0, float(vector[0]))
         component_flows = {
             comp: max(0.0, float(vector[1 + i]))
@@ -1024,10 +1203,21 @@ class FlowsheetSolver:
 
         P = max(1e-6, float(vector[1 + len(self.components)]))
         H = float(vector[2 + len(self.components)])
+        thermo = self.thermo_packages[thermo_scope]
         try:
-            return self._enthalpy_state_from_PH(P, F, composition, H, fallback)
+            return self._enthalpy_state_from_PH(
+                P,
+                F,
+                composition,
+                H,
+                fallback,
+                thermo,
+                thermo_scope,
+            )
         except Exception:
-            return self.thermo.calculate_state(fallback.T, P, F, composition)
+            state = thermo.calculate_state(fallback.T, P, F, composition)
+            state.thermo_scope = thermo_scope
+            return state
 
     def _tear_states_to_vector(self, tear_streams: list[str],
                                states: dict[str, StreamState]) -> list[float]:
@@ -1039,29 +1229,32 @@ class FlowsheetSolver:
     def _apply_tear_vector(self, tear_streams: list[str], vector: list[float],
                            fallback_states: dict[str, StreamState]):
         width = 3 + len(self.components)
-        context = getattr(self.thermo, 'quality_context', None)
-        manager = (
-            context(
-                kind='stream',
-                phase='recycle_tear_vector_decode',
-                affects_result=False,
-            )
-            if context is not None
-            else None
-        )
-        if manager is None:
-            for i, stream_id in enumerate(tear_streams):
-                start = i * width
-                end = start + width
-                fallback = fallback_states.get(stream_id, self.streams[stream_id])
-                self.streams[stream_id] = self._vector_to_state(vector[start:end], fallback)
-            return
-        with manager:
-            for i, stream_id in enumerate(tear_streams):
-                start = i * width
-                end = start + width
-                fallback = fallback_states.get(stream_id, self.streams[stream_id])
-                self.streams[stream_id] = self._vector_to_state(vector[start:end], fallback)
+        for i, stream_id in enumerate(tear_streams):
+            start = i * width
+            end = start + width
+            fallback = fallback_states.get(stream_id, self.streams[stream_id])
+            source_scope = self.stream_thermo_scopes[stream_id][0]
+            thermo = self.thermo_packages[source_scope]
+            context = getattr(thermo, 'quality_context', None)
+            if context is None:
+                state = self._vector_to_state(
+                    vector[start:end],
+                    fallback,
+                    source_scope,
+                )
+            else:
+                with context(
+                    kind='stream',
+                    stream_id=stream_id,
+                    phase='recycle_tear_vector_decode',
+                    affects_result=False,
+                ):
+                    state = self._vector_to_state(
+                        vector[start:end],
+                        fallback,
+                        source_scope,
+                    )
+            self.streams[stream_id] = state
     
     def _make_recycle_scale(self, tear_streams: list[str],
                             states: dict[str, StreamState]):
@@ -1861,9 +2054,14 @@ class FlowsheetSolver:
         for unit_id, result in self.unit_results.items():
             Q_total += result.heat_duty
             W_total += result.work
+
+        scope_correction = sum(
+            float(record['enthalpy_flow_correction_kJ_per_h'])
+            for record in self._thermo_scope_corrections.values()
+        )
         
-        # H_out = H_in + Q + W
-        expected_H_out = H_in + Q_total + W_total
+        # H_out = H_in + Q + W + thermodynamic-package reconciliation.
+        expected_H_out = H_in + Q_total + W_total + scope_correction
         if abs(expected_H_out) > 0:
             energy_error = abs(H_out - expected_H_out) / abs(expected_H_out)
         else:
@@ -1896,6 +2094,7 @@ class FlowsheetSolver:
         self.streams.clear()
         self.unit_results.clear()
         self.progress_callback = progress_callback
+        self._thermo_scope_corrections.clear()
         self._recycle_deferred_units = []
         self._recycle_invariant_units = set()
         self._recycle_invariant_units_ready = set()
@@ -2058,8 +2257,18 @@ class FlowsheetSolver:
         if energy_error > 0.05:
             warnings.append(f"Energy balance error: {energy_error*100:.2f}%")
 
-        warnings.extend(getattr(self.thermo, 'warnings', []))
+        for thermo in self.thermo_packages.values():
+            warnings.extend(getattr(thermo, 'warnings', []))
         warnings = self._dedupe_warnings(warnings)
+
+        scope_corrections = [
+            dict(self._thermo_scope_corrections[stream_id])
+            for stream_id in sorted(self._thermo_scope_corrections)
+        ]
+        scope_enthalpy_correction = sum(
+            float(record['enthalpy_flow_correction_kJ_per_h'])
+            for record in scope_corrections
+        )
         
         return SimulationResult(
             converged=converged,
@@ -2070,6 +2279,8 @@ class FlowsheetSolver:
             warnings=warnings,
             mass_balance_error=mass_error,
             energy_balance_error=energy_error,
+            thermo_scope_enthalpy_correction=scope_enthalpy_correction,
+            thermo_scope_corrections=scope_corrections,
             recycle_info={
                 'tear_streams': tear_streams,
                 'calculation_order': calc_order,

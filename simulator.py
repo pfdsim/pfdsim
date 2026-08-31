@@ -97,6 +97,8 @@ class Simulator:
         """
         self.pfd = pfd
         self.thermo: Optional[IdealThermodynamics] = None
+        self.thermo_packages: dict[str, IdealThermodynamics] = {}
+        self.thermo_scope_methods: dict[str, str] = {}
         self.solver: Optional[FlowsheetSolver] = None
         self.result: Optional[SimulationResult] = None
         self.thermo_method: Optional[str] = None
@@ -168,6 +170,13 @@ class Simulator:
         if thermo_method is None:
             thermo_method = 'IDEAL'
         thermo_method = thermo_method.upper()
+        scope_methods = {
+            'global': thermo_method,
+            **{
+                scope.name: str(scope.method).upper()
+                for scope in getattr(self.pfd, 'thermo_scopes', [])
+            },
+        }
         
         lle_methods = LLE_CAPABLE_THERMO_METHODS
         fluid_phase_model = str(
@@ -192,9 +201,15 @@ class Simulator:
         # Check for unsupported unit types
         for unit in self.pfd.units:
             unit_type = unit.unit_type
+            unit_scope = next((
+                str(param.value).strip()
+                for param in unit.params
+                if param.name.lower() == 'thermo_scope'
+            ), 'global')
+            unit_thermo_method = scope_methods[unit_scope]
             
             # Check for LLE/solid units - only restrict if no liquid activity model is selected.
-            if thermo_method not in lle_methods:
+            if unit_thermo_method not in lle_methods:
                 if any(phase in unit_type.lower() for phase in ['lle', 'decant', 'extract']):
                     raise SimulationError(
                         f"Unit '{unit.id}' ({unit_type}) requires LLE capability. "
@@ -217,7 +232,7 @@ class Simulator:
                     if (
                         str(param.value).upper().replace(' ', '')
                         in {'VLL', 'VLLE', 'LLE', 'VL(L)E', 'VLL(E)', 'ADAPTIVE_VLLE'}
-                        and thermo_method not in lle_methods
+                        and unit_thermo_method not in lle_methods
                     ):
                         raise SimulationError(
                             f"Unit '{unit.id}' specifies {param.value} phases. "
@@ -285,28 +300,67 @@ class Simulator:
         self._initialized_thermo_method = None
         self._initialized_fluid_phase_model = None
         self.thermo = None
+        self.thermo_packages = {}
+        self.thermo_scope_methods = {}
         self.solver = None
         self.result = None
         self.thermo_method = selected_method
-        normalized_thermo_method = self.thermo_method.replace('_', '-')
-        uses_mathias_copeman = (
-            normalized_thermo_method.endswith('-MC')
-            or normalized_thermo_method in {'PSRK', 'PREDICTIVE-SRK'}
+        self.thermo_scope_methods = {
+            'global': self.thermo_method,
+            **{
+                scope.name: str(scope.method).upper()
+                for scope in getattr(self.pfd, 'thermo_scopes', [])
+            },
+        }
+        scope_parents = {
+            scope.name: (
+                str(scope.inherit)
+                if scope.inherit
+                else None
+            )
+            for scope in getattr(self.pfd, 'thermo_scopes', [])
+        }
+
+        def thermo_scope_lineage(scope_name: str) -> list[str]:
+            if scope_name == 'global':
+                return ['global']
+            lineage = []
+            current = scope_name
+            while current and current != 'global':
+                lineage.append(current)
+                current = scope_parents.get(current)
+            if current == 'global':
+                lineage.append('global')
+            return list(reversed(lineage))
+        normalized_thermo_methods = {
+            method.replace('_', '-')
+            for method in self.thermo_scope_methods.values()
+        }
+        uses_mathias_copeman = any(
+            method.endswith('-MC')
+            or method in {'PSRK', 'PREDICTIVE-SRK'}
+            for method in normalized_thermo_methods
         )
-        uses_prsv1 = normalized_thermo_method in {
+        uses_prsv1 = bool(normalized_thermo_methods & {
             'PRSV', 'PRSV1', 'PR-SV', 'PR-SV1',
             'PENG-ROBINSON-SV', 'PENG-ROBINSON-SV1',
             'PENG-ROBINSON-STRYJEK-VERA',
-        }
-        uses_prsv2 = normalized_thermo_method in {
+        })
+        uses_prsv2 = bool(normalized_thermo_methods & {
             'PRSV2', 'PR-SV2', 'PENG-ROBINSON-SV2',
-        }
-        uses_twu = normalized_thermo_method in {
+        })
+        uses_twu = bool(normalized_thermo_methods & {
             'SRK-TWU', 'RKS-TWU', 'RK-SOAVE-TWU',
             'PR-TWU', 'PENG-ROBINSON-TWU',
-        }
-        uses_uniquac = normalized_thermo_method.startswith('UNIQUAC')
-        uses_vdm = normalized_thermo_method.endswith('-VDM')
+        })
+        uses_uniquac = any(
+            method.startswith('UNIQUAC')
+            for method in normalized_thermo_methods
+        )
+        uses_vdm = any(
+            method.endswith('-VDM')
+            for method in normalized_thermo_methods
+        )
         ignored_model_parameter_warnings: list[str] = []
         
         # Get database
@@ -439,7 +493,11 @@ class Simulator:
                     if property_attr in {'kappa1', 'kappa2', 'kappa3'} and not (uses_prsv1 or uses_prsv2):
                         ignored_prsv_fields.append(property_attr)
                         continue
-                    if property_attr in {'kappa2', 'kappa3'} and uses_prsv1:
+                    if (
+                        property_attr in {'kappa2', 'kappa3'}
+                        and uses_prsv1
+                        and not uses_prsv2
+                    ):
                         ignored_prsv2_fields.append(property_attr)
                         continue
                     if property_attr in {'twu_l', 'twu_m', 'twu_n'} and not uses_twu:
@@ -672,8 +730,13 @@ class Simulator:
             eos_static_records: dict[tuple, dict] = {}
             eos_ranged_records: dict[tuple, list[dict]] = {}
 
-            def unordered_pair_key(model: str, comp1: str, comp2: str) -> tuple:
-                return (model, tuple(sorted((comp1, comp2))))
+            def unordered_pair_key(
+                scope: str,
+                model: str,
+                comp1: str,
+                comp2: str,
+            ) -> tuple:
+                return (scope, model, tuple(sorted((comp1, comp2))))
 
             def eos_effective_range(record: dict) -> tuple[float, float] | None:
                 if 'Tmin_K' not in record or 'Tmax_K' not in record:
@@ -711,8 +774,13 @@ class Simulator:
                     return False
                 return max(left_range[0], right_range[0]) <= min(left_range[1], right_range[1]) + 1e-12
 
-            def remember_activity_override(model: str, comp1: str, comp2: str) -> None:
-                key = unordered_pair_key(model, comp1, comp2)
+            def remember_activity_override(
+                scope: str,
+                model: str,
+                comp1: str,
+                comp2: str,
+            ) -> None:
+                key = unordered_pair_key(scope, model, comp1, comp2)
                 if key in activity_override_keys:
                     raise SimulationError(
                         f"Duplicate {model} INTERACTION_PARAMETERS override for {comp1}/{comp2}."
@@ -720,7 +788,12 @@ class Simulator:
                 activity_override_keys.add(key)
 
             def remember_eos_override(record: dict) -> bool:
-                key = unordered_pair_key(record['model'], record['component1'], record['component2'])
+                key = unordered_pair_key(
+                    record['scope'],
+                    record['model'],
+                    record['component1'],
+                    record['component2'],
+                )
                 if eos_effective_range(record) is None:
                     existing = eos_static_records.get(key)
                     if existing is not None:
@@ -784,7 +857,12 @@ class Simulator:
                 return max(left_range[0], right_range[0]) <= min(left_range[1], right_range[1]) + 1e-12
 
             def remember_viscosity_override(record: dict) -> bool:
-                key = unordered_pair_key(record['model'], record['component1'], record['component2'])
+                key = unordered_pair_key(
+                    record['scope'],
+                    record['model'],
+                    record['component1'],
+                    record['component2'],
+                )
                 if viscosity_effective_range(record) is None:
                     existing = viscosity_static_records.get(key)
                     if existing is not None:
@@ -825,6 +903,7 @@ class Simulator:
 
             for item in getattr(self.pfd, 'interaction_parameters', []):
                 model = normalize_interaction_model(item.model)
+                scope = str(item.scope or 'global')
                 comp1 = resolve_interaction_component(item.component1)
                 comp2 = resolve_interaction_component(item.component2)
                 if comp1 == comp2:
@@ -840,6 +919,7 @@ class Simulator:
                     'component1': comp1,
                     'component2': comp2,
                     'model': model,
+                    'scope': scope,
                     'comment': str(params.get('comment') or 'PFD interaction override'),
                 }
 
@@ -874,7 +954,7 @@ class Simulator:
                     continue
 
                 if model == 'NRTL':
-                    remember_activity_override(model, comp1, comp2)
+                    remember_activity_override(scope, model, comp1, comp2)
                     alpha = params.get('alpha12', params.get('alpha'))
                     record['alpha12'] = numeric(alpha if alpha is not None else 0.3, 'alpha')
                     has_tau = any(key in params for key in (
@@ -905,7 +985,7 @@ class Simulator:
                     continue
 
                 if model == 'UNIQUAC':
-                    remember_activity_override(model, comp1, comp2)
+                    remember_activity_override(scope, model, comp1, comp2)
                     record['model_variant'] = str(params.get('model_variant') or 'standard_uniquac')
                     record['use_q_prime'] = boolean(params.get('use_q_prime', False))
                     has_tau = any(key in params for key in ('tau12_a', 'tau12_b', 'tau12_c', 'tau21_a', 'tau21_b', 'tau21_c'))
@@ -1001,7 +1081,7 @@ class Simulator:
                     continue
 
                 if model == 'VDM':
-                    remember_activity_override(model, comp1, comp2)
+                    remember_activity_override(scope, model, comp1, comp2)
                     try:
                         record.update(normalize_vdm_cross_parameters(raw))
                     except ValueError as error:
@@ -1081,6 +1161,7 @@ class Simulator:
             pair_keys = set()
             for item in getattr(self.pfd, 'interaction_estimation', []):
                 model = normalize_interaction_model(item.model)
+                scope = str(item.scope or 'global')
                 if model not in {'NRTL', 'UNIQUAC'}:
                     raise SimulationError(
                         "INTERACTION_ESTIMATION destination model must be NRTL "
@@ -1090,7 +1171,7 @@ class Simulator:
                     str(key).strip().lower().replace('-', '_'): value
                     for key, value in dict(item.parameters or {}).items()
                 }
-                record = {'model': model}
+                record = {'model': model, 'scope': scope}
                 pair_specific = item.component1 is not None or item.component2 is not None
                 if pair_specific:
                     if item.component1 is None or item.component2 is None:
@@ -1104,7 +1185,7 @@ class Simulator:
                             "INTERACTION_ESTIMATION cannot target self-interaction "
                             f"for '{comp1}'."
                         )
-                    key = (model, tuple(sorted((comp1, comp2))))
+                    key = (scope, model, tuple(sorted((comp1, comp2))))
                     if key in pair_keys:
                         raise SimulationError(
                             f"Duplicate {model} INTERACTION_ESTIMATION override "
@@ -1113,11 +1194,12 @@ class Simulator:
                     pair_keys.add(key)
                     record.update(component1=comp1, component2=comp2)
                 else:
-                    if model in global_models:
+                    global_key = (scope, model)
+                    if global_key in global_models:
                         raise SimulationError(
                             f"Duplicate global {model} INTERACTION_ESTIMATION rule."
                         )
-                    global_models.add(model)
+                    global_models.add(global_key)
 
                 if 'source' in raw:
                     source_key = str(raw['source']).strip().upper().replace(' ', '-')
@@ -1175,7 +1257,13 @@ class Simulator:
                 normalized.append(record)
 
             for record in normalized:
-                if 'component1' in record and record['model'] not in global_models:
+                if (
+                    'component1' in record
+                    and not any(
+                        (ancestor, record['model']) in global_models
+                        for ancestor in thermo_scope_lineage(record['scope'])
+                    )
+                ):
                     raise SimulationError(
                         f"Pair-specific {record['model']} INTERACTION_ESTIMATION "
                         "requires a global rule for that destination model."
@@ -1201,14 +1289,21 @@ class Simulator:
                     if record['model'] == 'NRTL':
                         record.setdefault('alpha12', 0.3)
             global_by_model = {
-                record['model']: record
+                (record['scope'], record['model']): record
                 for record in normalized
                 if 'component1' not in record
             }
             for record in normalized:
                 if 'component1' not in record:
                     continue
-                merged = dict(global_by_model[record['model']])
+                inherited_global = next(
+                    global_by_model[(ancestor, record['model'])]
+                    for ancestor in reversed(
+                        thermo_scope_lineage(record['scope'])
+                    )
+                    if (ancestor, record['model']) in global_by_model
+                )
+                merged = dict(inherited_global)
                 merged.update(record)
                 if merged['Tmax_K'] <= merged['Tmin_K']:
                     raise SimulationError(
@@ -1219,16 +1314,6 @@ class Simulator:
             return normalized
 
         interaction_estimation = normalize_interaction_estimation()
-        if not uses_vdm:
-            for record in interaction_overrides:
-                if record.get('model') != 'VDM':
-                    continue
-                ignored_model_parameter_warnings.append(
-                    "Ignoring VDM cross-interaction parameters for "
-                    f"{record['component1']}/{record['component2']} because "
-                    f"THERMO_METHOD {self.thermo_method} is not VDM-based."
-                )
-        
         # Compile fluid backends only from conventional components. Permanent
         # solids remain process components and are attached after construction.
         components = [c.symbol for c in self.pfd.components]
@@ -1254,11 +1339,9 @@ class Simulator:
         
         # Collect UNIFAC groups if specified in PFD
         unifac_groups = None
-        if self.thermo_method.upper() in (
-            'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
-            'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM',
-            'UNIFAC-RK', 'UNIFDMD-RK', 'UNIFNIST-RK',
-            'UNIFAC-PR', 'UNIFDMD-PR', 'UNIFNIST-PR',
+        if any(
+            method.startswith(('UNIFAC', 'UNIFDMD', 'UNIFM2', 'UNIFNIST'))
+            for method in self.thermo_scope_methods.values()
         ) or interaction_estimation:
             unifac_groups = {}
             for pfd_comp in self.pfd.components:
@@ -1280,115 +1363,79 @@ class Simulator:
                     except Exception:
                         pass  # Will try to look up from known molecules
         
-        fluid_interaction_overrides = []
-        for record in interaction_overrides:
-            if (
-                record.get('component1') in permanent_solid_set
-                or record.get('component2') in permanent_solid_set
-            ):
-                ignored_model_parameter_warnings.append(
-                    "Ignoring fluid interaction parameters for permanent-solid "
-                    f"pair {record.get('component1')}/{record.get('component2')}."
-                )
-                continue
-            fluid_interaction_overrides.append(record)
+        def effective_scoped_records(records: list[dict], scope: str) -> list[dict]:
+            """Return isolated/inherited records with nearest-scope precedence."""
+            effective = {}
+            for level in thermo_scope_lineage(scope):
+                local = {}
+                for record in records:
+                    if record.get('scope', 'global') != level:
+                        continue
+                    pair = tuple(sorted((
+                        str(record.get('component1') or ''),
+                        str(record.get('component2') or ''),
+                    )))
+                    key = (str(record.get('model') or ''), pair)
+                    local.setdefault(key, []).append(record)
+                for key, values in local.items():
+                    effective[key] = values
+            return [
+                dict(record)
+                for values in effective.values()
+                for record in values
+            ]
 
-        active_estimation_model = None
-        method_name = self.thermo_method.upper()
-        if method_name.startswith('NRTL'):
-            active_estimation_model = 'NRTL'
-        elif method_name.startswith('UNIQUAC'):
-            active_estimation_model = 'UNIQUAC'
-        fluid_interaction_estimation = []
-        for record in interaction_estimation:
-            if record['model'] != active_estimation_model:
-                ignored_model_parameter_warnings.append(
-                    f"Ignoring {record['model']} interaction-estimation rule "
-                    f"because THERMO_METHOD {self.thermo_method} does not use "
-                    f"{record['model']} liquid activity coefficients."
-                )
-                continue
-            if (
-                record.get('component1') in permanent_solid_set
-                or record.get('component2') in permanent_solid_set
-            ):
-                ignored_model_parameter_warnings.append(
-                    "Ignoring interaction-estimation override for permanent-solid "
-                    f"pair {record.get('component1')}/{record.get('component2')}."
-                )
-                continue
-            fluid_interaction_estimation.append(record)
-
-        try:
-            if fluid_components:
-                self.thermo = create_thermodynamics(
-                    fluid_components,
-                    self.thermo_method,
-                    db,
-                    unifac_groups,
-                    fluid_interaction_overrides,
-                    fluid_interaction_estimation,
-                    None,
-                    None,
-                )
-            else:
-                self.thermo = IdealThermodynamics([], db, [])
-                if self.thermo_method != 'IDEAL':
-                    ignored_model_parameter_warnings.append(
-                        f"THERMO_METHOD {self.thermo_method} has no fluid components; "
-                        "using the permanent-solid property layer only."
-                    )
-            self.thermo.configure_permanent_solids(
-                components,
-                permanent_solid_components,
-                particle_defaults,
-            )
-        except ThermodynamicsError as e:
-            raise SimulationError(f"Failed to initialize thermodynamics: {e}")
-
-        try:
-            self.thermo.set_fluid_phase_model(
-                getattr(self.pfd.metadata, 'fluid_phase_model', 'VLE')
-            )
-        except ThermodynamicsError as e:
-            raise SimulationError(f"Failed to initialize fluid phase model: {e}")
-
-        unit_types = {unit.unit_type for unit in self.pfd.units}
-        need_vlle = (
-            selected_phase_model != 'VLE'
-            or 'Flash3' in unit_types
-        )
-        need_lle = need_vlle or bool(unit_types & {
-            'Decanter',
-            'ShortcutExtractor',
-            'RigorousExtractor',
-        })
-        for unit in self.pfd.units:
-            if unit.unit_type != 'RigorousDistillation':
-                continue
-            params = {
-                str(param.name).strip().lower(): str(param.value).strip().lower()
+        def unit_scope_name(unit) -> str:
+            return next((
+                str(param.value).strip()
                 for param in unit.params
-            }
-            stage_model = params.get('stage_phase_model', 'vle')
-            condenser = params.get('condenser_type', 'total')
-            if stage_model not in {'vle', ''}:
-                need_vlle = True
-                need_lle = True
-            if condenser in {
-                'decanter', 'heterogeneous', 'heterogeneous_decanter',
-                'top_decanter',
-            }:
-                need_lle = True
+                if str(param.name).strip().lower() == 'thermo_scope'
+            ), 'global')
 
-        if ignored_model_parameter_warnings:
-            thermo_warnings = getattr(self.thermo, 'warnings', None)
-            if isinstance(thermo_warnings, list):
-                for warning in ignored_model_parameter_warnings:
-                    if warning not in thermo_warnings:
-                        thermo_warnings.append(warning)
+        units_by_scope = {
+            scope: [
+                unit for unit in self.pfd.units
+                if unit_scope_name(unit) == scope
+            ]
+            for scope in self.thermo_scope_methods
+        }
 
-        def refresh_thermo_property_snapshot(comp_symbol: str, props) -> None:
+        def backend_needs(scope: str) -> tuple[bool, bool]:
+            units = units_by_scope[scope]
+            unit_types = {unit.unit_type for unit in units}
+            need_vlle = (
+                selected_phase_model != 'VLE'
+                or 'Flash3' in unit_types
+            )
+            need_lle = need_vlle or bool(unit_types & {
+                'Decanter',
+                'ShortcutExtractor',
+                'RigorousExtractor',
+            })
+            for unit in units:
+                if unit.unit_type != 'RigorousDistillation':
+                    continue
+                params = {
+                    str(param.name).strip().lower(): str(param.value).strip().lower()
+                    for param in unit.params
+                }
+                stage_model = params.get('stage_phase_model', 'vle')
+                condenser = params.get('condenser_type', 'total')
+                if stage_model not in {'vle', ''}:
+                    need_vlle = True
+                    need_lle = True
+                if condenser in {
+                    'decanter', 'heterogeneous', 'heterogeneous_decanter',
+                    'top_decanter',
+                }:
+                    need_lle = True
+            return need_lle, need_vlle
+
+        def refresh_thermo_property_snapshot(
+            thermo,
+            comp_symbol: str,
+            props,
+        ) -> None:
             known = props.to_dict()
             known.setdefault('antoine_source', 'PFD component definition')
             known['_allow_online_lookup'] = allow_online_lookup
@@ -1396,8 +1443,8 @@ class Simulator:
                 known['_psat_minimum_pressure_bar'] = (
                     psat_minimum_pressure_bar
                 )
-            if hasattr(self.thermo, '_resolver_known_props'):
-                self.thermo._resolver_known_props[comp_symbol] = known
+            if hasattr(thermo, '_resolver_known_props'):
+                thermo._resolver_known_props[comp_symbol] = known
             for cache_name in (
                 '_psat_cache', '_psat_coefficients_cache',
                 '_cp_ideal_cache', '_cp_liquid_cache',
@@ -1416,17 +1463,17 @@ class Simulator:
                 '_liquid_cp_kernels',
                 '_solid_cp_kernels',
             ):
-                cache = getattr(self.thermo, cache_name, None)
+                cache = getattr(thermo, cache_name, None)
                 if isinstance(cache, dict):
                     cache.clear()
-            if hasattr(self.thermo, '_provided_cp_coeffs'):
+            if hasattr(thermo, '_provided_cp_coeffs'):
                 if known.get('Cp_coeffs'):
-                    self.thermo._provided_cp_coeffs[comp_symbol] = list(known['Cp_coeffs'])
+                    thermo._provided_cp_coeffs[comp_symbol] = list(known['Cp_coeffs'])
                 else:
-                    self.thermo._provided_cp_coeffs.pop(comp_symbol, None)
+                    thermo._provided_cp_coeffs.pop(comp_symbol, None)
             if hasattr(props, '_ideal_gas_cp_kernel'):
                 props._ideal_gas_cp_kernel = None
-            sources = getattr(self.thermo, '_liquid_molar_volume_sources', None)
+            sources = getattr(thermo, '_liquid_molar_volume_sources', None)
             if isinstance(sources, dict):
                 sources[comp_symbol] = [
                     source
@@ -1435,45 +1482,168 @@ class Simulator:
                 ]
             if (
                 comp_symbol not in permanent_solid_set
-                and hasattr(self.thermo, '_prebind_provided_liquid_molar_volume_source')
+                and hasattr(thermo, '_prebind_provided_liquid_molar_volume_source')
             ):
-                self.thermo._prebind_provided_liquid_molar_volume_source(comp_symbol, known)
-
-        for pfd_comp in self.pfd.components:
-            if pfd_comp.symbol in self.thermo.props:
-                props = self.thermo.props[pfd_comp.symbol]
-                refresh_thermo_property_snapshot(pfd_comp.symbol, props)
-
-        configure_activity_limits = getattr(
-            self.thermo,
-            'configure_activity_interaction_limits',
-            None,
-        )
-        if callable(configure_activity_limits):
-            configure_activity_limits(
-                max_psat_bar=activity_interaction_max_psat_bar,
-                max_temperature_K=activity_interaction_max_temperature_K,
-            )
-        
-        # Initialize only resources this selected thermodynamic model declares
-        # as persistent-process setup. No stream state or unit is solved here.
-        try:
-            initialize_thermo = getattr(self.thermo, 'initialize', None)
-            if callable(initialize_thermo):
-                initialize_thermo()
-            prepare_compiled = getattr(
-                self.thermo,
-                'prepare_compiled_backends',
-                None,
-            )
-            if callable(prepare_compiled):
-                prepare_compiled(
-                    need_lle=need_lle,
-                    need_vlle=need_vlle,
+                thermo._prebind_provided_liquid_molar_volume_source(
+                    comp_symbol,
+                    known,
                 )
-            self.solver = FlowsheetSolver(self.pfd, self.thermo)
+
+        self.thermo_packages = {}
+        try:
+            for scope, method in self.thermo_scope_methods.items():
+                package_warnings = list(ignored_model_parameter_warnings)
+                scoped_overrides = effective_scoped_records(
+                    interaction_overrides,
+                    scope,
+                )
+                retained_overrides = []
+                for record in scoped_overrides:
+                    if (
+                        record.get('model') == 'VDM'
+                        and not method.endswith('-VDM')
+                    ):
+                        package_warnings.append(
+                            "Ignoring VDM cross-interaction parameters for "
+                            f"{record['component1']}/{record['component2']} "
+                            f"because THERMO_METHOD {method} is not VDM-based."
+                        )
+                        continue
+                    if (
+                        record.get('component1') in permanent_solid_set
+                        or record.get('component2') in permanent_solid_set
+                    ):
+                        package_warnings.append(
+                            "Ignoring fluid interaction parameters for "
+                            "permanent-solid pair "
+                            f"{record.get('component1')}/"
+                            f"{record.get('component2')}."
+                        )
+                        continue
+                    retained_overrides.append(record)
+                scoped_overrides = retained_overrides
+
+                candidate_estimation = effective_scoped_records(
+                    interaction_estimation,
+                    scope,
+                )
+                active_estimation_model = None
+                if method.startswith('NRTL'):
+                    active_estimation_model = 'NRTL'
+                elif method.startswith('UNIQUAC'):
+                    active_estimation_model = 'UNIQUAC'
+                scoped_estimation = []
+                for record in candidate_estimation:
+                    if record['model'] != active_estimation_model:
+                        package_warnings.append(
+                            f"Ignoring {record['model']} interaction-estimation "
+                            f"rule because THERMO_METHOD {method} does not use "
+                            f"{record['model']} liquid activity coefficients."
+                        )
+                        continue
+                    if (
+                        record.get('component1') in permanent_solid_set
+                        or record.get('component2') in permanent_solid_set
+                    ):
+                        package_warnings.append(
+                            "Ignoring interaction-estimation override for "
+                            "permanent-solid pair "
+                            f"{record.get('component1')}/"
+                            f"{record.get('component2')}."
+                        )
+                        continue
+                    scoped_estimation.append(record)
+                constructor_overrides = []
+                for record in scoped_overrides:
+                    clean = dict(record)
+                    clean.pop('scope', None)
+                    constructor_overrides.append(clean)
+                constructor_estimation = []
+                for record in scoped_estimation:
+                    clean = dict(record)
+                    clean.pop('scope', None)
+                    constructor_estimation.append(clean)
+
+                if fluid_components:
+                    thermo = create_thermodynamics(
+                        fluid_components,
+                        method,
+                        db,
+                        unifac_groups,
+                        constructor_overrides,
+                        constructor_estimation,
+                        None,
+                        None,
+                    )
+                else:
+                    thermo = IdealThermodynamics([], db, [])
+                    if method != 'IDEAL':
+                        package_warnings.append(
+                            f"Thermodynamic scope '{scope}' method {method} has "
+                            "no fluid components; using the permanent-solid "
+                            "property layer only."
+                        )
+                thermo.configure_permanent_solids(
+                    components,
+                    permanent_solid_components,
+                    particle_defaults,
+                )
+                thermo.set_fluid_phase_model(
+                    getattr(self.pfd.metadata, 'fluid_phase_model', 'VLE')
+                )
+                for pfd_comp in self.pfd.components:
+                    if pfd_comp.symbol in thermo.props:
+                        refresh_thermo_property_snapshot(
+                            thermo,
+                            pfd_comp.symbol,
+                            thermo.props[pfd_comp.symbol],
+                        )
+                configure_activity_limits = getattr(
+                    thermo,
+                    'configure_activity_interaction_limits',
+                    None,
+                )
+                if callable(configure_activity_limits):
+                    configure_activity_limits(
+                        max_psat_bar=activity_interaction_max_psat_bar,
+                        max_temperature_K=activity_interaction_max_temperature_K,
+                    )
+                thermo_warnings = getattr(thermo, 'warnings', None)
+                if isinstance(thermo_warnings, list):
+                    for warning in package_warnings:
+                        scoped_warning = (
+                            warning
+                            if scope == 'global'
+                            else f"[{scope}] {warning}"
+                        )
+                        if scoped_warning not in thermo_warnings:
+                            thermo_warnings.append(scoped_warning)
+
+                initialize_thermo = getattr(thermo, 'initialize', None)
+                if callable(initialize_thermo):
+                    initialize_thermo()
+                prepare_compiled = getattr(
+                    thermo,
+                    'prepare_compiled_backends',
+                    None,
+                )
+                if callable(prepare_compiled):
+                    need_lle, need_vlle = backend_needs(scope)
+                    prepare_compiled(
+                        need_lle=need_lle,
+                        need_vlle=need_vlle,
+                    )
+                self.thermo_packages[scope] = thermo
+
+            self.thermo = self.thermo_packages['global']
+            self.solver = FlowsheetSolver(
+                self.pfd,
+                self.thermo,
+                self.thermo_packages,
+            )
         except (FlowsheetError, ThermodynamicsError) as e:
             self.thermo = None
+            self.thermo_packages = {}
             self.solver = None
             raise SimulationError(f"Failed to initialize simulation: {e}")
 
@@ -1796,6 +1966,13 @@ class Simulator:
         lines.append(f"GENERATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         lines.append("SIMULATOR: PFD-Editor v1.0")
         lines.append(f"THERMO_METHOD: {getattr(self, 'thermo_method', 'IDEAL')}")
+        for scope, method in getattr(
+            self,
+            'thermo_scope_methods',
+            {'global': getattr(self, 'thermo_method', 'IDEAL')},
+        ).items():
+            if scope != 'global':
+                lines.append(f"THERMO_SCOPE {scope}: {method}")
         lines.append(
             "FLUID_PHASE_MODEL: "
             f"{getattr(self.pfd.metadata, 'fluid_phase_model', 'VLE')}"
@@ -1816,6 +1993,10 @@ class Simulator:
             lines.append(f"    iterations = {self.result.iterations}")
         lines.append(f"    overall_mass_balance_error = {self.result.mass_balance_error*100:.4f} [%]")
         lines.append(f"    overall_energy_balance_error = {self.result.energy_balance_error*100:.4f} [%]")
+        lines.append(
+            "    thermo_scope_enthalpy_correction = "
+            f"{getattr(self.result, 'thermo_scope_enthalpy_correction', 0.0) / 3600:.6g} [kW]"
+        )
         
         # Overall duties
         total_heating = 0.0
@@ -1838,6 +2019,23 @@ class Simulator:
         lines.append(f"    total_work = {total_work/3600:.2f} [kW]")
         lines.append(f"    total_process_work = {total_process_work/3600:.2f} [kW]")
         lines.append("")
+
+        scope_corrections = getattr(
+            self.result,
+            'thermo_scope_corrections',
+            [],
+        )
+        if scope_corrections:
+            lines.append("THERMO_SCOPE_CORRECTIONS:")
+            for correction in scope_corrections:
+                lines.append(
+                    f"    {correction['stream_id']} | "
+                    f"source={correction['source_scope']}, "
+                    f"destination={correction['destination_scope']}, "
+                    "enthalpy_correction="
+                    f"{correction['enthalpy_flow_correction_kJ_per_h'] / 3600:.6g} [kW]"
+                )
+            lines.append("")
         
         # Stream results
         lines.append("#" + "-" * 78)
@@ -2193,6 +2391,11 @@ class Simulator:
                 'version': self.pfd.metadata.version,
                 'generated': datetime.now().isoformat(),
                 'thermo_method': getattr(self, 'thermo_method', 'IDEAL'),
+                'thermo_scopes': dict(getattr(
+                    self,
+                    'thermo_scope_methods',
+                    {'global': getattr(self, 'thermo_method', 'IDEAL')},
+                )),
                 'fluid_phase_model': getattr(
                     self.pfd.metadata, 'fluid_phase_model', 'VLE'
                 ),
@@ -2202,6 +2405,13 @@ class Simulator:
                 'iterations': self.result.iterations,
                 'mass_balance_error': self.result.mass_balance_error,
                 'energy_balance_error': self.result.energy_balance_error,
+                'thermo_scope_enthalpy_correction': (
+                    getattr(
+                        self.result,
+                        'thermo_scope_enthalpy_correction',
+                        0.0,
+                    )
+                ),
             },
             'streams': {
                 stream_id: state.to_dict() 
@@ -2212,6 +2422,9 @@ class Simulator:
                 for unit_id, result in self.result.units.items()
             },
             'recycle_info': self.result.recycle_info,
+            'thermo_scope_corrections': (
+                getattr(self.result, 'thermo_scope_corrections', [])
+            ),
             'errors': self.result.errors,
             'warnings': self.result.warnings,
         }

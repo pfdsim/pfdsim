@@ -319,7 +319,7 @@ _TOP_LEVEL_DIRECTIVES = (
     'ACTIVITY_INTERACTION_MAX_PSAT', 'ACTIVITY_INTERACTION_MAX_TEMPERATURE',
     'TEAR_STREAMS', 'RECYCLE_TEAR_STREAMS', 'TEAR_STREAM',
     'RECYCLE_TRACE_TOLERANCE', 'TRACE_TOLERANCE', 'COMPONENTS',
-    'PROPERTY_CORRELATIONS', 'INTERACTION_ESTIMATION',
+    'THERMO_SCOPES', 'PROPERTY_CORRELATIONS', 'INTERACTION_ESTIMATION',
     'INTERACTION_PARAMETERS', 'REACTIONS',
     'STREAM', 'UNIT',
 )
@@ -486,6 +486,18 @@ _KNOWN_UNSUPPORTED_THERMO_METHODS = {
         "",
     ),
 }
+
+_SUPPORTED_THERMO_SCOPE_METHODS = frozenset({
+    'IDEAL', 'STEAM',
+    'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM', 'SRK-MC', 'PR-MC',
+    'SRK-TWU', 'PR-TWU', 'PRSV1', 'PRSV2',
+    'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
+    'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM',
+    'UNIFAC-RK', 'UNIFAC-PR', 'UNIFDMD-RK', 'UNIFDMD-PR',
+    'UNIFNIST-RK', 'UNIFNIST-PR',
+    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR',
+    'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', 'UNIQUAC-PR',
+})
 
 _VDM_COMPONENT_PARAMETER_ALIASES = {
     'delta_h': 'delta_H_J_per_mol',
@@ -1127,15 +1139,35 @@ class NamedReaction:
 
 
 @dataclass
+class ThermoScope:
+    """Named thermodynamic-method context assigned to unit operations."""
+
+    name: str
+    method: str
+    inherit: Optional[str] = None
+
+    def to_pfd(self) -> str:
+        entries = [f"method={Component._format_pfd_value(self.method)}"]
+        if self.inherit:
+            entries.append(
+                f"inherit={Component._format_pfd_value(self.inherit)}"
+            )
+        return f"    {self.name} | {', '.join(entries)}"
+
+
+@dataclass
 class InteractionParameter:
     """A user-supplied binary interaction parameter override."""
     component1: str
     component2: str
     model: str
+    scope: Optional[str] = None
     parameters: dict = field(default_factory=dict)
 
     def to_pfd(self) -> str:
         entries = [f"model={Component._format_pfd_value(self.model)}"]
+        if self.scope:
+            entries.append(f"scope={Component._format_pfd_value(self.scope)}")
         for key, value in self.parameters.items():
             if key == 'model':
                 continue
@@ -1150,6 +1182,7 @@ class InteractionEstimation:
     model: str
     component1: Optional[str] = None
     component2: Optional[str] = None
+    scope: Optional[str] = None
     parameters: dict = field(default_factory=dict)
 
     def to_pfd(self) -> str:
@@ -1161,6 +1194,8 @@ class InteractionEstimation:
         entries = []
         if pair_specific:
             entries.append(f"model={Component._format_pfd_value(self.model)}")
+        if self.scope:
+            entries.append(f"scope={Component._format_pfd_value(self.scope)}")
         for key, value in self.parameters.items():
             if key == 'model':
                 continue
@@ -1294,6 +1329,7 @@ class ProcessFlowDiagram:
     """Complete process flow diagram"""
     metadata: Metadata = field(default_factory=Metadata)
     components: list[Component] = field(default_factory=list)
+    thermo_scopes: list[ThermoScope] = field(default_factory=list)
     interaction_estimation: list[InteractionEstimation] = field(default_factory=list)
     interaction_parameters: list[InteractionParameter] = field(default_factory=list)
     reaction_definitions: list[NamedReaction] = field(default_factory=list)
@@ -1316,6 +1352,12 @@ class ProcessFlowDiagram:
         for comp in self.components:
             if comp.symbol == symbol:
                 return comp
+        return None
+
+    def get_thermo_scope(self, name: str) -> Optional[ThermoScope]:
+        for scope in self.thermo_scopes:
+            if scope.name == name:
+                return scope
         return None
 
     def get_reaction_definition(self, name: str) -> Optional[NamedReaction]:
@@ -1352,6 +1394,15 @@ class ProcessFlowDiagram:
         sections.append("#" + "-" * 78)
         sections.append(self.metadata.to_pfd())
         sections.append("")
+
+        if self.thermo_scopes:
+            sections.append("#" + "-" * 78)
+            sections.append("# THERMODYNAMIC SCOPES")
+            sections.append("#" + "-" * 78)
+            sections.append("THERMO_SCOPES:")
+            for scope in self.thermo_scopes:
+                sections.append(scope.to_pfd())
+            sections.append("")
         
         # Components
         sections.append("#" + "-" * 78)
@@ -1456,11 +1507,20 @@ class ProcessFlowDiagram:
                 }
                 for c in self.components
             ],
+            'thermo_scopes': [
+                {
+                    'name': scope.name,
+                    'method': scope.method,
+                    'inherit': scope.inherit,
+                }
+                for scope in self.thermo_scopes
+            ],
             'interaction_parameters': [
                 {
                     'component1': item.component1,
                     'component2': item.component2,
                     'model': item.model,
+                    'scope': item.scope,
                     'parameters': item.parameters,
                 }
                 for item in self.interaction_parameters
@@ -1470,6 +1530,7 @@ class ProcessFlowDiagram:
                     'model': item.model,
                     'component1': item.component1,
                     'component2': item.component2,
+                    'scope': item.scope,
                     'parameters': item.parameters,
                 }
                 for item in self.interaction_estimation
@@ -1589,11 +1650,22 @@ class ProcessFlowDiagram:
                 **component_data
             ))
 
+        for item in data.get('thermo_scopes', []):
+            inherit = item.get('inherit')
+            if inherit and str(inherit).lower() == 'global':
+                inherit = 'global'
+            pfd.thermo_scopes.append(ThermoScope(
+                name=item['name'],
+                method=str(item['method']).upper(),
+                inherit=inherit,
+            ))
+
         for item in data.get('interaction_parameters', []):
             pfd.interaction_parameters.append(InteractionParameter(
                 component1=item['component1'],
                 component2=item['component2'],
                 model=item['model'],
+                scope=item.get('scope'),
                 parameters=item.get('parameters', {}),
             ))
 
@@ -1602,6 +1674,7 @@ class ProcessFlowDiagram:
                 model=item['model'],
                 component1=item.get('component1'),
                 component2=item.get('component2'),
+                scope=item.get('scope'),
                 parameters=item.get('parameters', {}),
             ))
 
@@ -2057,6 +2130,10 @@ class PFDParser:
                 i = self._parse_components(i + 1)
                 continue
 
+            elif stripped == 'THERMO_SCOPES:':
+                i = self._parse_thermo_scopes(i + 1)
+                continue
+
             elif stripped == 'PROPERTY_CORRELATIONS:':
                 i = self._parse_property_correlations(i + 1)
                 continue
@@ -2283,6 +2360,70 @@ class PFDParser:
 
         return i
 
+    def _parse_thermo_scopes(self, start: int) -> int:
+        """Parse named thermodynamic-method contexts."""
+        i = start
+        while i < len(self.lines):
+            line = self.lines[i]
+            stripped = self._strip_inline_comment(line).strip()
+
+            if (
+                stripped
+                and not stripped.startswith('#')
+                and not line.startswith((' ', '\t'))
+            ):
+                return i
+
+            if stripped and not stripped.startswith('#'):
+                try:
+                    parts = [part.strip() for part in stripped.split('|', 1)]
+                    if len(parts) != 2 or not parts[0]:
+                        raise ParseError(
+                            "Invalid THERMO_SCOPES row. Expected "
+                            "'name | method=..., inherit=...'.",
+                            i + 1,
+                        )
+                    name = parts[0]
+                    parameters = self._parse_key_value_properties(parts[1])
+                    unknown = sorted(set(parameters) - {'method', 'inherit'})
+                    if unknown:
+                        raise ParseError(
+                            unknown_name_message(
+                                'THERMO_SCOPES field',
+                                unknown[0],
+                                ('method', 'inherit'),
+                            ),
+                            i + 1,
+                        )
+                    method = parameters.get('method')
+                    if method is None or not str(method).strip():
+                        raise ParseError(
+                            f"THERMO_SCOPES scope '{name}' requires method=... .",
+                            i + 1,
+                        )
+                    inherit = parameters.get('inherit')
+                    inherit_name = (
+                        str(inherit).strip()
+                        if inherit is not None and str(inherit).strip()
+                        else None
+                    )
+                    if inherit_name and inherit_name.lower() == 'global':
+                        inherit_name = 'global'
+                    self.pfd.thermo_scopes.append(ThermoScope(
+                        name=name,
+                        method=str(method).strip().upper(),
+                        inherit=inherit_name,
+                    ))
+                except ParseError as error:
+                    self._record_error(error, i + 1)
+                except (TypeError, ValueError) as error:
+                    self._record_error(
+                        f"Invalid THERMO_SCOPES row: {error}",
+                        i + 1,
+                    )
+            i += 1
+        return i
+
     def _parse_interaction_parameters(self, start: int) -> int:
         """Parse the INTERACTION_PARAMETERS section."""
         i = start
@@ -2310,6 +2451,23 @@ class PFDParser:
                         )
                     parameters = self._parse_key_value_properties(parts[1])
                     model = parameters.pop('model', None)
+                    scope = parameters.pop('scope', None)
+                    if scope is not None:
+                        scope = str(scope).strip()
+                        if not scope:
+                            raise ParseError(
+                                "INTERACTION_PARAMETERS scope cannot be empty.",
+                                i + 1,
+                            )
+                        if (
+                            scope != 'global'
+                            and self.pfd.get_thermo_scope(scope) is None
+                        ):
+                            raise ParseError(
+                                f"INTERACTION_PARAMETERS scope '{scope}' must "
+                                "be declared earlier in THERMO_SCOPES.",
+                                i + 1,
+                            )
                     if not model:
                         raise ParseError(
                             "INTERACTION_PARAMETERS row must include model=...",
@@ -2359,6 +2517,7 @@ class PFDParser:
                         component1=component1,
                         component2=component2,
                         model=str(model),
+                        scope=(str(scope).strip() if scope is not None else None),
                         parameters=parameters,
                     ))
                 except ParseError as error:
@@ -2402,6 +2561,23 @@ class PFDParser:
                             i + 1,
                         )
                     parameters = self._parse_key_value_properties(parts[1])
+                    scope = parameters.pop('scope', None)
+                    if scope is not None:
+                        scope = str(scope).strip()
+                        if not scope:
+                            raise ParseError(
+                                "INTERACTION_ESTIMATION scope cannot be empty.",
+                                i + 1,
+                            )
+                        if (
+                            scope != 'global'
+                            and self.pfd.get_thermo_scope(scope) is None
+                        ):
+                            raise ParseError(
+                                f"INTERACTION_ESTIMATION scope '{scope}' must "
+                                "be declared earlier in THERMO_SCOPES.",
+                                i + 1,
+                            )
                     component1 = component2 = None
                     if '/' in parts[0]:
                         component1, component2 = [
@@ -2463,6 +2639,9 @@ class PFDParser:
                             model=normalized_model,
                             component1=component1,
                             component2=component2,
+                            scope=(
+                                str(scope).strip() if scope is not None else None
+                            ),
                             parameters=parameters,
                         )
                     )
@@ -3830,6 +4009,19 @@ class PFDParser:
         
         i = start + 1
         current_section = None
+
+        def validate_thermo_scope_parameter(param: Optional[Parameter], line_number: int) -> None:
+            if param is None or param.name.lower() != 'thermo_scope':
+                return
+            scope = str(param.value).strip()
+            if scope == 'global':
+                return
+            if self.pfd.get_thermo_scope(scope) is None:
+                self._record_error(
+                    f"Unit '{unit.id}' thermo_scope '{scope}' must be declared "
+                    "earlier in THERMO_SCOPES.",
+                    line_number,
+                )
         
         while i < len(self.lines):
             line = self.lines[i]
@@ -3884,6 +4076,7 @@ class PFDParser:
                 elif current_section == 'params':
                     param = self._parse_parameter(stripped)
                     if param:
+                        validate_thermo_scope_parameter(param, i + 1)
                         unit.params.append(param)
                     else:
                         self._record_error(
@@ -3903,6 +4096,7 @@ class PFDParser:
                 elif compact_type is not None:
                     param = self._parse_parameter(stripped)
                     if param:
+                        validate_thermo_scope_parameter(param, i + 1)
                         unit.params.append(param)
                     else:
                         self._record_error(
@@ -4021,6 +4215,79 @@ class PFDValidator:
             )
         except ValueError as error:
             self.errors.append(str(error))
+
+        scope_names = set()
+        scope_by_name = {}
+        for scope in self.pfd.thermo_scopes:
+            if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_.-]*', scope.name):
+                self.errors.append(
+                    f"Invalid thermodynamic scope name '{scope.name}'."
+                )
+                continue
+            if scope.name.lower() == 'global':
+                self.errors.append(
+                    "THERMO_SCOPES cannot redefine reserved scope 'global'."
+                )
+            if scope.name in scope_names:
+                self.errors.append(
+                    f"Duplicate thermodynamic scope: {scope.name}"
+                )
+            scope_names.add(scope.name)
+            scope_by_name[scope.name] = scope
+            if scope.method not in _SUPPORTED_THERMO_SCOPE_METHODS:
+                self.errors.append(
+                    unsupported_thermo_method_message(
+                        scope.method,
+                        _SUPPORTED_THERMO_SCOPE_METHODS,
+                        {},
+                    )
+                )
+
+        for scope in self.pfd.thermo_scopes:
+            if not scope.inherit or scope.inherit.lower() == 'global':
+                continue
+            if scope.inherit not in scope_by_name:
+                self.errors.append(
+                    f"Thermodynamic scope '{scope.name}' inherits unknown scope "
+                    f"'{scope.inherit}'."
+                )
+
+        visiting = set()
+        visited = set()
+
+        def visit_scope(name: str, path: list[str]) -> None:
+            if name in visited or name not in scope_by_name:
+                return
+            if name in visiting:
+                cycle_start = path.index(name)
+                cycle = path[cycle_start:] + [name]
+                self.errors.append(
+                    "Thermodynamic scope inheritance cycle: "
+                    + " -> ".join(cycle)
+                )
+                return
+            visiting.add(name)
+            scope = scope_by_name[name]
+            parent = scope.inherit
+            if parent and parent.lower() != 'global':
+                visit_scope(parent, path + [name])
+            visiting.remove(name)
+            visited.add(name)
+
+        for name in scope_by_name:
+            visit_scope(name, [])
+
+        valid_scope_names = scope_names | {'global'}
+        for collection_name, records in (
+            ('INTERACTION_PARAMETERS', self.pfd.interaction_parameters),
+            ('INTERACTION_ESTIMATION', self.pfd.interaction_estimation),
+        ):
+            for record in records:
+                if record.scope and record.scope not in valid_scope_names:
+                    self.errors.append(
+                        f"{collection_name} references unknown thermodynamic "
+                        f"scope '{record.scope}'."
+                    )
     
     def _validate_components(self):
         """Validate component definitions"""
@@ -4158,10 +4425,29 @@ class PFDValidator:
         component_metadata = {
             component.symbol: component for component in self.pfd.components
         }
+        valid_thermo_scopes = {
+            scope.name for scope in self.pfd.thermo_scopes
+        } | {'global'}
         for unit in self.pfd.units:
             if unit.id in unit_ids:
                 self.errors.append(f"Duplicate unit ID: {unit.id}")
             unit_ids.add(unit.id)
+
+            scope_params = [
+                param for param in unit.params
+                if param.name.lower() == 'thermo_scope'
+            ]
+            if len(scope_params) > 1:
+                self.errors.append(
+                    f"Unit {unit.id} declares thermo_scope more than once"
+                )
+            elif scope_params:
+                scope_name = str(scope_params[0].value).strip()
+                if scope_name not in valid_thermo_scopes:
+                    self.errors.append(
+                        f"Unit {unit.id} references unknown thermodynamic scope "
+                        f"'{scope_name}'"
+                    )
             
             if not unit.unit_type:
                 self.errors.append(f"Unit {unit.id} has no TYPE specified")

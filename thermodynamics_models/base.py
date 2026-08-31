@@ -92,6 +92,7 @@ class StreamState:
     phase_status: str = 'unspecified'
     phase_stability: str = 'not_checked'
     phase_details: dict = field(default_factory=dict)
+    thermo_scope: str = 'global'
 
     @property
     def effective_liquid1_fraction(self) -> float:
@@ -178,6 +179,7 @@ class StreamState:
             phase_status=self.phase_status,
             phase_stability=self.phase_stability,
             phase_details=dict(self.phase_details),
+            thermo_scope=self.thermo_scope,
         )
     
     def mass_flow(self) -> float:
@@ -221,6 +223,7 @@ class StreamState:
             'fluid_phase_model': self.fluid_phase_model,
             'phase_status': self.phase_status,
             'phase_stability': self.phase_stability,
+            'thermo_scope': self.thermo_scope,
             'phase_fractions': phase_fractions,
             'phase_component_flows': phase_component_flows,
             'mass_flow': self.mass_flow(),
