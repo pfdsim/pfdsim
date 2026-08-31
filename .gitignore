@@ -11,6 +11,9 @@ ENV/
 # Retired repository metadata (kept locally for recovery only)
 .git.disabled-by-codex-*/
 
+# Local agent instructions are intentionally not versioned
+/AGENTS.md
+
 # Local env files
 .env
 .env.*
