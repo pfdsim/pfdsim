@@ -817,6 +817,30 @@
       "tau21_d": 42.74815
     },
     {
+      "Tmax_K": 423.15,
+      "Tmin_K": 298.0,
+      "alpha12": 0.3,
+      "cas1": "64-17-5",
+      "cas2": "7732-18-5",
+      "comment": "Ethanol/Water Voutsas et al. (2011) temperature-dependent NRTL; high-T/P validation by Barr-David and Dodge (1959)",
+      "component1": "Ethanol",
+      "component2": "Water",
+      "fit_status": "recommended_temperature_dependent_literature_interaction",
+      "fit_vapor_treatment": {
+        "high_TP_validation_source": "Barr-David and Dodge (1959)",
+        "preferred_model": "NRTL-PR",
+        "type": "gamma_phi_cubic_EOS_validation"
+      },
+      "source": "ethanol_water_interactions.json",
+      "source_file": "data/source/ethanol_water_interactions.json",
+      "tau12_c": 3.391,
+      "tau12_d": -508.37,
+      "tau12_f": -0.00584,
+      "tau21_c": 5.1484,
+      "tau21_d": -763.53,
+      "tau21_f": -0.00332
+    },
+    {
       "Tmax_K": 473.15,
       "Tmin_K": 283.0,
       "alpha12": 0.3,
@@ -3838,18 +3862,6 @@
       "source_id2": "1279"
     },
     {
-      "a12_cal_per_mol": -57.9601,
-      "a21_cal_per_mol": 1241.7396,
-      "alpha12": 0.2937,
-      "cas1": "64-17-5",
-      "cas2": "7732-18-5",
-      "comment": "Ethanol/Water",
-      "component1": "C2H5OH",
-      "component2": "H2O",
-      "source_id1": "1102",
-      "source_id2": "1921"
-    },
-    {
       "a12_cal_per_mol": -285.3881,
       "a21_cal_per_mol": 1289.2198,
       "alpha12": 0.2909,
@@ -5782,19 +5794,6 @@
     {
       "alpha12": 0.3,
       "cas1": "64-17-5",
-      "cas2": "7732-18-5",
-      "comment": "Ethanol/Water supplemental NRTL matrix; tau_ij = a_ij + b_ij/T",
-      "component1": "Ethanol",
-      "component2": "Water",
-      "source": "User-supplied NRTL temperature-dependent matrix",
-      "tau12_c": -0.801,
-      "tau12_d": 246.2,
-      "tau21_c": 3.458,
-      "tau21_d": -586.1
-    },
-    {
-      "alpha12": 0.3,
-      "cas1": "64-17-5",
       "cas2": "67-64-1",
       "comment": "Ethanol/Acetone supplemental NRTL matrix; tau_ij = a_ij + b_ij/T",
       "component1": "Ethanol",
@@ -6364,8 +6363,8 @@
     "assorted_overlay_replaced_pairs": 2,
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
-    "base_converted_records": 346,
-    "converted_records": 464,
+    "base_converted_records": 345,
+    "converted_records": 463,
     "disabled_records": 15,
     "ipd_hydration_by_source": {
       "nrtl.ipd": 5
@@ -6376,9 +6375,9 @@
     "isopropanol_water_overlay_replaced_pairs": 0,
     "isopropanol_water_overlay_replaced_records": 0,
     "key_basis": "CAS",
-    "literature_vle_overlay_records": 9,
-    "literature_vle_overlay_replaced_pairs": 0,
-    "literature_vle_overlay_replaced_records": 0,
+    "literature_vle_overlay_records": 10,
+    "literature_vle_overlay_replaced_pairs": 1,
+    "literature_vle_overlay_replaced_records": 2,
     "skipped": [],
     "skipped_records": 0,
     "source": "ChemSep DECHEMA NRTL data at 1 atm",

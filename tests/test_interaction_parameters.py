@@ -42,12 +42,12 @@ from scripts.build_uniquac_rq_parameters import (
 
 
 class InteractionParameterTests(unittest.TestCase):
-    def test_uniquac_matches_chemsep_ethanol_water_reference(self):
+    def test_uniquac_uses_voutsas_ethanol_water_interaction(self):
         thermo = create_thermodynamics(['ethanol', 'water'], 'UNIQUAC')
         gamma = thermo.activity_coefficients(343.15, {'ethanol': 0.252, 'water': 0.748})
 
-        self.assertAlmostEqual(gamma['ethanol'], 1.977454, places=5)
-        self.assertAlmostEqual(gamma['water'], 1.1397696, places=5)
+        self.assertAlmostEqual(gamma['ethanol'], 1.95270514295, places=8)
+        self.assertAlmostEqual(gamma['water'], 1.16331348882, places=8)
         self.assertEqual(
             parse_pfd(
                 'PROCESS: UNIQUAC Alias\n'
@@ -761,16 +761,16 @@ class InteractionParameterTests(unittest.TestCase):
         )
         nrtl_payload = load_data('nrtl_binary_interactions_cas.json')
         self.assertEqual(nrtl_payload['metadata']['skipped_records'], 0)
-        self.assertEqual(nrtl_payload['metadata']['converted_records'], 464)
-        self.assertEqual(nrtl_payload['metadata']['base_converted_records'], 346)
+        self.assertEqual(nrtl_payload['metadata']['converted_records'], 463)
+        self.assertEqual(nrtl_payload['metadata']['base_converted_records'], 345)
         self.assertEqual(nrtl_payload['metadata']['supplemental_records'], 113)
         self.assertEqual(nrtl_payload['metadata']['supplemental_new_pairs'], 78)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_records'], 7)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_replaced_records'], 4)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_replaced_pairs'], 3)
-        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_records'], 9)
-        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_replaced_records'], 0)
-        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_replaced_pairs'], 0)
+        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_records'], 10)
+        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_replaced_records'], 2)
+        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_replaced_pairs'], 1)
         self.assertEqual(nrtl_payload['metadata']['assorted_overlay_records'], 28)
         self.assertEqual(nrtl_payload['metadata']['assorted_overlay_zero_records'], 3)
         self.assertEqual(nrtl_payload['metadata']['assorted_overlay_replaced_records'], 2)
@@ -798,15 +798,15 @@ class InteractionParameterTests(unittest.TestCase):
         uniquac_payload = load_data('uniquac_binary_interactions_cas.json')
         self.assertEqual(uniquac_payload['metadata']['skipped_records'], 0)
         self.assertEqual(uniquac_payload['metadata']['converted_records'], 443)
-        self.assertEqual(uniquac_payload['metadata']['base_converted_records'], 324)
-        self.assertEqual(uniquac_payload['metadata']['supplemental_records'], 101)
+        self.assertEqual(uniquac_payload['metadata']['base_converted_records'], 323)
+        self.assertEqual(uniquac_payload['metadata']['supplemental_records'], 102)
         self.assertEqual(uniquac_payload['metadata']['supplemental_new_pairs'], 70)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_records'], 7)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_replaced_records'], 3)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_replaced_pairs'], 2)
-        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_records'], 9)
-        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_replaced_records'], 3)
-        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_replaced_pairs'], 3)
+        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_records'], 10)
+        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_replaced_records'], 4)
+        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_replaced_pairs'], 4)
         self.assertEqual(uniquac_payload['metadata']['assorted_overlay_records'], 22)
         self.assertEqual(uniquac_payload['metadata']['assorted_overlay_zero_records'], 3)
         self.assertEqual(uniquac_payload['metadata']['assorted_overlay_replaced_records'], 2)
@@ -893,6 +893,7 @@ class InteractionParameterTests(unittest.TestCase):
             'dipropyl ether': (4.7437, 4.096),
             'dibutyl ether': (6.0925, 5.176),
             'methyl isobutyl ketone': (4.596, 3.952),
+            'ethanol': (2.1055, 1.972),
         }
         for component, (expected_r, expected_q) in expected.items():
             with self.subTest(component=component):
@@ -1047,6 +1048,7 @@ class InteractionParameterTests(unittest.TestCase):
             ('108-10-1', '7732-18-5'),
             ('79-10-7', '108-10-1'),
             ('79-09-4', '108-10-1'),
+            ('64-17-5', '7732-18-5'),
         }
         zero_pair = tuple(sorted(('79-09-4', '79-10-7')))
 
@@ -1055,8 +1057,8 @@ class InteractionParameterTests(unittest.TestCase):
                 records, new_pairs, covered_pairs = (
                     supplemental_literature_vle_activity_records([], model)
                 )
-                self.assertEqual(len(records), 9)
-                self.assertEqual(new_pairs, 9)
+                self.assertEqual(len(records), 10)
+                self.assertEqual(new_pairs, 10)
                 self.assertEqual(covered_pairs, {
                     tuple(sorted(pair)) for pair in expected_pairs
                 })
@@ -1131,6 +1133,33 @@ class InteractionParameterTests(unittest.TestCase):
                     if model == 'NRTL'
                     else 'recommended_vdm_literature_interaction',
                 )
+                ethanol_water = by_pair[
+                    tuple(sorted(('64-17-5', '7732-18-5')))
+                ]
+                self.assertEqual(ethanol_water['Tmin_K'], 298.0)
+                self.assertEqual(ethanol_water['Tmax_K'], 423.15)
+                if model == 'NRTL':
+                    self.assertAlmostEqual(ethanol_water['tau12_c'], 3.391)
+                    self.assertAlmostEqual(ethanol_water['tau12_d'], -508.37)
+                    self.assertAlmostEqual(ethanol_water['tau12_f'], -0.00584)
+                    self.assertAlmostEqual(ethanol_water['tau21_c'], 5.1484)
+                    self.assertAlmostEqual(ethanol_water['tau21_d'], -763.53)
+                    self.assertAlmostEqual(ethanol_water['tau21_f'], -0.00332)
+                    self.assertEqual(
+                        ethanol_water['fit_vapor_treatment']['preferred_model'],
+                        'NRTL-PR',
+                    )
+                else:
+                    self.assertAlmostEqual(ethanol_water['tau12_a'], 4.4853)
+                    self.assertAlmostEqual(ethanol_water['tau12_b'], -1030.38)
+                    self.assertAlmostEqual(ethanol_water['tau12_d'], -0.004108)
+                    self.assertAlmostEqual(ethanol_water['tau21_a'], -9.2619)
+                    self.assertAlmostEqual(ethanol_water['tau21_b'], 1881.18)
+                    self.assertAlmostEqual(ethanol_water['tau21_d'], 0.00938)
+                    self.assertEqual(
+                        ethanol_water['fit_vapor_treatment']['preferred_model'],
+                        'UMR_UNIQUAC',
+                    )
 
                 resolved, unresolved = resolve_component_ids()
                 built = build_interaction_payload(
@@ -1139,7 +1168,7 @@ class InteractionParameterTests(unittest.TestCase):
                     unresolved,
                 )
                 self.assertEqual(
-                    built['metadata']['literature_vle_overlay_records'], 9
+                    built['metadata']['literature_vle_overlay_records'], 10
                 )
                 for pair in covered_pairs:
                     matches = [
@@ -1713,13 +1742,15 @@ class InteractionParameterTests(unittest.TestCase):
 
         self.assertAlmostEqual(eos.mixture_da_dT(T, composition), finite_difference, delta=abs(finite_difference) * 1e-5)
 
-    def test_nrtl_supplemental_tau_matrix_predicts_ethanol_water_azeotrope(self):
+    def test_nrtl_voutsas_interaction_predicts_ethanol_water_azeotrope(self):
         interaction = nrtl_binary_interaction('64-17-5', '7732-18-5')
         self.assertIsNotNone(interaction)
-        self.assertAlmostEqual(interaction['tau12_c'], -0.801)
-        self.assertAlmostEqual(interaction['tau12_d'], 246.2)
-        self.assertAlmostEqual(interaction['tau21_c'], 3.458)
-        self.assertAlmostEqual(interaction['tau21_d'], -586.1)
+        self.assertAlmostEqual(interaction['tau12_c'], 3.391)
+        self.assertAlmostEqual(interaction['tau12_d'], -508.37)
+        self.assertAlmostEqual(interaction['tau12_f'], -0.00584)
+        self.assertAlmostEqual(interaction['tau21_c'], 5.1484)
+        self.assertAlmostEqual(interaction['tau21_d'], -763.53)
+        self.assertAlmostEqual(interaction['tau21_f'], -0.00332)
         self.assertAlmostEqual(interaction['alpha12'], 0.3)
 
         thermo = create_thermodynamics(['ethanol', 'water'], 'NRTL')
@@ -1731,8 +1762,8 @@ class InteractionParameterTests(unittest.TestCase):
         )['azeotrope']
 
         self.assertIsNotNone(azeotrope)
-        self.assertAlmostEqual(azeotrope['x'], 0.898, delta=0.01)
-        self.assertAlmostEqual(azeotrope['T'], 78.1, delta=0.3)
+        self.assertAlmostEqual(azeotrope['x'], 0.8914, delta=0.01)
+        self.assertAlmostEqual(azeotrope['T'], 78.25, delta=0.3)
 
     def test_water_aromatic_regressions_roughly_reproduce_solubility_data(self):
         cases = [

@@ -1151,6 +1151,59 @@ def supplemental_literature_vle_activity_records(
             },
         )
 
+    ethanol_water_file = "ethanol_water_interactions.json"
+    ethanol_water = load_json(SOURCE_DATA / ethanol_water_file)
+    activity = ethanol_water["parameters"]["activity_models"][model_key]
+    if model_key == "NRTL":
+        forward = activity["g12_over_R"]
+        reverse = activity["g21_over_R"]
+        parameters = {
+            "alpha12": activity["alpha"],
+            "tau12_c": forward["b"],
+            "tau12_d": forward["a_K"],
+            "tau12_f": forward["c_per_K"],
+            "tau21_c": reverse["b"],
+            "tau21_d": reverse["a_K"],
+            "tau21_f": reverse["c_per_K"],
+        }
+        vapor_treatment = {
+            "type": "gamma_phi_cubic_EOS_validation",
+            "preferred_model": "NRTL-PR",
+            "high_TP_validation_source": "Barr-David and Dodge (1959)",
+        }
+    else:
+        forward = activity["u12_over_R"]
+        reverse = activity["u21_over_R"]
+        parameters = {
+            "tau12_a": -float(forward["b"]),
+            "tau12_b": -float(forward["a_K"]),
+            "tau12_d": -float(forward["c_per_K"]),
+            "tau21_a": -float(reverse["b"]),
+            "tau21_b": -float(reverse["a_K"]),
+            "tau21_d": -float(reverse["c_per_K"]),
+        }
+        vapor_treatment = {
+            "type": "EoS_GE_validation",
+            "preferred_model": "UMR_UNIQUAC",
+            "high_TP_validation_source": "Barr-David and Dodge (1959)",
+        }
+    primary_range = ethanol_water["recommendation"]["primary_applicable_range"]
+    add_record(
+        cas1="64-17-5",
+        cas2="7732-18-5",
+        component1="Ethanol",
+        component2="Water",
+        source=ethanol_water_file,
+        parameters=parameters,
+        comment=(
+            f"Ethanol/Water Voutsas et al. (2011) temperature-dependent "
+            f"{model_key}; high-T/P validation by Barr-David and Dodge (1959)"
+        ),
+        temperature_range=tuple(primary_range["T_K"]),
+        fit_status="recommended_temperature_dependent_literature_interaction",
+        fit_vapor_treatment=vapor_treatment,
+    )
+
     return records, len(covered_pairs - existing_pairs), covered_pairs
 
 

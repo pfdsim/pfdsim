@@ -1,0 +1,361 @@
+{
+  "schema_version": "1.0",
+  "system": {
+    "components": [
+      "ethanol",
+      "water"
+    ],
+    "component_order": {
+      "1": "ethanol",
+      "2": "water"
+    },
+    "purpose": "Ethanol-water activity-model parameters from Voutsas et al. (2011) with concise high-T/P validation provenance."
+  },
+  "sources": {
+    "parameters": {
+      "citation": "Voutsas et al., Fluid Phase Equilibria 308 (2011) 135-141",
+      "doi": "10.1016/j.fluid.2011.06.009",
+      "items": [
+        "Eq. (1)",
+        "Tables 4-9",
+        "Fig. 5"
+      ]
+    },
+    "high_TP_experiment": {
+      "citation": "Barr-David and Dodge, J. Chem. Eng. Data 4(2) (1959) 107-121",
+      "doi": "10.1021/je60002a003",
+      "items": [
+        "Table III",
+        "Figures 3-4"
+      ]
+    },
+    "UMR_method": {
+      "citation": "Voutsas et al., Fluid Phase Equilibria 241 (2006) 216-228",
+      "doi": "10.1016/j.fluid.2005.12.028"
+    }
+  },
+  "parameters": {
+    "vapor_pressure": {
+      "equation": "Ps_bar = exp(a + b/T + c*ln(T) + d*T^e)",
+      "T_unit": "K",
+      "P_unit": "bar",
+      "source": "Voutsas et al. (2011), Eq. (1), Table 7",
+      "ethanol": {
+        "a": 61.7911,
+        "b": -7122.3,
+        "c": -7.1424,
+        "d": 2.8853e-06,
+        "e": 2
+      },
+      "water": {
+        "a": 62.1361,
+        "b": -7258.2,
+        "c": -7.3037,
+        "d": 4.1653e-06,
+        "e": 2
+      }
+    },
+    "activity_models": {
+      "UNIQUAC": {
+        "interaction_parameter_equation": "(u_ij/R)_K = a_ij + b_ij*T + c_ij*T^2",
+        "source": "Voutsas et al. (2011), Table 8",
+        "u12_over_R": {
+          "a_K": 1030.38,
+          "b": -4.4853,
+          "c_per_K": 0.004108
+        },
+        "u21_over_R": {
+          "a_K": -1881.18,
+          "b": 9.2619,
+          "c_per_K": -0.00938
+        },
+        "structural_parameters_source_reported": {
+          "ethanol": {
+            "R": 2.1055,
+            "Q": 1.972
+          },
+          "water": {
+            "R": 0.92,
+            "Q": 1.2
+          }
+        },
+        "structural_parameters_reconstruction_recommended": {
+          "ethanol": {
+            "R": 2.1055,
+            "Q": 1.972
+          },
+          "water": {
+            "R": 0.92,
+            "Q": 1.4
+          }
+        },
+        "Q_water_note": "The 2011 table prints Q_water=1.2. The high-T/P UMR/UNIQUAC reconstruction is poor with 1.2 (11.56% pressure AARD, y MAE 0.0393) but reproduces Fig. 5 closely with Q_water=1.4 (1.72% pressure AARD, y MAE 0.00457). The correction to 1.4 is therefore a reconstruction inference, not an explicit correction by the authors."
+      },
+      "NRTL": {
+        "interaction_parameter_equation": "(g_ij/R)_K = a_ij + b_ij*T + c_ij*T^2",
+        "source": "Voutsas et al. (2011), Table 8",
+        "alpha": 0.3,
+        "g12_over_R": {
+          "a_K": -508.37,
+          "b": 3.391,
+          "c_per_K": -0.00584
+        },
+        "g21_over_R": {
+          "a_K": -763.53,
+          "b": 5.1484,
+          "c_per_K": -0.00332
+        }
+      },
+      "Wilson": {
+        "interaction_parameter_equation": "(Lambda_energy_ij/R)_K = a_ij + b_ij*T + c_ij*T^2",
+        "source": "Voutsas et al. (2011), Table 8",
+        "lambda12_energy_over_R": {
+          "a_K": -2007.08,
+          "b": 10.8519,
+          "c_per_K": -0.013084
+        },
+        "lambda21_energy_over_R": {
+          "a_K": -472.3,
+          "b": 4.4808,
+          "c_per_K": -0.005162
+        },
+        "liquid_molar_volume_mL_per_mol": {
+          "ethanol": 58.69,
+          "water": 18.07
+        },
+        "high_TP_validation_in_this_json": false
+      }
+    },
+    "simple_vapor_EOS_reconstruction_inputs": {
+      "source_status": "Reconstruction inputs used for the plain RK/PR comparisons; the 2011 paper does not print these pure critical-property values. Values are representative DIPPR-era values and reproduce the comparison metrics reported in the conversation.",
+      "ethanol": {
+        "name": "ethanol",
+        "Tc_K": 513.9,
+        "Pc_bar": 61.48,
+        "omega": 0.644
+      },
+      "water": {
+        "name": "water",
+        "Tc_K": 647.3,
+        "Pc_bar": 221.2,
+        "omega": 0.344
+      },
+      "binary_kij": 0.0,
+      "PR": {
+        "type": "standard Peng-Robinson",
+        "alpha": "Soave-style PR alpha using acentric factor"
+      },
+      "RK": {
+        "type": "classic Redlich-Kwong"
+      },
+      "gamma_phi_standard_state": "f_i^0(T) = phi_i^sat(T, Psat_i) * Psat_i; Poynting factor set to 1. For T above the pure-component critical temperature, the 2011 Psat correlation and the corresponding pure-EOS fugacity correction are extrapolated, so the treatment is empirical rather than rigorous."
+    }
+  },
+  "regression_scope": {
+    "VLE_T_K": [
+      298.14,
+      348.15
+    ],
+    "VLE_pressure_examples_kPa": [
+      50.66,
+      101.32
+    ],
+    "azeotrope_T_K": [
+      312.91,
+      351.34
+    ],
+    "azeotrope_P_kPa": [
+      17.52,
+      101.32
+    ],
+    "excess_enthalpy_T_K": [
+      323.15,
+      383.15
+    ],
+    "held_out_low_P_kPa": [
+      13.15,
+      19.71,
+      32.86
+    ]
+  },
+  "high_TP_validation_summary": {
+    "experimental_source": "Barr-David and Dodge (1959), Table III",
+    "isotherms_K": [
+      423.15,
+      523.15,
+      548.15,
+      573.15,
+      598.15,
+      623.15
+    ],
+    "source_points": 68,
+    "benchmark_points": 57,
+    "overall_metrics": {
+      "umr_uniquac_qwater_1p4": {
+        "N": 57,
+        "P_AARD_pct": 1.7161435307745692,
+        "P_bias_pct": -0.9402397869859771,
+        "y_MAE": 0.004572470572138738,
+        "y_bias": -0.0035809334962633964
+      },
+      "umr_uniquac_qwater_1p2_printed": {
+        "N": 57,
+        "P_AARD_pct": 11.560516982112416,
+        "P_bias_pct": -11.560516982112416,
+        "y_MAE": 0.039262089225472446,
+        "y_bias": -0.028324204619116108
+      },
+      "uniquac_rk_gamma_phi": {
+        "N": 57,
+        "P_AARD_pct": 3.995874762061499,
+        "P_bias_pct": 3.8932286132582803,
+        "y_MAE": 0.028678330777038324,
+        "y_bias": 0.028309277424074793
+      },
+      "uniquac_pr_gamma_phi": {
+        "N": 57,
+        "P_AARD_pct": 6.173104627322976,
+        "P_bias_pct": 6.173104627322976,
+        "y_MAE": 0.027882039776249177,
+        "y_bias": 0.02729603067096467
+      },
+      "nrtl_rk_gamma_phi": {
+        "N": 57,
+        "P_AARD_pct": 5.350440248046907,
+        "P_bias_pct": -4.145658782629229,
+        "y_MAE": 0.01139434614324588,
+        "y_bias": 0.0024879233520645684
+      },
+      "nrtl_pr_gamma_phi": {
+        "N": 57,
+        "P_AARD_pct": 3.8923575921153666,
+        "P_bias_pct": -2.705783494646993,
+        "y_MAE": 0.010813922861169395,
+        "y_bias": 0.0040156588761143894
+      }
+    },
+    "423p15K_metrics": {
+      "umr_uniquac_qwater_1p4": {
+        "T_K": 423.15,
+        "N": 14,
+        "x_ethanol_min": 0.018,
+        "x_ethanol_max": 0.781,
+        "P_exp_bar_min": 5.58475340733,
+        "P_exp_bar_max": 9.58371263727,
+        "P_AARD_pct": 1.5375974355929345,
+        "P_bias_pct": 1.4272941433647532,
+        "y_MAE": 0.002706605923286125,
+        "y_bias": -0.001274599739062281
+      },
+      "umr_uniquac_qwater_1p2_printed": {
+        "T_K": 423.15,
+        "N": 14,
+        "x_ethanol_min": 0.018,
+        "x_ethanol_max": 0.781,
+        "P_exp_bar_min": 5.58475340733,
+        "P_exp_bar_max": 9.58371263727,
+        "P_AARD_pct": 12.470693020857652,
+        "P_bias_pct": -12.470693020857652,
+        "y_MAE": 0.06120989318782284,
+        "y_bias": -0.038018265471377745
+      },
+      "uniquac_rk_gamma_phi": {
+        "T_K": 423.15,
+        "N": 14,
+        "x_ethanol_min": 0.018,
+        "x_ethanol_max": 0.781,
+        "P_exp_bar_min": 5.58475340733,
+        "P_exp_bar_max": 9.58371263727,
+        "P_AARD_pct": 3.568212677417042,
+        "P_bias_pct": 3.568212677417042,
+        "y_MAE": 0.009359466456444114,
+        "y_bias": 0.007856892090806868
+      },
+      "uniquac_pr_gamma_phi": {
+        "T_K": 423.15,
+        "N": 14,
+        "x_ethanol_min": 0.018,
+        "x_ethanol_max": 0.781,
+        "P_exp_bar_min": 5.58475340733,
+        "P_exp_bar_max": 9.58371263727,
+        "P_AARD_pct": 3.5246899677617125,
+        "P_bias_pct": 3.5246899677617125,
+        "y_MAE": 0.008336013631359917,
+        "y_bias": 0.006148519366051091
+      },
+      "nrtl_rk_gamma_phi": {
+        "T_K": 423.15,
+        "N": 14,
+        "x_ethanol_min": 0.018,
+        "x_ethanol_max": 0.781,
+        "P_exp_bar_min": 5.58475340733,
+        "P_exp_bar_max": 9.58371263727,
+        "P_AARD_pct": 2.57150626637648,
+        "P_bias_pct": 2.242695578065679,
+        "y_MAE": 0.010563096159967927,
+        "y_bias": 0.006144927695037528
+      },
+      "nrtl_pr_gamma_phi": {
+        "T_K": 423.15,
+        "N": 14,
+        "x_ethanol_min": 0.018,
+        "x_ethanol_max": 0.781,
+        "P_exp_bar_min": 5.58475340733,
+        "P_exp_bar_max": 9.58371263727,
+        "P_AARD_pct": 2.5353459865136148,
+        "P_bias_pct": 2.187837691783979,
+        "y_MAE": 0.009972738978822088,
+        "y_bias": 0.004437411962571711
+      }
+    }
+  },
+  "recommendation": {
+    "preferred_simple_model": "NRTL-PR gamma-phi",
+    "preferred_high_TP_model": "UMR/UNIQUAC with Q_water=1.4 (or a comparable EoS/GE framework)",
+    "primary_applicable_range": {
+      "T_K": [
+        298.0,
+        423.15
+      ],
+      "T_C": [
+        24.85,
+        150.0
+      ],
+      "P_bar": [
+        0.1,
+        10.0
+      ],
+      "classification": "recommended / primary",
+      "rationale": "The fitted database covers ordinary low-temperature VLE/azeotrope behavior and excess enthalpy through 383 K, while the 423 K Barr-David isotherm provides a clean independent elevated-pressure check below ethanol's critical temperature. NRTL-PR gives 2.54% pressure AARD and y MAE 0.00997 at 423 K."
+    },
+    "useful_engineering_range": {
+      "T_K": [
+        298.0,
+        623.15
+      ],
+      "T_C": [
+        24.85,
+        350.0
+      ],
+      "P_bar": [
+        0.1,
+        190.0
+      ],
+      "classification": "validated engineering extrapolation with caveats",
+      "rationale": "Across the 57-point high-T/P benchmark, NRTL-PR remains quite accurate (3.89% pressure AARD, y MAE 0.0108), while reconstructed UMR/UNIQUAC is substantially better (1.72% pressure AARD, y MAE 0.00457).",
+      "caveats": [
+        "Plain gamma-phi NRTL-PR or UNIQUAC-PR is not a rigorous standard-state treatment above ethanol Tc (~514 K); its success there is empirical.",
+        "For work materially above ethanol Tc, prefer UMR/UNIQUAC or another EoS/GE formulation.",
+        "Composition coverage narrows sharply with temperature: the validated two-phase branch is water-rich at the highest temperatures.",
+        "At 623 K the 57-point benchmark contains only x_ethanol <= 0.052; do not interpret the 623 K result as full-composition validation.",
+        "The Q_water=1.4 correction is inferred from reproduction quality rather than explicitly acknowledged in the 2011 paper."
+      ]
+    },
+    "suggested_simulator_policy": [
+      "Use NRTL-PR as the simple/default implementation over the primary range.",
+      "Allow NRTL-PR through the useful engineering range with an extrapolation warning above ethanol Tc.",
+      "If UMR/EoS-GE is available, switch to or prefer UMR/UNIQUAC for genuinely high-T/P ethanol-water work.",
+      "Do not use the literal UNIQUAC Q_water=1.2 value from the printed 2011 Table 8 without a warning."
+    ]
+  }
+}

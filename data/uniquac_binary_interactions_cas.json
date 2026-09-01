@@ -717,6 +717,31 @@
       "use_q_prime": false
     },
     {
+      "Tmax_K": 423.15,
+      "Tmin_K": 298.0,
+      "cas1": "64-17-5",
+      "cas2": "7732-18-5",
+      "comment": "Ethanol/Water Voutsas et al. (2011) temperature-dependent UNIQUAC; high-T/P validation by Barr-David and Dodge (1959)",
+      "component1": "Ethanol",
+      "component2": "Water",
+      "fit_status": "recommended_temperature_dependent_literature_interaction",
+      "fit_vapor_treatment": {
+        "high_TP_validation_source": "Barr-David and Dodge (1959)",
+        "preferred_model": "UMR_UNIQUAC",
+        "type": "EoS_GE_validation"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "ethanol_water_interactions.json",
+      "source_file": "data/source/ethanol_water_interactions.json",
+      "tau12_a": 4.4853,
+      "tau12_b": -1030.38,
+      "tau12_d": -0.004108,
+      "tau21_a": -9.2619,
+      "tau21_b": 1881.18,
+      "tau21_d": 0.00938,
+      "use_q_prime": false
+    },
+    {
       "Tmax_K": 473.15,
       "Tmin_K": 283.0,
       "cas1": "7732-18-5",
@@ -2385,17 +2410,6 @@
       "component2": "oleic acid",
       "source_id1": "1101",
       "source_id2": "1279"
-    },
-    {
-      "a12_cal_per_mol": 173.801,
-      "a21_cal_per_mol": 109.8687,
-      "cas1": "64-17-5",
-      "cas2": "7732-18-5",
-      "comment": "Ethanol/Water",
-      "component1": "C2H5OH",
-      "component2": "H2O",
-      "source_id1": "1102",
-      "source_id2": "1921"
     },
     {
       "a12_cal_per_mol": -305.3246,
@@ -6897,7 +6911,7 @@
     "assorted_overlay_replaced_pairs": 2,
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
-    "base_converted_records": 324,
+    "base_converted_records": 323,
     "converted_records": 443,
     "disabled_records": 39,
     "ipd_hydration_by_source": {
@@ -6909,15 +6923,15 @@
     "isopropanol_water_overlay_replaced_pairs": 1,
     "isopropanol_water_overlay_replaced_records": 1,
     "key_basis": "CAS",
-    "literature_vle_overlay_records": 9,
-    "literature_vle_overlay_replaced_pairs": 3,
-    "literature_vle_overlay_replaced_records": 3,
+    "literature_vle_overlay_records": 10,
+    "literature_vle_overlay_replaced_pairs": 4,
+    "literature_vle_overlay_replaced_records": 4,
     "skipped": [],
     "skipped_records": 0,
     "source": "ChemSep DECHEMA UNIQUAC data at 1 atm",
     "source_file": "uniquac_binary_interactions.json",
     "supplemental_new_pairs": 70,
-    "supplemental_records": 101,
+    "supplemental_records": 102,
     "units": "a*_cal_per_mol records are cal/mol; tau* records are direct dimensionless UNIQUAC tau coefficients",
     "unresolved_components": [
       {

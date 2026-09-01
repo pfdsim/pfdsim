@@ -1269,10 +1269,10 @@
         "r": 2.1055,
         "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
       },
-      "formula": "C2H5OH",
+      "formula": "C2H6O",
       "name": "Ethanol",
-      "q": 1.97,
-      "r": 2.11,
+      "q": 1.972,
+      "r": 2.1055,
       "records": [
         {
           "dwsim_id": "27",
@@ -1287,10 +1287,17 @@
           "name": "Ethanol",
           "q": 1.972,
           "r": 2.1055,
+          "source": "ethanol_water_interactions.json; Voutsas et al. (2011) UNIQUAC structural basis"
+        },
+        {
+          "formula": "C2H6O",
+          "name": "Ethanol",
+          "q": 1.972,
+          "r": 2.1055,
           "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
         }
       ],
-      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+      "source": "ethanol_water_interactions.json; Voutsas et al. (2011) UNIQUAC structural basis"
     },
     "64-19-7": {
       "aliases": [
@@ -2200,6 +2207,7 @@
       "data/source/water_ethylene_oxide_interactions.json",
       "data/source/water_organic_binary_fits.json",
       "data/source/mibk_water_acids_vle.json",
+      "data/source/ethanol_water_interactions.json",
       "data/source/nagata_gmehling_extended_uniquac_rq.json",
       "data/source/ester_uniquac_combinatorial_parameters.json",
       "data/source/assorted_alcohols_ethers.json"

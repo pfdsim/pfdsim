@@ -77,6 +77,8 @@ def valid_cas(value: Any) -> Optional[str]:
 
 
 def source_priority(source: str) -> tuple[int, str]:
+    if "ethanol_water_interactions" in source:
+        return (-2, source)
     if "in this work" in source or "ester_uniquac_combinatorial" in source:
         return (-1, source)
     if "DWSIM.Thermodynamics" in source:
@@ -283,6 +285,28 @@ def mibk_vle_rq_records() -> list[dict]:
     }]
 
 
+def ethanol_water_rq_records() -> list[dict]:
+    path = SOURCE_DATA / "ethanol_water_interactions.json"
+    if not path.exists():
+        return []
+    payload = load_json(path)
+    parameters = (
+        payload["parameters"]["activity_models"]["UNIQUAC"]
+        ["structural_parameters_reconstruction_recommended"]["ethanol"]
+    )
+    return [{
+        "cas": "64-17-5",
+        "name": "Ethanol",
+        "formula": "C2H6O",
+        "r": parameters["R"],
+        "q": parameters["Q"],
+        "source": (
+            "ethanol_water_interactions.json; Voutsas et al. (2011) "
+            "UNIQUAC structural basis"
+        ),
+    }]
+
+
 def ester_combinatorial_records() -> list[dict]:
     path = SOURCE_DATA / "ester_uniquac_combinatorial_parameters.json"
     if not path.exists():
@@ -407,6 +431,8 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
         add_record(components, aliases, record)
     for record in mibk_vle_rq_records():
         add_record(components, aliases, record)
+    for record in ethanol_water_rq_records():
+        add_record(components, aliases, record)
     for record in ester_combinatorial_records():
         add_record(components, aliases, record)
     apply_extended_metadata(components, aliases, nagata_records())
@@ -424,6 +450,7 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
                 "data/source/water_ethylene_oxide_interactions.json",
                 "data/source/water_organic_binary_fits.json",
                 "data/source/mibk_water_acids_vle.json",
+                "data/source/ethanol_water_interactions.json",
                 "data/source/nagata_gmehling_extended_uniquac_rq.json",
                 "data/source/ester_uniquac_combinatorial_parameters.json",
                 "data/source/assorted_alcohols_ethers.json",
