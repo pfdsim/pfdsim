@@ -13,6 +13,7 @@ ENV/
 
 # Local agent instructions are intentionally not versioned
 /AGENTS.md
+/compaction_notes.md
 
 # Local env files
 .env
