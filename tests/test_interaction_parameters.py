@@ -1104,6 +1104,9 @@ class InteractionParameterTests(unittest.TestCase):
                     self.assertEqual(water_mibk['tau12_c'], 0.0)
                     self.assertAlmostEqual(water_mibk['tau12_d'], 0.01411794871)
 
+                self.assertEqual(water_mibk['Tmin_K'], 273.15)
+                self.assertEqual(water_mibk['Tmax_K'], 383.15)
+
                 acrylic_mibk = by_pair[
                     tuple(sorted(('79-10-7', '108-10-1')))
                 ]
@@ -1112,7 +1115,8 @@ class InteractionParameterTests(unittest.TestCase):
                 ]
                 self.assertEqual(acrylic_mibk['Tmin_K'], 352.5)
                 self.assertEqual(acrylic_mibk['Tmax_K'], 373.75)
-                self.assertNotIn('Tmin_K', propionic_mibk)
+                self.assertEqual(propionic_mibk['Tmin_K'], 388.15)
+                self.assertEqual(propionic_mibk['Tmax_K'], 413.15)
                 self.assertEqual(
                     acrylic_mibk['fit_vapor_treatment']['associated_component'],
                     'Acrylic acid',

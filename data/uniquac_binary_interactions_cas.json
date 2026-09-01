@@ -645,6 +645,8 @@
       "use_q_prime": false
     },
     {
+      "Tmax_K": 383.15,
+      "Tmin_K": 273.15,
       "cas1": "7732-18-5",
       "cas2": "108-10-1",
       "comment": "Water/MIBK joint VLE/LLE/VLLE UNIQUAC regression; Rawat and Krishna (1984)",
@@ -689,6 +691,8 @@
       "use_q_prime": false
     },
     {
+      "Tmax_K": 413.15,
+      "Tmin_K": 388.15,
       "cas1": "79-09-4",
       "cas2": "108-10-1",
       "comment": "Propionic acid / MIBK UNIQUAC VLE regression with fixed single-acid VDM association",

@@ -12,7 +12,11 @@
         "MIBK": "108-10-1"
       },
       "pressure_basis": "101.325 kPa experimental VLE/VLLE data",
-      "temperature_unit": "K"
+      "temperature_unit": "K",
+      "recommended_temperature_range_C": [
+        0.0,
+        110.0
+      ]
     },
     "source_paper": {
       "citation": "Rawat, B. S.; Krishna, Shri. Isobaric Vapor-Liquid Equilibria for the Partially Miscible System of Water-Methyl Isobutyl Ketone. Journal of Chemical and Engineering Data 1984, 29, 403-406.",
@@ -356,7 +360,11 @@
               "equivalent_kPa": 101.325
             },
             "points_used": 20,
-            "note": "The source paper reports 20 PA/MIBK Txy points at 760 mmHg and explicitly shows that propionic-acid vapor association must be included for thermodynamic consistency."
+            "note": "The source paper reports 20 PA/MIBK Txy points at 760 mmHg and explicitly shows that propionic-acid vapor association must be included for thermodynamic consistency.",
+            "temperature_range_C": [
+              115.0,
+              140.0
+            ]
           }
         },
         "vapor_association": {

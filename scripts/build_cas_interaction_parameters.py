@@ -1082,6 +1082,11 @@ def supplemental_literature_vle_activity_records(
             f"Water/MIBK joint VLE/LLE/VLLE {model_key} regression; "
             "Rawat and Krishna (1984)"
         ),
+        temperature_range=tuple(
+            float(value) + 273.15
+            for value in water_mibk["system"]
+            ["recommended_temperature_range_C"]
+        ),
         fit_status="recommended_joint_vle_lle_vlle_interaction",
     )
 
