@@ -75,6 +75,28 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     def rk(self, backend) -> None:
         self.vapor_eos = backend
 
+    def vapor_fugacity_coefficients(
+        self,
+        T: float,
+        P: float,
+        composition: dict[str, float],
+    ) -> dict[str, float]:
+        """Effective nominal-component vapor fugacity coefficients."""
+        backend = self.vapor_eos
+        if backend is None:
+            return {comp: 1.0 for comp in self.components}
+        return backend.fugacity_coefficients(T, P, composition, 'vapor')
+
+    def _liquid_fugacity_reference_factors(
+        self,
+        T: float,
+        P: float,
+    ) -> dict[str, float]:
+        """Pure-liquid reference fugacities [bar] used by this model's K-values."""
+        if self.vapor_eos is not None:
+            return self._gamma_phi_reference_factors(T, P)
+        return {component: self.Psat(component, T) for component in self.components}
+
     def compiled_vlle_backend(self):
         """Return the optional compiled ideal-vapor VLLE backend, built lazily."""
         if getattr(self, '_compiled_vlle_initialized', False):
@@ -2492,13 +2514,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     ) -> dict[str, float]:
         comp = self._normalize_phase_composition(composition)
         if phase == 'vapor':
-            phi = {component: 1.0 for component in self.components}
-            vapor_backend = self.vapor_eos
-            if vapor_backend is not None:
-                try:
-                    phi = vapor_backend.fugacity_coefficients(T, P, comp, 'vapor')
-                except Exception:
-                    pass
+            try:
+                phi = self.vapor_fugacity_coefficients(T, P, comp)
+            except Exception:
+                phi = {component: 1.0 for component in self.components}
             return {
                 component: math.log(max(
                     comp.get(component, 0.0)
@@ -2510,13 +2529,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             }
 
         gamma = self.activity_coefficients(T, comp)
-        if self.vapor_eos is not None:
-            reference = self._gamma_phi_reference_factors(T, P)
-        else:
-            reference = {
-                component: self.Psat(component, T)
-                for component in self.components
-            }
+        reference = self._liquid_fugacity_reference_factors(T, P)
         return {
             component: math.log(max(
                 comp.get(component, 0.0)
@@ -3529,6 +3542,26 @@ class VaporDimerizationActivityMixin:
         if model is None:
             return {comp: 1.0 for comp in self.components}
         return model.fugacity_coefficients(T, P, composition, rk_model=None)
+
+    def vapor_fugacity_coefficients(
+        self,
+        T: float,
+        P: float,
+        composition: dict[str, float],
+    ) -> dict[str, float]:
+        """VDM nominal-component fugacity coefficients for equilibrium audits."""
+        return self.fugacity_coefficients(T, P, composition, phase='vapor')
+
+    def _liquid_fugacity_reference_factors(
+        self,
+        T: float,
+        P: float,
+    ) -> dict[str, float]:
+        """VDM saturated-monomer references used by the VDM K-value equations."""
+        return {
+            comp: self._vdm_phi_sat(comp, T) * self.Psat(comp, T)
+            for comp in self.components
+        }
 
     def _vdm_pure_saturated_association_enthalpy(self, comp: str, T: float) -> float:
         """Pure saturated-vapor association enthalpy [kJ/kmol nominal component]."""

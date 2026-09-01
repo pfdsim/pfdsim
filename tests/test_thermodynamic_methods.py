@@ -16,6 +16,10 @@ from simulator import Simulator
 from thermodynamics import ThermodynamicsError, create_thermodynamics
 from chemical_properties import ChemicalDatabase, ChemicalProperties
 from cubic_eos import CubicEOS
+from equilibrium_stage_vlle import (
+    shared_vlle_vapor_terms,
+    three_phase_fugacity_residuals,
+)
 from rk_eos import RedlichKwong
 from unifac import (
     DORTMUND_UNIFAC_KNOWN_OVERRIDES,
@@ -1382,6 +1386,63 @@ class ThermodynamicMethodTests(unittest.TestCase):
             ).metadata.thermo_method,
             'UNIFNIST-VDM',
         )
+
+    def test_vdm_vlle_shared_vapor_and_audit_use_same_nominal_fugacities(self):
+        components = [
+            'water',
+            'methyl isobutyl ketone',
+            'acetic acid',
+            'propionic acid',
+        ]
+        thermo = create_thermodynamics(components, 'UNIQUAC-VDM')
+        liquid = {
+            'water': 0.64,
+            'methyl isobutyl ketone': 0.35,
+            'acetic acid': 0.009,
+            'propionic acid': 0.001,
+        }
+        pressure = 1.01325
+        temperature = thermo.bubble_point_T(liquid, pressure, 365.0)
+        gamma = thermo.activity_coefficients(temperature, liquid)
+        vapor_terms = shared_vlle_vapor_terms(
+            thermo,
+            temperature,
+            pressure,
+            liquid,
+            liquid,
+            components,
+            gamma,
+            gamma,
+        )
+        vapor_total = sum(vapor_terms.values())
+        vapor = {
+            component: value / vapor_total
+            for component, value in vapor_terms.items()
+        }
+
+        self.assertAlmostEqual(vapor_total, 1.0, delta=1e-6)
+        audit = three_phase_fugacity_residuals(
+            thermo,
+            temperature,
+            pressure,
+            liquid,
+            liquid,
+            vapor,
+            components,
+        )
+        self.assertLess(audit['overall'], 1e-6)
+
+        K = thermo.K_values(temperature, pressure, liquid)
+        for component in components:
+            with self.subTest(component=component):
+                self.assertAlmostEqual(
+                    math.log(
+                        vapor[component]
+                        / (liquid[component] * K[component])
+                    ),
+                    0.0,
+                    delta=1e-6,
+                )
 
     def test_uniquac_vdm_matches_acetic_acid_water_txy_without_azeotrope(self):
         experimental = [

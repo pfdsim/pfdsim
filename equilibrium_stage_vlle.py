@@ -132,8 +132,21 @@ def shared_vlle_vapor_terms(
     the MESH equations common to L1 and L2 instead of geometrically averaging
     two independently iterated vapor states.
     """
-    vapor_eos = getattr(thermo, "vapor_eos", None)
-    if vapor_eos is None:
+    correction_active = getattr(thermo, "_vapor_phase_correction_active", None)
+    uses_vapor_correction = bool(
+        callable(correction_active) and correction_active()
+    )
+    vapor_phi = getattr(thermo, "vapor_fugacity_coefficients", None)
+    reference_factors = getattr(
+        thermo,
+        "_liquid_fugacity_reference_factors",
+        None,
+    )
+    if (
+        not uses_vapor_correction
+        or not callable(vapor_phi)
+        or not callable(reference_factors)
+    ):
         K1 = thermo.K_values(T, P, x1)
         K2 = thermo.K_values(T, P, x2)
         return {
@@ -144,7 +157,7 @@ def shared_vlle_vapor_terms(
             for comp in components
         }
 
-    reference = thermo._gamma_phi_reference_factors(T, P)
+    reference = reference_factors(T, P)
     target_fugacity = {
         comp: math.sqrt(
             max(
@@ -169,7 +182,7 @@ def shared_vlle_vapor_terms(
     }
     for _ in range(12):
         try:
-            phi_v = vapor_eos.fugacity_coefficients(T, P, y, "vapor")
+            phi_v = vapor_phi(T, P, y)
         except Exception:
             phi_v = {comp: 1.0 for comp in components}
         vapor_terms = {
@@ -191,7 +204,7 @@ def shared_vlle_vapor_terms(
     # Re-evaluate at the returned shared vapor composition so the bubble term
     # and post-solve fugacity audit use the same EOS state.
     try:
-        phi_v = vapor_eos.fugacity_coefficients(T, P, y, "vapor")
+        phi_v = vapor_phi(T, P, y)
     except Exception:
         phi_v = {comp: 1.0 for comp in components}
     return {
