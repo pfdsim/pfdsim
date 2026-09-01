@@ -3,7 +3,7 @@
     "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1",
     "description": "Extended UNIQUAC molecular structure constants and Antoine constants. q_prime is the residual interaction surface parameter used by the extended UNIQUAC model.",
     "notes": [
-      "Values were manually transcribed from data/reference/main50.pdf because OCR is unreliable for Table 1.",
+      "Values were manually transcribed from data/reference/thermodynamic-models/1991-nagata-gmehling-extended-uniquac-excess-properties.pdf because OCR is unreliable for Table 1.",
       "Antoine constants use log10(P_mmHg) = A - B / (C + t_C)."
     ]
   },

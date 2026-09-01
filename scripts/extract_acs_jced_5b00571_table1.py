@@ -26,7 +26,13 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PDF = ROOT / "data" / "reference" / "acs.jced.5b00571.pdf"
+DEFAULT_PDF = (
+    ROOT
+    / "data"
+    / "reference"
+    / "pure-component-properties"
+    / "2016-ambrose-vapor-liquid-critical-properties-review.pdf"
+)
 DEFAULT_OUTPUT = ROOT / "data" / "acs_jced_5b00571_table1.json"
 
 SOURCE = {

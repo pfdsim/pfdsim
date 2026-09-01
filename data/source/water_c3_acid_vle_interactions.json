@@ -34,7 +34,7 @@
     "source": {
       "citation": "Olson, J. D.; Morrison, R. E.; Wilson, L. C. Thermodynamics of Hydrogen-Bonding Mixtures. 5. GE, HE, and TSE and Zeotropy of Water + Acrylic Acid. Ind. Eng. Chem. Res. 2008, 47, 5127-5131.",
       "doi": "10.1021/ie0712277",
-      "reference_file": "data/reference/acid_water_vle/ie0712277.pdf"
+      "reference_file": "data/reference/vapor-liquid-equilibria/2008-olson-water-acrylic-acid-hydrogen-bonding.pdf"
     },
     "fit_basis": {
       "objective": "Unweighted ln(sum_i x_i K_i) bubble-closure residual at each measured temperature, pressure, and corrected liquid composition.",
@@ -329,21 +329,21 @@
           {
             "citation": "Olson, J. D.; Morrison, R. E.; Wilson, L. C. Thermodynamics of Hydrogen-Bonding Mixtures. 5. GE, HE, and TSE and Zeotropy of Water + Acrylic Acid. Ind. Eng. Chem. Res. 2008, 47, 5127-5131.",
             "doi": "10.1021/ie0712277",
-            "reference_file": "data/reference/acid_water_vle/ie0712277.pdf",
+            "reference_file": "data/reference/vapor-liquid-equilibria/2008-olson-water-acrylic-acid-hydrogen-bonding.pdf",
             "used_data": "Table 4 water (1) + propanoic acid (2): 58 non-pure dilute PTx points at 101.325, 40.00, and 13.33 kPa.",
             "notes": "The three pure-water baselines were excluded because they contain no binary-interaction information."
           },
           {
             "citation": "Banat, F.; Al-Asheh, S.; Simandl, J. Vapor-liquid equilibria of propionic acid-water system in the presence of different types of inorganic salts: effect of temperature and salt concentration. Chemical Engineering and Processing 2003, 42, 917-923.",
             "doi": "10.1016/S0255-2701(02)00156-3",
-            "reference_file": "data/reference/acid_water_vle/main 3.pdf",
+            "reference_file": "data/reference/vapor-liquid-equilibria/2003-banat-propionic-acid-water-salts-vle.pdf",
             "used_data": "Tables 1 and 2 no-salt columns: 8 salt-free x_acid/y_acid points at 40 C and 8 at 50 C.",
             "notes": "Compositions are reported on a salt-free basis. The authors state that vial pressure could not be measured precisely and therefore did not present P-x-y diagrams; only the no-salt x-y observations were fitted."
           },
           {
             "citation": "Banat, F.; Al-Asheh, S.; Simandl, J. Effect of dissolved inorganic salts on the isothermal vapor-liquid equilibrium of the propionic acid-water mixture. Chemical Engineering and Processing 2002, 41, 793-798.",
             "doi": "10.1016/S0255-2701(02)00011-9",
-            "reference_file": "data/reference/acid_water_vle/main 4.pdf",
+            "reference_file": "data/reference/vapor-liquid-equilibria/2002-banat-propionic-acid-water-salts-vle.pdf",
             "used_data": "Table 3 salt-free column: 9 x_acid/y_acid points at 60 C.",
             "notes": "Only the binary no-salt column was fitted; every salted observation and every empirical salt-effect quantity was excluded."
           }

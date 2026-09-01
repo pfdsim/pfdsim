@@ -182,7 +182,7 @@ class FragmentationTests(unittest.TestCase):
 
     def test_diacid_interaction_extension(self):
         # COOH-COOH Tc/Pc fitted to pulse-heating diacid data (local
-        # extension; data/reference/IMG_3694.jpeg).  Adipic acid:
+        # extension; data/reference/pure-component-properties/2004-nikitin-dicarboxylic-acid-critical-property-tables.jpeg).  Adipic acid:
         # Tb 610.5 K, Tc 841 K, Pc 3.85 MPa.
         r = estimate('OC(=O)CCCCC(=O)O', tb=610.5)
         self.assertEqual(sorted(r.interaction_classes), ['C', 'C'])

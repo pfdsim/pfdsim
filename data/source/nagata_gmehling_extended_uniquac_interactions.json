@@ -6,7 +6,7 @@
     "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
     "temperature_units": "K",
     "notes": [
-      "Values were manually transcribed from data/reference/main50.pdf because OCR is unreliable for Table 2.",
+      "Values were manually transcribed from data/reference/thermodynamic-models/1991-nagata-gmehling-extended-uniquac-excess-properties.pdf because OCR is unreliable for Table 2.",
       "use_q_prime=true means the extended UNIQUAC q_prime residual surface parameter should be used for this pair."
     ]
   },

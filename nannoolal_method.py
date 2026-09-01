@@ -130,7 +130,7 @@ Vapor pressure layer ([3]) judgment calls:
   alcohols) is hopelessly misprinted in the journal: +0.75407/
   (1+7 exp(201/T-91))-1 can neither vanish nor satisfy Ps(Tb) = 1 atm.  The
   correct form is Eq. (8-6) of Nannoolal's PhD thesis (Univ. KwaZulu-Natal,
-  2006, data/reference/Nannoolal_Yash_2006.pdf, p. 193):
+  2006, data/reference/thermodynamic-models/2006-nannoolal-group-contribution-property-estimation-thesis.pdf, p. 193):
       f(T) = a [ 2 / (1 + exp((201/(T-91))^7)) - 1 ],   a = 0.37704
   added to log10(Ps/atm) for mono-functional alcohols only.  The journal's
   0.75407 is 2a, its "7 exp" is the 7th POWER on the argument, and
@@ -466,8 +466,8 @@ INTERACTION_CONTRIBUTIONS: dict[frozenset, tuple[float | None, ...]] = _pairs({
     # pulse-heating measurements for HOOC-(CH2)n-COOH (n = 3..12, succinic
     # excluded per that paper's own convention): Nikitin, Popov,
     # Bogatishcheva, Yatluk, J. Chem. Eng. Data 49 (2004) 1515-1520
-    # (data/reference/je0498356.pdf; Tables 2-3 also photographed in
-    # data/reference/IMG_3694.jpeg).  Fit residuals: Tc AAD 10.0 K (data
+    # (data/reference/pure-component-properties/2004-nikitin-dicarboxylic-acid-critical-properties.pdf;
+    # Tables 2-3 also photographed in data/reference/pure-component-properties/2004-nikitin-dicarboxylic-acid-critical-property-tables.jpeg).  Fit residuals: Tc AAD 10.0 K (data
     # uncertainty +-13 K; the 1/n interaction form cannot fully reproduce the
     # nearly flat Tc series), Pc AAD 2.7 %.
     # NOTE: because diacids have no true experimental Tb (they decompose),
@@ -807,7 +807,7 @@ VISC_TV_INTERACTIONS: dict[frozenset, float | None] = _pairs({
 # for byte-faithful published behavior.  Every use is reported in warnings.
 # Fitted 2026-07-09 against Ambrose/Tsonopoulos/Nikitin/Morton/Marsh, J. Chem.
 # Eng. Data 61 (2016) (Part 12 recommended values,
-# data/reference/acs.jced.5b00571.pdf) and Perry 9th ed. Table 2-106:
+# data/reference/pure-component-properties/2016-ambrose-vapor-liquid-critical-properties-review.pdf) and Perry 9th ed. Table 2-106:
 #   44/pc: linear saturated acids C3-C18 from ATN-12 (ethanoic excluded:
 #          dimerization; C20/C22 excluded: alkyl-tail extrapolation dominates).
 #   53/pc: thiol series C3-C10 (Perry) + 1-dodecanethiol (ATN-12); the

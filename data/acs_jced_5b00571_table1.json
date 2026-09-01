@@ -5978,7 +5978,7 @@
   "metadata": {
     "cas_key_count": 346,
     "extraction_method": "pdftotext -layout plus Table 2 CAS heading resolution",
-    "pdf": "data/reference/acs.jced.5b00571.pdf",
+    "pdf": "data/reference/pure-component-properties/2016-ambrose-vapor-liquid-critical-properties-review.pdf",
     "property_counts": {
       "Pc": 315,
       "Tc": 347,
