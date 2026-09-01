@@ -1,6 +1,740 @@
 {
   "interactions": [
     {
+      "Tmax_K": 423.15,
+      "Tmin_K": 308.15,
+      "alpha12": 0.31,
+      "cas1": "67-63-0",
+      "cas2": "7732-18-5",
+      "comment": "2-propanol/Water broad-range temperature-dependent NRTL fit with truncated-second-virial vapor correction (B12=-220 cm^3/mol)",
+      "component1": "2-propanol",
+      "component2": "water",
+      "fit_status": "recommended_broad_range_literature_interaction",
+      "fit_vapor_treatment": {
+        "cross_second_virial": {
+          "B12_cm3_per_mol": -220.0,
+          "notes": "A mild temperature dependence was tested and produced negligible improvement. The constant value is also consistent with independent consistency analysis of the Wilson and Barr-David/Dodge high-pressure datasets.",
+          "temperature_dependence": "constant"
+        },
+        "equation": "ln(phi_i) = P/(R*T) * (2*sum_j(y_j*B_ij) - B_mix)",
+        "pure_second_virials": {
+          "component_1": {
+            "fluid": "2-propanol",
+            "model": "Xu et al. 2021 associated-fluid correlation"
+          },
+          "component_2": {
+            "fluid": "water",
+            "model": "Xu et al. 2021 water-specific correlation"
+          }
+        },
+        "type": "truncated_second_virial"
+      },
+      "source": "isopropanol_water_interactions.json; Sada and Morisue (1975), Wu, Hagewiesche and Sandler (1988), Moioli et al. (2021), Barbieri et al. (2024), Wilson and Simons (1952), Barr-David and Dodge (1959)",
+      "source_file": "data/source/isopropanol_water_interactions.json",
+      "tau12_c": -0.83315,
+      "tau12_d": 300.79,
+      "tau12_e": 0.0,
+      "tau21_c": 16.6021,
+      "tau21_d": -2518.8,
+      "tau21_e": 0.0,
+      "tau21_f": -0.0203443,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 413.67,
+      "Tmin_K": 298.15,
+      "alpha12": 0.59840813,
+      "cas1": "71-36-3",
+      "cas2": "142-96-1",
+      "comment": "1-butanol/dibutyl ether recommended temperature-dependent NRTL literature interaction",
+      "component1": "1-butanol",
+      "component2": "dibutyl ether",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lladosa_2006, lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.20308121,
+      "tau12_d": 152.334314,
+      "tau12_e": 0.0,
+      "tau21_c": -2.2428764,
+      "tau21_d": 1056.184603,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 369.75,
+      "Tmin_K": 315.84,
+      "alpha12": 0.3,
+      "cas1": "71-23-8",
+      "cas2": "111-43-3",
+      "comment": "1-propanol/dipropyl ether recommended temperature-dependent NRTL literature interaction",
+      "component1": "1-propanol",
+      "component2": "dipropyl ether",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lladosa_2006",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -0.418548,
+      "tau12_d": 265.779,
+      "tau12_e": 0.0,
+      "tau21_c": -0.262194,
+      "tau21_d": 412.137,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 414.0,
+      "Tmin_K": 355.2,
+      "alpha12": 0.3,
+      "cas1": "67-63-0",
+      "cas2": "142-96-1",
+      "comment": "2-propanol/dibutyl ether recommended temperature-dependent NRTL literature interaction",
+      "component1": "2-propanol",
+      "component2": "dibutyl ether",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; wang_2020",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0064,
+      "tau12_d": 255.09,
+      "tau12_e": 0.0,
+      "tau21_c": -0.005,
+      "tau21_d": 245.27,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.50730973,
+      "cas1": "142-96-1",
+      "cas2": "67-56-1",
+      "comment": "dibutyl ether/methanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "methanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 465.526229,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 542.753235,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 388.7,
+      "Tmin_K": 309.2,
+      "alpha12": 0.3,
+      "cas1": "60-29-7",
+      "cas2": "71-36-3",
+      "comment": "diethyl ether/1-butanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diethyl ether",
+      "component2": "1-butanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; gao_2012",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -1.39058,
+      "tau12_d": 360.048,
+      "tau12_e": 0.0,
+      "tau21_c": 1.54676,
+      "tau21_d": -418.999,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 335.7,
+      "Tmin_K": 307.7,
+      "alpha12": 0.3,
+      "cas1": "60-29-7",
+      "cas2": "67-56-1",
+      "comment": "diethyl ether/methanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diethyl ether",
+      "component2": "methanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; gao_2012",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -0.557447,
+      "tau12_d": 710.993,
+      "tau12_e": 0.0,
+      "tau21_c": -0.412573,
+      "tau21_d": 93.9489,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 338.15,
+      "Tmin_K": 318.15,
+      "alpha12": 0.47,
+      "cas1": "108-20-3",
+      "cas2": "71-36-3",
+      "comment": "diisopropyl ether/1-butanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diisopropyl ether",
+      "component2": "1-butanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; reddy_2013",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -1.83772,
+      "tau12_d": 932.913,
+      "tau12_e": 0.0,
+      "tau21_c": 0.77204,
+      "tau21_d": -54.5116,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 355.35,
+      "Tmin_K": 307.18,
+      "alpha12": 0.57087796,
+      "cas1": "108-20-3",
+      "cas2": "67-63-0",
+      "comment": "diisopropyl ether/2-propanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diisopropyl ether",
+      "component2": "2-propanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lladosa_2007, arce_2003, chamorro_2002, shawaqfeh_2010",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -1.04999734,
+      "tau12_d": 659.656328,
+      "tau12_e": 0.0,
+      "tau21_c": 0.90684636,
+      "tau21_d": -123.756489,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 333.15,
+      "Tmin_K": 313.15,
+      "alpha12": 0.47,
+      "cas1": "108-20-3",
+      "cas2": "64-17-5",
+      "comment": "diisopropyl ether/ethanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diisopropyl ether",
+      "component2": "ethanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; reddy_2013",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 3.07788,
+      "tau12_d": -586.184,
+      "tau12_e": 0.0,
+      "tau21_c": -1.58735,
+      "tau21_d": 801.16,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 325.15,
+      "Tmin_K": 305.15,
+      "alpha12": 0.47,
+      "cas1": "108-20-3",
+      "cas2": "67-56-1",
+      "comment": "diisopropyl ether/methanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diisopropyl ether",
+      "component2": "methanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; reddy_2013",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.3549,
+      "tau12_d": 401.974,
+      "tau12_e": 0.0,
+      "tau21_c": -1.04607,
+      "tau21_d": 817.113,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 377.36,
+      "Tmin_K": 351.54,
+      "alpha12": 0.4,
+      "cas1": "64-17-5",
+      "cas2": "142-96-1",
+      "comment": "ethanol/dibutyl ether recommended temperature-dependent NRTL literature interaction",
+      "component1": "ethanol",
+      "component2": "dibutyl ether",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; cartes_2021",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 13.1566,
+      "tau12_d": -4236.56,
+      "tau12_e": 0.0,
+      "tau21_c": -3.5894,
+      "tau21_d": 1463.27,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 397.44,
+      "Tmin_K": 355.35,
+      "alpha12": 0.3,
+      "cas1": "67-63-0",
+      "cas2": "109-86-4",
+      "comment": "2-propanol/2-methoxyethanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "2-propanol",
+      "component2": "2-methoxyethanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lladosa_2007",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 36.031192,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 17.174892,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 426.98,
+      "Tmin_K": 355.2,
+      "alpha12": 0.3,
+      "cas1": "67-63-0",
+      "cas2": "100-66-3",
+      "comment": "2-propanol/anisole recommended temperature-dependent NRTL literature interaction",
+      "component1": "2-propanol",
+      "component2": "anisole",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; wang_2020",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0141,
+      "tau12_d": 357.19,
+      "tau12_e": 0.0,
+      "tau21_c": -0.0095,
+      "tau21_d": 110.63,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 313.15,
+      "Tmin_K": 313.15,
+      "alpha12": 0.5366,
+      "cas1": "67-63-0",
+      "cas2": "142-82-5",
+      "comment": "2-propanol/n-heptane recommended temperature-dependent NRTL literature interaction",
+      "component1": "2-propanol",
+      "component2": "n-heptane",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; chamorro_2002",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 447.11557,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 660.49598,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.48749031,
+      "cas1": "142-96-1",
+      "cas2": "75-05-8",
+      "comment": "dibutyl ether/acetonitrile recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "acetonitrile",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 429.87706,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 612.225781,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.3,
+      "cas1": "142-96-1",
+      "cas2": "109-73-9",
+      "comment": "dibutyl ether/butylamine recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "butylamine",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 425.797731,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": -163.729028,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.3,
+      "cas1": "142-96-1",
+      "cas2": "120-92-3",
+      "comment": "dibutyl ether/cyclopentanone recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "cyclopentanone",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 107.619664,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 219.750163,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.68338034,
+      "cas1": "142-96-1",
+      "cas2": "67-64-1",
+      "comment": "dibutyl ether/propanone recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "propanone",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 165.472317,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 278.772879,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.3,
+      "cas1": "142-96-1",
+      "cas2": "107-10-8",
+      "comment": "dibutyl ether/propylamine recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "propylamine",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 298.222194,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": -56.714881,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 298.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.3,
+      "cas1": "142-96-1",
+      "cas2": "109-99-9",
+      "comment": "dibutyl ether/tetrahydrofuran recommended temperature-dependent NRTL literature interaction",
+      "component1": "dibutyl ether",
+      "component2": "tetrahydrofuran",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": -144.141462,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 220.139394,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 397.44,
+      "Tmin_K": 341.49,
+      "alpha12": 0.3,
+      "cas1": "108-20-3",
+      "cas2": "109-86-4",
+      "comment": "diisopropyl ether/2-methoxyethanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "diisopropyl ether",
+      "component2": "2-methoxyethanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lladosa_2007",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 305.934384,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 269.601308,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 313.15,
+      "Tmin_K": 313.15,
+      "alpha12": 0.3,
+      "cas1": "108-20-3",
+      "cas2": "142-82-5",
+      "comment": "diisopropyl ether/n-heptane recommended temperature-dependent NRTL literature interaction",
+      "component1": "diisopropyl ether",
+      "component2": "n-heptane",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; chamorro_2002",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 48.569565,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 0.594985,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 426.98,
+      "Tmin_K": 361.67,
+      "alpha12": 0.3,
+      "cas1": "108-21-4",
+      "cas2": "100-66-3",
+      "comment": "isopropyl acetate/anisole recommended temperature-dependent NRTL literature interaction",
+      "component1": "isopropyl acetate",
+      "component2": "anisole",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; wang_2020",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -0.0019,
+      "tau12_d": -145.02,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0023,
+      "tau21_d": 192.57,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 414.0,
+      "Tmin_K": 361.67,
+      "alpha12": 0.3,
+      "cas1": "108-21-4",
+      "cas2": "142-96-1",
+      "comment": "isopropyl acetate/dibutyl ether recommended temperature-dependent NRTL literature interaction",
+      "component1": "isopropyl acetate",
+      "component2": "dibutyl ether",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; wang_2020",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0103,
+      "tau12_d": 332.72,
+      "tau12_e": 0.0,
+      "tau21_c": -0.0071,
+      "tau21_d": -180.86,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 386.6,
+      "Tmin_K": 338.3,
+      "alpha12": 0.36,
+      "cas1": "67-56-1",
+      "cas2": "71-36-3",
+      "comment": "methanol/1-butanol recommended temperature-dependent NRTL literature interaction",
+      "component1": "methanol",
+      "component2": "1-butanol",
+      "fit_status": "recommended_literature_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; gao_2012",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": -0.233226,
+      "tau12_d": -176.21,
+      "tau12_e": 0.0,
+      "tau21_c": -0.004149,
+      "tau21_d": 315.963,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "alpha12": 0.3,
+      "cas1": "110-54-3",
+      "cas2": "142-96-1",
+      "comment": "n-hexane/dibutyl ether defensible zero NRTL interaction; Independent sources indicate near-ideal behavior; directional fitted BIPs are poorly identifiable and the earlier compensating parameters should not be retained.",
+      "component1": "n-hexane",
+      "component2": "dibutyl ether",
+      "fit_status": "recommended_defensible_zero_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying VLE evidence likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; cartes_2021, lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 0.0,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 0.0,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "alpha12": 0.3,
+      "cas1": "142-96-1",
+      "cas2": "111-65-9",
+      "comment": "dibutyl ether/n-octane defensible zero NRTL interaction; Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable.",
+      "component1": "dibutyl ether",
+      "component2": "n-octane",
+      "fit_status": "recommended_defensible_zero_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying VLE evidence likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 0.0,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 0.0,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
+      "alpha12": 0.3,
+      "cas1": "142-96-1",
+      "cas2": "60-29-7",
+      "comment": "dibutyl ether/diethyl ether defensible zero NRTL interaction; Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable.",
+      "component1": "dibutyl ether",
+      "component2": "diethyl ether",
+      "fit_status": "recommended_defensible_zero_interaction",
+      "fit_vapor_treatment": {
+        "certainty": "inferred_not_confirmed_for_every_source",
+        "note": "The underlying VLE evidence likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all sources.",
+        "type": "likely_HOC_or_equivalent_association_correction"
+      },
+      "source": "assorted_alcohols_ethers.json; lepori_2000",
+      "source_file": "data/source/assorted_alcohols_ethers.json",
+      "tau12_c": 0.0,
+      "tau12_d": 0.0,
+      "tau12_e": 0.0,
+      "tau21_c": 0.0,
+      "tau21_d": 0.0,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15
+    },
+    {
       "Tmax_K": 375.0,
       "Tmin_K": 280.0,
       "alpha12": 0.3,
@@ -10,7 +744,6 @@
       "component1": "Acetaldehyde",
       "component2": "Water",
       "fit_status": "recommended_effective_pseudobinary_regression",
-      "recommended": true,
       "source": "acetaldehyde_water_vle.json",
       "source_file": "data/source/acetaldehyde_water_vle.json",
       "tau12_c": 5.25487,
@@ -30,8 +763,7 @@
       "comment": "Acetic acid/Propionic acid fitted residual NRTL interaction with statistical vapor cross-association",
       "component1": "Acetic acid",
       "component2": "Propionic acid",
-      "fit_status": "recommended_literature_regression",
-      "recommended": true,
+      "fit_status": "recommended_literature_interaction",
       "source": "three_acids_vle.json",
       "source_file": "data/source/three_acids_vle.json",
       "tau12_c": 0.0,
@@ -51,8 +783,7 @@
       "comment": "Acetic acid/Acrylic acid fitted residual NRTL interaction with statistical vapor cross-association",
       "component1": "Acetic acid",
       "component2": "Acrylic acid",
-      "fit_status": "recommended_literature_regression",
-      "recommended": true,
+      "fit_status": "recommended_literature_interaction",
       "source": "three_acids_vle.json",
       "source_file": "data/source/three_acids_vle.json",
       "tau12_c": 0.0,
@@ -67,11 +798,10 @@
       "alpha12": 0.3,
       "cas1": "79-09-4",
       "cas2": "79-10-7",
-      "comment": "Propionic acid/Acrylic acid defensible zero residual NRTL interaction after statistical vapor cross-association; expected zero-interaction error is well below the experimental error margin",
+      "comment": "Propionic acid/Acrylic acid defensible zero residual NRTL interaction after statistical vapor cross-association; expected zero-interaction error is well below the experimental error margin (about 1-2% activity-coefficient nonideality or less)",
       "component1": "Propionic acid",
       "component2": "Acrylic acid",
       "fit_status": "recommended_defensible_zero_interaction",
-      "recommended": true,
       "source": "three_acids_vle.json",
       "source_file": "data/source/three_acids_vle.json",
       "tau12_c": 0.0,
@@ -80,8 +810,7 @@
       "tau21_c": 0.0,
       "tau21_d": 0.0,
       "tau21_e": 0.0,
-      "tau_tref": 298.15,
-      "zero_interaction_basis": "The error introduced by assuming zero residual liquid interaction is expected to be well below the experimental error margin; the source estimates unmodeled activity-coefficient nonideality at about 1-2% or less."
+      "tau_tref": 298.15
     },
     {
       "Tmax_K": 399.57,
@@ -93,7 +822,6 @@
       "component1": "Water",
       "component2": "Acrylic acid",
       "fit_status": "retained_literature_alternative",
-      "recommended": false,
       "source": "water_c3_acid_vle_interactions.json",
       "source_file": "data/source/water_c3_acid_vle_interactions.json",
       "tau12_c": 2.524131826641469,
@@ -113,8 +841,7 @@
       "comment": "Water/Propionic acid temperature-dependent NRTL literature regression with fixed VDM",
       "component1": "Water",
       "component2": "Propionic acid",
-      "fit_status": "recommended_literature_regression",
-      "recommended": true,
+      "fit_status": "recommended_literature_interaction",
       "source": "water_c3_acid_vle_interactions.json",
       "source_file": "data/source/water_c3_acid_vle_interactions.json",
       "tau12_c": 9.080831096551332,
@@ -134,94 +861,9 @@
       "comment": "Water/Cyclohexane curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "Cyclohexane",
-      "fit_and_validation": {
-        "aqueous_LLE_AARD_percent": 5.63,
-        "khudaida_P_AARD_percent": 2.1,
-        "khudaida_hydrocarbon_vapor_MAAD_mole_fraction": 0.0958,
-        "organic_LLE_AARD_percent": 17.0,
-        "tsonopoulos_P3_AARD_percent": 2.34
-      },
-      "fit_assessment": {
-        "confidence": "high for broad process use; organic-rich branch limited by inter-source inconsistency",
-        "preferred_model": "NRTL",
-        "vapor_note": "Systematic vapor-composition discrepancy persists almost unchanged in NRTL and UNIQUAC."
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "full six-term retained",
-          "reason": "Broad ~190 K span and real curvature justify temperature flexibility; NRTL gives a clearly better aqueous-branch fit.",
-          "uniquac": "native a+b/T+cT retained"
-        },
-        "joint_properties": [
-          "LLE"
-        ],
-        "withheld_or_independent_validation": [
-          "Tsonopoulos P3",
-          "Khudaida pressure",
-          "Khudaida vapor composition"
-        ]
-      },
-      "fit_provenance": [
-        {
-          "data_used": [
-            "cyclohexane-in-water LLE",
-            "water-in-cyclohexane LLE"
-          ],
-          "doi": "10.1002/aic.690290618",
-          "notes": "Author-marked rejected solubility points excluded.",
-          "quality": "high",
-          "reference": "Tsonopoulos, C.; Wilson, G. M. AIChE J. 1983, 29, 990-999.",
-          "role": "primary broad-temperature mutual-solubility and three-phase-pressure backbone",
-          "validation_data": [
-            "three-phase pressure"
-          ]
-        },
-        {
-          "data_used": [
-            "water-in-cyclohexane LLE"
-          ],
-          "doi": "10.1021/je0502041",
-          "quality": "high",
-          "reference": "Marche, C.; Ferronato, C.; de Hemptinne, J.-C.; Jose, J. J. Chem. Eng. Data 2006, 51, 355-359.",
-          "role": "modern organic-rich branch"
-        },
-        {
-          "data_used": [
-            "cyclohexane-in-water LLE"
-          ],
-          "doi": "10.1016/j.fluid.2008.09.008",
-          "quality": "high",
-          "reference": "Pereda et al. Fluid Phase Equilib. 2009.",
-          "role": "modern aqueous branch"
-        },
-        {
-          "data_used": [
-            "water-in-cyclohexane organic-rich VLLE composition"
-          ],
-          "doi": "10.1016/j.jtice.2023.104922",
-          "notes": "Aqueous hydrocarbon compositions were literature-derived/smoothed and were not double-counted as independent measurements.",
-          "quality": "high",
-          "reference": "Khudaida, S. H.; Tiwikrama, A. H.; Lee, M.-J. J. Taiwan Inst. Chem. Eng. 2023, 147, 104922.",
-          "role": "modern VLLE validation and organic-rich constraint",
-          "validation_data": [
-            "three-phase pressure",
-            "vapor composition"
-          ]
-        },
-        {
-          "quality": "moderate_to_high",
-          "reference": "IUPAC/NIST Solubility Data Series and selected low-temperature literature",
-          "role": "low-temperature anchoring and consistency check"
-        }
-      ],
       "fit_status": "final_standardized",
-      "fit_temperature_range": {
-        "Tmax": 473.15,
-        "Tmin": 283.0
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_cyclohexane",
       "tau12_c": 6.39516595,
       "tau12_d": 1226.28753,
       "tau12_e": -25.1370461,
@@ -239,116 +881,9 @@
       "comment": "Water/n-Hexane curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "n-Hexane",
-      "fit_and_validation": {
-        "aqueous_LLE_AARD_percent": 7.95,
-        "khudaida_P_AARD_percent": 4.19,
-        "khudaida_hydrocarbon_vapor_MAAD_mole_fraction": 0.0467,
-        "organic_LLE_AARD_percent": 10.68,
-        "tsonopoulos_P3_AARD_percent": 3.4
-      },
-      "fit_assessment": {
-        "confidence": "high",
-        "preferred_model": "NRTL",
-        "vapor_note": "Vapor discrepancy is systematic and nearly model-independent."
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "full six-term retained",
-          "reason": "Large temperature span captures a low-temperature solubility minimum followed by a strong high-temperature rise.",
-          "uniquac": "native a+b/T+cT retained"
-        },
-        "joint_properties": [
-          "LLE"
-        ],
-        "withheld_or_independent_validation": [
-          "Tsonopoulos P3",
-          "Khudaida pressure",
-          "Khudaida vapor composition",
-          "IUPAC/NIST 298 K evaluation"
-        ]
-      },
-      "fit_provenance": [
-        {
-          "data_used": [
-            "n-hexane-in-water LLE",
-            "water-in-n-hexane LLE"
-          ],
-          "doi": "10.1139/v73-599",
-          "quality": "high",
-          "reference": "Polak, J.; Lu, B. C.-Y. Can. J. Chem. 1973, 51, 4018.",
-          "role": "low-temperature mutual-solubility anchors"
-        },
-        {
-          "data_used": [
-            "water-in-n-hexane LLE"
-          ],
-          "doi": "10.1016/j.fluid.2019.112322",
-          "quality": "very_high",
-          "reference": "Morgado et al. Fluid Phase Equilib. 2020, 503, 112322.",
-          "role": "modern low-temperature organic-rich branch"
-        },
-        {
-          "data_used": [
-            "n-hexane-in-water LLE"
-          ],
-          "doi": "10.1016/j.fluid.2008.09.008",
-          "quality": "high",
-          "reference": "Pereda et al. Fluid Phase Equilib. 2009.",
-          "role": "modern aqueous branch"
-        },
-        {
-          "data_used": [
-            "n-hexane-in-water LLE",
-            "water-in-n-hexane LLE"
-          ],
-          "doi": "10.1021/je900295u",
-          "notes": "Corrected 2010 measurements used; superseded erroneous 2004 dataset excluded.",
-          "quality": "high",
-          "reference": "Razzouk et al. J. Chem. Eng. Data 2010.",
-          "role": "corrected low-temperature mutual-solubility data"
-        },
-        {
-          "data_used": [
-            "n-hexane-in-water LLE",
-            "water-in-n-hexane LLE"
-          ],
-          "doi": "10.1002/aic.690290618",
-          "notes": "Author-rejected aqueous points excluded.",
-          "quality": "high",
-          "reference": "Tsonopoulos, C.; Wilson, G. M. AIChE J. 1983, 29, 990-999.",
-          "role": "high-temperature mutual-solubility backbone",
-          "validation_data": [
-            "three-phase pressure"
-          ]
-        },
-        {
-          "data_used": [
-            "water-in-n-hexane organic-rich VLLE composition"
-          ],
-          "doi": "10.1016/j.jtice.2023.104922",
-          "notes": "Aqueous values were literature-derived/smoothed and not double-counted.",
-          "quality": "high",
-          "reference": "Khudaida, S. H.; Tiwikrama, A. H.; Lee, M.-J. J. Taiwan Inst. Chem. Eng. 2023, 147, 104922.",
-          "role": "modern VLLE organic branch and validation",
-          "validation_data": [
-            "three-phase pressure",
-            "vapor composition"
-          ]
-        },
-        {
-          "quality": "evaluated",
-          "reference": "IUPAC/NIST Solubility Data Series",
-          "role": "room-temperature external validation"
-        }
-      ],
       "fit_status": "final_standardized",
-      "fit_temperature_range": {
-        "Tmax": 473.15,
-        "Tmin": 273.15
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_n_hexane",
       "tau12_c": 11.26238462,
       "tau12_d": 232.67075634,
       "tau12_e": -47.48429675,
@@ -366,70 +901,9 @@
       "comment": "Water/Dichloromethane curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "Dichloromethane",
-      "fit_and_validation": {
-        "heteroazeotrope_temperature_experimental_K": 311.25,
-        "heteroazeotrope_temperature_predicted_K": 311.32,
-        "heteroazeotrope_y_DCM_predicted": 0.9341,
-        "heteroazeotrope_y_DCM_reference_approx": 0.933,
-        "organic_in_water_LLE_AARD_percent": 2.92,
-        "water_in_organic_LLE_AARD_percent": 0.57
-      },
-      "fit_assessment": {
-        "confidence": "high over the evaluated temperature ranges",
-        "important_note": "No evidence that extra temperature curvature is needed.",
-        "preferred_model": "UNIQUAC by a negligible numerical margin"
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "c+d/T retained; e12=e21=0",
-          "reason": "Additional curvature produced negligible predictive benefit over the supported range.",
-          "uniquac": "exp(a+b/T) retained; c12=c21=0"
-        },
-        "joint_properties": [
-          "critically evaluated LLE branches"
-        ],
-        "validation": [
-          "atmospheric heteroazeotrope"
-        ]
-      },
-      "fit_provenance": [
-        {
-          "notes": "Evaluation considers at least 32 groups for dichloromethane-in-water and 19 laboratories for water-in-dichloromethane, with identified outliers rejected.",
-          "quality": "critically_evaluated",
-          "reference": "IUPAC/NIST Solubility Data Series, Vol. 60, Dichloromethane + Water critical evaluation (system 60_242).",
-          "role": "primary regression basis for both LLE branches"
-        },
-        {
-          "experimental_heteroazeotrope": {
-            "approx_water_mass_fraction": 0.015,
-            "temperature_C": 38.1,
-            "temperature_K": 311.25
-          },
-          "reference": "Atmospheric dichloromethane-water heteroazeotrope literature compilation",
-          "role": "independent process-level validation"
-        },
-        {
-          "fit_use": "not assigned independent weight in the retained fit statistics",
-          "reference": "Leighton, D. T.; Calo, J. M. J. Chem. Eng. Data 1981, 26, 382-385.",
-          "role": "available independent aqueous partition/Henry evidence"
-        }
-      ],
       "fit_status": "final_conservative",
-      "fit_temperature_range": {
-        "Tmax": 313.15,
-        "Tmin": 253.15,
-        "aqueous_branch_primary_range": [
-          273.15,
-          308.15
-        ],
-        "organic_branch_primary_range": [
-          253.15,
-          313.15
-        ]
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_dichloromethane",
       "tau12_c": 5.42009361,
       "tau12_d": -275.038735,
       "tau12_e": 0.0,
@@ -447,72 +921,9 @@
       "comment": "Water/Chloroform curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "Chloroform",
-      "fit_and_validation": {
-        "heteroazeotrope_temperature_experimental_K": 328.95,
-        "heteroazeotrope_temperature_predicted_K": 329.39,
-        "heteroazeotrope_y_chloroform_experimental": 0.856,
-        "heteroazeotrope_y_chloroform_predicted": 0.8351,
-        "organic_in_water_LLE_AARD_percent": 2.61,
-        "water_in_organic_LLE_AARD_percent": 9.65
-      },
-      "fit_assessment": {
-        "confidence": "moderate_to_high",
-        "important_note": "Organic-rich LLE near 320-330 K has genuine source inconsistency; conservative temperature dependence is preferred.",
-        "preferred_model": "UNIQUAC by a small numerical margin"
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "c+d/T retained; e12=e21=0",
-          "reason": "Full forms sharply lower training residuals but chase inconsistent high-temperature liquid-endpoint data and are weakly identified.",
-          "rejected_full_nrtl_behavior": {
-            "approx_e12": -13.6,
-            "approx_e21": 53.3
-          },
-          "uniquac": "exp(a+b/T) retained; c12=c21=0"
-        },
-        "joint_properties": [
-          "critically evaluated LLE branches"
-        ],
-        "validation": [
-          "Hu 101.3 kPa VLLE temperature, vapor composition, and liquid endpoints"
-        ]
-      },
-      "fit_provenance": [
-        {
-          "notes": "Multi-laboratory evaluated aqueous and organic-rich solubility branches; aqueous chloroform shows a shallow minimum near 318 K.",
-          "quality": "critically_evaluated",
-          "reference": "IUPAC/NIST Solubility Data Series, Vol. 60, Chloroform + Water critical evaluation (system 60_146).",
-          "role": "primary LLE regression basis"
-        },
-        {
-          "doi": "10.1016/j.fluid.2009.11.006",
-          "experimental_heteroazeotrope": {
-            "temperature_C": 55.8,
-            "temperature_K": 328.95,
-            "y_chloroform": 0.856
-          },
-          "notes": "Hu's organic-rich liquid endpoint near the heteroazeotrope is lower in water than the historical NIST trend, exposing real inter-source tension.",
-          "reference": "Hu, H.-S. Fluid Phase Equilib. 2010, 289, 80-89.",
-          "role": "independent 101.3 kPa VLE/VLLE validation"
-        }
-      ],
       "fit_status": "final_conservative",
-      "fit_temperature_range": {
-        "Tmax": 333.15,
-        "Tmin": 263.15,
-        "VLLE_validation_temperature_K": 328.95,
-        "aqueous_branch_primary_range": [
-          273.15,
-          333.15
-        ],
-        "organic_branch_primary_range": [
-          263.15,
-          323.15
-        ]
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_chloroform",
       "tau12_c": 6.1067819,
       "tau12_d": -158.687099,
       "tau12_e": 0.0,
@@ -530,70 +941,9 @@
       "comment": "Water/Carbon tetrachloride curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "Carbon tetrachloride",
-      "fit_and_validation": {
-        "heteroazeotrope_temperature_experimental_K": 339.15,
-        "heteroazeotrope_temperature_predicted_K": 340.02,
-        "heteroazeotrope_y_CCl4_predicted": 0.7315,
-        "heteroazeotrope_y_CCl4_reference_approx": 0.7326,
-        "organic_in_water_LLE_AARD_percent": 4.29,
-        "water_in_organic_low_T_LLE_AARD_percent": 3.88,
-        "wu_high_T_water_in_organic_AARD_percent": 5.39
-      },
-      "fit_assessment": {
-        "confidence": "high near 283-308 K; moderate toward the atmospheric heteroazeotrope",
-        "important_note": "Do not infer broad high-temperature reliability from the sparse old data.",
-        "preferred_model": "UNIQUAC by a negligible numerical margin"
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "c+d/T retained; e12=e21=0",
-          "reason": "Sparse and partially doubtful high-temperature data do not justify extra curvature.",
-          "uniquac": "exp(a+b/T) retained; c12=c21=0"
-        },
-        "joint_properties": [
-          "critically evaluated low-temperature LLE",
-          "downweighted high-temperature organic-rich LLE"
-        ],
-        "validation": [
-          "atmospheric heteroazeotrope"
-        ]
-      },
-      "fit_provenance": [
-        {
-          "notes": "CCl4-in-water data above about 308 K are classified as doubtful; high-temperature water-in-CCl4 data above 323 K come from only two investigators.",
-          "quality": "critically_evaluated",
-          "reference": "IUPAC/NIST Solubility Data Series, Vol. 60, Carbon tetrachloride + Water critical evaluation (system 60_23).",
-          "role": "primary low-temperature LLE regression basis"
-        },
-        {
-          "notes": "Used at reduced weight because NIST identifies Wu as one of the better high-temperature organic-phase sources, but the high-temperature evidence remains sparse.",
-          "reference": "Wu, X. Huaxue Shiji 1981, 221-224.",
-          "role": "high-temperature water-in-CCl4 extension",
-          "weight": "reduced"
-        },
-        {
-          "experimental_heteroazeotrope": {
-            "temperature_C": 66.0,
-            "temperature_K": 339.15,
-            "water_mass_fraction_approx": 0.041
-          },
-          "reference": "Atmospheric carbon-tetrachloride/water heteroazeotrope literature",
-          "role": "independent process-level validation"
-        }
-      ],
       "fit_status": "final_conservative",
-      "fit_temperature_range": {
-        "Tmax": 339.15,
-        "Tmin": 273.15,
-        "high_temperature_extension_confidence": "moderate_to_low",
-        "primary_high_confidence_range": [
-          283.15,
-          308.15
-        ]
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_carbon_tetrachloride",
       "tau12_c": 7.84191768,
       "tau12_d": 141.884293,
       "tau12_e": 0.0,
@@ -611,112 +961,9 @@
       "comment": "Water/Diethyl ether curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "Diethyl ether",
-      "fit_and_validation": {
-        "HE_infinity_29815_predicted_kJ_per_mol": -20.212,
-        "HE_infinity_29815_reference_kJ_per_mol": -19.54,
-        "P3_30815_experimental_kPa": 104.7,
-        "P3_30815_predicted_kPa": 104.732,
-        "ondo_direct_gamma_inf_AARD_percent": 2.09,
-        "ondo_direct_gamma_inf_max_abs_relative_error_percent": 4.4,
-        "ondo_recommended_gamma_inf_AARD_percent": 2.39,
-        "villamanan_HE_MAE_J_per_mol": 13.4,
-        "villamanan_HE_RMSE_J_per_mol": 14.85,
-        "villamanan_Px_AARD_percent": 0.737,
-        "villamanan_Px_MAE_kPa": 0.383,
-        "villamanan_Px_RMSE_kPa": 0.559,
-        "villamanan_Px_max_abs_error_kPa": 1.179,
-        "x_DEE_aqueous_29815_experimental": 0.0159,
-        "x_DEE_aqueous_29815_predicted": 0.015889,
-        "x_DEE_aqueous_30815_experimental": 0.01172,
-        "x_DEE_aqueous_30815_predicted": 0.011948,
-        "x_water_organic_29815_experimental": 0.0498,
-        "x_water_organic_29815_predicted": 0.047532,
-        "x_water_organic_30815_experimental": 0.05,
-        "x_water_organic_30815_predicted": 0.052278,
-        "y_DEE_VLLE_30815_experimental": 0.9463,
-        "y_DEE_VLLE_30815_predicted": 0.94637
-      },
-      "fit_assessment": {
-        "confidence": "high",
-        "important_note": "Both models are recommended; H^E validation materially improved parameter identifiability.",
-        "preferred_model": "UNIQUAC by a small numerical margin"
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "full six-term strongly retained",
-          "nrtl_delta_BIC_vs_reduced_approx": 108,
-          "reason": "Broad-temperature gamma_infinity curvature plus finite-composition VLE and H^E strongly identify temperature dependence.",
-          "uniquac": "full native a+b/T+cT strongly retained",
-          "uniquac_delta_BIC_vs_reduced_approx": 104
-        },
-        "excess_enthalpy_weight": "moderate thermodynamic-derivative constraint",
-        "joint_properties": [
-          "LLE",
-          "VLE total pressure",
-          "limiting activity coefficient",
-          "excess enthalpy"
-        ],
-        "source_balanced": true
-      },
-      "fit_provenance": [
-        {
-          "data_used": [
-            "direct DEE limiting activity coefficients in water, 273.35-328.15 K",
-            "critically evaluated gamma_infinity(T)",
-            "infinite-dilution enthalpy/heat-capacity consistency"
-          ],
-          "doi": "10.1016/j.fluid.2007.08.013",
-          "notes": "Recommended correlation incorporates 45 equilibrium, 8 enthalpy, and 2 heat-capacity constraints. Signer-derived extrapolated gamma_infinity was identified as a high outlier and not used.",
-          "quality": "very_high",
-          "reference": "Ondo, D.; Dohnal, V. Fluid Phase Equilib. 2007, 262, 121-136.",
-          "role": "primary broad-temperature infinite-dilution thermodynamic constraint"
-        },
-        {
-          "data_used": [
-            "P-x VLE both branches",
-            "VLLE pressure",
-            "miscibility endpoints",
-            "excess enthalpy"
-          ],
-          "doi": "10.1021/je00038a020",
-          "experimental_P3_kPa": 104.7,
-          "experimental_x_DEE_aqueous": 0.01172,
-          "experimental_x_DEE_organic": 0.95,
-          "experimental_y_DEE_VLLE": 0.9463,
-          "quality": "very_high",
-          "reference": "Villamanan, M. A.; Allawi, A. J.; Van Ness, H. C. J. Chem. Eng. Data 1984, 29, 431-435.",
-          "role": "finite-composition VLE/VLLE and excess-enthalpy constraint",
-          "temperature_K": 308.15
-        },
-        {
-          "data_not_used": [
-            "extrapolated limiting activity coefficient"
-          ],
-          "data_used": [
-            "direct miscibility endpoints",
-            "three-phase total pressure"
-          ],
-          "doi": "10.1002/hlca.19690520816",
-          "experimental_P3_Torr": 539.2,
-          "experimental_x_DEE_aqueous": 0.0159,
-          "experimental_x_DEE_organic": 0.9502,
-          "reference": "Signer, R.; Arm, H.; Daeniker, H. Helv. Chim. Acta 1969, 52, 2347-2351.",
-          "role": "independent 298 K LLE and three-phase-pressure check",
-          "temperature_K": 298.15
-        }
-      ],
       "fit_status": "final_recommended_after_HE_validation",
-      "fit_temperature_range": {
-        "Tmax": 373.15,
-        "Tmin": 273.15,
-        "finite_composition_validation_strongest_K": [
-          298.15,
-          308.15
-        ]
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_diethyl_ether",
       "tau12_c": 11.754188386,
       "tau12_d": -2538.603239639,
       "tau12_e": -28.215160571,
@@ -734,98 +981,9 @@
       "comment": "Water/Diisopropyl ether curated water/organic NRTL regression",
       "component1": "Water",
       "component2": "Diisopropyl ether",
-      "fit_and_validation": {
-        "Henry_kH_29815_predicted_mol_per_kg_bar": 0.4793,
-        "Henry_kH_29815_reference_mol_per_kg_bar": 0.49,
-        "heteroazeotrope_temperature_experimental_K": 335.35,
-        "heteroazeotrope_temperature_predicted_K": 335.473,
-        "heteroazeotrope_y_DIPE_experimental": 0.78,
-        "heteroazeotrope_y_DIPE_predicted": 0.78216,
-        "hwang_DIPE_in_water_LLE_AARD_percent": 5.82,
-        "hwang_water_in_DIPE_LLE_AARD_percent": 1.78,
-        "yorizane_dilute_high_T_aqueous_VLE_pressure_MAE_kPa": 18.74,
-        "yorizane_dilute_high_T_aqueous_VLE_y_MAE": 0.299,
-        "yorizane_organic_rich_VLE_pressure_MAE_kPa": 1.31,
-        "yorizane_organic_rich_VLE_y_MAE": 0.0266
-      },
-      "fit_assessment": {
-        "confidence_288_to_323_K": "high",
-        "confidence_323_to_335_K": "moderate",
-        "confidence_above_335_K": "low",
-        "important_note": "Do not let the old dilute high-temperature aqueous VLE force a large curvature coefficient without independent confirmation.",
-        "preferred_model": "UNIQUAC by a negligible numerical margin"
-      },
-      "fit_protocol": {
-        "complexity_selection": {
-          "nrtl": "c+d/T retained; e12=e21=0",
-          "reason": "An added NRTL e12 term rose to approximately +94 and was identified mainly by one rounded historical dataset.",
-          "rejected_candidate": "large aqueous-side curvature driven by 1967 dilute VLE",
-          "uniquac": "exp(a+b/T) retained; c12=c21=0"
-        },
-        "independent_validation": [
-          "298 K Henry constant"
-        ],
-        "joint_properties": [
-          "modern LLE",
-          "low-weight historical binary VLE",
-          "binary heteroazeotrope"
-        ]
-      },
-      "fit_provenance": [
-        {
-          "data_used": [
-            "both liquid branches at eight temperatures, 288.15-323.15 K"
-          ],
-          "doi": "10.1016/j.fluid.2008.04.010",
-          "quality": "very_high",
-          "reference": "Hwang, I.-C.; Park, S.-J.; Choi, J.-S. Fluid Phase Equilib. 2008, 269, 1-5.",
-          "role": "primary modern binary LLE regression source",
-          "weight": "highest"
-        },
-        {
-          "data_downweighted": [
-            "very dilute high-temperature aqueous VLE",
-            "boiling-point binary solubility endpoints"
-          ],
-          "data_used": [
-            "organic-rich binary VLE with moderate weight",
-            "binary heterogeneous azeotrope"
-          ],
-          "experimental_heteroazeotrope": {
-            "temperature_K": 335.35,
-            "y_DIPE": 0.78
-          },
-          "notes": "Dilute compositions are strongly rounded and the VLE and boiling-point-solubility data show tension near the phase boundary.",
-          "quality": "moderate",
-          "reference": "Yorizane, M.; Yoshimura, S.; Yamamoto, T. Kagaku Kogaku 1967, 31, 451-456.",
-          "role": "atmospheric VLE/VLLE and high-temperature validation"
-        },
-        {
-          "experimental_kH_mol_per_kg_bar": 0.49,
-          "reference": "Sander/NIST Henry-law compilation",
-          "role": "independent 298 K infinite-dilution validation"
-        },
-        {
-          "doi": "10.1016/j.jct.2008.01.002",
-          "notes": "ThermoML ternary VLLE is available and thermodynamically consistent, but was not treated as an independent binary LLE series.",
-          "reference": "Lladosa, E.; Monton, J. B.; Burguet, M. C.; de la Torre, J. J. Chem. Thermodyn. 2008, 40, 867-873.",
-          "role": "supporting ternary VLLE provenance"
-        }
-      ],
       "fit_status": "final_conservative",
-      "fit_temperature_range": {
-        "Tmax": 335.35,
-        "Tmin": 288.15,
-        "do_not_extrapolate_to_373_K_without_additional_data": true,
-        "high_confidence_LLE_range": [
-          288.15,
-          323.15
-        ],
-        "upper_extension_basis": "atmospheric binary VLLE/heteroazeotrope"
-      },
       "source": "water_organic_binary_fits.json",
       "source_file": "data/source/water_organic_binary_fits.json",
-      "source_pair_id": "water_diisopropyl_ether",
       "tau12_c": -3.78924315,
       "tau12_d": 2667.048549496,
       "tau12_e": 0.0,
@@ -2867,18 +3025,6 @@
       "source_id2": "1845"
     },
     {
-      "a12_cal_per_mol": 793.8173,
-      "a21_cal_per_mol": -486.3299,
-      "alpha12": 0.2483,
-      "cas1": "67-56-1",
-      "cas2": "71-36-3",
-      "comment": "Methanol/1-Butanol p127 1/2c",
-      "component1": "CH3OH",
-      "component2": "1-Butanol",
-      "source_id1": "1101",
-      "source_id2": "1105"
-    },
-    {
       "a12_cal_per_mol": -308.561,
       "a21_cal_per_mol": 285.442,
       "alpha12": 0.3036,
@@ -4293,18 +4439,6 @@
       "component2": "C2H5OH",
       "source_id1": "1321",
       "source_id2": "1102"
-    },
-    {
-      "a12_cal_per_mol": 705.9989,
-      "a21_cal_per_mol": 211.158,
-      "alpha12": 0.2953,
-      "cas1": "60-29-7",
-      "cas2": "67-56-1",
-      "comment": "DiethylEther/Methanol p133 1/2c",
-      "component1": "Diethyl Ether",
-      "component2": "CH3OH",
-      "source_id1": "1402",
-      "source_id2": "1101"
     },
     {
       "a12_cal_per_mol": 763.6707,
@@ -6436,14 +6570,21 @@
     "activity_curated_disabled_records": 9,
     "activity_duplicate_equivalence_tolerance": "rel_tol=1e-4, abs_tol=1e-3",
     "activity_duplicate_policy": "Only equivalent records after canonical CAS orientation are collapsed; competing same-form fits remain separate.",
-    "base_converted_records": 348,
-    "converted_records": 434,
+    "assorted_overlay_records": 28,
+    "assorted_overlay_replaced_pairs": 2,
+    "assorted_overlay_replaced_records": 2,
+    "assorted_overlay_zero_records": 3,
+    "base_converted_records": 346,
+    "converted_records": 461,
     "disabled_records": 15,
     "ipd_hydration_by_source": {
       "nrtl.ipd": 5
     },
     "ipd_hydration_new_pairs": 5,
     "ipd_hydration_records": 5,
+    "isopropanol_water_overlay_records": 1,
+    "isopropanol_water_overlay_replaced_pairs": 0,
+    "isopropanol_water_overlay_replaced_records": 0,
     "key_basis": "CAS",
     "literature_vle_overlay_records": 6,
     "literature_vle_overlay_replaced_pairs": 0,
@@ -6452,8 +6593,8 @@
     "skipped_records": 0,
     "source": "ChemSep DECHEMA NRTL data at 1 atm",
     "source_file": "nrtl_binary_interactions.json",
-    "supplemental_new_pairs": 48,
-    "supplemental_records": 81,
+    "supplemental_new_pairs": 75,
+    "supplemental_records": 110,
     "units": "a*_cal_per_mol records are cal/mol; tau* records are dimensionless NRTL tau coefficients",
     "unresolved_components": [
       {

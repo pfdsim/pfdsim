@@ -19,6 +19,31 @@ SOURCE_DATA = DATA / "source"
 ARCHIVED_DATA = DATA / "archived"
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 
+ASSORTED_ALCOHOL_ETHER_CAS = {
+    "1-butanol": "71-36-3",
+    "1-propanol": "71-23-8",
+    "2-methoxyethanol": "109-86-4",
+    "2-propanol": "67-63-0",
+    "acetonitrile": "75-05-8",
+    "anisole": "100-66-3",
+    "butylamine": "109-73-9",
+    "cyclopentanone": "120-92-3",
+    "dibutyl ether": "142-96-1",
+    "diethyl ether": "60-29-7",
+    "diisopropyl ether": "108-20-3",
+    "dipropyl ether": "111-43-3",
+    "ethanol": "64-17-5",
+    "isopropyl acetate": "108-21-4",
+    "methanol": "67-56-1",
+    "n-heptane": "142-82-5",
+    "n-hexane": "110-54-3",
+    "n-octane": "111-65-9",
+    "propanone": "67-64-1",
+    "propylamine": "107-10-8",
+    "tetrahydrofuran": "109-99-9",
+    "water": "7732-18-5",
+}
+
 SOURCE_INTERACTION_FILES = (
     "eos_binary_interactions.json",
     "nrtl_binary_interactions.json",
@@ -689,13 +714,7 @@ def supplemental_water_organic_binary_fit_records(
             "Tmax_K": float(temperature_range["Tmax"]),
             "source": "water_organic_binary_fits.json",
             "source_file": "data/source/water_organic_binary_fits.json",
-            "source_pair_id": system["pair_id"],
             "fit_status": system["fit_status"],
-            "fit_temperature_range": temperature_range,
-            "fit_provenance": system["provenance"],
-            "fit_protocol": system["fit_protocol"],
-            "fit_and_validation": fit.get("fit_and_validation", {}),
-            "fit_assessment": system["assessment"],
             "comment": (
                 f"{system['component1']}/{system['component2']} curated "
                 f"water/organic {model_key} regression"
@@ -753,12 +772,11 @@ def supplemental_literature_vle_activity_records(
         cas2: str,
         component1: str,
         component2: str,
-        source_file: str,
+        source: str,
         parameters: dict,
-        recommended: bool,
         comment: str,
         temperature_range: tuple[float, float] | None = None,
-        fit_status: str = "literature_regression",
+        fit_status: str = "recommended_literature_interaction",
     ) -> None:
         pair = tuple(sorted((cas1, cas2)))
         if pair in covered_pairs:
@@ -771,10 +789,9 @@ def supplemental_literature_vle_activity_records(
             "cas2": cas2,
             "component1": component1,
             "component2": component2,
-            "source": source_file,
-            "source_file": f"data/source/{source_file}",
+            "source": source,
+            "source_file": f"data/source/{source}",
             "fit_status": fit_status,
-            "recommended": bool(recommended),
             "comment": comment,
         }
         if temperature_range is not None:
@@ -822,14 +839,13 @@ def supplemental_literature_vle_activity_records(
             cas2="7732-18-5",
             component1="Acetaldehyde",
             component2="Water",
-            source_file=acetaldehyde_file,
+            source=acetaldehyde_file,
             parameters={
                 "tau12_a": fit["A_12"],
                 "tau12_b": fit["B_12_K"],
                 "tau21_a": fit["A_21"],
                 "tau21_b": fit["B_21_K"],
             },
-            recommended=True,
             comment=(
                 "Acetaldehyde/Water source-balanced temperature-dependent "
                 "UNIQUAC literature regression"
@@ -845,7 +861,7 @@ def supplemental_literature_vle_activity_records(
             cas2="7732-18-5",
             component1="Acetaldehyde",
             component2="Water",
-            source_file=acetaldehyde_file,
+            source=acetaldehyde_file,
             parameters={
                 "alpha12": fit["alpha_12"],
                 "tau12_c": fit["A_12"],
@@ -853,7 +869,6 @@ def supplemental_literature_vle_activity_records(
                 "tau21_c": fit["A_21"],
                 "tau21_d": fit["B_21_K"],
             },
-            recommended=True,
             comment=(
                 "Acetaldehyde/Water source-balanced temperature-dependent "
                 "NRTL literature regression"
@@ -911,9 +926,8 @@ def supplemental_literature_vle_activity_records(
             cas2=acid_cas[component2],
             component1=component1,
             component2=component2,
-            source_file=acid_file,
+            source=acid_file,
             parameters=parameters,
-            recommended=bool(fit["recommended"]),
             comment=(
                 f"{component1}/{component2} defensible zero residual {model_key} "
                 "interaction after statistical vapor cross-association"
@@ -925,19 +939,14 @@ def supplemental_literature_vle_activity_records(
             fit_status=(
                 "recommended_defensible_zero_interaction"
                 if is_defensible_zero
-                else "recommended_literature_regression"
+                else "recommended_literature_interaction"
             ),
         )
         if is_defensible_zero:
-            records[-1]["zero_interaction_basis"] = (
-                "The error introduced by assuming zero residual liquid "
-                "interaction is expected to be well below the experimental "
-                "error margin; the source estimates unmodeled activity-"
-                "coefficient nonideality at about 1-2% or less."
-            )
             records[-1]["comment"] += (
                 "; expected zero-interaction error is well below the "
-                "experimental error margin"
+                "experimental error margin (about 1-2% activity-coefficient "
+                "nonideality or less)"
             )
 
     water_acid_file = "water_c3_acid_vle_interactions.json"
@@ -991,22 +1000,287 @@ def supplemental_literature_vle_activity_records(
             cas2=water_acid_cas[system_key],
             component1="Water",
             component2=acid_name,
-            source_file=water_acid_file,
+            source=water_acid_file,
             parameters=parameters,
-            recommended=bool(fit["recommended"]),
             comment=(
                 f"Water/{acid_name} temperature-dependent {model_key} "
                 "literature regression with fixed VDM"
             ),
             temperature_range=water_acid_ranges[system_key],
             fit_status=(
-                "recommended_literature_regression"
+                "recommended_literature_interaction"
                 if fit["recommended"]
                 else "retained_literature_alternative"
             ),
         )
 
     return records, len(covered_pairs - existing_pairs), covered_pairs
+
+
+def supplemental_assorted_alcohol_ether_records(
+    existing: list[dict],
+    model: str,
+) -> tuple[list[dict], int, set[tuple[str, str]]]:
+    """Build recommended alcohol/ether fits and evidence-backed zeroes."""
+    path = SOURCE_DATA / "assorted_alcohols_ethers.json"
+    if not path.exists():
+        return [], 0, set()
+    model_key = model.upper()
+    source_key = model_key.lower()
+    if model_key not in {"NRTL", "UNIQUAC"}:
+        return [], 0, set()
+
+    payload = load_json(path)
+    excluded_pair = frozenset(("2-propanol", "water"))
+    existing_pairs = {
+        tuple(sorted((record["cas1"], record["cas2"])))
+        for record in existing
+    }
+    records: list[dict] = []
+    covered_pairs: set[tuple[str, str]] = set()
+
+    def pair_identity(components: list[str]) -> tuple[str, str, tuple[str, str]]:
+        component1, component2 = components
+        try:
+            cas1 = ASSORTED_ALCOHOL_ETHER_CAS[component1]
+            cas2 = ASSORTED_ALCOHOL_ETHER_CAS[component2]
+        except KeyError as error:
+            raise ValueError(
+                f"Missing CAS mapping for assorted alcohol/ether component {error.args[0]!r}"
+            ) from error
+        return cas1, cas2, tuple(sorted((cas1, cas2)))
+
+    for entry in payload["entries"]:
+        components = entry["components"]
+        if frozenset(components) == excluded_pair:
+            continue
+        parameters = entry.get(source_key)
+        if not (
+            entry.get("recommended", False)
+            and parameters
+            and parameters.get("recommended", False)
+        ):
+            continue
+        cas1, cas2, pair = pair_identity(components)
+        if pair in covered_pairs:
+            raise ValueError(
+                f"Duplicate recommended {model_key} assorted fit for CAS pair {pair}"
+            )
+        covered_pairs.add(pair)
+        validity = entry["validity"]
+        source_ids = list(
+            entry.get("source_ids")
+            or entry.get("sources_used_for_refit")
+            or entry.get("sources")
+            or []
+        )
+        record = {
+            "cas1": cas1,
+            "cas2": cas2,
+            "component1": components[0],
+            "component2": components[1],
+            "Tmin_K": float(validity["T_K"][0]),
+            "Tmax_K": float(validity["T_K"][1]),
+            "source": (
+                "assorted_alcohols_ethers.json"
+                + (f"; {', '.join(source_ids)}" if source_ids else "")
+            ),
+            "source_file": "data/source/assorted_alcohols_ethers.json",
+            "fit_status": "recommended_literature_interaction",
+            "fit_vapor_treatment": {
+                "type": "likely_HOC_or_equivalent_association_correction",
+                "certainty": "inferred_not_confirmed_for_every_source",
+                "note": (
+                    "The underlying alcohol/ether VLE reductions likely used "
+                    "Hayden-O'Connell or an equivalent association-aware vapor "
+                    "treatment, but this is not confirmed uniformly across all "
+                    "contributing sources."
+                ),
+            },
+            "comment": (
+                f"{components[0]}/{components[1]} recommended temperature-dependent "
+                f"{model_key} literature interaction"
+            ),
+        }
+        if model_key == "NRTL":
+            record.update({
+                "alpha12": float(parameters["alpha"]),
+                "tau12_c": float(parameters["a12"]),
+                "tau12_d": float(parameters["b12_K"]),
+                "tau12_e": 0.0,
+                "tau12_f": float(parameters.get("c12_per_K", 0.0)),
+                "tau21_c": float(parameters["a21"]),
+                "tau21_d": float(parameters["b21_K"]),
+                "tau21_e": 0.0,
+                "tau21_f": float(parameters.get("c21_per_K", 0.0)),
+                "tau_tref": 298.15,
+            })
+        else:
+            if parameters.get("model_variant") != "standard_uniquac":
+                raise ValueError(
+                    f"Recommended nonstandard UNIQUAC entry was not excluded: {components}"
+                )
+            record.update({
+                "model_variant": "standard_uniquac",
+                "use_q_prime": False,
+                "tau12_a": float(parameters["a12"]),
+                "tau12_b": float(parameters["b12_K"]),
+                "tau12_c": float(parameters.get("c12_per_K", 0.0)),
+                "tau21_a": float(parameters["a21"]),
+                "tau21_b": float(parameters["b21_K"]),
+                "tau21_c": float(parameters.get("c21_per_K", 0.0)),
+            })
+        records.append(record)
+
+    for entry in payload["retired_or_not_promoted"]:
+        if "use_zero_interaction" not in entry.get("status", ""):
+            continue
+        components = entry["components"]
+        cas1, cas2, pair = pair_identity(components)
+        if pair in covered_pairs:
+            raise ValueError(
+                f"Defensible zero duplicates an active {model_key} assorted fit for {pair}"
+            )
+        covered_pairs.add(pair)
+        source_ids = list(entry.get("source_ids", []))
+        record = {
+            "cas1": cas1,
+            "cas2": cas2,
+            "component1": components[0],
+            "component2": components[1],
+            "source": (
+                "assorted_alcohols_ethers.json"
+                + (f"; {', '.join(source_ids)}" if source_ids else "")
+            ),
+            "source_file": "data/source/assorted_alcohols_ethers.json",
+            "fit_status": "recommended_defensible_zero_interaction",
+            "fit_vapor_treatment": {
+                "type": "likely_HOC_or_equivalent_association_correction",
+                "certainty": "inferred_not_confirmed_for_every_source",
+                "note": (
+                    "The underlying VLE evidence likely used Hayden-O'Connell "
+                    "or an equivalent association-aware vapor treatment, but "
+                    "this is not confirmed uniformly across all sources."
+                ),
+            },
+            "comment": (
+                f"{components[0]}/{components[1]} defensible zero {model_key} "
+                f"interaction; {entry['reason']}"
+            ),
+        }
+        if model_key == "NRTL":
+            record.update({
+                "alpha12": 0.3,
+                "tau12_c": 0.0,
+                "tau12_d": 0.0,
+                "tau12_e": 0.0,
+                "tau12_f": 0.0,
+                "tau21_c": 0.0,
+                "tau21_d": 0.0,
+                "tau21_e": 0.0,
+                "tau21_f": 0.0,
+                "tau_tref": 298.15,
+            })
+        else:
+            record.update({
+                "model_variant": "standard_uniquac",
+                "use_q_prime": False,
+                "tau12_a": 0.0,
+                "tau12_b": 0.0,
+                "tau12_c": 0.0,
+                "tau21_a": 0.0,
+                "tau21_b": 0.0,
+                "tau21_c": 0.0,
+            })
+        records.append(record)
+
+    return records, len(covered_pairs - existing_pairs), covered_pairs
+
+
+def supplemental_isopropanol_water_records(
+    existing: list[dict],
+    model: str,
+) -> tuple[list[dict], int, set[tuple[str, str]]]:
+    """Build the curated broad-range 2-propanol/water interaction fit."""
+    path = SOURCE_DATA / "isopropanol_water_interactions.json"
+    if not path.exists():
+        return [], 0, set()
+    model_key = model.upper()
+    if model_key not in {"NRTL", "UNIQUAC"}:
+        return [], 0, set()
+
+    payload = load_json(path)
+    component_order = payload["system"]["component_order"]
+    component1 = component_order["1"]
+    component2 = component_order["2"]
+    cas1, cas2 = component1["cas"], component2["cas"]
+    pair = tuple(sorted((cas1, cas2)))
+    existing_pairs = {
+        tuple(sorted((record["cas1"], record["cas2"])))
+        for record in existing
+    }
+    model_data = payload["models"][model_key]
+    if not model_data.get("selected", False):
+        return [], 0, set()
+
+    validity = payload["recommended_validity"]
+    fit_sources = [
+        source["source"] for source in payload["fit_provenance"]["common_dataset"]
+    ]
+    record = {
+        "cas1": cas1,
+        "cas2": cas2,
+        "component1": component1["name"],
+        "component2": component2["name"],
+        "Tmin_K": float(validity["temperature_min_K"]),
+        "Tmax_K": float(validity["temperature_max_K"]),
+        "source": (
+            "isopropanol_water_interactions.json; " + ", ".join(fit_sources)
+        ),
+        "source_file": "data/source/isopropanol_water_interactions.json",
+        "fit_status": "recommended_broad_range_literature_interaction",
+        "fit_vapor_treatment": payload["vapor_phase_treatment"],
+        "comment": (
+            f"2-propanol/Water broad-range temperature-dependent {model_key} "
+            "fit with truncated-second-virial vapor correction "
+            "(B12=-220 cm^3/mol)"
+        ),
+    }
+    parameters = model_data["parameters"]
+    forward = parameters["1_to_2"]
+    reverse = parameters["2_to_1"]
+    if model_key == "NRTL":
+        alpha12 = float(parameters["alpha_12"])
+        alpha21 = float(parameters["alpha_21"])
+        if not math.isclose(alpha12, alpha21):
+            raise ValueError(
+                "PFDSim's NRTL runtime requires symmetric alpha for the "
+                "2-propanol/water fit"
+            )
+        record.update({
+            "alpha12": alpha12,
+            "tau12_c": float(forward["a"]),
+            "tau12_d": float(forward["b"]),
+            "tau12_e": 0.0,
+            "tau12_f": float(forward["c"]),
+            "tau21_c": float(reverse["a"]),
+            "tau21_d": float(reverse["b"]),
+            "tau21_e": 0.0,
+            "tau21_f": float(reverse["c"]),
+            "tau_tref": 298.15,
+        })
+    else:
+        record.update({
+            "model_variant": "standard_uniquac",
+            "use_q_prime": False,
+            "tau12_a": float(forward["a"]),
+            "tau12_b": float(forward["b"]),
+            "tau12_c": float(forward["c"]),
+            "tau21_a": float(reverse["a"]),
+            "tau21_b": float(reverse["b"]),
+            "tau21_c": float(reverse["c"]),
+        })
+    return [record], 0 if pair in existing_pairs else 1, {pair}
 
 
 def supplemental_phenolic_temperature_records(
@@ -1941,6 +2215,13 @@ def build_interaction_payload(
     literature_vle_overlay_records = 0
     literature_vle_overlay_replaced_records = 0
     literature_vle_overlay_replaced_pairs = 0
+    assorted_overlay_records = 0
+    assorted_overlay_zero_records = 0
+    assorted_overlay_replaced_records = 0
+    assorted_overlay_replaced_pairs = 0
+    isopropanol_water_overlay_records = 0
+    isopropanol_water_overlay_replaced_records = 0
+    isopropanol_water_overlay_replaced_pairs = 0
     water_eo_models = {
         "eos_binary_interactions.json": ("PR", "SRK"),
         "nrtl_binary_interactions.json": ("NRTL",),
@@ -2097,6 +2378,84 @@ def build_interaction_payload(
             for record in supplemental_records
         } - base_pairs)
 
+        assorted_records, _assorted_new_pairs, assorted_pairs = (
+            supplemental_assorted_alcohol_ether_records(records, acid_model)
+        )
+        superseded = [
+            record for record in records
+            if tuple(sorted((record["cas1"], record["cas2"]))) in assorted_pairs
+        ]
+        supplemental_ids = {id(record) for record in supplemental_records}
+        curated_conflicts = [
+            record for record in superseded if id(record) in supplemental_ids
+        ]
+        if curated_conflicts:
+            conflict_labels = [
+                record.get("comment", str((record["cas1"], record["cas2"])))
+                for record in curated_conflicts
+            ]
+            raise ValueError(
+                "assorted_alcohols_ethers.json would replace newer curated "
+                f"records; review required: {conflict_labels}"
+            )
+        superseded_ids = {id(record) for record in superseded}
+        assorted_overlay_replaced_records = len(superseded)
+        assorted_overlay_replaced_pairs = len({
+            tuple(sorted((record["cas1"], record["cas2"])))
+            for record in superseded
+        })
+        records = [
+            record for record in records if id(record) not in superseded_ids
+        ]
+        records[0:0] = assorted_records
+        supplemental_records += assorted_records
+        assorted_overlay_records = len(assorted_records)
+        assorted_overlay_zero_records = sum(
+            record.get("fit_status") == "recommended_defensible_zero_interaction"
+            for record in assorted_records
+        )
+        supplemental_new_pairs = len({
+            tuple(sorted((record["cas1"], record["cas2"])))
+            for record in supplemental_records
+        } - base_pairs)
+
+        ipa_records, _ipa_new_pairs, ipa_pairs = (
+            supplemental_isopropanol_water_records(records, acid_model)
+        )
+        superseded = [
+            record for record in records
+            if tuple(sorted((record["cas1"], record["cas2"]))) in ipa_pairs
+        ]
+        supplemental_ids = {id(record) for record in supplemental_records}
+        curated_conflicts = [
+            record for record in superseded if id(record) in supplemental_ids
+        ]
+        if curated_conflicts:
+            conflict_labels = [
+                record.get("comment", str((record["cas1"], record["cas2"])))
+                for record in curated_conflicts
+            ]
+            raise ValueError(
+                "isopropanol_water_interactions.json would replace newer "
+                f"curated records; review required: {conflict_labels}"
+            )
+        superseded_ids = {id(record) for record in superseded}
+        isopropanol_water_overlay_replaced_records = len(superseded)
+        isopropanol_water_overlay_replaced_pairs = len({
+            tuple(sorted((record["cas1"], record["cas2"])))
+            for record in superseded
+        })
+        records = [
+            record for record in records if id(record) not in superseded_ids
+        ]
+        records[0:0] = ipa_records
+        supplemental_records += ipa_records
+        isopropanol_water_overlay_records = len(ipa_records)
+        supplemental_new_pairs = len({
+            tuple(sorted((record["cas1"], record["cas2"])))
+            for record in supplemental_records
+        } - base_pairs)
+
     hydration_records, hydration_new_pairs, hydration_by_source = ipd_hydration_records(
         records,
         source_name,
@@ -2154,6 +2513,13 @@ def build_interaction_payload(
             "literature_vle_overlay_records": literature_vle_overlay_records,
             "literature_vle_overlay_replaced_records": literature_vle_overlay_replaced_records,
             "literature_vle_overlay_replaced_pairs": literature_vle_overlay_replaced_pairs,
+            "assorted_overlay_records": assorted_overlay_records,
+            "assorted_overlay_zero_records": assorted_overlay_zero_records,
+            "assorted_overlay_replaced_records": assorted_overlay_replaced_records,
+            "assorted_overlay_replaced_pairs": assorted_overlay_replaced_pairs,
+            "isopropanol_water_overlay_records": isopropanol_water_overlay_records,
+            "isopropanol_water_overlay_replaced_records": isopropanol_water_overlay_replaced_records,
+            "isopropanol_water_overlay_replaced_pairs": isopropanol_water_overlay_replaced_pairs,
         })
     source_payload = load_json(ARCHIVED_DATA / source_name)
     for key in ("source", "units"):

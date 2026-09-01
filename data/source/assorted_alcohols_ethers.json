@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "generated_date": "2026-08-30",
+  "schema_version": 4,
+  "generated_date": "2026-08-31",
   "purpose": "Full combined PFDSIM temperature-dependent NRTL/UNIQUAC binary interaction parameter set from the alcohol/ether survey and reliable additional systems found in the supplied papers.",
   "conventions": {
     "temperature_unit": "K",
@@ -50,57 +50,231 @@
     "gao_2012": {
       "citation": "Gao et al., Industrial & Engineering Chemistry Research 51 (2012) 567-575",
       "doi": "10.1021/ie201805m",
-      "vapor_basis": "gamma-phi; Hayden-O'Connell vapor fugacity, saturated-vapor fugacity correction, Poynting correction, modified Rackett liquid volume"
+      "vapor_basis": "gamma-phi; Hayden-O'Connell vapor fugacity, saturated-vapor fugacity correction, Poynting correction, modified Rackett liquid volume",
+      "title": "Correlation and Prediction for Isobaric Vapor-Liquid Equilibria of the Diethyl Ether + Methanol + 1-Butanol Ternary System and the Constituent Binary Systems at 101.325 kPa",
+      "authors": [
+        "Daming Gao",
+        "Hui Zhang",
+        "Dechun Zhu",
+        "Hong Sun",
+        "Hong Chen",
+        "Jianjun Shi",
+        "Peter LÃ¼cking",
+        "Bernhard Winter",
+        "Yamei Zhan"
+      ],
+      "journal": "Industrial & Engineering Chemistry Research",
+      "year": 2012,
+      "volume": 51,
+      "pages": "567-575",
+      "attached_file": "ie201805m.pdf",
+      "experimental_scope": "Full T-x-y VLE for DEE + methanol, DEE + 1-butanol, and methanol + 1-butanol at 101.325 kPa; ternary measured separately.",
+      "parameter_location": "Table 2",
+      "provenance_note": "Constituent binary parameters were independently fitted; the ternary was predicted from those binary parameters without additional adjustment."
     },
     "lladosa_2006": {
       "citation": "Lladosa et al., Fluid Phase Equilibria 247 (2006) 47-53",
       "doi": "10.1016/j.fluid.2006.06.017",
-      "vapor_basis": "ideal vapor at 20 and 101.3 kPa; liquid pressure dependence neglected"
+      "vapor_basis": "ideal vapor at 20 and 101.3 kPa; liquid pressure dependence neglected",
+      "title": "Isobaric vapor-liquid equilibria for the binary systems 1-propyl alcohol + dipropyl ether and 1-butyl alcohol + dibutyl ether at 20 and 101.3 kPa",
+      "authors": [
+        "Estela Lladosa",
+        "Juan B. MontÃ³n",
+        "M. Cruz Burguet",
+        "Rosa MuÃ±oz"
+      ],
+      "journal": "Fluid Phase Equilibria",
+      "year": 2006,
+      "volume": 247,
+      "pages": "47-53",
+      "attached_file": "main 5(1).pdf",
+      "experimental_scope": "Full T-x-y VLE for 1-propanol + DPE and 1-butanol + DBE at 20 and 101.3 kPa.",
+      "parameter_location": "Table 10",
+      "provenance_note": "Published global regressions combine both pressures with Aij = Aij0 + Aij1*T. Source states UNIQUAC volume/surface parameters were from DECHEMA but does not print their numerical r/q values."
     },
     "reddy_2013": {
       "citation": "Reddy, Benecke & Ramjugernath, Journal of Chemical Thermodynamics 58 (2013) 330-339",
       "doi": "10.1016/j.jct.2012.11.005",
-      "vapor_basis": "gamma-phi; truncated two-term virial EOS with Hayden-O'Connell second virials, saturation fugacity and Poynting corrections"
+      "vapor_basis": "gamma-phi; truncated two-term virial EOS with Hayden-O'Connell second virials, saturation fugacity and Poynting corrections",
+      "title": "Isothermal (vapour + liquid) equilibria for binary mixtures of diisopropyl ether with (methanol, or ethanol, or 1-butanol): Experimental data, correlations, and predictions",
+      "authors": [
+        "Prashant Reddy",
+        "Travis P. Benecke",
+        "Deresh Ramjugernath"
+      ],
+      "journal": "The Journal of Chemical Thermodynamics",
+      "year": 2013,
+      "volume": 58,
+      "pages": "330-339",
+      "attached_file": "main 6(1).pdf",
+      "experimental_scope": "P-x-y VLE at 305.15/315.15/325.15 K for DIPE + methanol, 313.15/323.15/333.15 K for DIPE + ethanol, and 318.15/338.15 K for DIPE + 1-butanol.",
+      "parameter_location": "Table 9 for gamma-phi activity-model fits",
+      "provenance_note": "PFDSIM entries are global temperature-dependent refits to the multi-isotherm information rather than interpolation of the separately published isotherm parameters. Source calculations used Aspen Plus; numerical UNIQUAC r/q values are not printed in the paper."
     },
     "cartes_2021": {
       "citation": "Cartes et al., Fuel 297 (2021) 120361",
       "doi": "10.1016/j.fuel.2021.120361",
-      "vapor_basis": "ideal vapor modified Raoult law at 94 kPa; liquid fugacity pressure dependence neglected"
+      "vapor_basis": "ideal vapor modified Raoult law at 94 kPa; liquid fugacity pressure dependence neglected",
+      "title": "Measurements and modeling of the phase equilibria for the n-hexane + ethanol + dibutyl ether ternary mixture and its dibutyl ether sub-binary mixtures at 94 kPa",
+      "authors": [
+        "Marcela Cartes",
+        "Gustavo Chaparro",
+        "AndrÃ©s MejÃ­a"
+      ],
+      "journal": "Fuel",
+      "year": 2021,
+      "volume": 297,
+      "pages": "120361",
+      "attached_file": "main 8(1).pdf",
+      "experimental_scope": "T-x-y VLE for n-hexane + DBE and ethanol + DBE, plus ternary, at 94 kPa.",
+      "parameter_location": "Table 13",
+      "provenance_note": "Source prints the exact DECHEMA UNIQUAC structural parameters used: n-hexane 4.4998/3.8560, ethanol 2.1055/1.972, DBE 6.0925/5.176."
     },
     "wang_2020": {
       "citation": "Wang et al., Journal of Chemical & Engineering Data 65 (2020) 4387-4394",
       "doi": "10.1021/acs.jced.0c00204",
-      "vapor_basis": "ideal-vapor approximation at 101.3 kPa; vapor fugacity and Poynting corrections taken as approximately unity"
+      "vapor_basis": "ideal-vapor approximation at 101.3 kPa; vapor fugacity and Poynting corrections taken as approximately unity",
+      "title": "Isobaric Vapor-Liquid Equilibrium of Binary Systems (Isopropyl Acetate/Isopropyl Alcohol + Dibutyl Ether/Anisole) at 101.3 kPa",
+      "authors": [
+        "Wenjun Wang",
+        "Yi Zhang",
+        "Tao Zhang",
+        "Jun Gao",
+        "Dongmei Xu",
+        "Lianzheng Zhang",
+        "Yinglong Wang"
+      ],
+      "journal": "Journal of Chemical & Engineering Data",
+      "year": 2020,
+      "volume": 65,
+      "pages": "4387-4394",
+      "attached_file": "je0c00204.pdf",
+      "experimental_scope": "T-x-y VLE for IPAC + DBE, IPAC + anisole, IPA + DBE, and IPA + anisole at 101.3 kPa.",
+      "parameter_location": "Table 11; UNIQUAC r/q in Table 10",
+      "provenance_note": "Source prints the exact Aspen-databank UNIQUAC r/q values used and already publishes a+b/T forms."
     },
     "soujanya_2014": {
       "citation": "Soujanya, Satyavathi & Sankarshana, Fluid Phase Equilibria 382 (2014) 286-299",
       "doi": "10.1016/j.fluid.2014.09.014",
-      "vapor_basis": "low-pressure bubble-point treatment; no separate HOC correction documented for the activity-coefficient fits"
+      "vapor_basis": "low-pressure bubble-point treatment; no separate HOC correction documented for the activity-coefficient fits",
+      "title": "Experimental isobaric vapor-liquid equilibrium at atmospheric and sub-atmospheric pressures, excess molar volumes and deviations in molar refractivity from 293.15 K to 318.15 K of diisopropyl ether with methanol and isopropyl alcohol",
+      "authors": [
+        "Soujanya J.",
+        "Satyavathi B.",
+        "Sankarshana T."
+      ],
+      "journal": "Fluid Phase Equilibria",
+      "year": 2014,
+      "volume": 382,
+      "pages": "286-299",
+      "attached_file": "main 7(1).pdf",
+      "experimental_scope": "Bubble-temperature/composition measurements for DIPE + IPA and methanol + DIPE at 53.3, 66.7, 79.9, and 94.79 kPa; no independent measured vapor-composition series used in the PFDSIM replacement fit.",
+      "parameter_location": "Tables 7-9",
+      "provenance_note": "Old PFDSIM DIPE + IPA fit from this paper is retired; stronger multi-source data replace it."
     },
     "lladosa_2007": {
       "citation": "Lladosa et al., Fluid Phase Equilibria 262 (2007) 271-279",
       "doi": "10.1016/j.fluid.2007.09.014",
-      "vapor_basis": "ideal-vapor modified Raoult law; liquid pressure dependence neglected; justified by low pressure"
+      "vapor_basis": "ideal-vapor modified Raoult law; liquid pressure dependence neglected; justified by low pressure",
+      "title": "Effect of pressure and the capability of 2-methoxyethanol as a solvent in the behaviour of a diisopropyl ether-isopropyl alcohol azeotropic mixture",
+      "authors": [
+        "Estela Lladosa",
+        "Juan B. MontÃ³n",
+        "M. Cruz Burguet",
+        "Rosa MuÃ±oz"
+      ],
+      "journal": "Fluid Phase Equilibria",
+      "year": 2007,
+      "volume": 262,
+      "pages": "271-279",
+      "attached_file": "mainext 2.pdf",
+      "experimental_scope": "Full T-x-y VLE for DIPE + IPA at 30 and 101.3 kPa and DIPE + 2-methoxyethanol / IPA + 2-methoxyethanol at 101.3 kPa.",
+      "parameter_location": "Table 9 for 101.3-kPa binaries; Table 10 for global DIPE + IPA parameters",
+      "provenance_note": "Source states UNIQUAC volume/surface parameters were from DECHEMA but does not print the numerical r/q values."
     },
     "arce_2003": {
       "citation": "Arce et al., Journal of Chemical Thermodynamics 35 (2003) 871-884",
       "doi": "10.1016/S0021-9614(03)00018-1",
-      "vapor_basis": "gamma-phi; Hayden-O'Connell second-virial vapor fugacity; saturated-vapor fugacity and Poynting correction; Rackett liquid volume"
+      "vapor_basis": "gamma-phi; Hayden-O'Connell second-virial vapor fugacity; saturated-vapor fugacity and Poynting correction; Rackett liquid volume",
+      "title": "(Vapour + liquid) equilibrium of (DIPE + IPA + water) at 101.32 kPa",
+      "authors": [
+        "Alberto Arce",
+        "Alberto Arce Jr.",
+        "JosÃ© MartÃ­nez-Ageitos",
+        "Eva Rodil",
+        "Ana Soto"
+      ],
+      "journal": "The Journal of Chemical Thermodynamics",
+      "year": 2003,
+      "volume": 35,
+      "pages": "871-884",
+      "attached_file": "main 10(1).pdf",
+      "experimental_scope": "Thermodynamically consistent T-x-y VLE for DIPE + IPA and IPA + water plus the ternary at 101.32 kPa.",
+      "parameter_location": "Table 5",
+      "provenance_note": "Uses Hayden-O'Connell vapor correction. For UNIQUAC the paper states r/q came from Daubert & Danner and explicitly uses q0 (q-prime) = 0.89 for IPA and 1.00 for water; this is not silently interchangeable with ordinary UNIQUAC."
     },
     "chamorro_2002": {
       "citation": "Chamorro et al., Journal of Chemical Thermodynamics 34 (2002) 13-28",
       "doi": "10.1006/jcht.2001.0840",
-      "vapor_basis": "Barker total-pressure reduction; second-virial EOS with Hayden-O'Connell coefficients"
+      "vapor_basis": "Barker total-pressure reduction; second-virial EOS with Hayden-O'Connell coefficients",
+      "title": "Isothermal v.l.e. and excess molar Gibbs energy of binary and ternary mixtures containing diisopropyl ether, n-heptane and isopropanol at T = 313.15 K",
+      "authors": [
+        "CÃ©sar R. Chamorro",
+        "JosÃ© J. Segovia",
+        "MarÃ­a C. MartÃ­n",
+        "Miguel A. VillamaÃ±Ã¡n"
+      ],
+      "journal": "The Journal of Chemical Thermodynamics",
+      "year": 2002,
+      "volume": 34,
+      "pages": "13-28",
+      "attached_file": "main 9(1).pdf",
+      "experimental_scope": "High-precision isothermal total-pressure data for DIPE + n-heptane, DIPE + IPA, IPA + n-heptane, and the ternary at 313.15 K; vapor compositions obtained by Barker reduction.",
+      "parameter_location": "Table 6",
+      "provenance_note": "Second-virial vapor EOS with Hayden-O'Connell coefficients. Paper uses UNIQUAC r/q but does not print their numerical values."
     },
     "shawaqfeh_2010": {
       "citation": "Shawaqfeh, Afinidad LXVII 549 (2010)",
       "doi": null,
-      "vapor_basis": "gamma-phi; virial EOS with Hayden-O'Connell second virials; modified Rackett liquid volume; Antoine vapor pressures"
+      "vapor_basis": "gamma-phi; virial EOS with Hayden-O'Connell second virials; modified Rackett liquid volume; Antoine vapor pressures",
+      "title": "Isobaric Vapor-liquid equilibrium for the binary system Diisopropylether + Isopropanol at 95 kPa",
+      "authors": [
+        "Ahmad T. Shawaqfeh"
+      ],
+      "journal": "Afinidad",
+      "year": 2010,
+      "volume": "LXVII",
+      "issue": 549,
+      "pages": "380-385",
+      "attached_file": "adminRACO,+08_3808_549.pdf",
+      "experimental_scope": "Full T-x-y VLE for DIPE + IPA at 95 kPa.",
+      "parameter_location": "Tables 1, 3, and 4",
+      "provenance_note": "Used as independent validation for the PFDSIM multi-source DIPE + IPA fit."
     },
     "lepori_2000": {
       "citation": "Lepori et al., Physical Chemistry Chemical Physics 2 (2000) 4837-4842",
       "doi": "10.1039/B005160H",
-      "vapor_basis": "head-space GC; virial vapor nonideality correction including air represented as nitrogen; corrections generally under 4%"
+      "vapor_basis": "head-space GC; virial vapor nonideality correction including air represented as nitrogen; corrections generally under 4%",
+      "title": "Isothermal vapour/liquid equilibria of binary mixtures with dibutyl ether at 298.15 K",
+      "authors": [
+        "Luciano Lepori",
+        "Enrico Matteoli",
+        "Luca Bernazzani",
+        "Norberto Ceccanti",
+        "Giovanni Conti",
+        "Paolo Gianni",
+        "Vincenzo Mollica",
+        "Maria R. TinÃ¨"
+      ],
+      "journal": "Physical Chemistry Chemical Physics",
+      "year": 2000,
+      "volume": 2,
+      "pages": "4837-4842",
+      "attached_file": "b005160h.pdf",
+      "supplemental_file": "b005160h_table_suppl.doc",
+      "experimental_scope": "Head-space GC VLE at 298.15 K for DBE with hexane, octane, DEE, THF, propylamine, butylamine, propanone, cyclopentanone, methanol, 1-butanol, and acetonitrile.",
+      "parameter_location": "Raw x, ln(gamma1/gamma2), y, P in electronic supplementary Table S1; source Redlich-Kister smoothing in main-paper Table 2.",
+      "provenance_note": "PFDSIM NRTL/UNIQUAC entries are refits to the raw supplementary ln(gamma1/gamma2) values, not copied source BIPs."
     }
   },
   "entries": [
@@ -118,12 +292,13 @@
       "validity": {
         "T_K": [
           298.15,
-          411.1
+          413.67
         ],
         "P_kPa": [
           0.9,
           101.3
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -200,13 +375,52 @@
             "x_1_butanol_calc": 0.88527,
             "T_K_calc": 390.17
           }
-        ]
+        ],
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "1_butanol_standard",
+            "dibutyl_ether_canonical"
+          ],
+          "components": {
+            "1-butanol": {
+              "r": 3.4543,
+              "q": 3.052,
+              "registry_id": "1_butanol_standard"
+            },
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "These are the explicit r/q values tied to the PFDSIM global refit; they are not claimed to be printed numerically by Lladosa 2006."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis"
       },
       "source_ids": [
         "lladosa_2006",
         "lepori_2000"
       ],
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_global_refit",
+        "fit_data": [
+          {
+            "source_id": "lladosa_2006",
+            "role": "primary_fit",
+            "data": "T-x-y VLE at 20 and 101.3 kPa"
+          },
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K raw supplementary ln(gamma1/gamma2) VLE information"
+          }
+        ],
+        "component_order_note": "Lepori reports DBE as component 1; data were reordered to the entry order before fitting."
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -222,7 +436,12 @@
         "P_kPa": [
           20.0,
           101.3
-        ]
+        ],
+        "T_K": [
+          315.84,
+          369.75
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -236,7 +455,8 @@
         "published_fit_metrics": {
           "AAD_y1": 0.0051,
           "AAD_T_K": 0.07
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -250,9 +470,42 @@
           "AAD_y1": 0.0055,
           "AAD_T_K": 0.07
         },
-        "structural_basis": "DECHEMA, as used by source"
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "1_propanol_standard",
+            "dipropyl_ether_standard"
+          ],
+          "components": {
+            "1-propanol": {
+              "r": 2.7799,
+              "q": 2.512,
+              "registry_id": "1_propanol_standard"
+            },
+            "dipropyl ether": {
+              "r": 4.7437,
+              "q": 4.096,
+              "registry_id": "dipropyl_ether_standard"
+            }
+          },
+          "provenance_status": "source_basis_reconstructed",
+          "note": "Lladosa 2006 states DECHEMA r/q were used but does not print them; these are compatible published standard values. Exact source-number identity should be considered reconstructed rather than proven."
+        },
+        "r_q_provenance_status": "source_basis_reconstructed",
+        "recommended": true
       },
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "source_published_global_fit_converted",
+        "fit_data": [
+          {
+            "source_id": "lladosa_2006",
+            "role": "source_parameter_fit",
+            "data": "simultaneous 20 and 101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -268,7 +521,12 @@
         "P_kPa": [
           101.3,
           101.3
-        ]
+        ],
+        "T_K": [
+          355.2,
+          414.0
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -282,22 +540,85 @@
         "published_fit_metrics": {
           "RMS_y1": 0.009,
           "RMS_T_K": 0.33
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
-        "term_count": 2,
-        "a12": -0.0012,
-        "b12_K": 112.65,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": 113.26523551,
         "c12_per_K": 0.0,
-        "a21": 0.0018,
-        "b21_K": -341.76,
+        "a21": 0.0,
+        "b21_K": -345.32075525,
         "c21_per_K": 0.0,
         "published_fit_metrics": {
           "RMS_y1": 0.0087,
           "RMS_T_K": 0.33
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "2_propanol_canonical",
+            "dibutyl_ether_canonical"
+          ],
+          "components": {
+            "2-propanol": {
+              "r": 2.7791,
+              "q": 2.508,
+              "registry_id": "2_propanol_canonical"
+            },
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            }
+          },
+          "provenance_status": "canonical_database_basis_transformed",
+          "note": "Exact Aspen-databank r/q values printed in Wang 2020 Table 10."
+        },
+        "r_q_provenance_status": "canonical_database_basis_transformed",
+        "recommended": true,
+        "pre_standardization_parameterization": {
+          "term_count": 2,
+          "a12": -0.0012,
+          "b12_K": 112.65,
+          "a21": 0.0018,
+          "b21_K": -341.76,
+          "r_q": {
+            "2-propanol": [
+              2.9137,
+              2.5276
+            ],
+            "dibutyl ether": [
+              6.0593,
+              5.152
+            ]
+          }
+        },
+        "parameter_treatment": "r_q_basis_standardization_by_surface_projection",
+        "r_q_standardization": {
+          "standardized": true,
+          "method": "Previous UNIQUAC activity-coefficient surface projected onto the canonical r/q basis over the experimental T span and x=0.01..0.99. One-term b/T retained because it reproduces the prior surface without the ill-conditioned extra intercept terms.",
+          "RMS_delta_ln_gamma": 0.00021695580894626383,
+          "max_abs_delta_ln_gamma": 0.0014093586933578983
+        },
+        "published_pre_standardization_fit_metrics": {
+          "RMS_y1": 0.0087,
+          "RMS_T_K": 0.33
         }
       },
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "source_published_as_is",
+        "fit_data": [
+          {
+            "source_id": "wang_2020",
+            "role": "source_parameter_fit",
+            "data": "101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -313,7 +634,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.026
@@ -341,25 +663,47 @@
         "a21": 0.0,
         "b21_K": 40.40917,
         "c21_per_K": 0.0,
-        "structural_parameters": {
-          "dibutyl ether": {
-            "r": 6.0925,
-            "q": 5.176
-          },
-          "methanol": {
-            "r": 1.4311,
-            "q": 1.432
-          }
-        },
         "fit_metrics": {
           "RMS_ln_gamma_ratio_raw": 0.077788
         },
-        "note": "Not recommended under this standard r/q convention; fit is much worse than NRTL and source smoothing."
+        "note": "Not recommended under this standard r/q convention; fit is much worse than NRTL and source smoothing.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "methanol_standard"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "methanol": {
+              "r": 1.4311,
+              "q": 1.432,
+              "registry_id": "methanol_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis"
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis"
       },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -379,7 +723,8 @@
         "P_kPa": [
           101.325,
           101.325
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -396,7 +741,8 @@
           "mean_abs_gamma1": 0.0065,
           "mean_abs_gamma2": 0.0043
         },
-        "refit_metrics": null
+        "refit_metrics": null,
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -412,12 +758,47 @@
           "mean_abs_gamma1": 0.0046,
           "mean_abs_gamma2": 0.0038
         },
-        "refit_metrics": null
+        "refit_metrics": null,
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diethyl_ether_standard",
+            "1_butanol_standard"
+          ],
+          "components": {
+            "diethyl ether": {
+              "r": 3.3949,
+              "q": 3.016,
+              "registry_id": "diethyl_ether_standard"
+            },
+            "1-butanol": {
+              "r": 3.4543,
+              "q": 3.052,
+              "registry_id": "1_butanol_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "Gao 2012 does not print numerical r/q; these are the explicit standard values used for the PFDSIM UNIQUAC refit."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis",
+        "recommended": true
       },
       "notes": [
         "Temperature trend is useful but the fitted temperature coefficients are somewhat correlated."
       ],
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_temperature_dependent_refit",
+        "fit_data": [
+          {
+            "source_id": "gao_2012",
+            "role": "primary_fit",
+            "data": "101.325 kPa binary VLE/activity coefficients"
+          }
+        ],
+        "temperature_leverage_note": "At a single pressure, temperature changes with composition; temperature-dependence parameters therefore have weaker independent leverage than a multi-isotherm/multi-isobar fit."
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -437,7 +818,8 @@
         "P_kPa": [
           101.325,
           101.325
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -454,7 +836,8 @@
           "mean_abs_gamma1": 0.0202,
           "mean_abs_gamma2": 0.0495
         },
-        "refit_metrics": null
+        "refit_metrics": null,
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -470,9 +853,44 @@
           "mean_abs_gamma1": 0.0125,
           "mean_abs_gamma2": 0.0145
         },
-        "refit_metrics": null
+        "refit_metrics": null,
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diethyl_ether_standard",
+            "methanol_standard"
+          ],
+          "components": {
+            "diethyl ether": {
+              "r": 3.3949,
+              "q": 3.016,
+              "registry_id": "diethyl_ether_standard"
+            },
+            "methanol": {
+              "r": 1.4311,
+              "q": 1.432,
+              "registry_id": "methanol_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "Gao 2012 does not print numerical r/q; these are the explicit standard values used for the PFDSIM UNIQUAC refit."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis",
+        "recommended": true
       },
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_temperature_dependent_refit",
+        "fit_data": [
+          {
+            "source_id": "gao_2012",
+            "role": "primary_fit",
+            "data": "101.325 kPa binary VLE/activity coefficients"
+          }
+        ],
+        "temperature_leverage_note": "At a single pressure, temperature changes with composition; temperature-dependence parameters therefore have weaker independent leverage than a multi-isotherm/multi-isobar fit."
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -488,7 +906,8 @@
         "T_K": [
           318.15,
           338.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -520,7 +939,8 @@
             0.08,
             0.08
           ]
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -551,9 +971,43 @@
             0.1,
             0.1
           ]
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diisopropyl_ether_pfdisim_basis",
+            "1_butanol_standard"
+          ],
+          "components": {
+            "diisopropyl ether": {
+              "r": 4.7421,
+              "q": 4.088,
+              "registry_id": "diisopropyl_ether_pfdisim_basis"
+            },
+            "1-butanol": {
+              "r": 3.4543,
+              "q": 3.052,
+              "registry_id": "1_butanol_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "Reddy 2013 reports Aspen-based UNIQUAC calculations but does not print r/q; these are the explicit values tied to the PFDSIM global refit."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis",
+        "recommended": true
       },
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_global_multiisotherm_refit",
+        "fit_data": [
+          {
+            "source_id": "reddy_2013",
+            "role": "primary_fit",
+            "data": "318.15 and 338.15 K isothermal P-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -579,13 +1033,14 @@
       "parameter_treatment": "global_refit",
       "validity": {
         "T_K": [
-          307.2,
-          355.4
+          307.18,
+          355.35
         ],
         "P_kPa": [
           30.0,
           101.32
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -639,21 +1094,11 @@
         "recommended": true,
         "term_count": 1,
         "a12": 0.0,
-        "b12_K": -305.298998,
+        "b12_K": -307.786746,
         "c12_per_K": 0.0,
         "a21": 0.0,
-        "b21_K": 103.819007,
+        "b21_K": 104.02769205,
         "c21_per_K": 0.0,
-        "structural_parameters": {
-          "diisopropyl ether": {
-            "r": 4.7421,
-            "q": 4.088
-          },
-          "2-propanol": {
-            "r": 2.9137,
-            "q": 2.5276
-          }
-        },
         "fit_metrics": {
           "RMS_ln_gamma_primary": 0.02638695,
           "RMS_ln_gamma_by_source": {
@@ -688,7 +1133,53 @@
             "x_DIPE_calc": 0.76874,
             "T_K_calc": 339.24
           }
-        ]
+        ],
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diisopropyl_ether_pfdisim_basis",
+            "2_propanol_canonical"
+          ],
+          "components": {
+            "diisopropyl ether": {
+              "r": 4.7421,
+              "q": 4.088,
+              "registry_id": "diisopropyl_ether_pfdisim_basis"
+            },
+            "2-propanol": {
+              "r": 2.7791,
+              "q": 2.508,
+              "registry_id": "2_propanol_canonical"
+            }
+          },
+          "provenance_status": "canonical_database_basis_transformed",
+          "note": "Explicit basis used for the replacement multi-source PFDSIM refit; this intentionally does not import Arce's source-native modified-UNIQUAC/q-prime BIPs."
+        },
+        "r_q_provenance_status": "canonical_database_basis_transformed",
+        "pre_standardization_parameterization": {
+          "term_count": 1,
+          "a12": 0.0,
+          "b12_K": -305.298998,
+          "a21": 0.0,
+          "b21_K": 103.819007,
+          "r_q": {
+            "diisopropyl ether": [
+              4.7421,
+              4.088
+            ],
+            "2-propanol": [
+              2.9137,
+              2.5276
+            ]
+          }
+        },
+        "parameter_treatment": "r_q_basis_standardization_by_surface_projection",
+        "r_q_standardization": {
+          "standardized": true,
+          "method": "Previous UNIQUAC activity-coefficient surface projected onto the canonical r/q basis over the experimental T span and x=0.01..0.99. One-term b/T retained because it reproduces the prior surface without the ill-conditioned extra intercept terms.",
+          "RMS_delta_ln_gamma": 0.0001508536500507713,
+          "max_abs_delta_ln_gamma": 0.0007583640906652089
+        }
       },
       "source_ids": [
         "lladosa_2007",
@@ -696,7 +1187,35 @@
         "chamorro_2002",
         "shawaqfeh_2010"
       ],
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_global_multisource_refit",
+        "fit_data": [
+          {
+            "source_id": "lladosa_2007",
+            "role": "primary_fit",
+            "data": "30 and 101.3 kPa T-x-y VLE"
+          },
+          {
+            "source_id": "arce_2003",
+            "role": "primary_fit",
+            "data": "101.32 kPa T-x-y/activity-coefficient VLE; source-native UNIQUAC BIPs were NOT imported"
+          },
+          {
+            "source_id": "chamorro_2002",
+            "role": "primary_fit",
+            "data": "313.15 K Barker-reduced total-pressure VLE"
+          }
+        ],
+        "validation_data": [
+          {
+            "source_id": "shawaqfeh_2010",
+            "role": "independent_validation",
+            "data": "95 kPa T-x-y VLE and azeotrope"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -712,7 +1231,8 @@
         "T_K": [
           313.15,
           333.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -744,7 +1264,8 @@
             0.05,
             0.08
           ]
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -775,9 +1296,43 @@
             0.06,
             0.1
           ]
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diisopropyl_ether_pfdisim_basis",
+            "ethanol_dechema_cartes2021"
+          ],
+          "components": {
+            "diisopropyl ether": {
+              "r": 4.7421,
+              "q": 4.088,
+              "registry_id": "diisopropyl_ether_pfdisim_basis"
+            },
+            "ethanol": {
+              "r": 2.1055,
+              "q": 1.972,
+              "registry_id": "ethanol_dechema_cartes2021"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "Reddy 2013 does not print numerical r/q; these are the explicit values tied to the PFDSIM global refit."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis",
+        "recommended": true
       },
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_global_multiisotherm_refit",
+        "fit_data": [
+          {
+            "source_id": "reddy_2013",
+            "role": "primary_fit",
+            "data": "313.15, 323.15, and 333.15 K isothermal P-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -793,7 +1348,8 @@
         "T_K": [
           305.15,
           325.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -825,7 +1381,8 @@
             0.06,
             0.1
           ]
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -856,9 +1413,43 @@
             0.07,
             0.11
           ]
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diisopropyl_ether_pfdisim_basis",
+            "methanol_standard"
+          ],
+          "components": {
+            "diisopropyl ether": {
+              "r": 4.7421,
+              "q": 4.088,
+              "registry_id": "diisopropyl_ether_pfdisim_basis"
+            },
+            "methanol": {
+              "r": 1.4311,
+              "q": 1.432,
+              "registry_id": "methanol_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "Reddy 2013 does not print numerical r/q; these are the explicit values tied to the PFDSIM global refit."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis",
+        "recommended": true
       },
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_global_multiisotherm_refit",
+        "fit_data": [
+          {
+            "source_id": "reddy_2013",
+            "role": "primary_fit",
+            "data": "305.15, 315.15, and 325.15 K isothermal P-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -878,7 +1469,8 @@
         "P_kPa": [
           94.0,
           94.0
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -894,7 +1486,8 @@
           "bubble_AAD_y_x100": 0.33,
           "dew_percent_AAD_P": 1.2,
           "dew_AAD_x_x100": 0.96
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -909,12 +1502,47 @@
           "bubble_AAD_y_x100": 0.36,
           "dew_percent_AAD_P": 1.29,
           "dew_AAD_x_x100": 1.47
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "ethanol_dechema_cartes2021",
+            "dibutyl_ether_canonical"
+          ],
+          "components": {
+            "ethanol": {
+              "r": 2.1055,
+              "q": 1.972,
+              "registry_id": "ethanol_dechema_cartes2021"
+            },
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            }
+          },
+          "provenance_status": "source_exact_and_pfdisim_refit_basis",
+          "note": "Exact DECHEMA values printed by Cartes 2021 and used in the PFDSIM refit."
+        },
+        "r_q_provenance_status": "source_exact_and_pfdisim_refit_basis",
+        "recommended": true
       },
       "notes": [
         "Fit quality is good, but the temperature coefficients are compensating; extrapolate cautiously."
       ],
-      "original_question_pair": true
+      "original_question_pair": true,
+      "provenance": {
+        "parameter_origin": "pfdsim_temperature_dependent_refit",
+        "fit_data": [
+          {
+            "source_id": "cartes_2021",
+            "role": "primary_fit",
+            "data": "94 kPa T-x-y VLE"
+          }
+        ],
+        "temperature_leverage_note": "Single-isobar temperature/composition coupling; retain the existing extrapolation caution."
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -930,7 +1558,12 @@
         "P_kPa": [
           101.3,
           101.3
-        ]
+        ],
+        "T_K": [
+          355.35,
+          397.44
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -956,16 +1589,48 @@
         "a21": 0.0,
         "b21_K": -179.608721,
         "c21_per_K": 0.0,
-        "structural_basis": "DECHEMA, as used by source",
         "published_fit_metrics": {
           "AAD_T_K": 0.59,
           "AAD_y1": 0.0094
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "2_propanol_canonical",
+            "2_methoxyethanol_jced1993"
+          ],
+          "components": {
+            "2-propanol": {
+              "r": 2.7791,
+              "q": 2.508,
+              "registry_id": "2_propanol_canonical"
+            },
+            "2-methoxyethanol": {
+              "r": 3.4938,
+              "q": 3.368,
+              "registry_id": "2_methoxyethanol_jced1993"
+            }
+          },
+          "provenance_status": "source_basis_reconstructed",
+          "note": "Lladosa 2007 states DECHEMA r/q were used but does not print them; numerical values here are a compatible published reconstruction."
+        },
+        "r_q_provenance_status": "source_basis_reconstructed"
       },
       "source_ids": [
         "lladosa_2007"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_parameter_converted",
+        "fit_data": [
+          {
+            "source_id": "lladosa_2007",
+            "role": "source_parameter_fit",
+            "data": "101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -981,7 +1646,12 @@
         "P_kPa": [
           101.3,
           101.3
-        ]
+        ],
+        "T_K": [
+          355.2,
+          426.98
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -995,22 +1665,85 @@
         "published_fit_metrics": {
           "RMS_y1": 0.0094,
           "RMS_T_K": 0.51
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
-        "term_count": 2,
-        "a12": -0.0058,
-        "b12_K": -45.12,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -35.08829652,
         "c12_per_K": 0.0,
-        "a21": 0.0057,
-        "b21_K": -104.13,
+        "a21": 0.0,
+        "b21_K": -106.56453382,
         "c21_per_K": 0.0,
         "published_fit_metrics": {
           "RMS_y1": 0.009,
           "RMS_T_K": 0.48
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "2_propanol_canonical",
+            "anisole_aspen_wang2020"
+          ],
+          "components": {
+            "2-propanol": {
+              "r": 2.7791,
+              "q": 2.508,
+              "registry_id": "2_propanol_canonical"
+            },
+            "anisole": {
+              "r": 4.1668,
+              "q": 3.208,
+              "registry_id": "anisole_aspen_wang2020"
+            }
+          },
+          "provenance_status": "canonical_database_basis_transformed",
+          "note": "Exact Aspen-databank values printed by Wang 2020."
+        },
+        "r_q_provenance_status": "canonical_database_basis_transformed",
+        "recommended": true,
+        "pre_standardization_parameterization": {
+          "term_count": 2,
+          "a12": -0.0058,
+          "b12_K": -45.12,
+          "a21": 0.0057,
+          "b21_K": -104.13,
+          "r_q": {
+            "2-propanol": [
+              2.9137,
+              2.5276
+            ],
+            "anisole": [
+              4.1668,
+              3.208
+            ]
+          }
+        },
+        "parameter_treatment": "r_q_basis_standardization_by_surface_projection",
+        "r_q_standardization": {
+          "standardized": true,
+          "method": "Previous UNIQUAC activity-coefficient surface projected onto the canonical r/q basis over the experimental T span and x=0.01..0.99. One-term b/T retained because it reproduces the prior surface without the ill-conditioned extra intercept terms.",
+          "RMS_delta_ln_gamma": 0.0015145678303552753,
+          "max_abs_delta_ln_gamma": 0.007068281018735689
+        },
+        "published_pre_standardization_fit_metrics": {
+          "RMS_y1": 0.009,
+          "RMS_T_K": 0.48
         }
       },
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_as_is",
+        "fit_data": [
+          {
+            "source_id": "wang_2020",
+            "role": "source_parameter_fit",
+            "data": "101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1026,7 +1759,8 @@
         "T_K": [
           313.15,
           313.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -1056,12 +1790,45 @@
           "RMS_P_kPa": 0.402,
           "max_abs_P_kPa": 1.442
         },
-        "note": "Clearly weaker than NRTL for this data set."
+        "note": "Clearly weaker than NRTL for this data set.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "2_propanol_canonical",
+            "n_heptane_standard"
+          ],
+          "components": {
+            "2-propanol": {
+              "r": 2.7791,
+              "q": 2.508,
+              "registry_id": "2_propanol_canonical"
+            },
+            "n-heptane": {
+              "r": 5.1742,
+              "q": 4.396,
+              "registry_id": "n_heptane_standard"
+            }
+          },
+          "provenance_status": "source_basis_reconstructed",
+          "note": "Chamorro 2002 uses r/q in its UNIQUAC model but does not print the numerical values; these are compatible published standard values."
+        },
+        "r_q_provenance_status": "source_basis_reconstructed"
       },
       "source_ids": [
         "chamorro_2002"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_parameter_converted",
+        "fit_data": [
+          {
+            "source_id": "chamorro_2002",
+            "role": "source_parameter_fit",
+            "data": "313.15 K total-pressure VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1077,7 +1844,12 @@
         "P_kPa": [
           101.32,
           101.32
-        ]
+        ],
+        "T_K": [
+          353.28,
+          371.95
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -1110,12 +1882,53 @@
           "RMS_x1": 0.0036,
           "RMS_y1": 0.0055,
           "RMS_P_kPa": 0.12
-        }
+        },
+        "model_variant": "modified_uniquac_anderson_prausnitz_q_prime",
+        "r_q_use": {
+          "registry_ids": [
+            "2_propanol_canonical",
+            "water_standard"
+          ],
+          "components": {
+            "2-propanol": {
+              "r": 2.7791,
+              "q": 2.508,
+              "registry_id": "2_propanol_canonical",
+              "q_prime_or_q0": 0.89,
+              "source_notation": "q0"
+            },
+            "water": {
+              "r": 0.92,
+              "q": 1.4,
+              "registry_id": "water_standard",
+              "q_prime_or_q0": 1.0,
+              "source_notation": "q0"
+            }
+          },
+          "provenance_status": "source_basis_reconstructed_with_exact_qprime",
+          "note": "Arce 2003 does not print numerical r/q, but explicitly states q0=0.89 for IPA and 1.00 for water. The standard r/q values here are a compatible reconstruction; q-prime/q0 is source-exact."
+        },
+        "portability": {
+          "directly_portable_to_plain_standard_uniquac": false,
+          "reason": "Arce 2003 explicitly uses the Anderson-Prausnitz q-prime/q0 modification (q0=0.89 for IPA, 1.00 for water). The interaction parameters should not be used with a plain standard-UNIQUAC implementation without reproducing that variant."
+        },
+        "r_q_provenance_status": "source_basis_reconstructed_with_exact_qprime"
       },
       "source_ids": [
         "arce_2003"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_parameter_converted",
+        "fit_data": [
+          {
+            "source_id": "arce_2003",
+            "role": "source_parameter_fit",
+            "data": "101.32 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1131,7 +1944,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.019
@@ -1159,25 +1973,47 @@
         "a21": 0.0,
         "b21_K": 26.586161,
         "c21_per_K": 0.0,
-        "structural_parameters": {
-          "dibutyl ether": {
-            "r": 6.0925,
-            "q": 5.176
-          },
-          "acetonitrile": {
-            "r": 1.8701,
-            "q": 1.724
-          }
-        },
         "fit_metrics": {
           "RMS_ln_gamma_ratio_raw": 0.088288
         },
-        "note": "Not recommended; substantially worse than NRTL."
+        "note": "Not recommended; substantially worse than NRTL.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "acetonitrile_standard"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "acetonitrile": {
+              "r": 1.8701,
+              "q": 1.724,
+              "registry_id": "acetonitrile_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis"
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis"
       },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1193,7 +2029,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.034
@@ -1213,11 +2050,60 @@
         },
         "note": "Free alpha ran to the upper bound and was rejected."
       },
-      "uniquac": null,
+      "uniquac": {
+        "recommended": false,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -273.396547,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 149.340755,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.0501528
+        },
+        "source_fit_quality": {
+          "source_Redlich_Kister_sigma_ln_gamma_ratio": 0.034
+        },
+        "note": "Exploratory only: worse than the source Redlich-Kister smoothing and relies on a group-derived butylamine r/q proxy.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "butylamine_unifac_geometry_proxy"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "butylamine": {
+              "r": 3.6191,
+              "q": 3.164,
+              "registry_id": "butylamine_unifac_geometry_proxy"
+            }
+          },
+          "provenance_status": "pfdsim_exploratory_group_derived_basis",
+          "note": "The amine r/q is a group-derived proxy, so this UNIQUAC fit is explicitly non-recommended."
+        },
+        "r_q_provenance_status": "pfdsim_exploratory_group_derived_basis"
+      },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1233,7 +2119,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.02
@@ -1253,11 +2140,60 @@
         },
         "note": "Unconstrained alpha optimized near 0.95; rejected as an overly exotic compensation."
       },
-      "uniquac": null,
+      "uniquac": {
+        "recommended": false,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -196.184278,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 73.524812,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.0344424
+        },
+        "source_fit_quality": {
+          "source_Redlich_Kister_sigma_ln_gamma_ratio": 0.02
+        },
+        "note": "Exploratory only: moderate fit but weaker than source smoothing; cyclopentanone r/q is an approximate group-derived proxy.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "cyclopentanone_unifac_geometry_proxy"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "cyclopentanone": {
+              "r": 3.4689,
+              "q": 2.8,
+              "registry_id": "cyclopentanone_unifac_geometry_proxy"
+            }
+          },
+          "provenance_status": "pfdsim_exploratory_group_derived_basis",
+          "note": "Cyclopentanone r/q is an approximate group-derived proxy, so this UNIQUAC fit is explicitly non-recommended."
+        },
+        "r_q_provenance_status": "pfdsim_exploratory_group_derived_basis"
+      },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1279,7 +2215,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.015
@@ -1308,25 +2245,47 @@
         "a21": 0.0,
         "b21_K": 55.435279,
         "c21_per_K": 0.0,
-        "structural_parameters": {
-          "dibutyl ether": {
-            "r": 6.0925,
-            "q": 5.176
-          },
-          "propanone": {
-            "r": 2.5735,
-            "q": 2.336
-          }
-        },
         "fit_metrics": {
           "RMS_ln_gamma_ratio_raw": 0.02336
         },
-        "note": "Acceptable, but NRTL is clearly better."
+        "note": "Acceptable, but NRTL is clearly better.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "propanone_standard"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "propanone": {
+              "r": 2.5735,
+              "q": 2.336,
+              "registry_id": "propanone_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis"
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis"
       },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1342,7 +2301,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.039
@@ -1362,11 +2322,60 @@
         },
         "note": "Moderate rather than excellent fit; free alpha ran to the upper bound and was rejected."
       },
-      "uniquac": null,
+      "uniquac": {
+        "recommended": false,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -262.944958,
+        "c12_per_K": 0.0,
+        "a21": 0.0,
+        "b21_K": 125.429652,
+        "c21_per_K": 0.0,
+        "fit_metrics": {
+          "RMS_ln_gamma_ratio_raw": 0.0639074
+        },
+        "source_fit_quality": {
+          "source_Redlich_Kister_sigma_ln_gamma_ratio": 0.039
+        },
+        "note": "Exploratory only: worse than the source Redlich-Kister smoothing and relies on a group-derived propylamine r/q proxy.",
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "propylamine_unifac_geometry_proxy"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "propylamine": {
+              "r": 2.9447,
+              "q": 2.624,
+              "registry_id": "propylamine_unifac_geometry_proxy"
+            }
+          },
+          "provenance_status": "pfdsim_exploratory_group_derived_basis",
+          "note": "The amine r/q is a group-derived proxy, so this UNIQUAC fit is explicitly non-recommended."
+        },
+        "r_q_provenance_status": "pfdsim_exploratory_group_derived_basis"
+      },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1382,7 +2391,8 @@
         "T_K": [
           298.15,
           298.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "source_fit_quality": {
         "source_RK_sigma_ln_gamma_ratio": 0.016
@@ -1410,24 +2420,46 @@
         "a21": 0.0,
         "b21_K": 38.985382,
         "c21_per_K": 0.0,
-        "structural_parameters": {
-          "dibutyl ether": {
-            "r": 6.0925,
-            "q": 5.176
-          },
-          "tetrahydrofuran": {
-            "r": 2.9415,
-            "q": 2.72
-          }
-        },
         "fit_metrics": {
           "RMS_ln_gamma_ratio_raw": 0.014452
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "dibutyl_ether_canonical",
+            "tetrahydrofuran_standard"
+          ],
+          "components": {
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            },
+            "tetrahydrofuran": {
+              "r": 2.9415,
+              "q": 2.72,
+              "registry_id": "tetrahydrofuran_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis"
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis"
       },
       "source_ids": [
         "lepori_2000"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_refit_to_raw_supplementary_data",
+        "fit_data": [
+          {
+            "source_id": "lepori_2000",
+            "role": "primary_fit",
+            "data": "298.15 K Table S1 x and ln(gamma1/gamma2)"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1445,9 +2477,10 @@
           101.3
         ],
         "T_K": [
-          341.5,
-          397.4
-        ]
+          341.49,
+          397.44
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -1473,16 +2506,48 @@
         "a21": 0.0,
         "b21_K": 50.035705,
         "c21_per_K": 0.0,
-        "structural_basis": "DECHEMA, as used by source",
         "published_fit_metrics": {
           "AAD_T_K": 0.18,
           "AAD_y1": 0.0059
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diisopropyl_ether_pfdisim_basis",
+            "2_methoxyethanol_jced1993"
+          ],
+          "components": {
+            "diisopropyl ether": {
+              "r": 4.7421,
+              "q": 4.088,
+              "registry_id": "diisopropyl_ether_pfdisim_basis"
+            },
+            "2-methoxyethanol": {
+              "r": 3.4938,
+              "q": 3.368,
+              "registry_id": "2_methoxyethanol_jced1993"
+            }
+          },
+          "provenance_status": "source_basis_reconstructed",
+          "note": "Lladosa 2007 states DECHEMA r/q were used but does not print them; numerical values here are a compatible published reconstruction."
+        },
+        "r_q_provenance_status": "source_basis_reconstructed"
       },
       "source_ids": [
         "lladosa_2007"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_parameter_converted",
+        "fit_data": [
+          {
+            "source_id": "lladosa_2007",
+            "role": "source_parameter_fit",
+            "data": "101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1498,7 +2563,8 @@
         "T_K": [
           313.15,
           313.15
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "recommended": true,
@@ -1527,12 +2593,45 @@
         "published_fit_metrics": {
           "RMS_P_kPa": 0.007,
           "max_abs_P_kPa": 0.015
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "diisopropyl_ether_pfdisim_basis",
+            "n_heptane_standard"
+          ],
+          "components": {
+            "diisopropyl ether": {
+              "r": 4.7421,
+              "q": 4.088,
+              "registry_id": "diisopropyl_ether_pfdisim_basis"
+            },
+            "n-heptane": {
+              "r": 5.1742,
+              "q": 4.396,
+              "registry_id": "n_heptane_standard"
+            }
+          },
+          "provenance_status": "source_basis_reconstructed",
+          "note": "Chamorro 2002 uses r/q but does not print numerical values; numerical values here are compatible published values."
+        },
+        "r_q_provenance_status": "source_basis_reconstructed"
       },
       "source_ids": [
         "chamorro_2002"
       ],
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_parameter_converted",
+        "fit_data": [
+          {
+            "source_id": "chamorro_2002",
+            "role": "source_parameter_fit",
+            "data": "313.15 K total-pressure VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1548,7 +2647,12 @@
         "P_kPa": [
           101.3,
           101.3
-        ]
+        ],
+        "T_K": [
+          361.67,
+          426.98
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -1562,7 +2666,8 @@
         "published_fit_metrics": {
           "RMS_y1": 0.0019,
           "RMS_T_K": 0.04
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -1575,9 +2680,43 @@
         "published_fit_metrics": {
           "RMS_y1": 0.0022,
           "RMS_T_K": 0.03
-        }
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "isopropyl_acetate_aspen_wang2020",
+            "anisole_aspen_wang2020"
+          ],
+          "components": {
+            "isopropyl acetate": {
+              "r": 4.1523,
+              "q": 3.652,
+              "registry_id": "isopropyl_acetate_aspen_wang2020"
+            },
+            "anisole": {
+              "r": 4.1668,
+              "q": 3.208,
+              "registry_id": "anisole_aspen_wang2020"
+            }
+          },
+          "provenance_status": "source_exact",
+          "note": "Exact Aspen-databank values printed by Wang 2020."
+        },
+        "r_q_provenance_status": "source_exact",
+        "recommended": true
       },
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_as_is",
+        "fit_data": [
+          {
+            "source_id": "wang_2020",
+            "role": "source_parameter_fit",
+            "data": "101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1593,7 +2732,12 @@
         "P_kPa": [
           101.3,
           101.3
-        ]
+        ],
+        "T_K": [
+          361.67,
+          414.0
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -1607,22 +2751,85 @@
         "published_fit_metrics": {
           "RMS_y1": 0.0063,
           "RMS_T_K": 0.09
-        }
+        },
+        "recommended": true
       },
       "uniquac": {
-        "term_count": 2,
-        "a12": -0.0057,
-        "b12_K": -37.9,
+        "term_count": 1,
+        "a12": 0.0,
+        "b12_K": -38.22773823,
         "c12_per_K": 0.0,
-        "a21": 0.0054,
-        "b21_K": 8.78,
+        "a21": 0.0,
+        "b21_K": 9.0439482,
         "c21_per_K": 0.0,
         "published_fit_metrics": {
           "RMS_y1": 0.0059,
           "RMS_T_K": 0.08
+        },
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "isopropyl_acetate_aspen_wang2020",
+            "dibutyl_ether_canonical"
+          ],
+          "components": {
+            "isopropyl acetate": {
+              "r": 4.1523,
+              "q": 3.652,
+              "registry_id": "isopropyl_acetate_aspen_wang2020"
+            },
+            "dibutyl ether": {
+              "r": 6.0925,
+              "q": 5.176,
+              "registry_id": "dibutyl_ether_canonical"
+            }
+          },
+          "provenance_status": "canonical_database_basis_transformed",
+          "note": "Exact Aspen-databank values printed by Wang 2020."
+        },
+        "r_q_provenance_status": "canonical_database_basis_transformed",
+        "recommended": true,
+        "pre_standardization_parameterization": {
+          "term_count": 2,
+          "a12": -0.0057,
+          "b12_K": -37.9,
+          "a21": 0.0054,
+          "b21_K": 8.78,
+          "r_q": {
+            "isopropyl acetate": [
+              4.1523,
+              3.652
+            ],
+            "dibutyl ether": [
+              6.0593,
+              5.152
+            ]
+          }
+        },
+        "parameter_treatment": "r_q_basis_standardization_by_surface_projection",
+        "r_q_standardization": {
+          "standardized": true,
+          "method": "Previous UNIQUAC activity-coefficient surface projected onto the canonical r/q basis over the experimental T span and x=0.01..0.99. One-term b/T retained because it reproduces the prior surface without the ill-conditioned extra intercept terms.",
+          "RMS_delta_ln_gamma": 4.7010770607199334e-05,
+          "max_abs_delta_ln_gamma": 0.0002245777653093195
+        },
+        "published_pre_standardization_fit_metrics": {
+          "RMS_y1": 0.0059,
+          "RMS_T_K": 0.08
         }
       },
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "source_published_as_is",
+        "fit_data": [
+          {
+            "source_id": "wang_2020",
+            "role": "source_parameter_fit",
+            "data": "101.3 kPa T-x-y VLE"
+          }
+        ]
+      },
+      "recommended": true
     },
     {
       "components": [
@@ -1642,7 +2849,8 @@
         "P_kPa": [
           101.325,
           101.325
-        ]
+        ],
+        "T_range_basis": "experimental_data_span"
       },
       "nrtl": {
         "term_count": 2,
@@ -1659,7 +2867,8 @@
           "mean_abs_gamma1": 0.0028,
           "mean_abs_gamma2": 0.0025
         },
-        "refit_metrics": null
+        "refit_metrics": null,
+        "recommended": true
       },
       "uniquac": {
         "term_count": 2,
@@ -1675,9 +2884,44 @@
           "mean_abs_gamma1": 0.0036,
           "mean_abs_gamma2": 0.0028
         },
-        "refit_metrics": null
+        "refit_metrics": null,
+        "model_variant": "standard_uniquac",
+        "r_q_use": {
+          "registry_ids": [
+            "methanol_standard",
+            "1_butanol_standard"
+          ],
+          "components": {
+            "methanol": {
+              "r": 1.4311,
+              "q": 1.432,
+              "registry_id": "methanol_standard"
+            },
+            "1-butanol": {
+              "r": 3.4543,
+              "q": 3.052,
+              "registry_id": "1_butanol_standard"
+            }
+          },
+          "provenance_status": "pfdsim_explicit_refit_basis",
+          "note": "Gao 2012 does not print numerical r/q; these are the explicit standard values used for the PFDSIM UNIQUAC refit."
+        },
+        "r_q_provenance_status": "pfdsim_explicit_refit_basis",
+        "recommended": true
       },
-      "original_question_pair": false
+      "original_question_pair": false,
+      "provenance": {
+        "parameter_origin": "pfdsim_temperature_dependent_refit",
+        "fit_data": [
+          {
+            "source_id": "gao_2012",
+            "role": "primary_fit",
+            "data": "101.325 kPa binary VLE/activity coefficients"
+          }
+        ],
+        "temperature_leverage_note": "At a single pressure, temperature changes with composition; temperature-dependence parameters therefore have weaker independent leverage than a multi-isotherm/multi-isobar fit."
+      },
+      "recommended": true
     }
   ],
   "retired_or_not_promoted": [
@@ -1704,7 +2948,18 @@
       ],
       "status": "retired_use_zero_interaction",
       "reason": "Independent sources indicate near-ideal behavior; directional fitted BIPs are poorly identifiable and the earlier compensating parameters should not be retained.",
-      "recommended_action": "Use zero/default interaction parameters unless a special local regression is required."
+      "recommended_action": "Use zero/default interaction parameters unless a special local regression is required.",
+      "source_uniquac_r_q": {
+        "n-hexane": {
+          "r": 4.4998,
+          "q": 3.856
+        },
+        "dibutyl ether": {
+          "r": 6.0925,
+          "q": 5.176
+        },
+        "provenance": "Cartes 2021 Table 13 footnote, DECHEMA"
+      }
     },
     {
       "components": [
@@ -1715,7 +2970,8 @@
         "lepori_2000"
       ],
       "status": "not_promoted_use_zero_interaction",
-      "reason": "Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable."
+      "reason": "Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable.",
+      "structural_parameter_note": "No active BIP promoted because the mixture is near ideal."
     },
     {
       "components": [
@@ -1726,7 +2982,8 @@
         "lepori_2000"
       ],
       "status": "not_promoted_use_zero_interaction",
-      "reason": "Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable."
+      "reason": "Near-ideal at 298.15 K; directional BIPs are not meaningfully identifiable.",
+      "structural_parameter_note": "If a diagnostic UNIQUAC calculation is desired, DBE 6.0925/5.176 and DEE 3.3949/3.016 are the explicit standard basis retained in the structural registry; no active BIP is promoted because the mixture is near ideal."
     }
   ],
   "counts": {
@@ -1734,5 +2991,228 @@
     "original_question_binary_entries": 11,
     "additional_binary_entries": 15,
     "retired_or_not_promoted_cases": 4
+  },
+  "revision_notes": [
+    "Added explicit entry-level and per-model recommended fields to every active entry.",
+    "Filled missing temperature ranges and refined several existing ranges to exact experimental source spans.",
+    "Standardized active dibutyl-ether UNIQUAC r/q to 6.0925/5.1760 and active 2-propanol r/q to 2.7791/2.5080.",
+    "For the four fits that previously used conflicting r/q values, transformed UNIQUAC parameters by matching the prior model surface; source-specific r/q and pre-standardization parameters remain preserved for provenance.",
+    "Collapsed those four standardized UNIQUAC fits to one-term b/T because the extra intercept terms were unnecessary/ill-conditioned; the largest surface change is <0.0071 in ln(gamma).",
+    "Repaired accented author names and normalized all JSON strings to Unicode NFC.",
+    "No active binary entries were added or removed."
+  ],
+  "uniquac_structural_parameter_registry": {
+    "methanol_standard": {
+      "component": "methanol",
+      "r": 1.4311,
+      "q": 1.432,
+      "provenance_status": "published_standard_value",
+      "reference": "Common original-UNIQUAC value; also equal to the original-UNIFAC CH3OH subgroup geometry."
+    },
+    "ethanol_dechema_cartes2021": {
+      "component": "ethanol",
+      "r": 2.1055,
+      "q": 1.972,
+      "provenance_status": "source_exact",
+      "source_id": "cartes_2021",
+      "source_location": "Table 13 footnote (DECHEMA)"
+    },
+    "1_propanol_standard": {
+      "component": "1-propanol",
+      "r": 2.7799,
+      "q": 2.512,
+      "provenance_status": "published_standard_value",
+      "reference": "Common original-UNIQUAC value used in published thermodynamic work."
+    },
+    "2_propanol_standard": {
+      "component": "2-propanol",
+      "r": 2.7791,
+      "q": 2.508,
+      "provenance_status": "published_standard_value",
+      "reference": "Common original-UNIQUAC/DECHEMA-style value used in published thermodynamic work.",
+      "active_database_standard": true
+    },
+    "2_propanol_aspen_wang2020": {
+      "component": "2-propanol",
+      "r": 2.9137,
+      "q": 2.5276,
+      "provenance_status": "source_exact",
+      "source_id": "wang_2020",
+      "source_location": "Table 10 (Aspen property databank)",
+      "active_database_standard": false,
+      "status": "legacy_source_specific_variant"
+    },
+    "1_butanol_standard": {
+      "component": "1-butanol",
+      "r": 3.4543,
+      "q": 3.052,
+      "provenance_status": "published_standard_value",
+      "reference": "Common original-UNIQUAC value used in published thermodynamic work."
+    },
+    "diethyl_ether_standard": {
+      "component": "diethyl ether",
+      "r": 3.3949,
+      "q": 3.016,
+      "provenance_status": "published_standard_value",
+      "reference": "Published original-UNIQUAC molecular volume/surface value."
+    },
+    "dipropyl_ether_standard": {
+      "component": "dipropyl ether",
+      "r": 4.7437,
+      "q": 4.096,
+      "provenance_status": "published_standard_value",
+      "reference": "Published original-UNIQUAC value; compatible reconstruction of the DECHEMA basis stated by Lladosa 2006."
+    },
+    "diisopropyl_ether_pfdisim_basis": {
+      "component": "diisopropyl ether",
+      "r": 4.7421,
+      "q": 4.088,
+      "provenance_status": "published_value_used_as_pfdisim_refit_basis",
+      "reference": "Published UNIQUAC molecular volume/surface values; explicitly fixed for PFDSIM refits."
+    },
+    "dibutyl_ether_dechema_cartes2021": {
+      "component": "dibutyl ether",
+      "r": 6.0925,
+      "q": 5.176,
+      "provenance_status": "source_exact",
+      "source_id": "cartes_2021",
+      "source_location": "Table 13 footnote (DECHEMA)",
+      "active_database_standard": true
+    },
+    "dibutyl_ether_aspen_wang2020": {
+      "component": "dibutyl ether",
+      "r": 6.0593,
+      "q": 5.152,
+      "provenance_status": "source_exact",
+      "source_id": "wang_2020",
+      "source_location": "Table 10 (Aspen property databank)",
+      "active_database_standard": false,
+      "status": "legacy_source_specific_variant"
+    },
+    "2_methoxyethanol_jced1993": {
+      "component": "2-methoxyethanol",
+      "r": 3.4938,
+      "q": 3.368,
+      "provenance_status": "published_value",
+      "reference": "J. Chem. Eng. Data 38 (1993) 128-131, UNIQUAC structural parameters."
+    },
+    "n_heptane_standard": {
+      "component": "n-heptane",
+      "r": 5.1742,
+      "q": 4.396,
+      "provenance_status": "published_standard_value",
+      "reference": "Common original-UNIQUAC value; published tables commonly report r=5.1742, q=4.396."
+    },
+    "water_standard": {
+      "component": "water",
+      "r": 0.92,
+      "q": 1.4,
+      "provenance_status": "published_standard_value",
+      "reference": "Original-UNIQUAC standard value."
+    },
+    "isopropyl_acetate_aspen_wang2020": {
+      "component": "isopropyl acetate",
+      "r": 4.1523,
+      "q": 3.652,
+      "provenance_status": "source_exact",
+      "source_id": "wang_2020",
+      "source_location": "Table 10 (Aspen property databank)"
+    },
+    "anisole_aspen_wang2020": {
+      "component": "anisole",
+      "r": 4.1668,
+      "q": 3.208,
+      "provenance_status": "source_exact",
+      "source_id": "wang_2020",
+      "source_location": "Table 10 (Aspen property databank)"
+    },
+    "acetonitrile_standard": {
+      "component": "acetonitrile",
+      "r": 1.8701,
+      "q": 1.724,
+      "provenance_status": "published_standard_value"
+    },
+    "propanone_standard": {
+      "component": "propanone",
+      "r": 2.5735,
+      "q": 2.336,
+      "provenance_status": "published_standard_value"
+    },
+    "tetrahydrofuran_standard": {
+      "component": "tetrahydrofuran",
+      "r": 2.9415,
+      "q": 2.72,
+      "provenance_status": "published_standard_value"
+    },
+    "propylamine_unifac_geometry_proxy": {
+      "component": "propylamine",
+      "r": 2.9447,
+      "q": 2.624,
+      "provenance_status": "group_derived_proxy",
+      "derivation": "CH3 + CH2 + CH2NH2 using published original-UNIFAC subgroup R/Q values.",
+      "warning": "Used only to make an explicit, reproducible exploratory UNIQUAC fit; not claimed to be a source-native molecular UNIQUAC parameter."
+    },
+    "butylamine_unifac_geometry_proxy": {
+      "component": "butylamine",
+      "r": 3.6191,
+      "q": 3.164,
+      "provenance_status": "group_derived_proxy",
+      "derivation": "CH3 + 2*CH2 + CH2NH2 using published original-UNIFAC subgroup R/Q values.",
+      "warning": "Used only to make an explicit, reproducible exploratory UNIQUAC fit; not claimed to be a source-native molecular UNIQUAC parameter."
+    },
+    "cyclopentanone_unifac_geometry_proxy": {
+      "component": "cyclopentanone",
+      "r": 3.4689,
+      "q": 2.8,
+      "provenance_status": "group_derived_proxy",
+      "derivation": "CH2CO + 3*CH2 using published original-UNIFAC subgroup R/Q values.",
+      "warning": "Approximate group-derived geometry; used only for a non-recommended exploratory UNIQUAC fit."
+    },
+    "dibutyl_ether_canonical": {
+      "component": "dibutyl ether",
+      "r": 6.0925,
+      "q": 5.176,
+      "provenance_status": "canonical_database_value",
+      "reference": "DECHEMA value printed explicitly by Cartes et al. (2021).",
+      "active_database_standard": true
+    },
+    "2_propanol_canonical": {
+      "component": "2-propanol",
+      "r": 2.7791,
+      "q": 2.508,
+      "provenance_status": "canonical_database_value",
+      "reference": "Published standard original-UNIQUAC / DECHEMA-style value.",
+      "active_database_standard": true
+    }
+  },
+  "audit": {
+    "active_entries_with_nrtl": 26,
+    "active_entries_with_uniquac_object": 26,
+    "active_uniquac_entries_with_explicit_r_q": 26,
+    "uniquac_source_exact_r_q_entries": 5,
+    "uniquac_reconstructed_or_pfdisim_basis_entries": 18,
+    "uniquac_exploratory_group_derived_entries": 3,
+    "modified_uniquac_entries": 1,
+    "active_entries": 26,
+    "entries_with_explicit_recommended": 26,
+    "nrtl_models_with_explicit_recommended": 26,
+    "uniquac_models_with_explicit_recommended": 26,
+    "entries_with_temperature_range": 26,
+    "active_dbe_uniquac_noncanonical_rq": 0,
+    "active_ipa_uniquac_noncanonical_rq": 0,
+    "r_q_standardized_transformed_uniquac_entries": 4
+  },
+  "uniquac_r_q_policy": {
+    "canonical_values": {
+      "dibutyl ether": {
+        "r": 6.0925,
+        "q": 5.176
+      },
+      "2-propanol": {
+        "r": 2.7791,
+        "q": 2.508
+      }
+    },
+    "policy": "Active UNIQUAC entries use the canonical values above. Source-specific alternatives are retained only as provenance. Where a source fit used a conflicting r/q basis, the active BIPs were transformed by matching the old model surface rather than changing r/q underneath unchanged BIPs."
   }
 }

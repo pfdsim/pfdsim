@@ -3,22 +3,27 @@
     "1": "74-82-8",
     "10": "111-65-9",
     "100414": "100-41-4",
+    "100663": "100-66-3",
     "105373": "105-37-3",
     "105544": "105-54-4",
     "106423": "106-42-3",
     "106978": "106-97-8",
     "107926": "107-92-6",
     "108203": "108-20-3",
+    "108214": "108-21-4",
     "108383": "108-38-3",
     "108883": "108-88-3",
     "108952": "108-95-2",
     "109604": "109-60-4",
     "109660": "109-66-0",
+    "109864": "109-86-4",
     "109944": "109-94-4",
+    "109999": "109-99-9",
     "11": "111-84-2",
     "110543": "110-54-3",
     "110827": "110-82-7",
     "111273": "111-27-3",
+    "111433": "111-43-3",
     "111659": "111-65-9",
     "111842": "111-84-2",
     "111875": "111-87-5",
@@ -34,6 +39,7 @@
     "14": "7727-37-9",
     "141786": "141-78-6",
     "142825": "142-82-5",
+    "142961": "142-96-1",
     "14dioxane": "123-91-1",
     "15": "7732-18-5",
     "16": "124-38-9",
@@ -56,6 +62,7 @@
     "27": "64-17-5",
     "28": "67-63-0",
     "2butanol": "78-92-2",
+    "2methoxyethanol": "109-86-4",
     "2octanol": "123-96-6",
     "2pentanol": "6032-29-7",
     "2propanol": "67-63-0",
@@ -113,6 +120,7 @@
     "acrylicacid": "79-10-7",
     "alphamethylstyrene": "98-83-9",
     "aniline": "62-53-3",
+    "anisole": "100-66-3",
     "benzene": "71-43-2",
     "butane": "106-97-8",
     "butanoicacid": "107-92-6",
@@ -124,10 +132,12 @@
     "cumene": "98-82-8",
     "cyclohexane": "110-82-7",
     "decane": "124-18-5",
+    "dibutylether": "142-96-1",
     "dichloromethane": "75-09-2",
     "diethylether": "60-29-7",
     "diisopropylether": "108-20-3",
     "dimethylamine": "124-40-3",
+    "dipropylether": "111-43-3",
     "ethane": "74-84-0",
     "ethanol": "64-17-5",
     "ethylacetate": "141-78-6",
@@ -148,6 +158,7 @@
     "isobutane": "75-28-5",
     "isopentane": "78-78-4",
     "isopropanol": "67-63-0",
+    "isopropylacetate": "108-21-4",
     "methane": "74-82-8",
     "methanol": "67-56-1",
     "methylacetate": "79-20-9",
@@ -170,6 +181,7 @@
     "propylacetate": "109-60-4",
     "propylethanoate": "109-60-4",
     "pxylene": "106-42-3",
+    "tetrahydrofuran": "109-99-9",
     "toluene": "108-88-3",
     "triethylamine": "121-44-8",
     "water": "7732-18-5"
@@ -197,6 +209,26 @@
         }
       ],
       "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "100-66-3": {
+      "aliases": [
+        "anisole"
+      ],
+      "cas": "100-66-3",
+      "formula": "",
+      "name": "anisole",
+      "q": 3.208,
+      "r": 4.1668,
+      "records": [
+        {
+          "formula": "",
+          "name": "anisole",
+          "q": 3.208,
+          "r": 4.1668,
+          "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_exact"
+        }
+      ],
+      "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_exact"
     },
     "105-37-3": {
       "aliases": [
@@ -351,6 +383,26 @@
       ],
       "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
     },
+    "108-21-4": {
+      "aliases": [
+        "isopropyl acetate"
+      ],
+      "cas": "108-21-4",
+      "formula": "",
+      "name": "isopropyl acetate",
+      "q": 3.652,
+      "r": 4.1523,
+      "records": [
+        {
+          "formula": "",
+          "name": "isopropyl acetate",
+          "q": 3.652,
+          "r": 4.1523,
+          "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; canonical_database_basis_transformed"
+        }
+      ],
+      "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; canonical_database_basis_transformed"
+    },
     "108-38-3": {
       "aliases": [
         "21",
@@ -501,6 +553,26 @@
       ],
       "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
     },
+    "109-86-4": {
+      "aliases": [
+        "2-methoxyethanol"
+      ],
+      "cas": "109-86-4",
+      "formula": "",
+      "name": "2-methoxyethanol",
+      "q": 3.368,
+      "r": 3.4938,
+      "records": [
+        {
+          "formula": "",
+          "name": "2-methoxyethanol",
+          "q": 3.368,
+          "r": 3.4938,
+          "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_basis_reconstructed"
+        }
+      ],
+      "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_basis_reconstructed"
+    },
     "109-94-4": {
       "aliases": [
         "C3H6O2",
@@ -535,6 +607,26 @@
         }
       ],
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+    },
+    "109-99-9": {
+      "aliases": [
+        "tetrahydrofuran"
+      ],
+      "cas": "109-99-9",
+      "formula": "",
+      "name": "tetrahydrofuran",
+      "q": 2.72,
+      "r": 2.9415,
+      "records": [
+        {
+          "formula": "",
+          "name": "tetrahydrofuran",
+          "q": 2.72,
+          "r": 2.9415,
+          "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; pfdsim_explicit_refit_basis"
+        }
+      ],
+      "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; pfdsim_explicit_refit_basis"
     },
     "110-54-3": {
       "aliases": [
@@ -637,6 +729,26 @@
         }
       ],
       "source": "User-provided paper"
+    },
+    "111-43-3": {
+      "aliases": [
+        "dipropyl ether"
+      ],
+      "cas": "111-43-3",
+      "formula": "",
+      "name": "dipropyl ether",
+      "q": 4.096,
+      "r": 4.7437,
+      "records": [
+        {
+          "formula": "",
+          "name": "dipropyl ether",
+          "q": 4.096,
+          "r": 4.7437,
+          "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_basis_reconstructed"
+        }
+      ],
+      "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_basis_reconstructed"
     },
     "111-65-9": {
       "aliases": [
@@ -972,6 +1084,26 @@
         }
       ],
       "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "142-96-1": {
+      "aliases": [
+        "dibutyl ether"
+      ],
+      "cas": "142-96-1",
+      "formula": "",
+      "name": "dibutyl ether",
+      "q": 5.176,
+      "r": 6.0925,
+      "records": [
+        {
+          "formula": "",
+          "name": "dibutyl ether",
+          "q": 5.176,
+          "r": 6.0925,
+          "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; defensible-zero structural basis"
+        }
+      ],
+      "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; defensible-zero structural basis"
     },
     "544-76-3": {
       "aliases": [
@@ -2037,7 +2169,7 @@
   "metadata": {
     "ambiguous_alias_count": 0,
     "ambiguous_aliases": [],
-    "component_count": 66,
+    "component_count": 72,
     "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
     "key_basis": "CAS",
     "source_files": [
@@ -2045,7 +2177,8 @@
       "data/source/water_ethylene_oxide_interactions.json",
       "data/source/water_organic_binary_fits.json",
       "data/source/nagata_gmehling_extended_uniquac_rq.json",
-      "data/source/ester_uniquac_combinatorial_parameters.json"
+      "data/source/ester_uniquac_combinatorial_parameters.json",
+      "data/source/assorted_alcohols_ethers.json"
     ]
   }
 }

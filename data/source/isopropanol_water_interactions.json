@@ -1,0 +1,437 @@
+{
+  "system": {
+    "name": "2-propanol + water",
+    "component_order": {
+      "1": {
+        "name": "2-propanol",
+        "aliases": [
+          "isopropanol",
+          "IPA"
+        ],
+        "cas": "67-63-0"
+      },
+      "2": {
+        "name": "water",
+        "cas": "7732-18-5"
+      }
+    }
+  },
+
+  "recommended_validity": {
+    "temperature_min_K": 308.15,
+    "temperature_max_K": 423.15,
+    "approx_pressure_min_kPa": 12.7,
+    "approx_pressure_max_kPa": 917.0,
+    "notes": "Parameters were fitted and validated against VLE data spanning low-pressure Sada and Wilson measurements through modern isobars and the Barr-David and Dodge 423.15 K high-pressure isotherm. Extrapolation outside this range is not recommended without additional validation."
+  },
+
+  "vapor_phase_treatment": {
+    "type": "truncated_second_virial",
+    "equation": "ln(phi_i) = P/(R*T) * (2*sum_j(y_j*B_ij) - B_mix)",
+    "pure_second_virials": {
+      "component_1": {
+        "model": "Xu et al. 2021 associated-fluid correlation",
+        "fluid": "2-propanol"
+      },
+      "component_2": {
+        "model": "Xu et al. 2021 water-specific correlation",
+        "fluid": "water"
+      }
+    },
+    "cross_second_virial": {
+      "B12_cm3_per_mol": -220.0,
+      "temperature_dependence": "constant",
+      "notes": "A mild temperature dependence was tested and produced negligible improvement. The constant value is also consistent with independent consistency analysis of the Wilson and Barr-David/Dodge high-pressure datasets."
+    }
+  },
+
+  "models": {
+    "NRTL": {
+      "selected": true,
+
+      "coefficient_convention": {
+        "equation": "tau_ij(T) = a_ij + b_ij/T + c_ij*T",
+        "temperature_unit": "K",
+        "tau_dimensionless": true
+      },
+
+      "parameters": {
+        "1_to_2": {
+          "a": -0.83315,
+          "b": 300.79,
+          "c": 0.0
+        },
+        "2_to_1": {
+          "a": 16.6021,
+          "b": -2518.80,
+          "c": -0.0203443
+        },
+        "alpha_12": 0.310,
+        "alpha_21": 0.310
+      },
+
+      "explicit_equations": {
+        "tau_12": "-0.83315 + 300.79/T + 0.0*T",
+        "tau_21": "16.6021 - 2518.80/T - 0.0203443*T"
+      },
+
+      "fit_metrics": {
+        "overall": {
+          "pressure_AAD_percent": 1.99,
+          "vapor_2propanol_mole_fraction_MAE": 0.0253
+        },
+        "Wilson_azeotropes": {
+          "temperature_MAE_K": 0.14,
+          "2propanol_liquid_mole_fraction_MAE": 0.0098
+        },
+        "selected_dataset_metrics": {
+          "Sada_308.15_K": {
+            "pressure_AAD_percent": 1.27,
+            "vapor_2propanol_mole_fraction_MAE": 0.0078
+          },
+          "Sada_318.15_K": {
+            "pressure_AAD_percent": 0.98,
+            "vapor_2propanol_mole_fraction_MAE": 0.0082
+          },
+          "Sada_328.15_K": {
+            "pressure_AAD_percent": 1.18,
+            "vapor_2propanol_mole_fraction_MAE": 0.0106
+          },
+          "Sada_338.15_K": {
+            "pressure_AAD_percent": 1.29,
+            "vapor_2propanol_mole_fraction_MAE": 0.0114
+          },
+          "Sada_348.15_K": {
+            "pressure_AAD_percent": 1.57,
+            "vapor_2propanol_mole_fraction_MAE": 0.0112
+          },
+          "Wu_353.15_K": {
+            "pressure_AAD_percent": 2.06,
+            "vapor_2propanol_mole_fraction_MAE": 0.0139
+          },
+          "modern_60_kPa": {
+            "pressure_AAD_percent": 1.99,
+            "vapor_2propanol_mole_fraction_MAE": 0.0316
+          },
+          "modern_80_kPa": {
+            "pressure_AAD_percent": 1.63,
+            "vapor_2propanol_mole_fraction_MAE": 0.0160
+          },
+          "modern_103.5_kPa": {
+            "pressure_AAD_percent": 1.81,
+            "vapor_2propanol_mole_fraction_MAE": 0.0188
+          },
+          "Barr_423.15_K": {
+            "pressure_AAD_percent": 3.62,
+            "vapor_2propanol_mole_fraction_MAE": 0.0308
+          }
+        }
+      },
+
+      "Wilson_azeotrope_validation": [
+        {
+          "pressure_mmHg": 95,
+          "experimental_x_2propanol": 0.6670,
+          "predicted_x_2propanol": 0.6472
+        },
+        {
+          "pressure_mmHg": 190,
+          "experimental_x_2propanol": 0.6705,
+          "predicted_x_2propanol": 0.6604
+        },
+        {
+          "pressure_mmHg": 380,
+          "experimental_x_2propanol": 0.6750,
+          "predicted_x_2propanol": 0.6743
+        },
+        {
+          "pressure_mmHg": 760,
+          "experimental_x_2propanol": 0.6870,
+          "predicted_x_2propanol": 0.6885
+        },
+        {
+          "pressure_mmHg": 3087,
+          "experimental_x_2propanol": 0.6950,
+          "predicted_x_2propanol": 0.7118
+        }
+      ],
+
+      "model_selection": {
+        "alpha": "Fitted rather than fixed. Allowing a single curvature term in tau_21 prevented alpha from collapsing toward the very low values obtained with the more rigid a+b/T form.",
+        "chosen_temperature_dependence": "Only the 2_to_1 interaction receives a linear-T term.",
+        "reason": "A single c*T term in tau_21 improved pressure and azeotrope behavior while remaining substantially more identifiable than models containing higher-order terms in both interactions.",
+        "rejected_or_disfavored_forms": [
+          "a+b/T with free alpha only",
+          "c*ln(T) curvature instead of c*T",
+          "higher-order terms in both interaction directions",
+          "a+b/T+c*ln(T)+d*T full forms"
+        ]
+      }
+    },
+
+    "UNIQUAC": {
+      "selected": true,
+
+      "structural_parameters": {
+        "component_1": {
+          "name": "2-propanol",
+          "r": 2.7791,
+          "q": 2.508
+        },
+        "component_2": {
+          "name": "water",
+          "r": 0.9200,
+          "q": 1.400
+        }
+      },
+
+      "coefficient_convention": {
+        "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*T",
+        "equivalent_equation": "tau_ij(T) = exp(a_ij + b_ij/T + c_ij*T)",
+        "temperature_unit": "K",
+        "tau_dimensionless": true
+      },
+
+      "parameters": {
+        "1_to_2": {
+          "a": 0.31849185,
+          "b": -299.87604,
+          "c": 0.0
+        },
+        "2_to_1": {
+          "a": -1.56273238,
+          "b": 308.94286,
+          "c": 0.001803034
+        }
+      },
+
+      "explicit_equations": {
+        "ln_tau_12": "0.31849185 - 299.87604/T + 0.0*T",
+        "ln_tau_21": "-1.56273238 + 308.94286/T + 0.001803034*T",
+        "tau_12": "exp(0.31849185 - 299.87604/T)",
+        "tau_21": "exp(-1.56273238 + 308.94286/T + 0.001803034*T)"
+      },
+
+      "fit_metrics": {
+        "overall": {
+          "pressure_AAD_percent": 1.908,
+          "vapor_2propanol_mole_fraction_MAE": 0.02037
+        },
+        "Wilson_azeotropes": {
+          "temperature_MAE_K": 0.084,
+          "2propanol_liquid_mole_fraction_MAE": 0.00756
+        },
+        "dataset_groups": {
+          "Sada_308_to_348_K": {
+            "pressure_AAD_percent": 1.96,
+            "vapor_2propanol_mole_fraction_MAE": 0.0099
+          },
+          "Wu_353.15_K": {
+            "pressure_AAD_percent": 2.28,
+            "vapor_2propanol_mole_fraction_MAE": 0.0163
+          },
+          "Wilson_95_mmHg": {
+            "pressure_AAD_percent": 1.28,
+            "vapor_2propanol_mole_fraction_MAE": 0.0071
+          },
+          "Wilson_190_mmHg": {
+            "pressure_AAD_percent": 0.74,
+            "vapor_2propanol_mole_fraction_MAE": 0.0069
+          },
+          "Wilson_380_mmHg": {
+            "pressure_AAD_percent": 1.37,
+            "vapor_2propanol_mole_fraction_MAE": 0.0096
+          },
+          "Wilson_760_mmHg": {
+            "pressure_AAD_percent": 1.63,
+            "vapor_2propanol_mole_fraction_MAE": 0.0083
+          },
+          "Wilson_3087_mmHg": {
+            "pressure_AAD_percent": 1.54,
+            "vapor_2propanol_mole_fraction_MAE": 0.0139
+          },
+          "Barr_423.15_K": {
+            "pressure_AAD_percent": 3.02,
+            "vapor_2propanol_mole_fraction_MAE": 0.0224
+          }
+        }
+      },
+
+      "Wilson_azeotrope_validation": [
+        {
+          "pressure_mmHg": 95,
+          "experimental_x_2propanol": 0.6670,
+          "predicted_x_2propanol": 0.6627
+        },
+        {
+          "pressure_mmHg": 190,
+          "experimental_x_2propanol": 0.6705,
+          "predicted_x_2propanol": 0.6715
+        },
+        {
+          "pressure_mmHg": 380,
+          "experimental_x_2propanol": 0.6750,
+          "predicted_x_2propanol": 0.6826
+        },
+        {
+          "pressure_mmHg": 760,
+          "experimental_x_2propanol": 0.6870,
+          "predicted_x_2propanol": 0.6950
+        },
+        {
+          "pressure_mmHg": 3087,
+          "experimental_x_2propanol": 0.6950,
+          "predicted_x_2propanol": 0.7119
+        }
+      ],
+
+      "model_selection": {
+        "chosen_temperature_dependence": "Only the 2_to_1 interaction receives a linear-T term.",
+        "candidate_comparison": {
+          "both_a_plus_b_over_T": {
+            "pressure_AAD_percent": 1.956,
+            "vapor_y_MAE": 0.02035,
+            "azeotrope_temperature_MAE_K": 0.079,
+            "azeotrope_x_MAE": 0.00797,
+            "scaled_condition_number": 29
+          },
+          "single_cT_on_2_to_1": {
+            "pressure_AAD_percent": 1.908,
+            "vapor_y_MAE": 0.02037,
+            "azeotrope_temperature_MAE_K": 0.084,
+            "azeotrope_x_MAE": 0.00756,
+            "scaled_condition_number": 42
+          },
+          "single_lnT_on_2_to_1": {
+            "pressure_AAD_percent": 1.906,
+            "vapor_y_MAE": 0.02036,
+            "azeotrope_temperature_MAE_K": 0.084,
+            "azeotrope_x_MAE": 0.00751,
+            "scaled_condition_number": 87
+          },
+          "double_cT": {
+            "pressure_AAD_percent": 1.932,
+            "vapor_y_MAE": 0.02019,
+            "azeotrope_temperature_MAE_K": 0.085,
+            "azeotrope_x_MAE": 0.00685,
+            "scaled_condition_number": 473
+          },
+          "double_lnT": {
+            "pressure_AAD_percent": 1.927,
+            "vapor_y_MAE": 0.02018,
+            "azeotrope_temperature_MAE_K": 0.086,
+            "azeotrope_x_MAE": 0.00678,
+            "scaled_condition_number": 962
+          },
+          "full_lnT_plus_T_both_directions": {
+            "pressure_AAD_percent": 2.012,
+            "vapor_y_MAE": 0.01995,
+            "azeotrope_temperature_MAE_K": 0.111,
+            "azeotrope_x_MAE": 0.00722,
+            "scaled_condition_number": 37600
+          }
+        },
+        "reason": "The single linear-T term on the 2_to_1 interaction captures nearly all useful curvature while preserving good parameter identifiability. Double-curvature models provide only very small azeotrope improvements at much worse conditioning."
+      }
+    }
+  },
+
+  "fit_provenance": {
+    "common_dataset": [
+      {
+        "source": "Sada and Morisue (1975)",
+        "temperature_range_K": [
+          308.15,
+          348.15
+        ],
+        "type": "isothermal pressure-composition / Barker-derived VLE",
+        "role": "low-temperature anchor"
+      },
+      {
+        "source": "Wu, Hagewiesche and Sandler (1988)",
+        "temperature_K": 353.15,
+        "type": "direct isothermal P-x-y",
+        "role": "high-quality intermediate-temperature anchor"
+      },
+      {
+        "source": "Moioli et al. (2021)",
+        "citation": "S. Moioli, G. De Guido, M. Gilardi, L.A. Pellegrini, D. Bonalumi, G.G. Lozza, \"Isobaric Vapor-Liquid Equilibrium Data for the Isopropanol-Water System,\" Journal of Chemical & Engineering Data 66 (2021) 4148-4158.",
+        "doi": "10.1021/acs.jced.1c00327",
+        "pressures_kPa": [
+          103.5,
+          150.0,
+          200.0,
+          250.0,
+          300.0
+        ],
+        "type": "modern isobaric T-x-y",
+        "role": "primary modern VLE database",
+        "notes": "PT lab, Politecnico di Milano. New experimental isobars at 150-300 kPa; the near-atmospheric 103.5 kPa dataset was used as an apparatus/data validation set."
+      },
+      {
+        "source": "Barbieri et al. (2024)",
+        "citation": "C. Barbieri, G. De Guido, S. Moioli, \"Vapor-liquid equilibrium data for the binary system isopropanol+water at 60 kPa and 80 kPa,\" The Journal of Chemical Thermodynamics 198 (2024) 107342.",
+        "doi": "10.1016/j.jct.2024.107342",
+        "pressures_kPa": [
+          60.0,
+          80.0
+        ],
+        "type": "modern isobaric T-x-y",
+        "role": "primary modern vacuum VLE database",
+        "notes": "PT lab, Politecnico di Milano. New vacuum VLE measurements at 60 and 80 kPa."
+      },
+      {
+        "source": "Wilson and Simons (1952)",
+        "pressures_mmHg": [
+          95,
+          190,
+          380,
+          760,
+          3087
+        ],
+        "type": "isobaric T-x-y plus reported azeotropes",
+        "role": "broad pressure range and azeotropic-locus constraint"
+      },
+      {
+        "source": "Barr-David and Dodge (1959)",
+        "temperature_K": 423.15,
+        "type": "direct high-pressure isothermal P-x-y",
+        "role": "high-temperature/high-pressure anchor"
+      }
+    ],
+
+    "weighting": {
+      "general": "Direct pressure and vapor-composition residuals were fitted with dataset-quality-aware weighting.",
+      "azeotrope": "Reported azeotropic temperature and composition were given explicit additional weight, particularly the five Wilson azeotropes.",
+      "Sada": "Direct pressure measurements were regarded as more fundamental than Barker-derived phase compositions.",
+      "Barr-David_and_Dodge": "Moderate weighting was used because of older experimental precision and increased sensitivity to vapor-phase fugacity treatment."
+    },
+
+    "excluded_points": [
+      {
+        "dataset": "modern 103.5 kPa",
+        "description": "first extreme water-rich point",
+        "reason": "identified as anomalous"
+      },
+      {
+        "description": "pure-component endpoints",
+        "reason": "not treated as binary interaction regression observations"
+      }
+    ]
+  },
+
+  "comparison": {
+    "preferred_overall_model": "UNIQUAC",
+    "reason": "Within the common regression framework, UNIQUAC produced lower pressure AAD, lower vapor-composition MAE, and lower Wilson azeotrope-composition MAE than the selected NRTL fit.",
+    "NRTL": {
+      "pressure_AAD_percent": 1.99,
+      "vapor_y_MAE": 0.0253,
+      "Wilson_azeotrope_x_MAE": 0.0098
+    },
+    "UNIQUAC": {
+      "pressure_AAD_percent": 1.908,
+      "vapor_y_MAE": 0.02037,
+      "Wilson_azeotrope_x_MAE": 0.00756
+    }
+  }
+}

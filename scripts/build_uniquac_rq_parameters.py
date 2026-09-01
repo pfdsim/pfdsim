@@ -16,6 +16,31 @@ DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 
+ASSORTED_ALCOHOL_ETHER_CAS = {
+    "1-butanol": "71-36-3",
+    "1-propanol": "71-23-8",
+    "2-methoxyethanol": "109-86-4",
+    "2-propanol": "67-63-0",
+    "acetonitrile": "75-05-8",
+    "anisole": "100-66-3",
+    "butylamine": "109-73-9",
+    "cyclopentanone": "120-92-3",
+    "dibutyl ether": "142-96-1",
+    "diethyl ether": "60-29-7",
+    "diisopropyl ether": "108-20-3",
+    "dipropyl ether": "111-43-3",
+    "ethanol": "64-17-5",
+    "isopropyl acetate": "108-21-4",
+    "methanol": "67-56-1",
+    "n-heptane": "142-82-5",
+    "n-hexane": "110-54-3",
+    "n-octane": "111-65-9",
+    "propanone": "67-64-1",
+    "propylamine": "107-10-8",
+    "tetrahydrofuran": "109-99-9",
+    "water": "7732-18-5",
+}
+
 
 def normalize_name(value: str) -> str:
     text = value.lower().strip()
@@ -256,6 +281,80 @@ def ester_combinatorial_records() -> list[dict]:
     return records
 
 
+def assorted_alcohol_ether_rq_records(existing_cas: set[str]) -> list[dict]:
+    """Return only new CAS-keyed r/q entries needed by recommended fits."""
+    path = SOURCE_DATA / "assorted_alcohols_ethers.json"
+    if not path.exists():
+        return []
+    payload = load_json(path)
+    excluded_pair = frozenset(("2-propanol", "water"))
+    records_by_cas: dict[str, dict] = {}
+
+    def add_component(name: str, parameters: dict, provenance: str) -> None:
+        try:
+            cas = ASSORTED_ALCOHOL_ETHER_CAS[name]
+        except KeyError as error:
+            raise ValueError(
+                f"Missing CAS mapping for assorted alcohol/ether component {name!r}"
+            ) from error
+        if cas in existing_cas:
+            return
+        record = {
+            "cas": cas,
+            "name": name,
+            "r": float(parameters["r"]),
+            "q": float(parameters["q"]),
+            "source": (
+                "assorted_alcohols_ethers.json; recommended UNIQUAC structural "
+                f"basis; {provenance}"
+            ),
+        }
+        previous = records_by_cas.get(cas)
+        if previous is not None and (
+            not math.isclose(float(previous["r"]), record["r"])
+            or not math.isclose(float(previous["q"]), record["q"])
+        ):
+            raise ValueError(
+                f"Conflicting recommended assorted UNIQUAC r/q values for CAS {cas}"
+            )
+        records_by_cas[cas] = record
+
+    for entry in payload["entries"]:
+        if frozenset(entry["components"]) == excluded_pair:
+            continue
+        uniquac = entry.get("uniquac")
+        if not (
+            entry.get("recommended", False)
+            and uniquac
+            and uniquac.get("recommended", False)
+        ):
+            continue
+        for name, parameters in uniquac["r_q_use"]["components"].items():
+            add_component(
+                name,
+                parameters,
+                str(uniquac.get("r_q_provenance_status", "documented basis")),
+            )
+
+    registry = payload["uniquac_structural_parameter_registry"]
+    for entry in payload["retired_or_not_promoted"]:
+        if "use_zero_interaction" not in entry.get("status", ""):
+            continue
+        for name in entry["components"]:
+            candidates = [
+                item for item in registry.values()
+                if item["component"] == name
+                and item.get("active_database_standard", True)
+            ]
+            if candidates:
+                add_component(name, candidates[0], "defensible-zero structural basis")
+        for name, parameters in entry.get("source_uniquac_r_q", {}).items():
+            if isinstance(parameters, dict) and "r" in parameters and "q" in parameters:
+                add_component(name, parameters, "defensible-zero source basis")
+
+    return list(records_by_cas.values())
+
+
 def apply_extended_metadata(components: dict[str, dict], aliases: dict[str, Optional[str]], records: list[dict]) -> None:
     for record in records:
         add_record(components, aliases, record)
@@ -287,6 +386,9 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
     for record in ester_combinatorial_records():
         add_record(components, aliases, record)
     apply_extended_metadata(components, aliases, nagata_records())
+    assorted_records = assorted_alcohol_ether_rq_records(set(components))
+    for record in assorted_records:
+        add_record(components, aliases, record)
 
     ambiguous_aliases = sorted(key for key, cas in aliases.items() if cas is None)
     payload = {
@@ -299,6 +401,7 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
                 "data/source/water_organic_binary_fits.json",
                 "data/source/nagata_gmehling_extended_uniquac_rq.json",
                 "data/source/ester_uniquac_combinatorial_parameters.json",
+                "data/source/assorted_alcohols_ethers.json",
             ],
             "component_count": len(components),
             "ambiguous_alias_count": len(ambiguous_aliases),
