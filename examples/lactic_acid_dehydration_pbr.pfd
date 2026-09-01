@@ -70,11 +70,11 @@ INTERACTION_PARAMETERS:
     H2O/PA   | model=NRTL, scope=extraction, alpha=0.1, a12=2105.30, a21=-1124.50, comment=25 C water-propanoic acid-MIBK extraction regression
     PA/MIBK  | model=NRTL, scope=extraction, alpha=0.1, a12=-1297.70, a21=2043.30, comment=25 C water-propanoic acid-MIBK extraction regression
 
-    # Constant-tau NRTL parameters fitted against the paper's raw ternary LLE
-    # data for water/acrylic acid/MIBK.
-    H2O/AA   | model=NRTL, scope=extraction, alpha=0.450, tau12_c=6.468, tau21_c=2.524, comment=constant-tau fit to raw water-acrylic acid-MIBK LLE data
-    H2O/MIBK | model=NRTL, scope=extraction, alpha=0.378, tau12_c=5.338, tau21_c=3.156, comment=constant-tau fit to raw water-acrylic acid-MIBK LLE data
-    AA/MIBK  | model=NRTL, scope=extraction, alpha=0.239, tau12_c=6.061, tau21_c=1.229, comment=constant-tau fit to raw water-acrylic acid-MIBK LLE data
+    # Stability-constrained constant-tau NRTL parameters fitted against the
+    # paper's raw ternary LLE data for water/acrylic acid/MIBK.
+    H2O/AA   | model=NRTL, scope=extraction, alpha=0.8361, tau12_c=4.4560, tau21_c=1.8867, comment=stability-constrained constant-tau fit to raw water-acrylic acid-MIBK LLE data
+    H2O/MIBK | model=NRTL, scope=extraction, alpha=0.3799, tau12_c=4.7575, tau21_c=2.6617, comment=stability-constrained constant-tau fit to raw water-acrylic acid-MIBK LLE data
+    AA/MIBK  | model=NRTL, scope=extraction, alpha=-0.1383, tau12_c=-12.6725, tau21_c=2.0522, comment=stability-constrained constant-tau fit to raw water-acrylic acid-MIBK LLE data
 
 # Explicit PFD and curated database interactions take priority. Remaining
 # missing liquid binaries are fitted once from UNIFDMD during initialization
@@ -113,7 +113,7 @@ STREAM Extraction-Feed : E-301.out -> X-301.feed
 STREAM Extraction-Solvent : -> X-301.solvent
     T = 25 [C]
     P = 1.01325 [bar]
-    F_mass = 2290.6986 [kg/h]
+    F_mass = 2450 [kg/h]
     w = MIBK:1.0
 STREAM Extraction-Raffinate : X-301.raffinate
 STREAM Extraction-Extract : X-301.extract
@@ -183,10 +183,9 @@ UNIT C-201 : RigorousDistillation
     initializer = cheap_estimate
 
 # The concentrated aqueous acid product is raised to atmospheric pressure,
-# cooled to room temperature, and contacted counter-currently with MIBK. Total
-# solvent mass is one half of the current C-201-bottoms mass flow. The
-# extractor uses its isolated NRTL scope so these LLE regressions do not alter
-# the upstream UNIQUAC-VDM vapor-liquid calculations.
+# cooled to room temperature, and contacted counter-currently with 2450 kg/h
+# MIBK. The extractor uses its isolated NRTL scope so these LLE regressions do
+# not alter the upstream UNIQUAC-VDM vapor-liquid calculations.
 UNIT P-301 : Pump
     P_out = 1.01325 [bar]
 
@@ -195,7 +194,7 @@ UNIT E-301 : Cooler
 
 UNIT X-301 : RigorousLiquidLiquidExtractor
     N_stages = 20
-    mode = isothermal
+    mode = adiabatic
     T = 25 [C]
     solver_algorithm = equation_oriented
     thermo_scope = extraction
