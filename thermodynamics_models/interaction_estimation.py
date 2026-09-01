@@ -15,7 +15,7 @@ from scipy.optimize import least_squares
 
 _MODIFIED_SOURCES = frozenset({'UNIFDMD', 'UNIFM2', 'UNIFNIST'})
 _SOURCE_CLASSES = None
-_FIT_CACHE_SCHEMA_VERSION = 1
+_FIT_CACHE_SCHEMA_VERSION = 2
 _FIT_CACHE = None
 _FIT_CACHE_PATH = (
     Path(__file__).resolve().parent.parent
@@ -438,17 +438,19 @@ def _fit_pair(
         )
     elif destination == 'UNIQUAC':
         record.update(
-            tau12_a=physical[0], tau12_b=physical[1], tau12_c=physical[2],
-            tau21_a=physical[3], tau21_b=physical[4], tau21_c=physical[5],
+            tau12_a=physical[0], tau12_b=physical[1], tau12_c=0.0,
+            tau12_d=physical[2], tau12_e=0.0,
+            tau21_a=physical[3], tau21_b=physical[4], tau21_c=0.0,
+            tau21_d=physical[5], tau21_e=0.0, tau_tref=T_ref,
             model_variant='standard_uniquac', use_q_prime=False,
         )
     else:
         record.update(
             alpha12=alpha,
             tau12_c=physical[0], tau12_d=physical[1], tau12_e=0.0,
-            tau12_f=physical[2],
+            tau12_f=physical[2], tau12_g=0.0,
             tau21_c=physical[3], tau21_d=physical[4], tau21_e=0.0,
-            tau21_f=physical[5],
+            tau21_f=physical[5], tau21_g=0.0,
             tau_tref=T_ref,
         )
     if destination == 'NRTL' and not modified:

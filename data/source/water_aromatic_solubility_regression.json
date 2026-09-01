@@ -4,7 +4,7 @@
   "pressure_units": "kPa",
   "component_order": "water -> organic",
   "nrtl_form": "tau_ij = c_ij + d_ij/T + e_ij*((Tref - T)/T + ln(T/Tref)); Tref = 298.15 K",
-  "uniquac_form": "ln(tau_ij) = a_ij + b_ij/T + c_ij*T",
+  "uniquac_form": "ln(tau_ij) = a_ij + b_ij/T + d_ij*T",
   "residual_basis": {
     "composition": "runtime LLE split mean abs ln(predicted/table)",
     "pressure": "mean abs relative pressure residual at tabulated liquid compositions"
@@ -52,10 +52,10 @@
         "UNIQUAC": {
           "tau12_a": -4.26152099,
           "tau12_b": 410.757318,
-          "tau12_c": 0.00557446,
+          "tau12_d": 0.00557446,
           "tau21_a": 2.89513893,
           "tau21_b": -1851.910186,
-          "tau21_c": 0.00151181,
+          "tau21_d": 0.00151181,
           "average_residuals": {
             "mean_abs_log_x_water_in_organic_rich": 0.041402,
             "mean_abs_log_x_organic_in_water_rich": 0.026324,
@@ -107,10 +107,10 @@
         "UNIQUAC": {
           "tau12_a": -5.02820679,
           "tau12_b": 546.919292,
-          "tau12_c": 0.00691596,
+          "tau12_d": 0.00691596,
           "tau21_a": 4.86379009,
           "tau21_b": -2243.653045,
-          "tau21_c": -0.00141886,
+          "tau21_d": -0.00141886,
           "average_residuals": {
             "mean_abs_log_x_water_in_organic_rich": 0.046140,
             "mean_abs_log_x_organic_in_water_rich": 0.054189,
@@ -158,10 +158,10 @@
         "UNIQUAC": {
           "tau12_a": -3.49453499,
           "tau12_b": 263.479577,
-          "tau12_c": 0.00502872,
+          "tau12_d": 0.00502872,
           "tau21_a": 0.11693990,
           "tau21_b": -1355.069752,
-          "tau21_c": 0.00443349,
+          "tau21_d": 0.00443349,
           "average_residuals": {
             "mean_abs_log_x_water_in_organic_rich": 0.032031,
             "mean_abs_log_x_organic_in_water_rich": 0.032909,

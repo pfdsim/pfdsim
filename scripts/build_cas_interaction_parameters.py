@@ -587,10 +587,12 @@ def supplemental_nrtl_matrix_records(existing: list[dict]) -> tuple[list[dict], 
                 "tau12_d": float(forward["b"]),
                 "tau12_e": 0.0,
                 "tau12_f": 0.0,
+                "tau12_g": 0.0,
                 "tau21_c": float(reverse["a"]),
                 "tau21_d": float(reverse["b"]),
                 "tau21_e": 0.0,
                 "tau21_f": 0.0,
+                "tau21_g": 0.0,
                 "alpha12": max(float(forward.get("c", 0.0)), float(reverse.get("c", 0.0))),
                 "comment": f"{comp_i}/{comp_j} supplemental NRTL matrix; tau_ij = a_ij + b_ij/T",
                 "source": payload.get("source", "supplemental NRTL matrix"),
@@ -648,10 +650,12 @@ def supplemental_water_aromatic_regression_records(
                 "tau12_d": float(params["tau12_d"]),
                 "tau12_e": float(params.get("tau12_e", 0.0)),
                 "tau12_f": float(params.get("tau12_f", 0.0)),
+                "tau12_g": float(params.get("tau12_g", 0.0)),
                 "tau21_c": float(params["tau21_c"]),
                 "tau21_d": float(params["tau21_d"]),
                 "tau21_e": float(params.get("tau21_e", 0.0)),
                 "tau21_f": float(params.get("tau21_f", 0.0)),
+                "tau21_g": float(params.get("tau21_g", 0.0)),
                 "tau_tref": 298.15,
             })
         elif model_key == "UNIQUAC":
@@ -661,9 +665,14 @@ def supplemental_water_aromatic_regression_records(
                 "tau12_a": float(params["tau12_a"]),
                 "tau12_b": float(params["tau12_b"]),
                 "tau12_c": float(params.get("tau12_c", 0.0)),
+                "tau12_d": float(params.get("tau12_d", 0.0)),
+                "tau12_e": float(params.get("tau12_e", 0.0)),
                 "tau21_a": float(params["tau21_a"]),
                 "tau21_b": float(params["tau21_b"]),
                 "tau21_c": float(params.get("tau21_c", 0.0)),
+                "tau21_d": float(params.get("tau21_d", 0.0)),
+                "tau21_e": float(params.get("tau21_e", 0.0)),
+                "tau_tref": float(params.get("tau_tref", 298.15)),
             })
         else:
             continue
@@ -727,10 +736,12 @@ def supplemental_water_organic_binary_fit_records(
                 "tau12_d": float(params["tau12_d"]),
                 "tau12_e": float(params.get("tau12_e", 0.0)),
                 "tau12_f": float(params.get("tau12_f", 0.0)),
+                "tau12_g": float(params.get("tau12_g", 0.0)),
                 "tau21_c": float(params["tau21_c"]),
                 "tau21_d": float(params["tau21_d"]),
                 "tau21_e": float(params.get("tau21_e", 0.0)),
                 "tau21_f": float(params.get("tau21_f", 0.0)),
+                "tau21_g": float(params.get("tau21_g", 0.0)),
                 "tau_tref": float(fit.get("tau_tref_K", 298.15)),
             })
         else:
@@ -740,9 +751,14 @@ def supplemental_water_organic_binary_fit_records(
                 "tau12_a": float(params["tau12_a"]),
                 "tau12_b": float(params["tau12_b"]),
                 "tau12_c": float(params.get("tau12_c", 0.0)),
+                "tau12_d": float(params.get("tau12_d", 0.0)),
+                "tau12_e": float(params.get("tau12_e", 0.0)),
                 "tau21_a": float(params["tau21_a"]),
                 "tau21_b": float(params["tau21_b"]),
                 "tau21_c": float(params.get("tau21_c", 0.0)),
+                "tau21_d": float(params.get("tau21_d", 0.0)),
+                "tau21_e": float(params.get("tau21_e", 0.0)),
+                "tau_tref": float(fit.get("tau_tref_K", 298.15)),
             })
         records.append(record)
 
@@ -806,10 +822,12 @@ def supplemental_literature_vle_activity_records(
                 "tau12_d": float(parameters.get("tau12_d", 0.0)),
                 "tau12_e": float(parameters.get("tau12_e", 0.0)),
                 "tau12_f": float(parameters.get("tau12_f", 0.0)),
+                "tau12_g": float(parameters.get("tau12_g", 0.0)),
                 "tau21_c": float(parameters["tau21_c"]),
                 "tau21_d": float(parameters.get("tau21_d", 0.0)),
                 "tau21_e": float(parameters.get("tau21_e", 0.0)),
                 "tau21_f": float(parameters.get("tau21_f", 0.0)),
+                "tau21_g": float(parameters.get("tau21_g", 0.0)),
                 "tau_tref": float(parameters.get("tau_tref", 298.15)),
             })
         else:
@@ -821,9 +839,14 @@ def supplemental_literature_vle_activity_records(
                 "tau12_a": float(parameters["tau12_a"]),
                 "tau12_b": float(parameters.get("tau12_b", 0.0)),
                 "tau12_c": float(parameters.get("tau12_c", 0.0)),
+                "tau12_d": float(parameters.get("tau12_d", 0.0)),
+                "tau12_e": float(parameters.get("tau12_e", 0.0)),
                 "tau21_a": float(parameters["tau21_a"]),
                 "tau21_b": float(parameters.get("tau21_b", 0.0)),
                 "tau21_c": float(parameters.get("tau21_c", 0.0)),
+                "tau21_d": float(parameters.get("tau21_d", 0.0)),
+                "tau21_e": float(parameters.get("tau21_e", 0.0)),
+                "tau_tref": float(parameters.get("tau_tref", 298.15)),
             })
         records.append(record)
 
@@ -977,10 +1000,12 @@ def supplemental_literature_vle_activity_records(
                 "tau12_d": raw["tau12_d"],
                 "tau12_e": raw.get("tau12_e", 0.0),
                 "tau12_f": raw.get("tau12_f", 0.0),
+                "tau12_g": raw.get("tau12_g", 0.0),
                 "tau21_c": raw["tau21_c"],
                 "tau21_d": raw["tau21_d"],
                 "tau21_e": raw.get("tau21_e", 0.0),
                 "tau21_f": raw.get("tau21_f", 0.0),
+                "tau21_g": raw.get("tau21_g", 0.0),
                 "tau_tref": raw.get("tau_tref", 298.15),
             }
         else:
@@ -990,9 +1015,14 @@ def supplemental_literature_vle_activity_records(
                 "tau12_a": raw["tau12_a"],
                 "tau12_b": raw["tau12_b"],
                 "tau12_c": raw.get("tau12_c", 0.0),
+                "tau12_d": raw.get("tau12_d", 0.0),
+                "tau12_e": raw.get("tau12_e", 0.0),
                 "tau21_a": raw["tau21_a"],
                 "tau21_b": raw["tau21_b"],
                 "tau21_c": raw.get("tau21_c", 0.0),
+                "tau21_d": raw.get("tau21_d", 0.0),
+                "tau21_e": raw.get("tau21_e", 0.0),
+                "tau_tref": raw.get("tau_tref", 298.15),
             }
         acid_name = water_acid_names[system_key]
         add_record(
@@ -1109,10 +1139,12 @@ def supplemental_assorted_alcohol_ether_records(
                 "tau12_d": float(parameters["b12_K"]),
                 "tau12_e": 0.0,
                 "tau12_f": float(parameters.get("c12_per_K", 0.0)),
+                "tau12_g": float(parameters.get("d12_per_K2", 0.0)),
                 "tau21_c": float(parameters["a21"]),
                 "tau21_d": float(parameters["b21_K"]),
                 "tau21_e": 0.0,
                 "tau21_f": float(parameters.get("c21_per_K", 0.0)),
+                "tau21_g": float(parameters.get("d21_per_K2", 0.0)),
                 "tau_tref": 298.15,
             })
         else:
@@ -1125,10 +1157,15 @@ def supplemental_assorted_alcohol_ether_records(
                 "use_q_prime": False,
                 "tau12_a": float(parameters["a12"]),
                 "tau12_b": float(parameters["b12_K"]),
-                "tau12_c": float(parameters.get("c12_per_K", 0.0)),
+                "tau12_c": 0.0,
+                "tau12_d": float(parameters.get("c12_per_K", 0.0)),
+                "tau12_e": float(parameters.get("d12_per_K2", 0.0)),
                 "tau21_a": float(parameters["a21"]),
                 "tau21_b": float(parameters["b21_K"]),
-                "tau21_c": float(parameters.get("c21_per_K", 0.0)),
+                "tau21_c": 0.0,
+                "tau21_d": float(parameters.get("c21_per_K", 0.0)),
+                "tau21_e": float(parameters.get("d21_per_K2", 0.0)),
+                "tau_tref": 298.15,
             })
         records.append(record)
 
@@ -1175,10 +1212,12 @@ def supplemental_assorted_alcohol_ether_records(
                 "tau12_d": 0.0,
                 "tau12_e": 0.0,
                 "tau12_f": 0.0,
+                "tau12_g": 0.0,
                 "tau21_c": 0.0,
                 "tau21_d": 0.0,
                 "tau21_e": 0.0,
                 "tau21_f": 0.0,
+                "tau21_g": 0.0,
                 "tau_tref": 298.15,
             })
         else:
@@ -1188,9 +1227,14 @@ def supplemental_assorted_alcohol_ether_records(
                 "tau12_a": 0.0,
                 "tau12_b": 0.0,
                 "tau12_c": 0.0,
+                "tau12_d": 0.0,
+                "tau12_e": 0.0,
                 "tau21_a": 0.0,
                 "tau21_b": 0.0,
                 "tau21_c": 0.0,
+                "tau21_d": 0.0,
+                "tau21_e": 0.0,
+                "tau_tref": 298.15,
             })
         records.append(record)
 
@@ -1263,10 +1307,12 @@ def supplemental_isopropanol_water_records(
             "tau12_d": float(forward["b"]),
             "tau12_e": 0.0,
             "tau12_f": float(forward["c"]),
+            "tau12_g": float(forward.get("d", 0.0)),
             "tau21_c": float(reverse["a"]),
             "tau21_d": float(reverse["b"]),
             "tau21_e": 0.0,
             "tau21_f": float(reverse["c"]),
+            "tau21_g": float(reverse.get("d", 0.0)),
             "tau_tref": 298.15,
         })
     else:
@@ -1275,10 +1321,15 @@ def supplemental_isopropanol_water_records(
             "use_q_prime": False,
             "tau12_a": float(forward["a"]),
             "tau12_b": float(forward["b"]),
-            "tau12_c": float(forward["c"]),
+            "tau12_c": 0.0,
+            "tau12_d": float(forward["c"]),
+            "tau12_e": float(forward.get("d", 0.0)),
             "tau21_a": float(reverse["a"]),
             "tau21_b": float(reverse["b"]),
-            "tau21_c": float(reverse["c"]),
+            "tau21_c": 0.0,
+            "tau21_d": float(reverse["c"]),
+            "tau21_e": float(reverse.get("d", 0.0)),
+            "tau_tref": 298.15,
         })
     return [record], 0 if pair in existing_pairs else 1, {pair}
 
@@ -1331,10 +1382,12 @@ def supplemental_phenolic_temperature_records(
                 "tau12_d": c12c - tref * c12t,
                 "tau12_e": 0.0,
                 "tau12_f": 0.0,
+                "tau12_g": 0.0,
                 "tau21_c": c21t,
                 "tau21_d": c21c - tref * c21t,
                 "tau21_e": 0.0,
                 "tau21_f": 0.0,
+                "tau21_g": 0.0,
                 "tau_tref": tref,
             })
         elif model_key == "UNIQUAC":
@@ -1344,9 +1397,14 @@ def supplemental_phenolic_temperature_records(
                 "tau12_a": -c12t,
                 "tau12_b": -c12c + tref * c12t,
                 "tau12_c": 0.0,
+                "tau12_d": 0.0,
+                "tau12_e": 0.0,
                 "tau21_a": -c21t,
                 "tau21_b": -c21c + tref * c21t,
                 "tau21_c": 0.0,
+                "tau21_d": 0.0,
+                "tau21_e": 0.0,
+                "tau_tref": tref,
             })
         else:
             continue
@@ -1387,10 +1445,12 @@ def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[lis
             "tau12_d": float(system["a12_J_per_mol"]) / r_j_per_mol_k,
             "tau12_e": 0.0,
             "tau12_f": 0.0,
+            "tau12_g": 0.0,
             "tau21_c": float(system["b21_J_per_mol_K"]) / r_j_per_mol_k,
             "tau21_d": float(system["a21_J_per_mol"]) / r_j_per_mol_k,
             "tau21_e": 0.0,
             "tau21_f": 0.0,
+            "tau21_g": 0.0,
             "tau_tref": 298.15,
             "comment": (
                 f"{component1}/{component2} Cesari phenolic NRTL Table {system['table']}; "
@@ -1439,10 +1499,12 @@ def supplemental_diethyl_ether_water_records(
             "tau12_d": float(params["tau12_d"]),
             "tau12_e": float(params.get("tau12_e", 0.0)),
             "tau12_f": float(params.get("tau12_f", 0.0)),
+            "tau12_g": float(params.get("tau12_g", 0.0)),
             "tau21_c": float(params["tau21_c"]),
             "tau21_d": float(params["tau21_d"]),
             "tau21_e": float(params.get("tau21_e", 0.0)),
             "tau21_f": float(params.get("tau21_f", 0.0)),
+            "tau21_g": float(params.get("tau21_g", 0.0)),
             "tau_tref": float(params.get("tau_tref", payload["metadata"]["temperature_K"])),
         })
     elif model_key == "UNIQUAC":
@@ -1452,9 +1514,14 @@ def supplemental_diethyl_ether_water_records(
             "tau12_a": float(params["tau12_a"]),
             "tau12_b": float(params["tau12_b"]),
             "tau12_c": float(params.get("tau12_c", 0.0)),
+            "tau12_d": float(params.get("tau12_d", 0.0)),
+            "tau12_e": float(params.get("tau12_e", 0.0)),
             "tau21_a": float(params["tau21_a"]),
             "tau21_b": float(params["tau21_b"]),
             "tau21_c": float(params.get("tau21_c", 0.0)),
+            "tau21_d": float(params.get("tau21_d", 0.0)),
+            "tau21_e": float(params.get("tau21_e", 0.0)),
+            "tau_tref": float(params.get("tau_tref", payload["metadata"]["temperature_K"])),
         })
     else:
         return [], 0
@@ -1498,10 +1565,12 @@ def supplemental_1_butanol_water_records(
             "tau12_d": float(params["tau12_d"]),
             "tau12_e": float(params["tau12_e"]),
             "tau12_f": float(params.get("tau12_f", 0.0)),
+            "tau12_g": float(params.get("tau12_g", 0.0)),
             "tau21_c": float(params["tau21_c"]),
             "tau21_d": float(params["tau21_d"]),
             "tau21_e": float(params["tau21_e"]),
             "tau21_f": float(params.get("tau21_f", 0.0)),
+            "tau21_g": float(params.get("tau21_g", 0.0)),
             "tau_tref": float(params["tau_tref"]),
         })
     elif model_key == "UNIQUAC":
@@ -1510,10 +1579,15 @@ def supplemental_1_butanol_water_records(
             "use_q_prime": False,
             "tau12_a": float(params["tau12_a"]),
             "tau12_b": float(params["tau12_b"]),
-            "tau12_c": float(params["tau12_c"]),
+            "tau12_c": float(params.get("tau12_c", 0.0)),
+            "tau12_d": float(params.get("tau12_d", 0.0)),
+            "tau12_e": float(params.get("tau12_e", 0.0)),
             "tau21_a": float(params["tau21_a"]),
             "tau21_b": float(params["tau21_b"]),
-            "tau21_c": float(params["tau21_c"]),
+            "tau21_c": float(params.get("tau21_c", 0.0)),
+            "tau21_d": float(params.get("tau21_d", 0.0)),
+            "tau21_e": float(params.get("tau21_e", 0.0)),
+            "tau_tref": float(params.get("tau_tref", 298.15)),
         })
     else:
         return [], 0
@@ -1666,10 +1740,12 @@ def supplemental_ester_alcohol_fit_records(
                 "tau12_d": float(fit["B12_K"]),
                 "tau12_e": 0.0,
                 "tau12_f": 0.0,
+                "tau12_g": 0.0,
                 "tau21_c": float(fit["A21"]),
                 "tau21_d": float(fit["B21_K"]),
                 "tau21_e": 0.0,
                 "tau21_f": 0.0,
+                "tau21_g": 0.0,
                 "tau_tref": 298.15,
             })
         else:
@@ -1679,9 +1755,14 @@ def supplemental_ester_alcohol_fit_records(
                 "tau12_a": -float(fit["A12"]),
                 "tau12_b": -float(fit["B12_K"]),
                 "tau12_c": 0.0,
+                "tau12_d": 0.0,
+                "tau12_e": 0.0,
                 "tau21_a": -float(fit["A21"]),
                 "tau21_b": -float(fit["B21_K"]),
                 "tau21_c": 0.0,
+                "tau21_d": 0.0,
+                "tau21_e": 0.0,
+                "tau_tref": 298.15,
             })
         records.append(record)
     return records, len(new_pairs)
@@ -1731,10 +1812,12 @@ def supplemental_water_ethylene_oxide_records(
                 "tau12_d": float(params["tau12_d"]),
                 "tau12_e": float(params.get("tau12_e", 0.0)),
                 "tau12_f": float(params.get("tau12_f", 0.0)),
+                "tau12_g": float(params.get("tau12_g", 0.0)),
                 "tau21_c": float(params["tau21_c"]),
                 "tau21_d": float(params["tau21_d"]),
                 "tau21_e": float(params.get("tau21_e", 0.0)),
                 "tau21_f": float(params.get("tau21_f", 0.0)),
+                "tau21_g": float(params.get("tau21_g", 0.0)),
                 "tau_tref": float(params.get("tau_tref", 298.15)),
             })
         elif model_key == "UNIQUAC":
@@ -1746,9 +1829,14 @@ def supplemental_water_ethylene_oxide_records(
                 "tau12_a": float(params["tau12_a"]),
                 "tau12_b": float(params["tau12_b"]),
                 "tau12_c": float(params.get("tau12_c", 0.0)),
+                "tau12_d": float(params.get("tau12_d", 0.0)),
+                "tau12_e": float(params.get("tau12_e", 0.0)),
                 "tau21_a": float(params["tau21_a"]),
                 "tau21_b": float(params["tau21_b"]),
                 "tau21_c": float(params.get("tau21_c", 0.0)),
+                "tau21_d": float(params.get("tau21_d", 0.0)),
+                "tau21_e": float(params.get("tau21_e", 0.0)),
+                "tau_tref": 298.15,
             })
         elif model_key in {"PR", "SRK"}:
             record.update({
@@ -1797,10 +1885,15 @@ def supplemental_extended_uniquac_records(existing: list[dict]) -> tuple[list[di
             "model_variant": "extended_uniquac",
             "tau12_a": -float(source_record["B12"]),
             "tau12_b": -float(source_record["A12"]),
-            "tau12_c": -float(source_record["C12"]),
+            "tau12_c": 0.0,
+            "tau12_d": -float(source_record["C12"]),
+            "tau12_e": 0.0,
             "tau21_a": -float(source_record["B21"]),
             "tau21_b": -float(source_record["A21"]),
-            "tau21_c": -float(source_record["C21"]),
+            "tau21_c": 0.0,
+            "tau21_d": -float(source_record["C21"]),
+            "tau21_e": 0.0,
+            "tau_tref": 298.15,
             "use_q_prime": True,
             "tau_expression": payload["metadata"]["tau_expression"],
             "source": payload["metadata"]["source"],
@@ -1954,14 +2047,21 @@ def activity_record_signature(record: dict, model: str) -> tuple:
                 float(record.get("tau12_d", 0.0)),
                 float(record.get("tau12_e", 0.0)),
                 float(record.get("tau12_f", 0.0)),
+                float(record.get("tau12_g", 0.0)),
             )
             backward = (
                 float(record["tau21_c"]),
                 float(record.get("tau21_d", 0.0)),
                 float(record.get("tau21_e", 0.0)),
                 float(record.get("tau21_f", 0.0)),
+                float(record.get("tau21_g", 0.0)),
             )
-            return ("tau", backward, forward, alpha) if reverse else ("tau", forward, backward, alpha)
+            tref = (
+                float(record.get("tau_tref", 298.15))
+                if forward[2] != 0.0 or backward[2] != 0.0
+                else None
+            )
+            return ("tau", backward, forward, alpha, tref) if reverse else ("tau", forward, backward, alpha, tref)
         forward = float(record["a12_cal_per_mol"])
         backward = float(record["a21_cal_per_mol"])
         return ("energy", backward, forward, alpha) if reverse else ("energy", forward, backward, alpha)
@@ -1971,11 +2071,15 @@ def activity_record_signature(record: dict, model: str) -> tuple:
             float(record["tau12_a"]),
             float(record.get("tau12_b", 0.0)),
             float(record.get("tau12_c", 0.0)),
+            float(record.get("tau12_d", 0.0)),
+            float(record.get("tau12_e", 0.0)),
         )
         backward = (
             float(record["tau21_a"]),
             float(record.get("tau21_b", 0.0)),
             float(record.get("tau21_c", 0.0)),
+            float(record.get("tau21_d", 0.0)),
+            float(record.get("tau21_e", 0.0)),
         )
         return (
             "tau",
@@ -1983,6 +2087,11 @@ def activity_record_signature(record: dict, model: str) -> tuple:
             forward if reverse else backward,
             bool(record.get("use_q_prime", False)),
             record.get("model_variant", "standard_uniquac"),
+            (
+                float(record.get("tau_tref", 298.15))
+                if forward[2] != 0.0 or backward[2] != 0.0
+                else None
+            ),
         )
     forward = float(record["a12_cal_per_mol"])
     backward = float(record["a21_cal_per_mol"])
@@ -2478,13 +2587,29 @@ def build_interaction_payload(
         )
 
     if source_name == "nrtl_binary_interactions.json":
-        # tau_f is an optional linear-T extension. Preserve real nonzero
-        # source values, but keep the historical runtime payload compact by
-        # representing the documented zero default through omission.
+        # Optional anchored-log, linear-T, and quadratic-T extensions use
+        # documented zero defaults, so omit explicit zeros from runtime JSON.
         for record in records:
-            for field in ("tau12_f", "tau21_f"):
+            for field in (
+                "tau12_e", "tau21_e", "tau12_f", "tau21_f",
+                "tau12_g", "tau21_g",
+            ):
                 if field in record and abs(float(record[field])) <= 0.0:
                     record.pop(field)
+            if "tau12_e" not in record and "tau21_e" not in record:
+                record.pop("tau_tref", None)
+    elif source_name == "uniquac_binary_interactions.json":
+        # The anchored-log, linear-T, and quadratic-T extensions likewise
+        # default to zero. Tref matters only when an anchored term is present.
+        for record in records:
+            for field in (
+                "tau12_c", "tau21_c", "tau12_d", "tau21_d",
+                "tau12_e", "tau21_e",
+            ):
+                if field in record and abs(float(record[field])) <= 0.0:
+                    record.pop(field)
+            if "tau12_c" not in record and "tau21_c" not in record:
+                record.pop("tau_tref", None)
 
     payload = {
         "metadata": {

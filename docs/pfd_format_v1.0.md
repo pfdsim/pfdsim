@@ -726,8 +726,9 @@ coefficients. Original UNIFAC sources fit one directional energy parameter in
 each direction. Modified sources fit three coefficients in each direction:
 
 ```
-UNIQUAC: ln(tau_ij) = A_ij + B_ij/T + C_ij*T
-NRTL:    tau_ij = c_ij + d_ij/T + f_ij*T
+UNIQUAC: ln(tau_ij) = a_ij + b_ij/T + c_ij*h(T,Tref) + d_ij*T + e_ij*T^2
+NRTL:    tau_ij = c_ij + d_ij/T + e_ij*h(T,Tref) + f_ij*T + g_ij*T^2
+h(T,Tref) = (Tref - T)/T + ln(T/Tref)
 ```
 
 For NRTL, `alpha=0.3` is the default and may be overridden globally or for a
@@ -777,13 +778,17 @@ are fatal parse errors, with a close match suggestion when one is available.
 Supported models and fields:
 - `NRTL` - `alpha` or `alpha12`, plus either scalar energy fields `a12`/`a21`
   [cal/mol] (`a12_cal_per_mol`/`a21_cal_per_mol` are aliases) or direct tau
-  fields `tau12_c`, `tau12_d`, `tau12_e`, `tau12_f`, `tau21_c`, `tau21_d`,
-  `tau21_e`, `tau21_f`, and optional `tau_tref`/`tref`. The direct form is
-  `tau = c + d/T + e*((Tref-T)/T + ln(T/Tref)) + f*T`; omitted `d`, `e`, and
-  `f` coefficients default to zero
+  fields `tau12_c`, `tau12_d`, `tau12_e`, `tau12_f`, `tau12_g`, `tau21_c`,
+  `tau21_d`, `tau21_e`, `tau21_f`, `tau21_g`, and optional
+  `tau_tref`/`tref`. The direct form is
+  `tau = c + d/T + e*((Tref-T)/T + ln(T/Tref)) + f*T + g*T^2`; omitted
+  `d`, `e`, `f`, and `g` coefficients default to zero
 - `UNIQUAC` - either scalar energy fields `a12`/`a21` [cal/mol] or direct tau
-  fields `tau12_a`, `tau12_b`, `tau12_c`, `tau21_a`, `tau21_b`, `tau21_c`,
-  plus optional `use_q_prime` and `model_variant`
+  fields `tau12_a`, `tau12_b`, `tau12_c`, `tau12_d`, `tau12_e`, `tau21_a`,
+  `tau21_b`, `tau21_c`, `tau21_d`, `tau21_e`, and optional
+  `tau_tref`/`tref`, `use_q_prime`, and `model_variant`. The direct form is
+  `ln(tau) = a + b/T + c*((Tref-T)/T + ln(T/Tref)) + d*T + e*T^2`;
+  omitted `b`, `c`, `d`, and `e` coefficients default to zero
 - `PR` or `SRK` - constant `kij`/`k_ij`, optionally with `Tmin_K`/`Tmax_K`, or
   temperature-dependent `kij_a`, `kij_b`, `kij_c` using
   `k_ij = kij_a + kij_b/T + kij_c*T`; `T_ref_K` is accepted as provenance

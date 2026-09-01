@@ -33,10 +33,9 @@
       "source_file": "data/source/isopropanol_water_interactions.json",
       "tau12_a": 0.31849185,
       "tau12_b": -299.87604,
-      "tau12_c": 0.0,
       "tau21_a": -1.56273238,
       "tau21_b": 308.94286,
-      "tau21_c": 0.001803034,
+      "tau21_d": 0.001803034,
       "use_q_prime": false
     },
     {
@@ -58,10 +57,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": -0.12533602,
       "tau12_b": 147.409781,
-      "tau12_c": 0.0,
       "tau21_a": 0.72435572,
       "tau21_b": -522.450397,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -83,10 +80,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.323533,
       "tau12_b": -12.9545,
-      "tau12_c": 0.0,
       "tau21_a": -0.131097,
       "tau21_b": -255.284,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -108,10 +103,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": 113.26523551,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -345.32075525,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -133,10 +126,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.666966,
       "tau12_b": -164.889,
-      "tau12_c": 0.0,
       "tau21_a": -0.746315,
       "tau21_b": 191.662,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -158,10 +149,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 3.34369,
       "tau12_b": -1594.29,
-      "tau12_c": 0.0,
       "tau21_a": -0.468566,
       "tau21_b": 272.819,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -183,10 +172,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.453895,
       "tau12_b": -404.859,
-      "tau12_c": 0.0,
       "tau21_a": -0.13135,
       "tau21_b": 128.706,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -208,10 +195,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": -307.786746,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 104.02769205,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -233,10 +218,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": -3.29389,
       "tau12_b": 610.251,
-      "tau12_c": 0.0,
       "tau21_a": 1.26154,
       "tau21_b": -305.43,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -258,10 +241,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": -1.59483,
       "tau12_b": -141.77,
-      "tau12_c": 0.0,
       "tau21_a": 0.388311,
       "tau21_b": -77.2558,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -283,10 +264,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": -3.31212,
       "tau12_b": 1246.06,
-      "tau12_c": 0.0,
       "tau21_a": 3.40086,
       "tau21_b": -1574.27,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -308,10 +287,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": 123.589467,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -179.608721,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -333,10 +310,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": -35.08829652,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -106.56453382,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -358,10 +333,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": -219.41342,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 55.435279,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -383,10 +356,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": -71.615005,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 38.985382,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -408,10 +379,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": -249.784032,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 50.035705,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -433,10 +402,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": 2.557359,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -14.156445,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -458,10 +425,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0002,
       "tau12_b": -45.74,
-      "tau12_c": 0.0,
       "tau21_a": -0.0001,
       "tau21_b": 52.67,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -483,10 +448,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": -38.22773823,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 9.0439482,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -508,10 +471,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.376144,
       "tau12_b": -106.0,
-      "tau12_c": 0.0,
       "tau21_a": -0.537085,
       "tau21_b": 119.704,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -531,10 +492,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": 0.0,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 0.0,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -554,10 +513,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": 0.0,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 0.0,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -577,10 +534,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_a": 0.0,
       "tau12_b": 0.0,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": 0.0,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -597,10 +552,8 @@
       "source_file": "data/source/acetaldehyde_water_vle.json",
       "tau12_a": 3.71393,
       "tau12_b": -1316.43,
-      "tau12_c": 0.0,
       "tau21_a": -4.45833,
       "tau21_b": 1338.28,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -617,10 +570,8 @@
       "source_file": "data/source/three_acids_vle.json",
       "tau12_a": 0.0,
       "tau12_b": 37.313184,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -63.157388,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -637,10 +588,8 @@
       "source_file": "data/source/three_acids_vle.json",
       "tau12_a": 0.0,
       "tau12_b": 109.310634,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -143.338996,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -655,10 +604,8 @@
       "source_file": "data/source/three_acids_vle.json",
       "tau12_a": 0.0,
       "tau12_b": -0.0,
-      "tau12_c": 0.0,
       "tau21_a": 0.0,
       "tau21_b": -0.0,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -675,10 +622,8 @@
       "source_file": "data/source/water_c3_acid_vle_interactions.json",
       "tau12_a": -0.2292745181471927,
       "tau12_b": 253.61822922421456,
-      "tau12_c": 0.0,
       "tau21_a": 1.9096130681691217,
       "tau21_b": -1086.1508008365538,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -695,10 +640,8 @@
       "source_file": "data/source/water_c3_acid_vle_interactions.json",
       "tau12_a": -6.398698130332292,
       "tau12_b": 2085.207612703263,
-      "tau12_c": 0.0,
       "tau21_a": 6.517269802152079,
       "tau21_b": -2324.4916848820835,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -715,10 +658,10 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": -3.15782228,
       "tau12_b": 20.7742487,
-      "tau12_c": 0.00425294628,
+      "tau12_d": 0.00425294628,
       "tau21_a": -4.05659996,
       "tau21_b": -1111.0041,
-      "tau21_c": 0.0116093247,
+      "tau21_d": 0.0116093247,
       "use_q_prime": false
     },
     {
@@ -735,10 +678,10 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": -9.7009235,
       "tau12_b": 1181.88008,
-      "tau12_c": 0.0127981631,
+      "tau12_d": 0.0127981631,
       "tau21_a": 3.40439264,
       "tau21_b": -2582.74738,
-      "tau21_c": 0.00231697663,
+      "tau21_d": 0.00231697663,
       "use_q_prime": false
     },
     {
@@ -755,10 +698,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": -2.59569476,
       "tau12_b": 380.964782,
-      "tau12_c": 0.0,
       "tau21_a": 4.15075532,
       "tau21_b": -1954.579178,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -775,10 +716,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": -2.17327415,
       "tau12_b": 297.727891,
-      "tau12_c": 0.0,
       "tau21_a": 4.04498984,
       "tau21_b": -2019.912438,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -795,10 +734,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": -2.0707167,
       "tau12_b": 120.385888,
-      "tau12_c": 0.0,
       "tau21_a": 3.22584259,
       "tau21_b": -2151.70094,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -815,10 +752,10 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": -12.439879602,
       "tau12_b": 2315.818669335,
-      "tau12_c": 0.0151473563,
+      "tau12_d": 0.0151473563,
       "tau21_a": 11.059254211,
       "tau21_b": -2688.791776972,
-      "tau21_c": -0.0139451522,
+      "tau21_d": -0.0139451522,
       "use_q_prime": false
     },
     {
@@ -835,10 +772,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_a": 1.865751407,
       "tau12_b": -637.840022589,
-      "tau12_c": 0.0,
       "tau21_a": -0.212099211,
       "tau21_b": -646.935878221,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -862,10 +797,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -27.729419728664258,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": -26.749225601172057,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -889,10 +822,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": 6.0684196981037495,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": -48.8224161121271,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -916,10 +847,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.5508166785467565,
       "tau12_b": 54.271234204010625,
-      "tau12_c": 0.0,
       "tau21_a": 0.9880500338198404,
       "tau21_b": -302.48984414431465,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -943,10 +872,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": 0.8014757,
       "tau12_b": -488.343,
-      "tau12_c": 0.0,
       "tau21_a": -0.0240097,
       "tau21_b": 53.3274,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -970,10 +897,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": 1.1666568408466098,
       "tau12_b": -810.8330193930938,
-      "tau12_c": 0.0,
       "tau21_a": -0.023605310805173307,
       "tau21_b": 89.79209455050768,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -997,10 +922,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": 2.9475,
       "tau12_b": -1282.8,
-      "tau12_c": 0.0,
       "tau21_a": -2.1565,
       "tau21_b": 562.48,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1024,10 +947,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -59.382658309444665,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": 22.46141754502501,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1051,10 +972,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -135.2840989938495,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": 44.286684494257095,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1078,10 +997,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -1.122601189137326,
       "tau12_b": -67.72527609290138,
-      "tau12_c": 0.0,
       "tau21_a": 2.9042350511743478,
       "tau21_b": -950.4860701392012,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1105,10 +1022,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -348.0940390968503,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": 46.678344756501446,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1132,10 +1047,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -205.90178437059646,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": 125.67172147450098,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1159,10 +1072,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -143.74060741053697,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": 46.44882383224102,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1186,10 +1097,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": 1.4563882326628477,
       "tau12_b": -883.1699535663384,
-      "tau12_c": 0.0,
       "tau21_a": 0.5031207801555913,
       "tau21_b": -128.01567710105385,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1213,10 +1122,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": 3.9269535422087913,
       "tau12_b": -1385.9343871972437,
-      "tau12_c": 0.0,
       "tau21_a": 6.208677904056188,
       "tau21_b": -4167.368302267625,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1240,10 +1147,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -61.32537651619384,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": 15.418828377654737,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1267,10 +1172,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -0.0,
       "tau12_b": -45.77715918481821,
-      "tau12_c": 0.0,
       "tau21_a": -0.0,
       "tau21_b": -11.994066277679025,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -1294,10 +1197,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_a": -9.817657508137804,
       "tau12_b": 3878.3074021065986,
-      "tau12_c": 0.0,
       "tau21_a": 6.745861123966896,
       "tau21_b": -2698.992322535731,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -5947,10 +5848,8 @@
       "source": "Regressed in this work from EO\u2013H\u2082O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and \u03b3^\u221e_{EO,H\u2082O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng\u2013Robinson and k12=-0.10 following Huang et al. (2012).",
       "tau12_a": -2.31209,
       "tau12_b": 673.029,
-      "tau12_c": 0.0,
       "tau21_a": 3.13674,
       "tau21_b": -1397.36,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -5965,10 +5864,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 2.5693,
       "tau12_b": -476.0,
-      "tau12_c": -0.0046,
+      "tau12_d": -0.0046,
       "tau21_a": 2.8994,
       "tau21_b": -550.4,
-      "tau21_c": -0.0031,
+      "tau21_d": -0.0031,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -5984,10 +5883,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 7.9123,
       "tau12_b": -1892.78,
-      "tau12_c": -0.0097,
+      "tau12_d": -0.0097,
       "tau21_a": 4.1599,
       "tau21_b": -1670.18,
-      "tau21_c": -0.0022,
+      "tau21_d": -0.0022,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6003,10 +5902,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 1.7227,
       "tau12_b": -366.7,
-      "tau12_c": -0.0,
       "tau21_a": 0.6814,
       "tau21_b": -1182.37,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6022,10 +5919,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 1.2057,
       "tau12_b": -501.77,
-      "tau12_c": -0.0,
       "tau21_a": 2.6188,
       "tau21_b": -1534.4,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6041,10 +5936,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 2.6358,
       "tau12_b": -900.57,
-      "tau12_c": -0.0025,
+      "tau12_d": -0.0025,
       "tau21_a": 2.9432,
       "tau21_b": -1609.05,
-      "tau21_c": 0.0028,
+      "tau21_d": 0.0028,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6060,10 +5955,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 1.2203,
       "tau12_b": -640.79,
-      "tau12_c": -0.0002,
+      "tau12_d": -0.0002,
       "tau21_a": 3.9396,
       "tau21_b": -1749.91,
-      "tau21_c": 0.0001,
+      "tau21_d": 0.0001,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6079,10 +5974,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -2.5103,
       "tau12_b": -544.15,
-      "tau12_c": 0.0045,
+      "tau12_d": 0.0045,
       "tau21_a": -3.3034,
       "tau21_b": 364.68,
-      "tau21_c": 0.0068,
+      "tau21_d": 0.0068,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6098,10 +5993,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 1.5092,
       "tau12_b": -1203.79,
-      "tau12_c": 0.0005,
+      "tau12_d": 0.0005,
       "tau21_a": -6.1256,
       "tau21_b": 509.79,
-      "tau21_c": 0.0115,
+      "tau21_d": 0.0115,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6117,10 +6012,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 0.8209,
       "tau12_b": -1057.46,
-      "tau12_c": 0.0041,
+      "tau12_d": 0.0041,
       "tau21_a": 1.9333,
       "tau21_b": -883.49,
-      "tau21_c": -0.0017,
+      "tau21_d": -0.0017,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6136,10 +6031,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 4.5664,
       "tau12_b": -1643.86,
-      "tau12_c": -0.0003,
+      "tau12_d": -0.0003,
       "tau21_a": -0.1757,
       "tau21_b": -732.3,
-      "tau21_c": 0.0009,
+      "tau21_d": 0.0009,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6155,10 +6050,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 1.412,
       "tau12_b": -1264.52,
-      "tau12_c": 0.0009,
+      "tau12_d": 0.0009,
       "tau21_a": -0.1694,
       "tau21_b": -77.32,
-      "tau21_c": 0.0008,
+      "tau21_d": 0.0008,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6174,10 +6069,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 3.6562,
       "tau12_b": -1665.93,
-      "tau12_c": -0.0,
       "tau21_a": 0.544,
       "tau21_b": -505.46,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6193,10 +6086,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 2.1421,
       "tau12_b": -642.78,
-      "tau12_c": -0.0,
       "tau21_a": -2.4439,
       "tau21_b": 187.02,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6212,10 +6103,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -0.2728,
       "tau12_b": -140.55,
-      "tau12_c": -0.0,
       "tau21_a": 1.5135,
       "tau21_b": -550.58,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6231,10 +6120,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 5.2098,
       "tau12_b": -2339.02,
-      "tau12_c": -0.0,
       "tau21_a": 4.1622,
       "tau21_b": -2772.58,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6250,10 +6137,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -3.4347,
       "tau12_b": 361.59,
-      "tau12_c": 0.0059,
+      "tau12_d": 0.0059,
       "tau21_a": 6.32,
       "tau21_b": -3679.65,
-      "tau21_c": 0.0011,
+      "tau21_d": 0.0011,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6269,10 +6156,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -5.9264,
       "tau12_b": 389.71,
-      "tau12_c": 0.011,
+      "tau12_d": 0.011,
       "tau21_a": 13.9138,
       "tau21_b": -5504.39,
-      "tau21_c": -0.0082,
+      "tau21_d": -0.0082,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6288,10 +6175,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 1.7271,
       "tau12_b": -708.11,
-      "tau12_c": -0.0018,
+      "tau12_d": -0.0018,
       "tau21_a": -30.796,
       "tau21_b": 2190.7,
-      "tau21_c": 0.0562,
+      "tau21_d": 0.0562,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6307,10 +6194,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -11.3511,
       "tau12_b": 1310.24,
-      "tau12_c": 0.0197,
+      "tau12_d": 0.0197,
       "tau21_a": 12.1486,
       "tau21_b": -4394.9,
-      "tau21_c": -0.013,
+      "tau21_d": -0.013,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6326,10 +6213,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -4.9795,
       "tau12_b": 347.64,
-      "tau12_c": 0.0095,
+      "tau12_d": 0.0095,
       "tau21_a": 6.7299,
       "tau21_b": -4013.42,
-      "tau21_c": 0.0011,
+      "tau21_d": 0.0011,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6345,10 +6232,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -1.6962,
       "tau12_b": 137.18,
-      "tau12_c": 0.0034,
+      "tau12_d": 0.0034,
       "tau21_a": 6.2237,
       "tau21_b": -3655.54,
-      "tau21_c": -0.0008,
+      "tau21_d": -0.0008,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6364,10 +6251,9 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -2.5229,
       "tau12_b": 216.07,
-      "tau12_c": -0.0041,
+      "tau12_d": -0.0041,
       "tau21_a": 7.2273,
       "tau21_b": -3670.22,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6383,10 +6269,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -6.103,
       "tau12_b": 635.26,
-      "tau12_c": 0.0103,
+      "tau12_d": 0.0103,
       "tau21_a": 12.0891,
       "tau21_b": -3954.95,
-      "tau21_c": -0.009,
+      "tau21_d": -0.009,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6402,10 +6288,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 0.2666,
       "tau12_b": -538.55,
-      "tau12_c": 0.0015,
+      "tau12_d": 0.0015,
       "tau21_a": 7.4151,
       "tau21_b": -3474.07,
-      "tau21_c": -0.0003,
+      "tau21_d": -0.0003,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6421,10 +6307,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -3.4054,
       "tau12_b": 247.89,
-      "tau12_c": 0.0052,
+      "tau12_d": 0.0052,
       "tau21_a": 10.74,
       "tau21_b": -3822.0,
-      "tau21_c": -0.0043,
+      "tau21_d": -0.0043,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6440,10 +6326,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 0.4233,
       "tau12_b": -344.21,
-      "tau12_c": -0.0001,
+      "tau12_d": -0.0001,
       "tau21_a": 2.4383,
       "tau21_b": -1286.18,
-      "tau21_c": 0.0001,
+      "tau21_d": 0.0001,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6459,10 +6345,8 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 0.4548,
       "tau12_b": -757.28,
-      "tau12_c": -0.0,
       "tau21_a": 4.4667,
       "tau21_b": -1732.52,
-      "tau21_c": -0.0,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6478,10 +6362,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": 2.9122,
       "tau12_b": -1688.45,
-      "tau12_c": -0.0016,
+      "tau12_d": -0.0016,
       "tau21_a": 4.3198,
       "tau21_b": -1734.37,
-      "tau21_c": 0.0012,
+      "tau21_d": 0.0012,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6497,10 +6381,10 @@
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 2",
       "tau12_a": -11.5,
       "tau12_b": 1407.68,
-      "tau12_c": 0.0197,
+      "tau12_d": 0.0197,
       "tau21_a": 0.0306,
       "tau21_b": -886.8,
-      "tau21_c": 0.0046,
+      "tau21_d": 0.0046,
       "tau_expression": "tau_ij = exp(-(A_ij + B_ij*T + C_ij*T^2)/T) = exp(-B_ij - A_ij/T - C_ij*T)",
       "use_q_prime": true
     },
@@ -6516,10 +6400,10 @@
       "source": "J. Chem. Eng. Data 2003, 48, 750-752",
       "tau12_a": -4.26152099,
       "tau12_b": 410.757318,
-      "tau12_c": 0.00557446,
+      "tau12_d": 0.00557446,
       "tau21_a": 2.89513893,
       "tau21_b": -1851.910186,
-      "tau21_c": 0.00151181,
+      "tau21_d": 0.00151181,
       "use_q_prime": false
     },
     {
@@ -6534,10 +6418,10 @@
       "source": "J. Chem. Eng. Data 2003, 48, 750-752",
       "tau12_a": -5.02820679,
       "tau12_b": 546.919292,
-      "tau12_c": 0.00691596,
+      "tau12_d": 0.00691596,
       "tau21_a": 4.86379009,
       "tau21_b": -2243.653045,
-      "tau21_c": -0.00141886,
+      "tau21_d": -0.00141886,
       "use_q_prime": false
     },
     {
@@ -6552,10 +6436,10 @@
       "source": "J. Chem. Eng. Data 2003, 48, 750-752",
       "tau12_a": -3.49453499,
       "tau12_b": 263.479577,
-      "tau12_c": 0.00502872,
+      "tau12_d": 0.00502872,
       "tau21_a": 0.1169399,
       "tau21_b": -1355.069752,
-      "tau21_c": 0.00443349,
+      "tau21_d": 0.00443349,
       "use_q_prime": false
     },
     {
@@ -6568,10 +6452,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": 1.6642,
       "tau12_b": -824.14623,
-      "tau12_c": 0.0,
       "tau21_a": -0.9573,
       "tau21_b": 407.806495,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6584,10 +6466,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": 2.7563,
       "tau12_b": -1125.733345,
-      "tau12_c": 0.0,
       "tau21_a": -1.6261,
       "tau21_b": 635.849215,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6600,10 +6480,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": 2.4085,
       "tau12_b": -1010.601775,
-      "tau12_c": 0.0,
       "tau21_a": -1.3615,
       "tau21_b": 521.3837249999999,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6616,10 +6494,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": -0.9399,
       "tau12_b": 148.07368499999998,
-      "tau12_c": 0.0,
       "tau21_a": 0.8258,
       "tau21_b": -230.30727,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6632,10 +6508,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": -0.0066,
       "tau12_b": -284.60721,
-      "tau12_c": 0.0,
       "tau21_a": 0.2871,
       "tau21_b": -20.501364999999993,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6648,10 +6522,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": 2.7093,
       "tau12_b": -1259.8752949999998,
-      "tau12_c": 0.0,
       "tau21_a": -2.3092,
       "tau21_b": 897.60798,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6664,10 +6536,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": -0.6408,
       "tau12_b": -292.30548,
-      "tau12_c": 0.0,
       "tau21_a": 0.9202,
       "tau21_b": -34.65262999999999,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6680,10 +6550,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": 1.4436,
       "tau12_b": -963.4593399999999,
-      "tau12_c": 0.0,
       "tau21_a": -0.1756,
       "tau21_b": 229.60513999999998,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6696,10 +6564,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": 1.5048,
       "tau12_b": -452.3761199999999,
-      "tau12_c": 0.0,
       "tau21_a": -1.7006,
       "tau21_b": 390.32888999999994,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6712,10 +6578,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_a": -0.6966,
       "tau12_b": -53.14371,
-      "tau12_c": 0.0,
       "tau21_a": 0.7445,
       "tau21_b": -116.140175,
-      "tau21_c": 0.0,
       "use_q_prime": false
     },
     {
@@ -6728,10 +6592,10 @@
       "source": "J. Chem. Thermodynamics 1978, 10, 1173-1179",
       "tau12_a": -12.81485434,
       "tau12_b": 1905.74507135,
-      "tau12_c": 0.02169653866,
+      "tau12_d": 0.02169653866,
       "tau21_a": 8.68179405,
       "tau21_b": -1368.13065752,
-      "tau21_c": -0.0167836069,
+      "tau21_d": -0.0167836069,
       "use_q_prime": false
     },
     {

@@ -269,10 +269,12 @@ def _nrtl_interactions() -> dict[tuple[str, str], dict]:
                 "tau12_d": float(record.get("tau12_d", 0.0)),
                 "tau12_e": float(record.get("tau12_e", 0.0)),
                 "tau12_f": float(record.get("tau12_f", 0.0)),
+                "tau12_g": float(record.get("tau12_g", 0.0)),
                 "tau21_c": float(record["tau21_c"]),
                 "tau21_d": float(record.get("tau21_d", 0.0)),
                 "tau21_e": float(record.get("tau21_e", 0.0)),
                 "tau21_f": float(record.get("tau21_f", 0.0)),
+                "tau21_g": float(record.get("tau21_g", 0.0)),
                 "tau_tref": float(record.get("tau_tref", 298.15)),
             })
         else:
@@ -300,25 +302,29 @@ def _nrtl_oriented_record(data: dict, reverse: bool = False) -> dict:
             result.update({
                 "tau12_c": data["tau12_c"],
                 "tau12_d": data["tau12_d"],
-                "tau12_e": data["tau12_e"],
+                "tau12_e": data.get("tau12_e", 0.0),
                 "tau12_f": data.get("tau12_f", 0.0),
+                "tau12_g": data.get("tau12_g", 0.0),
                 "tau21_c": data["tau21_c"],
                 "tau21_d": data["tau21_d"],
-                "tau21_e": data["tau21_e"],
+                "tau21_e": data.get("tau21_e", 0.0),
                 "tau21_f": data.get("tau21_f", 0.0),
-                "tau_tref": data["tau_tref"],
+                "tau21_g": data.get("tau21_g", 0.0),
+                "tau_tref": data.get("tau_tref", 298.15),
             })
         else:
             result.update({
                 "tau12_c": data["tau21_c"],
                 "tau12_d": data["tau21_d"],
-                "tau12_e": data["tau21_e"],
+                "tau12_e": data.get("tau21_e", 0.0),
                 "tau12_f": data.get("tau21_f", 0.0),
+                "tau12_g": data.get("tau21_g", 0.0),
                 "tau21_c": data["tau12_c"],
                 "tau21_d": data["tau12_d"],
-                "tau21_e": data["tau12_e"],
+                "tau21_e": data.get("tau12_e", 0.0),
                 "tau21_f": data.get("tau12_f", 0.0),
-                "tau_tref": data["tau_tref"],
+                "tau21_g": data.get("tau12_g", 0.0),
+                "tau_tref": data.get("tau_tref", 298.15),
             })
         return result
 
@@ -373,9 +379,14 @@ def _uniquac_interactions() -> dict[tuple[str, str], dict]:
                 "tau12_a": float(record["tau12_a"]),
                 "tau12_b": float(record.get("tau12_b", 0.0)),
                 "tau12_c": float(record.get("tau12_c", 0.0)),
+                "tau12_d": float(record.get("tau12_d", 0.0)),
+                "tau12_e": float(record.get("tau12_e", 0.0)),
                 "tau21_a": float(record["tau21_a"]),
                 "tau21_b": float(record.get("tau21_b", 0.0)),
                 "tau21_c": float(record.get("tau21_c", 0.0)),
+                "tau21_d": float(record.get("tau21_d", 0.0)),
+                "tau21_e": float(record.get("tau21_e", 0.0)),
+                "tau_tref": float(record.get("tau_tref", 298.15)),
             })
         else:
             interaction.update({
@@ -403,19 +414,29 @@ def _uniquac_oriented_record(data: dict, reverse: bool = False) -> dict:
             result.update({
                 "tau12_a": data["tau12_a"],
                 "tau12_b": data["tau12_b"],
-                "tau12_c": data["tau12_c"],
+                "tau12_c": data.get("tau12_c", 0.0),
+                "tau12_d": data.get("tau12_d", 0.0),
+                "tau12_e": data.get("tau12_e", 0.0),
                 "tau21_a": data["tau21_a"],
                 "tau21_b": data["tau21_b"],
-                "tau21_c": data["tau21_c"],
+                "tau21_c": data.get("tau21_c", 0.0),
+                "tau21_d": data.get("tau21_d", 0.0),
+                "tau21_e": data.get("tau21_e", 0.0),
+                "tau_tref": data.get("tau_tref", 298.15),
             })
         else:
             result.update({
                 "tau12_a": data["tau21_a"],
                 "tau12_b": data["tau21_b"],
-                "tau12_c": data["tau21_c"],
+                "tau12_c": data.get("tau21_c", 0.0),
+                "tau12_d": data.get("tau21_d", 0.0),
+                "tau12_e": data.get("tau21_e", 0.0),
                 "tau21_a": data["tau12_a"],
                 "tau21_b": data["tau12_b"],
-                "tau21_c": data["tau12_c"],
+                "tau21_c": data.get("tau12_c", 0.0),
+                "tau21_d": data.get("tau12_d", 0.0),
+                "tau21_e": data.get("tau12_e", 0.0),
+                "tau_tref": data.get("tau_tref", 298.15),
             })
         return result
 

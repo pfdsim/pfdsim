@@ -10,6 +10,10 @@ from .common import ThermodynamicsError
 from .activity import ActivityCoefficientThermodynamics, VaporDimerizationActivityMixin
 from .base import IdealThermodynamics
 
+
+def _anchored_log_temperature_term(T: float, T_ref: float) -> float:
+    return (T_ref - T) / T + math.log(T / T_ref)
+
 def _interaction_override_map(
     interaction_overrides: Optional[list[dict]],
     model: str,
@@ -248,11 +252,9 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                         data["tau12_c"]
                         + data.get("tau12_d", 0.0) / interaction_T
                         + data.get("tau12_e", 0.0)
-                        * (
-                            (tref - interaction_T) / interaction_T
-                            + math.log(interaction_T / tref)
-                        )
+                        * _anchored_log_temperature_term(interaction_T, tref)
                         + data.get("tau12_f", 0.0) * interaction_T
+                        + data.get("tau12_g", 0.0) * interaction_T * interaction_T
                     )
                 else:
                     tau[i][j] = (
@@ -279,6 +281,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         tau_d = [[0.0 for _ in range(n)] for _ in range(n)]
         tau_e = [[0.0 for _ in range(n)] for _ in range(n)]
         tau_f = [[0.0 for _ in range(n)] for _ in range(n)]
+        tau_g = [[0.0 for _ in range(n)] for _ in range(n)]
         tau_tref = [[self.T_REF for _ in range(n)] for _ in range(n)]
         tau_energy = [[0.0 for _ in range(n)] for _ in range(n)]
         alpha = [[0.3 for _ in range(n)] for _ in range(n)]
@@ -298,6 +301,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                     tau_d[i][j] = data.get("tau12_d", 0.0)
                     tau_e[i][j] = data.get("tau12_e", 0.0)
                     tau_f[i][j] = data.get("tau12_f", 0.0)
+                    tau_g[i][j] = data.get("tau12_g", 0.0)
                     tau_tref[i][j] = data.get("tau_tref", self.T_REF)
                 else:
                     tau_mode[i][j] = 2
@@ -309,6 +313,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
             "tau_d": tau_d,
             "tau_e": tau_e,
             "tau_f": tau_f,
+            "tau_g": tau_g,
             "tau_tref": tau_tref,
             "tau_energy": tau_energy,
             "alpha": alpha,
@@ -381,6 +386,7 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
     """UNIQUAC liquid activity coefficient model with Raoult-law vapor phase."""
 
     R_CAL = 1.98720425864083
+    T_REF = 298.15
     Z = 10.0
 
     def __init__(
@@ -708,10 +714,14 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                     T,
                 )
                 if "tau12_a" in data:
+                    tref = data.get("tau_tref", self.T_REF)
                     exponent = (
                         data["tau12_a"]
                         + data.get("tau12_b", 0.0) / interaction_T
-                        + data.get("tau12_c", 0.0) * interaction_T
+                        + data.get("tau12_c", 0.0)
+                        * _anchored_log_temperature_term(interaction_T, tref)
+                        + data.get("tau12_d", 0.0) * interaction_T
+                        + data.get("tau12_e", 0.0) * interaction_T * interaction_T
                     )
                 else:
                     exponent = (
@@ -733,6 +743,9 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         tau_a = [[0.0 for _ in range(n)] for _ in range(n)]
         tau_b = [[0.0 for _ in range(n)] for _ in range(n)]
         tau_c = [[0.0 for _ in range(n)] for _ in range(n)]
+        tau_d = [[0.0 for _ in range(n)] for _ in range(n)]
+        tau_e = [[0.0 for _ in range(n)] for _ in range(n)]
+        tau_tref = [[self.T_REF for _ in range(n)] for _ in range(n)]
         use_q_prime = [[False for _ in range(n)] for _ in range(n)]
 
         for i, comp_i in enumerate(self.components):
@@ -747,6 +760,9 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                     tau_a[i][j] = data["tau12_a"]
                     tau_b[i][j] = data.get("tau12_b", 0.0)
                     tau_c[i][j] = data.get("tau12_c", 0.0)
+                    tau_d[i][j] = data.get("tau12_d", 0.0)
+                    tau_e[i][j] = data.get("tau12_e", 0.0)
+                    tau_tref[i][j] = data.get("tau_tref", self.T_REF)
                 else:
                     tau_mode[i][j] = 2
                     tau_a[i][j] = data["a12_cal_per_mol"] / self.R_CAL
@@ -767,6 +783,9 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
             "tau_a": tau_a,
             "tau_b": tau_b,
             "tau_c": tau_c,
+            "tau_d": tau_d,
+            "tau_e": tau_e,
+            "tau_tref": tau_tref,
             "use_q_prime": use_q_prime,
             "q_residual": q_residual,
         }
@@ -914,10 +933,14 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                     T,
                 )
                 if "tau12_a" in data:
+                    tref = data.get("tau_tref", self.T_REF)
                     exponent = (
                         data["tau12_a"]
                         + data.get("tau12_b", 0.0) / interaction_T
-                        + data.get("tau12_c", 0.0) * interaction_T
+                        + data.get("tau12_c", 0.0)
+                        * _anchored_log_temperature_term(interaction_T, tref)
+                        + data.get("tau12_d", 0.0) * interaction_T
+                        + data.get("tau12_e", 0.0) * interaction_T * interaction_T
                     )
                 else:
                     exponent = (

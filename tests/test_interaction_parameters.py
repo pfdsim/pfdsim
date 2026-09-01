@@ -236,6 +236,150 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertEqual(pr_thermo.r['HNO3'], thermo.r['HNO3'])
         self.assertEqual(pr_thermo.q['HNO3'], thermo.q['HNO3'])
 
+    def test_nrtl_supports_anchored_log_and_quadratic_tau_terms(self):
+        T = 360.0
+        T_ref = 310.0
+        override = {
+            'model': 'NRTL',
+            'component1': 'ethanol',
+            'component2': 'water',
+            'alpha12': 0.27,
+            'tau12_c': 0.2,
+            'tau12_d': 45.0,
+            'tau12_e': 0.7,
+            'tau12_f': 1.0e-3,
+            'tau12_g': 2.0e-6,
+            'tau21_c': -0.3,
+            'tau21_d': 80.0,
+            'tau21_e': -0.4,
+            'tau21_f': -5.0e-4,
+            'tau21_g': -1.0e-6,
+            'tau_tref': T_ref,
+        }
+        thermo = create_thermodynamics(
+            ['ethanol', 'water'], 'NRTL', interaction_overrides=[override]
+        )
+        tau, _ = thermo._nrtl_matrices(T)
+        anchored = (T_ref - T) / T + math.log(T / T_ref)
+        self.assertAlmostEqual(
+            tau[0][1], 0.2 + 45.0 / T + 0.7 * anchored + 1.0e-3 * T + 2.0e-6 * T * T
+        )
+        reverse = thermo._nrtl_interaction_for_components('water', 'ethanol')
+        self.assertEqual(reverse['tau12_g'], -1.0e-6)
+        backend = thermo._compiled_activity_backend(T)
+        compiled = backend.activity_coefficients([0.4, 0.6], T)
+        thermo._compiled_activity_cache['all_temperatures'] = None
+        thermo._activity_cache.clear()
+        readable = thermo.activity_coefficients(T, {'ethanol': 0.4, 'water': 0.6})
+        self.assertAlmostEqual(compiled[0], readable['ethanol'], places=12)
+        self.assertAlmostEqual(compiled[1], readable['water'], places=12)
+
+        from compiled_lle import CompiledNRTLLLEBackend
+        from compiled_vlle import CompiledActivityVLLEBackend
+        lle_backend = CompiledNRTLLLEBackend.from_activity_backend(backend)
+        vlle_backend = CompiledActivityVLLEBackend.from_thermo(thermo)
+        self.assertIsNotNone(lle_backend)
+        self.assertIsNotNone(vlle_backend)
+        lle_backend.compile_kernels()
+        vlle_backend.compile_kernels()
+        V, x, y = vlle_backend.flash_VLE_TP(
+            {'ethanol': 0.4, 'water': 0.6}, T, 1.01325
+        )
+        self.assertTrue(math.isfinite(V))
+        self.assertTrue(all(math.isfinite(value) for value in x))
+        self.assertTrue(all(math.isfinite(value) for value in y))
+
+        minimal = create_thermodynamics(
+            ['ethanol', 'water'],
+            'NRTL',
+            interaction_overrides=[{
+                'model': 'NRTL',
+                'component1': 'ethanol',
+                'component2': 'water',
+                'alpha12': 0.3,
+                'tau12_c': 0.1,
+                'tau12_d': 20.0,
+                'tau21_c': -0.2,
+                'tau21_d': 30.0,
+            }],
+        )
+        minimal_interaction = minimal._nrtl_interaction_for_components(
+            'ethanol', 'water'
+        )
+        for field in ('tau12_e', 'tau12_f', 'tau12_g', 'tau21_e', 'tau21_f', 'tau21_g'):
+            self.assertEqual(minimal_interaction.get(field, 0.0), 0.0)
+
+    def test_uniquac_supports_anchored_log_linear_and_quadratic_tau_terms(self):
+        T = 360.0
+        T_ref = 310.0
+        override = {
+            'model': 'UNIQUAC',
+            'component1': 'ethanol',
+            'component2': 'water',
+            'tau12_a': 0.2,
+            'tau12_b': 45.0,
+            'tau12_c': 0.7,
+            'tau12_d': 1.0e-3,
+            'tau12_e': 2.0e-6,
+            'tau21_a': -0.3,
+            'tau21_b': 80.0,
+            'tau21_c': -0.4,
+            'tau21_d': -5.0e-4,
+            'tau21_e': -1.0e-6,
+            'tau_tref': T_ref,
+            'use_q_prime': False,
+        }
+        thermo = create_thermodynamics(
+            ['ethanol', 'water'], 'UNIQUAC', interaction_overrides=[override]
+        )
+        tau = thermo._uniquac_tau_matrix(T)
+        anchored = (T_ref - T) / T + math.log(T / T_ref)
+        exponent = 0.2 + 45.0 / T + 0.7 * anchored + 1.0e-3 * T + 2.0e-6 * T * T
+        self.assertAlmostEqual(tau[0][1], math.exp(exponent))
+        reverse = thermo._uniquac_interaction_for_components('water', 'ethanol')
+        self.assertEqual(reverse['tau12_e'], -1.0e-6)
+        backend = thermo._compiled_activity_backend(T)
+        compiled = backend.activity_coefficients([0.4, 0.6], T)
+        thermo._compiled_activity_cache['all_temperatures'] = None
+        thermo._activity_cache.clear()
+        readable = thermo.activity_coefficients(T, {'ethanol': 0.4, 'water': 0.6})
+        self.assertAlmostEqual(compiled[0], readable['ethanol'], places=12)
+        self.assertAlmostEqual(compiled[1], readable['water'], places=12)
+
+        from compiled_lle import CompiledUNIQUACLLEBackend
+        from compiled_vlle import CompiledActivityVLLEBackend
+        lle_backend = CompiledUNIQUACLLEBackend.from_activity_backend(backend)
+        vlle_backend = CompiledActivityVLLEBackend.from_thermo(thermo)
+        self.assertIsNotNone(lle_backend)
+        self.assertIsNotNone(vlle_backend)
+        lle_backend.compile_kernels()
+        vlle_backend.compile_kernels()
+        V, x, y = vlle_backend.flash_VLE_TP(
+            {'ethanol': 0.4, 'water': 0.6}, T, 1.01325
+        )
+        self.assertTrue(math.isfinite(V))
+        self.assertTrue(all(math.isfinite(value) for value in x))
+        self.assertTrue(all(math.isfinite(value) for value in y))
+
+        minimal = create_thermodynamics(
+            ['ethanol', 'water'],
+            'UNIQUAC',
+            interaction_overrides=[{
+                'model': 'UNIQUAC',
+                'component1': 'ethanol',
+                'component2': 'water',
+                'tau12_a': 0.1,
+                'tau12_b': 20.0,
+                'tau21_a': -0.2,
+                'tau21_b': 30.0,
+            }],
+        )
+        minimal_interaction = minimal._uniquac_interaction_for_components(
+            'ethanol', 'water'
+        )
+        for field in ('tau12_c', 'tau12_d', 'tau12_e', 'tau21_c', 'tau21_d', 'tau21_e'):
+            self.assertEqual(minimal_interaction.get(field, 0.0), 0.0)
+
     def test_phenolic_temperature_interactions_use_paper_cij_form(self):
         T = 333.15
         tref = 273.15
@@ -385,10 +529,10 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertIn('temperature-dependent UNIQUAC', uniquac['comment'])
         self.assertAlmostEqual(uniquac['tau12_a'], -12.81485434, places=8)
         self.assertAlmostEqual(uniquac['tau12_b'], 1905.74507135, places=8)
-        self.assertAlmostEqual(uniquac['tau12_c'], 0.02169653866, places=10)
+        self.assertAlmostEqual(uniquac['tau12_d'], 0.02169653866, places=10)
         self.assertAlmostEqual(uniquac['tau21_a'], 8.68179405, places=8)
         self.assertAlmostEqual(uniquac['tau21_b'], -1368.13065752, places=8)
-        self.assertAlmostEqual(uniquac['tau21_c'], -0.01678360690, places=10)
+        self.assertAlmostEqual(uniquac['tau21_d'], -0.01678360690, places=10)
 
     def test_extended_uniquac_interactions_are_retained_but_disabled(self):
         with open(
@@ -409,7 +553,7 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertTrue(extended[0]['use_q_prime'])
         self.assertAlmostEqual(extended[0]['tau12_a'], -2.5229, places=6)
         self.assertAlmostEqual(extended[0]['tau12_b'], 216.07, places=6)
-        self.assertAlmostEqual(extended[0]['tau12_c'], -0.0041, places=6)
+        self.assertAlmostEqual(extended[0]['tau12_d'], -0.0041, places=6)
 
         interaction = uniquac_binary_interaction('64-17-5', '71-43-2')
         self.assertIsNotNone(interaction)
@@ -817,15 +961,40 @@ class InteractionParameterTests(unittest.TestCase):
                     record = matches[0]
                     expected_record = dict(by_pair[pair])
                     if model == 'NRTL':
+                        optional_fields = (
+                            'tau12_e', 'tau12_f', 'tau12_g',
+                            'tau21_e', 'tau21_f', 'tau21_g',
+                        )
                         record = {
                             **record,
-                            'tau12_f': record.get('tau12_f', 0.0),
-                            'tau21_f': record.get('tau21_f', 0.0),
+                            **{field: record.get(field, 0.0) for field in optional_fields},
+                            'tau_tref': record.get('tau_tref', 298.15),
                         }
                         expected_record = {
                             **expected_record,
-                            'tau12_f': expected_record.get('tau12_f', 0.0),
-                            'tau21_f': expected_record.get('tau21_f', 0.0),
+                            **{
+                                field: expected_record.get(field, 0.0)
+                                for field in optional_fields
+                            },
+                            'tau_tref': expected_record.get('tau_tref', 298.15),
+                        }
+                    else:
+                        optional_fields = (
+                            'tau12_c', 'tau12_d', 'tau12_e',
+                            'tau21_c', 'tau21_d', 'tau21_e',
+                        )
+                        record = {
+                            **record,
+                            **{field: record.get(field, 0.0) for field in optional_fields},
+                            'tau_tref': record.get('tau_tref', 298.15),
+                        }
+                        expected_record = {
+                            **expected_record,
+                            **{
+                                field: expected_record.get(field, 0.0)
+                                for field in optional_fields
+                            },
+                            'tau_tref': expected_record.get('tau_tref', 298.15),
                         }
                     self.assertEqual(record, expected_record)
                     self.assertEqual(record['Tmin_K'], fit['temperature_range_K']['Tmin'])
@@ -1102,12 +1271,12 @@ class InteractionParameterTests(unittest.TestCase):
                 else:
                     self.assertFalse(record['use_q_prime'])
                     self.assertAlmostEqual(record['tau12_a'], 0.31849185)
-                    self.assertAlmostEqual(record['tau21_c'], 0.001803034)
+                    self.assertAlmostEqual(record['tau21_d'], 0.001803034)
                     runtime = uniquac_binary_interaction(*pair)
                     reverse = uniquac_binary_interaction(*reversed(pair))
                     self.assertAlmostEqual(runtime['tau12_a'], 0.31849185)
-                    self.assertAlmostEqual(runtime['tau21_c'], 0.001803034)
-                    self.assertAlmostEqual(reverse['tau12_c'], 0.001803034)
+                    self.assertAlmostEqual(runtime['tau21_d'], 0.001803034)
+                    self.assertAlmostEqual(reverse['tau12_d'], 0.001803034)
 
     def test_runtime_interaction_records_keep_provenance_compact(self):
         forbidden = {

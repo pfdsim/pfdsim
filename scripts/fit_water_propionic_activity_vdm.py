@@ -120,8 +120,10 @@ def uniquac_override(parameters) -> list[dict]:
         "model": "UNIQUAC", "component1": WATER, "component2": ACID,
         "tau12_a": float(parameters[0]), "tau12_b": float(parameters[1]),
         "tau12_c": 0.0,
+        "tau12_d": 0.0, "tau12_e": 0.0,
         "tau21_a": float(parameters[2]), "tau21_b": float(parameters[3]),
-        "tau21_c": 0.0, "use_q_prime": False,
+        "tau21_c": 0.0, "tau21_d": 0.0, "tau21_e": 0.0,
+        "tau_tref": 298.15, "use_q_prime": False,
     }]
 
 
@@ -130,9 +132,10 @@ def nrtl_override(parameters, alpha: float) -> list[dict]:
         "model": "NRTL", "component1": WATER, "component2": ACID,
         "alpha12": float(alpha),
         "tau12_c": float(parameters[0]), "tau12_d": float(parameters[1]),
-        "tau12_e": 0.0, "tau12_f": 0.0,
+        "tau12_e": 0.0, "tau12_f": 0.0, "tau12_g": 0.0,
         "tau21_c": float(parameters[2]), "tau21_d": float(parameters[3]),
-        "tau21_e": 0.0, "tau21_f": 0.0, "tau_tref": 298.15,
+        "tau21_e": 0.0, "tau21_f": 0.0, "tau21_g": 0.0,
+        "tau_tref": 298.15,
     }]
 
 

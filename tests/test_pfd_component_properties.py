@@ -1025,7 +1025,10 @@ COMPONENTS:
             '    W | Water | MW=18.015, CAS=7732-18-5\n'
             '\n'
             'INTERACTION_PARAMETERS:\n'
-            '    E/W | model=UNIQUAC, tau12_a=0.25, tau21_a=-0.5, tau12_b=30.0, tau21_b=-60.0, use_q_prime=true\n'
+            '    E/W | model=UNIQUAC, tau12_a=0.25, tau21_a=-0.5, '
+            'tau12_b=30.0, tau21_b=-60.0, tau12_c=0.4, tau21_c=-0.3, '
+            'tau12_d=0.001, tau21_d=-0.002, tau12_e=0.000001, '
+            'tau21_e=-0.000002, tau_tref=298.15, use_q_prime=true\n'
             '\n'
             'STREAM Feed : FEED -> PRODUCT\n'
             '    T = 25 [C]\n'
@@ -1039,8 +1042,15 @@ COMPONENTS:
         self.assertTrue(result.converged)
         tau = sim.thermo._uniquac_tau_matrix(300.0)
         params = sim.thermo._uniquac_parameter_matrices()
-        self.assertAlmostEqual(tau[0][1], math.exp(0.25 + 30.0 / 300.0))
-        self.assertAlmostEqual(tau[1][0], math.exp(-0.5 - 60.0 / 300.0))
+        anchored = (298.15 - 300.0) / 300.0 + math.log(300.0 / 298.15)
+        self.assertAlmostEqual(
+            tau[0][1],
+            math.exp(0.25 + 30.0 / 300.0 + 0.4 * anchored + 0.001 * 300.0 + 0.000001 * 300.0**2),
+        )
+        self.assertAlmostEqual(
+            tau[1][0],
+            math.exp(-0.5 - 60.0 / 300.0 - 0.3 * anchored - 0.002 * 300.0 - 0.000002 * 300.0**2),
+        )
         self.assertTrue(params['use_q_prime'][0][1])
         self.assertFalse(any('UNIQUAC binary interaction parameters missing' in warning for warning in sim.thermo.warnings))
 
@@ -1070,6 +1080,9 @@ COMPONENTS:
         self.assertTrue(result.converged)
         params = sim.thermo._uniquac_parameter_matrices()
         self.assertFalse(params['use_q_prime'][0][1])
+        interaction = sim.thermo._uniquac_interaction_for_components('E', 'W')
+        for field in ('tau12_c', 'tau12_d', 'tau12_e', 'tau21_c', 'tau21_d', 'tau21_e'):
+            self.assertEqual(interaction[field], 0.0)
 
     def test_pfd_pr_ranged_kij_override_applies_only_inside_temperature_range(self):
         pfd = (

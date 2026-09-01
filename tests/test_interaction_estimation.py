@@ -47,7 +47,9 @@ class InteractionEstimationTests(unittest.TestCase):
             )
             self.assertIn('tau12_a', interaction)
             self.assertIn('tau12_b', interaction)
-            self.assertIn('tau12_c', interaction)
+            self.assertEqual(interaction['tau12_c'], 0.0)
+            self.assertNotEqual(interaction['tau12_d'], 0.0)
+            self.assertEqual(interaction['tau12_e'], 0.0)
             details = thermo.estimated_interaction_metadata[
                 ('2,3-pentanedione', 'water')
             ]
@@ -382,23 +384,32 @@ COMPONENTS:
         capped, _ = nrtl._nrtl_matrices(350.0)
         self.assertEqual(hot, capped)
 
-    def test_nrtl_manual_linear_temperature_term_and_orientation(self):
+    def test_nrtl_manual_five_term_temperature_form_and_orientation(self):
         source = '''ONLINE_LOOKUP: false
 THERMO_METHOD: NRTL
 COMPONENTS:
     W | Water
     E | Ethanol
 INTERACTION_PARAMETERS:
-    W/E | model=NRTL, alpha=0.3, tau12_c=1.0, tau12_d=20.0, tau12_e=0.0, tau12_f=0.002, tau21_c=-0.5, tau21_d=10.0, tau21_e=0.0, tau21_f=-0.001, tau_tref=298.15
+    W/E | model=NRTL, alpha=0.3, tau12_c=1.0, tau12_d=20.0, tau12_e=0.4, tau12_f=0.002, tau12_g=0.000001, tau21_c=-0.5, tau21_d=10.0, tau21_e=-0.3, tau21_f=-0.001, tau21_g=-0.000002, tau_tref=298.15
 '''
         thermo = Simulator(PFDParser().parse(source)).initialize().thermo
         T = 350.0
         tau, _, _ = thermo._nrtl_cached_matrices(T)
-        self.assertAlmostEqual(tau[0][1], 1.0 + 20.0 / T + 0.002 * T)
-        self.assertAlmostEqual(tau[1][0], -0.5 + 10.0 / T - 0.001 * T)
+        anchored = (298.15 - T) / T + math.log(T / 298.15)
+        self.assertAlmostEqual(
+            tau[0][1],
+            1.0 + 20.0 / T + 0.4 * anchored + 0.002 * T + 0.000001 * T * T,
+        )
+        self.assertAlmostEqual(
+            tau[1][0],
+            -0.5 + 10.0 / T - 0.3 * anchored - 0.001 * T - 0.000002 * T * T,
+        )
         reverse = thermo._nrtl_interaction_for_components('E', 'W')
         self.assertEqual(reverse['tau12_f'], -0.001)
         self.assertEqual(reverse['tau21_f'], 0.002)
+        self.assertEqual(reverse['tau12_g'], -0.000002)
+        self.assertEqual(reverse['tau21_g'], 0.000001)
         backend = thermo._compiled_activity_backend(T)
         self.assertIsNotNone(backend)
         compiled = backend.activity_coefficients([0.4, 0.6], T)

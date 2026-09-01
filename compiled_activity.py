@@ -23,6 +23,7 @@ class CompiledNRTLBackend:
     tau_d: np.ndarray
     tau_e: np.ndarray
     tau_f: np.ndarray
+    tau_g: np.ndarray
     tau_tref: np.ndarray
     tau_energy: np.ndarray
     alpha: np.ndarray
@@ -41,6 +42,7 @@ class CompiledNRTLBackend:
             tau_d=np.asarray(params["tau_d"], dtype=np.float64),
             tau_e=np.asarray(params["tau_e"], dtype=np.float64),
             tau_f=np.asarray(params["tau_f"], dtype=np.float64),
+            tau_g=np.asarray(params["tau_g"], dtype=np.float64),
             tau_tref=np.asarray(params["tau_tref"], dtype=np.float64),
             tau_energy=np.asarray(params["tau_energy"], dtype=np.float64),
             alpha=np.asarray(params["alpha"], dtype=np.float64),
@@ -58,7 +60,7 @@ class CompiledNRTLBackend:
         composition = np.zeros(len(self.components), dtype=np.float64)
         args = (
             composition, 298.15, self.tau_mode, self.tau_c, self.tau_d,
-            self.tau_e, self.tau_f, self.tau_tref, self.tau_energy, self.alpha,
+            self.tau_e, self.tau_f, self.tau_g, self.tau_tref, self.tau_energy, self.alpha,
             self.interaction_temperature_caps,
         )
         _nrtl_activity_coefficients_numba.compile(
@@ -76,6 +78,7 @@ class CompiledNRTLBackend:
             self.tau_d,
             self.tau_e,
             self.tau_f,
+            self.tau_g,
             self.tau_tref,
             self.tau_energy,
             self.alpha,
@@ -95,6 +98,9 @@ class CompiledUNIQUACBackend:
     tau_a: np.ndarray
     tau_b: np.ndarray
     tau_c: np.ndarray
+    tau_d: np.ndarray
+    tau_e: np.ndarray
+    tau_tref: np.ndarray
     interaction_temperature_caps: np.ndarray
     compilation_complete: bool = False
 
@@ -115,6 +121,9 @@ class CompiledUNIQUACBackend:
             tau_a=np.asarray(params["tau_a"], dtype=np.float64)[index_array, :][:, index_array],
             tau_b=np.asarray(params["tau_b"], dtype=np.float64)[index_array, :][:, index_array],
             tau_c=np.asarray(params["tau_c"], dtype=np.float64)[index_array, :][:, index_array],
+            tau_d=np.asarray(params["tau_d"], dtype=np.float64)[index_array, :][:, index_array],
+            tau_e=np.asarray(params["tau_e"], dtype=np.float64)[index_array, :][:, index_array],
+            tau_tref=np.asarray(params["tau_tref"], dtype=np.float64)[index_array, :][:, index_array],
             interaction_temperature_caps=np.asarray(
                 [
                     thermo.activity_interaction_component_temperature_limit(comp)
@@ -133,6 +142,7 @@ class CompiledUNIQUACBackend:
         args = (
             composition, 298.15, self.r, self.q, self.q_residual,
             self.tau_mode, self.tau_a, self.tau_b, self.tau_c,
+            self.tau_d, self.tau_e, self.tau_tref,
             self.interaction_temperature_caps,
         )
         _uniquac_activity_coefficients_numba.compile(
@@ -152,6 +162,9 @@ class CompiledUNIQUACBackend:
             self.tau_a,
             self.tau_b,
             self.tau_c,
+            self.tau_d,
+            self.tau_e,
+            self.tau_tref,
             self.interaction_temperature_caps,
         ).tolist()
 
@@ -160,7 +173,7 @@ if njit is not None:
 
     @njit(cache=True)
     def _nrtl_activity_coefficients_numba(
-        x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_tref, tau_energy, alpha,
+        x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
         interaction_temperature_caps=None,
     ):
         n = x.shape[0]
@@ -204,6 +217,7 @@ if njit is not None:
                             + np.log(interaction_T / tref)
                         )
                         + tau_f[i, j] * interaction_T
+                        + tau_g[i, j] * interaction_T * interaction_T
                     )
                 elif mode == 2:
                     tau_ij = tau_energy[i, j] / interaction_T
@@ -249,7 +263,8 @@ if njit is not None:
 
     @njit(cache=True)
     def _uniquac_activity_coefficients_numba(
-        x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
+        x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d, tau_e,
+        tau_tref,
         interaction_temperature_caps=None,
     ):
         n = x.shape[0]
@@ -282,10 +297,16 @@ if njit is not None:
                     if interaction_temperature_caps[j] < interaction_T:
                         interaction_T = interaction_temperature_caps[j]
                 if mode == 1:
+                    tref = tau_tref[i, j]
                     exponent = (
                         tau_a[i, j]
                         + tau_b[i, j] / interaction_T
-                        + tau_c[i, j] * interaction_T
+                        + tau_c[i, j] * (
+                            (tref - interaction_T) / interaction_T
+                            + np.log(interaction_T / tref)
+                        )
+                        + tau_d[i, j] * interaction_T
+                        + tau_e[i, j] * interaction_T * interaction_T
                     )
                 elif mode == 2:
                     exponent = -tau_a[i, j] / interaction_T

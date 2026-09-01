@@ -958,8 +958,8 @@ class Simulator:
                     alpha = params.get('alpha12', params.get('alpha'))
                     record['alpha12'] = numeric(alpha if alpha is not None else 0.3, 'alpha')
                     has_tau = any(key in params for key in (
-                        'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f',
-                        'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f',
+                        'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f', 'tau12_g',
+                        'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f', 'tau21_g',
                     ))
                     if has_tau:
                         if 'tau12_c' not in params or 'tau21_c' not in params:
@@ -967,8 +967,8 @@ class Simulator:
                                 "NRTL tau-form overrides require at least tau12_c and tau21_c."
                             )
                         for key in (
-                            'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f',
-                            'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f',
+                            'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f', 'tau12_g',
+                            'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f', 'tau21_g',
                         ):
                             record[key] = numeric(params.get(key, 0.0), key)
                         record['tau_tref'] = numeric(params.get('tau_tref', params.get('tref', 298.15)), 'tau_tref')
@@ -988,14 +988,22 @@ class Simulator:
                     remember_activity_override(scope, model, comp1, comp2)
                     record['model_variant'] = str(params.get('model_variant') or 'standard_uniquac')
                     record['use_q_prime'] = boolean(params.get('use_q_prime', False))
-                    has_tau = any(key in params for key in ('tau12_a', 'tau12_b', 'tau12_c', 'tau21_a', 'tau21_b', 'tau21_c'))
+                    uniquac_tau_fields = (
+                        'tau12_a', 'tau12_b', 'tau12_c', 'tau12_d', 'tau12_e',
+                        'tau21_a', 'tau21_b', 'tau21_c', 'tau21_d', 'tau21_e',
+                    )
+                    has_tau = any(key in params for key in uniquac_tau_fields)
                     if has_tau:
                         if 'tau12_a' not in params or 'tau21_a' not in params:
                             raise SimulationError(
                                 "UNIQUAC tau-form overrides require at least tau12_a and tau21_a."
                             )
-                        for key in ('tau12_a', 'tau12_b', 'tau12_c', 'tau21_a', 'tau21_b', 'tau21_c'):
+                        for key in uniquac_tau_fields:
                             record[key] = numeric(params.get(key, 0.0), key)
+                        record['tau_tref'] = numeric(
+                            params.get('tau_tref', params.get('tref', 298.15)),
+                            'tau_tref',
+                        )
                     else:
                         a12 = params.get('a12_cal_per_mol', params.get('a12'))
                         a21 = params.get('a21_cal_per_mol', params.get('a21'))

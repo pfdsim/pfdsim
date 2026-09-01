@@ -116,9 +116,14 @@ def temperature_dependent_interaction(parameters: np.ndarray | list[float]) -> l
         "tau12_a": float(parameters[0]),
         "tau12_b": float(parameters[1]),
         "tau12_c": 0.0,
+        "tau12_d": 0.0,
+        "tau12_e": 0.0,
         "tau21_a": float(parameters[2]),
         "tau21_b": float(parameters[3]),
         "tau21_c": 0.0,
+        "tau21_d": 0.0,
+        "tau21_e": 0.0,
+        "tau_tref": 298.15,
         "use_q_prime": False,
     }]
 

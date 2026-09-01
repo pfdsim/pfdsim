@@ -117,6 +117,9 @@ class CompiledActivityVLLEBackend:
     parameter_4: np.ndarray
     parameter_5: np.ndarray
     parameter_6: np.ndarray
+    parameter_7: np.ndarray
+    parameter_8: np.ndarray
+    parameter_9: np.ndarray
     thermo: object = field(repr=False)
     compilation_complete: bool = False
     _psat_coefficients_cache: dict[tuple[float, float], tuple[np.ndarray, np.ndarray, np.ndarray]] = field(
@@ -146,6 +149,9 @@ class CompiledActivityVLLEBackend:
                 backend.interactions,
                 backend.interactions_b,
                 backend.interactions_c,
+                np.zeros_like(backend.interactions),
+                np.zeros_like(backend.interactions),
+                np.zeros_like(backend.interactions),
             )
         elif "NRTL" in method_name and CompiledNRTLBackend is not None:
             backend = CompiledNRTLBackend.from_thermo(thermo)
@@ -166,9 +172,12 @@ class CompiledActivityVLLEBackend:
                 backend.tau_d,
                 backend.tau_e,
                 backend.tau_f,
+                backend.tau_g,
                 backend.tau_tref,
                 backend.tau_energy,
                 alpha_with_caps,
+                np.zeros_like(backend.tau_c),
+                np.zeros_like(backend.tau_c),
             )
         elif "UNIQUAC" in method_name and CompiledUNIQUACBackend is not None:
             backend = CompiledUNIQUACBackend.from_thermo(thermo)
@@ -191,6 +200,9 @@ class CompiledActivityVLLEBackend:
                 backend.tau_a,
                 backend.tau_b,
                 backend.tau_c,
+                backend.tau_d,
+                backend.tau_e,
+                backend.tau_tref,
                 caps,
             )
         else:
@@ -207,6 +219,9 @@ class CompiledActivityVLLEBackend:
             parameter_4=np.asarray(parameters[4], dtype=np.float64),
             parameter_5=np.asarray(parameters[5], dtype=np.float64),
             parameter_6=np.asarray(parameters[6], dtype=np.float64),
+            parameter_7=np.asarray(parameters[7], dtype=np.float64),
+            parameter_8=np.asarray(parameters[8], dtype=np.float64),
+            parameter_9=np.asarray(parameters[9], dtype=np.float64),
             thermo=thermo,
         )
 
@@ -271,6 +286,9 @@ class CompiledActivityVLLEBackend:
             self.parameter_4,
             self.parameter_5,
             self.parameter_6,
+            self.parameter_7,
+            self.parameter_8,
+            self.parameter_9,
             coeffs[0],
             coeffs[1],
             coeffs[2],
@@ -1663,14 +1681,14 @@ if (
 ):
 
     @njit(cache=True)
-    def _activity_gamma(model_id, x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6):
+    def _activity_gamma(model_id, x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9):
         n = x.shape[0]
         caps = np.empty(n, dtype=np.float64)
         for i in range(n):
-            caps[i] = p6[i, i]
+            caps[i] = p7[i, i] if model_id == 1 else p9[i, i]
         if model_id == 1:
             return _nrtl_activity_coefficients_numba(
-                x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7,
                 caps,
             )
         r = np.empty(n, dtype=np.float64)
@@ -1681,20 +1699,21 @@ if (
             q[i] = p1[i, i]
             q_residual[i] = p2[i, i]
         return _uniquac_activity_coefficients_numba(
-            x, T, r, q, q_residual, integer_parameters, p3, p4, p5,
+            x, T, r, q, q_residual, integer_parameters,
+            p3, p4, p5, p6, p7, p8,
             caps,
         )
 
 
     @njit(cache=True)
-    def _activity_lle_split(model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+    def _activity_lle_split(model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                             max_iter, tol):
         caps = np.empty(z.shape[0], dtype=np.float64)
         for i in range(z.shape[0]):
-            caps[i] = p6[i, i]
+            caps[i] = p7[i, i] if model_id == 1 else p9[i, i]
         if model_id == 1:
             return _lle_split_nrtl_numba(
-                z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7,
                 caps, max_iter, tol
             )
         n = z.shape[0]
@@ -1706,16 +1725,17 @@ if (
             q[i] = p1[i, i]
             q_residual[i] = p2[i, i]
         return _lle_split_uniquac_numba(
-            z, T, r, q, q_residual, integer_parameters, p3, p4, p5,
+            z, T, r, q, q_residual, integer_parameters,
+            p3, p4, p5, p6, p7, p8,
             caps, max_iter, tol
         )
 
 
     @njit(cache=True)
     def _k_values_activity(x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4,
-                           p5, p6, antoine_a, antoine_b, antoine_c):
+                           p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c):
         gamma = _activity_gamma(
-            model_id, x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6
+            model_id, x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9
         )
         psat = _psat_array(T, antoine_a, antoine_b, antoine_c)
         out = np.empty(x.shape[0], dtype=np.float64)
@@ -1728,10 +1748,11 @@ if (
 
     @njit(cache=True)
     def _bubble_point_p_activity(x, T, model_id, integer_parameters, p0, p1, p2, p3,
-                                 p4, p5, p6, antoine_a, antoine_b, antoine_c):
+                                 p4, p5, p6, p7, p8, p9,
+                                 antoine_a, antoine_b, antoine_c):
         xn = _norm(x)
         gamma = _activity_gamma(
-            model_id, xn, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6
+            model_id, xn, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9
         )
         psat = _psat_array(T, antoine_a, antoine_b, antoine_c)
         total = 0.0
@@ -1741,13 +1762,14 @@ if (
 
     @njit(cache=True)
     def _vle_flash_activity(z_input, T, P, model_id, integer_parameters, p0, p1, p2,
-                            p3, p4, p5, p6, antoine_a, antoine_b, antoine_c, max_iter, tol):
+                            p3, p4, p5, p6, p7, p8, p9,
+                            antoine_a, antoine_b, antoine_c, max_iter, tol):
         z = _norm(z_input)
         x = z.copy()
         y = z.copy()
         V = 0.5
         K = _k_values_activity(
-            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         for _iteration in range(max_iter):
@@ -1762,7 +1784,7 @@ if (
             x = _norm(x)
             y = _norm(y)
             K_new = _k_values_activity(
-                x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                 antoine_a, antoine_b, antoine_c
             )
             change = 0.0
@@ -1785,13 +1807,13 @@ if (
 
     @njit(cache=True)
     def _seeded_vle_activity(z_input, T, P, liquid_seed, model_id,
-                             integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                             integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                              antoine_a, antoine_b, antoine_c, max_iter, tol):
         z = _norm(z_input)
         x = _norm(liquid_seed)
         y = z.copy()
         K = _k_values_activity(
-            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         V = 0.5
@@ -1808,7 +1830,7 @@ if (
             x = _norm(x)
             y = _norm(y)
             K_new = _k_values_activity(
-                x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                 antoine_a, antoine_b, antoine_c
             )
             error = 0.0
@@ -1834,7 +1856,7 @@ if (
             return False, V, x, y
 
         K_check = _k_values_activity(
-            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         residual = 0.0
@@ -1851,12 +1873,12 @@ if (
 
     @njit(cache=True)
     def _liquid_tpd_activity(z_input, T, P, liquid_seed, model_id,
-                             integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                             integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                              antoine_a, antoine_b, antoine_c):
         z = _norm(z_input)
         x = _norm(liquid_seed)
         K = _k_values_activity(
-            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         value = 0.0
@@ -1869,7 +1891,7 @@ if (
 
     @njit(cache=True)
     def _reduced_gibbs_activity(T, P, V, x_input, y_input, model_id,
-                                integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                                integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                                 antoine_a, antoine_b, antoine_c):
         x = _norm(x_input)
         y = _norm(y_input)
@@ -1880,7 +1902,7 @@ if (
         if V >= 1.0 - 1e-12:
             return value
         K = _k_values_activity(
-            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         for i in range(x.shape[0]):
@@ -1893,15 +1915,16 @@ if (
     @njit(cache=True)
     def _stable_vle_from_lle_seeds_activity(
         z, T, P, seed1, seed2, model_id, integer_parameters, p0, p1, p2,
-        p3, p4, p5, p6, antoine_a, antoine_b, antoine_c, max_iter, tol,
+        p3, p4, p5, p6, p7, p8, p9,
+        antoine_a, antoine_b, antoine_c, max_iter, tol,
     ):
         tpd1 = _liquid_tpd_activity(
             z, T, P, seed1, model_id, integer_parameters, p0, p1, p2, p3,
-            p4, p5, p6, antoine_a, antoine_b, antoine_c
+            p4, p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c
         )
         tpd2 = _liquid_tpd_activity(
             z, T, P, seed2, model_id, integer_parameters, p0, p1, p2, p3,
-            p4, p5, p6, antoine_a, antoine_b, antoine_c
+            p4, p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c
         )
         seed = seed1 if tpd1 <= tpd2 else seed2
         tpd = min(tpd1, tpd2)
@@ -1911,17 +1934,18 @@ if (
 
         ok, V, x, y = _seeded_vle_activity(
             z, T, P, seed, model_id, integer_parameters, p0, p1, p2, p3,
-            p4, p5, p6, antoine_a, antoine_b, antoine_c, max_iter, tol
+            p4, p5, p6, p7, p8, p9,
+            antoine_a, antoine_b, antoine_c, max_iter, tol
         )
         if not ok:
             return False, V, x, y
         candidate_gibbs = _reduced_gibbs_activity(
             T, P, V, x, y, model_id, integer_parameters, p0, p1, p2, p3,
-            p4, p5, p6, antoine_a, antoine_b, antoine_c
+            p4, p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c
         )
         vapor_gibbs = _reduced_gibbs_activity(
             T, P, 1.0, z, z, model_id, integer_parameters, p0, p1, p2, p3,
-            p4, p5, p6, antoine_a, antoine_b, antoine_c
+            p4, p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c
         )
         if not np.isfinite(candidate_gibbs) or candidate_gibbs - vapor_gibbs >= -1e-10:
             return False, V, x, y
@@ -1930,29 +1954,29 @@ if (
 
     @njit(cache=True)
     def _binary_invariant_activity(z, T, P, x1, x2, model_id, integer_parameters,
-                                   p0, p1, p2, p3, p4, p5, p6, antoine_a, antoine_b,
+                                   p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a, antoine_b,
                                    antoine_c):
         n = z.shape[0]
         y = np.zeros(n, dtype=np.float64)
         if n != 2:
             return False, 0.0, 0.0, y, 1e300
         p_x1 = _bubble_point_p_activity(
-            x1, T, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x1, T, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         p_x2 = _bubble_point_p_activity(
-            x2, T, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x2, T, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         pressure_residual = max(abs(p_x1 - P), abs(p_x2 - P))
         if pressure_residual > max(5e-4, 5e-4 * P):
             return False, 0.0, 0.0, y, pressure_residual
         k1 = _k_values_activity(
-            x1, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x1, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         k2 = _k_values_activity(
-            x2, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            x2, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c
         )
         y1 = _norm(x1 * k1)
@@ -1997,7 +2021,8 @@ if (
     @njit(cache=True)
     def _structured_vlle_activity(z, T, P, x1_seed, x2_seed, beta_seed, v_seed,
                                   status_code, model_id, integer_parameters, p0, p1,
-                                  p2, p3, p4, p5, p6, antoine_a, antoine_b, antoine_c,
+                                  p2, p3, p4, p5, p6, p7, p8, p9,
+                                  antoine_a, antoine_b, antoine_c,
                                   max_iter, tol):
         n = z.shape[0]
         x1 = _norm(x1_seed)
@@ -2030,11 +2055,11 @@ if (
                 current[i] = x1[i]
                 current[n + i] = x2[i]
             k1 = _k_values_activity(
-                x1, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                x1, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                 antoine_a, antoine_b, antoine_c
             )
             k2 = _k_values_activity(
-                x2, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                x2, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                 antoine_a, antoine_b, antoine_c
             )
             ok, v, l1, y_new, x1_new, x2_new, rr_residual = _solve_three_phase_rr(
@@ -2111,29 +2136,29 @@ if (
 
     @njit(cache=True)
     def _vlle_flash_tp_activity_numba(z_input, T, P, model_id, integer_parameters,
-                                      p0, p1, p2, p3, p4, p5, p6, antoine_a, antoine_b,
+                                      p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a, antoine_b,
                                       antoine_c, max_iter, tol):
         z = _norm(z_input)
         V, x_vle, y_vle = _vle_flash_activity(
-            z, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            z, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c, max_iter, tol
         )
         has_lle, feed_x1, feed_x2, feed_beta = _activity_lle_split(
-            model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             max_iter, 1e-6
         )
         if has_lle:
             if z.shape[0] == 2:
                 ok, v, l1, y, residual = _binary_invariant_activity(
                     z, T, P, feed_x1, feed_x2, model_id, integer_parameters,
-                    p0, p1, p2, p3, p4, p5, p6, antoine_a, antoine_b, antoine_c
+                    p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c
                 )
                 if ok:
                     return 3, 3, v, l1, 1.0 - v - l1, y, feed_x1, feed_x2, residual, 1
             else:
                 out = _structured_vlle_activity(
                     z, T, P, feed_x1, feed_x2, feed_beta, V, 4, model_id,
-                    integer_parameters, p0, p1, p2, p3, p4, p5, p6, antoine_a,
+                    integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a,
                     antoine_b, antoine_c, max_iter, tol
                 )
                 if out[0]:
@@ -2141,7 +2166,7 @@ if (
         if V >= 1.0 - 1e-10 and has_lle:
             stable, stable_v, stable_x, stable_y = _stable_vle_from_lle_seeds_activity(
                 z, T, P, feed_x1, feed_x2, model_id, integer_parameters,
-                p0, p1, p2, p3, p4, p5, p6, antoine_a, antoine_b, antoine_c,
+                p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c,
                 max_iter, tol
             )
             if stable:
@@ -2153,13 +2178,13 @@ if (
                 return 2, 6, 0.0, 1.0 - feed_beta, feed_beta, z, feed_x1, feed_x2, 0.0, 0
             return 1, 0, 0.0, 1.0, 0.0, z, z, z, 0.0, 0
         has_liquid_lle, liquid_x1, liquid_x2, liquid_beta = _activity_lle_split(
-            model_id, x_vle, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            model_id, x_vle, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             max_iter, 1e-6
         )
         if has_liquid_lle:
             out = _structured_vlle_activity(
                 z, T, P, liquid_x1, liquid_x2, liquid_beta, V, 5, model_id,
-                integer_parameters, p0, p1, p2, p3, p4, p5, p6, antoine_a,
+                integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a,
                 antoine_b, antoine_c, max_iter, tol
             )
             if out[0]:
@@ -2169,16 +2194,16 @@ if (
 
     @njit(cache=True)
     def _vlle_flash_pv_activity_numba(z, P, target, T_low, T_high, model_id,
-                                      integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+                                      integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                                       antoine_a, antoine_b, antoine_c, max_iter, tol):
         low = T_low
         high = T_high
         low_result = _vlle_flash_tp_activity_numba(
-            z, low, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            z, low, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c, max_iter, tol
         )
         high_result = _vlle_flash_tp_activity_numba(
-            z, high, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6,
+            z, high, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c, max_iter, tol
         )
         f_low = low_result[2] - target
@@ -2197,7 +2222,8 @@ if (
             mid = 0.5 * (low + high)
             result = _vlle_flash_tp_activity_numba(
                 z, mid, P, model_id, integer_parameters, p0, p1, p2, p3, p4,
-                p5, p6, antoine_a, antoine_b, antoine_c, max_iter, tol
+                p5, p6, p7, p8, p9,
+                antoine_a, antoine_b, antoine_c, max_iter, tol
             )
             f_mid = result[2] - target
             if abs(f_mid) < 1e-8 or high - low < 1e-8:

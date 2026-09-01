@@ -33,12 +33,9 @@
       "source_file": "data/source/isopropanol_water_interactions.json",
       "tau12_c": -0.83315,
       "tau12_d": 300.79,
-      "tau12_e": 0.0,
       "tau21_c": 16.6021,
       "tau21_d": -2518.8,
-      "tau21_e": 0.0,
-      "tau21_f": -0.0203443,
-      "tau_tref": 298.15
+      "tau21_f": -0.0203443
     },
     {
       "Tmax_K": 413.67,
@@ -59,11 +56,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.20308121,
       "tau12_d": 152.334314,
-      "tau12_e": 0.0,
       "tau21_c": -2.2428764,
-      "tau21_d": 1056.184603,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 1056.184603
     },
     {
       "Tmax_K": 369.75,
@@ -84,11 +78,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -0.418548,
       "tau12_d": 265.779,
-      "tau12_e": 0.0,
       "tau21_c": -0.262194,
-      "tau21_d": 412.137,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 412.137
     },
     {
       "Tmax_K": 414.0,
@@ -109,11 +100,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0064,
       "tau12_d": 255.09,
-      "tau12_e": 0.0,
       "tau21_c": -0.005,
-      "tau21_d": 245.27,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 245.27
     },
     {
       "Tmax_K": 298.15,
@@ -134,11 +122,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 465.526229,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 542.753235,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 542.753235
     },
     {
       "Tmax_K": 388.7,
@@ -159,11 +144,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -1.39058,
       "tau12_d": 360.048,
-      "tau12_e": 0.0,
       "tau21_c": 1.54676,
-      "tau21_d": -418.999,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -418.999
     },
     {
       "Tmax_K": 335.7,
@@ -184,11 +166,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -0.557447,
       "tau12_d": 710.993,
-      "tau12_e": 0.0,
       "tau21_c": -0.412573,
-      "tau21_d": 93.9489,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 93.9489
     },
     {
       "Tmax_K": 338.15,
@@ -209,11 +188,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -1.83772,
       "tau12_d": 932.913,
-      "tau12_e": 0.0,
       "tau21_c": 0.77204,
-      "tau21_d": -54.5116,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -54.5116
     },
     {
       "Tmax_K": 355.35,
@@ -234,11 +210,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -1.04999734,
       "tau12_d": 659.656328,
-      "tau12_e": 0.0,
       "tau21_c": 0.90684636,
-      "tau21_d": -123.756489,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -123.756489
     },
     {
       "Tmax_K": 333.15,
@@ -259,11 +232,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 3.07788,
       "tau12_d": -586.184,
-      "tau12_e": 0.0,
       "tau21_c": -1.58735,
-      "tau21_d": 801.16,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 801.16
     },
     {
       "Tmax_K": 325.15,
@@ -284,11 +254,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.3549,
       "tau12_d": 401.974,
-      "tau12_e": 0.0,
       "tau21_c": -1.04607,
-      "tau21_d": 817.113,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 817.113
     },
     {
       "Tmax_K": 377.36,
@@ -309,11 +276,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 13.1566,
       "tau12_d": -4236.56,
-      "tau12_e": 0.0,
       "tau21_c": -3.5894,
-      "tau21_d": 1463.27,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 1463.27
     },
     {
       "Tmax_K": 397.44,
@@ -334,11 +298,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 36.031192,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 17.174892,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 17.174892
     },
     {
       "Tmax_K": 426.98,
@@ -359,11 +320,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0141,
       "tau12_d": 357.19,
-      "tau12_e": 0.0,
       "tau21_c": -0.0095,
-      "tau21_d": 110.63,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 110.63
     },
     {
       "Tmax_K": 313.15,
@@ -384,11 +342,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 447.11557,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 660.49598,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 660.49598
     },
     {
       "Tmax_K": 298.15,
@@ -409,11 +364,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 429.87706,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 612.225781,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 612.225781
     },
     {
       "Tmax_K": 298.15,
@@ -434,11 +386,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 425.797731,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -163.729028,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -163.729028
     },
     {
       "Tmax_K": 298.15,
@@ -459,11 +408,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 107.619664,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 219.750163,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 219.750163
     },
     {
       "Tmax_K": 298.15,
@@ -484,11 +430,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 165.472317,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 278.772879,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 278.772879
     },
     {
       "Tmax_K": 298.15,
@@ -509,11 +452,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 298.222194,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -56.714881,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -56.714881
     },
     {
       "Tmax_K": 298.15,
@@ -534,11 +474,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": -144.141462,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 220.139394,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 220.139394
     },
     {
       "Tmax_K": 397.44,
@@ -559,11 +496,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 305.934384,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 269.601308,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 269.601308
     },
     {
       "Tmax_K": 313.15,
@@ -584,11 +518,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 48.569565,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 0.594985,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 0.594985
     },
     {
       "Tmax_K": 426.98,
@@ -609,11 +540,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -0.0019,
       "tau12_d": -145.02,
-      "tau12_e": 0.0,
       "tau21_c": 0.0023,
-      "tau21_d": 192.57,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 192.57
     },
     {
       "Tmax_K": 414.0,
@@ -634,11 +562,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0103,
       "tau12_d": 332.72,
-      "tau12_e": 0.0,
       "tau21_c": -0.0071,
-      "tau21_d": -180.86,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -180.86
     },
     {
       "Tmax_K": 386.6,
@@ -659,11 +584,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": -0.233226,
       "tau12_d": -176.21,
-      "tau12_e": 0.0,
       "tau21_c": -0.004149,
-      "tau21_d": 315.963,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 315.963
     },
     {
       "alpha12": 0.3,
@@ -682,11 +604,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 0.0,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 0.0,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 0.0
     },
     {
       "alpha12": 0.3,
@@ -705,11 +624,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 0.0,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 0.0,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 0.0
     },
     {
       "alpha12": 0.3,
@@ -728,11 +644,8 @@
       "source_file": "data/source/assorted_alcohols_ethers.json",
       "tau12_c": 0.0,
       "tau12_d": 0.0,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 0.0,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 0.0
     },
     {
       "Tmax_K": 375.0,
@@ -748,11 +661,8 @@
       "source_file": "data/source/acetaldehyde_water_vle.json",
       "tau12_c": 5.25487,
       "tau12_d": -1310.86,
-      "tau12_e": 0.0,
       "tau21_c": 2.10302,
-      "tau21_d": -363.638,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -363.638
     },
     {
       "Tmax_K": 343.2,
@@ -768,11 +678,8 @@
       "source_file": "data/source/three_acids_vle.json",
       "tau12_c": 0.0,
       "tau12_d": 54.06903,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -11.326834,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -11.326834
     },
     {
       "Tmax_K": 374.0,
@@ -788,11 +695,8 @@
       "source_file": "data/source/three_acids_vle.json",
       "tau12_c": 0.0,
       "tau12_d": -161.713961,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 214.85047,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 214.85047
     },
     {
       "alpha12": 0.3,
@@ -806,11 +710,8 @@
       "source_file": "data/source/three_acids_vle.json",
       "tau12_c": 0.0,
       "tau12_d": 0.0,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 0.0,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 0.0
     },
     {
       "Tmax_K": 399.57,
@@ -826,11 +727,8 @@
       "source_file": "data/source/water_c3_acid_vle_interactions.json",
       "tau12_c": 2.524131826641469,
       "tau12_d": -483.44757985154956,
-      "tau12_e": 0.0,
       "tau21_c": -1.9801650300280798,
-      "tau21_d": 836.6800879723412,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 836.6800879723412
     },
     {
       "Tmax_K": 373.15,
@@ -846,11 +744,8 @@
       "source_file": "data/source/water_c3_acid_vle_interactions.json",
       "tau12_c": 9.080831096551332,
       "tau12_d": -2392.892338323224,
-      "tau12_e": 0.0,
       "tau21_c": -4.609797001050538,
-      "tau21_d": 1612.8341217031916,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 1612.8341217031916
     },
     {
       "Tmax_K": 473.15,
@@ -906,11 +801,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_c": 5.42009361,
       "tau12_d": -275.038735,
-      "tau12_e": 0.0,
       "tau21_c": -4.38406453,
-      "tau21_d": 2448.830846,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 2448.830846
     },
     {
       "Tmax_K": 333.15,
@@ -926,11 +818,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_c": 6.1067819,
       "tau12_d": -158.687099,
-      "tau12_e": 0.0,
       "tau21_c": -4.12722444,
-      "tau21_d": 2529.390577,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 2529.390577
     },
     {
       "Tmax_K": 339.15,
@@ -946,11 +835,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_c": 7.84191768,
       "tau12_d": 141.884293,
-      "tau12_e": 0.0,
       "tau21_c": -3.24899904,
-      "tau21_d": 2887.045158,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 2887.045158
     },
     {
       "Tmax_K": 373.15,
@@ -986,11 +872,8 @@
       "source_file": "data/source/water_organic_binary_fits.json",
       "tau12_c": -3.78924315,
       "tau12_d": 2667.048549496,
-      "tau12_e": 0.0,
       "tau21_c": -3.965469654,
-      "tau21_d": 2012.593549617,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 2012.593549617
     },
     {
       "Pmax_kPa": 1500.0,
@@ -1013,11 +896,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": -9.851925651262082,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 157.64743941765926,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 157.64743941765926
     },
     {
       "Pmax_kPa": 101.32,
@@ -1040,11 +920,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 122.06969319829527,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 25.78685159058269,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 25.78685159058269
     },
     {
       "Pmax_kPa": 1500.0,
@@ -1067,11 +944,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.03822789136902233,
       "tau12_d": 131.23507478940107,
-      "tau12_e": 0.0,
       "tau21_c": -1.78073007197341,
-      "tau21_d": 708.198654044474,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 708.198654044474
     },
     {
       "Pmax_kPa": 700.0,
@@ -1094,11 +968,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": -2.2179516,
       "tau12_d": 889.4061,
-      "tau12_e": 0.0,
       "tau21_c": 0.7257094,
-      "tau21_d": -54.9981,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -54.9981
     },
     {
       "Pmax_kPa": 700.0,
@@ -1121,11 +992,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": -2.6031377189605864,
       "tau12_d": 1128.4234732247712,
-      "tau12_e": 0.0,
       "tau21_c": 1.0186165891993442,
-      "tau21_d": -197.57587357655257,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -197.57587357655257
     },
     {
       "Pmax_kPa": 115.8,
@@ -1148,11 +1016,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": -3.861,
       "tau12_d": 1331.1,
-      "tau12_e": 0.0,
       "tau21_c": 9.2994,
-      "tau21_d": -1657.4,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -1657.4
     },
     {
       "Pmax_kPa": 101.32,
@@ -1175,11 +1040,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 53.601074976144915,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 96.75196707829663,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 96.75196707829663
     },
     {
       "Pmax_kPa": 101.32,
@@ -1202,11 +1064,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": -35.251545023053914,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 262.1923413336798,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 262.1923413336798
     },
     {
       "Pmax_kPa": 141.3,
@@ -1229,11 +1088,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": -0.3359755125206388,
       "tau12_d": 215.9051493100651,
-      "tau12_e": 0.0,
       "tau21_c": -6.1291266342217625,
-      "tau21_d": 2528.4810295948528,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 2528.4810295948528
     },
     {
       "Pmax_kPa": 141.3,
@@ -1256,11 +1112,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 219.99665521903492,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 177.51614254499998,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 177.51614254499998
     },
     {
       "Pmax_kPa": 101.32,
@@ -1283,11 +1136,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 382.58428748614244,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -151.70016840209004,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -151.70016840209004
     },
     {
       "Pmax_kPa": 101.32,
@@ -1310,11 +1160,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 69.27906732504309,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 165.76212863644872,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 165.76212863644872
     },
     {
       "Pmax_kPa": 141.3,
@@ -1337,11 +1184,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": -3.2007325861374403,
       "tau12_d": 1195.81495188333,
-      "tau12_e": 0.0,
       "tau21_c": -0.5311313070686612,
-      "tau21_d": 539.3652370312233,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 539.3652370312233
     },
     {
       "Pmax_kPa": 1500.0,
@@ -1364,11 +1208,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": -13.153483259990383,
       "tau12_d": 5514.372887885734,
-      "tau12_e": 0.0,
       "tau21_c": 3.327762094108224,
-      "tau21_d": 313.95081172134525,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 313.95081172134525
     },
     {
       "Pmax_kPa": 1500.0,
@@ -1391,11 +1232,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 134.52541804537148,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -16.69507542321185,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -16.69507542321185
     },
     {
       "Pmax_kPa": 1500.0,
@@ -1418,11 +1256,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 0.0,
       "tau12_d": 102.46258550659243,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 46.23240734131972,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 46.23240734131972
     },
     {
       "Pmax_kPa": 600.0,
@@ -1445,11 +1280,8 @@
       "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
       "tau12_c": 19.82391266938986,
       "tau12_d": -8004.391300405892,
-      "tau12_e": 0.0,
       "tau21_c": -15.632412535314975,
-      "tau21_d": 6453.955070168055,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 6453.955070168055
     },
     {
       "Tmax_K": 389.65,
@@ -5717,11 +5549,8 @@
       "source_id2": "1921",
       "tau12_c": 1.533,
       "tau12_d": 84.6,
-      "tau12_e": 0.0,
       "tau21_c": 0.178,
-      "tau21_d": -865.8,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -865.8
     },
     {
       "Tmax_K": 420.0,
@@ -5735,11 +5564,8 @@
       "source": "Regressed in this work from EO\u2013H\u2082O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and \u03b3^\u221e_{EO,H\u2082O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng\u2013Robinson and k12=-0.10 following Huang et al. (2012).",
       "tau12_c": 5.8537,
       "tau12_d": -1547.7,
-      "tau12_e": 0.0,
       "tau21_c": -4.70938,
-      "tau21_d": 1926.66,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 1926.66
     },
     {
       "alpha12": 0.3,
@@ -5751,10 +5577,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 4.712,
       "tau12_d": -1162.3,
-      "tau12_e": 0.0,
       "tau21_c": -2.313,
-      "tau21_d": 483.8,
-      "tau21_e": 0.0
+      "tau21_d": 483.8
     },
     {
       "alpha12": 0.4,
@@ -5766,10 +5590,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -1.709,
       "tau12_d": 892.2,
-      "tau12_e": 0.0,
       "tau21_c": 11.58,
-      "tau21_d": -3282.6,
-      "tau21_e": 0.0
+      "tau21_d": -3282.6
     },
     {
       "alpha12": 0.5,
@@ -5781,10 +5603,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.678,
       "tau12_d": 295.5,
-      "tau12_e": 0.0,
       "tau21_c": -3.259,
-      "tau21_d": 1677.6,
-      "tau21_e": 0.0
+      "tau21_d": 1677.6
     },
     {
       "alpha12": 0.3,
@@ -5796,10 +5616,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": 371.1,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 446.9,
-      "tau21_e": 0.0
+      "tau21_d": 446.9
     },
     {
       "alpha12": 0.3,
@@ -5811,10 +5629,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": -71.9,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 690.1,
-      "tau21_e": 0.0
+      "tau21_d": 690.1
     },
     {
       "alpha12": 0.3,
@@ -5826,10 +5642,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -0.693,
       "tau12_d": 173.0,
-      "tau12_e": 0.0,
       "tau21_c": 2.732,
-      "tau21_d": -617.3,
-      "tau21_e": 0.0
+      "tau21_d": -617.3
     },
     {
       "alpha12": 0.3,
@@ -5841,10 +5655,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": 114.1,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 101.9,
-      "tau21_e": 0.0
+      "tau21_d": 101.9
     },
     {
       "alpha12": 0.3,
@@ -5856,10 +5668,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.569,
       "tau12_d": -54.8,
-      "tau12_e": 0.0,
       "tau21_c": -0.916,
-      "tau21_d": 882.0,
-      "tau21_e": 0.0
+      "tau21_d": 882.0
     },
     {
       "alpha12": 0.3,
@@ -5871,10 +5681,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 4.075,
       "tau12_d": -1202.4,
-      "tau12_e": 0.0,
       "tau21_c": -5.639,
-      "tau21_d": 2504.2,
-      "tau21_e": 0.0
+      "tau21_d": 2504.2
     },
     {
       "alpha12": 0.3,
@@ -5886,10 +5694,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 1.146,
       "tau12_d": -113.5,
-      "tau12_e": 0.0,
       "tau21_c": -1.722,
-      "tau21_d": 992.7,
-      "tau21_e": 0.0
+      "tau21_d": 992.7
     },
     {
       "alpha12": 0.3,
@@ -5901,10 +5707,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": -148.9,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 690.3,
-      "tau21_e": 0.0
+      "tau21_d": 690.3
     },
     {
       "alpha12": 0.3,
@@ -5916,10 +5720,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -0.801,
       "tau12_d": 246.2,
-      "tau12_e": 0.0,
       "tau21_c": 3.458,
-      "tau21_d": -586.1,
-      "tau21_e": 0.0
+      "tau21_d": -586.1
     },
     {
       "alpha12": 0.3,
@@ -5931,10 +5733,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -1.079,
       "tau12_d": 479.1,
-      "tau12_e": 0.0,
       "tau21_c": -0.347,
-      "tau21_d": 206.6,
-      "tau21_e": 0.0
+      "tau21_d": 206.6
     },
     {
       "alpha12": 0.3,
@@ -5946,10 +5746,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": 122.7,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -136.5,
-      "tau21_e": 0.0
+      "tau21_d": -136.5
     },
     {
       "alpha12": 0.3,
@@ -5961,10 +5759,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -2.885,
       "tau12_d": 1124.0,
-      "tau12_e": 0.0,
       "tau21_c": 2.191,
-      "tau21_d": -863.7,
-      "tau21_e": 0.0
+      "tau21_d": -863.7
     },
     {
       "alpha12": 0.5,
@@ -5978,10 +5774,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": -375.4,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 313.0,
-      "tau21_e": 0.0
+      "tau21_d": 313.0
     },
     {
       "alpha12": 0.2,
@@ -5995,10 +5789,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 45.191,
       "tau12_d": 591.4,
-      "tau12_e": 0.0,
       "tau21_c": 140.087,
-      "tau21_d": -5954.3,
-      "tau21_e": 0.0
+      "tau21_d": -5954.3
     },
     {
       "alpha12": 0.3,
@@ -6010,10 +5802,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.422,
       "tau12_d": -239.9,
-      "tau12_e": 0.0,
       "tau21_c": -0.102,
-      "tau21_d": 306.1,
-      "tau21_e": 0.0
+      "tau21_d": 306.1
     },
     {
       "alpha12": 0.3,
@@ -6025,10 +5815,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": 75.9,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -91.1,
-      "tau21_e": 0.0
+      "tau21_d": -91.1
     },
     {
       "alpha12": 0.3,
@@ -6042,10 +5830,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": -17.7,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -120.2,
-      "tau21_e": 0.0
+      "tau21_d": -120.2
     },
     {
       "alpha12": 0.2,
@@ -6059,10 +5845,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 2.773,
       "tau12_d": 296.7,
-      "tau12_e": 0.0,
       "tau21_c": 162.477,
-      "tau21_d": -6046.0,
-      "tau21_e": 0.0
+      "tau21_d": -6046.0
     },
     {
       "alpha12": 0.3,
@@ -6074,10 +5858,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": 173.6,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": 83.2,
-      "tau21_e": 0.0
+      "tau21_d": 83.2
     },
     {
       "alpha12": 0.3,
@@ -6089,10 +5871,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.0,
       "tau12_d": -57.0,
-      "tau12_e": 0.0,
       "tau21_c": 0.0,
-      "tau21_d": -25.2,
-      "tau21_e": 0.0
+      "tau21_d": -25.2
     },
     {
       "alpha12": 0.2,
@@ -6106,10 +5886,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -247.879,
       "tau12_d": 14759.8,
-      "tau12_e": 0.0,
       "tau21_c": 627.053,
-      "tau21_d": -27269.4,
-      "tau21_e": 0.0
+      "tau21_d": -27269.4
     },
     {
       "alpha12": 0.3,
@@ -6121,10 +5899,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": -1.285,
       "tau12_d": 630.1,
-      "tau12_e": 0.0,
       "tau21_c": 1.203,
-      "tau21_d": -400.5,
-      "tau21_e": 0.0
+      "tau21_d": -400.5
     },
     {
       "alpha12": 0.3,
@@ -6136,10 +5912,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.538,
       "tau12_d": -106.4,
-      "tau12_e": 0.0,
       "tau21_c": 0.965,
-      "tau21_d": -590.0,
-      "tau21_e": 0.0
+      "tau21_d": -590.0
     },
     {
       "alpha12": 0.3,
@@ -6151,10 +5925,8 @@
       "source": "User-supplied NRTL temperature-dependent matrix",
       "tau12_c": 0.054,
       "tau12_d": 420.0,
-      "tau12_e": 0.0,
       "tau21_c": 6.398,
-      "tau21_d": -1809.0,
-      "tau21_e": 0.0
+      "tau21_d": -1809.0
     },
     {
       "Tmax_K": 453.15,
@@ -6220,11 +5992,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": -4.3775,
       "tau12_d": 2052.854125,
-      "tau12_e": 0.0,
       "tau21_c": 2.843,
-      "tau21_d": -1084.97545,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": -1084.97545
     },
     {
       "alpha12": 0.2,
@@ -6236,11 +6005,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": -5.9518,
       "tau12_d": 2568.40417,
-      "tau12_e": 0.0,
       "tau21_c": 2.9683,
-      "tau21_d": -1226.951145,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": -1226.951145
     },
     {
       "alpha12": 0.2,
@@ -6252,11 +6018,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": -5.1134,
       "tau12_d": 2306.51521,
-      "tau12_e": 0.0,
       "tau21_c": 2.2854,
-      "tau21_d": -927.2870099999999,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": -927.2870099999999
     },
     {
       "alpha12": 0.2,
@@ -6268,11 +6031,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": 1.673,
       "tau12_d": -13.14994999999999,
-      "tau12_e": 0.0,
       "tau21_c": -1.6607,
-      "tau21_d": 403.510205,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": 403.510205
     },
     {
       "alpha12": 0.51,
@@ -6284,11 +6044,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": -2.8088,
       "tau12_d": 1475.00372,
-      "tau12_e": 0.0,
       "tau21_c": -1.4006,
-      "tau21_d": 962.36389,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": 962.36389
     },
     {
       "alpha12": 0.4,
@@ -6300,11 +6057,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": -1.2432,
       "tau12_d": 946.28008,
-      "tau12_e": 0.0,
       "tau21_c": 7.3141,
-      "tau21_d": -2242.006415,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": -2242.006415
     },
     {
       "alpha12": 0.2,
@@ -6316,11 +6070,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": -5.0783,
       "tau12_d": 3208.767645,
-      "tau12_e": 0.0,
       "tau21_c": 1.5755,
-      "tau21_d": -987.537825,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": -987.537825
     },
     {
       "alpha12": 0.4,
@@ -6332,11 +6083,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": 1.8177,
       "tau12_d": 974.025245,
-      "tau12_e": 0.0,
       "tau21_c": -3.1878,
-      "tau21_d": 1310.07757,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": 1310.07757
     },
     {
       "alpha12": 0.4,
@@ -6348,11 +6096,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": 4.0054,
       "tau12_d": 76.0449900000001,
-      "tau12_e": 0.0,
       "tau21_c": -2.0853,
-      "tau21_d": 864.099695,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": 864.099695
     },
     {
       "alpha12": 0.2,
@@ -6364,11 +6109,8 @@
       "source": "Ind. Eng. Chem. Res. DOI 10.1021/ie071214t, Table 5",
       "tau12_c": 4.4922,
       "tau12_d": 275.82556999999997,
-      "tau12_e": 0.0,
       "tau21_c": -1.8663,
-      "tau21_d": 202.38984499999998,
-      "tau21_e": 0.0,
-      "tau_tref": 273.15
+      "tau21_d": 202.38984499999998
     },
     {
       "alpha12": 0.3,
@@ -6380,11 +6122,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": 6.080970270960229,
       "tau12_d": -349.3274470509465,
-      "tau12_e": 0.0,
       "tau21_c": -5.029789887886803,
-      "tau21_d": 1759.7216647598307,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 1759.7216647598307
     },
     {
       "alpha12": 0.3,
@@ -6396,11 +6135,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": 4.815705095910751,
       "tau12_d": -0.5388201505914127,
-      "tau12_e": 0.0,
       "tau21_c": 11.095124752691477,
-      "tau21_d": -0.5688882393520943,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -0.5688882393520943
     },
     {
       "alpha12": 0.3,
@@ -6412,11 +6148,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": 22.0026246315163,
       "tau12_d": 246.4993943836175,
-      "tau12_e": 0.0,
       "tau21_c": -7.258436626828518,
-      "tau21_d": 2232.8983666924737,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 2232.8983666924737
     },
     {
       "alpha12": 0.3,
@@ -6428,11 +6161,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": -3.6683068288031446,
       "tau12_d": 2822.157134818155,
-      "tau12_e": 0.0,
       "tau21_c": 331320.9712417795,
-      "tau21_d": 674.9600374349257,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": 674.9600374349257
     },
     {
       "alpha12": 0.3,
@@ -6444,11 +6174,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": 0.0012027235504272606,
       "tau12_d": -0.004810894201709042,
-      "tau12_e": 0.0,
       "tau21_c": 0.6578897820837114,
-      "tau21_d": -1.3217931819195592,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -1.3217931819195592
     },
     {
       "alpha12": 0.3,
@@ -6460,11 +6187,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": 266.4934706859202,
       "tau12_d": 400.2603839644401,
-      "tau12_e": 0.0,
       "tau21_c": -0.16597584995896195,
-      "tau21_d": -1.107708389943507,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -1.107708389943507
     },
     {
       "alpha12": 0.3,
@@ -6476,11 +6200,8 @@
       "source": "Fluid Phase Equilibria 453 (2017) 58-66, Tables 5 and 7",
       "tau12_c": -515.2479717265888,
       "tau12_d": 17193.1051428254,
-      "tau12_e": 0.0,
       "tau21_c": 0.6145917342683301,
-      "tau21_d": -0.5592664509486762,
-      "tau21_e": 0.0,
-      "tau_tref": 298.15
+      "tau21_d": -0.5592664509486762
     },
     {
       "alpha12": 0.45131325,

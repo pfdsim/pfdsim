@@ -165,6 +165,7 @@ class CompiledNRTLLLEBackend:
     tau_d: np.ndarray
     tau_e: np.ndarray
     tau_f: np.ndarray
+    tau_g: np.ndarray
     tau_tref: np.ndarray
     tau_energy: np.ndarray
     alpha: np.ndarray
@@ -173,7 +174,7 @@ class CompiledNRTLLLEBackend:
     _component_index: dict[str, int] = field(init=False, repr=False)
     _ordered_arrays_cache: dict[
         tuple[str, ...],
-        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray],
+        tuple[np.ndarray, ...],
     ] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -193,6 +194,7 @@ class CompiledNRTLLLEBackend:
             tau_d=np.asarray(backend.tau_d, dtype=np.float64),
             tau_e=np.asarray(backend.tau_e, dtype=np.float64),
             tau_f=np.asarray(backend.tau_f, dtype=np.float64),
+            tau_g=np.asarray(backend.tau_g, dtype=np.float64),
             tau_tref=np.asarray(backend.tau_tref, dtype=np.float64),
             tau_energy=np.asarray(backend.tau_energy, dtype=np.float64),
             alpha=np.asarray(backend.alpha, dtype=np.float64),
@@ -208,7 +210,7 @@ class CompiledNRTLLLEBackend:
         composition = np.zeros(len(self.components), dtype=np.float64)
         args = (
             composition, 298.15, self.tau_mode, self.tau_c, self.tau_d,
-            self.tau_e, self.tau_f, self.tau_tref, self.tau_energy, self.alpha,
+            self.tau_e, self.tau_f, self.tau_g, self.tau_tref, self.tau_energy, self.alpha,
             self.interaction_temperature_caps,
             100, 1.0e-6,
         )
@@ -220,7 +222,7 @@ class CompiledNRTLLLEBackend:
     def _ordered_arrays(
         self,
         order: tuple[str, ...],
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray] | None:
+    ) -> tuple[np.ndarray, ...] | None:
         cached = self._ordered_arrays_cache.get(order)
         if cached is not None:
             return cached
@@ -239,6 +241,7 @@ class CompiledNRTLLLEBackend:
             self.tau_d[index_array, :][:, index_array].copy(),
             self.tau_e[index_array, :][:, index_array].copy(),
             self.tau_f[index_array, :][:, index_array].copy(),
+            self.tau_g[index_array, :][:, index_array].copy(),
             self.tau_tref[index_array, :][:, index_array].copy(),
             self.tau_energy[index_array, :][:, index_array].copy(),
             self.alpha[index_array, :][:, index_array].copy(),
@@ -258,7 +261,7 @@ class CompiledNRTLLLEBackend:
         ordered_arrays = self._ordered_arrays(order)
         if ordered_arrays is None:
             return None
-        tau_mode, tau_c, tau_d, tau_e, tau_f, tau_tref, tau_energy, alpha, interaction_temperature_caps = ordered_arrays
+        tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha, interaction_temperature_caps = ordered_arrays
         z = np.asarray(
             [max(float(composition.get(comp, 0.0)), 0.0) for comp in order],
             dtype=np.float64,
@@ -271,6 +274,7 @@ class CompiledNRTLLLEBackend:
             tau_d,
             tau_e,
             tau_f,
+            tau_g,
             tau_tref,
             tau_energy,
             alpha,
@@ -295,12 +299,15 @@ class CompiledUNIQUACLLEBackend:
     tau_a: np.ndarray
     tau_b: np.ndarray
     tau_c: np.ndarray
+    tau_d: np.ndarray
+    tau_e: np.ndarray
+    tau_tref: np.ndarray
     interaction_temperature_caps: np.ndarray
     compilation_complete: bool = False
     _component_index: dict[str, int] = field(init=False, repr=False)
     _ordered_arrays_cache: dict[
         tuple[str, ...],
-        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray],
+        tuple[np.ndarray, ...],
     ] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -322,6 +329,9 @@ class CompiledUNIQUACLLEBackend:
             tau_a=np.asarray(backend.tau_a, dtype=np.float64),
             tau_b=np.asarray(backend.tau_b, dtype=np.float64),
             tau_c=np.asarray(backend.tau_c, dtype=np.float64),
+            tau_d=np.asarray(backend.tau_d, dtype=np.float64),
+            tau_e=np.asarray(backend.tau_e, dtype=np.float64),
+            tau_tref=np.asarray(backend.tau_tref, dtype=np.float64),
             interaction_temperature_caps=np.asarray(
                 backend.interaction_temperature_caps,
                 dtype=np.float64,
@@ -335,6 +345,7 @@ class CompiledUNIQUACLLEBackend:
         args = (
             composition, 298.15, self.r, self.q, self.q_residual,
             self.tau_mode, self.tau_a, self.tau_b, self.tau_c,
+            self.tau_d, self.tau_e, self.tau_tref,
             self.interaction_temperature_caps,
             100, 1.0e-6,
         )
@@ -346,7 +357,7 @@ class CompiledUNIQUACLLEBackend:
     def _ordered_arrays(
         self,
         order: tuple[str, ...],
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray] | None:
+    ) -> tuple[np.ndarray, ...] | None:
         cached = self._ordered_arrays_cache.get(order)
         if cached is not None:
             return cached
@@ -367,6 +378,9 @@ class CompiledUNIQUACLLEBackend:
             self.tau_a[index_array, :][:, index_array].copy(),
             self.tau_b[index_array, :][:, index_array].copy(),
             self.tau_c[index_array, :][:, index_array].copy(),
+            self.tau_d[index_array, :][:, index_array].copy(),
+            self.tau_e[index_array, :][:, index_array].copy(),
+            self.tau_tref[index_array, :][:, index_array].copy(),
             self.interaction_temperature_caps[index_array].copy(),
         )
         self._ordered_arrays_cache[order] = arrays
@@ -383,7 +397,7 @@ class CompiledUNIQUACLLEBackend:
         ordered_arrays = self._ordered_arrays(order)
         if ordered_arrays is None:
             return None
-        r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, interaction_temperature_caps = ordered_arrays
+        r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d, tau_e, tau_tref, interaction_temperature_caps = ordered_arrays
         z = np.asarray(
             [max(float(composition.get(comp, 0.0)), 0.0) for comp in order],
             dtype=np.float64,
@@ -398,6 +412,9 @@ class CompiledUNIQUACLLEBackend:
             tau_a,
             tau_b,
             tau_c,
+            tau_d,
+            tau_e,
+            tau_tref,
             interaction_temperature_caps,
             int(max_iter),
             float(tol),
@@ -547,7 +564,7 @@ if njit is not None and _nrtl_activity_coefficients_numba is not None:
 
     @njit(cache=True)
     def _lle_split_nrtl_numba(
-        z_input, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_tref, tau_energy, alpha,
+        z_input, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
         interaction_temperature_caps,
         max_iter, tol,
     ):
@@ -576,11 +593,11 @@ if njit is not None and _nrtl_activity_coefficients_numba is not None:
 
         for _iteration in range(max_iter):
             gamma1 = _nrtl_activity_coefficients_numba(
-                x1, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_tref, tau_energy, alpha,
+                x1, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
                 interaction_temperature_caps,
             )
             gamma2 = _nrtl_activity_coefficients_numba(
-                x2, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_tref, tau_energy, alpha,
+                x2, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
                 interaction_temperature_caps,
             )
 
@@ -655,7 +672,8 @@ if njit is not None and _uniquac_activity_coefficients_numba is not None:
 
     @njit(cache=True)
     def _lle_split_uniquac_numba(
-        z_input, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
+        z_input, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
+        tau_e, tau_tref,
         interaction_temperature_caps, max_iter, tol
     ):
         z = _normalize(z_input)
@@ -683,11 +701,13 @@ if njit is not None and _uniquac_activity_coefficients_numba is not None:
 
         for _iteration in range(max_iter):
             gamma1 = _uniquac_activity_coefficients_numba(
-                x1, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
+                x1, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
+                tau_e, tau_tref,
                 interaction_temperature_caps,
             )
             gamma2 = _uniquac_activity_coefficients_numba(
-                x2, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
+                x2, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
+                tau_e, tau_tref,
                 interaction_temperature_caps,
             )
 

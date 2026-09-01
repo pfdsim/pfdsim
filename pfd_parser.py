@@ -279,13 +279,15 @@ _INTERACTION_PARAMETER_FIELDS = {
     'NRTL': frozenset({
         'comment', 'alpha', 'alpha12', 'a12', 'a21',
         'a12_cal_per_mol', 'a21_cal_per_mol',
-        'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f',
-        'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f', 'tau_tref', 'tref',
+        'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f', 'tau12_g',
+        'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f', 'tau21_g',
+        'tau_tref', 'tref',
     }),
     'UNIQUAC': frozenset({
         'comment', 'a12', 'a21', 'a12_cal_per_mol', 'a21_cal_per_mol',
-        'tau12_a', 'tau12_b', 'tau12_c',
-        'tau21_a', 'tau21_b', 'tau21_c',
+        'tau12_a', 'tau12_b', 'tau12_c', 'tau12_d', 'tau12_e',
+        'tau21_a', 'tau21_b', 'tau21_c', 'tau21_d', 'tau21_e',
+        'tau_tref', 'tref',
         'use_q_prime', 'model_variant',
     }),
     'LIQUID_VISCOSITY': frozenset({
