@@ -261,6 +261,28 @@ def water_organic_binary_fit_records() -> list[dict]:
     return list(records_by_cas.values())
 
 
+def mibk_vle_rq_records() -> list[dict]:
+    path = SOURCE_DATA / "mibk_water_acids_vle.json"
+    if not path.exists():
+        return []
+    payload = load_json(path)
+    parameters = (
+        payload["H2O_MIBK"]["recommended_parameters"]["UNIQUAC"]
+        ["structural_parameters_used_in_fit"]["MIBK"]
+    )
+    return [{
+        "cas": payload["H2O_MIBK"]["system"]["cas"]["MIBK"],
+        "name": "methyl isobutyl ketone",
+        "formula": "C6H12O",
+        "r": parameters["r"],
+        "q": parameters["q"],
+        "source": (
+            "mibk_water_acids_vle.json; structural parameters used in the "
+            "recommended Water/MIBK UNIQUAC regression"
+        ),
+    }]
+
+
 def ester_combinatorial_records() -> list[dict]:
     path = SOURCE_DATA / "ester_uniquac_combinatorial_parameters.json"
     if not path.exists():
@@ -383,6 +405,8 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
         add_record(components, aliases, record)
     for record in water_organic_binary_fit_records():
         add_record(components, aliases, record)
+    for record in mibk_vle_rq_records():
+        add_record(components, aliases, record)
     for record in ester_combinatorial_records():
         add_record(components, aliases, record)
     apply_extended_metadata(components, aliases, nagata_records())
@@ -399,6 +423,7 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
                 "data/source/dwsim_uniquac_combinatorial_parameters.csv",
                 "data/source/water_ethylene_oxide_interactions.json",
                 "data/source/water_organic_binary_fits.json",
+                "data/source/mibk_water_acids_vle.json",
                 "data/source/nagata_gmehling_extended_uniquac_rq.json",
                 "data/source/ester_uniquac_combinatorial_parameters.json",
                 "data/source/assorted_alcohols_ethers.json",

@@ -9,6 +9,7 @@
     "106423": "106-42-3",
     "106978": "106-97-8",
     "107926": "107-92-6",
+    "108101": "108-10-1",
     "108203": "108-20-3",
     "108214": "108-21-4",
     "108383": "108-38-3",
@@ -163,6 +164,7 @@
     "methanol": "67-56-1",
     "methylacetate": "79-20-9",
     "methylethylketone": "78-93-3",
+    "methylisobutylketone": "108-10-1",
     "methylstyrene": "98-83-9",
     "mxylene": "108-38-3",
     "nitricacid": "7697-37-2",
@@ -362,6 +364,27 @@
         }
       ],
       "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+    },
+    "108-10-1": {
+      "aliases": [
+        "C6H12O",
+        "methyl isobutyl ketone"
+      ],
+      "cas": "108-10-1",
+      "formula": "C6H12O",
+      "name": "methyl isobutyl ketone",
+      "q": 3.952,
+      "r": 4.596,
+      "records": [
+        {
+          "formula": "C6H12O",
+          "name": "methyl isobutyl ketone",
+          "q": 3.952,
+          "r": 4.596,
+          "source": "mibk_water_acids_vle.json; structural parameters used in the recommended Water/MIBK UNIQUAC regression"
+        }
+      ],
+      "source": "mibk_water_acids_vle.json; structural parameters used in the recommended Water/MIBK UNIQUAC regression"
     },
     "108-20-3": {
       "aliases": [
@@ -2169,13 +2192,14 @@
   "metadata": {
     "ambiguous_alias_count": 0,
     "ambiguous_aliases": [],
-    "component_count": 72,
+    "component_count": 73,
     "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
     "key_basis": "CAS",
     "source_files": [
       "data/source/dwsim_uniquac_combinatorial_parameters.csv",
       "data/source/water_ethylene_oxide_interactions.json",
       "data/source/water_organic_binary_fits.json",
+      "data/source/mibk_water_acids_vle.json",
       "data/source/nagata_gmehling_extended_uniquac_rq.json",
       "data/source/ester_uniquac_combinatorial_parameters.json",
       "data/source/assorted_alcohols_ethers.json"

@@ -793,6 +793,7 @@ def supplemental_literature_vle_activity_records(
         comment: str,
         temperature_range: tuple[float, float] | None = None,
         fit_status: str = "recommended_literature_interaction",
+        fit_vapor_treatment: dict | None = None,
     ) -> None:
         pair = tuple(sorted((cas1, cas2)))
         if pair in covered_pairs:
@@ -815,6 +816,8 @@ def supplemental_literature_vle_activity_records(
                 "Tmin_K": float(temperature_range[0]),
                 "Tmax_K": float(temperature_range[1]),
             })
+        if fit_vapor_treatment is not None:
+            record["fit_vapor_treatment"] = fit_vapor_treatment
         if model_key == "NRTL":
             record.update({
                 "alpha12": float(parameters["alpha12"]),
@@ -1042,6 +1045,105 @@ def supplemental_literature_vle_activity_records(
                 if fit["recommended"]
                 else "retained_literature_alternative"
             ),
+        )
+
+    mibk_file = "mibk_water_acids_vle.json"
+    mibk_payload = load_json(SOURCE_DATA / mibk_file)
+    water_mibk = mibk_payload["H2O_MIBK"]
+    water_mibk_fit = water_mibk["recommended_parameters"][model_key]
+    water_mibk_raw = water_mibk_fit["parameters"]
+    if model_key == "NRTL":
+        water_mibk_parameters = {
+            "alpha12": water_mibk_raw["alpha"],
+            "tau12_c": water_mibk_raw["tau12_a"],
+            "tau12_d": water_mibk_raw["tau12_b"],
+            "tau12_f": water_mibk_raw["tau12_c"],
+            "tau21_c": water_mibk_raw["tau21_a"],
+            "tau21_d": water_mibk_raw["tau21_b"],
+            "tau21_f": water_mibk_raw["tau21_c"],
+        }
+    else:
+        water_mibk_parameters = {
+            "tau12_a": water_mibk_raw["tau12_a"],
+            "tau12_b": water_mibk_raw["tau12_b"],
+            "tau12_d": water_mibk_raw["tau12_c"],
+            "tau21_a": water_mibk_raw["tau21_a"],
+            "tau21_b": water_mibk_raw["tau21_b"],
+            "tau21_d": water_mibk_raw["tau21_c"],
+        }
+    add_record(
+        cas1="7732-18-5",
+        cas2="108-10-1",
+        component1="Water",
+        component2="Methyl isobutyl ketone",
+        source=mibk_file,
+        parameters=water_mibk_parameters,
+        comment=(
+            f"Water/MIBK joint VLE/LLE/VLLE {model_key} regression; "
+            "Rawat and Krishna (1984)"
+        ),
+        fit_status="recommended_joint_vle_lle_vlle_interaction",
+    )
+
+    acid_status = {
+        "Acrylic acid / MIBK": {
+            "NRTL": "validated_secondary_vdm_literature_interaction",
+            "UNIQUAC": "recommended_vdm_literature_interaction",
+        },
+        "Propionic acid / MIBK": {
+            "NRTL": "recommended_vdm_literature_interaction",
+            "UNIQUAC": "recommended_vdm_literature_interaction",
+        },
+    }
+    for system in mibk_payload["acid_MIBK"]["systems"]:
+        component1 = system["components"]["1"]["name"]
+        component2 = system["components"]["2"]["name"]
+        cas1 = system["components"]["1"]["cas"]
+        cas2 = system["components"]["2"]["cas"]
+        fit = system["recommended_parameters"][model_key]
+        raw = fit["parameters"]
+        if model_key == "NRTL":
+            parameters = {
+                "alpha12": raw["alpha"],
+                "tau12_c": raw["tau12_c"],
+                "tau12_d": raw["tau12_d"],
+                "tau21_c": raw["tau21_c"],
+                "tau21_d": raw["tau21_d"],
+            }
+        else:
+            parameters = {
+                "tau12_a": raw["tau12_a"],
+                "tau12_b": raw["tau12_b"],
+                "tau21_a": raw["tau21_a"],
+                "tau21_b": raw["tau21_b"],
+            }
+        experimental = system["source_paper"]["experimental_dataset"]
+        temperature_range = None
+        if "temperature_range_C" in experimental:
+            low_c, high_c = experimental["temperature_range_C"]
+            temperature_range = (float(low_c) + 273.15, float(high_c) + 273.15)
+        association = system["vapor_association"]
+        add_record(
+            cas1=cas1,
+            cas2=cas2,
+            component1=component1,
+            component2=component2,
+            source=mibk_file,
+            parameters=parameters,
+            comment=(
+                f"{system['pair']} {model_key} VLE regression with fixed "
+                "single-acid VDM association"
+            ),
+            temperature_range=temperature_range,
+            fit_status=acid_status[system["pair"]][model_key],
+            fit_vapor_treatment={
+                "type": "PFDSim_VDM_single_species_dimerization",
+                "associated_component": component1,
+                "physical_fugacity": association["physical_fugacity"],
+                "standard_state": association["standard_state"],
+                "delta_H_J_per_mol": float(association["delta_H_J_per_mol"]),
+                "delta_S_J_per_mol_K": float(association["delta_S_J_per_mol_K"]),
+            },
         )
 
     return records, len(covered_pairs - existing_pairs), covered_pairs

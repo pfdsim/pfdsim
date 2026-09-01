@@ -1,0 +1,490 @@
+{
+  "title": "MIBK Binary VLE/LLE Activity-Model Parameter Fits",
+  "description": "Combined parameter archive for H2O/MIBK, acrylic-acid/MIBK, and propionic-acid/MIBK systems. H2O/MIBK retains its multi-term temperature-dependent VLE/LLE fit; acid/MIBK recommended parameters use B/T-only interaction forms with VDM vapor association.",
+  "H2O_MIBK": {
+    "system": {
+      "components": {
+        "1": "Water",
+        "2": "Methyl isobutyl ketone (MIBK)"
+      },
+      "cas": {
+        "Water": "7732-18-5",
+        "MIBK": "108-10-1"
+      },
+      "pressure_basis": "101.325 kPa experimental VLE/VLLE data",
+      "temperature_unit": "K"
+    },
+    "source_paper": {
+      "citation": "Rawat, B. S.; Krishna, Shri. Isobaric Vapor-Liquid Equilibria for the Partially Miscible System of Water-Methyl Isobutyl Ketone. Journal of Chemical and Engineering Data 1984, 29, 403-406.",
+      "doi": "10.1021/je00038a011",
+      "experimental_content_used": {
+        "homogeneous_Txy": "Table I: 14 experimentally measured homogeneous VLE points",
+        "excluded_Txy_points": "Five starred points inside the two-liquid region were excluded because the paper states they were arbitrarily inserted for continuity/correlation purposes.",
+        "mutual_solubility": "Table III: all 18 mutual-solubility points, including literature low-temperature points and the authors' higher-temperature measurements.",
+        "VLLE_anchor": {
+          "temperature_C": 87.9,
+          "x_water_organic": 0.1994,
+          "x_water_aqueous": 0.9963,
+          "y_water": 0.6411
+        }
+      }
+    },
+    "pure_component_vapor_pressure": {
+      "Water": {
+        "method": "IAPWS-IF97 Region 4 saturation-pressure equation"
+      },
+      "MIBK": {
+        "method": "NIST Antoine",
+        "equation": "log10(P_bar) = A - B/(T_K + C)",
+        "A": 3.95298,
+        "B": 1254.095,
+        "C": -71.537,
+        "valid_temperature_K": [
+          294.9,
+          389.3
+        ]
+      }
+    },
+    "fitting_strategy": {
+      "objective": "Simultaneous regression of homogeneous VLE and liquid-liquid mutual solubility, with the reported heteroazeotropic VLLE point given very high weight.",
+      "homogeneous_VLE": {
+        "points_used": 14,
+        "residuals": [
+          "bubble temperature",
+          "vapor-phase water mole fraction"
+        ]
+      },
+      "mutual_solubility": {
+        "points_used": 18,
+        "residual_basis": "relative/log-style solubility error so dilute branches remain influential"
+      },
+      "VLLE": {
+        "weighting": "very high",
+        "targets": [
+          "heteroazeotrope temperature",
+          "organic-phase water mole fraction",
+          "aqueous-phase water mole fraction",
+          "azeotropic vapor water mole fraction"
+        ],
+        "relaxation_probe": "A lighter VLLE weighting improved homogeneous VLE and the aqueous solubility branch somewhat, but worsened the organic-rich solubility branch. No useful Pareto improvement was found while retaining VLLE performance at least as good as the Aspen UNIQUAC set, so the heavily anchored strategy was retained."
+      },
+      "temperature_dependence_test": "A linear c*T term was retained where allowed because it materially improved the combined VLE/LLE regression.",
+      "water_psat": "IF97 Region 4",
+      "MIBK_psat": "NIST Antoine"
+    },
+    "recommended_parameters": {
+      "UNIQUAC": {
+        "status": "Recommended UNIQUAC fit for the H2O/MIBK binary when retaining UNIQUAC-VDM in the process model.",
+        "component_order": "1 = H2O, 2 = MIBK",
+        "interaction_definition": {
+          "tau_ij": "exp(tauij_a + tauij_b/T + tauij_c*T)"
+        },
+        "parameters": {
+          "tau12_a": -9.96027006,
+          "tau12_b": 1627.068625,
+          "tau12_c": 0.01411794871,
+          "tau21_a": 4.75716457,
+          "tau21_b": -1328.069331,
+          "tau21_c": -0.005833157694
+        },
+        "structural_parameters_used_in_fit": {
+          "Water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "MIBK": {
+            "r": 4.596,
+            "q": 3.952
+          }
+        },
+        "fit_metrics": {
+          "homogeneous_bubble_temperature_MAE_C": 2.66,
+          "homogeneous_y_water_MAE": 0.06343,
+          "aqueous_branch_MIBK_solubility_MAPE_percent": 15.93,
+          "organic_branch_water_solubility_MAPE_percent": 7.75,
+          "predicted_VLLE": {
+            "temperature_C": 88.369,
+            "x_water_organic": 0.19669,
+            "x_water_aqueous": 0.99598,
+            "y_water": 0.6484
+          }
+        },
+        "comparison": {
+          "Aspen_UNIQUAC_reference_fit": {
+            "homogeneous_bubble_temperature_MAE_C": 3.555,
+            "homogeneous_y_water_MAE": 0.0851,
+            "aqueous_branch_MIBK_solubility_MAPE_percent": 25.87,
+            "organic_branch_water_solubility_MAPE_percent": 12.49
+          },
+          "note": "The retained custom UNIQUAC fit improves all four aggregate metrics versus the tested Aspen UNIQUAC parameter set while remaining strongly anchored to the heteroazeotrope."
+        }
+      },
+      "NRTL": {
+        "status": "Recommended NRTL fit if NRTL is used for this binary; it gives the best overall fit of the two tested activity-coefficient models.",
+        "component_order": "1 = H2O, 2 = MIBK",
+        "interaction_definition": {
+          "tau_ij": "tauij_a + tauij_b/T + tauij_c*T",
+          "alpha": "constant symmetric NRTL nonrandomness parameter"
+        },
+        "parameters": {
+          "alpha": 0.34180058,
+          "tau12_a": 28.0912309,
+          "tau12_b": -3779.181,
+          "tau12_c": -0.0358249005,
+          "tau21_a": 14.3860462,
+          "tau21_b": -1630.29856,
+          "tau21_c": -0.0231481413
+        },
+        "fit_metrics": {
+          "homogeneous_bubble_temperature_MAE_C": 0.735,
+          "homogeneous_y_water_MAE": 0.03,
+          "aqueous_branch_MIBK_solubility_MAPE_percent": 14.06,
+          "organic_branch_water_solubility_MAPE_percent": 7.52,
+          "predicted_VLLE": {
+            "temperature_C": 87.9549,
+            "x_water_organic": 0.199532,
+            "x_water_aqueous": 0.996082,
+            "y_water": 0.638277
+          }
+        },
+        "temperature_dependence_note": "Removing the c*T terms degraded the mutual-solubility fit substantially, so both c*T terms are retained."
+      }
+    },
+    "experimental_VLLE_target": {
+      "temperature_C": 87.9,
+      "x_water_organic": 0.1994,
+      "x_water_aqueous": 0.9963,
+      "y_water": 0.6411
+    },
+    "selection_guidance": {
+      "UNIQUAC": "Use when the surrounding process thermo is UNIQUAC-VDM and model consistency matters.",
+      "NRTL": "Use when an isolated H2O/MIBK NRTL scope is acceptable; this regression fits the measured binary data substantially better overall."
+    }
+  },
+  "acid_MIBK": {
+    "systems": [
+      {
+        "pair": "Acrylic acid / MIBK",
+        "components": {
+          "1": {
+            "name": "Acrylic acid",
+            "symbol": "AA",
+            "formula": "C2H3COOH",
+            "cas": "79-10-7"
+          },
+          "2": {
+            "name": "Methyl isobutyl ketone",
+            "symbol": "MIBK",
+            "cas": "108-10-1"
+          }
+        },
+        "source_paper": {
+          "citation": "Linek, J.; Wichterle, I. Liquid-vapour equilibrium LIX. The systems diisopropyl ether-acrylic acid, isopropyl acetate-acrylic acid, acrylic acid-2-ethylhexanol and methyl isobutyl ketone-acrylic acid. Collection of Czechoslovak Chemical Communications 1973, 38, 1846-1852.",
+          "doi": "10.1135/cccc19731846",
+          "experimental_dataset": {
+            "type": "binary isobaric Txy VLE",
+            "pressure": {
+              "value": 200.0,
+              "unit": "Torr",
+              "equivalent_kPa": 26.664
+            },
+            "points_used": 12,
+            "composition_range_reported": {
+              "x_MIBK_min": 0.044,
+              "x_MIBK_max": 0.818,
+              "y_MIBK_min": 0.087,
+              "y_MIBK_max": 0.964
+            },
+            "temperature_range_C": [
+              79.35,
+              100.6
+            ]
+          }
+        },
+        "vapor_association": {
+          "model": "PFDSim VDM, single-species 2A <-> A2",
+          "physical_fugacity": "ideal",
+          "standard_state": "1 bar fugacity standard",
+          "delta_H_J_per_mol": -67000.0,
+          "delta_S_J_per_mol_K": -161.4,
+          "K_expression": "K(T) = exp(delta_S/R - delta_H/(R*T))",
+          "nominal_fugacity_coefficient": "phi_D = y_true_monomer / y_nominal_monomer"
+        },
+        "pure_component_vapor_pressure": {
+          "Acrylic_acid": {
+            "method": "DIPPR",
+            "equation": "ln(P) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+            "coefficients": {
+              "C1": 46.745,
+              "C2": -6587.1,
+              "C3": -3.2208,
+              "C4": 5.2253e-07,
+              "C5": 2.0
+            },
+            "valid_temperature_K": [
+              286.15,
+              615.0
+            ]
+          },
+          "MIBK": {
+            "method": "Antoine",
+            "note": "MIBK vapor pressure was taken from the source/validated Antoine treatment used for the VLE regression."
+          }
+        },
+        "fitting_strategy": {
+          "temperature_dependence": "B/T only",
+          "reason": "Only one isobaric dataset is available, so a flexible multi-term temperature correlation is not identifiable. The B/T form was selected because it has the same parameter count as the previous constant-interaction fit while mapping naturally to a constant interaction-energy interpretation.",
+          "data_used": "all 12 reported binary Txy points at 200 Torr",
+          "vapor_phase": "PFDSim VDM association correction with ideal physical fugacity",
+          "liquid_phase_models_fit": [
+            "UNIQUAC",
+            "NRTL"
+          ],
+          "primary_regression_objective": "same VDM-reduced activity-coefficient objective used for the previous constant-parameter comparison, so the B/T and constant fits are directly comparable",
+          "B_over_T_probe": {
+            "UNIQUAC_result": "B/T lowers RMS ln(gamma) error and substantially improves vapor-composition prediction, while bubble-temperature MAE increases modestly.",
+            "NRTL_result": "B/T improves vapor-composition prediction but worsens bubble-temperature MAE.",
+            "direct_Txy_alternative_not_selected": {
+              "description": "A separately weighted direct-Txy UNIQUAC regression gave approximately B12=171.65 K and B21=-265.64 K with bubble-temperature MAE about 0.137 C and vapor y_AA MAE about 0.02235. It was not selected here because it uses a different regression objective and is therefore not an apples-to-apples replacement for the archived fit."
+            }
+          }
+        },
+        "recommended_parameters": {
+          "UNIQUAC": {
+            "status": "recommended B/T-only UNIQUAC fit for UNIQUAC-VDM process calculations; preferred over the previous constant-ln(tau) form for its energy interpretation and improved underlying activity/vapor-composition fit",
+            "component_order": "1 = Acrylic acid, 2 = MIBK",
+            "interaction_definition": "ln(tau_ij) = tauij_b/T; equivalently tau_ij = exp(tauij_b/T)",
+            "parameters": {
+              "tau12_a": 0.0,
+              "tau12_b": 248.5628,
+              "tau12_c": 0.0,
+              "tau21_a": 0.0,
+              "tau21_b": -432.6573,
+              "tau21_c": 0.0
+            },
+            "interaction_energy_interpretation": {
+              "definition": "Delta_u_ij = -R * tauij_b",
+              "Delta_u12_kJ_per_mol": -2.067,
+              "Delta_u21_kJ_per_mol": 3.597
+            },
+            "fit_metrics": {
+              "bubble_temperature_MAE_C": 0.479,
+              "bubble_temperature_RMSE_C": 0.526,
+              "vapor_y_AA_MAE": 0.01634,
+              "vapor_y_AA_RMSE": 0.01854,
+              "ln_gamma_RMS_error": 0.08473
+            },
+            "comparison_to_previous_constant_ln_tau_fit": {
+              "previous_parameters": {
+                "tau12_a": 0.478046997,
+                "tau12_b": 0.0,
+                "tau12_c": 0.0,
+                "tau21_a": -0.724551818,
+                "tau21_b": 0.0,
+                "tau21_c": 0.0
+              },
+              "previous_fit_metrics": {
+                "bubble_temperature_MAE_C": 0.296,
+                "bubble_temperature_RMSE_C": 0.353,
+                "vapor_y_AA_MAE": 0.02475,
+                "vapor_y_AA_RMSE": 0.02909,
+                "ln_gamma_RMS_error": 0.09031
+              },
+              "summary": "B/T improves RMS ln(gamma) error by about 6% and vapor y_AA MAE by about 34%, at the cost of about 0.18 C additional bubble-temperature MAE."
+            }
+          },
+          "NRTL": {
+            "status": "B/T-only NRTL alternative; retained as a validated secondary fit, while UNIQUAC is preferred in the current UNIQUAC-VDM flowsheet",
+            "component_order": "1 = Acrylic acid, 2 = MIBK",
+            "alpha": {
+              "value": 0.3,
+              "treatment": "fixed",
+              "reason": "Fitting alpha from a single isobar is poorly identifiable and produced strong parameter covariance."
+            },
+            "interaction_definition": "tau_ij = tauij_d/T",
+            "parameters": {
+              "alpha": 0.3,
+              "tau12_c": 0.0,
+              "tau12_d": -450.874,
+              "tau21_c": 0.0,
+              "tau21_d": 871.536
+            },
+            "fit_metrics": {
+              "bubble_temperature_MAE_C": 0.608,
+              "vapor_y_AA_MAE": 0.01605
+            },
+            "comparison_to_previous_constant_tau_fit": {
+              "previous_parameters": {
+                "alpha": 0.3,
+                "tau12_c": -1.107602,
+                "tau21_c": 1.93101833
+              },
+              "previous_fit_metrics": {
+                "bubble_temperature_MAE_C": 0.407,
+                "vapor_y_AA_MAE": 0.02088,
+                "ln_gamma_RMS_error": 0.0875
+              },
+              "summary": "B/T improves vapor y_AA MAE but worsens bubble-temperature MAE; therefore it is kept as an alternative rather than the primary recommendation."
+            }
+          }
+        },
+        "selection_guidance": "Use the B/T-only UNIQUAC set in the present UNIQUAC-VDM distillation flowsheet. It gives a more natural constant-interaction-energy parameterization and markedly better vapor-composition prediction than the previous constant-ln(tau) fit, although the constant-ln(tau) fit remains better for bubble temperature alone."
+      },
+      {
+        "pair": "Propionic acid / MIBK",
+        "components": {
+          "1": {
+            "name": "Propionic acid",
+            "symbol": "PA",
+            "formula": "C2H5COOH",
+            "cas": "79-09-4"
+          },
+          "2": {
+            "name": "Methyl isobutyl ketone",
+            "symbol": "MIBK",
+            "cas": "108-10-1"
+          }
+        },
+        "source_paper": {
+          "citation": "Wisniak, J.; Tamir, A. Association Effects in Propionic Acid Systems. Journal of Chemical & Engineering Data 1976, 21, 88-90.",
+          "doi": "10.1021/je60068a019",
+          "experimental_dataset": {
+            "type": "binary isobaric Txy VLE",
+            "pressure": {
+              "value": 760.0,
+              "unit": "mmHg",
+              "equivalent_kPa": 101.325
+            },
+            "points_used": 20,
+            "note": "The source paper reports 20 PA/MIBK Txy points at 760 mmHg and explicitly shows that propionic-acid vapor association must be included for thermodynamic consistency."
+          }
+        },
+        "vapor_association": {
+          "model": "PFDSim VDM, single-species 2A <-> A2",
+          "physical_fugacity": "ideal",
+          "standard_state": "1 bar fugacity standard",
+          "delta_H_J_per_mol": -63490.0,
+          "delta_S_J_per_mol_K": -152.4,
+          "K_expression": "K(T) = exp(delta_S/R - delta_H/(R*T))",
+          "nominal_fugacity_coefficient": "phi_D = y_true_monomer / y_nominal_monomer",
+          "consistency_note": "The supplied PFDSim propionic-acid association constants closely reproduce the association treatment required by the source paper over the experimental temperature range."
+        },
+        "pure_component_vapor_pressure": {
+          "Propionic_acid": {
+            "method": "DIPPR",
+            "equation": "ln(P) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+            "coefficients": {
+              "C1": 54.552,
+              "C2": -7149.4,
+              "C3": -4.2769,
+              "C4": 1.18e-18,
+              "C5": 6.0
+            },
+            "valid_temperature_K": [
+              252.45,
+              600.81
+            ]
+          },
+          "MIBK": {
+            "method": "Antoine",
+            "note": "A source/validated MIBK Antoine correlation was used over the full PA/MIBK experimental range; the public NIST correlation was not extrapolated beyond its stated upper-temperature limit."
+          }
+        },
+        "fitting_strategy": {
+          "temperature_dependence": "B/T only",
+          "reason": "Only one isobaric dataset is available, so flexible temperature dependence is not justified. B/T has the same parameter count as the previous constant-interaction fit and corresponds naturally to a constant interaction-energy form.",
+          "data_used": "all 20 reported binary Txy points at 760 mmHg from the clean publisher Table IV",
+          "vapor_phase": "PFDSim VDM association correction with ideal physical fugacity",
+          "liquid_phase_models_fit": [
+            "UNIQUAC",
+            "NRTL"
+          ],
+          "objective": "same VDM-reduced activity-coefficient regression objective used for the previous constant-parameter fit, followed by full bubble-point validation against T and y",
+          "data_handling_note": "The clean ACS Table IV was used directly. The earlier OCR/transcription ambiguity is no longer relevant.",
+          "B_over_T_result": "For PA/MIBK, B/T gives a small but consistent improvement over the constant form in RMS ln(gamma), bubble temperature, and vapor composition for both UNIQUAC and NRTL."
+        },
+        "recommended_parameters": {
+          "UNIQUAC": {
+            "status": "recommended B/T-only UNIQUAC fit for UNIQUAC-VDM process calculations",
+            "component_order": "1 = Propionic acid, 2 = MIBK",
+            "interaction_definition": "ln(tau_ij) = tauij_b/T; equivalently tau_ij = exp(tauij_b/T)",
+            "parameters": {
+              "tau12_a": 0.0,
+              "tau12_b": 76.83818,
+              "tau12_c": 0.0,
+              "tau21_a": 0.0,
+              "tau21_b": -138.38714,
+              "tau21_c": 0.0
+            },
+            "interaction_energy_interpretation": {
+              "definition": "Delta_u_ij = -R * tauij_b",
+              "Delta_u12_kJ_per_mol": -0.639,
+              "Delta_u21_kJ_per_mol": 1.151
+            },
+            "fit_metrics": {
+              "bubble_temperature_MAE_C": 0.446,
+              "bubble_temperature_RMSE_C": 0.535,
+              "vapor_y_PA_MAE": 0.0054,
+              "vapor_y_PA_RMSE": 0.00701,
+              "ln_gamma_RMS_error": 0.02357
+            },
+            "comparison_to_previous_constant_ln_tau_fit": {
+              "previous_fit_metrics_recomputed_from_clean_table": {
+                "bubble_temperature_MAE_C": 0.45,
+                "bubble_temperature_RMSE_C": 0.538,
+                "vapor_y_PA_MAE": 0.00593,
+                "vapor_y_PA_RMSE": 0.00765,
+                "ln_gamma_RMS_error": 0.02461
+              },
+              "summary": "B/T improves every tracked aggregate metric while retaining the same number of adjustable directional interaction parameters."
+            }
+          },
+          "NRTL": {
+            "status": "recommended B/T-only NRTL equivalent when an NRTL scope is preferred",
+            "component_order": "1 = Propionic acid, 2 = MIBK",
+            "alpha": {
+              "value": 0.3,
+              "treatment": "fixed",
+              "reason": "Fitting alpha from a single isobar is poorly identifiable and does not provide a meaningful improvement."
+            },
+            "interaction_definition": "tau_ij = tauij_d/T",
+            "parameters": {
+              "alpha": 0.3,
+              "tau12_c": 0.0,
+              "tau12_d": 75.00358,
+              "tau21_c": 0.0,
+              "tau21_d": 42.74815
+            },
+            "fit_metrics": {
+              "bubble_temperature_MAE_C": 0.443,
+              "bubble_temperature_RMSE_C": 0.531,
+              "vapor_y_PA_MAE": 0.00557,
+              "vapor_y_PA_RMSE": 0.00718,
+              "ln_gamma_RMS_error": 0.02342
+            },
+            "comparison_to_previous_constant_tau_fit": {
+              "previous_fit_metrics_recomputed_from_clean_table": {
+                "bubble_temperature_MAE_C": 0.449,
+                "bubble_temperature_RMSE_C": 0.535,
+                "vapor_y_PA_MAE": 0.00592,
+                "vapor_y_PA_RMSE": 0.00762,
+                "ln_gamma_RMS_error": 0.02458
+              },
+              "summary": "B/T gives a small, consistent improvement in every tracked aggregate metric."
+            }
+          }
+        },
+        "selection_guidance": "Use the B/T-only UNIQUAC set in the current UNIQUAC-VDM flowsheet. For PA/MIBK the B/T form is preferred without qualification: it is slightly better statistically than the constant form, has the same parameter count, and has a clearer constant-interaction-energy interpretation."
+      }
+    ],
+    "common_model_notes": {
+      "VDM_implementation": {
+        "description": "PFDSim Vapor Dimerization Model with ideal physical fugacity",
+        "fugacity_decomposition": "ln(phi_i) = ln(phi_i^P) + ln(phi_i^D), with phi_i^P = 1 for these regressions",
+        "chemical_fugacity": "phi_i^D = y_true_i / y_nominal_i"
+      },
+      "parameter_recommendation": "For the current flowsheet, use the B/T-only UNIQUAC fits for both AA/MIBK and PA/MIBK. PA/MIBK improves cleanly versus the constant form. AA/MIBK trades a modest increase in bubble-temperature error for substantially better vapor-composition and ln(gamma) fit, while gaining a more natural interaction-energy interpretation. Keep the NRTL B/T fits as validated alternatives for isolated NRTL scopes.",
+      "why_no_LLE_data": "Ternary LLE regressions were intentionally excluded because effective LLE binary parameters can absorb ternary behavior and are not necessarily transferable to VLE/distillation."
+    }
+  }
+}
