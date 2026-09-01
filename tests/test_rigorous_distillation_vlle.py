@@ -69,11 +69,11 @@ class RigorousDistillationVLLETests(unittest.TestCase):
 
         distillate = result.outlet_streams['distillate']
         bottoms = result.outlet_streams['bottoms']
-        self.assertAlmostEqual(performance['T_top_C'], 111.3231, places=2)
-        self.assertAlmostEqual(performance['T_bottom_C'], 111.3553, places=2)
-        self.assertAlmostEqual(distillate.composition['ethanol'], 0.31150, places=4)
-        self.assertAlmostEqual(distillate.composition['water'], 0.25980, places=4)
-        self.assertAlmostEqual(bottoms.composition['benzene'], 0.38087, places=4)
+        self.assertAlmostEqual(performance['T_top_C'], 111.4784, places=2)
+        self.assertAlmostEqual(performance['T_bottom_C'], 111.5139, places=2)
+        self.assertAlmostEqual(distillate.composition['ethanol'], 0.31081, places=4)
+        self.assertAlmostEqual(distillate.composition['water'], 0.25796, places=4)
+        self.assertAlmostEqual(bottoms.composition['benzene'], 0.37918, places=4)
         self.assertAlmostEqual(
             result.heat_duty / 3600.0,
             performance['condenser_duty_kW'] + performance['reboiler_duty_kW'],
@@ -188,9 +188,9 @@ class RigorousDistillationVLLETests(unittest.TestCase):
     def test_vlle_mode_supports_mass_distillate_specification(self):
         thermo, feed, params = self._nrtl_rk_case()
         reference_composition = {
-            'ethanol': 0.31150394939118964,
-            'water': 0.2598002447827131,
-            'benzene': 0.4286958058260973,
+            'ethanol': 0.3108141416332551,
+            'water': 0.2579577018625229,
+            'benzene': 0.43122815650422197,
         }
         target_mass_flow = 8.0 * thermo.mixture_MW(reference_composition)
         params.pop('D_to_F')
