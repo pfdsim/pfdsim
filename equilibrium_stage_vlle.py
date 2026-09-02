@@ -1121,6 +1121,7 @@ def solve_vlle_active_set(
     component_scales,
     initial_profile: VLLEProfile,
     solver_options,
+    initial_active: Optional[list[bool]] = None,
 ) -> VLLEColumnSolution:
     phase_fraction_min = float(unit.get_param("vlle_phase_fraction_min", 1e-6))
     phase_distance_min = float(unit.get_param("vlle_phase_distance_min", 1e-3))
@@ -1148,37 +1149,49 @@ def solve_vlle_active_set(
         float(unit.get_param("vlle_stability_tolerance", 1e-7)),
     )
     profile = initial_profile
-    screened_active = []
-    for T, x in zip(profile.T, profile.aggregate_x):
-        has_lle, split_x1, split_x2, split_beta = stability.split(T, x)
-        screened_active.append(_split_is_active(
-            has_lle,
-            split_x1,
-            split_x2,
-            split_beta,
-            components,
-            phase_fraction_appearance_min,
-            phase_distance_appearance_min,
-        ))
-    initial_topology = str(
+    screened_active = None
+    initial_topology = "previous_recycle" if initial_active is not None else str(
         unit.get_param("vlle_initial_topology", "screened")
     ).strip().lower().replace("-", "_")
-    if initial_topology in ("screened", "auto"):
-        active = list(screened_active)
-    elif initial_topology in ("all_vle", "vle"):
-        active = [False] * len(pressures)
-    elif initial_topology in ("all_vlle", "vlle"):
-        active = [True] * len(pressures)
+    if initial_active is not None:
+        if len(initial_active) != len(pressures):
+            raise RuntimeError(
+                "recycle VLLE topology length does not match the column stage count"
+            )
+        active = [bool(value) for value in initial_active]
     else:
-        raise RuntimeError(
-            "vlle_initial_topology must be screened, all_vle, or all_vlle"
-        )
+        screened_active = []
+        for T, x in zip(profile.T, profile.aggregate_x):
+            has_lle, split_x1, split_x2, split_beta = stability.split(T, x)
+            screened_active.append(_split_is_active(
+                has_lle,
+                split_x1,
+                split_x2,
+                split_beta,
+                components,
+                phase_fraction_appearance_min,
+                phase_distance_appearance_min,
+            ))
+        if initial_topology in ("screened", "auto"):
+            active = list(screened_active)
+        elif initial_topology in ("all_vle", "vle"):
+            active = [False] * len(pressures)
+        elif initial_topology in ("all_vlle", "vlle"):
+            active = [True] * len(pressures)
+        else:
+            raise RuntimeError(
+                "vlle_initial_topology must be screened, all_vle, or all_vlle"
+            )
     history = [topology_text(active)]
     topology_events = []
     # Absent liquid phases make the fixed-topology equations singular.  A
     # deliberately overactivated seed is therefore reconciled against the
     # seed-profile stability result before its first Newton system is built.
-    if initial_topology in ("all_vlle", "vlle") and active != screened_active:
+    if (
+        screened_active is not None
+        and initial_topology in ("all_vlle", "vlle")
+        and active != screened_active
+    ):
         previous = topology_text(active)
         active = list(screened_active)
         history.append(topology_text(active))

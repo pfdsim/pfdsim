@@ -361,7 +361,7 @@ class CompiledUNIQUACLLEBackend:
         cached = self._ordered_arrays_cache.get(order)
         if cached is not None:
             return cached
-        if set(order) != set(self.components):
+        if not order or not set(order).issubset(self._component_index):
             return None
         indices = []
         for comp in order:

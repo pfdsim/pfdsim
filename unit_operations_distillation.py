@@ -2700,65 +2700,99 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 "auto, cheap, or homogeneous"
             )
 
-        seed_params = dict(self.params)
-        seed_params['stage_phase_model'] = 'VLE'
-        seed_params['initializer'] = 'estimate'
-        seed_unit = RigorousDistillation(
-            f"{self.unit_id}_vlle_seed",
-            self.thermo,
-            seed_params,
+        recycle_guess = self._recycle_profile_initial_guess(
+            comps, N, T_min, T_max
         )
-        cheap = seed_unit._initial_guess(
-            inlet,
-            comps,
-            feed_z,
-            N,
-            feed_stage,
-            RR,
-            q_feed,
-            pressures,
-            condenser,
-            condenser_vapor_fraction,
-            distillate_spec,
-            [],
-            T_min,
-            T_max,
-        )
-        profile = VLLEProfile(
-            T=[float(value) for value in cheap['T']],
-            aggregate_x=[dict(value) for value in cheap['x']],
-            L=[float(value) for value in cheap['L']],
-            V=[float(value) for value in cheap['V']],
-            Q_cond=float(cheap['Q_cond']),
-            Q_reb=float(cheap['Q_reb']),
-            split_data=[None] * N,
-        )
-        cheap_has_lle = any(
-            self.thermo.liquid_liquid_equilibrium(
-                x_stage,
-                T_stage,
-                max_iter=100,
-                tol=float(self.get_param('vlle_stability_tolerance', 1e-7)),
-            )[0]
-            for T_stage, x_stage in zip(profile.T, profile.aggregate_x)
-        )
-        initializer_label = 'vlle_cheap'
-        if seed_mode == 'homogeneous' or (seed_mode == 'auto' and not cheap_has_lle):
-            homogeneous = seed_unit.solve(inlets)
-            performance = homogeneous.performance
+        initial_active = None
+        if recycle_guess is not None and recycle_guess.get('vlle_topology'):
+            split_data = []
+            for stage in range(N):
+                if recycle_guess['vlle_topology'][stage] == 'L':
+                    split_data.append((
+                        dict(recycle_guess['x1'][stage]),
+                        dict(recycle_guess['x2'][stage]),
+                        float(recycle_guess['beta'][stage]),
+                    ))
+                else:
+                    split_data.append(None)
             profile = VLLEProfile(
-                T=[float(value) + 273.15 for value in performance['stage_temperatures_C']],
-                aggregate_x=[
-                    {comp: float(stage.get(comp, 0.0)) for comp in comps}
-                    for stage in performance['stage_liquid_compositions']
-                ],
-                L=[float(value) for value in performance['liquid_flows']],
-                V=[float(value) for value in performance['vapor_flows']],
-                Q_cond=float(performance['condenser_duty_kW']) * 3600.0,
-                Q_reb=float(performance['reboiler_duty_kW']) * 3600.0,
+                T=list(recycle_guess['T']),
+                aggregate_x=[dict(value) for value in recycle_guess['x']],
+                L=list(recycle_guess['L']),
+                V=list(recycle_guess['V']),
+                Q_cond=float(recycle_guess['Q_cond']),
+                Q_reb=float(recycle_guess['Q_reb']),
+                split_data=split_data,
+            )
+            initial_active = [
+                value == 'L' for value in recycle_guess['vlle_topology']
+            ]
+            initializer_label = 'previous_recycle'
+        else:
+            seed_params = dict(self.params)
+            seed_params['stage_phase_model'] = 'VLE'
+            seed_params['initializer'] = 'estimate'
+            seed_unit = RigorousDistillation(
+                f"{self.unit_id}_vlle_seed",
+                self.thermo,
+                seed_params,
+            )
+            cheap = seed_unit._initial_guess(
+                inlet,
+                comps,
+                feed_z,
+                N,
+                feed_stage,
+                RR,
+                q_feed,
+                pressures,
+                condenser,
+                condenser_vapor_fraction,
+                distillate_spec,
+                [],
+                T_min,
+                T_max,
+            )
+            profile = VLLEProfile(
+                T=[float(value) for value in cheap['T']],
+                aggregate_x=[dict(value) for value in cheap['x']],
+                L=[float(value) for value in cheap['L']],
+                V=[float(value) for value in cheap['V']],
+                Q_cond=float(cheap['Q_cond']),
+                Q_reb=float(cheap['Q_reb']),
                 split_data=[None] * N,
             )
-            initializer_label = 'vlle_homogeneous'
+            cheap_has_lle = any(
+                self.thermo.liquid_liquid_equilibrium(
+                    x_stage,
+                    T_stage,
+                    max_iter=100,
+                    tol=float(self.get_param('vlle_stability_tolerance', 1e-7)),
+                )[0]
+                for T_stage, x_stage in zip(profile.T, profile.aggregate_x)
+            )
+            initializer_label = 'vlle_cheap'
+            if seed_mode == 'homogeneous' or (
+                seed_mode == 'auto' and not cheap_has_lle
+            ):
+                homogeneous = seed_unit.solve(inlets)
+                performance = homogeneous.performance
+                profile = VLLEProfile(
+                    T=[
+                        float(value) + 273.15
+                        for value in performance['stage_temperatures_C']
+                    ],
+                    aggregate_x=[
+                        {comp: float(stage.get(comp, 0.0)) for comp in comps}
+                        for stage in performance['stage_liquid_compositions']
+                    ],
+                    L=[float(value) for value in performance['liquid_flows']],
+                    V=[float(value) for value in performance['vapor_flows']],
+                    Q_cond=float(performance['condenser_duty_kW']) * 3600.0,
+                    Q_reb=float(performance['reboiler_duty_kW']) * 3600.0,
+                    split_data=[None] * N,
+                )
+                initializer_label = 'vlle_homogeneous'
 
         solver_options = {
             'mesh_tolerance': float(self.get_param('mesh_tolerance', 2e-6)),
@@ -2794,6 +2828,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 component_scales,
                 profile,
                 solver_options,
+                initial_active=initial_active,
             )
         except Exception as exc:
             raise UnitOperationError(
@@ -3745,6 +3780,20 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'Q_cond': float(profile['Q_cond']),
                 'Q_reb': float(profile['Q_reb']),
                 'initializer': 'previous_recycle',
+                **(
+                    {
+                        'x1': [dict(stage) for stage in profile['x1']],
+                        'x2': [dict(stage) for stage in profile['x2']],
+                        'beta': [float(value) for value in profile['beta']],
+                        'vlle_topology': str(profile['vlle_topology']),
+                    }
+                    if (
+                        len(profile.get('x1', [])) == N
+                        and len(profile.get('x2', [])) == N
+                        and len(profile.get('beta', [])) == N
+                        and len(str(profile.get('vlle_topology', ''))) == N
+                    ) else {}
+                ),
             }
         except (TypeError, ValueError, KeyError):
             return None
@@ -3772,6 +3821,22 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'Q_cond': float(performance['condenser_duty_kW']) * 3600.0,
                 'Q_reb': float(performance['reboiler_duty_kW']) * 3600.0,
             }
+            x1 = performance.get('stage_liquid1_compositions')
+            x2 = performance.get('stage_liquid2_compositions')
+            beta = performance.get('stage_liquid2_fractions')
+            topology = performance.get('vlle_topology')
+            if (
+                len(x1 or []) == len(x)
+                and len(x2 or []) == len(x)
+                and len(beta or []) == len(x)
+                and len(str(topology or '')) == len(x)
+            ):
+                self._last_recycle_profile.update({
+                    'x1': [dict(stage) for stage in x1],
+                    'x2': [dict(stage) for stage in x2],
+                    'beta': [float(value) for value in beta],
+                    'vlle_topology': str(topology),
+                })
         except (TypeError, ValueError, KeyError, IndexError):
             return
 

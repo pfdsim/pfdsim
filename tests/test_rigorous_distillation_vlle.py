@@ -294,6 +294,33 @@ class RigorousDistillationVLLETests(unittest.TestCase):
             for value in result.performance['stage_liquid2_fractions']
         ))
 
+    def test_vlle_recycle_warm_start_reuses_profile_and_topology(self):
+        thermo, feed, params = self._nrtl_rk_case(stages=12)
+        column = RigorousDistillation('VLLE-RECYCLE-WARM', thermo, params)
+        column.solve_context = {'recycle_evaluation': 1}
+        first = column.solve({'feed': feed})
+
+        column.solve_context = {'recycle_evaluation': 2}
+        second = column.solve({'feed': feed})
+        column.solve_context = {}
+
+        self.assertEqual(second.performance['initializer'], 'previous_recycle')
+        self.assertEqual(
+            second.performance['vlle_topology_history'][0],
+            first.performance['vlle_topology'],
+        )
+        self.assertEqual(
+            second.performance['vlle_topology'],
+            first.performance['vlle_topology'],
+        )
+        self.assertLessEqual(second.performance['vlle_topology_solves'], 2)
+        self.assertLess(
+            second.performance['function_evaluations'],
+            first.performance['function_evaluations'],
+        )
+        self.assertLess(second.performance['mesh_residual'], 1e-5)
+        self.assertLess(second.performance['component_balance_error'], 1e-7)
+
     def test_vlle_mode_supports_partial_vapor_condenser(self):
         thermo, feed, params = self._nrtl_rk_case(
             stages=12,

@@ -386,6 +386,43 @@ class CompiledBackendTests(unittest.TestCase):
                             delta=5e-7,
                         )
 
+    def test_compiled_uniquac_lle_accepts_component_subset(self):
+        components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        composition = {
+            'H2O': 0.46,
+            'methyl acetate': 0.25,
+            '(C2H5)2O': 0.29,
+        }
+        thermo = create_thermodynamics(components, 'UNIQUAC')
+        backend = thermo._compiled_lle_backend(298.15)
+        if backend is None:
+            self.skipTest("Compiled UNIQUAC LLE backend is unavailable")
+
+        reference = ActivityCoefficientThermodynamics.liquid_liquid_equilibrium(
+            thermo,
+            composition,
+            298.15,
+            max_iter=200,
+            tol=1e-5,
+        )
+        compiled = backend.split(
+            composition,
+            298.15,
+            max_iter=200,
+            tol=1e-5,
+        )
+
+        self.assertIsNotNone(compiled)
+        self.assertEqual(reference[0], compiled[0])
+        self.assertAlmostEqual(reference[3], compiled[3], delta=5e-7)
+        for phase_index in (1, 2):
+            for comp in composition:
+                self.assertAlmostEqual(
+                    reference[phase_index][comp],
+                    compiled[phase_index][comp],
+                    delta=5e-7,
+                )
+
     def test_nrtl_and_uniquac_binary_lle_use_compiled_backend(self):
         compiled_split = (
             True,
