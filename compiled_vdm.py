@@ -48,6 +48,22 @@ def compile_vdm_kernels() -> bool:
     _solve_n_acid_true_moles_numba.compile(
         tuple(typeof(argument) for argument in n_args)
     )
+    closure_args = (
+        np.ones(3, dtype=np.float64),
+        np.ones(3, dtype=np.float64) / 3.0,
+        np.asarray([0, 1], dtype=np.int64),
+        pair_i,
+        pair_j,
+        np.ones(3, dtype=np.float64),
+        np.ones(3, dtype=np.float64),
+        12,
+        1.0e-10,
+        0,
+        1.0e-8,
+    )
+    _vapor_closure_numba.compile(
+        tuple(typeof(argument) for argument in closure_args)
+    )
     _COMPILATION_COMPLETE = True
     return True
 
@@ -111,7 +127,252 @@ def solve_n_acid_true_moles(
     return monomers.tolist(), extents.tolist(), float(total)
 
 
+def solve_vapor_closure(
+    base_values: list[float] | np.ndarray,
+    liquid_composition: list[float] | np.ndarray,
+    acid_indices: list[int] | np.ndarray,
+    pair_i: list[int] | np.ndarray,
+    pair_j: list[int] | np.ndarray,
+    pair_kappa: list[float] | np.ndarray,
+    pair_delta_h: list[float] | np.ndarray,
+    max_iter: int,
+    tol: float,
+    mode: int,
+    phi_floor: float,
+) -> dict | None:
+    """Solve a multi-acid ideal-physical-fugacity vapor closure.
+
+    ``mode=1`` reproduces the VLE K-value iteration, while ``mode=0``
+    reproduces the shared-VLLE vapor-term iteration.
+    """
+    if njit is None:
+        return None
+    result = _vapor_closure_numba(
+        np.asarray(base_values, dtype=np.float64),
+        np.asarray(liquid_composition, dtype=np.float64),
+        np.asarray(acid_indices, dtype=np.int64),
+        np.asarray(pair_i, dtype=np.int64),
+        np.asarray(pair_j, dtype=np.int64),
+        np.asarray(pair_kappa, dtype=np.float64),
+        np.asarray(pair_delta_h, dtype=np.float64),
+        int(max_iter),
+        float(tol),
+        int(mode),
+        float(phi_floor),
+    )
+    ok, values, vapor_terms, vapor, phi, extents, association_enthalpy, iterations = result
+    if not ok:
+        return None
+    return {
+        "values": values.tolist(),
+        "vapor_terms": vapor_terms.tolist(),
+        "vapor_composition": vapor.tolist(),
+        "phi_total": phi.tolist(),
+        "extents": extents.tolist(),
+        "association_enthalpy": float(association_enthalpy),
+        "iterations": int(iterations),
+    }
+
+
 if njit is not None:
+
+    @njit(cache=True)
+    def _normalize_positive(values):
+        total = 0.0
+        for value in values:
+            if value > 0.0:
+                total += value
+        normalized = np.zeros(values.shape[0], dtype=np.float64)
+        if total <= 0.0:
+            return False, normalized
+        for index in range(values.shape[0]):
+            normalized[index] = max(values[index], 0.0) / total
+        return True, normalized
+
+
+    @njit(cache=True)
+    def _association_arrays(
+        vapor,
+        acid_indices,
+        pair_i,
+        pair_j,
+        pair_kappa,
+        pair_delta_h,
+    ):
+        n_acids = acid_indices.shape[0]
+        nominal = np.empty(n_acids, dtype=np.float64)
+        acid_total = 0.0
+        for acid in range(n_acids):
+            value = max(vapor[acid_indices[acid]], 0.0)
+            nominal[acid] = value
+            acid_total += value
+        inert_total = max(1.0 - acid_total, 0.0)
+
+        if n_acids == 2 and pair_kappa.shape[0] == 3:
+            solved = _solve_two_acid_true_moles_numba(
+                nominal[0],
+                nominal[1],
+                inert_total,
+                pair_kappa[0],
+                pair_kappa[1],
+                pair_kappa[2],
+            )
+            if not solved[0]:
+                return (
+                    False,
+                    np.ones(vapor.shape[0], dtype=np.float64),
+                    np.zeros(pair_kappa.shape[0], dtype=np.float64),
+                    0.0,
+                )
+            monomers = np.asarray([solved[1], solved[2]], dtype=np.float64)
+            extents = np.asarray([solved[3], solved[4], solved[5]], dtype=np.float64)
+            total = solved[6]
+        else:
+            solved = _solve_n_acid_true_moles_numba(
+                nominal,
+                inert_total,
+                pair_i,
+                pair_j,
+                pair_kappa,
+            )
+            if not solved[0]:
+                return (
+                    False,
+                    np.ones(vapor.shape[0], dtype=np.float64),
+                    np.zeros(pair_kappa.shape[0], dtype=np.float64),
+                    0.0,
+                )
+            monomers = solved[1]
+            extents = solved[2]
+            total = solved[3]
+
+        phi = np.ones(vapor.shape[0], dtype=np.float64)
+        for acid in range(n_acids):
+            nominal_value = nominal[acid]
+            if nominal_value > 1.0e-30:
+                phi[acid_indices[acid]] = max(
+                    monomers[acid] / max(total, 1.0e-300) / nominal_value,
+                    1.0e-30,
+                )
+        association_enthalpy = 0.0
+        for pair in range(extents.shape[0]):
+            association_enthalpy += extents[pair] * pair_delta_h[pair]
+        return True, phi, extents, association_enthalpy
+
+
+    @njit(cache=True)
+    def _vapor_closure_numba(
+        base_values,
+        liquid_composition,
+        acid_indices,
+        pair_i,
+        pair_j,
+        pair_kappa,
+        pair_delta_h,
+        max_iter,
+        tol,
+        mode,
+        phi_floor,
+    ):
+        n = base_values.shape[0]
+        values = np.empty(n, dtype=np.float64)
+        vapor_terms = np.empty(n, dtype=np.float64)
+        for index in range(n):
+            if mode == 1:
+                values[index] = min(max(base_values[index], 1.0e-6), 1.0e6)
+                vapor_terms[index] = max(liquid_composition[index], 0.0) * values[index]
+            else:
+                values[index] = max(base_values[index], 1.0e-300)
+                vapor_terms[index] = values[index]
+        valid, vapor = _normalize_positive(vapor_terms)
+        if not valid:
+            return (
+                False, values, vapor_terms, vapor,
+                np.ones(n, dtype=np.float64),
+                np.zeros(pair_kappa.shape[0], dtype=np.float64),
+                0.0, 0,
+            )
+
+        iterations = 0
+        for iteration in range(max_iter):
+            ok, phi, _extents, _enthalpy = _association_arrays(
+                vapor, acid_indices, pair_i, pair_j, pair_kappa, pair_delta_h
+            )
+            if not ok:
+                return (
+                    False, values, vapor_terms, vapor, phi, _extents,
+                    _enthalpy, iterations,
+                )
+            for index in range(n):
+                denominator = max(phi[index], phi_floor)
+                if mode == 1:
+                    values[index] = min(
+                        max(base_values[index] / denominator, 1.0e-6),
+                        1.0e6,
+                    )
+                    vapor_terms[index] = (
+                        max(liquid_composition[index], 0.0) * values[index]
+                    )
+                else:
+                    values[index] = max(
+                        base_values[index] / denominator,
+                        1.0e-300,
+                    )
+                    vapor_terms[index] = values[index]
+            valid, vapor_new = _normalize_positive(vapor_terms)
+            if not valid:
+                return (
+                    False, values, vapor_terms, vapor, phi, _extents,
+                    _enthalpy, iterations,
+                )
+            change = 0.0
+            for index in range(n):
+                difference = abs(vapor_new[index] - vapor[index])
+                if difference > change:
+                    change = difference
+            iterations = iteration + 1
+            if change < tol:
+                vapor = vapor_new
+                break
+            vapor = vapor_new
+
+        # Match the shared-VLLE path's final fugacity re-evaluation. VLE keeps
+        # its final K values but still returns association enthalpy evaluated
+        # at the vapor composition implied by those values.
+        ok, phi, extents, association_enthalpy = _association_arrays(
+            vapor, acid_indices, pair_i, pair_j, pair_kappa, pair_delta_h
+        )
+        if not ok:
+            return (
+                False, values, vapor_terms, vapor, phi, extents,
+                association_enthalpy, iterations,
+            )
+        if mode == 0:
+            for index in range(n):
+                values[index] = max(
+                    base_values[index] / max(phi[index], phi_floor),
+                    1.0e-300,
+                )
+                vapor_terms[index] = values[index]
+            valid, returned_vapor = _normalize_positive(vapor_terms)
+            if not valid:
+                return (
+                    False, values, vapor_terms, vapor, phi, extents,
+                    association_enthalpy, iterations,
+                )
+            vapor = returned_vapor
+            ok, phi, extents, association_enthalpy = _association_arrays(
+                vapor, acid_indices, pair_i, pair_j, pair_kappa, pair_delta_h
+            )
+            if not ok:
+                return (
+                    False, values, vapor_terms, vapor, phi, extents,
+                    association_enthalpy, iterations,
+                )
+        return (
+            True, values, vapor_terms, vapor, phi, extents,
+            association_enthalpy, iterations,
+        )
 
     @njit(cache=True)
     def _solve_two_acid_true_moles_numba(n_a, n_b, inert_total, k_aa, k_ab, k_bb):
@@ -546,6 +807,9 @@ if njit is not None:
         return result
 
 else:
+
+    def _vapor_closure_numba(*args, **kwargs):  # pragma: no cover
+        raise RuntimeError("Numba is not available")
 
     def _solve_two_acid_true_moles_numba(*args, **kwargs):  # pragma: no cover
         raise RuntimeError("Numba is not available")

@@ -164,7 +164,7 @@ def _split_is_active(
     )
 
 
-def shared_vlle_vapor_terms(
+def _shared_vlle_vapor_closure(
     thermo,
     T: float,
     P: float,
@@ -199,13 +199,13 @@ def shared_vlle_vapor_terms(
     ):
         K1 = thermo.K_values(T, P, x1)
         K2 = thermo.K_values(T, P, x2)
-        return {
+        return ({
             comp: math.sqrt(
                 max(K1.get(comp, 1.0) * x1.get(comp, 0.0), 1e-300)
                 * max(K2.get(comp, 1.0) * x2.get(comp, 0.0), 1e-300)
             )
             for comp in components
-        }
+        }, None)
 
     reference = reference_factors(T, P)
     target_fugacity = {
@@ -225,6 +225,11 @@ def shared_vlle_vapor_terms(
         )
         for comp in components
     }
+    fused_closure = getattr(thermo, "_vdm_vapor_terms_closure", None)
+    if callable(fused_closure):
+        solved = fused_closure(T, P, target_fugacity, components)
+        if solved is not None:
+            return dict(solved["vapor_terms"]), solved
     y = _normalize(target_fugacity, components)
     vapor_terms = {
         comp: target_fugacity[comp] / max(P, 1e-300)
@@ -257,7 +262,7 @@ def shared_vlle_vapor_terms(
         phi_v = vapor_phi(T, P, y)
     except Exception:
         phi_v = {comp: 1.0 for comp in components}
-    return {
+    vapor_terms = {
         comp: max(
             target_fugacity[comp]
             / (max(float(phi_v.get(comp, 1.0)), 1e-8) * max(P, 1e-300)),
@@ -265,6 +270,28 @@ def shared_vlle_vapor_terms(
         )
         for comp in components
     }
+    returned_vapor = _normalize(vapor_terms, components)
+    association_state = None
+    state_method = getattr(thermo, "_vdm_vapor_association_state", None)
+    if callable(state_method):
+        association_state = state_method(T, P, returned_vapor)
+    return vapor_terms, association_state
+
+
+def shared_vlle_vapor_terms(
+    thermo,
+    T: float,
+    P: float,
+    x1: dict[str, float],
+    x2: dict[str, float],
+    components,
+    gamma1: dict[str, float],
+    gamma2: dict[str, float],
+) -> dict[str, float]:
+    """Return shared-vapor terms while hiding optional closure-state reuse."""
+    return _shared_vlle_vapor_closure(
+        thermo, T, P, x1, x2, components, gamma1, gamma2
+    )[0]
 
 
 def three_phase_fugacity_residuals(
@@ -549,8 +576,17 @@ class EquationOrientedVLLEColumn:
     def stage_properties(self, stage: int, state: dict) -> dict:
         T = state["T"]
         P = self.pressures[stage]
+        vapor_association_state = None
         if not self.active[stage]:
-            K = self.thermo.K_values(T, P, state["x1"])
+            closure_method = getattr(
+                self.thermo, "_K_values_with_vapor_state", None
+            )
+            if callable(closure_method):
+                K, vapor_association_state = closure_method(
+                    T, P, state["x1"]
+                )
+            else:
+                K = self.thermo.K_values(T, P, state["x1"])
             vapor_terms = {
                 comp: max(K.get(comp, 1.0) * state["x1"].get(comp, 0.0), 1e-300)
                 for comp in self.components
@@ -574,7 +610,7 @@ class EquationOrientedVLLEColumn:
                 math.log(activities1[comp]) - math.log(activities2[comp])
                 for comp in self.components
             ]
-            vapor_terms = shared_vlle_vapor_terms(
+            vapor_terms, vapor_association_state = _shared_vlle_vapor_closure(
                 self.thermo,
                 T,
                 P,
@@ -592,7 +628,13 @@ class EquationOrientedVLLEColumn:
             comp: vapor_terms[comp] / max(vapor_total, 1e-300)
             for comp in self.components
         }
-        h_vapor = self.thermo.mixture_enthalpy(y, T, 1.0, P=P)
+        reused_enthalpy = getattr(
+            self.thermo, "_vapor_enthalpy_from_association_state", None
+        )
+        if vapor_association_state is not None and callable(reused_enthalpy):
+            h_vapor = reused_enthalpy(y, T, vapor_association_state)
+        else:
+            h_vapor = self.thermo.mixture_enthalpy(y, T, 1.0, P=P)
         return {
             "y": y,
             "bubble": vapor_total - 1.0,

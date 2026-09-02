@@ -3741,6 +3741,52 @@ class VaporDimerizationActivityMixin:
         """VDM nominal-component fugacity coefficients for equilibrium audits."""
         return self.fugacity_coefficients(T, P, composition, phase='vapor')
 
+    def _vdm_vapor_terms_closure(
+        self,
+        T: float,
+        P: float,
+        target_fugacity: dict[str, float],
+        components,
+    ) -> Optional[dict]:
+        """Return a fused multi-acid shared-vapor closure when available."""
+        total = sum(max(float(target_fugacity.get(comp, 0.0)), 0.0) for comp in components)
+        if total <= 0.0:
+            return None
+        initial_vapor = {
+            comp: max(float(target_fugacity.get(comp, 0.0)), 0.0) / total
+            for comp in components
+        }
+        _acid, model = self._active_vdm_model(initial_vapor)
+        compiled_closure = getattr(model, 'compiled_vapor_closure', None)
+        if not callable(compiled_closure):
+            return None
+        return compiled_closure(
+            T,
+            P,
+            components,
+            {
+                comp: max(float(target_fugacity.get(comp, 0.0)), 0.0)
+                / max(float(P), 1e-300)
+                for comp in components
+            },
+            max_iter=12,
+            tol=1e-10,
+            phi_floor=1e-8,
+        )
+
+    def _vapor_enthalpy_from_association_state(
+        self,
+        composition: dict[str, float],
+        T: float,
+        association_state: dict,
+    ) -> float:
+        """Use an existing VDM closure state for nominal vapor enthalpy."""
+        ideal = sum(
+            fraction * self.enthalpy_ideal_gas(comp, T)
+            for comp, fraction in composition.items()
+        ) * 1000.0
+        return ideal + float(association_state.get('association_enthalpy', 0.0))
+
     def _liquid_fugacity_reference_factors(
         self,
         T: float,
@@ -3914,12 +3960,16 @@ class VaporDimerizationActivityMixin:
             K[comp] = float(max(1e-6, min(1e6, value)))
         return self._set_cached_k_values(cache_key, K)
 
-    def K_values(self, T: float, P: float,
-                 composition: dict[str, float]) -> dict[str, float]:
+    def _K_values_with_vapor_state(
+        self,
+        T: float,
+        P: float,
+        composition: dict[str, float],
+    ) -> tuple[dict[str, float], Optional[dict]]:
         cache_key = self._k_values_cache_key('gamma_vdm', T, P, composition)
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
-            return cached
+            return cached, None
 
         x = {
             comp: max(float(composition.get(comp, 0.0)), 0.0)
@@ -3933,20 +3983,44 @@ class VaporDimerizationActivityMixin:
 
         acid, model = self._active_vdm_model(x)
         if model is None:
-            return super().K_values(T, P, x)
+            return super().K_values(T, P, x), None
         if acid is not None:
             K = self._single_acid_vdm_K_values(acid, model, T, P, x)
-            return self._set_cached_k_values(cache_key, K)
+            return self._set_cached_k_values(cache_key, K), None
 
         gamma = self.activity_coefficients(T, x)
         phi_sat = {comp: self._vdm_phi_sat(comp, T) for comp in self.components}
-        K = {
-            comp: float(max(
-                1e-6,
-                min(1e6, gamma.get(comp, 1.0) * phi_sat[comp] * self.Psat(comp, T) / max(P, 1e-12)),
-            ))
+        base_K = {
+            comp: (
+                gamma.get(comp, 1.0)
+                * phi_sat[comp]
+                * self.Psat(comp, T)
+                / max(P, 1e-12)
+            )
             for comp in self.components
         }
+        K = {
+            comp: float(max(1e-6, min(1e6, base_K[comp])))
+            for comp in self.components
+        }
+        compiled_closure = getattr(model, 'compiled_vapor_closure', None)
+        if callable(compiled_closure):
+            closure = compiled_closure(
+                T,
+                P,
+                self.components,
+                base_K,
+                x,
+                max_iter=15,
+                tol=1e-9,
+                phi_floor=1e-12,
+            )
+            if closure is not None:
+                K = {
+                    comp: float(closure['values'].get(comp, K[comp]))
+                    for comp in self.components
+                }
+                return self._set_cached_k_values(cache_key, K), closure
         y_sum = sum(x[comp] * K[comp] for comp in self.components)
         y = {
             comp: x[comp] * K[comp] / y_sum
@@ -3972,7 +4046,11 @@ class VaporDimerizationActivityMixin:
             y = y_new
             K = K_new
 
-        return self._set_cached_k_values(cache_key, K)
+        return self._set_cached_k_values(cache_key, K), None
+
+    def K_values(self, T: float, P: float,
+                 composition: dict[str, float]) -> dict[str, float]:
+        return self._K_values_with_vapor_state(T, P, composition)[0]
 
     def aqueous_K_values(self, T: float, P: float,
                          composition: dict[str, float],

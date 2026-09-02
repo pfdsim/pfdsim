@@ -572,6 +572,7 @@ class MultiVaporDimerizationModel:
                 self._pair_delta_S[(i, j)] = delta_S
         self._fugacity_cache: dict[tuple, dict[str, float]] = {}
         self._association_state_cache: dict[tuple, dict] = {}
+        self._compiled_closure_layout_cache: dict[tuple[str, ...], Optional[dict]] = {}
 
     def _dimer_symbol(self, i: str, j: str) -> str:
         pair = (i, j) if (i, j) in self._dimer_symbols else (j, i)
@@ -611,6 +612,98 @@ class MultiVaporDimerizationModel:
             phi_dimer = max(phi_physical.get(dimer, 1.0), 1e-30)
             kappa[(i, j)] = K * (P / P_STD) * phi_i * phi_j / phi_dimer
         return kappa
+
+    def compiled_vapor_closure(
+        self,
+        T: float,
+        P: float,
+        component_order,
+        base_values: dict[str, float],
+        liquid_composition: Optional[dict[str, float]] = None,
+        *,
+        max_iter: int,
+        tol: float,
+        phi_floor: float,
+    ) -> Optional[dict]:
+        """Run the ideal-physical-fugacity vapor closure in one array kernel."""
+        order = tuple(component_order)
+        if not order:
+            return None
+        layout = self._compiled_closure_layout_cache.get(order)
+        if layout is None and order not in self._compiled_closure_layout_cache:
+            component_index = {component: index for index, component in enumerate(order)}
+            if any(component not in component_index for component in self.monomers):
+                self._compiled_closure_layout_cache[order] = None
+                return None
+            monomer_index = {
+                component: index for index, component in enumerate(self.monomers)
+            }
+            layout = {
+                'acid_indices': [component_index[component] for component in self.monomers],
+                'pair_i': [monomer_index[pair[0]] for pair in self._pair_keys],
+                'pair_j': [monomer_index[pair[1]] for pair in self._pair_keys],
+                'pair_delta_h': [self._pair_delta_H[pair] for pair in self._pair_keys],
+            }
+            self._compiled_closure_layout_cache[order] = layout
+        if layout is None:
+            return None
+
+        pressure_factor = float(P) / P_STD
+        pair_kappa = [
+            math.exp(
+                self._pair_delta_S[pair] / R
+                - self._pair_delta_H[pair] / (R * float(T))
+            ) * pressure_factor
+            for pair in self._pair_keys
+        ]
+        try:
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from .compiled_vdm import solve_vapor_closure
+            else:
+                from compiled_vdm import solve_vapor_closure
+
+            solved = solve_vapor_closure(
+                [max(float(base_values.get(component, 0.0)), 0.0) for component in order],
+                [
+                    max(float((liquid_composition or {}).get(component, 0.0)), 0.0)
+                    for component in order
+                ],
+                layout['acid_indices'],
+                layout['pair_i'],
+                layout['pair_j'],
+                pair_kappa,
+                layout['pair_delta_h'],
+                max_iter,
+                tol,
+                1 if liquid_composition is not None else 0,
+                phi_floor,
+            )
+        except Exception:
+            solved = None
+        if solved is None:
+            return None
+
+        solved['values'] = {
+            component: float(solved['values'][index])
+            for index, component in enumerate(order)
+        }
+        solved['vapor_terms'] = {
+            component: float(solved['vapor_terms'][index])
+            for index, component in enumerate(order)
+        }
+        solved['vapor_composition'] = {
+            component: float(solved['vapor_composition'][index])
+            for index, component in enumerate(order)
+        }
+        solved['phi_total'] = {
+            component: float(solved['phi_total'][index])
+            for index, component in enumerate(order)
+        }
+        solved['extents'] = {
+            pair: float(solved['extents'][index])
+            for index, pair in enumerate(self._pair_keys)
+        }
+        return solved
 
     def _cache_key(self, T: float, P: float, y_nominal: dict[str, float]) -> tuple:
         return (

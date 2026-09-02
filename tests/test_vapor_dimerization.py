@@ -334,6 +334,147 @@ class VaporDimerizationTests(unittest.TestCase):
         for comp in thermo_fast.components:
             self.assertAlmostEqual(fast[comp], reference[comp], delta=abs(reference[comp]) * 2e-8)
 
+    def test_compiled_multi_acid_vapor_closure_matches_readable_fixed_point(self):
+        components = ['CH3COOH', 'C2H5COOH', 'H2O']
+        composition = {'CH3COOH': 0.20, 'C2H5COOH': 0.10, 'H2O': 0.70}
+        temperature = 390.0
+        pressure = 1.01325
+        compiled_thermo = create_thermodynamics(
+            components,
+            'UNIQUAC-VDM',
+        )
+        reference_thermo = create_thermodynamics(
+            components,
+            'UNIQUAC-VDM',
+        )
+        _acid, reference_model = reference_thermo._active_vdm_model(composition)
+        reference_model.compiled_vapor_closure = lambda *_args, **_kwargs: None
+
+        compiled_K, closure = compiled_thermo._K_values_with_vapor_state(
+            temperature,
+            pressure,
+            composition,
+        )
+        reference_K = reference_thermo.K_values(
+            temperature,
+            pressure,
+            composition,
+        )
+
+        self.assertIsNotNone(closure)
+        for component in components:
+            self.assertAlmostEqual(
+                compiled_K[component],
+                reference_K[component],
+                delta=max(abs(reference_K[component]) * 2e-10, 1e-12),
+            )
+
+        vapor_terms = {
+            component: composition[component] * compiled_K[component]
+            for component in components
+        }
+        vapor_total = sum(vapor_terms.values())
+        vapor = {
+            component: value / vapor_total
+            for component, value in vapor_terms.items()
+        }
+        _acid, compiled_model = compiled_thermo._active_vdm_model(vapor)
+        reference_state = compiled_model.association_state(
+            temperature,
+            pressure,
+            vapor,
+            rk_model=None,
+        )
+        self.assertAlmostEqual(
+            closure['association_enthalpy'],
+            reference_state['association_enthalpy'],
+            delta=max(abs(reference_state['association_enthalpy']) * 2e-10, 1e-9),
+        )
+        self.assertAlmostEqual(
+            compiled_thermo._vapor_enthalpy_from_association_state(
+                vapor,
+                temperature,
+                closure,
+            ),
+            compiled_thermo.mixture_enthalpy(
+                vapor,
+                temperature,
+                1.0,
+                P=pressure,
+            ),
+            delta=1e-8,
+        )
+
+    def test_compiled_three_acid_vapor_closure_matches_readable_fixed_point(self):
+        models = {
+            'A': VaporDimerizationModel('A', 'A2', delta_S=-150.0, delta_H=-60000.0),
+            'B': VaporDimerizationModel('B', 'B2', delta_S=-160.0, delta_H=-70000.0),
+            'C': VaporDimerizationModel('C', 'C2', delta_S=-155.0, delta_H=-65000.0),
+        }
+        model = MultiVaporDimerizationModel(models)
+        temperature = 390.0
+        pressure = 1.01325
+        order = ('A', 'B', 'C', 'water')
+        liquid = {'A': 0.15, 'B': 0.12, 'C': 0.10, 'water': 0.63}
+        base_K = {'A': 2.0, 'B': 1.5, 'C': 1.2, 'water': 0.8}
+        compiled = model.compiled_vapor_closure(
+            temperature,
+            pressure,
+            order,
+            base_K,
+            liquid,
+            max_iter=15,
+            tol=1e-9,
+            phi_floor=1e-12,
+        )
+        if compiled is None:
+            self.skipTest('compiled VDM closure is unavailable')
+
+        reference_K = {
+            component: max(1e-6, min(1e6, base_K[component]))
+            for component in order
+        }
+        vapor_terms = {
+            component: liquid[component] * reference_K[component]
+            for component in order
+        }
+        total = sum(vapor_terms.values())
+        vapor = {component: value / total for component, value in vapor_terms.items()}
+        for _ in range(15):
+            phi = model.fugacity_coefficients(
+                temperature,
+                pressure,
+                vapor,
+                rk_model=None,
+            )
+            updated = {
+                component: max(
+                    1e-6,
+                    min(1e6, base_K[component] / max(phi[component], 1e-12)),
+                )
+                for component in order
+            }
+            vapor_terms = {
+                component: liquid[component] * updated[component]
+                for component in order
+            }
+            total = sum(vapor_terms.values())
+            vapor_new = {
+                component: value / total
+                for component, value in vapor_terms.items()
+            }
+            reference_K = updated
+            if max(abs(vapor_new[c] - vapor[c]) for c in order) < 1e-9:
+                break
+            vapor = vapor_new
+
+        for component in order:
+            self.assertAlmostEqual(
+                compiled['values'][component],
+                reference_K[component],
+                delta=max(abs(reference_K[component]) * 2e-10, 1e-12),
+            )
+
     def test_cross_dimer_uses_statistical_factor_plus_residual(self):
         acetic = VaporDimerizationModel('A', 'A2', delta_S=-150.0, delta_H=-60000.0)
         propionic = VaporDimerizationModel('B', 'B2', delta_S=-160.0, delta_H=-70000.0)
