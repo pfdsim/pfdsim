@@ -5502,16 +5502,47 @@ class UnitOperationSmokeTests(unittest.TestCase):
         mesh = RigorousLiquidLiquidExtractor(
             'U_mesh', thermo, {**common, 'solver_algorithm': 'equation_oriented'}
         ).solve({'feed': feed, 'solvent': solvent})
+        global_thermo_mesh = RigorousLiquidLiquidExtractor(
+            'U_mesh_global_thermo',
+            thermo,
+            {
+                **common,
+                'solver_algorithm': 'equation_oriented',
+                'semi_analytic_local_thermo_jacobian': False,
+            },
+        ).solve({'feed': feed, 'solvent': solvent})
 
         self.assertEqual(mesh.performance['solver'], 'sparse_damped_newton')
         self.assertEqual(mesh.performance['solver_algorithm'], 'equation_oriented')
+        self.assertEqual(
+            mesh.performance['jacobian_method'],
+            'semi_analytic_local_thermo',
+        )
+        self.assertEqual(
+            global_thermo_mesh.performance['jacobian_method'],
+            'semi_analytic_flow',
+        )
         self.assertIn('deprecated', split.warnings[0])
         self.assertLess(mesh.performance['mesh_residual'], 1e-6)
         self.assertLess(mesh.performance['component_balance_error'], 1e-7)
         self.assertLess(
             mesh.performance['function_evaluations'],
+            global_thermo_mesh.performance['function_evaluations'],
+        )
+        self.assertLess(
+            global_thermo_mesh.performance['function_evaluations'],
             split.performance['solver_iterations'] * 10,
         )
+        for stream_name in ('extract', 'raffinate'):
+            local_stream = mesh.outlet_streams[stream_name]
+            global_stream = global_thermo_mesh.outlet_streams[stream_name]
+            self.assertAlmostEqual(local_stream.F, global_stream.F, delta=2e-7)
+            for comp in components:
+                self.assertAlmostEqual(
+                    local_stream.composition.get(comp, 0.0),
+                    global_stream.composition.get(comp, 0.0),
+                    delta=2e-8,
+                )
         for stream_name in ('extract', 'raffinate'):
             split_stream = split.outlet_streams[stream_name]
             mesh_stream = mesh.outlet_streams[stream_name]

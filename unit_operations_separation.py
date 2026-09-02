@@ -2913,45 +2913,6 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
                 return None
 
             J = lil_matrix(sparsity_matrix.shape, dtype=float)
-            column_rows = [
-                sparsity_matrix[:, col].nonzero()[0]
-                for col in range(sparsity_matrix.shape[1])
-            ]
-            flow_columns = set()
-            for stage in range(N):
-                off = offsets(stage)
-                flow_columns.add(off['R'])
-                flow_columns.add(off['E'])
-            nonlinear_columns = [
-                col for col in range(n_vars)
-                if col not in flow_columns
-            ]
-            groups = []
-            group_rows = []
-            for col in nonlinear_columns:
-                rows = set(column_rows[col].tolist())
-                for index, used_rows in enumerate(group_rows):
-                    if rows.isdisjoint(used_rows):
-                        groups[index].append(col)
-                        used_rows.update(rows)
-                        break
-                else:
-                    groups.append([col])
-                    group_rows.append(set(rows))
-
-            evaluations = 0
-            for group in groups:
-                step = np.zeros_like(vector)
-                for col in group:
-                    step[col] = rel_step * max(abs(vector[col]), 1.0)
-                f_step = residual(vector + step)
-                evaluations += 1
-                diff = f_step - f0
-                for col in group:
-                    rows = column_rows[col]
-                    if rows.size:
-                        J[rows, col] = diff[rows] / step[col]
-
             Rv, Ev, xRv, xEv, Tv = decode(vector)
             hR = [phase_enthalpy(xRv[stage], Tv[stage]) for stage in range(N)]
             hE = [phase_enthalpy(xEv[stage], Tv[stage]) for stage in range(N)]
@@ -2959,6 +2920,221 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             def add(row_index: int, col_index: int, value: float) -> None:
                 if value:
                     J[row_index, col_index] = J[row_index, col_index] + value
+
+            use_local_thermo = self._truthy_param(
+                self.get_param('semi_analytic_local_thermo_jacobian', True)
+            )
+            if use_local_thermo:
+                gamma_R = [
+                    self.thermo.activity_coefficients(float(Tv[stage]), xRv[stage])
+                    for stage in range(N)
+                ]
+                gamma_E = [
+                    self.thermo.activity_coefficients(float(Tv[stage]), xEv[stage])
+                    for stage in range(N)
+                ]
+                activity_R = [
+                    {
+                        comp: math.log(max(
+                            xRv[stage].get(comp, 0.0)
+                            * gamma_R[stage].get(comp, 1.0),
+                            1e-300,
+                        ))
+                        for comp in comps
+                    }
+                    for stage in range(N)
+                ]
+                activity_E = [
+                    {
+                        comp: math.log(max(
+                            xEv[stage].get(comp, 0.0)
+                            * gamma_E[stage].get(comp, 1.0),
+                            1e-300,
+                        ))
+                        for comp in comps
+                    }
+                    for stage in range(N)
+                ]
+                phase_property_evaluations = 2 * N
+
+                for stage in range(N):
+                    off = offsets(stage)
+                    nonlinear_columns = list(range(
+                        off['xR'], off['xR'] + nc - 1
+                    ))
+                    nonlinear_columns.extend(range(
+                        off['xE'], off['xE'] + nc - 1
+                    ))
+                    if mode == 'adiabatic':
+                        nonlinear_columns.append(off['T'])
+
+                    for col in nonlinear_columns:
+                        step = rel_step * max(abs(float(vector[col])), 1.0)
+                        xR_trial = xRv[stage]
+                        xE_trial = xEv[stage]
+                        T_trial = Tv[stage]
+                        hR_trial = hR[stage]
+                        hE_trial = hE[stage]
+                        gamma_R_trial = gamma_R[stage]
+                        gamma_E_trial = gamma_E[stage]
+
+                        if off['xR'] <= col < off['xR'] + nc - 1:
+                            logits = np.array(
+                                vector[off['xR']:off['xR'] + nc - 1],
+                                dtype=float,
+                                copy=True,
+                            )
+                            logits[col - off['xR']] += step
+                            xR_trial = softmax_logits(logits)
+                            hR_trial = phase_enthalpy(xR_trial, T_trial)
+                            gamma_R_trial = self.thermo.activity_coefficients(
+                                float(T_trial), xR_trial
+                            )
+                            phase_property_evaluations += 1
+                        elif off['xE'] <= col < off['xE'] + nc - 1:
+                            logits = np.array(
+                                vector[off['xE']:off['xE'] + nc - 1],
+                                dtype=float,
+                                copy=True,
+                            )
+                            logits[col - off['xE']] += step
+                            xE_trial = softmax_logits(logits)
+                            hE_trial = phase_enthalpy(xE_trial, T_trial)
+                            gamma_E_trial = self.thermo.activity_coefficients(
+                                float(T_trial), xE_trial
+                            )
+                            phase_property_evaluations += 1
+                        else:
+                            T_trial = decode_temperature(vector[off['T']] + step)
+                            hR_trial = phase_enthalpy(xR_trial, T_trial)
+                            hE_trial = phase_enthalpy(xE_trial, T_trial)
+                            gamma_R_trial = self.thermo.activity_coefficients(
+                                float(T_trial), xR_trial
+                            )
+                            gamma_E_trial = self.thermo.activity_coefficients(
+                                float(T_trial), xE_trial
+                            )
+                            phase_property_evaluations += 2
+
+                        for ci, comp in enumerate(comps):
+                            d_raf_component = Rv[stage] * (
+                                xR_trial.get(comp, 0.0)
+                                - xRv[stage].get(comp, 0.0)
+                            ) / step
+                            d_ext_component = Ev[stage] * (
+                                xE_trial.get(comp, 0.0)
+                                - xEv[stage].get(comp, 0.0)
+                            ) / step
+                            scale = component_scales[comp]
+                            add(
+                                stage * stage_row_count + ci,
+                                col,
+                                -(d_raf_component + d_ext_component) / scale,
+                            )
+                            if stage < N - 1:
+                                add(
+                                    (stage + 1) * stage_row_count + ci,
+                                    col,
+                                    d_raf_component / scale,
+                                )
+                            if stage > 0:
+                                add(
+                                    (stage - 1) * stage_row_count + ci,
+                                    col,
+                                    d_ext_component / scale,
+                                )
+
+                            log_aR_trial = math.log(max(
+                                xR_trial.get(comp, 0.0)
+                                * gamma_R_trial.get(comp, 1.0),
+                                1e-300,
+                            ))
+                            log_aE_trial = math.log(max(
+                                xE_trial.get(comp, 0.0)
+                                * gamma_E_trial.get(comp, 1.0),
+                                1e-300,
+                            ))
+                            activity_derivative = (
+                                log_aR_trial
+                                - log_aE_trial
+                                - activity_R[stage][comp]
+                                + activity_E[stage][comp]
+                            ) / (step * activity_scale)
+                            add(
+                                stage * stage_row_count + nc + ci,
+                                col,
+                                activity_derivative,
+                            )
+
+                        if mode == 'adiabatic':
+                            d_raf_enthalpy = Rv[stage] * (
+                                hR_trial - hR[stage]
+                            ) / step
+                            d_ext_enthalpy = Ev[stage] * (
+                                hE_trial - hE[stage]
+                            ) / step
+                            energy_row_offset = 2 * nc
+                            add(
+                                stage * stage_row_count + energy_row_offset,
+                                col,
+                                -(d_raf_enthalpy + d_ext_enthalpy) / energy_scale,
+                            )
+                            if stage < N - 1:
+                                add(
+                                    (stage + 1) * stage_row_count + energy_row_offset,
+                                    col,
+                                    d_raf_enthalpy / energy_scale,
+                                )
+                            if stage > 0:
+                                add(
+                                    (stage - 1) * stage_row_count + energy_row_offset,
+                                    col,
+                                    d_ext_enthalpy / energy_scale,
+                                )
+
+                evaluations = max(
+                    1,
+                    math.ceil(phase_property_evaluations / max(2 * N, 1)),
+                )
+            else:
+                column_rows = [
+                    sparsity_matrix[:, col].nonzero()[0]
+                    for col in range(sparsity_matrix.shape[1])
+                ]
+                flow_columns = set()
+                for stage in range(N):
+                    off = offsets(stage)
+                    flow_columns.add(off['R'])
+                    flow_columns.add(off['E'])
+                nonlinear_columns = [
+                    col for col in range(n_vars)
+                    if col not in flow_columns
+                ]
+                groups = []
+                group_rows = []
+                for col in nonlinear_columns:
+                    rows = set(column_rows[col].tolist())
+                    for index, used_rows in enumerate(group_rows):
+                        if rows.isdisjoint(used_rows):
+                            groups[index].append(col)
+                            used_rows.update(rows)
+                            break
+                    else:
+                        groups.append([col])
+                        group_rows.append(set(rows))
+
+                evaluations = 0
+                for group in groups:
+                    step = np.zeros_like(vector)
+                    for col in group:
+                        step[col] = rel_step * max(abs(vector[col]), 1.0)
+                    f_step = residual(vector + step)
+                    evaluations += 1
+                    diff = f_step - f0
+                    for col in group:
+                        rows = column_rows[col]
+                        if rows.size:
+                            J[rows, col] = diff[rows] / step[col]
 
             for stage in range(N):
                 row_base = stage * stage_row_count
@@ -3002,6 +3178,13 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             residual, sparsity_matrix, pack(), solver_options,
             jacobian=semi_analytic_flow_jacobian,
         )
+        if (
+            solution.get('jacobian_method') == 'semi_analytic_flow'
+            and self._truthy_param(
+                self.get_param('semi_analytic_local_thermo_jacobian', True)
+            )
+        ):
+            solution['jacobian_method'] = 'semi_analytic_local_thermo'
         if not solution['success']:
             raise UnitOperationError(
                 f"RigorousLiquidLiquidExtractor '{self.unit_id}' equation-oriented MESH "
