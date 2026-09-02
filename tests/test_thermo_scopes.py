@@ -378,6 +378,41 @@ UNIT D-1 : Decanter
         self.assertIn('THERMO_SCOPE extraction: NRTL', pfr)
         self.assertIn('THERMO_SCOPE_CORRECTIONS:', pfr)
 
+    def test_downstream_global_unit_preserves_scope_exit_energy_correction(self):
+        simulator = Simulator.from_string("""
+PROCESS: consumed scoped boundary
+THERMO_METHOD: IDEAL
+ONLINE_LOOKUP: false
+THERMO_SCOPES:
+    extraction | method=NRTL
+COMPONENTS:
+    H2O | Water | MW=18.015
+    ETOH | Ethanol | MW=46.069
+INTERACTION_PARAMETERS:
+    H2O/ETOH | model=NRTL, scope=extraction, a12=300, a21=-100, alpha=0.3
+STREAM Feed : FEED -> H-1.in
+    T = 25 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = H2O:0.6, ETOH:0.4
+STREAM Scope-Exit : H-1.out -> M-1.in
+STREAM Product : M-1.out -> PRODUCT
+UNIT H-1 : Heater
+    T = 40 [C]
+    thermo_scope = extraction
+UNIT M-1 : Mixer
+    mode = adiabatic
+""").initialize()
+
+        result = simulator.run()
+
+        self.assertTrue(result.converged)
+        self.assertEqual(
+            [item['stream_id'] for item in result.thermo_scope_corrections],
+            ['Feed', 'Scope-Exit'],
+        )
+        self.assertLess(result.energy_balance_error, 1e-12)
+
     def test_boundary_recomputes_density_and_viscosity_in_destination_scope(self):
         simulator = Simulator.from_string(self._heater_chain_pfd()).initialize()
         solver = simulator.solver

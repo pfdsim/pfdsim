@@ -799,7 +799,14 @@ class FlowsheetSolver:
     ) -> StreamState:
         source_scope = getattr(state, 'thermo_scope', None) or 'global'
         if source_scope == destination_scope:
-            self._thermo_scope_corrections.pop(stream_id, None)
+            # A material stream can already carry the destination package
+            # because its source-unit outlet was converted at a declared
+            # scope boundary.  Downstream consumption of that converted view
+            # must not erase the boundary's energy-reconciliation record.
+            # Only discard records for identifiers that are not real topology
+            # boundaries (for example direct diagnostic probes).
+            if stream_id not in self.thermo_scope_boundaries:
+                self._thermo_scope_corrections.pop(stream_id, None)
             return state
         if source_scope not in self.thermo_packages:
             raise FlowsheetError(
