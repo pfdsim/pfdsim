@@ -50,6 +50,37 @@ def _source_classes():
     return _SOURCE_CLASSES
 
 
+def _source_component_groups(
+    destination_thermo,
+    source_name: str,
+    source_class,
+    component: str,
+    unifac_groups: Optional[dict],
+) -> tuple[Optional[dict], bool]:
+    """Resolve one source component without constructing the source model."""
+    if unifac_groups and component in unifac_groups:
+        return dict(unifac_groups[component]), False
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .unifac_models import (
+            can_exclude_component_from_unifac,
+            resolve_component_unifac_groups,
+        )
+    else:
+        from thermodynamics_models.unifac_models import (
+            can_exclude_component_from_unifac,
+            resolve_component_unifac_groups,
+        )
+    props = destination_thermo.props.get(component)
+    groups = resolve_component_unifac_groups(
+        component,
+        props,
+        destination_thermo.db,
+        source_class.unifac_variant,
+    )
+    excluded = groups is None and can_exclude_component_from_unifac(props)
+    return groups, excluded
+
+
 def _fit_cache():
     global _FIT_CACHE
     if _FIT_CACHE is None or Path(_FIT_CACHE.path) != Path(_FIT_CACHE_PATH):
@@ -64,11 +95,11 @@ def _fit_cache():
     return _FIT_CACHE
 
 
-def _source_parameter_fingerprint(source_name: str, source) -> str:
+def _source_parameter_fingerprint(source_name: str, source_type) -> str:
     cached = _SOURCE_PARAMETER_FINGERPRINTS.get(source_name)
     if cached is not None:
         return cached
-    filename = str(getattr(source, 'default_unifac_data_filename', '') or '')
+    filename = str(getattr(source_type, 'default_unifac_data_filename', '') or '')
     path = Path(__file__).resolve().parent.parent / 'data' / filename
     digest = hashlib.sha256()
     digest.update(source_name.encode('utf-8'))
@@ -105,7 +136,8 @@ def _fit_cache_key(
     comp1: str,
     comp2: str,
     options: dict,
-    source,
+    source_type,
+    source_groups: dict[str, dict],
 ) -> str:
     source_name = str(options['source'])
     payload = {
@@ -114,12 +146,12 @@ def _fit_cache_key(
         'source': source_name,
         'source_parameter_fingerprint': _source_parameter_fingerprint(
             source_name,
-            source,
+            source_type,
         ),
         'components': [
             {
                 'identity': _component_fit_identity(destination_thermo, component),
-                'source_groups': _normalized_groups(source.component_groups[component]),
+                'source_groups': _normalized_groups(source_groups[component]),
                 'r': (
                     float(destination_thermo.r[component])
                     if destination == 'UNIQUAC' else None
@@ -299,39 +331,39 @@ def _fit_pair(
     comp2: str,
     options: dict,
     unifac_groups: Optional[dict],
+    resolved_source_groups: Optional[dict[str, dict]] = None,
 ) -> tuple[dict, dict]:
     source_name = options['source']
     source_class = _source_classes()[source_name]
-    source_groups = None
-    if unifac_groups:
-        selected = {
-            component: unifac_groups[component]
-            for component in (comp1, comp2)
-            if component in unifac_groups
-        }
-        source_groups = selected or None
-    source = source_class(
-        [comp1, comp2],
-        destination_thermo.db,
-        source_groups,
-    )
-    missing_source_components = [
-        component for component in (comp1, comp2)
-        if component not in source.component_groups
-    ]
-    if missing_source_components:
-        raise ValueError(
-            f"{source_name} excludes {', '.join(missing_source_components)} "
-            "from its liquid group model (for example as contextual Henry "
-            "solutes); no molecular liquid interaction can be regressed"
-        )
+    source_groups = dict(resolved_source_groups or {})
+    if resolved_source_groups is None:
+        for component in (comp1, comp2):
+            groups, excluded = _source_component_groups(
+                destination_thermo,
+                source_name,
+                source_class,
+                component,
+                unifac_groups,
+            )
+            if excluded:
+                raise ValueError(
+                    f"{source_name} excludes {component} from its liquid group model "
+                    "(for example as a contextual Henry solute); no molecular "
+                    "liquid interaction can be regressed"
+                )
+            if groups is None:
+                raise ValueError(
+                    f"{source_name} groups not found for '{component}'"
+                )
+            source_groups[component] = groups
     cache_key = _fit_cache_key(
         destination_thermo,
         destination,
         comp1,
         comp2,
         options,
-        source,
+        source_class,
+        source_groups,
     )
     try:
         cached = _fit_cache().get(cache_key)
@@ -352,6 +384,11 @@ def _fit_pair(
             metadata['fit_cache_hit'] = True
             metadata['fit_cache_key'] = cache_key
             return record, metadata
+    source = source_class(
+        [comp1, comp2],
+        destination_thermo.db,
+        source_groups,
+    )
     modified = source_name in _MODIFIED_SOURCES
     temperatures = _temperature_grid(
         options['Tmin_K'], options['Tmax_K'], modified
@@ -514,6 +551,10 @@ def estimate_missing_interactions(
     records = []
     metadata = {}
     failures = []
+    source_group_cache: dict[
+        tuple[str, str], tuple[Optional[dict], bool]
+    ] = {}
+    reported_source_exclusions: set[tuple[str, str]] = set()
     for comp1, comp2 in combinations(destination_thermo.components, 2):
         options = dict(global_rule)
         options.update(pair_rules.get(tuple(sorted((comp1, comp2))), {}))
@@ -535,6 +576,44 @@ def estimate_missing_interactions(
                 "0 < Tmin < Tmax"
             )
             continue
+        source_name = options['source']
+        source_class = _source_classes()[source_name]
+        resolved_source_groups = {}
+        unresolved_component = None
+        unresolved_excluded = False
+        for component in (comp1, comp2):
+            group_key = (source_name, component)
+            if group_key not in source_group_cache:
+                source_group_cache[group_key] = _source_component_groups(
+                    destination_thermo,
+                    source_name,
+                    source_class,
+                    component,
+                    unifac_groups,
+                )
+            groups, excluded = source_group_cache[group_key]
+            if groups is None:
+                unresolved_component = component
+                unresolved_excluded = excluded
+                break
+            resolved_source_groups[component] = groups
+        if unresolved_component is not None:
+            exclusion_key = (source_name, unresolved_component)
+            if unresolved_excluded:
+                if exclusion_key not in reported_source_exclusions:
+                    failures.append(
+                        f"all pairs involving {unresolved_component}: {source_name} "
+                        f"excludes {unresolved_component} from its liquid group model "
+                        "(for example as a contextual Henry solute); no molecular "
+                        "liquid interaction can be regressed"
+                    )
+                    reported_source_exclusions.add(exclusion_key)
+            else:
+                failures.append(
+                    f"{comp1}/{comp2}: {source_name} groups not found for "
+                    f"'{unresolved_component}'"
+                )
+            continue
         try:
             record, details = _fit_pair(
                 destination_thermo,
@@ -543,6 +622,7 @@ def estimate_missing_interactions(
                 comp2,
                 options,
                 unifac_groups,
+                resolved_source_groups,
             )
         except Exception as error:
             failures.append(f"{comp1}/{comp2}: {error}")

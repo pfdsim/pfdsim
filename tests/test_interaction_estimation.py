@@ -185,6 +185,47 @@ INTERACTION_ESTIMATION:
             for warning in thermo.warnings
         ))
 
+    def test_contextual_henry_components_are_resolved_once_and_prefiltered(self):
+        import thermodynamics_models.interaction_estimation as estimation
+        import thermodynamics_models.unifac_models as unifac_models
+
+        real_source = estimation._source_classes()['UNIFAC']
+
+        class SourceMustNotBeConstructed(real_source):
+            def __init__(self, *args, **kwargs):
+                raise AssertionError(
+                    'excluded source components must be filtered before model construction'
+                )
+
+        with (
+            patch.dict(
+                estimation._source_classes(),
+                {'UNIFAC': SourceMustNotBeConstructed},
+            ),
+            patch.object(
+                unifac_models,
+                'resolve_component_unifac_groups',
+                wraps=unifac_models.resolve_component_unifac_groups,
+            ) as resolve_groups,
+        ):
+            thermo = create_thermodynamics(
+                ['water', 'carbon monoxide', 'carbon dioxide'],
+                'NRTL',
+                interaction_estimation=self._rule('NRTL', source='UNIFAC'),
+            )
+
+        resolved_components = [
+            call.args[0] for call in resolve_groups.call_args_list
+        ]
+        self.assertEqual(resolved_components.count('carbon monoxide'), 1)
+        self.assertEqual(resolved_components.count('carbon dioxide'), 1)
+        self.assertEqual(thermo.estimated_interaction_metadata, {})
+        exclusions = [
+            warning for warning in thermo.warnings
+            if 'no molecular liquid interaction can be regressed' in warning
+        ]
+        self.assertEqual(len(exclusions), 2)
+
     def test_unifdmd_keeps_group_resolvable_volatile_condensable(self):
         source = create_thermodynamics(
             ['acetaldehyde', 'propionic acid'],
@@ -266,11 +307,23 @@ COMPONENTS:
                 self.assertFalse(first_details['fit_cache_hit'])
 
                 estimation._FIT_CACHE = None
-                second = create_thermodynamics(
-                    ['acetaldehyde', 'propionic acid'],
-                    'UNIQUAC',
-                    interaction_estimation=self._rule('UNIQUAC'),
-                )
+                real_source = estimation._source_classes()['UNIFDMD']
+
+                class CacheHitMustNotConstructSource(real_source):
+                    def __init__(self, *args, **kwargs):
+                        raise AssertionError(
+                            'persistent cache hit constructed its UNIFDMD source model'
+                        )
+
+                with patch.dict(
+                    estimation._source_classes(),
+                    {'UNIFDMD': CacheHitMustNotConstructSource},
+                ):
+                    second = create_thermodynamics(
+                        ['acetaldehyde', 'propionic acid'],
+                        'UNIQUAC',
+                        interaction_estimation=self._rule('UNIQUAC'),
+                    )
                 self.assertEqual(optimizer.call_count, first_calls)
                 second_details = second.estimated_interaction_metadata[
                     ('acetaldehyde', 'propionic acid')

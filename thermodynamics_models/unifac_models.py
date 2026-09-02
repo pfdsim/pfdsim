@@ -8,6 +8,83 @@ else:
 from .common import ThermodynamicsError
 from .activity import ActivityCoefficientThermodynamics, VaporDimerizationActivityMixin
 
+
+def resolve_component_unifac_groups(
+    comp: str,
+    props,
+    db,
+    variant: str,
+    get_unifac_groups_func=None,
+) -> Optional[dict]:
+    """Resolve canonical UNIFAC groups without constructing a thermo model."""
+    if get_unifac_groups_func is None:
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from ..unifac import get_unifac_groups as get_unifac_groups_func
+        else:
+            from unifac import get_unifac_groups as get_unifac_groups_func
+
+    identifiers = []
+    if props is not None:
+        # Process-local symbols are never chemical lookup identifiers.
+        # Use only identity resolved from the PFD lookup field.
+        identifiers.extend((props.name, props.CAS, props.formula))
+
+    expected_mw = None
+    try:
+        expected_mw = float(getattr(props, 'MW', None))
+    except (TypeError, ValueError):
+        pass
+    for identifier in identifiers:
+        if not identifier:
+            continue
+        try:
+            return get_unifac_groups_func(
+                identifier,
+                variant=variant,
+                expected_mw=expected_mw,
+            )
+        except ValueError:
+            pass
+
+    smiles = getattr(props, 'smiles', None) if props is not None else None
+    if not smiles and hasattr(db, 'resolve_smiles_info'):
+        for identifier in identifiers:
+            if not identifier:
+                continue
+            result = db.resolve_smiles_info(
+                identifier,
+                fetch_online=True,
+                props=props,
+            )
+            smiles = result.smiles if result else None
+            if smiles:
+                break
+
+    if smiles:
+        label = getattr(props, 'name', None) or 'resolved component'
+        try:
+            return get_unifac_groups_func(
+                label,
+                smiles=smiles,
+                variant=variant,
+            )
+        except ValueError:
+            # A resolved structure is not necessarily representable by the
+            # selected UNIFAC variant. Let the caller apply its ordinary
+            # non-condensable exclusion policy.
+            return None
+    return None
+
+
+def can_exclude_component_from_unifac(props) -> bool:
+    """Return whether an unfragmentable component may remain an ideal solute."""
+    if props is None:
+        return False
+    if getattr(props, 'phase_at_STP', None) == 'gas':
+        return True
+    boiling_point = getattr(props, 'Tb', None)
+    return boiling_point is not None and boiling_point < 250.0
+
 class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
     """
     UNIFAC (Universal Functional Activity Coefficient) thermodynamic calculator.
@@ -157,66 +234,16 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
     def _resolve_component_unifac_groups(self, comp: str, props,
                                          get_unifac_groups_func) -> Optional[dict]:
         """Resolve identity first, then pass only resolved structures to the fragmenter."""
-        identifiers = []
-        if props is not None:
-            # Process-local symbols are never chemical lookup identifiers.
-            # Use only identity resolved from the PFD lookup field.
-            identifiers.extend((props.name, props.CAS, props.formula))
-
-        expected_mw = None
-        try:
-            expected_mw = float(getattr(props, 'MW', None))
-        except (TypeError, ValueError):
-            pass
-        for identifier in identifiers:
-            if not identifier:
-                continue
-            try:
-                return get_unifac_groups_func(
-                    identifier,
-                    variant=self.unifac_variant,
-                    expected_mw=expected_mw,
-                )
-            except ValueError:
-                pass
-
-        smiles = getattr(props, 'smiles', None) if props is not None else None
-        if not smiles and hasattr(self.db, 'resolve_smiles_info'):
-            for identifier in identifiers:
-                if not identifier:
-                    continue
-                result = self.db.resolve_smiles_info(
-                    identifier,
-                    fetch_online=True,
-                    props=props,
-                )
-                smiles = result.smiles if result else None
-                if smiles:
-                    break
-
-        if smiles:
-            label = getattr(props, 'name', None) or 'resolved component'
-            try:
-                return get_unifac_groups_func(
-                    label,
-                    smiles=smiles,
-                    variant=self.unifac_variant,
-                )
-            except ValueError:
-                # A resolved structure is not necessarily representable by
-                # the selected UNIFAC variant (charged permanent gases such
-                # as CO are a common example). Let the caller apply its
-                # ordinary non-condensable exclusion policy.
-                return None
-        return None
+        return resolve_component_unifac_groups(
+            comp,
+            props,
+            self.db,
+            self.unifac_variant,
+            get_unifac_groups_func,
+        )
 
     def _can_exclude_from_unifac(self, comp: str) -> bool:
-        props = self.props.get(comp)
-        if props is None:
-            return False
-        if getattr(props, 'phase_at_STP', None) == 'gas':
-            return True
-        return props.Tb is not None and props.Tb < 250.0
+        return can_exclude_component_from_unifac(self.props.get(comp))
 
     def _warn_missing_unifac_group_interactions(self) -> None:
         main_groups: dict[int, str] = {}
