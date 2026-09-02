@@ -1,0 +1,3506 @@
+#==============================================================================
+# PROCESS FLOW RESULTS
+#==============================================================================
+
+RESULTS_FOR: L-Lactic Acid Dehydration and Primary Condensation
+VERSION: 1.0
+GENERATED: 2026-09-02 11:18:08
+SIMULATOR: PFD-Editor v1.0
+THERMO_METHOD: UNIQUAC-VDM
+THERMO_SCOPE extraction: NRTL
+FLUID_PHASE_MODEL: VLE
+CONVERGED: yes
+ITERATIONS: 4
+
+#------------------------------------------------------------------------------
+# SIMULATION SUMMARY
+#------------------------------------------------------------------------------
+
+SUMMARY:
+    convergence_status = converged
+    iterations = 4
+    overall_mass_balance_error = 0.0001 [%]
+    overall_energy_balance_error = 0.0000 [%]
+    thermo_scope_enthalpy_correction = -3.43344 [kW]
+    total_heating_duty = 1994.94 [kW]
+    total_cooling_duty = 4752.38 [kW]
+    total_net_heat_duty = -2757.44 [kW]
+    total_work = 0.14 [kW]
+    total_process_work = 0.13 [kW]
+
+THERMO_SCOPE_CORRECTIONS:
+    Extraction-Extract | source=extraction, destination=global, enthalpy_correction=-171.572 [kW]
+    Extraction-Feed | source=global, destination=extraction, enthalpy_correction=175.787 [kW]
+    Extraction-Raffinate | source=extraction, destination=global, enthalpy_correction=-3.35658 [kW]
+    Extraction-Solvent | source=global, destination=extraction, enthalpy_correction=-4.29203 [kW]
+
+#------------------------------------------------------------------------------
+# STREAM RESULTS
+#------------------------------------------------------------------------------
+
+STREAM_RESULT Wet-Lactic-Feed:
+    source = FEED
+    destination = R-101.in
+    T = 360.00 [C]
+    T_K = 633.15 [K]
+    P = 1.0132 [bar]
+    F = 173.4638 [kmol/h]
+    F_mass = 5000.00 [kg/h]
+    F_vol = 9011.1309 [m3/h]
+    vapor_fraction = 1.0000
+    liquid1_fraction = 0.0000
+    phase_status = single_vapor
+    phase_stability = vle_constrained
+    MW = 28.82 [kg/kmol]
+    H = -280468.75 [kJ/kmol]
+    S = 253.0702 [kJ/kmol-K]
+    Cp = 58.5311 [kJ/kmol-K]
+    rho = 0.0192 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.850000, F=147.4443 [kmol/h]
+        LLA: x=0.150000, F=26.0196 [kmol/h]
+    VAPOR_COMPOSITION:
+        H2O: 0.850000
+        LLA: 0.150000
+        AA: 0.000000
+        AcH: 0.000000
+        PA: 0.000000
+        PD23: 0.000000
+        CO: 0.000000
+        CO2: 0.000000
+        MIBK: 0.000000
+
+STREAM_RESULT Reactor-Effluent:
+    source = R-101.out
+    destination = E-201.in
+    T = 371.95 [C]
+    T_K = 645.10 [K]
+    P = 0.8326 [bar]
+    F = 203.6540 [kmol/h]
+    F_mass = 5000.00 [kg/h]
+    F_vol = 534.3159 [m3/h]
+    vapor_fraction = 1.0000
+    liquid1_fraction = 0.0000
+    phase_status = forced_vapor
+    phase_stability = explicit_phase_constraint
+    MW = 24.55 [kg/kmol]
+    H = -231649.39 [kJ/kmol]
+    rho = 0.3811 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.848743, F=172.8500 [kmol/h]
+        AA: x=0.100089, F=20.3835 [kmol/h]
+        AcH: x=0.023493, F=4.7845 [kmol/h]
+        CO: x=0.020479, F=4.1706 [kmol/h]
+        CO2: x=0.003598, F=0.7328 [kmol/h]
+        PA: x=0.003014, F=0.6139 [kmol/h]
+        PD23: x=0.000584, F=0.1189 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+        MIBK: x=0.000000, F=0.0000 [kmol/h]
+    VAPOR_COMPOSITION:
+        H2O: 0.848743
+        AA: 0.100089
+        AcH: 0.023493
+        CO: 0.020479
+        CO2: 0.003598
+        PA: 0.003014
+        PD23: 0.000584
+        LLA: 0.000000
+        MIBK: 0.000000
+
+STREAM_RESULT Cooled-Effluent:
+    source = E-201.out
+    destination = F-201.in
+    T = 40.00 [C]
+    T_K = 313.15 [K]
+    P = 0.8326 [bar]
+    F = 203.6540 [kmol/h]
+    F_mass = 5000.00 [kg/h]
+    F_vol = 204.7209 [m3/h]
+    vapor_fraction = 0.0314
+    liquid1_fraction = 0.9686
+    phase_status = aqueous_vle
+    phase_stability = aqueous_henry_vle_constrained
+    MW = 24.55 [kg/kmol]
+    H = -288998.00 [kJ/kmol]
+    S = 101.7582 [kJ/kmol-K]
+    Cp = 99.7537 [kJ/kmol-K]
+    rho = 0.9948 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.848743, F=172.8500 [kmol/h]
+        AA: x=0.100089, F=20.3835 [kmol/h]
+        AcH: x=0.023493, F=4.7845 [kmol/h]
+        CO: x=0.020479, F=4.1706 [kmol/h]
+        CO2: x=0.003598, F=0.7328 [kmol/h]
+        PA: x=0.003014, F=0.6139 [kmol/h]
+        PD23: x=0.000584, F=0.1189 [kmol/h]
+    LIQUID_COMPOSITION:
+        H2O: 0.873659
+        AA: 0.103227
+        AcH: 0.019405
+        PA: 0.003108
+        PD23: 0.000553
+        CO2: 0.000040
+        CO: 0.000008
+        LLA: 0.000000
+        MIBK: 0.000000
+    VAPOR_COMPOSITION:
+        CO: 0.651552
+        AcH: 0.149534
+        CO2: 0.113280
+        H2O: 0.080643
+        AA: 0.003334
+        PD23: 0.001529
+        PA: 0.000126
+        LLA: 0.000000
+        MIBK: 0.000000
+
+STREAM_RESULT Condenser-Vent:
+    source = F-201.vapor_out
+    destination = PRODUCT
+    T = 40.00 [C]
+    T_K = 313.15 [K]
+    P = 0.8326 [bar]
+    F = 6.3987 [kmol/h]
+    F_mass = 202.70 [kg/h]
+    F_vol = 199.8811 [m3/h]
+    vapor_fraction = 1.0000
+    liquid1_fraction = 0.0000
+    phase_status = forced_vapor
+    phase_stability = explicit_phase_constraint
+    MW = 31.68 [kg/kmol]
+    H = -162852.03 [kJ/kmol]
+    S = 220.6187 [kJ/kmol-K]
+    Cp = 36.3475 [kJ/kmol-K]
+    rho = 0.0320 [kmol/m3]
+    COMPOSITION:
+        CO: x=0.651552, F=4.1691 [kmol/h]
+        AcH: x=0.149534, F=0.9568 [kmol/h]
+        CO2: x=0.113280, F=0.7248 [kmol/h]
+        H2O: x=0.080643, F=0.5160 [kmol/h]
+        AA: x=0.003334, F=0.0213 [kmol/h]
+        PD23: x=0.001529, F=0.0098 [kmol/h]
+        PA: x=0.000126, F=0.0008 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+        MIBK: x=0.000000, F=0.0000 [kmol/h]
+    VAPOR_COMPOSITION:
+        CO: 0.651552
+        AcH: 0.149534
+        CO2: 0.113280
+        H2O: 0.080643
+        AA: 0.003334
+        PD23: 0.001529
+        PA: 0.000126
+        LLA: 0.000000
+        MIBK: 0.000000
+
+STREAM_RESULT Condensed-Product:
+    source = F-201.liquid_out
+    destination = C-201.feed
+    T = 40.00 [C]
+    T_K = 313.15 [K]
+    P = 0.8326 [bar]
+    F = 197.2553 [kmol/h]
+    F_mass = 4797.30 [kg/h]
+    F_vol = 4.8398 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 24.32 [kg/kmol]
+    H = -293090.01 [kJ/kmol]
+    S = 97.9025 [kJ/kmol-K]
+    Cp = 101.8105 [kJ/kmol-K]
+    rho = 40.7569 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.873659, F=172.3339 [kmol/h]
+        AA: x=0.103227, F=20.3621 [kmol/h]
+        AcH: x=0.019405, F=3.8277 [kmol/h]
+        PA: x=0.003108, F=0.6131 [kmol/h]
+        PD23: x=0.000553, F=0.1091 [kmol/h]
+        CO2: x=0.000040, F=0.0079 [kmol/h]
+        CO: x=0.000008, F=0.0015 [kmol/h]
+
+STREAM_RESULT Column-Overhead:
+    source = C-201.distillate
+    destination = PRODUCT
+    T = 67.72 [C]
+    T_K = 340.87 [K]
+    P = 0.8326 [bar]
+    F = 5.9177 [kmol/h]
+    F_mass = 215.90 [kg/h]
+    F_vol = 201.3996 [m3/h]
+    vapor_fraction = 1.0000
+    liquid1_fraction = 0.0000
+    phase_status = forced_vapor
+    phase_stability = explicit_phase_constraint
+    MW = 36.48 [kg/kmol]
+    H = -196254.76 [kJ/kmol]
+    S = 248.5003 [kJ/kmol-K]
+    Cp = 52.2355 [kJ/kmol-K]
+    rho = 0.0294 [kmol/m3]
+    COMPOSITION:
+        AcH: x=0.646819, F=3.8277 [kmol/h]
+        H2O: x=0.331770, F=1.9633 [kmol/h]
+        PD23: x=0.018433, F=0.1091 [kmol/h]
+        CO2: x=0.001336, F=0.0079 [kmol/h]
+        PA: x=0.000994, F=0.0059 [kmol/h]
+        AA: x=0.000391, F=0.0023 [kmol/h]
+        CO: x=0.000256, F=0.0015 [kmol/h]
+    VAPOR_COMPOSITION:
+        AcH: 0.646819
+        H2O: 0.331770
+        PD23: 0.018433
+        CO2: 0.001336
+        PA: 0.000994
+        AA: 0.000391
+        CO: 0.000256
+
+STREAM_RESULT Column-Bottoms:
+    source = C-201.bottoms
+    destination = P-301.in
+    T = 95.30 [C]
+    T_K = 368.45 [K]
+    P = 0.8326 [bar]
+    F = 191.3377 [kmol/h]
+    F_mass = 4581.40 [kg/h]
+    F_vol = 4.7639 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 23.94 [kg/kmol]
+    H = -289414.34 [kJ/kmol]
+    S = 109.0584 [kJ/kmol-K]
+    Cp = 104.6878 [kJ/kmol-K]
+    rho = 40.1644 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.890419, F=170.3706 [kmol/h]
+        AA: x=0.106408, F=20.3598 [kmol/h]
+        PA: x=0.003173, F=0.6072 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Pressurized-Concentrate:
+    source = P-301.out
+    destination = E-301.in
+    T = 95.31 [C]
+    T_K = 368.46 [K]
+    P = 1.0132 [bar]
+    F = 191.3377 [kmol/h]
+    F_mass = 4581.40 [kg/h]
+    F_vol = 4.7639 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 23.94 [kg/kmol]
+    H = -289413.74 [kJ/kmol]
+    S = 109.0598 [kJ/kmol-K]
+    Cp = 104.6885 [kJ/kmol-K]
+    rho = 40.1642 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.890419, F=170.3706 [kmol/h]
+        AA: x=0.106408, F=20.3598 [kmol/h]
+        PA: x=0.003173, F=0.6072 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Extraction-Feed:
+    source = E-301.out
+    destination = X-301.feed
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 1.0132 [bar]
+    F = 191.3377 [kmol/h]
+    F_mass = 4581.40 [kg/h]
+    F_vol = 4.5274 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 23.94 [kg/kmol]
+    H = -296476.03 [kJ/kmol]
+    S = 92.4139 [kJ/kmol-K]
+    Cp = 96.2724 [kJ/kmol-K]
+    rho = 42.2626 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.890419, F=170.3706 [kmol/h]
+        AA: x=0.106408, F=20.3598 [kmol/h]
+        PA: x=0.003173, F=0.6072 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Fresh-MIBK:
+    source = FEED
+    destination = M-301.mibk
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 1.0132 [bar]
+    F = 0.6855 [kmol/h]
+    F_mass = 68.66 [kg/h]
+    F_vol = 0.0862 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 100.16 [kg/kmol]
+    H = -327142.83 [kJ/kmol]
+    S = 306.4305 [kJ/kmol-K]
+    Cp = 213.8588 [kJ/kmol-K]
+    rho = 7.9499 [kmol/m3]
+    COMPOSITION:
+        MIBK: x=1.000000, F=0.6855 [kmol/h]
+
+STREAM_RESULT Solvent-Water-Makeup:
+    source = FEED
+    destination = M-301.water
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 1.0132 [bar]
+    F = 0.0906 [kmol/h]
+    F_mass = 1.63 [kg/h]
+    F_vol = 0.0016 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 18.02 [kg/kmol]
+    H = -285812.08 [kJ/kmol]
+    S = 70.0142 [kJ/kmol-K]
+    Cp = 75.3842 [kJ/kmol-K]
+    rho = 55.3422 [kmol/m3]
+    COMPOSITION:
+        H2O: x=1.000000, F=0.0906 [kmol/h]
+
+STREAM_RESULT Organic-Recycle:
+    source = D-401.light
+    destination = P-302.in
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 0.1600 [bar]
+    F = 27.0996 [kmol/h]
+    F_mass = 2454.75 [kg/h]
+    F_vol = 3.0684 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 90.58 [kg/kmol]
+    H = -321769.04 [kJ/kmol]
+    S = 281.4691 [kJ/kmol-K]
+    rho = 8.8318 [kmol/m3]
+    COMPOSITION:
+        MIBK: x=0.883393, F=23.9396 [kmol/h]
+        H2O: x=0.116606, F=3.1600 [kmol/h]
+        AA: x=0.000001, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Pressurized-Organic-Recycle:
+    source = P-302.out
+    destination = M-301.organic
+    T = 25.06 [C]
+    T_K = 298.21 [K]
+    P = 1.0132 [bar]
+    F = 27.0996 [kmol/h]
+    F_mass = 2454.75 [kg/h]
+    F_vol = 3.0686 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 90.58 [kg/kmol]
+    H = -321756.16 [kJ/kmol]
+    S = 281.5128 [kJ/kmol-K]
+    Cp = 204.8496 [kJ/kmol-K]
+    rho = 8.8312 [kmol/m3]
+    COMPOSITION:
+        MIBK: x=0.883393, F=23.9396 [kmol/h]
+        H2O: x=0.116606, F=3.1600 [kmol/h]
+        AA: x=0.000001, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Extraction-Solvent:
+    source = M-301.out
+    destination = X-301.solvent
+    T = 24.99 [C]
+    T_K = 298.14 [K]
+    P = 1.0132 [bar]
+    F = 27.8757 [kmol/h]
+    F_mass = 2525.04 [kg/h]
+    F_vol = 3.1562 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 90.58 [kg/kmol]
+    H = -321771.85 [kJ/kmol]
+    S = 281.4586 [kJ/kmol-K]
+    Cp = 204.8409 [kJ/kmol-K]
+    rho = 8.8319 [kmol/m3]
+    COMPOSITION:
+        MIBK: x=0.883390, F=24.6251 [kmol/h]
+        H2O: x=0.116608, F=3.2505 [kmol/h]
+        AA: x=0.000001, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Extraction-Raffinate:
+    source = X-301.raffinate
+    destination = PRODUCT
+    T = 25.17 [C]
+    T_K = 298.32 [K]
+    P = 1.0132 [bar]
+    F = 148.2200 [kmol/h]
+    F_mass = 2734.94 [kg/h]
+    F_vol = 2.7574 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 18.45 [kg/kmol]
+    H = -286171.27 [kJ/kmol]
+    S = 71.4293 [kJ/kmol-K]
+    Cp = 77.5044 [kJ/kmol-K]
+    rho = 53.7527 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.994007, F=147.3317 [kmol/h]
+        MIBK: x=0.004021, F=0.5959 [kmol/h]
+        AA: x=0.001972, F=0.2923 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Extraction-Extract:
+    source = X-301.extract
+    destination = M-401.extract
+    T = 25.17 [C]
+    T_K = 298.32 [K]
+    P = 1.0132 [bar]
+    F = 70.9934 [kmol/h]
+    F_mass = 4371.49 [kg/h]
+    F_vol = 4.9272 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 61.58 [kg/kmol]
+    H = -328096.82 [kJ/kmol]
+    S = 210.9492 [kJ/kmol-K]
+    Cp = 186.5956 [kJ/kmol-K]
+    rho = 14.4085 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.370309, F=26.2895 [kmol/h]
+        MIBK: x=0.338471, F=24.0292 [kmol/h]
+        AA: x=0.282667, F=20.0675 [kmol/h]
+        PA: x=0.008553, F=0.6072 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Aqueous-Recycle:
+    source = S-401.recycle
+    destination = P-401.in
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 0.1600 [bar]
+    F = 8.7986 [kmol/h]
+    F_mass = 160.92 [kg/h]
+    F_vol = 0.1622 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 18.29 [kg/kmol]
+    H = -285969.40 [kJ/kmol]
+    S = 70.7683 [kJ/kmol-K]
+    rho = 54.2617 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.996659, F=8.7692 [kmol/h]
+        MIBK: x=0.003340, F=0.0294 [kmol/h]
+        AA: x=0.000000, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Aqueous-Purge:
+    source = S-401.purge
+    destination = PRODUCT
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 0.1600 [bar]
+    F = 23.1896 [kmol/h]
+    F_mass = 424.12 [kg/h]
+    F_vol = 0.4274 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 18.29 [kg/kmol]
+    H = -285969.40 [kJ/kmol]
+    S = 70.7683 [kJ/kmol-K]
+    rho = 54.2617 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.996659, F=23.1121 [kmol/h]
+        MIBK: x=0.003340, F=0.0775 [kmol/h]
+        AA: x=0.000000, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Pressurized-Aqueous-Recycle:
+    source = P-401.out
+    destination = M-401.water
+    T = 25.03 [C]
+    T_K = 298.18 [K]
+    P = 1.0132 [bar]
+    F = 8.7986 [kmol/h]
+    F_mass = 160.92 [kg/h]
+    F_vol = 0.1622 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 18.29 [kg/kmol]
+    H = -285967.30 [kJ/kmol]
+    S = 70.7752 [kJ/kmol-K]
+    Cp = 76.8619 [kJ/kmol-K]
+    rho = 54.2612 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.996659, F=8.7692 [kmol/h]
+        MIBK: x=0.003340, F=0.0294 [kmol/h]
+        AA: x=0.000000, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Water-Assisted-Extract:
+    source = M-401.out
+    destination = V-401.in
+    T = 25.33 [C]
+    T_K = 298.48 [K]
+    P = 1.0132 [bar]
+    F = 79.7920 [kmol/h]
+    F_mass = 4532.42 [kg/h]
+    F_vol = 5.0902 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 56.80 [kg/kmol]
+    H = -323451.22 [kJ/kmol]
+    S = 195.5042 [kJ/kmol-K]
+    Cp = 179.1474 [kJ/kmol-K]
+    rho = 15.6757 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.439377, F=35.0587 [kmol/h]
+        MIBK: x=0.301516, F=24.0585 [kmol/h]
+        AA: x=0.251498, F=20.0675 [kmol/h]
+        PA: x=0.007610, F=0.6072 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Vacuum-Column-Feed:
+    source = V-401.out
+    destination = C-401.feed
+    T = 25.33 [C]
+    T_K = 298.48 [K]
+    P = 0.1600 [bar]
+    F = 79.7920 [kmol/h]
+    F_mass = 4532.42 [kg/h]
+    F_vol = 5.0902 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 56.80 [kg/kmol]
+    H = -323451.22 [kJ/kmol]
+    S = 195.5042 [kJ/kmol-K]
+    Cp = 179.1474 [kJ/kmol-K]
+    rho = 15.6757 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.439377, F=35.0587 [kmol/h]
+        MIBK: x=0.301516, F=24.0585 [kmol/h]
+        AA: x=0.251498, F=20.0675 [kmol/h]
+        PA: x=0.007610, F=0.6072 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PD23: x=0.000000, F=0.0000 [kmol/h]
+        CO2: x=0.000000, F=0.0000 [kmol/h]
+        CO: x=0.000000, F=0.0000 [kmol/h]
+        LLA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Recovered-Azeotrope-Hot:
+    source = C-401.distillate
+    destination = E-401.in
+    T = 44.83 [C]
+    T_K = 317.98 [K]
+    P = 0.1600 [bar]
+    F = 59.0878 [kmol/h]
+    F_mass = 3039.79 [kg/h]
+    F_vol = 3.7324 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 51.45 [kg/kmol]
+    H = -299639.69 [kJ/kmol]
+    S = 177.0557 [kJ/kmol-K]
+    Cp = 137.4816 [kJ/kmol-K]
+    rho = 15.8312 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.593038, F=35.0413 [kmol/h]
+        MIBK: x=0.406962, F=24.0465 [kmol/h]
+        AA: x=0.000001, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Acid-Product:
+    source = C-401.bottoms
+    destination = PRODUCT
+    T = 89.39 [C]
+    T_K = 362.54 [K]
+    P = 0.1600 [bar]
+    F = 20.7041 [kmol/h]
+    F_mass = 1492.62 [kg/h]
+    F_vol = 1.5409 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 72.09 [kg/kmol]
+    H = -366533.07 [kJ/kmol]
+    S = 269.1328 [kJ/kmol-K]
+    Cp = 252.0208 [kJ/kmol-K]
+    rho = 13.4368 [kmol/m3]
+    COMPOSITION:
+        AA: x=0.969250, F=20.0675 [kmol/h]
+        PA: x=0.029327, F=0.6072 [kmol/h]
+        H2O: x=0.000842, F=0.0174 [kmol/h]
+        MIBK: x=0.000582, F=0.0120 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Recovered-Azeotrope-Cold:
+    source = E-401.out
+    destination = D-401.in
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 0.1600 [bar]
+    F = 59.0878 [kmol/h]
+    F_mass = 3039.79 [kg/h]
+    F_vol = 3.6579 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = single_liquid
+    phase_stability = vle_constrained
+    MW = 51.45 [kg/kmol]
+    H = -302252.40 [kJ/kmol]
+    S = 166.2141 [kJ/kmol-K]
+    Cp = 170.6132 [kJ/kmol-K]
+    rho = 16.1533 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.593038, F=35.0413 [kmol/h]
+        MIBK: x=0.406962, F=24.0465 [kmol/h]
+        AA: x=0.000001, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+
+STREAM_RESULT Aqueous-Decanter:
+    source = D-401.heavy
+    destination = S-401.in
+    T = 25.00 [C]
+    T_K = 298.15 [K]
+    P = 0.1600 [bar]
+    F = 31.9882 [kmol/h]
+    F_mass = 585.04 [kg/h]
+    F_vol = 0.5895 [m3/h]
+    vapor_fraction = 0.0000
+    liquid1_fraction = 1.0000
+    phase_status = forced_liquid
+    phase_stability = explicit_phase_constraint
+    MW = 18.29 [kg/kmol]
+    H = -285969.40 [kJ/kmol]
+    S = 70.7683 [kJ/kmol-K]
+    rho = 54.2617 [kmol/m3]
+    COMPOSITION:
+        H2O: x=0.996659, F=31.8813 [kmol/h]
+        MIBK: x=0.003340, F=0.1069 [kmol/h]
+        AA: x=0.000000, F=0.0000 [kmol/h]
+        AcH: x=0.000000, F=0.0000 [kmol/h]
+        PA: x=0.000000, F=0.0000 [kmol/h]
+
+#------------------------------------------------------------------------------
+# UNIT OPERATION RESULTS
+#------------------------------------------------------------------------------
+
+UNIT_RESULT R-101:
+    type = PackedBedReactor
+    heating_duty = 409.6819 [kW]
+    cooling_duty = 0.0000 [kW]
+    net_heat_duty = 409.6819 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = jacketed
+        phase = vapor
+        volume_m3 = 0.8730
+        length_m = 0.2895
+        diameter_m = 0.0500
+        n_tubes = 1536
+        pressure_drop_model = ergun
+        pressure_drop_bar = 0.1806
+        residence_time_h = 3.264291e-05
+        T_in_C = 360.0000
+        T_out_C = 371.9505
+        P_in_bar = 1.0132
+        P_out_bar = 0.8326
+        component_conversions:
+            LLA: 1.000000
+            H2O: -0.172307
+        reactions:
+            index: 1
+            name: None
+            equation: LLA -> AA + H2O
+            stoichiometry: {'LLA': -1.0, 'AA': 1.0, 'H2O': 1.0}
+            kinetic_type: custom
+            reversible: False
+            rate_basis: None
+            rate_output_basis: catalyst_mass
+            concentration_unit: kmol/m3
+            pressure_unit: kpa
+            declared_rate_unit: kmol/kg_cat/h
+            extent_kmol_h: 20.38345707238085
+            outlet_rate_kmol_kg_cat_h: 0.0
+            outlet_intrinsic_rate_kmol_kg_cat_h: 0.0
+            outlet_effectiveness_factor: 1.0
+            index: 2
+            name: None
+            equation: LLA -> AcH + CO + H2O
+            stoichiometry: {'LLA': -1.0, 'AcH': 1.0, 'CO': 1.0, 'H2O': 1.0}
+            kinetic_type: custom
+            reversible: False
+            rate_basis: None
+            rate_output_basis: catalyst_mass
+            concentration_unit: kmol/m3
+            pressure_unit: kpa
+            declared_rate_unit: kmol/kg_cat/h
+            extent_kmol_h: 4.1706112052680036
+            outlet_rate_kmol_kg_cat_h: 0.0
+            outlet_intrinsic_rate_kmol_kg_cat_h: 0.0
+            outlet_effectiveness_factor: 1.0
+            index: 3
+            name: None
+            equation: 2 LLA -> PA + AcH + CO2 + H2O
+            stoichiometry: {'LLA': -2.0, 'PA': 1.0, 'AcH': 1.0, 'CO2': 1.0, 'H2O': 1.0}
+            kinetic_type: custom
+            reversible: False
+            rate_basis: None
+            rate_output_basis: catalyst_mass
+            concentration_unit: kmol/m3
+            pressure_unit: kpa
+            declared_rate_unit: kmol/kg_cat/h
+            extent_kmol_h: 0.6138883132024548
+            outlet_rate_kmol_kg_cat_h: 0.0
+            outlet_intrinsic_rate_kmol_kg_cat_h: 0.0
+            outlet_effectiveness_factor: 1.0
+            index: 4
+            name: None
+            equation: 2 LLA -> PD23 + CO2 + 2 H2O
+            stoichiometry: {'LLA': -2.0, 'PD23': 1.0, 'CO2': 1.0, 'H2O': 2.0}
+            kinetic_type: custom
+            reversible: False
+            rate_basis: None
+            rate_output_basis: catalyst_mass
+            concentration_unit: kmol/m3
+            pressure_unit: kpa
+            declared_rate_unit: kmol/kg_cat/h
+            extent_kmol_h: 0.11886611288936187
+            outlet_rate_kmol_kg_cat_h: 0.0
+            outlet_intrinsic_rate_kmol_kg_cat_h: 0.0
+            outlet_effectiveness_factor: 1.0
+        solver_method = LSODA
+        attempted_solver_methods:
+            - LSODA
+        solver_evaluations = 252
+        solver_status = 0
+        solver_message = The solver successfully reached the end of the integration interval.
+        profile_points = 22
+        requested_profile_points = 21
+        detailed_diagnostics = True
+        profile:
+            reactor_volume_m3: 0.0
+            temperature_K: 633.15
+            temperature_C: 360.0
+            pressure_bar: 1.01325
+            total_flow_kmol_h: 173.4638475322166
+            residence_time_h: 0.0
+            composition: {'LLA': 0.15, 'H2O': 0.85, 'AA': 0.0, 'AcH': 0.0, 'PA': 0.0, 'PD23': 0.0, 'CO': 0.0, 'CO2': 0.0, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.0821500078023149, 0.026215699617265095, 0.004523352299687489, 0.001353547880748689]
+            intrinsic_reaction_rates: [0.0821500078023149, 0.026215699617265095, 0.004523352299687489, 0.001353547880748689]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 0.0
+            reaction_rates_kmol_kg_cat_h: [0.0821500078023149, 0.026215699617265095, 0.004523352299687489, 0.001353547880748689]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.0821500078023149, 0.026215699617265095, 0.004523352299687489, 0.001353547880748689]
+            position_m: 0.0
+            density_kg_m3: 0.5548693098548279
+            viscosity_Pa_s: 2.1036288608443876e-05
+            velocity_m_s: 0.8299571934707412
+            friction_gradient_Pa_m: 51371.10044590576
+            reynolds_number: 13.13495313898603
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.04365079365079365
+            temperature_K: 626.4525528066122
+            temperature_C: 353.3025528066122
+            pressure_bar: 1.005781543850161
+            total_flow_kmol_h: 176.7256617701278
+            residence_time_h: 1.923014301250323e-06
+            composition: {'LLA': 0.13196607765168772, 'H2O': 0.8489920108082908, 'AA': 0.010601308923569567, 'AcH': 0.00377652959940111, 'PA': 0.000584975488742437, 'PD23': 0.00015128396445366577, 'CO': 0.0031915541106586733, 'CO2': 0.0007362594531961029, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.058408826975067246, 0.016645906665060172, 0.003197349687853221, 0.0007241520226403402]
+            intrinsic_reaction_rates: [0.058408826975067246, 0.016645906665060172, 0.003197349687853221, 0.0007241520226403402]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 27.5
+            reaction_rates_kmol_kg_cat_h: [0.058408826975067246, 0.016645906665060172, 0.003197349687853221, 0.0007241520226403402]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.058408826975067246, 0.016645906665060172, 0.003197349687853221, 0.0007241520226403402]
+            position_m: 0.0144734157904336
+            density_kg_m3: 0.5463927350042089
+            viscosity_Pa_s: 2.0897072848352672e-05
+            velocity_m_s: 0.8428329032350925
+            friction_gradient_Pa_m: 51893.051096420335
+            reynolds_number: 13.222457857865852
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.0873015873015873
+            temperature_K: 623.3488764824957
+            temperature_C: 350.19887648249573
+            pressure_bar: 0.9982163825424307
+            total_flow_kmol_h: 179.1819752243635
+            residence_time_h: 3.815614553483172e-06
+            composition: {'LLA': 0.11869172268085547, 'H2O': 0.8483809504110802, 'AA': 0.018617745535142494, 'AcH': 0.006405910280393088, 'PA': 0.0010149222982426954, 'PD23': 0.00024141925694649955, 'CO': 0.005390987982150393, 'CO2': 0.001256341555189195, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.04914916862782859, 0.013051740901547272, 0.0025701898692041952, 0.0005070582594298773]
+            intrinsic_reaction_rates: [0.04914916862782859, 0.013051740901547272, 0.0025701898692041952, 0.0005070582594298773]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 55.0
+            reaction_rates_kmol_kg_cat_h: [0.04914916862782859, 0.013051740901547272, 0.0025701898692041952, 0.0005070582594298773]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.04914916862782859, 0.013051740901547272, 0.0025701898692041952, 0.0005070582594298773]
+            position_m: 0.0289468315808672
+            density_kg_m3: 0.5375100480908936
+            viscosity_Pa_s: 2.0858760795129982e-05
+            velocity_m_s: 0.8567612396936733
+            friction_gradient_Pa_m: 52673.684038890526
+            reynolds_number: 13.246744032589312
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.13095238095238096
+            temperature_K: 621.8328715721904
+            temperature_C: 348.6828715721904
+            pressure_bar: 0.9905277104855003
+            total_flow_kmol_h: 181.28231901202213
+            residence_time_h: 5.676877698709114e-06
+            composition: {'LLA': 0.10755975810034579, 'H2O': 0.847949725393854, 'AA': 0.025476315970912586, 'AcH': 0.008519580208382132, 'PA': 0.0013618124908927776, 'PD23': 0.000306613813615308, 'CO': 0.007157767717489354, 'CO2': 0.0016684263045080858, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.04460150773723426, 0.011241012163270532, 0.002183402159099738, 0.0003996799175470214]
+            intrinsic_reaction_rates: [0.04460150773723426, 0.011241012163270532, 0.002183402159099738, 0.0003996799175470214]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 82.50000000000001
+            reaction_rates_kmol_kg_cat_h: [0.04460150773723426, 0.011241012163270532, 0.002183402159099738, 0.0003996799175470214]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.04460150773723426, 0.011241012163270532, 0.002183402159099738, 0.0003996799175470214]
+            position_m: 0.043420247371300805
+            density_kg_m3: 0.5284730883162765
+            viscosity_Pa_s: 2.0865291348297455e-05
+            velocity_m_s: 0.8714119703188232
+            friction_gradient_Pa_m: 53587.748827073425
+            reynolds_number: 13.242597981390855
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.1746031746031746
+            temperature_K: 621.1509193674508
+            temperature_C: 348.0009193674508
+            pressure_bar: 0.9827002928794581
+            total_flow_kmol_h: 183.1899298770984
+            residence_time_h: 7.506502894420061e-06
+            composition: {'LLA': 0.09762693560267943, 'H2O': 0.8476266265529078, 'AA': 0.031701901438833675, 'AcH': 0.010337306577647191, 'PA': 0.0016535503073793671, 'PD23': 0.0003581864714526662, 'CO': 0.008683756270267825, 'CO2': 0.0020117367788320337, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.042108249294343626, 0.010163128865822657, 0.0019047524287700104, 0.00033447029864093974]
+            intrinsic_reaction_rates: [0.042108249294343626, 0.010163128865822657, 0.0019047524287700104, 0.00033447029864093974]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 110.0
+            reaction_rates_kmol_kg_cat_h: [0.042108249294343626, 0.010163128865822657, 0.0019047524287700104, 0.00033447029864093974]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.042108249294343626, 0.010163128865822657, 0.0019047524287700104, 0.00033447029864093974]
+            position_m: 0.0578936631617344
+            density_kg_m3: 0.5194043932232953
+            viscosity_Pa_s: 2.0895147830905177e-05
+            velocity_m_s: 0.8866266461326991
+            friction_gradient_Pa_m: 54585.42272780699
+            reynolds_number: 13.223676009672253
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.21825396825396823
+            temperature_K: 620.9490164981418
+            temperature_C: 347.7990164981418
+            pressure_bar: 0.9747239578917116
+            total_flow_kmol_h: 184.97958317787493
+            residence_time_h: 9.30450218296563e-06
+            composition: {'LLA': 0.08846142736041399, 'H2O': 0.8473808034227569, 'AA': 0.0375377031442313, 'AcH': 0.011957310098602611, 'PA': 0.0019036790744327494, 'PD23': 0.0004008834004799515, 'CO': 0.010053631024169863, 'CO2': 0.002304562474912701, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.040650952747154585, 0.009436945137572593, 0.0016823300132953747, 0.0002888063870575451]
+            intrinsic_reaction_rates: [0.040650952747154585, 0.009436945137572593, 0.0016823300132953747, 0.0002888063870575451]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 137.5
+            reaction_rates_kmol_kg_cat_h: [0.040650952747154585, 0.009436945137572593, 0.0016823300132953747, 0.0002888063870575451]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.040650952747154585, 0.009436945137572593, 0.0016823300132953747, 0.0002888063870575451]
+            position_m: 0.072367078952168
+            density_kg_m3: 0.5103676014081396
+            viscosity_Pa_s: 2.09380801045442e-05
+            velocity_m_s: 0.9023256450440027
+            friction_gradient_Pa_m: 55642.73035705346
+            reynolds_number: 13.19656165753842
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.2619047619047619
+            temperature_K: 621.0411910951673
+            temperature_C: 347.8911910951673
+            pressure_bar: 0.9665910722487883
+            total_flow_kmol_h: 186.68980040923458
+            residence_time_h: 1.107105174095876e-05
+            composition: {'LLA': 0.07983875630115776, 'H2O': 0.8471969621319599, 'AA': 0.04311100920762906, 'AcH': 0.01342971874296678, 'PA': 0.0021197424007041357, 'PD23': 0.00043704623630777073, 'CO': 0.011309976342262643, 'CO2': 0.0025567886370119067, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03975843134716344, 0.008893128976536312, 0.0014921623357276837, 0.00025327931178841635]
+            intrinsic_reaction_rates: [0.03975843134716344, 0.008893128976536312, 0.0014921623357276837, 0.00025327931178841635]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 165.00000000000003
+            reaction_rates_kmol_kg_cat_h: [0.03975843134716344, 0.008893128976536312, 0.0014921623357276837, 0.00025327931178841635]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03975843134716344, 0.008893128976536312, 0.0014921623357276837, 0.00025327931178841635]
+            position_m: 0.08684049474260161
+            density_kg_m3: 0.5013961753159368
+            viscosity_Pa_s: 2.0988653378200688e-05
+            velocity_m_s: 0.9184708576206853
+            friction_gradient_Pa_m: 56747.20692339737
+            reynolds_number: 13.164763842213848
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.3055555555555556
+            temperature_K: 621.3239817133615
+            temperature_C: 348.1739817133615
+            pressure_bar: 0.9582953314326591
+            total_flow_kmol_h: 188.3416605238298
+            residence_time_h: 1.2806412658476985e-05
+            composition: {'LLA': 0.07163301056488927, 'H2O': 0.8470668346778281, 'AA': 0.04849336284375511, 'AcH': 0.01478222698242863, 'PA': 0.0023064103555718776, 'PD23': 0.00046796379654924595, 'CO': 0.012475816626856755, 'CO2': 0.0027743741521211234, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03918537657065145, 0.008446214379798611, 0.0013220748200857902, 0.00022343359598576973]
+            intrinsic_reaction_rates: [0.03918537657065145, 0.008446214379798611, 0.0013220748200857902, 0.00022343359598576973]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 192.5
+            reaction_rates_kmol_kg_cat_h: [0.03918537657065145, 0.008446214379798611, 0.0013220748200857902, 0.00022343359598576973]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03918537657065145, 0.008446214379798611, 0.0013220748200857902, 0.00022343359598576973]
+            position_m: 0.1013139105330352
+            density_kg_m3: 0.49250683650405613
+            viscosity_Pa_s: 2.1043829014438482e-05
+            velocity_m_s: 0.9350484927661858
+            friction_gradient_Pa_m: 57892.36532035694
+            reynolds_number: 13.13024663432283
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.3492063492063492
+            temperature_K: 621.7386278144867
+            temperature_C: 348.5886278144867
+            pressure_bar: 0.9498310993986914
+            total_flow_kmol_h: 189.94693494656758
+            residence_time_h: 1.4510885889345685e-05
+            composition: {'LLA': 0.06377011922574502, 'H2O': 0.8469856978999993, 'AA': 0.053726704460467116, 'AcH': 0.01603090125095917, 'PA': 0.002466855201199391, 'PD23': 0.0004944103553354347, 'CO': 0.01356404604975978, 'CO2': 0.002961265556534826, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03879309819749589, 0.008048977588729368, 0.001165516278497957, 0.00019698136047883755]
+            intrinsic_reaction_rates: [0.03879309819749589, 0.008048977588729368, 0.001165516278497957, 0.00019698136047883755]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 220.0
+            reaction_rates_kmol_kg_cat_h: [0.03879309819749589, 0.008048977588729368, 0.001165516278497957, 0.00019698136047883755]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03879309819749589, 0.008048977588729368, 0.001165516278497957, 0.00019698136047883755]
+            position_m: 0.1157873263234688
+            density_kg_m3: 0.4837065335551639
+            viscosity_Pa_s: 2.110188139965995e-05
+            velocity_m_s: 0.9520602745748122
+            friction_gradient_Pa_m: 59075.16623373251
+            reynolds_number: 13.09412463547201
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.39285714285714285
+            temperature_K: 622.2523765581965
+            temperature_C: 349.1023765581965
+            pressure_bar: 0.9411930121334747
+            total_flow_kmol_h: 191.51202827030986
+            residence_time_h: 1.6184785493495646e-05
+            composition: {'LLA': 0.056205347229652106, 'H2O': 0.8469507752943637, 'AA': 0.05883608905201577, 'AcH': 0.01718529299944017, 'PA': 0.0026034221839586805, 'PD23': 0.0005168901205647181, 'CO': 0.014581870815481488, 'CO2': 0.0031203123045233988, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.038497488658002434, 0.007673192813323027, 0.0010188374053500956, 0.00017268655732550505]
+            intrinsic_reaction_rates: [0.038497488658002434, 0.007673192813323027, 0.0010188374053500956, 0.00017268655732550505]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 247.5
+            reaction_rates_kmol_kg_cat_h: [0.038497488658002434, 0.007673192813323027, 0.0010188374053500956, 0.00017268655732550505]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.038497488658002434, 0.007673192813323027, 0.0010188374053500956, 0.00017268655732550505]
+            position_m: 0.1302607421139024
+            density_kg_m3: 0.47499629963136886
+            viscosity_Pa_s: 2.1161856773534124e-05
+            velocity_m_s: 0.96951865837177
+            friction_gradient_Pa_m: 60294.73836437094
+            reynolds_number: 13.057014233063958
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.43650793650793646
+            temperature_K: 622.8486404734674
+            temperature_C: 349.69864047346744
+            pressure_bar: 0.9323757179266698
+            total_flow_kmol_h: 193.0400111705806
+            residence_time_h: 1.7828422183663876e-05
+            composition: {'LLA': 0.048911693867823285, 'H2O': 0.8469604493238283, 'AA': 0.06383629453091295, 'AcH': 0.01825103210920898, 'PA': 0.0027179805880996545, 'PD23': 0.0005357587354589114, 'CO': 0.015533051521109323, 'CO2': 0.003253739323558566, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.038243161006525306, 0.00730037779713448, 0.0008799719765657869, 0.00014986077622125286]
+            intrinsic_reaction_rates: [0.038243161006525306, 0.00730037779713448, 0.0008799719765657869, 0.00014986077622125286]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 275.0
+            reaction_rates_kmol_kg_cat_h: [0.038243161006525306, 0.00730037779713448, 0.0008799719765657869, 0.00014986077622125286]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.038243161006525306, 0.00730037779713448, 0.0008799719765657869, 0.00014986077622125286]
+            position_m: 0.144734157904336
+            density_kg_m3: 0.4663734589784409
+            viscosity_Pa_s: 2.122328596608402e-05
+            velocity_m_s: 0.9874442172564721
+            friction_gradient_Pa_m: 61551.702723222465
+            reynolds_number: 13.019221695059645
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.4801587301587301
+            temperature_K: 623.5218001730037
+            temperature_C: 350.37180017300375
+            pressure_bar: 0.9233736890123234
+            total_flow_kmol_h: 194.53166642514984
+            residence_time_h: 1.9442092768136917e-05
+            composition: {'LLA': 0.0418738163159505, 'H2O': 0.8470138632906756, 'AA': 0.06873529340356699, 'AcH': 0.019231167104701876, 'PA': 0.0028121177575241756, 'PD23': 0.0005512875114395119, 'CO': 0.016419049347177705, 'CO2': 0.0033634052689636876, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03798880668995374, 0.006916764898009208, 0.000747759936093914, 0.00012811599983143844]
+            intrinsic_reaction_rates: [0.03798880668995374, 0.006916764898009208, 0.000747759936093914, 0.00012811599983143844]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 302.5
+            reaction_rates_kmol_kg_cat_h: [0.03798880668995374, 0.006916764898009208, 0.000747759936093914, 0.00012811599983143844]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03798880668995374, 0.006916764898009208, 0.000747759936093914, 0.00012811599983143844]
+            position_m: 0.1592075736947696
+            density_kg_m3: 0.4578328737772987
+            viscosity_Pa_s: 2.1286032175606583e-05
+            velocity_m_s: 1.0058643700062642
+            friction_gradient_Pa_m: 62847.83499607994
+            reynolds_number: 12.980844095817123
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.5238095238095238
+            temperature_K: 624.2747857407456
+            temperature_C: 351.12478574074566
+            pressure_bar: 0.9141810649945761
+            total_flow_kmol_h: 195.98594936797915
+            residence_time_h: 2.1026072809294108e-05
+            composition: {'LLA': 0.03508509997622654, 'H2O': 0.8471107257420276, 'AA': 0.07353589730645521, 'AcH': 0.020126812388939742, 'PA': 0.002887253408630027, 'PD23': 0.0005636993943905532, 'CO': 0.017239558980309714, 'CO2': 0.0034509528030205803, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03769713735460387, 0.006510082402892597, 0.000621592455743036, 0.00010723735374504219]
+            intrinsic_reaction_rates: [0.03769713735460387, 0.006510082402892597, 0.000621592455743036, 0.00010723735374504219]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 330.00000000000006
+            reaction_rates_kmol_kg_cat_h: [0.03769713735460387, 0.006510082402892597, 0.000621592455743036, 0.00010723735374504219]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03769713735460387, 0.006510082402892597, 0.000621592455743036, 0.00010723735374504219]
+            position_m: 0.17368098948520322
+            density_kg_m3: 0.4493675767481554
+            viscosity_Pa_s: 2.1350220953948376e-05
+            velocity_m_s: 1.024813090616579
+            friction_gradient_Pa_m: 64185.9533740084
+            reynolds_number: 12.941817589901653
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.5674603174603174
+            temperature_K: 625.1187250438479
+            temperature_C: 351.96872504384794
+            pressure_bar: 0.9047914980618207
+            total_flow_kmol_h: 197.4000117668719
+            residence_time_h: 2.258061064198239e-05
+            composition: {'LLA': 0.028546900956424467, 'H2O': 0.8472512273103502, 'AA': 0.07823608301850778, 'AcH': 0.020937346251836613, 'PA': 0.0029447146519798297, 'PD23': 0.000573190779532239, 'CO': 0.017992631599856788, 'CO2': 0.0035179054315120683, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03732531601198248, 0.0060668560215825194, 0.0005012352433421025, 8.711773562411297e-05]
+            intrinsic_reaction_rates: [0.03732531601198248, 0.0060668560215825194, 0.0005012352433421025, 8.711773562411297e-05]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 357.5
+            reaction_rates_kmol_kg_cat_h: [0.03732531601198248, 0.0060668560215825194, 0.0005012352433421025, 8.711773562411297e-05]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03732531601198248, 0.0060668560215825194, 0.0005012352433421025, 8.711773562411297e-05]
+            position_m: 0.18815440527563682
+            density_kg_m3: 0.4409689347929394
+            viscosity_Pa_s: 2.1416232924734794e-05
+            velocity_m_s: 1.0443315590165096
+            friction_gradient_Pa_m: 65570.00575652756
+            reynolds_number: 12.901926592840214
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.6111111111111112
+            temperature_K: 626.0748301851077
+            temperature_C: 352.9248301851077
+            pressure_bar: 0.8951979684244512
+            total_flow_kmol_h: 198.7687488219748
+            residence_time_h: 2.4105921147022856e-05
+            composition: {'LLA': 0.022269935061874323, 'H2O': 0.8474360202459277, 'AA': 0.08282792071641344, 'AcH': 0.02166021704469059, 'PA': 0.0029857960880760766, 'PD23': 0.0005799468991636403, 'CO': 0.018674420956614517, 'CO2': 0.003565742987239717, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03681118743405065, 0.005569116074107942, 0.000386770118659799, 6.772954963745998e-05]
+            intrinsic_reaction_rates: [0.03681118743405065, 0.005569116074107942, 0.000386770118659799, 6.772954963745998e-05]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 385.0
+            reaction_rates_kmol_kg_cat_h: [0.03681118743405065, 0.005569116074107942, 0.000386770118659799, 6.772954963745998e-05]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03681118743405065, 0.005569116074107942, 0.000386770118659799, 6.772954963745998e-05]
+            position_m: 0.2026278210660704
+            density_kg_m3: 0.4326263120480457
+            viscosity_Pa_s: 2.1484766510881703e-05
+            velocity_m_s: 1.0644701034712305
+            friction_gradient_Pa_m: 67005.41720659024
+            reynolds_number: 12.8607711398748
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.6547619047619048
+            temperature_K: 627.1799262111882
+            temperature_C: 354.02992621118824
+            pressure_bar: 0.8853925190115933
+            total_flow_kmol_h: 200.08356674892738
+            residence_time_h: 2.5602177093910764e-05
+            composition: {'LLA': 0.0162789582973484, 'H2O': 0.8476662085117579, 'AA': 0.08729420790810705, 'AcH': 0.02229024242215179, 'PA': 0.0030118269648287776, 'PD23': 0.0005841567368271391, 'CO': 0.019278415457323013, 'CO2': 0.0035959837016559166, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03604476548543395, 0.004988581121112025, 0.00027864999219479953, 4.912692179748684e-05]
+            intrinsic_reaction_rates: [0.03604476548543395, 0.004988581121112025, 0.00027864999219479953, 4.912692179748684e-05]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 412.5
+            reaction_rates_kmol_kg_cat_h: [0.03604476548543395, 0.004988581121112025, 0.00027864999219479953, 4.912692179748684e-05]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03604476548543395, 0.004988581121112025, 0.00027864999219479953, 4.912692179748684e-05]
+            position_m: 0.217101236856504
+            density_kg_m3: 0.42432593992206113
+            viscosity_Pa_s: 2.1557017014654426e-05
+            velocity_m_s: 1.0852925353438125
+            friction_gradient_Pa_m: 68499.9113926393
+            reynolds_number: 12.817666976013445
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.6984126984126984
+            temperature_K: 628.5005235868475
+            temperature_C: 355.35052358684754
+            pressure_bar: 0.875365802448004
+            total_flow_kmol_h: 201.32933769066906
+            residence_time_h: 2.7069493875229024e-05
+            composition: {'LLA': 0.0106250194748009, 'H2O': 0.8479432007904729, 'AA': 0.09159958022057657, 'AcH': 0.02281792409928326, 'PA': 0.003024280469685252, 'PD23': 0.0005860354229489419, 'CO': 0.01979364362959801, 'CO2': 0.0036103158926341938, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03478979417610867, 0.004272925934906834, 0.00017795095727458855, 3.149474561307445e-05]
+            intrinsic_reaction_rates: [0.03478979417610867, 0.004272925934906834, 0.00017795095727458855, 3.149474561307445e-05]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 440.0
+            reaction_rates_kmol_kg_cat_h: [0.03478979417610867, 0.004272925934906834, 0.00017795095727458855, 3.149474561307445e-05]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03478979417610867, 0.004272925934906834, 0.00017795095727458855, 3.149474561307445e-05]
+            position_m: 0.2315746526469376
+            density_kg_m3: 0.41604793315860933
+            viscosity_Pa_s: 2.163513144623646e-05
+            velocity_m_s: 1.1068863427681
+            friction_gradient_Pa_m: 70065.48736136213
+            reynolds_number: 12.771388321662432
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.742063492063492
+            temperature_K: 630.1744824323737
+            temperature_C: 357.0244824323737
+            pressure_bar: 0.8651061266835888
+            total_flow_kmol_h: 202.4755811757223
+            residence_time_h: 2.85078954697417e-05
+            composition: {'LLA': 0.005422216193101708, 'H2O': 0.8482676561013517, 'AA': 0.09566312926649716, 'AcH': 0.02322510871135483, 'PA': 0.0030250289541699123, 'PD23': 0.0005858760310849441, 'CO': 0.020200079757184918, 'CO2': 0.0036109049852548563, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.03238088366404104, 0.003301585752971683, 8.72067092088036e-05, 1.5331870785789117e-05]
+            intrinsic_reaction_rates: [0.03238088366404104, 0.003301585752971683, 8.72067092088036e-05, 1.5331870785789117e-05]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 467.5
+            reaction_rates_kmol_kg_cat_h: [0.03238088366404104, 0.003301585752971683, 8.72067092088036e-05, 1.5331870785789117e-05]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.03238088366404104, 0.003301585752971683, 8.72067092088036e-05, 1.5331870785789117e-05]
+            position_m: 0.2460480684373712
+            density_kg_m3: 0.40775725109104133
+            viscosity_Pa_s: 2.172355865330964e-05
+            velocity_m_s: 1.1293919946682656
+            friction_gradient_Pa_m: 71724.15454629638
+            reynolds_number: 12.719401526231952
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.7857142857142857
+            temperature_K: 632.6068468191464
+            temperature_C: 359.45684681914645
+            pressure_bar: 0.8545966521614282
+            total_flow_kmol_h: 203.4360457380476
+            residence_time_h: 2.991720848581458e-05
+            composition: {'LLA': 0.001022804432690102, 'H2O': 0.8486300536466533, 'AA': 0.09922249471787281, 'AcH': 0.02346942097970497, 'PA': 0.0030173110782678466, 'PD23': 0.0005842470825529866, 'CO': 0.020452109901437122, 'CO2': 0.0036015581608208327, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.02525273686039373, 0.0016227321156294277, 1.4379061293285642e-05, 2.3466591633748694e-06]
+            intrinsic_reaction_rates: [0.02525273686039373, 0.0016227321156294277, 1.4379061293285642e-05, 2.3466591633748694e-06]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 495.0
+            reaction_rates_kmol_kg_cat_h: [0.02525273686039373, 0.0016227321156294277, 1.4379061293285642e-05, 2.3466591633748694e-06]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.02525273686039373, 0.0016227321156294277, 1.4379061293285642e-05, 2.3466591633748694e-06]
+            position_m: 0.2605214842278048
+            density_kg_m3: 0.3993599385991296
+            viscosity_Pa_s: 2.1835429212495688e-05
+            velocity_m_s: 1.1531396383061334
+            friction_gradient_Pa_m: 73534.64246603622
+            reynolds_number: 12.654235572890528
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.8011156268066837
+            temperature_K: 634.0212010229336
+            temperature_C: 360.87120102293363
+            pressure_bar: 0.8508233562122773
+            total_flow_kmol_h: 203.65403586731708
+            residence_time_h: 3.0407385884471185e-05
+            composition: {'LLA': 0.0, 'H2O': 0.8487431073137576, 'AA': 0.10008864781673614, 'AcH': 0.023493271312273988, 'PA': 0.003014368512698713, 'PD23': 0.0005836668661297952, 'CO': 0.020478902799575278, 'CO2': 0.003598035378828508, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.0, 0.0, 0.0, 0.0]
+            intrinsic_reaction_rates: [0.0, 0.0, 0.0, 0.0]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 504.70284488821073
+            reaction_rates_kmol_kg_cat_h: [0.0, 0.0, 0.0, 0.0]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.0, 0.0, 0.0, 0.0]
+            position_m: 0.2656281499884287
+            density_kg_m3: 0.3962848521870065
+            viscosity_Pa_s: 2.1892766942180438e-05
+            velocity_m_s: 1.1620877573509725
+            friction_gradient_Pa_m: 74261.42321343414
+            reynolds_number: 12.621093798688952
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.8293650793650793
+            temperature_K: 638.5233811059672
+            temperature_C: 365.37338110596727
+            pressure_bar: 0.8437917987549634
+            total_flow_kmol_h: 203.65403586731708
+            residence_time_h: 3.12961242794359e-05
+            composition: {'LLA': 0.0, 'H2O': 0.8487431073137576, 'AA': 0.10008864781673614, 'AcH': 0.023493271312273988, 'PA': 0.003014368512698713, 'PD23': 0.0005836668661297952, 'CO': 0.020478902799575278, 'CO2': 0.003598035378828508, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.0, 0.0, 0.0, 0.0]
+            intrinsic_reaction_rates: [0.0, 0.0, 0.0, 0.0]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 522.5
+            reaction_rates_kmol_kg_cat_h: [0.0, 0.0, 0.0, 0.0]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.0, 0.0, 0.0, 0.0]
+            position_m: 0.2749949000182384
+            density_kg_m3: 0.390238298634595
+            viscosity_Pa_s: 2.206040302566496e-05
+            velocity_m_s: 1.1800937446720783
+            friction_gradient_Pa_m: 75875.72339716551
+            reynolds_number: 12.525186632748168
+            darcy_friction_factor: None
+            reactor_volume_m3: 0.8730158730158729
+            temperature_K: 645.1005016836212
+            temperature_C: 371.95050168362127
+            pressure_bar: 0.8326289192336658
+            total_flow_kmol_h: 203.65403586731708
+            residence_time_h: 3.2642911703792394e-05
+            composition: {'LLA': 0.0, 'H2O': 0.8487431073137576, 'AA': 0.10008864781673614, 'AcH': 0.023493271312273988, 'PA': 0.003014368512698713, 'PD23': 0.0005836668661297952, 'CO': 0.020478902799575278, 'CO2': 0.003598035378828508, 'MIBK': 0.0}
+            reaction_measure_basis: catalyst_mass
+            reaction_rates: [0.0, 0.0, 0.0, 0.0]
+            intrinsic_reaction_rates: [0.0, 0.0, 0.0, 0.0]
+            effectiveness_factors: [1.0, 1.0, 1.0, 1.0]
+            catalyst_mass_kg: 550.0
+            reaction_rates_kmol_kg_cat_h: [0.0, 0.0, 0.0, 0.0]
+            intrinsic_reaction_rates_kmol_kg_cat_h: [0.0, 0.0, 0.0, 0.0]
+            position_m: 0.289468315808672
+            density_kg_m3: 0.38114911884960795
+            viscosity_Pa_s: 2.2305091751651277e-05
+            velocity_m_s: 1.208235182440154
+            friction_gradient_Pa_m: 78378.0250299565
+            reynolds_number: 12.387784285605566
+            darcy_friction_factor: None
+        maximum_material_balance_residual_kmol_h = 0.0000
+        energy_balance_residual_kW = 4.139211e-12
+        duty_kW = 409.6819
+        phase_stability:
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.000000
+            unconstrained_liquid2_fraction: 0.000000
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+        phase_stability_profile:
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+            requested_phase: vapor
+            unconstrained_vapor_fraction: 1.0
+            unconstrained_liquid2_fraction: 0.0
+            flash_status: single_vapor
+            flash_stability: vle_constrained
+            liquid_spinodal: None
+            global_liquid_liquid_stability: None
+            global_liquid_liquid_stability_checked: False
+        global_phase_stability_profile_checks:
+            21: {'requested_phase': 'vapor', 'unconstrained_vapor_fraction': 1.0, 'unconstrained_liquid2_fraction': 0.0, 'flash_status': 'single_vapor', 'flash_stability': 'vle_constrained', 'liquid_spinodal': None, 'global_liquid_liquid_stability': None, 'global_liquid_liquid_stability_checked': False}
+        component_depletion_events:
+            coordinate: 0.2656281499884287
+            coordinate_kind: length
+            components: ('LLA',)
+            reaction_measure_at_event: 504.70284488821073
+            remaining_reaction_measure: 45.297155111789266
+            reaction_measure_basis: catalyst_mass
+            all_reactions_inactive_downstream: True
+            remaining_catalyst_mass_kg: 45.297155111789266
+        reaction_inactive_from_coordinate = 0.2656
+        inactive_remaining_catalyst_mass_kg = 45.2972
+        inlet_velocity_m_s = 0.8300
+        outlet_velocity_m_s = 1.2082
+        inlet_reynolds_number = 13.1350
+        outlet_reynolds_number = 12.3878
+        catalyst_mass_kg = 550.0000
+        bulk_catalyst_density_kg_m3_bed = 630.0000
+        bed_void_fraction = 0.4000
+        particle_density_kg_m3_particle = 1050.0000
+        kinetic_basis = apparent
+        diffusion_model = none
+        fluid_void_volume_m3 = 0.3492
+        minimum_effectiveness_factor = 1.0000
+        maximum_effectiveness_factor = 1.0000
+    WARNINGS:
+        - PackedBedReactor component inventory depleted for LLA at z=0.265628; reaction directions consuming absent components were suppressed while hydraulic and thermal balances continued to the outlet; all reactions are inactive through the remaining 45.2972 kg catalyst
+
+UNIT_RESULT E-201:
+    type = Cooler
+    heating_duty = 0.0000 [kW]
+    cooling_duty = 3244.2430 [kW]
+    net_heat_duty = -3244.2430 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        T_in_C = 371.9505
+        T_out_C = 40.0000
+        P_in_bar = 0.8326
+        P_out_bar = 0.8326
+        P_drop_bar = 0.0000
+        duty_kW = -3244.2430
+        henry:
+            selection_mode: manual
+            water_component: H2O
+            water_mole_fraction_cutoff: 0.950000
+            dilute_mole_fraction_cutoff: 0.001000
+            estimated_water_mole_fraction: 0.869682
+            selection_reference_temperature_C: 40.000000
+            components: {'CO': {'reason': 'manual_override', 'estimated_max_aqueous_mole_fraction': None, 'Hcp_298_mol_m3_Pa': 9.369697394441044e-06, 'B_K': 1300.869221651521, 'quality_h': 'A', 'quality_b': 'A+', 'quality_score_h': 0.9217799927920605, 'quality_score_b': 0.9681563225629561, 'H_source': 'database', 'B_source': 'database', 'full_quality_temperature_min_C': 5.0, 'full_quality_temperature_max_C': 315.52, 'temperature_range_source': 'IAPWS G7-04 Table 2', 'richer_temperature_dependence_available_upstream': True, 'temperature_model': 'iapws_g7_04', 'temperature_correlation_source': 'IAPWS G7-04', 'temperature_correlation_DOI': '10.1063/1.1564818', 'temperature_fit_RMS_lnH': 0.0039, 'temperature_fit_quality_indicator': 0.9961075951231319, 'temperature_fit_uncertainty_upper_percent': None, 'temperature_normalized_to_reference': True, 'temperature_raw_reference_value_difference_percent': 3.782201926384521, 'temperature_raw_reference_slope_difference_K': 9.938405132842945, 'temperature_raw_reference_slope_difference_percent': 0.7639818797638723, 'Vinf_cm3_per_mol': 35.46773824376726, 'Vinf_uncertainty_cm3_per_mol': None, 'Vinf_estimated_relative_MAE': None, 'Vinf_source': 'Zhou and Battino (2001) correlation', 'Vinf_method': 'henry_vinf_from_critical_volume', 'Vinf_quality': 0.9, 'Vinf_unavailable_reason': None, 'pressure_correction': 'Krichevsky-Kasarnovsky', 'base_correlation_quality': 0.9217799927920605, 'base_correlation_grade': 'A', 'minimum_effective_quality': 0.9217799927920605, 'minimum_effective_grade': 'A', 'maximum_temperature_penalty': 0.0, 'maximum_pressure_penalty': 0.0, 'temperature_penalty_per_K': 0.005, 'pressure_penalty_per_bar_above_10': 0.001, 'pressure_quality_method': 'Vc_correlation', 'minimum_Hcp_pressure_correction_factor': 1.0002280347277375, 'maximum_Hcp_pressure_correction_factor': 1.0002280347277375, 'maximum_solved_aqueous_mole_fraction': 7.682810785994516e-06}, 'CO2': {'reason': 'manual_override', 'estimated_max_aqueous_mole_fraction': None, 'Hcp_298_mol_m3_Pa': 0.000335306528796783, 'B_K': 2370.8624708624707, 'quality_h': 'A+', 'quality_b': 'A+', 'quality_score_h': 0.9853086886532113, 'quality_score_b': 0.9766395859969861, 'H_source': 'database', 'B_source': 'database', 'full_quality_temperature_min_C': 1.0400000000000205, 'full_quality_temperature_max_C': 369.51, 'temperature_range_source': 'IAPWS G7-04 Table 2', 'richer_temperature_dependence_available_upstream': True, 'temperature_model': 'iapws_g7_04', 'temperature_correlation_source': 'IAPWS G7-04', 'temperature_correlation_DOI': '10.1063/1.1564818', 'temperature_fit_RMS_lnH': 0.0528, 'temperature_fit_quality_indicator': 0.9485697074536594, 'temperature_fit_uncertainty_upper_percent': None, 'temperature_normalized_to_reference': True, 'temperature_raw_reference_value_difference_percent': -0.3556569108691843, 'temperature_raw_reference_slope_difference_K': -55.01459810998131, 'temperature_raw_reference_slope_difference_percent': -2.3204466216873447, 'Vinf_cm3_per_mol': 35.99198909285764, 'Vinf_uncertainty_cm3_per_mol': None, 'Vinf_estimated_relative_MAE': 0.09, 'Vinf_source': 'Zhou and Battino (2001) correlation', 'Vinf_method': 'henry_vinf_from_critical_volume', 'Vinf_quality': 0.9, 'Vinf_unavailable_reason': None, 'pressure_correction': 'Krichevsky-Kasarnovsky', 'base_correlation_quality': 0.9766395859969861, 'base_correlation_grade': 'A+', 'minimum_effective_quality': 0.9766395859969861, 'minimum_effective_grade': 'A+', 'maximum_temperature_penalty': 0.0, 'maximum_pressure_penalty': 0.0, 'temperature_penalty_per_K': 0.005, 'pressure_penalty_per_bar_above_10': 0.001, 'pressure_quality_method': 'Vc_correlation', 'minimum_Hcp_pressure_correction_factor': 1.0002314057132153, 'maximum_Hcp_pressure_correction_factor': 1.0002314057132153, 'maximum_solved_aqueous_mole_fraction': 4.0077385613114976e-05}}
+            enabled: True
+            solvent_feed_water_mole_fraction: 0.869682
+            fully_loaded_water_mole_fraction_estimate: 0.869682
+            aqueous_loading_water_basis_moles: 172.849959
+            minimum_solved_water_mole_fraction: 0.873659
+            minimum_solved_temperature_C: 40.000000
+            maximum_solved_temperature_C: 40.000000
+            minimum_solved_pressure_bar: 0.832629
+            maximum_solved_pressure_bar: 0.832629
+    WARNINGS:
+        - Flash 'E-201' is applying manually selected Henry components at estimated x_H2O=0.8697, below the pure-water cutoff 0.95.
+        - Cooler 'E-201' selected pure-water Henry constants from a pre-solve aqueous estimate, but the solved profile reaches x_H2O=0.8737 below the 0.95 cutoff; Henry components remained frozen for numerical continuity.
+
+UNIT_RESULT F-201:
+    type = Flash
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        T_C = 40.0000
+        P_bar = 0.8326
+        pressure_source = upstream
+        vapor_fraction = 0.0314
+        fluid_vapor_fraction = 0.0314
+        duty_kW = 0.0000
+        liquid_composition:
+            LLA: 0.000000
+            H2O: 0.873659
+            AA: 0.103227
+            AcH: 0.019405
+            PA: 0.003108
+            PD23: 0.000553
+            CO: 0.000008
+            CO2: 0.000040
+            MIBK: 0.000000
+        nonvapor_composition:
+            H2O: 0.873659
+            AA: 0.103227
+            AcH: 0.019405
+            PA: 0.003108
+            PD23: 0.000553
+            CO: 0.000008
+            CO2: 0.000040
+        vapor_composition:
+            LLA: 0.000000
+            H2O: 0.080643
+            AA: 0.003334
+            AcH: 0.149534
+            PA: 0.000126
+            PD23: 0.001529
+            CO: 0.651552
+            CO2: 0.113280
+            MIBK: 0.000000
+        vapor_flow_kmol_hr = 6.3987
+        liquid_flow_kmol_hr = 197.2553
+        liquid1_fraction_of_liquid_outlet = 1.0000
+        liquid2_fraction_of_liquid_outlet = 0.0000
+        henry:
+            selection_mode: manual
+            water_component: H2O
+            water_mole_fraction_cutoff: 0.950000
+            dilute_mole_fraction_cutoff: 0.001000
+            estimated_water_mole_fraction: 0.869682
+            selection_reference_temperature_C: 40.000000
+            components: {'CO': {'reason': 'manual_override', 'estimated_max_aqueous_mole_fraction': None, 'Hcp_298_mol_m3_Pa': 9.369697394441044e-06, 'B_K': 1300.869221651521, 'quality_h': 'A', 'quality_b': 'A+', 'quality_score_h': 0.9217799927920605, 'quality_score_b': 0.9681563225629561, 'H_source': 'database', 'B_source': 'database', 'full_quality_temperature_min_C': 5.0, 'full_quality_temperature_max_C': 315.52, 'temperature_range_source': 'IAPWS G7-04 Table 2', 'richer_temperature_dependence_available_upstream': True, 'temperature_model': 'iapws_g7_04', 'temperature_correlation_source': 'IAPWS G7-04', 'temperature_correlation_DOI': '10.1063/1.1564818', 'temperature_fit_RMS_lnH': 0.0039, 'temperature_fit_quality_indicator': 0.9961075951231319, 'temperature_fit_uncertainty_upper_percent': None, 'temperature_normalized_to_reference': True, 'temperature_raw_reference_value_difference_percent': 3.782201926384521, 'temperature_raw_reference_slope_difference_K': 9.938405132842945, 'temperature_raw_reference_slope_difference_percent': 0.7639818797638723, 'Vinf_cm3_per_mol': 35.46773824376726, 'Vinf_uncertainty_cm3_per_mol': None, 'Vinf_estimated_relative_MAE': None, 'Vinf_source': 'Zhou and Battino (2001) correlation', 'Vinf_method': 'henry_vinf_from_critical_volume', 'Vinf_quality': 0.9, 'Vinf_unavailable_reason': None, 'pressure_correction': 'Krichevsky-Kasarnovsky', 'base_correlation_quality': 0.9217799927920605, 'base_correlation_grade': 'A', 'minimum_effective_quality': 0.9217799927920605, 'minimum_effective_grade': 'A', 'maximum_temperature_penalty': 0.0, 'maximum_pressure_penalty': 0.0, 'temperature_penalty_per_K': 0.005, 'pressure_penalty_per_bar_above_10': 0.001, 'pressure_quality_method': 'Vc_correlation', 'minimum_Hcp_pressure_correction_factor': 1.0002280347277375, 'maximum_Hcp_pressure_correction_factor': 1.0002280347277375, 'maximum_solved_aqueous_mole_fraction': 7.682810785994516e-06}, 'CO2': {'reason': 'manual_override', 'estimated_max_aqueous_mole_fraction': None, 'Hcp_298_mol_m3_Pa': 0.000335306528796783, 'B_K': 2370.8624708624707, 'quality_h': 'A+', 'quality_b': 'A+', 'quality_score_h': 0.9853086886532113, 'quality_score_b': 0.9766395859969861, 'H_source': 'database', 'B_source': 'database', 'full_quality_temperature_min_C': 1.0400000000000205, 'full_quality_temperature_max_C': 369.51, 'temperature_range_source': 'IAPWS G7-04 Table 2', 'richer_temperature_dependence_available_upstream': True, 'temperature_model': 'iapws_g7_04', 'temperature_correlation_source': 'IAPWS G7-04', 'temperature_correlation_DOI': '10.1063/1.1564818', 'temperature_fit_RMS_lnH': 0.0528, 'temperature_fit_quality_indicator': 0.9485697074536594, 'temperature_fit_uncertainty_upper_percent': None, 'temperature_normalized_to_reference': True, 'temperature_raw_reference_value_difference_percent': -0.3556569108691843, 'temperature_raw_reference_slope_difference_K': -55.01459810998131, 'temperature_raw_reference_slope_difference_percent': -2.3204466216873447, 'Vinf_cm3_per_mol': 35.99198909285764, 'Vinf_uncertainty_cm3_per_mol': None, 'Vinf_estimated_relative_MAE': 0.09, 'Vinf_source': 'Zhou and Battino (2001) correlation', 'Vinf_method': 'henry_vinf_from_critical_volume', 'Vinf_quality': 0.9, 'Vinf_unavailable_reason': None, 'pressure_correction': 'Krichevsky-Kasarnovsky', 'base_correlation_quality': 0.9766395859969861, 'base_correlation_grade': 'A+', 'minimum_effective_quality': 0.9766395859969861, 'minimum_effective_grade': 'A+', 'maximum_temperature_penalty': 0.0, 'maximum_pressure_penalty': 0.0, 'temperature_penalty_per_K': 0.005, 'pressure_penalty_per_bar_above_10': 0.001, 'pressure_quality_method': 'Vc_correlation', 'minimum_Hcp_pressure_correction_factor': 1.0002314057132153, 'maximum_Hcp_pressure_correction_factor': 1.0002314057132153, 'maximum_solved_aqueous_mole_fraction': 4.0077385613114976e-05}}
+            enabled: True
+            solvent_feed_water_mole_fraction: 0.869682
+            fully_loaded_water_mole_fraction_estimate: 0.869682
+            aqueous_loading_water_basis_moles: 172.849959
+            minimum_solved_water_mole_fraction: 0.873659
+            minimum_solved_temperature_C: 40.000000
+            maximum_solved_temperature_C: 40.000000
+            minimum_solved_pressure_bar: 0.832629
+            maximum_solved_pressure_bar: 0.832629
+        duty_residual_kW = 0.0000
+    WARNINGS:
+        - Flash 'F-201' is applying manually selected Henry components at estimated x_H2O=0.8697, below the pure-water cutoff 0.95.
+        - Flash 'F-201' selected pure-water Henry constants from a pre-solve aqueous estimate, but the solved profile reaches x_H2O=0.8737 below the 0.95 cutoff; Henry components remained frozen for numerical continuity.
+
+UNIT_RESULT C-201:
+    type = RigorousDistillation
+    heating_duty = 425.8320 [kW]
+    cooling_duty = 71.2953 [kW]
+    net_heat_duty = 354.5367 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        N_stages = 15
+        feed_stage = 8
+        feeds:
+            port: feed
+            stage: 8
+            flow: 197.2553210269394
+            composition: {'AA': 0.10322724235943506, 'AcH': 0.019404652955618055, 'PA': 0.003108061964002511, 'PD23': 0.000552985782125867, 'CO': 7.682810785994516e-06, 'CO2': 4.0077385613114976e-05, 'H2O': 0.8736592967424194}
+            temperature_C: 40.0
+            pressure_bar: 0.8326289192336658
+            vapor_fraction: 0.0
+        feed_thermal_condition_q = 1.1009
+        stage_phase_model = VLE
+        liquid_phase_routing = single
+        stage_phase_counts:
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+            - 2
+        stage_spinodal_minimum_eigenvalues:
+        condenser_type = partial
+        distillate_vapor_fraction = 1.0000
+        reflux_ratio = 1.0000
+        distillate_flow = 5.9177
+        distillate_liquid_flow = 0.0000
+        distillate_vapor_flow = 5.9177
+        bottoms_flow = 191.3377
+        mesh_residual = 1.222992e-06
+        component_balance_error = 1.409889e-09
+        solver = sparse_damped_newton
+        initializer = previous_recycle
+        jacobian_method = colored_finite_difference
+        jacobian_fallback = False
+        jacobian_dense_mb = 0.1432
+        solver_iterations = 0
+        function_evaluations = 1
+        jacobian_evaluations = 0
+        finite_difference_rel_step = 1.000000e-06
+        T_top_C = 67.7160
+        T_bottom_C = 95.3017
+        stage_temperatures_C:
+            - 67.71595466295815
+            - 83.77097146917106
+            - 84.21254891125625
+            - 84.28334737269711
+            - 84.36879053383342
+            - 84.48562858343632
+            - 84.65337449241093
+            - 84.93285187693783
+            - 92.99740321424338
+            - 94.83123573066291
+            - 95.17374006880993
+            - 95.23546850149307
+            - 95.24678428595303
+            - 95.25222800646856
+            - 95.30174008325497
+        stage_pressures_bar:
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+            - 0.8326289192336658
+        stage_liquid_compositions:
+            AA: 0.003132235899958996
+            AcH: 0.017755463113314024
+            PA: 0.003211125582776146
+            PD23: 0.00046162908242271104
+            CO: 5.833099562531575e-07
+            CO2: 4.8555122943401535e-06
+            H2O: 0.9754341074992775
+            AA: 0.005586145807863848
+            AcH: 0.005569301573965083
+            PA: 0.002609494661195582
+            PD23: 9.529553819823176e-05
+            CO: 2.7324692006502083e-07
+            CO2: 1.9612003209057614e-06
+            H2O: 0.9861375279715362
+            AA: 0.009331300912523323
+            AcH: 0.00553968631268289
+            PA: 0.002229987167271093
+            PD23: 9.54545776915527e-05
+            CO: 2.6896640901356936e-07
+            CO2: 1.945302416242503e-06
+            H2O: 0.9828013567610059
+            AA: 0.015047058001460462
+            AcH: 0.005870600864848389
+            PA: 0.002025900953286521
+            PD23: 0.00010456834464852559
+            CO: 2.6873462952140517e-07
+            CO2: 1.982161016841087e-06
+            H2O: 0.9769496209401097
+            AA: 0.023690301635818343
+            AcH: 0.006411184303029628
+            PA: 0.001952794743065551
+            PD23: 0.00012053675931208215
+            CO: 2.6849722311190204e-07
+            CO2: 2.0408067429651645e-06
+            H2O: 0.9678228732548084
+            AA: 0.036896724107596424
+            AcH: 0.007290222913006817
+            PA: 0.002011203366503887
+            PD23: 0.0001492413434088311
+            CO: 2.680769567565123e-07
+            CO2: 2.1303263626102265e-06
+            H2O: 0.9536502098661648
+            AA: 0.05815604585774347
+            AcH: 0.008816136737114408
+            PA: 0.0022723936404518428
+            PD23: 0.00020735473114468544
+            CO: 2.6732287184937274e-07
+            CO2: 2.2714607127574304e-06
+            H2O: 0.930545530249961
+            AA: 0.09721408022673855
+            AcH: 0.01190628357889456
+            PA: 0.0030295315669258364
+            PD23: 0.00036112514456443834
+            CO: 2.6589605674362166e-07
+            CO2: 2.518053797924687e-06
+            H2O: 0.8874861955330219
+            AA: 0.09715902428565877
+            AcH: 0.0024701025199815843
+            PA: 0.003038362647666068
+            PD23: 6.13839521285287e-05
+            CO: 3.6429961659751414e-09
+            CO2: 5.833720935470496e-08
+            H2O: 0.8972710646143596
+            AA: 0.0971390003423565
+            AcH: 0.0004571426283222926
+            PA: 0.003039891132631464
+            PD23: 8.753019279158086e-06
+            CO: 4.5862994043449426e-11
+            CO2: 1.2233415838735644e-09
+            H2O: 0.899355211608206
+            AA: 0.09713542462946088
+            AcH: 8.263221325885569e-05
+            PA: 0.0030401217687246853
+            PD23: 1.2051456650022415e-06
+            CO: 5.670389184341096e-13
+            CO2: 2.512435673058297e-11
+            H2O: 0.8997406162171991
+            AA: 0.09713781669445953
+            AcH: 1.4863320386770402e-05
+            PA: 0.003039882683915843
+            PD23: 1.6483984644056694e-07
+            CO: 2.2449974462172393e-14
+            CO2: 5.747688836212172e-13
+            H2O: 0.8998072724607943
+            AA: 0.09717991091430647
+            AcH: 2.6626769143557024e-06
+            PA: 0.003038345989279879
+            PD23: 2.249145279067092e-08
+            CO: 1.8036870953609482e-14
+            CO2: 1.9633567472233295e-13
+            H2O: 0.8997790579278321
+            AA: 0.09777454212873991
+            AcH: 4.693311550006645e-07
+            PA: 0.0030364489932628697
+            PD23: 3.0499366145323764e-09
+            CO: 1.8001923508337398e-14
+            CO2: 1.9080582378135302e-13
+            H2O: 0.8991885364966967
+            AA: 0.10640773790494916
+            AcH: 7.907149349921464e-08
+            PA: 0.0031734355359491454
+            PD23: 4.944204337877051e-10
+            CO: 1.808797815654015e-14
+            CO2: 1.96032295993598e-13
+            H2O: 0.8904187469929736
+        stage_vapor_compositions:
+            AA: 0.00039121444718680947
+            AcH: 0.6468192555386049
+            PA: 0.000994316313474253
+            PD23: 0.018432845979810125
+            CO: 0.00025609369286648336
+            CO2: 0.0013359128537703668
+            H2O: 0.33177036117428715
+            AA: 0.0017617251735729056
+            AcH: 0.3322873593259583
+            PA: 0.002102720948125012
+            PD23: 0.009447237531116256
+            CO: 0.00012833850141136875
+            CO2: 0.000670384183032353
+            H2O: 0.6536022343367839
+            AA: 0.003021754891763205
+            AcH: 0.3221116084356623
+            PA: 0.0018121889038697813
+            PD23: 0.009147320389182671
+            CO: 0.00012655472827005548
+            CO2: 0.000660444107047403
+            H2O: 0.6631201285442045
+            AA: 0.0049206431868253145
+            AcH: 0.32191970090263833
+            PA: 0.0016203598198343636
+            PD23: 0.009142342140860026
+            CO: 0.00012648198577400814
+            CO2: 0.0006600680520141866
+            H2O: 0.6616104039120537
+            AA: 0.00782037525578819
+            AcH: 0.32191740952786213
+            PA: 0.0015172345711963468
+            PD23: 0.009142099842130071
+            CO: 0.00012641403665577367
+            CO2: 0.0006597330359866661
+            H2O: 0.6588167337303807
+            AA: 0.012214267679655503
+            AcH: 0.32184606429635426
+            PA: 0.0014806933720897854
+            PD23: 0.009140318552855022
+            CO: 0.0001262759501450338
+            CO2: 0.0006590434086445315
+            H2O: 0.6545333367402559
+            AA: 0.01895427086683906
+            AcH: 0.3216186591061936
+            PA: 0.0015114035124589478
+            PD23: 0.009135630639513238
+            CO: 0.00012600633383764572
+            CO2: 0.0006576842647673389
+            H2O: 0.6479963452763902
+            AA: 0.029884384839059492
+            AcH: 0.3210720104783761
+            PA: 0.0016468682461652719
+            PD23: 0.009127399988770324
+            CO: 0.00012547562410835994
+            CO2: 0.0006549914023158787
+            H2O: 0.6374888694212045
+            AA: 0.045028324039605584
+            AcH: 0.07948921652168214
+            PA: 0.002212692630153506
+            PD23: 0.0024109694400222216
+            CO: 1.7751959488905e-06
+            CO2: 1.681122674740484e-05
+            H2O: 0.8708402109458403
+            AA: 0.04926237060510771
+            AcH: 0.015261711179950708
+            PA: 0.0023388556959557825
+            PD23: 0.00037927312890914335
+            CO: 2.2509114182718205e-08
+            CO2: 3.6045025757888265e-07
+            H2O: 0.9327574064307049
+            AA: 0.05009002654814183
+            AcH: 0.0027772470836756992
+            PA: 0.0023620073099034824
+            PD23: 5.3182050797962936e-05
+            CO: 2.786679156103727e-10
+            CO2: 7.433137095438624e-09
+            H2O: 0.944717529295676
+            AA: 0.050241766430869146
+            AcH: 0.0005001425787300201
+            PA: 0.0023659027073727828
+            PD23: 7.297931420940266e-06
+            CO: 1.1035551969680625e-11
+            CO2: 1.7017157373176245e-10
+            H2O: 0.9468848901704
+            AA: 0.05028758781712944
+            AcH: 8.959033401554037e-05
+            PA: 0.00236490587880108
+            PD23: 9.958428947950476e-07
+            CO: 8.866628017837195e-12
+            CO2: 5.813106111382181e-11
+            H2O: 0.9472569200601614
+            AA: 0.05055252861744214
+            AcH: 1.5724748818100287e-05
+            PA: 0.002355750611190089
+            PD23: 1.3404672399631727e-07
+            CO: 8.84963547883508e-12
+            CO2: 5.6415029805532414e-11
+            H2O: 0.9470758619105609
+            AA: 0.054218309461149965
+            AcH: 2.4913999365824916e-06
+            PA: 0.0023453238355004183
+            PD23: 1.9460619290841798e-08
+            CO: 8.893648384371962e-12
+            CO2: 5.677289169843141e-11
+            H2O: 0.9434338557771272
+        liquid_flows:
+            - 5.917659630808183
+            - 6.070308118135103
+            - 6.07701147314452
+            - 6.083461327283516
+            - 6.096601412468487
+            - 6.122342810371972
+            - 6.173338867396961
+            - 225.04595882363077
+            - 228.2844443144044
+            - 229.03154624656932
+            - 229.17098123700583
+            - 229.1962827848188
+            - 229.2044851482753
+            - 229.26232992699096
+            - 191.3376613969076
+        vapor_flows:
+            - 5.917659630808183
+            - 11.835319261616364
+            - 11.987967748943287
+            - 11.994671103952706
+            - 12.001120958091697
+            - 12.01426104327667
+            - 12.040002441180155
+            - 12.090998498205142
+            - 33.708297427499495
+            - 36.94678291827309
+            - 37.69388485043796
+            - 37.833319841144984
+            - 37.85862138902441
+            - 37.866823753982985
+            - 37.92466853083025
+        internal_vapor_to_condenser = 11.8353
+        condenser_duty_kW = -71.2953
+        reboiler_duty_kW = 425.8320
+        residual_diagnostics:
+            component: {'count': 105, 'max_scaled_abs': 1.2229919295931694e-06, 'rms_scaled': 1.7371343912925097e-07, 'max_unscaled_abs': 1.334032111803086e-07, 'max_stage': 15, 'max_component': 'PD23'}
+            energy: {'count': 15, 'max_scaled_abs': 3.267598949464537e-09, 'rms_scaled': 1.035946633805573e-09, 'max_unscaled_abs': 0.1889115422964096, 'max_stage': 15, 'max_component': None}
+            bubble: {'count': 15, 'max_scaled_abs': 4.678160459015146e-08, 'rms_scaled': 1.207900287403074e-08, 'max_unscaled_abs': 4.678160459015146e-08, 'max_stage': 15, 'max_component': None}
+            distillate_spec: {'count': 1, 'max_scaled_abs': 4.502684211894216e-18, 'rms_scaled': 4.502684211894216e-18, 'max_unscaled_abs': 8.881784197001252e-16, 'max_stage': None, 'max_component': None}
+            reflux_spec: {'count': 1, 'max_scaled_abs': 0.0, 'rms_scaled': 0.0, 'max_unscaled_abs': 0.0, 'max_stage': None, 'max_component': None}
+        component_classification:
+            reference_condenser_temperature_K: 352.547815
+            reference_condenser_temperature_C: 79.397815
+            noncondensables: ['CO', 'CO2']
+            volatile_components: ['AcH']
+            heavy_components: []
+        side_draws:
+        distillate_enthalpy_basis = -196254.7600
+        top_decanter = None
+    WARNINGS:
+        - Trace non-condensable component(s) routed through the vapor distillate: CO, CO2
+        - Condenser vapor outlet contains likely non-condensable component(s): CO, CO2
+
+UNIT_RESULT P-301:
+    type = Pump
+    heat_duty = 0.0000 [kW]
+    work = 0.0335 [kW]
+    process_work = 0.0319 [kW]
+    PERFORMANCE:
+        pressure_spec = P_out
+        hydraulic_efficiency = 0.7500
+        efficiency = 0.7500
+        mechanical_efficiency = 0.9500
+        pressure_rise = 0.1806
+        P_in_bar = 0.8326
+        P_out_bar = 1.0132
+        liquid_molar_volume_m3_per_kmol = 0.0249
+        liquid_volume_basis = inlet_stream_density
+        hydraulic_work_kJ_per_kmol = 0.4497
+        fluid_work_kJ_per_kmol = 0.5996
+        shaft_work_kJ_per_kmol = 0.6312
+        mechanical_loss_kJ_per_kmol = 0.0316
+        hydraulic_power_kW = 0.0239
+        fluid_power_kW = 0.0319
+        shaft_power_kW = 0.0335
+        mechanical_loss_kW = 0.0017
+        power_kW = 0.0335
+        enthalpy_rise_kJ_per_kmol = 0.5996
+        enthalpy_residual_kJ_per_kmol = 6.577466e-09
+        T_out_C = 95.3075
+
+UNIT_RESULT E-301:
+    type = Cooler
+    heating_duty = 0.0000 [kW]
+    cooling_duty = 375.3562 [kW]
+    net_heat_duty = -375.3562 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        T_in_C = 95.3075
+        T_out_C = 25.0000
+        P_in_bar = 1.0132
+        P_out_bar = 1.0132
+        P_drop_bar = 0.0000
+        duty_kW = -375.3562
+
+UNIT_RESULT P-302:
+    type = Pump
+    heat_duty = 0.0000 [kW]
+    work = 0.1021 [kW]
+    process_work = 0.0970 [kW]
+    PERFORMANCE:
+        pressure_spec = P_out
+        hydraulic_efficiency = 0.7500
+        efficiency = 0.7500
+        mechanical_efficiency = 0.9500
+        pressure_rise = 0.8532
+        P_in_bar = 0.1600
+        P_out_bar = 1.0132
+        liquid_molar_volume_m3_per_kmol = 0.1132
+        liquid_volume_basis = inlet_stream_density
+        hydraulic_work_kJ_per_kmol = 9.6611
+        fluid_work_kJ_per_kmol = 12.8815
+        shaft_work_kJ_per_kmol = 13.5595
+        mechanical_loss_kJ_per_kmol = 0.6780
+        hydraulic_power_kW = 0.0727
+        fluid_power_kW = 0.0970
+        shaft_power_kW = 0.1021
+        mechanical_loss_kW = 0.0051
+        power_kW = 0.1021
+        enthalpy_rise_kJ_per_kmol = 12.8815
+        enthalpy_residual_kJ_per_kmol = -5.005859e-09
+        T_out_C = 25.0629
+
+UNIT_RESULT M-301:
+    type = Mixer
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = adiabatic
+        n_inlets = 3
+        pressure_policy = auto_valve_to_lowest_inlet_pressure
+        P_out = 1.0132
+        T_out_C = 24.9857
+        duty_kW = 0.0000
+        inlet_pressure_range_bar:
+            - 1.01325
+            - 1.01325
+
+UNIT_RESULT X-301:
+    type = RigorousExtractor
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        N_stages = 20
+        mode = adiabatic
+        solver = sparse_damped_newton
+        solver_algorithm = equation_oriented
+        initializer = previous_recycle
+        requested_initializer = auto
+        jacobian_method = semi_analytic_flow
+        T_C = 25.0000
+        raffinate_T_C = 25.1716
+        extract_T_C = 25.1699
+        mesh_residual = 3.954677e-05
+        residual_diagnostics:
+            component: 0.000019
+            activity: 0.000040
+            energy: 0.000000
+        component_balance_error = 2.862808e-07
+        max_stage_energy_residual_kJ_h = 28.1669
+        max_stage_energy_relative_error = 4.328096e-07
+        overall_energy_residual_kJ_h = 4.7380
+        overall_energy_relative_error = 7.280294e-08
+        solver_iterations = 2
+        function_evaluations = 118
+        jacobian_evaluations = 2
+        terminal_raffinate_stage_flow = 148.2200
+        terminal_raffinate_stage_composition:
+            AA: 0.001972
+            AcH: 0.000000
+            PA: 0.000000
+            PD23: 0.000000
+            CO: 0.000000
+            CO2: 0.000000
+            H2O: 0.994007
+            MIBK: 0.004021
+            LLA: 0.000000
+        raffinate_flows:
+            - 186.30547591638245
+            - 181.6396739656657
+            - 178.82928396291692
+            - 177.0331826535633
+            - 175.808029678669
+            - 174.914867460059
+            - 174.2205269017196
+            - 173.64760527825925
+            - 173.14863797528972
+            - 172.6923248222376
+            - 172.25577706555086
+            - 171.81967043296515
+            - 171.3644904365633
+            - 170.86639690396945
+            - 170.29055764077705
+            - 169.57659180893498
+            - 168.59641450143823
+            - 166.95595684103088
+            - 156.01011911117084
+            - 148.21997987554627
+        extract_flows:
+            - 70.99336068351404
+            - 65.96117521028252
+            - 61.29537326142756
+            - 58.484983247446095
+            - 56.68888193824639
+            - 55.46372896373376
+            - 54.57056675400238
+            - 53.87622618617196
+            - 53.303304571210006
+            - 52.804337276666075
+            - 52.34802412211475
+            - 51.91147634559948
+            - 51.47536973818473
+            - 51.02018972487843
+            - 50.52209621860131
+            - 49.94625692299739
+            - 49.23229109786977
+            - 48.25211378805814
+            - 46.611656135400054
+            - 35.66581841159919
+        stage_temperatures_C:
+            - 25.169859409963806
+            - 25.256053578992294
+            - 25.300354225717456
+            - 25.323202815139382
+            - 25.335158073717878
+            - 25.341505858370112
+            - 25.3449059268479
+            - 25.34669716924583
+            - 25.347573468777796
+            - 25.347876328424434
+            - 25.34772589737247
+            - 25.347091974434022
+            - 25.345778680754393
+            - 25.343396160120335
+            - 25.33919427574756
+            - 25.331838864324823
+            - 25.318928883693445
+            - 25.29612169062574
+            - 25.25517876832032
+            - 25.171572609788598
+        stage_energy_residuals_kJ_h:
+            - 28.166929334402084
+            - -2.230773448944092
+            - -1.5654854625463486
+            - -1.0370184741914272
+            - -0.7887256927788258
+            - -0.6014036238193512
+            - -0.32130124047398567
+            - -0.32269488647580147
+            - -0.36216939240694046
+            - -0.2942249495536089
+            - -0.29445808567106724
+            - -0.20852477476000786
+            - -0.3599692527204752
+            - -0.2946108113974333
+            - -0.3763532415032387
+            - -0.39710528030991554
+            - -0.7146255671977997
+            - -1.2281848303973675
+            - -4.647358536720276
+            - -7.383980507031083
+        stage_raffinate_compositions:
+            AA: 0.09542670742667704
+            AcH: 8.124612082592687e-08
+            PA: 0.001659960965659065
+            PD23: 5.04122178498127e-10
+            CO: 1.844299801123552e-14
+            CO2: 1.9987970400082332e-13
+            H2O: 0.8980217649071344
+            MIBK: 0.00489148495006437
+            LLA: 3.779328307916385e-15
+            AA: 0.08662299098366445
+            AcH: 8.226034648775329e-08
+            PA: 0.0008455844151117326
+            PD23: 5.109496733387507e-10
+            CO: 1.8692776814117735e-14
+            CO2: 2.025867351431732e-13
+            H2O: 0.9078564043292078
+            MIBK: 0.0046749375004948145
+            LLA: 3.847258424290706e-15
+            AA: 0.0808077384576423
+            AcH: 8.283155360249832e-08
+            PA: 0.00043791958878393084
+            PD23: 5.149302602539396e-10
+            CO: 1.8838403702572992e-14
+            CO2: 2.0416499675427794e-13
+            H2O: 0.9141736802514421
+            MIBK: 0.004580578355421046
+            LLA: 3.8866995774620805e-15
+            AA: 0.07675358020880323
+            AcH: 8.316487882800831e-08
+            PA: 0.00023120396765934632
+            PD23: 5.174033541779758e-10
+            CO: 1.8928880095601265e-14
+            CO2: 2.051455530919458e-13
+            H2O: 0.9184739116256803
+            MIBK: 0.0045412205153469686
+            LLA: 3.911164341754286e-15
+            AA: 0.07375638822114437
+            AcH: 8.336685030700343e-08
+            PA: 0.0001241688785398178
+            PD23: 5.19053070592538e-10
+            CO: 1.8989233765929715e-14
+            CO2: 2.0579964867294776e-13
+            H2O: 0.9215918639739151
+            MIBK: 0.004527495040268644
+            LLA: 3.927474078550665e-15
+            AA: 0.07141296220431004
+            AcH: 8.349155052960507e-08
+            PA: 6.7635332267688e-05
+            PD23: 5.202268969380584e-10
+            CO: 1.9032177356042766e-14
+            CO2: 2.0626505862788356e-13
+            H2O: 0.9239930802900923
+            MIBK: 0.004526238161323344
+            LLA: 3.939065487692052e-15
+            AA: 0.06948492323926798
+            AcH: 8.3567211481602e-08
+            PA: 3.727618466403279e-05
+            PD23: 5.211084147321845e-10
+            CO: 1.9064427002016708e-14
+            CO2: 2.066145714051465e-13
+            H2O: 0.9259463398161694
+            MIBK: 0.004531376671348973
+            LLA: 3.947744461036972e-15
+            AA: 0.06782414719489836
+            AcH: 8.360936315037843e-08
+            PA: 2.0751164583168727e-05
+            PD23: 5.217998945441139e-10
+            CO: 1.908972428894512e-14
+            CO2: 2.0688873590942195e-13
+            H2O: 0.927614943982793
+            MIBK: 0.0045400735263326705
+            LLA: 3.954512708724428e-15
+            AA: 0.06633248691681985
+            AcH: 8.362744836245057e-08
+            PA: 1.1654993996796697e-05
+            PD23: 5.223611915327138e-10
+            CO: 1.9110258961516274e-14
+            CO2: 2.0711128434171842e-13
+            H2O: 0.9291047214266366
+            MIBK: 0.004551052512506927
+            LLA: 3.959952666276501e-15
+            AA: 0.0649392979164138
+            AcH: 8.36289628916765e-08
+            PA: 6.599715150056291e-06
+            PD23: 5.228284319525301e-10
+            CO: 1.9127352592634087e-14
+            CO2: 2.0729654061745564e-13
+            H2O: 0.93049016511572
+            MIBK: 0.0045638531006945305
+            LLA: 3.964410801833451e-15
+            AA: 0.06358790411421336
+            AcH: 8.362377158592675e-08
+            PA: 3.766061688755392e-06
+            PD23: 5.232230674683372e-10
+            CO: 1.9141790045725742e-14
+            CO2: 2.0745300963107625e-13
+            H2O: 0.9318297374571907
+            MIBK: 0.004578508219682053
+            LLA: 3.968087262966884e-15
+            AA: 0.062226127270404955
+            AcH: 8.363159858088565e-08
+            PA: 2.1650884717941514e-06
+            PD23: 5.235559003045903e-10
+            CO: 1.9153966538478708e-14
+            CO2: 2.0758497447185818e-13
+            H2O: 0.9331761826251833
+            MIBK: 0.004595440860554904
+            LLA: 3.9710839233282845e-15
+            AA: 0.06079767858483454
+            AcH: 8.369831371859662e-08
+            PA: 1.2536922829371891e-06
+            PD23: 5.238282376648886e-10
+            CO: 1.91639297899972e-14
+            CO2: 2.0769295353262653e-13
+            H2O: 0.9345854690936081
+            MIBK: 0.004615514406901863
+            LLA: 3.973453611017497e-15
+            AA: 0.059231198097982156
+            AcH: 8.39336511669569e-08
+            PA: 7.309792564873297e-07
+            PD23: 5.240331685109925e-10
+            CO: 1.9171427123599945e-14
+            CO2: 2.0777420677206445e-13
+            H2O: 0.9361277199911635
+            MIBK: 0.004640266473682667
+            LLA: 3.9753519977729706e-15
+            AA: 0.05742139329330292
+            AcH: 8.460059072714017e-08
+            PA: 4.2893683048624013e-07
+            PD23: 5.241721337291226e-10
+            CO: 1.9176511087303148e-14
+            CO2: 2.078293048858743e-13
+            H2O: 0.9379055938611265
+            MIBK: 0.004672498783746328
+            LLA: 3.977659096071122e-15
+            AA: 0.05518815814968778
+            AcH: 8.633152499866233e-08
+            PA: 2.5308161997487164e-07
+            PD23: 5.24373307420347e-10
+            CO: 1.9183870702165544e-14
+            CO2: 2.0790906731335907e-13
+            H2O: 0.9400937052521178
+            MIBK: 0.004717796660445282
+            LLA: 3.984488587659608e-15
+            AA: 0.05216576575749706
+            AcH: 9.06696915766734e-08
+            PA: 1.4994137497854602e-07
+            PD23: 5.25591219172628e-10
+            CO: 1.922842676047817e-14
+            CO2: 2.083919537745218e-13
+            H2O: 0.9430448408772832
+            MIBK: 0.0047891522283304705
+            LLA: 4.013250292975513e-15
+            AA: 0.04738402890373291
+            AcH: 1.0152768979290068e-07
+            PA: 8.912019389772274e-08
+            PD23: 5.336248666449713e-10
+            CO: 1.952233138776733e-14
+            CO2: 2.115772082985036e-13
+            H2O: 0.9476894052575656
+            MIBK: 0.004926374656957499
+            LLA: 4.1373340808565355e-15
+            AA: 0.034477903896007044
+            AcH: 1.2986476704851758e-07
+            PA: 5.321459012493957e-08
+            PD23: 5.856222391209265e-10
+            CO: 2.1424621046372775e-14
+            CO2: 2.321936641187947e-13
+            H2O: 0.9600938675271145
+            MIBK: 0.005428044911640715
+            LLA: 4.721714012188851e-15
+            AA: 0.001972084844295868
+            AcH: 9.491093062317083e-08
+            PA: 2.4636888920771925e-08
+            PD23: 4.713888401351184e-10
+            CO: 1.7245465220667993e-14
+            CO2: 1.8690122490497535e-13
+            H2O: 0.9940071923979468
+            MIBK: 0.0040206027383404555
+            LLA: 4.334866063490966e-15
+        stage_extract_compositions:
+            AA: 0.28266711779660464
+            AcH: 1.0258551438080538e-07
+            PA: 0.008552762952818442
+            PD23: 3.483532927057614e-10
+            CO: 1.274428970400821e-14
+            CO2: 1.3811880521329504e-13
+            H2O: 0.3703094987982777
+            MIBK: 0.33847051751827806
+            LLA: 2.611552356458849e-15
+            AA: 0.26510407293609173
+            AcH: 1.105256244115698e-07
+            PA: 0.00468854403899804
+            PD23: 3.646337200237023e-10
+            CO: 1.3339898563618367e-14
+            CO2: 1.4457383692185197e-13
+            H2O: 0.35209810881566794
+            MIBK: 0.3781091633188236
+            LLA: 2.745554457837103e-15
+            AA: 0.25193068854155004
+            AcH: 1.1575986250670109e-07
+            PA: 0.0025057667448152247
+            PD23: 3.742480900880512e-10
+            CO: 1.3691633857811951e-14
+            CO2: 1.4838584161920873e-13
+            H2O: 0.33968635065614394
+            MIBK: 0.40587707792321537
+            LLA: 2.824828924519351e-15
+            AA: 0.24209249616021555
+            AcH: 1.1911617995814644e-07
+            PA: 0.0013390135412721085
+            PD23: 3.798505462818902e-10
+            CO: 1.3896596162638604e-14
+            CO2: 1.50607161368688e-13
+            H2O: 0.33170057569003214
+            MIBK: 0.42486779511228234
+            LLA: 2.871372790630032e-15
+            AA: 0.2345415299345339
+            AcH: 1.2130672763090357e-07
+            PA: 0.0007220051940247099
+            PD23: 3.832939455395124e-10
+            CO: 1.4022570484784567e-14
+            CO2: 1.519724355465585e-13
+            H2O: 0.32667516406176844
+            MIBK: 0.4380611791194824
+            LLA: 2.900237227462111e-15
+            AA: 0.22852625127036752
+            AcH: 1.2278944837998503e-07
+            PA: 0.0003935644272432839
+            PD23: 3.855608149184296e-10
+            CO: 1.4105502666036833e-14
+            CO2: 1.5287122733363638e-13
+            H2O: 0.3234861605062959
+            MIBK: 0.4475939006209142
+            LLA: 2.9193978769241687e-15
+            AA: 0.22354781704322285
+            AcH: 1.2383437527035032e-07
+            PA: 0.0002167646567621373
+            PD23: 3.87138404935824e-10
+            CO: 1.4163217710742942e-14
+            CO2: 1.534967261427144e-13
+            H2O: 0.32139364007484017
+            MIBK: 0.4548416540034905
+            LLA: 2.9328321110574933e-15
+            AA: 0.2192735929374608
+            AcH: 1.2459896071641631e-07
+            PA: 0.00012051247401070504
+            PD23: 3.8827379184689224e-10
+            CO: 1.4204755054787241e-14
+            CO2: 1.53946895910099e-13
+            H2O: 0.3199439166312627
+            MIBK: 0.4606618529698604
+            LLA: 2.9425717838375804e-15
+            AA: 0.21547308129441706
+            AcH: 1.2517729600836598e-07
+            PA: 6.757246843020273e-05
+            PD23: 3.890987071067662e-10
+            CO: 1.4234933931095144e-14
+            CO2: 1.5427396652089126e-13
+            H2O: 0.31886634949698967
+            MIBK: 0.46559287117359704
+            LLA: 2.949707006677881e-15
+            AA: 0.21197690341541084
+            AcH: 1.2562938301076238e-07
+            PA: 3.818763788411138e-05
+            PD23: 3.896853070124757e-10
+            CO: 1.4256394404506813e-14
+            CO2: 1.5450654784555866e-13
+            H2O: 0.31799921691921434
+            MIBK: 0.4699855660082506
+            LLA: 2.954836714331729e-15
+            AA: 0.2086503310739091
+            AcH: 1.2600050099709717e-07
+            PA: 2.174171857714895e-05
+            PD23: 3.900701910176494e-10
+            CO: 1.427047495260508e-14
+            CO2: 1.5465915059180422e-13
+            H2O: 0.3172428178450574
+            MIBK: 0.4740849829717132
+            LLA: 2.9582651275992706e-15
+            AA: 0.20537447881700177
+            AcH: 1.2633959149884444e-07
+            PA: 1.2466139739459723e-05
+            PD23: 3.902632862646632e-10
+            CO: 1.4277539124794834e-14
+            CO2: 1.5473571082000893e-13
+            H2O: 0.3165308578689452
+            MIBK: 0.4780820704442868
+            LLA: 2.9600817418722973e-15
+            AA: 0.20203012887266664
+            AcH: 1.2672760712802236e-07
+            PA: 7.195892247310221e-06
+            PD23: 3.9024781316258387e-10
+            CO: 1.4276973160934888e-14
+            CO2: 1.547295756418706e-13
+            H2O: 0.3158123318615254
+            MIBK: 0.4821502162555338
+            LLA: 2.9601908947790743e-15
+            AA: 0.19847947034124902
+            AcH: 1.2733616926707799e-07
+            PA: 4.179577174660699e-06
+            PD23: 3.899732321602378e-10
+            CO: 1.4266927716040063e-14
+            CO2: 1.5462070679702966e-13
+            H2O: 0.31503800696995654
+            MIBK: 0.48647821538530545
+            LLA: 2.9583640112392988e-15
+            AA: 0.19453888042425685
+            AcH: 1.2856231130528446e-07
+            PA: 2.440578756949323e-06
+            PD23: 3.8934666632673363e-10
+            CO: 1.42440051889286e-14
+            CO2: 1.543722791203855e-13
+            H2O: 0.31414592949792514
+            MIBK: 0.49131262054723146
+            LLA: 2.954541469950083e-15
+            AA: 0.18992823413481488
+            AcH: 1.313507802883034e-07
+            PA: 1.4304697057644237e-06
+            PD23: 3.8826765858155897e-10
+            CO: 1.4204530372595984e-14
+            CO2: 1.539444621022932e-13
+            H2O: 0.31303670248397847
+            MIBK: 0.4970335011722819
+            LLA: 2.95027994505507e-15
+            AA: 0.18415746734455102
+            AcH: 1.3799087525229308e-07
+            PA: 8.392673775898942e-07
+            PD23: 3.8698968950484724e-10
+            CO: 1.4157776329701436e-14
+            CO2: 1.5343775649904659e-13
+            H2O: 0.3115117582580716
+            MIBK: 0.5043297967519643
+            LLA: 2.9549323287196283e-15
+            AA: 0.17621659422894057
+            AcH: 1.5419828950384067e-07
+            PA: 4.90790780145811e-07
+            PD23: 3.884542709203789e-10
+            CO: 1.4211356135363314e-14
+            CO2: 1.5401844121301093e-13
+            H2O: 0.3090546425477717
+            MIBK: 0.5147281178455926
+            LLA: 3.011788234514428e-15
+            AA: 0.16345459114736305
+            AcH: 1.9532617316769035e-07
+            PA: 2.8493147532936363e-07
+            PD23: 4.124026235917189e-10
+            CO: 1.5087490454089705e-14
+            CO2: 1.6351372921794425e-13
+            H2O: 0.30337850560564705
+            MIBK: 0.5331664225767567
+            LLA: 3.325091020978786e-15
+            AA: 0.1426210617820286
+            AcH: 3.4806552025166966e-07
+            PA: 1.879642200599454e-07
+            PD23: 6.02642742828206e-10
+            CO: 2.204730694848213e-14
+            CO2: 2.3894215833045963e-13
+            H2O: 0.15990175454136535
+            MIBK: 0.6974766470439565
+            LLA: 5.541869787122002e-15
+    WARNINGS:
+        - MESH solver accepted residual 3.95e-05
+
+UNIT_RESULT P-401:
+    type = Pump
+    heat_duty = 0.0000 [kW]
+    work = 0.0054 [kW]
+    process_work = 0.0051 [kW]
+    PERFORMANCE:
+        pressure_spec = P_out
+        hydraulic_efficiency = 0.7500
+        efficiency = 0.7500
+        mechanical_efficiency = 0.9500
+        pressure_rise = 0.8532
+        P_in_bar = 0.1600
+        P_out_bar = 1.0132
+        liquid_molar_volume_m3_per_kmol = 0.0184
+        liquid_volume_basis = inlet_stream_density
+        hydraulic_work_kJ_per_kmol = 1.5725
+        fluid_work_kJ_per_kmol = 2.0966
+        shaft_work_kJ_per_kmol = 2.2070
+        mechanical_loss_kJ_per_kmol = 0.1103
+        hydraulic_power_kW = 0.0038
+        fluid_power_kW = 0.0051
+        shaft_power_kW = 0.0054
+        mechanical_loss_kW = 2.696996e-04
+        power_kW = 0.0054
+        enthalpy_rise_kJ_per_kmol = 2.0966
+        enthalpy_residual_kJ_per_kmol = -6.984919e-10
+        T_out_C = 25.0273
+
+UNIT_RESULT M-401:
+    type = Mixer
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = adiabatic
+        n_inlets = 2
+        pressure_policy = auto_valve_to_lowest_inlet_pressure
+        P_out = 1.0132
+        T_out_C = 25.3325
+        duty_kW = 0.0000
+        inlet_pressure_range_bar:
+            - 1.01325
+            - 1.01325
+
+UNIT_RESULT V-401:
+    type = Valve
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        pressure_drop = 0.8532
+        inlet_vapor_frac = 0.0000
+        outlet_vapor_frac = 0.0000
+        joule_thomson_dT = 0.0000
+        enthalpy_error_kJ_per_kmol = 0.0000
+
+UNIT_RESULT C-401:
+    type = RigorousDistillation
+    heating_duty = 1159.4300 [kW]
+    cooling_duty = 1016.3741 [kW]
+    net_heat_duty = 143.0552 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        N_stages = 20
+        feed_stage = 10
+        feeds:
+            port: feed
+            stage: 10
+            flow: 79.79197900206256
+            composition: {'H2O': 0.4393767665649053, 'AA': 0.25149758937416866, 'AcH': 9.632033783440319e-08, 'PA': 0.007609656944632908, 'MIBK': 0.3015158904858782}
+            temperature_C: 25.332536991699158
+            pressure_bar: 0.16
+            vapor_fraction: 0.0
+        feed_thermal_condition_q = 1.1020
+        condenser_type = total
+        distillate_vapor_fraction = 0.0000
+        reflux_ratio = 0.5000
+        distillate_flow = 59.0878
+        distillate_liquid_flow = 59.0878
+        distillate_vapor_flow = 0.0000
+        bottoms_flow = 20.7041
+        mesh_residual = 4.264004e-06
+        component_balance_error = 4.499018e-07
+        solver = sparse_damped_newton_vlle_active_set
+        initializer = vlle_cheap
+        jacobian_method = vlle_semi_analytic_local_thermo
+        jacobian_fallback = False
+        jacobian_dense_mb = 0.0000
+        solver_iterations = 6
+        function_evaluations = 997
+        jacobian_evaluations = 6
+        finite_difference_rel_step = 1.000000e-06
+        T_top_C = 44.8280
+        T_bottom_C = 89.3920
+        stage_temperatures_C:
+            - 44.828047988958815
+            - 44.82813116134213
+            - 44.82821445006357
+            - 44.82865867044296
+            - 44.83115160898922
+            - 44.84553886485321
+            - 44.92794048112182
+            - 45.34220683690961
+            - 46.69429314042162
+            - 48.44806663746226
+            - 48.64086916718088
+            - 49.26053087488549
+            - 50.92643862188072
+            - 53.97695731389001
+            - 56.05023650723524
+            - 57.02531263441517
+            - 59.614886500054126
+            - 72.29197730728413
+            - 86.40868772617381
+            - 89.39200636786273
+        stage_pressures_bar:
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+            - 0.16
+        stage_liquid_compositions:
+            H2O: 0.5930375922609803
+            AA: 6.303707150795471e-07
+            AcH: 1.3007047768112835e-07
+            PA: 4.718207907788793e-08
+            MIBK: 0.4069616001157479
+            H2O: 0.5930429759795363
+            AA: 8.778510097439734e-07
+            AcH: 4.739468028071336e-09
+            PA: 4.848570751485465e-07
+            MIBK: 0.406955656572911
+            H2O: 0.5930713221278769
+            AA: 3.0727765032245146e-06
+            AcH: 3.217059446288989e-09
+            PA: 2.2746253056820724e-06
+            MIBK: 0.4069233272532547
+            H2O: 0.5932293954472401
+            AA: 1.9182631896754333e-05
+            AcH: 3.1977214584612483e-09
+            PA: 9.474263078895375e-06
+            MIBK: 0.40674194446006295
+            H2O: 0.5941404070076928
+            AA: 0.00012097281961771816
+            AcH: 3.1926014223920215e-09
+            PA: 3.8356302754199555e-05
+            MIBK: 0.405700260677334
+            H2O: 0.5993812242920638
+            AA: 0.0007528054085486483
+            AcH: 3.1644663589667917e-09
+            PA: 0.00015241578688000146
+            MIBK: 0.39971355134804126
+            H2O: 0.6265062582355624
+            AA: 0.004408482811276719
+            AcH: 3.0191285019619145e-09
+            PA: 0.0005662841913330479
+            MIBK: 0.36851897174269954
+            H2O: 0.7224561520559135
+            AA: 0.020016549427214494
+            AcH: 2.502335237518327e-09
+            PA: 0.001596727652748312
+            MIBK: 0.2559305683617884
+            H2O: 0.8557136876022121
+            AA: 0.04879679511441622
+            AcH: 1.753226059567245e-09
+            PA: 0.002368187262502529
+            MIBK: 0.09312132826764304
+            H2O: 0.5609663710713273
+            AA: 0.18698502399212769
+            AcH: 3.692089723622037e-09
+            PA: 0.005916544765251435
+            MIBK: 0.2461320564792039
+            H2O: 0.5732478536551618
+            AA: 0.19050922451760627
+            AcH: 1.839222231561601e-10
+            PA: 0.0060956591370269556
+            MIBK: 0.23014726250628273
+            H2O: 0.6056757195122839
+            AA: 0.20140793246110514
+            AcH: 8.725564752775957e-12
+            PA: 0.006627245280049963
+            MIBK: 0.18628910273783525
+            H2O: 0.6657045813799871
+            AA: 0.22656503506606682
+            AcH: 5.081961206847197e-13
+            PA: 0.007700969693136017
+            MIBK: 0.10002941386030187
+            H2O: 0.7123279118130825
+            AA: 0.24931821763534365
+            AcH: 2.052984207848479e-13
+            PA: 0.008373744288654013
+            MIBK: 0.02998012626271448
+            H2O: 0.7135452212542341
+            AA: 0.27001141178367577
+            AcH: 1.6434092197994179e-13
+            PA: 0.008459376248884883
+            MIBK: 0.007983990713040866
+            H2O: 0.652460865652039
+            AA: 0.33519014312391204
+            AcH: 1.6389067448473204e-13
+            PA: 0.009293177529082555
+            MIBK: 0.0030558136948026296
+            H2O: 0.40494504663722053
+            AA: 0.5766660284319077
+            AcH: 2.121387536020974e-13
+            PA: 0.01542045464539307
+            MIBK: 0.002968470285266415
+            H2O: 0.08399455326774447
+            AA: 0.8878977813551718
+            AcH: 1.0525302767675962e-13
+            PA: 0.025436412134824646
+            MIBK: 0.0026712532421539377
+            H2O: 0.008984470828431512
+            AA: 0.9612512377089663
+            AcH: 4.6332287934120283e-14
+            PA: 0.02842006856322458
+            MIBK: 0.0013442228993312537
+            H2O: 0.0008415578652802733
+            AA: 0.9692499130150555
+            AcH: 2.6734041784097247e-14
+            PA: 0.0293268457283793
+            MIBK: 0.0005816833912582251
+        stage_vapor_compositions:
+            H2O: 0.5930354611479886
+            AA: 3.331719824262416e-08
+            AcH: 3.569636651293465e-06
+            PA: 3.907361793702786e-09
+            MIBK: 0.40696093199080013
+            H2O: 0.5930378425763251
+            AA: 4.639808954349339e-08
+            AcH: 1.300707068999599e-07
+            PA: 4.015390421580607e-08
+            MIBK: 0.40696194080097414
+            H2O: 0.5930395563590123
+            AA: 1.6241904420531123e-07
+            AcH: 8.829360400143985e-08
+            PA: 1.8838811828667797e-07
+            MIBK: 0.40696000454022124
+            H2O: 0.5930489570913072
+            AA: 1.0142995161107999e-06
+            AcH: 8.778632847465115e-08
+            PA: 7.849734555018547e-07
+            MIBK: 0.4069491558493927
+            H2O: 0.593101639148838
+            AA: 6.409146964179104e-06
+            AcH: 8.778102572830648e-08
+            PA: 3.1847539605093152e-06
+            MIBK: 0.4068886791692117
+            H2O: 0.5934052430739785
+            AA: 4.0331885633194145e-05
+            AcH: 8.778583859685724e-08
+            PA: 1.2809816663844996e-05
+            MIBK: 0.4065415274378859
+            H2O: 0.5951500191568505
+            AA: 0.0002506854457679569
+            AcH: 8.781320380291638e-08
+            PA: 5.077842409204053e-05
+            MIBK: 0.4045484291600857
+            H2O: 0.6041355757801091
+            AA: 0.0014618231699587618
+            AcH: 8.7941627957714e-08
+            PA: 0.00018780090735999775
+            MIBK: 0.3942147122009441
+            H2O: 0.6354265275427007
+            AA: 0.006556091208095351
+            AcH: 8.828781399372966e-08
+            PA: 0.0005230076371121399
+            MIBK: 0.3574942853242778
+            H2O: 0.6779911180231166
+            AA: 0.015781634597824355
+            AcH: 8.85708281311006e-08
+            PA: 0.0007659346321418404
+            MIBK: 0.305461224176089
+            H2O: 0.6826990972848032
+            AA: 0.01697427760724735
+            AcH: 4.49449686018279e-09
+            PA: 0.0008287505977302692
+            MIBK: 0.2994978700157224
+            H2O: 0.6977869764118858
+            AA: 0.02107768102518438
+            AcH: 2.2393845034049331e-10
+            PA: 0.001041222070280761
+            MIBK: 0.2800941202687106
+            H2O: 0.7374486453447348
+            AA: 0.034121111113234036
+            AcH: 1.4230619042329713e-11
+            PA: 0.0016817693865493612
+            MIBK: 0.22674847414125127
+            H2O: 0.8099965566969756
+            AA: 0.06538376267440309
+            AcH: 6.707113300392884e-12
+            PA: 0.0030076114201870135
+            MIBK: 0.12161206920172729
+            H2O: 0.8646691981314917
+            AA: 0.09516864058331531
+            AcH: 5.72398159700786e-12
+            PA: 0.0038873301669107214
+            MIBK: 0.03627483111255826
+            H2O: 0.8636646355046163
+            AA: 0.12272821454346508
+            AcH: 4.996635899052802e-12
+            PA: 0.004063983807003537
+            MIBK: 0.009543166139918517
+            H2O: 0.7843657916475242
+            AA: 0.2068397305019175
+            AcH: 4.747799308348587e-12
+            PA: 0.005237834954310502
+            MIBK: 0.0035566428915000062
+            H2O: 0.4763197663156485
+            AA: 0.5073259571578146
+            AcH: 3.274921452060085e-12
+            PA: 0.01296424035147093
+            MIBK: 0.0033900361717910422
+            H2O: 0.09584158111203181
+            AA: 0.8763073273431999
+            AcH: 2.1789896367072326e-12
+            PA: 0.024882131740536228
+            MIBK: 0.0029689598020530466
+            H2O: 0.009972578756233468
+            AA: 0.9602806324076891
+            AcH: 1.3568848193836944e-12
+            PA: 0.028310035002466663
+            MIBK: 0.0014367538322538976
+        liquid_flows:
+            - 29.5439178717257
+            - 29.54388232213222
+            - 29.543665877485605
+            - 29.54246781739396
+            - 29.535637194507103
+            - 29.49717015149187
+            - 29.312725391767277
+            - 28.779399011248863
+            - 28.244639003196493
+            - 115.96944059319466
+            - 115.86445650160277
+            - 115.7356000925635
+            - 116.10389943423232
+            - 117.39963357773695
+            - 118.99868297578512
+            - 122.98401927371246
+            - 137.92515019849637
+            - 166.02426485506177
+            - 191.32521769270176
+            - 20.704143233321933
+        vapor_flows:
+            - 59.08783574345141
+            - 88.63175361609328
+            - 88.63171806601233
+            - 88.63150162136401
+            - 88.63030356139487
+            - 88.62347293850758
+            - 88.58500589549229
+            - 88.40056113576772
+            - 87.86723475524936
+            - 87.33247474719693
+            - 95.2652973598742
+            - 95.16031326828252
+            - 95.03145685875266
+            - 95.39975620069885
+            - 96.6954903436606
+            - 98.29453974215438
+            - 102.27987604051665
+            - 117.22100696532391
+            - 145.32012162117903
+            - 170.62107445993473
+        internal_vapor_to_condenser = 88.6318
+        condenser_duty_kW = -1016.3741
+        reboiler_duty_kW = 1159.4300
+        residual_diagnostics:
+            max_abs_residual: 0.000004
+        component_classification:
+            reference_condenser_temperature_K: 321.225288
+            reference_condenser_temperature_C: 48.075288
+            noncondensables: []
+            volatile_components: []
+            heavy_components: ['AA', 'PA']
+        side_draws:
+        distillate_enthalpy_basis = -299639.6904
+        top_decanter = None
+        stage_phase_model = VLLE
+        liquid_phase_routing = co_routed_equilibrium
+        vlle_topology = LLLLLLLLLLLLL.......
+        vlle_topology_history:
+            - ....................
+            - LLLLLLLLLLLLLLLLL...
+            - LLLLLLLLLLLLLLLL....
+            - LLLLLLLLLLLLLLL.....
+            - LLLLLLLLLLLLLL......
+            - LLLLLLLLLLLLL.......
+            - LLLLLLLLLLLLL.......
+        vlle_topology_events:
+            from: ....................
+            to: LLLLLLLLLLLLLLLLL...
+            reason: persistent_candidate_after_progress
+            residual_norm: 0.347537931823747
+            from: LLLLLLLLLLLLLLLLL...
+            to: LLLLLLLLLLLLLLLL....
+            reason: confident_phase_contraction
+            residual_norm: 0.21842743314899188
+            from: LLLLLLLLLLLLLLLL....
+            to: LLLLLLLLLLLLLLL.....
+            reason: confident_phase_contraction
+            residual_norm: 0.15393767712826617
+            from: LLLLLLLLLLLLLLL.....
+            to: LLLLLLLLLLLLLL......
+            reason: confident_phase_contraction
+            residual_norm: 0.07756983263347572
+            from: LLLLLLLLLLLLLL......
+            to: LLLLLLLLLLLLL.......
+            reason: residual_floor
+            residual_norm: 0.02839381153511025
+        vlle_topology_solves = 6
+        vlle_topology_policy = adaptive
+        vlle_stability_checks = 462
+        vlle_stability_cache_hits = 95
+        vlle_vapor_fugacity_closure = ideal_vapor_exact
+        vlle_max_log_fugacity_residual = 4.514410e-06
+        vlle_max_liquid_liquid_log_fugacity_residual = 4.264004e-06
+        vlle_max_vapor_liquid_log_fugacity_residual = 4.514410e-06
+        vlle_max_fugacity_residual_stage = 1
+        VLLE_STAGES:
+            active_stage_count = 13
+            active_stages = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+            STAGE 1:
+                phase_count = 3
+                liquid2_fraction = 0.469345
+                liquid1_flow = 15.6776 [kmol/h]
+                liquid2_flow = 13.8663 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.996971
+                    MIBK: 0.003029
+                    AA: 0.000000
+                    AcH: 0.000000
+                    PA: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.863660
+                    H2O: 0.136339
+                    AA: 0.000001
+                    AcH: 0.000000
+                    PA: 0.000000
+            STAGE 2:
+                phase_count = 3
+                liquid2_fraction = 0.469339
+                liquid1_flow = 15.6778 [kmol/h]
+                liquid2_flow = 13.8661 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.996971
+                    MIBK: 0.003029
+                    AA: 0.000000
+                    PA: 0.000000
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.863658
+                    H2O: 0.136340
+                    AA: 0.000002
+                    PA: 0.000001
+                    AcH: 0.000000
+            STAGE 3:
+                phase_count = 3
+                liquid2_fraction = 0.469307
+                liquid1_flow = 15.6786 [kmol/h]
+                liquid2_flow = 13.8651 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.996970
+                    MIBK: 0.003029
+                    AA: 0.000001
+                    PA: 0.000001
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.863647
+                    H2O: 0.136343
+                    AA: 0.000005
+                    PA: 0.000004
+                    AcH: 0.000000
+            STAGE 4:
+                phase_count = 3
+                liquid2_fraction = 0.469131
+                liquid1_flow = 15.6832 [kmol/h]
+                liquid2_flow = 13.8593 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.996962
+                    MIBK: 0.003029
+                    AA: 0.000006
+                    PA: 0.000003
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.863583
+                    H2O: 0.136365
+                    AA: 0.000034
+                    PA: 0.000017
+                    AcH: 0.000000
+            STAGE 5:
+                phase_count = 3
+                liquid2_fraction = 0.468118
+                liquid1_flow = 15.7095 [kmol/h]
+                liquid2_flow = 13.8262 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.996920
+                    MIBK: 0.003032
+                    AA: 0.000038
+                    PA: 0.000011
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.863219
+                    H2O: 0.136497
+                    AA: 0.000215
+                    PA: 0.000070
+                    AcH: 0.000000
+            STAGE 6:
+                phase_count = 3
+                liquid2_fraction = 0.462300
+                liquid1_flow = 15.8606 [kmol/h]
+                liquid2_flow = 13.6365 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.996673
+                    MIBK: 0.003045
+                    AA: 0.000238
+                    PA: 0.000043
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.861078
+                    H2O: 0.137291
+                    AA: 0.001351
+                    PA: 0.000279
+                    AcH: 0.000000
+            STAGE 7:
+                phase_count = 3
+                liquid2_fraction = 0.432206
+                liquid1_flow = 16.6436 [kmol/h]
+                liquid2_flow = 12.6691 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.995259
+                    MIBK: 0.003125
+                    AA: 0.001448
+                    PA: 0.000168
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.848543
+                    H2O: 0.142071
+                    AA: 0.008297
+                    PA: 0.001089
+                    AcH: 0.000000
+            STAGE 8:
+                phase_count = 3
+                liquid2_fraction = 0.324180
+                liquid1_flow = 19.4497 [kmol/h]
+                liquid2_flow = 9.3297 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.988219
+                    AA: 0.007672
+                    MIBK: 0.003538
+                    PA: 0.000572
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.782096
+                    H2O: 0.168420
+                    AA: 0.045751
+                    PA: 0.003734
+                    AcH: 0.000000
+            STAGE 9:
+                phase_count = 3
+                liquid2_fraction = 0.155222
+                liquid1_flow = 23.8604 [kmol/h]
+                liquid2_flow = 4.3842 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.965208
+                    AA: 0.028412
+                    MIBK: 0.005044
+                    PA: 0.001336
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.572470
+                    H2O: 0.259804
+                    AA: 0.159741
+                    PA: 0.007985
+                    AcH: 0.000000
+            STAGE 10:
+                phase_count = 3
+                liquid2_fraction = 0.652998
+                liquid1_flow = 40.2416 [kmol/h]
+                liquid2_flow = 75.7279 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.929161
+                    AA: 0.061042
+                    MIBK: 0.008020
+                    PA: 0.001777
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    MIBK: 0.372664
+                    H2O: 0.365309
+                    AA: 0.253911
+                    PA: 0.008116
+                    AcH: 0.000000
+            STAGE 11:
+                phase_count = 3
+                liquid2_fraction = 0.640797
+                liquid1_flow = 41.6189 [kmol/h]
+                liquid2_flow = 74.2456 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.924328
+                    AA: 0.065269
+                    MIBK: 0.008486
+                    PA: 0.001917
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    H2O: 0.376447
+                    MIBK: 0.354401
+                    AA: 0.260714
+                    PA: 0.008438
+                    AcH: 0.000000
+            STAGE 12:
+                phase_count = 3
+                liquid2_fraction = 0.610060
+                liquid1_flow = 45.1299 [kmol/h]
+                liquid2_flow = 70.6057 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.906973
+                    AA: 0.080302
+                    MIBK: 0.010313
+                    PA: 0.002412
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    H2O: 0.413092
+                    MIBK: 0.298770
+                    AA: 0.278816
+                    PA: 0.009322
+                    AcH: 0.000000
+            STAGE 13:
+                phase_count = 3
+                liquid2_fraction = 0.559643
+                liquid1_flow = 51.1272 [kmol/h]
+                liquid2_flow = 64.9767 [kmol/h]
+                LIQUID1_COMPOSITION:
+                    H2O: 0.834568
+                    AA: 0.140005
+                    MIBK: 0.021012
+                    PA: 0.004415
+                    AcH: 0.000000
+                LIQUID2_COMPOSITION:
+                    H2O: 0.532834
+                    AA: 0.294675
+                    MIBK: 0.162205
+                    PA: 0.010286
+                    AcH: 0.000000
+
+UNIT_RESULT E-401:
+    type = Cooler
+    heating_duty = 0.0000 [kW]
+    cooling_duty = 42.8832 [kW]
+    net_heat_duty = -42.8832 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        T_in_C = 44.8280
+        T_out_C = 25.0000
+        P_in_bar = 0.1600
+        P_out_bar = 0.1600
+        P_drop_bar = 0.0000
+        duty_kW = -42.8832
+
+UNIT_RESULT D-401:
+    type = Decanter
+    heating_duty = 0.0000 [kW]
+    cooling_duty = 2.2306 [kW]
+    net_heat_duty = -2.2306 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = specified_temperature
+        two_phases = True
+        phase_count = 2
+        no_lle = False
+        T_C = 25.0000
+        P_bar = 0.1600
+        n_inlets = 1
+        pressure_policy = specified_pressure
+        lle_beta_phase2 = 0.4586
+        light_fraction = 0.4586
+        heavy_fraction = 0.5414
+        light_flow_kmol_hr = 27.0996
+        heavy_flow_kmol_hr = 31.9882
+        light_composition:
+            H2O: 0.116606
+            AA: 0.000001
+            AcH: 0.000000
+            PA: 0.000000
+            MIBK: 0.883393
+        heavy_composition:
+            H2O: 0.996659
+            AA: 0.000000
+            AcH: 0.000000
+            PA: 0.000000
+            MIBK: 0.003340
+        light_molar_density_kmol_m3 = 8.8318
+        heavy_molar_density_kmol_m3 = 54.2617
+        light_mass_density_kg_m3 = 800.0032
+        heavy_mass_density_kg_m3 = 992.4134
+        phase_classifier = mass_density
+        duty_kW = -2.2306
+        outlet_enthalpy_residual_kW = -2.2306
+        component_balance_residual = 1.202519e-16
+
+UNIT_RESULT S-401:
+    type = Splitter
+    heat_duty = 0.0000 [kW]
+    work = 0.0000 [kW]
+    process_work = 0.0000 [kW]
+    PERFORMANCE:
+        mode = bulk_split
+        outlet_names:
+            - recycle
+            - purge
+        split_fractions:
+            - 0.27505834043469474
+            - 0.7249416595653053
+        component_splits:
+        implicit_state_change_duty_kW = 0.0000
+
+#------------------------------------------------------------------------------
+# RECYCLE INFORMATION
+#------------------------------------------------------------------------------
+
+RECYCLE:
+    tear_streams = Organic-Recycle, Aqueous-Recycle
+    calculation_order = R-101, P-302, P-401, E-201, M-301, F-201, C-201, P-301, E-301, X-301, M-401, V-401, C-401, E-401, D-401, S-401
+    method = BROYDEN
+    variable_basis = total_flow_component_flows_pressure_enthalpy
+    trace_tolerance = 1e-08
+    manual_tears = Organic-Recycle, Aqueous-Recycle
+    worst_variable = Organic-Recycle.n_H2O
+    worst_error = 2.8438e-09
+    failed_evaluations = 0
+
+#------------------------------------------------------------------------------
+# WARNINGS
+#------------------------------------------------------------------------------
+
+WARNINGS:
+    - Recycle detected: tearing stream(s) Organic-Recycle, Aqueous-Recycle
+    - PackedBedReactor component inventory depleted for LLA at z=0.265628; reaction directions consuming absent components were suppressed while hydraulic and thermal balances continued to the outlet; all reactions are inactive through the remaining 45.2972 kg catalyst
+    - Flash 'E-201' is applying manually selected Henry components at estimated x_H2O=0.8697, below the pure-water cutoff 0.95.
+    - Cooler 'E-201' selected pure-water Henry constants from a pre-solve aqueous estimate, but the solved profile reaches x_H2O=0.8737 below the 0.95 cutoff; Henry components remained frozen for numerical continuity.
+    - Flash 'F-201' is applying manually selected Henry components at estimated x_H2O=0.8697, below the pure-water cutoff 0.95.
+    - Flash 'F-201' selected pure-water Henry constants from a pre-solve aqueous estimate, but the solved profile reaches x_H2O=0.8737 below the 0.95 cutoff; Henry components remained frozen for numerical continuity.
+    - Trace non-condensable component(s) routed through the vapor distillate: CO, CO2
+    - Condenser vapor outlet contains likely non-condensable component(s): CO, CO2
+    - MESH solver accepted residual 3.95e-05
+    - UNIQUAC r/q parameters missing for 'LLA'; estimated from UNIFAC group volume/area parameters.
+    - UNIQUAC r/q parameters missing for 'PD23'; estimated from UNIFAC group volume/area parameters.
+    - Estimated and froze 13 UNIQUAC binary interaction(s) from UNIFAC-family activity coefficients: LLA/H2O, LLA/AA, LLA/AcH, LLA/PA, LLA/PD23, LLA/MIBK, AA/AcH, AA/PD23, AcH/PA, AcH/PD23, AcH/MIBK, PA/PD23, PD23/MIBK. Worst ln(gamma) RMSE=0.0746, max error=0.2763.
+    - Could not estimate missing UNIQUAC binary interaction for LLA/CO2: UNIFDMD excludes CO2 from its liquid group model (for example as contextual Henry solutes); no molecular liquid interaction can be regressed; retaining the ideal residual-interaction fallback.
+    - Could not estimate missing UNIQUAC binary interaction for AA/CO2: UNIFDMD excludes CO2 from its liquid group model (for example as contextual Henry solutes); no molecular liquid interaction can be regressed; retaining the ideal residual-interaction fallback.
+    - Could not estimate missing UNIQUAC binary interaction for AcH/CO2: UNIFDMD excludes CO2 from its liquid group model (for example as contextual Henry solutes); no molecular liquid interaction can be regressed; retaining the ideal residual-interaction fallback.
+    - Could not estimate missing UNIQUAC binary interaction for PA/CO2: UNIFDMD excludes CO2 from its liquid group model (for example as contextual Henry solutes); no molecular liquid interaction can be regressed; retaining the ideal residual-interaction fallback.
+    - Could not estimate missing UNIQUAC binary interaction for PD23/CO2: UNIFDMD excludes CO2 from its liquid group model (for example as contextual Henry solutes); no molecular liquid interaction can be regressed; retaining the ideal residual-interaction fallback.
+    - Could not estimate missing UNIQUAC binary interaction for CO2/MIBK: UNIFDMD excludes CO2 from its liquid group model (for example as contextual Henry solutes); no molecular liquid interaction can be regressed; retaining the ideal residual-interaction fallback.
+    - UNIQUAC binary interaction parameters missing for LLA/CO2; using tau_ij=tau_ji=1.
+    - UNIQUAC binary interaction parameters missing for AA/CO2; using tau_ij=tau_ji=1.
+    - UNIQUAC binary interaction parameters missing for AcH/CO2; using tau_ij=tau_ji=1.
+    - UNIQUAC binary interaction parameters missing for PA/CO2; using tau_ij=tau_ji=1.
+    - UNIQUAC binary interaction parameters missing for PD23/CO2; using tau_ij=tau_ji=1.
+    - UNIQUAC binary interaction parameters missing for CO2/MIBK; using tau_ij=tau_ji=1.
+    - Boiling point for 'LLA' was estimated from estimated_normal_boiling_point.
+    - Critical temperature for 'LLA' was estimated from effective_critical.
+    - Critical pressure for 'LLA' was estimated from effective_critical.
+    - Acentric factor for 'LLA' was estimated from Tb, Tc, and Pc.
+    - Identifier '600-14-6' resolved to molecular structure by chemicals_smiles_cache; physical properties are estimated unless a separate local or online source is selected.
+    - Boiling point for 'PD23' was estimated from formula atom-count fallback.
+    - Critical temperature for 'PD23' was estimated from Tb using the Guldberg rule.
+    - Critical pressure for 'PD23' was estimated from formula, Tb, and structure/name.
+    - Acentric factor for 'PD23' was estimated from Tb, Tc, and Pc.
+    - Trace component(s) omitted from liquid density/viscosity mixing at x <= 1e-06: AcH (Acetaldehyde), PA (Propionic acid)
+    - Trace component(s) omitted from liquid density/viscosity mixing at x <= 1e-06: AA (Acrylic acid), AcH (Acetaldehyde), PA (Propionic acid)
+    - Accepted liquid phase equilibrium at 50 K uses estimated UNIQUAC interaction AA/AcH below its 293.15-423.15 K UNIFDMD fitting range; the frozen interaction is being extrapolated.
+    - Accepted liquid phase equilibrium at 50 K uses estimated UNIQUAC interaction AcH/PA below its 293.15-423.15 K UNIFDMD fitting range; the frozen interaction is being extrapolated.
+    - Accepted liquid phase equilibrium at 50 K uses estimated UNIQUAC interaction AcH/MIBK below its 293.15-423.15 K UNIFDMD fitting range; the frozen interaction is being extrapolated.
+    - VDM vapor viscosity uses nominal-component mixture viscosity; internal physical dimer species are not included in the transport mixing rule.
+    - Trace component(s) omitted from liquid density/viscosity mixing at x <= 1e-06: AcH (Acetaldehyde), CO (Carbon Monoxide), CO2 (Carbon Dioxide), PD23 (600-14-6)
+    - No liquid-viscosity interaction for H2O/AA; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'H2O': UNIFAC-VISCO group mapping unavailable for H2O).
+    - No liquid-viscosity interaction for H2O/PA; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'H2O': UNIFAC-VISCO group mapping unavailable for H2O).
+    - No liquid-viscosity interaction for AA/PA; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'AA': UNIFAC-VISCO group mapping unavailable for CH2=CH).
+    - No liquid-viscosity interaction for MIBK/H2O; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'MIBK': UNIFAC-VISCO group mapping unavailable for 3).
+    - No liquid-viscosity interaction for MIBK/AA; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'MIBK': UNIFAC-VISCO group mapping unavailable for 3).
+    - Trace component(s) omitted from liquid density/viscosity mixing at x <= 1e-06: AcH (Acetaldehyde), CO (Carbon Monoxide), CO2 (Carbon Dioxide), LLA ((S)-Lactic acid), PA (Propionic acid), PD23 (600-14-6)
+    - No liquid-viscosity interaction for AA/H2O; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'AA': UNIFAC-VISCO group mapping unavailable for CH2=CH).
+    - No liquid-viscosity interaction for AA/MIBK; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'AA': UNIFAC-VISCO group mapping unavailable for CH2=CH).
+    - No liquid-viscosity interaction for H2O/MIBK; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'H2O': UNIFAC-VISCO group mapping unavailable for H2O).
+    - Trace component(s) omitted from liquid density/viscosity mixing at x <= 1e-06: AcH (Acetaldehyde), CO (Carbon Monoxide), CO2 (Carbon Dioxide), LLA ((S)-Lactic acid), PD23 (600-14-6)
+    - No liquid-viscosity interaction for PA/H2O; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'H2O': UNIFAC-VISCO group mapping unavailable for H2O).
+    - No liquid-viscosity interaction for PA/MIBK; using zero excess contribution (Cannot determine UNIFAC-VISCO groups for 'MIBK': UNIFAC-VISCO group mapping unavailable for 3).
+    - Trace component(s) omitted from liquid density/viscosity mixing at x <= 1e-06: AcH (Acetaldehyde)
+    - NRTL binary interaction parameters missing for LLA/H2O; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/AA; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/AcH; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/PA; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/PD23; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/CO; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for LLA/MIBK; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for H2O/PD23; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for H2O/CO; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for H2O/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AA/AcH; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AA/PD23; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AA/CO; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AA/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AcH/PA; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AcH/PD23; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AcH/CO; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AcH/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for AcH/MIBK; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for PA/PD23; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for PA/CO; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for PA/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for PD23/CO; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for PD23/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for PD23/MIBK; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for CO/CO2; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for CO/MIBK; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - NRTL binary interaction parameters missing for CO2/MIBK; using tau_ij=tau_ji=0 with alpha_ij=0.3.
+    - [extraction] Boiling point for 'LLA' was estimated from estimated_normal_boiling_point.
+    - [extraction] Critical temperature for 'LLA' was estimated from effective_critical.
+    - [extraction] Critical pressure for 'LLA' was estimated from effective_critical.
+    - [extraction] Acentric factor for 'LLA' was estimated from Tb, Tc, and Pc.
+    - [extraction] Identifier '600-14-6' resolved to molecular structure by chemicals_smiles_cache; physical properties are estimated unless a separate local or online source is selected.
+    - [extraction] Boiling point for 'PD23' was estimated from formula atom-count fallback.
+    - [extraction] Critical temperature for 'PD23' was estimated from Tb using the Guldberg rule.
+    - [extraction] Critical pressure for 'PD23' was estimated from formula, Tb, and structure/name.
+    - [extraction] Acentric factor for 'PD23' was estimated from Tb, Tc, and Pc.
+
+#------------------------------------------------------------------------------
+# QUALITY REPORT
+#------------------------------------------------------------------------------
+
+QUALITY_REPORT:
+    flagged_properties = 21
+    - very_low: AA.Cp_ideal_gas(T) quality=0.580 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 13, T_range = 200.00-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 12 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 250-1500 K; fit MAPE 0.0003532%, max error 0.001651% | clamped above extended range after 10 K extrapolation; query is 300 K outside fitted range | 37 additional note variant(s) omitted
+    - very_low: AA.Cp_liquid(T) quality=0.580 source=Perry 9th edition method=canonical_perry_9e_liquid_cp
+      resolver_calls = 8, T_range = 30.00-298.15 K
+      contexts = stream Fresh-MIBK feed_spec: 1 call(s); unit F-201 (Flash) solve: 7 call(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 286.15-375 K; fit MAPE 4.066e-13%, max error 1.132e-12% | clamped below extended range after 10 K extrapolation; query is 236.15 K outside fitted range | 58 additional note variant(s) omitted
+    - very_low: AcH.Cp_ideal_gas(T) quality=0.579 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 9, T_range = 298.15-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 8 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 50-1500 K; fit MAPE 0.01495%, max error 0.09817% | clamped above extended range after 10 K extrapolation; query is 300 K outside fitted range | 27 additional note variant(s) omitted
+    - low: AcH.Cp_liquid(T) quality=0.750 source=Perry 9th edition method=canonical_perry_9e_liquid_cp
+      resolver_calls = 134, T_range = 30.00-368.55 K
+      contexts = stream Fresh-MIBK feed_spec: 2 call(s); unscoped calculation: 36 call(s); unit P-302 (Pump) solve: 12 call(s); unit M-301 (Mixer) solve: 18 call(s); 7 additional context(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 149.78-294.15 K; fit MAPE 6.59e-14%, max error 3.331e-13% | extrapolated 4 K above fitted range | 8021 additional note variant(s) omitted
+    - very_low: CO.Cp_ideal_gas(T) quality=0.595 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 11, T_range = 30.00-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 10 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 60-1500 K; fit MAPE 0.007608%, max error 0.02606% | clamped above extended range after 10 K extrapolation; query is 300 K outside fitted range | 26 additional note variant(s) omitted
+    - very_low: CO.Cp_liquid(T) quality=0.580 source=CoolProp HEOS liquid CPMOLAR at Q=0 method=canonical_coolprop_liquid_liquid_cp
+      resolver_calls = 104, T_range = 298.14-368.55 K
+      contexts = stream Fresh-MIBK feed_spec: 2 call(s); unscoped calculation: 36 call(s); unit P-302 (Pump) solve: 12 call(s); unit M-301 (Mixer) solve: 18 call(s); 5 additional context(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 68.16-126.217 K; fit MAPE 0.004813%, max error 0.04154% | clamped above extended range after 10 K extrapolation; query is 171.933 K outside fitted range | 634 additional note variant(s) omitted
+    - watch: CO.henry_Hcp_effective(T) quality=0.922 source=database method=henry_effective_TP_quality
+      resolver_calls = 2, T = 313.15 K
+      contexts = unit E-201 (Cooler) solve: 1 call(s); unit F-201 (Flash) solve: 1 call(s)
+      notes = Full-quality T range 278.15-588.67 K (IAPWS G7-04 Table 2); pressure method Vc_correlation; evaluated pressure 0.832629 bar
+    - watch: CO2.Cp_ideal_gas(T) quality=0.935 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 2, T_range = 30.00-298.15 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 1 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 50-5000 K; fit MAPE 0.004736%, max error 0.01572% | clamped below extended range after 10 K extrapolation; query is 20 K outside fitted range
+    - medium: CO2.Cp_liquid(T) quality=0.831 source=Perry 9th edition method=canonical_perry_9e_liquid_cp
+      resolver_calls = 104, T_range = 298.14-368.55 K
+      contexts = stream Fresh-MIBK feed_spec: 2 call(s); unscoped calculation: 36 call(s); unit P-302 (Pump) solve: 12 call(s); unit M-301 (Mixer) solve: 18 call(s); 5 additional context(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 220-288.999 K; fit MAPE 1.861e-12%, max error 7.794e-12% | extrapolated 9.1505 K above fitted range | 630 additional note variant(s) omitted
+    - very_low: H2O.Cp_ideal_gas(T) quality=0.588 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 7, T_range = 298.15-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 6 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 100-2273.15 K; fit MAPE 0.02394%, max error 0.08051% | clamped below extended range after 10 K extrapolation; query is 70 K outside fitted range | 18 additional note variant(s) omitted
+    - very_low: H2O.Cp_liquid(T) quality=0.590 source=Perry 9th edition method=canonical_perry_9e_liquid_cp
+      resolver_calls = 7, T_range = 30.00-298.15 K
+      contexts = stream Fresh-MIBK feed_spec: 1 call(s); unit F-201 (Flash) solve: 6 call(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 273.16-533.15 K; fit MAPE 1.317e-13%, max error 8.438e-13% | clamped below extended range after 10 K extrapolation; query is 223.16 K outside fitted range | 35 additional note variant(s) omitted
+    - very_low: LLA.Cp_ideal_gas(T) quality=0.493 source=Emel'yanenko et al., Russian Journal of Physical Chemistry A 84 (2010) 1491-1497, doi:10.1134/S0036024410090074; exponential polynomial refit of Table 5 method=provided_exp_poly_x_chebyshev_ideal_gas_cp_kernel
+      resolver_calls = 5, T_range = 298.15-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 4 call(s)
+      notes = clamped above extended range after 10 K extrapolation; query is 300 K outside fitted range | clamped above extended range after 10 K extrapolation; query is 500 K outside fitted range | 6 additional note variant(s) omitted
+    - estimated: LLA.Cp_liquid(T) quality=0.197 source=estimated method=mixed_donor_rowlinson_bondi_liquid_cp_kernel
+      resolver_calls = 5, T_range = 30.00-298.15 K
+      contexts = stream Fresh-MIBK feed_spec: 1 call(s); unit F-201 (Flash) solve: 4 call(s)
+      notes = Rowlinson-Bondi ordinary-liquid Cp estimate; provisional mixed-donor quality tier; non-HBD-organic held-out mean MARD 3.57%, case median 1.97%; donor classes=('alcohol', 'acid'); ideal-gas source=provided_exp_poly_x_chebyshev_ideal_gas_cp_kernel; Tc source=effective_critical; omega source=effective_critical; identity source=pfd_component_override; donor classification=RDKit | clamped below extended range after 10 K extrapolation; query is 148.767 K outside fitted range | 22 additional note variant(s) omitted
+    - watch: LLA.S quality=0.900 source=doi:10.1134/S0036024410090074 method=molecular_and_spectral_statistical_thermodynamics
+      uses = 6
+      contexts = stream Wet-Lactic-Feed ideal_gas_entropy: 1 call(s); unscoped ideal_gas_entropy: 1 call(s); unit P-302 (Pump) ideal_gas_entropy: 1 call(s); unit M-301 (Mixer) ideal_gas_entropy: 1 call(s); 2 additional context(s)
+      notes = Ideal-gas standard molar entropy at 298.15 K; calculated from conformer, molecular, and spectral data rather than directly measured.
+    - very_low: MIBK.Cp_ideal_gas(T) quality=0.580 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 17, T_range = 200.00-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit M-301 (Mixer) solve: 2 call(s); unit F-201 (Flash) solve: 14 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 298.15-1500.15 K; fit MAPE 7.41e-05%, max error 0.0004219% | clamped above extended range after 10 K extrapolation; query is 299.85 K outside fitted range | 39 additional note variant(s) omitted
+    - low: MIBK.Cp_liquid(T) quality=0.672 source=Perry 9th edition method=canonical_perry_9e_liquid_cp
+      resolver_calls = 5, T_range = 30.00-298.15 K
+      contexts = stream Fresh-MIBK feed_spec: 1 call(s); unit F-201 (Flash) solve: 4 call(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 189.15-389.15 K; fit MAPE 5.383e-14%, max error 1.887e-13% | clamped below extended range after 10 K extrapolation; query is 139.15 K outside fitted range | 26 additional note variant(s) omitted
+    - very_low: PA.Cp_ideal_gas(T) quality=0.580 source=Perry 9th edition method=canonical_perry_9e_ideal_gas_cp
+      resolver_calls = 21, T_range = 200.00-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit M-301 (Mixer) solve: 2 call(s); unit F-201 (Flash) solve: 18 call(s)
+      notes = Bundled canonical ideal-gas Cp; source range 298.15-1500 K; fit MAPE 0.0004065%, max error 0.001718% | clamped above extended range after 10 K extrapolation; query is 300 K outside fitted range | 58 additional note variant(s) omitted
+    - very_low: PA.Cp_liquid(T) quality=0.580 source=Perry 9th edition method=canonical_perry_9e_liquid_cp
+      resolver_calls = 7, T_range = 30.00-298.15 K
+      contexts = stream Fresh-MIBK feed_spec: 1 call(s); unit F-201 (Flash) solve: 6 call(s)
+      notes = Bundled canonical ordinary-liquid Cp; source range 252.45-414.32 K; fit MAPE 1.3e-13%, max error 3.775e-13% | clamped below extended range after 10 K extrapolation; query is 202.45 K outside fitted range | 33 additional note variant(s) omitted
+    - estimated: PD23.Cp_ideal_gas(T) quality=0.400 source=estimated method=atom_increment_shomate_ideal_gas_cp_kernel
+      resolver_calls = 15, T_range = 200.00-4000.00 K
+      contexts = stream Wet-Lactic-Feed feed_spec: 1 call(s); unit F-201 (Flash) solve: 14 call(s)
+      notes = Empirical atom-increment Shomate estimate; formula-grouped 5-fold CV median range MAPE 5.62%, P90 16.6%; atom categories: C=5, H=8, O=2; conventional-organic validation tier; coefficients from PFDsim bundled atom-increment model | clamped above extended range after 10 K extrapolation; query is 300 K outside fitted range | 42 additional note variant(s) omitted
+    - estimated: PD23.Cp_liquid(T) quality=0.080 source=estimated method=scaled_ideal_gas_liquid_cp_kernel
+      resolver_calls = 7, T_range = 30.00-298.15 K
+      contexts = stream Fresh-MIBK feed_spec: 1 call(s); unit F-201 (Flash) solve: 6 call(s)
+      notes = Fallback to 1.3x resolved ideal-gas Cp with quality multiplier 0.6; ideal-gas source: atom_increment_shomate_ideal_gas_cp_kernel | clamped below extended range after 10 K extrapolation; query is 223.15 K outside fitted range | 33 additional note variant(s) omitted
+    - estimated: PD23.Hf quality=0.850 source=estimated method=domalski_hearing_gas_hf
+      uses = 6
+      contexts = unit R-101 (KineticsPackedBed) reactor_enthalpy_balance: 1 call(s); unit R-101 (KineticsPackedBed) ideal_gas_enthalpy: 1 call(s); unit P-302 (Pump) ideal_gas_enthalpy: 1 call(s); unit E-201 (Cooler) ideal_gas_enthalpy: 1 call(s); 2 additional context(s)
+      notes = Domalski-Hearing group-additivity gas Hf at 298.15 K; SMILES source: chemicals_smiles_cache; units kJ/mol
+
+#==============================================================================
+# END OF RESULTS
+#==============================================================================
