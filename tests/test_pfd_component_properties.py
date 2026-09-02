@@ -140,6 +140,72 @@ COMPONENTS:
         self.assertEqual(thermo.activity_interaction_max_psat_bar, 10.0)
         self.assertEqual(thermo.activity_interaction_max_temperature_K, 350.0)
 
+    def test_plain_eos_skips_activity_limits_but_activity_scope_keeps_them(self):
+        from thermodynamics_models.eos import RKThermodynamics
+        from thermodynamics_models.nrtl_uniquac import NRTLThermodynamics
+
+        source = '''ONLINE_LOOKUP: false
+THERMO_METHOD: RK
+ACTIVITY_INTERACTION_MAX_PSAT: 10 [bar]
+ACTIVITY_INTERACTION_MAX_TEMPERATURE: 350 [K]
+THERMO_SCOPES:
+    extraction | method=NRTL
+COMPONENTS:
+    W | Water
+    E | Ethanol
+STREAM Feed : FEED -> H-1.in
+    T = 25 [C]
+    P = 1 [bar]
+    F = 1 [kmol/h]
+    x = W:0.5, E:0.5
+STREAM Product : H-1.out -> PRODUCT
+UNIT H-1 : Heater
+    T = 30 [C]
+    thermo_scope = extraction
+'''
+        original = NRTLThermodynamics.configure_activity_interaction_limits
+        observed = []
+
+        def record_configuration(thermo, **options):
+            observed.append((thermo, dict(options)))
+            return original(thermo, **options)
+
+        with (
+            patch.object(
+                RKThermodynamics,
+                'Psat',
+                side_effect=AssertionError('plain RK initialization requested Psat'),
+            ) as rk_psat,
+            patch.object(NRTLThermodynamics, 'Psat', return_value=1.0),
+            patch.object(
+                NRTLThermodynamics,
+                'configure_activity_interaction_limits',
+                record_configuration,
+            ),
+        ):
+            simulator = Simulator(PFDParser().parse(source)).initialize()
+
+        global_thermo = simulator.thermo_packages['global']
+        scoped_thermo = simulator.thermo_packages['extraction']
+        self.assertIsInstance(global_thermo, RKThermodynamics)
+        self.assertFalse(hasattr(global_thermo, 'configure_activity_interaction_limits'))
+        rk_psat.assert_not_called()
+
+        active = [
+            (thermo, options)
+            for thermo, options in observed
+            if options.get('max_psat_bar') == 10.0
+        ]
+        self.assertEqual(active, [(scoped_thermo, {
+            'max_psat_bar': 10.0,
+            'max_temperature_K': 350.0,
+        })])
+        self.assertEqual(scoped_thermo.activity_interaction_max_psat_bar, 10.0)
+        self.assertEqual(
+            scoped_thermo.activity_interaction_max_temperature_K,
+            350.0,
+        )
+
     def test_component_inline_properties_parse_all_supported_fields(self):
         pfd = self.parse(
             'PROCESS: Inline Properties\n'
