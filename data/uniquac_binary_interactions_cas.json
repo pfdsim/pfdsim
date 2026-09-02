@@ -742,6 +742,60 @@
       "use_q_prime": false
     },
     {
+      "Tmax_K": 413.15,
+      "Tmin_K": 273.15,
+      "cas1": "142-82-5",
+      "cas2": "7732-18-5",
+      "comment": "n-heptane/Water wide-temperature LLE UNIQUAC regression with atmospheric ideal-vapor VLLE validation",
+      "component1": "n-heptane",
+      "component2": "water",
+      "fit_status": "recommended_neighbor_constrained_literature_interaction",
+      "fit_vapor_treatment": {
+        "scope": "atmospheric_VLLE_validation",
+        "type": "ideal_vapor"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "heptane_octane_water.json",
+      "source_file": "data/source/heptane_octane_water.json",
+      "tau12_a": 4.96100468,
+      "tau12_b": -2848.51039,
+      "tau12_c": 1.84606393,
+      "tau21_a": -2.16308086,
+      "tau21_b": 57.26957,
+      "tau21_c": 9.66496619,
+      "tau_tref": 298.15,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 533.0,
+      "Tmin_K": 273.15,
+      "cas1": "111-65-9",
+      "cas2": "7732-18-5",
+      "comment": "n-octane/Water wide-temperature LLE UNIQUAC regression with atmospheric ideal-vapor VLLE validation",
+      "component1": "n-octane",
+      "component2": "water",
+      "fit_status": "recommended_direct_high_temperature_literature_interaction",
+      "fit_vapor_treatment": {
+        "scope": "atmospheric_VLLE_validation",
+        "type": "ideal_vapor"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "heptane_octane_water.json",
+      "source_file": "data/source/heptane_octane_water.json",
+      "tau12_a": 32.2320299,
+      "tau12_b": -6424.35286,
+      "tau12_c": 14.5393376,
+      "tau12_d": -0.0629335446,
+      "tau12_e": 3.93979306e-05,
+      "tau21_a": -105.604097,
+      "tau21_b": 13820.1602,
+      "tau21_c": -64.4006856,
+      "tau21_d": 0.227692477,
+      "tau21_e": -0.000118592839,
+      "tau_tref": 298.15,
+      "use_q_prime": false
+    },
+    {
       "Tmax_K": 473.15,
       "Tmin_K": 283.0,
       "cas1": "7732-18-5",
@@ -6912,7 +6966,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 323,
-    "converted_records": 443,
+    "converted_records": 445,
     "disabled_records": 39,
     "ipd_hydration_by_source": {
       "uniquac.ipd": 18
@@ -6923,15 +6977,15 @@
     "isopropanol_water_overlay_replaced_pairs": 1,
     "isopropanol_water_overlay_replaced_records": 1,
     "key_basis": "CAS",
-    "literature_vle_overlay_records": 10,
+    "literature_vle_overlay_records": 12,
     "literature_vle_overlay_replaced_pairs": 4,
     "literature_vle_overlay_replaced_records": 4,
     "skipped": [],
     "skipped_records": 0,
     "source": "ChemSep DECHEMA UNIQUAC data at 1 atm",
     "source_file": "uniquac_binary_interactions.json",
-    "supplemental_new_pairs": 70,
-    "supplemental_records": 102,
+    "supplemental_new_pairs": 72,
+    "supplemental_records": 104,
     "units": "a*_cal_per_mol records are cal/mol; tau* records are direct dimensionless UNIQUAC tau coefficients",
     "unresolved_components": [
       {

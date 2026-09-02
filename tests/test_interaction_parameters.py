@@ -761,14 +761,14 @@ class InteractionParameterTests(unittest.TestCase):
         )
         nrtl_payload = load_data('nrtl_binary_interactions_cas.json')
         self.assertEqual(nrtl_payload['metadata']['skipped_records'], 0)
-        self.assertEqual(nrtl_payload['metadata']['converted_records'], 463)
+        self.assertEqual(nrtl_payload['metadata']['converted_records'], 465)
         self.assertEqual(nrtl_payload['metadata']['base_converted_records'], 345)
-        self.assertEqual(nrtl_payload['metadata']['supplemental_records'], 113)
-        self.assertEqual(nrtl_payload['metadata']['supplemental_new_pairs'], 78)
+        self.assertEqual(nrtl_payload['metadata']['supplemental_records'], 115)
+        self.assertEqual(nrtl_payload['metadata']['supplemental_new_pairs'], 80)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_records'], 7)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_replaced_records'], 4)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_replaced_pairs'], 3)
-        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_records'], 10)
+        self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_records'], 12)
         self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_replaced_records'], 2)
         self.assertEqual(nrtl_payload['metadata']['literature_vle_overlay_replaced_pairs'], 1)
         self.assertEqual(nrtl_payload['metadata']['assorted_overlay_records'], 28)
@@ -797,14 +797,14 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertIsNotNone(nrtl_binary_interaction('106-99-0', '67-56-1'))
         uniquac_payload = load_data('uniquac_binary_interactions_cas.json')
         self.assertEqual(uniquac_payload['metadata']['skipped_records'], 0)
-        self.assertEqual(uniquac_payload['metadata']['converted_records'], 443)
+        self.assertEqual(uniquac_payload['metadata']['converted_records'], 445)
         self.assertEqual(uniquac_payload['metadata']['base_converted_records'], 323)
-        self.assertEqual(uniquac_payload['metadata']['supplemental_records'], 102)
-        self.assertEqual(uniquac_payload['metadata']['supplemental_new_pairs'], 70)
+        self.assertEqual(uniquac_payload['metadata']['supplemental_records'], 104)
+        self.assertEqual(uniquac_payload['metadata']['supplemental_new_pairs'], 72)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_records'], 7)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_replaced_records'], 3)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_replaced_pairs'], 2)
-        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_records'], 10)
+        self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_records'], 12)
         self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_replaced_records'], 4)
         self.assertEqual(uniquac_payload['metadata']['literature_vle_overlay_replaced_pairs'], 4)
         self.assertEqual(uniquac_payload['metadata']['assorted_overlay_records'], 22)
@@ -1049,6 +1049,8 @@ class InteractionParameterTests(unittest.TestCase):
             ('79-10-7', '108-10-1'),
             ('79-09-4', '108-10-1'),
             ('64-17-5', '7732-18-5'),
+            ('142-82-5', '7732-18-5'),
+            ('111-65-9', '7732-18-5'),
         }
         zero_pair = tuple(sorted(('79-09-4', '79-10-7')))
 
@@ -1057,8 +1059,8 @@ class InteractionParameterTests(unittest.TestCase):
                 records, new_pairs, covered_pairs = (
                     supplemental_literature_vle_activity_records([], model)
                 )
-                self.assertEqual(len(records), 10)
-                self.assertEqual(new_pairs, 10)
+                self.assertEqual(len(records), 12)
+                self.assertEqual(new_pairs, 12)
                 self.assertEqual(covered_pairs, {
                     tuple(sorted(pair)) for pair in expected_pairs
                 })
@@ -1161,6 +1163,37 @@ class InteractionParameterTests(unittest.TestCase):
                         'UMR_UNIQUAC',
                     )
 
+                heptane_water = by_pair[
+                    tuple(sorted(('142-82-5', '7732-18-5')))
+                ]
+                octane_water = by_pair[
+                    tuple(sorted(('111-65-9', '7732-18-5')))
+                ]
+                self.assertEqual(heptane_water['Tmin_K'], 273.15)
+                self.assertEqual(heptane_water['Tmax_K'], 413.15)
+                self.assertEqual(octane_water['Tmin_K'], 273.15)
+                self.assertEqual(octane_water['Tmax_K'], 533.0)
+                self.assertEqual(
+                    heptane_water['fit_status'],
+                    'recommended_neighbor_constrained_literature_interaction',
+                )
+                self.assertEqual(
+                    octane_water['fit_status'],
+                    'recommended_direct_high_temperature_literature_interaction',
+                )
+                self.assertEqual(
+                    heptane_water['fit_vapor_treatment'],
+                    {'type': 'ideal_vapor', 'scope': 'atmospheric_VLLE_validation'},
+                )
+                if model == 'NRTL':
+                    self.assertAlmostEqual(heptane_water['tau12_e'], -8.09127910)
+                    self.assertAlmostEqual(octane_water['tau12_g'], -0.000400236938)
+                    self.assertAlmostEqual(octane_water['tau21_g'], 0.000404465782)
+                else:
+                    self.assertAlmostEqual(heptane_water['tau12_c'], 1.84606393)
+                    self.assertAlmostEqual(octane_water['tau12_e'], 0.0000393979306)
+                    self.assertAlmostEqual(octane_water['tau21_e'], -0.000118592839)
+
                 resolved, unresolved = resolve_component_ids()
                 built = build_interaction_payload(
                     f'{model.lower()}_binary_interactions.json',
@@ -1168,7 +1201,7 @@ class InteractionParameterTests(unittest.TestCase):
                     unresolved,
                 )
                 self.assertEqual(
-                    built['metadata']['literature_vle_overlay_records'], 10
+                    built['metadata']['literature_vle_overlay_records'], 12
                 )
                 for pair in covered_pairs:
                     matches = [
@@ -1204,6 +1237,90 @@ class InteractionParameterTests(unittest.TestCase):
                     math.isfinite(value) and value > 0.0
                     for value in gamma.values()
                 ))
+
+    def test_heptane_octane_water_direct_lle_validation(self):
+        with open(
+            os.path.join(ROOT, 'data', 'source', 'heptane_octane_water.json'),
+            encoding='utf-8',
+        ) as handle:
+            source = json.load(handle)
+        self.assertEqual(
+            source['package']['general_model_conventions']
+            ['atmospheric_vlle_vapor_treatment'],
+            'ideal vapor; phi_i = 1 for both components',
+        )
+        interpolation_basis = (
+            source['systems']['water_n_heptane']['data_basis']
+            ['high_temperature_heptane_rich_extension']['thermodynamic_basis']
+        )
+        self.assertEqual(
+            interpolation_basis['doi'],
+            '10.1016/S0378-3812(99)00021-7',
+        )
+
+        def direct_split(thermo, hydrocarbon, temperature, initial):
+            def residual(values):
+                water_organic, water_aqueous = values
+                organic = thermo.activity_coefficients(temperature, {
+                    hydrocarbon: 1.0 - water_organic,
+                    'water': water_organic,
+                })
+                aqueous = thermo.activity_coefficients(temperature, {
+                    hydrocarbon: 1.0 - water_aqueous,
+                    'water': water_aqueous,
+                })
+                return [
+                    math.log(water_organic * organic['water'])
+                    - math.log(water_aqueous * aqueous['water']),
+                    math.log((1.0 - water_organic) * organic[hydrocarbon])
+                    - math.log((1.0 - water_aqueous) * aqueous[hydrocarbon]),
+                ]
+
+            result = least_squares(
+                residual,
+                initial,
+                bounds=([1e-12, 0.500001], [0.499999, 1.0 - 1e-12]),
+                xtol=1e-13,
+                ftol=1e-13,
+                gtol=1e-13,
+                max_nfev=5000,
+            )
+            self.assertLess(max(abs(value) for value in result.fun), 1e-7)
+            return result.x
+
+        expected = {
+            'NRTL': {
+                'n-heptane': (413.15, (0.02585, 0.99999535)),
+                'n-octane': (533.1, (0.3821, 0.99963921)),
+            },
+            'UNIQUAC': {
+                'n-heptane': (413.15, (0.02609, 0.99999532)),
+                'n-octane': (533.1, (0.3797, 0.99963454)),
+            },
+        }
+        for model, systems in expected.items():
+            for hydrocarbon, (temperature, endpoints) in systems.items():
+                with self.subTest(model=model, hydrocarbon=hydrocarbon):
+                    thermo = create_thermodynamics(
+                        [hydrocarbon, 'water'],
+                        model,
+                        activity_interaction_max_psat_bar=None,
+                    )
+                    actual = direct_split(
+                        thermo,
+                        hydrocarbon,
+                        temperature,
+                        endpoints,
+                    )
+                    self.assertAlmostEqual(actual[0], endpoints[0], delta=5e-4)
+                    self.assertAlmostEqual(actual[1], endpoints[1], delta=5e-6)
+
+        self.assertAlmostEqual(
+            uniquac_rq_for_component('n-heptane')['r'], 5.1742
+        )
+        self.assertAlmostEqual(
+            uniquac_rq_for_component('n-octane')['q'], 4.9360
+        )
 
     def test_assorted_alcohol_ether_overlay_uses_only_recommended_models(self):
         excluded_pair = tuple(sorted(('67-63-0', '7732-18-5')))

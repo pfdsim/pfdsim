@@ -1204,6 +1204,67 @@ def supplemental_literature_vle_activity_records(
         fit_vapor_treatment=vapor_treatment,
     )
 
+    alkane_water_file = "heptane_octane_water.json"
+    alkane_water = load_json(SOURCE_DATA / alkane_water_file)
+    alkane_status = {
+        "water_n_heptane": "recommended_neighbor_constrained_literature_interaction",
+        "water_n_octane": "recommended_direct_high_temperature_literature_interaction",
+    }
+    for system_key, system in alkane_water["systems"].items():
+        component1, component2 = system["components"]
+        fit = system[model_key.lower()]
+        raw12 = fit["parameters"]["12"]
+        raw21 = fit["parameters"]["21"]
+        if model_key == "NRTL":
+            parameters = {
+                "alpha12": fit["alpha"]["alpha_12"],
+                "tau12_c": raw12["c"],
+                "tau12_d": raw12["d"],
+                "tau12_e": raw12["e"],
+                "tau12_f": raw12["f"],
+                "tau12_g": raw12["g"],
+                "tau21_c": raw21["c"],
+                "tau21_d": raw21["d"],
+                "tau21_e": raw21["e"],
+                "tau21_f": raw21["f"],
+                "tau21_g": raw21["g"],
+                "tau_tref": alkane_water["package"]["reference_temperature_K"],
+            }
+        else:
+            parameters = {
+                "tau12_a": raw12["a"],
+                "tau12_b": raw12["b"],
+                "tau12_c": raw12["c"],
+                "tau12_d": raw12["d"],
+                "tau12_e": raw12["e"],
+                "tau21_a": raw21["a"],
+                "tau21_b": raw21["b"],
+                "tau21_c": raw21["c"],
+                "tau21_d": raw21["d"],
+                "tau21_e": raw21["e"],
+                "tau_tref": alkane_water["package"]["reference_temperature_K"],
+            }
+        add_record(
+            cas1=component1["cas"],
+            cas2=component2["cas"],
+            component1=component1["name"],
+            component2=component2["name"],
+            source=alkane_water_file,
+            parameters=parameters,
+            comment=(
+                f"{component1['name']}/Water wide-temperature LLE {model_key} "
+                "regression with atmospheric ideal-vapor VLLE validation"
+            ),
+            temperature_range=tuple(
+                system["fit_scope"]["recommended_temperature_range_K"]
+            ),
+            fit_status=alkane_status[system_key],
+            fit_vapor_treatment={
+                "type": "ideal_vapor",
+                "scope": "atmospheric_VLLE_validation",
+            },
+        )
+
     return records, len(covered_pairs - existing_pairs), covered_pairs
 
 

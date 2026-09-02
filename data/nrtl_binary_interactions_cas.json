@@ -841,6 +841,58 @@
       "tau21_f": -0.00332
     },
     {
+      "Tmax_K": 413.15,
+      "Tmin_K": 273.15,
+      "alpha12": 0.2,
+      "cas1": "142-82-5",
+      "cas2": "7732-18-5",
+      "comment": "n-heptane/Water wide-temperature LLE NRTL regression with atmospheric ideal-vapor VLLE validation",
+      "component1": "n-heptane",
+      "component2": "water",
+      "fit_status": "recommended_neighbor_constrained_literature_interaction",
+      "fit_vapor_treatment": {
+        "scope": "atmospheric_VLLE_validation",
+        "type": "ideal_vapor"
+      },
+      "source": "heptane_octane_water.json",
+      "source_file": "data/source/heptane_octane_water.json",
+      "tau12_c": -6.62439165,
+      "tau12_d": 3981.60993,
+      "tau12_e": -8.0912791,
+      "tau21_c": 12.28156603,
+      "tau21_d": 198.20097,
+      "tau21_e": -42.98605859,
+      "tau_tref": 298.15
+    },
+    {
+      "Tmax_K": 533.0,
+      "Tmin_K": 273.15,
+      "alpha12": 0.15,
+      "cas1": "111-65-9",
+      "cas2": "7732-18-5",
+      "comment": "n-octane/Water wide-temperature LLE NRTL regression with atmospheric ideal-vapor VLLE validation",
+      "component1": "n-octane",
+      "component2": "water",
+      "fit_status": "recommended_direct_high_temperature_literature_interaction",
+      "fit_vapor_treatment": {
+        "scope": "atmospheric_VLLE_validation",
+        "type": "ideal_vapor"
+      },
+      "source": "heptane_octane_water.json",
+      "source_file": "data/source/heptane_octane_water.json",
+      "tau12_c": -406.62522,
+      "tau12_d": 58278.9782,
+      "tau12_e": -300.755332,
+      "tau12_f": 0.847097133,
+      "tau12_g": -0.000400236938,
+      "tau21_c": 384.2787,
+      "tau21_d": -49604.2056,
+      "tau21_e": 234.589449,
+      "tau21_f": -0.805739704,
+      "tau21_g": 0.000404465782,
+      "tau_tref": 298.15
+    },
+    {
       "Tmax_K": 473.15,
       "Tmin_K": 283.0,
       "alpha12": 0.3,
@@ -6364,7 +6416,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 345,
-    "converted_records": 463,
+    "converted_records": 465,
     "disabled_records": 15,
     "ipd_hydration_by_source": {
       "nrtl.ipd": 5
@@ -6375,15 +6427,15 @@
     "isopropanol_water_overlay_replaced_pairs": 0,
     "isopropanol_water_overlay_replaced_records": 0,
     "key_basis": "CAS",
-    "literature_vle_overlay_records": 10,
+    "literature_vle_overlay_records": 12,
     "literature_vle_overlay_replaced_pairs": 1,
     "literature_vle_overlay_replaced_records": 2,
     "skipped": [],
     "skipped_records": 0,
     "source": "ChemSep DECHEMA NRTL data at 1 atm",
     "source_file": "nrtl_binary_interactions.json",
-    "supplemental_new_pairs": 78,
-    "supplemental_records": 113,
+    "supplemental_new_pairs": 80,
+    "supplemental_records": 115,
     "units": "a*_cal_per_mol records are cal/mol; tau* records are dimensionless NRTL tau coefficients",
     "unresolved_components": [
       {

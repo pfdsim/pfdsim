@@ -1,0 +1,683 @@
+{
+  "package": {
+    "name": "water_normal_alkane_LLE_fits",
+    "version": "1.0",
+    "reference_temperature_K": 298.15,
+    "composition_basis": "mole_fraction",
+    "temperature_basis_function": {
+      "symbol": "H",
+      "definition": "H(T) = (Tref - T)/T + ln(T/Tref)",
+      "Tref_K": 298.15
+    },
+    "general_model_conventions": {
+      "nrtl": "tau_ij(T) = c_ij + d_ij/T + e_ij*H(T) + f_ij*T + g_ij*T^2",
+      "uniquac": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*H(T) + d_ij*T + e_ij*T^2",
+      "component_order": "Component 1 is the hydrocarbon; component 2 is water.",
+      "lle_condition": "x_i_alpha*gamma_i_alpha = x_i_beta*gamma_i_beta for each component",
+      "regression_space": "logarithmic mole-fraction residuals",
+      "atmospheric_vlle_vapor_treatment": "ideal vapor; phi_i = 1 for both components"
+    }
+  },
+
+  "systems": {
+    "water_n_heptane": {
+      "components": [
+        {
+          "index": 1,
+          "name": "n-heptane",
+          "cas": "142-82-5"
+        },
+        {
+          "index": 2,
+          "name": "water",
+          "cas": "7732-18-5"
+        }
+      ],
+
+      "fit_scope": {
+        "temperature_min_K": 273.15,
+        "temperature_max_K": 413.15,
+        "recommended_temperature_range_K": [
+          273.15,
+          413.15
+        ],
+        "direct_water_in_heptane_data_max_K_approx": 318.0,
+        "high_temperature_extension_method": "Geometric interpolation between water-in-n-hexane and water-in-n-octane correlations.",
+        "high_temperature_extension_is_experimental_heptane_data": false,
+        "notes": [
+          "The water-rich branch is constrained by evaluated n-heptane experimental data through the upper end of the fit.",
+          "The heptane-rich branch above approximately 318 K is constrained by neighboring-alkane interpolation rather than direct n-heptane measurements.",
+          "The interpolation was treated as soft pseudo-data rather than as experimental n-heptane measurements.",
+          "The neighboring-alkane interpolation agrees with direct n-heptane measurements within approximately 4% near 298 K and approximately 8% near 318 K."
+        ]
+      },
+
+      "nrtl": {
+        "recommended": true,
+        "alpha": {
+          "alpha_12": 0.20,
+          "alpha_21": 0.20,
+          "fixed": true
+        },
+
+        "temperature_dependence": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*H(T) + f_ij*T + g_ij*T^2",
+          "terms_retained": [
+            "constant",
+            "1/T",
+            "H(T)"
+          ],
+          "terms_zero": [
+            "T",
+            "T^2"
+          ]
+        },
+
+        "parameters": {
+          "12": {
+            "c": -6.62439165,
+            "d": 3981.60993,
+            "e": -8.09127910,
+            "f": 0.0,
+            "g": 0.0
+          },
+          "21": {
+            "c": 12.28156603,
+            "d": 198.20097,
+            "e": -42.98605859,
+            "f": 0.0,
+            "g": 0.0
+          }
+        },
+
+        "parameter_units": {
+          "c": "dimensionless",
+          "d": "K",
+          "e": "dimensionless",
+          "f": "K^-1",
+          "g": "K^-2"
+        },
+
+        "centered_equivalent": {
+          "equation": "tau_ij(T) = value_at_Tref + d*(1/T - 1/Tref) + e*H(T)",
+          "12": {
+            "value_at_Tref": 6.72999349,
+            "d": 3981.60993,
+            "e": -8.09127910
+          },
+          "21": {
+            "value_at_Tref": 12.94633535,
+            "d": 198.20097,
+            "e": -42.98605859
+          }
+        },
+
+        "fit_metrics": {
+          "modern_measured_water_in_heptane_mape_percent": 2.38,
+          "nist_evaluated_heptane_in_water_mape_percent": 11.96,
+          "high_temperature_neighbor_interpolation_mape_percent": 1.21,
+          "notes": [
+            "The modern measured organic-rich branch is reproduced extremely well.",
+            "The larger aqueous-branch error reflects substantial scatter and curvature in the dilute heptane-in-water measurements.",
+            "The pseudo-data MAPE measures reproduction of the hexane/octane interpolation and is not an experimental n-heptane error."
+          ]
+        }
+      },
+
+      "uniquac": {
+        "recommended": true,
+
+        "structural_parameters": {
+          "n-heptane": {
+            "r": 5.1742,
+            "q": 4.3960
+          },
+          "water": {
+            "r": 0.9200,
+            "q": 1.4000
+          },
+          "coordination_number_z": 10.0
+        },
+
+        "temperature_dependence": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*H(T) + d_ij*T + e_ij*T^2",
+          "terms_retained": [
+            "constant",
+            "1/T",
+            "H(T)"
+          ],
+          "terms_zero": [
+            "T",
+            "T^2"
+          ]
+        },
+
+        "parameters": {
+          "12": {
+            "a": 4.96100468,
+            "b": -2848.51039,
+            "c": 1.84606393,
+            "d": 0.0,
+            "e": 0.0
+          },
+          "21": {
+            "a": -2.16308086,
+            "b": 57.26957,
+            "c": 9.66496619,
+            "d": 0.0,
+            "e": 0.0
+          }
+        },
+
+        "parameter_units": {
+          "a": "dimensionless",
+          "b": "K",
+          "c": "dimensionless",
+          "d": "K^-1",
+          "e": "K^-2"
+        },
+
+        "centered_equivalent": {
+          "equation": "ln(tau_ij(T)) = value_at_Tref + b*(1/T - 1/Tref) + c*H(T)",
+          "12": {
+            "value_at_Tref": -4.59294597,
+            "b": -2848.51039,
+            "c": 1.84606393
+          },
+          "21": {
+            "value_at_Tref": -1.97099780,
+            "b": 57.26957,
+            "c": 9.66496619
+          }
+        },
+
+        "fit_metrics": {
+          "modern_measured_water_in_heptane_mape_percent": 2.38,
+          "nist_evaluated_heptane_in_water_mape_percent": 11.53,
+          "high_temperature_neighbor_interpolation_mape_percent": 1.36
+        }
+      },
+
+      "data_basis": {
+        "modern_water_in_heptane": {
+          "source": "Morgado et al., Fluid Phase Equilibria 503 (2020) 112322",
+          "doi": "10.1016/j.fluid.2019.112322",
+          "temperature_range_K": [
+            282.18,
+            317.74
+          ],
+          "method": "Coulometric Karl Fischer titration",
+          "role": "Primary heptane-rich-branch fit data",
+          "quality_notes": [
+            "More than 400 water-saturated n-heptane samples were analyzed.",
+            "Estimated intrinsic standard deviation was up to approximately 5%."
+          ]
+        },
+
+        "mutual_low_temperature_validation": {
+          "source": "Susilo, Lee and Englezos, Fluid Phase Equilibria 231 (2005) 20-26",
+          "doi": "10.1016/j.fluid.2004.12.016",
+          "temperatures_K": [
+            275.5,
+            283.15,
+            298.15
+          ],
+          "role": "Independent mutual-solubility validation on both liquid branches",
+          "fit_weight": "secondary/holdout",
+          "reason": "Useful independent data but visibly noisier than the modern Karl Fischer organic-rich measurements and evaluated aqueous data."
+        },
+
+        "aqueous_branch": {
+          "source": "IUPAC-NIST Solubility Data Series / NIST SRD 106",
+          "role": "Primary evaluated heptane-in-water temperature dependence",
+          "temperature_range_K_approx": [
+            273.0,
+            413.0
+          ],
+          "notes": [
+            "The evaluator identifies substantial scatter among historical measurements.",
+            "Modern GLC measurements on the aqueous branch were considered substantially more reliable than several older values.",
+            "Old high-temperature water-in-heptane measurements were not used to define the extended organic-rich branch."
+          ]
+        },
+
+        "high_temperature_heptane_rich_extension": {
+          "method": "x_H2O_C7(T) = sqrt(x_H2O_C6(T) * x_H2O_C8(T))",
+          "interpolation_space": "ln(x)",
+          "neighboring_systems": [
+            "water + n-hexane",
+            "water + n-octane"
+          ],
+          "pseudo_data_temperature_range_K": [
+            333.0,
+            413.0
+          ],
+          "nominal_effective_uncertainty_percent": 15.0,
+          "role": "Soft constraint on the otherwise unconstrained high-temperature water-in-heptane branch",
+          "thermodynamic_basis": {
+            "source": "Tsonopoulos, Fluid Phase Equilibria 156 (1999) 21-33",
+            "doi": "10.1016/S0378-3812(99)00021-7",
+            "title": "Thermodynamic analysis of the mutual solubilities of normal alkanes and water",
+            "justification": "Tsonopoulos found the heat of solution of water in C6-C8 normal alkanes to be nearly independent of temperature and carbon number and used interpolated heptane correlation parameters. Geometric interpolation of x is linear interpolation in ln(x), and therefore in the corresponding dilute-solution free energy.",
+            "reported_heat_of_solution_water_in_C6_C8_kJ_per_mol_approx": 35.7
+          },
+          "notes": [
+            "Water solubility in neighboring normal alkanes varies smoothly with carbon number.",
+            "The interpolation reproduces available n-heptane data near the top of the measured range reasonably well.",
+            "These values must not be labeled as direct n-heptane measurements."
+          ]
+        },
+
+        "vlle_compilation": {
+          "source": "User-provided heterogeneous-azeotrope compilation",
+          "role": "Independent pressure and vapor-composition validation",
+          "preferred_one_atm_cluster": {
+            "temperature_K_approx": [
+              352.35,
+              352.55
+            ],
+            "heptane_vapor_mole_fraction_approx": [
+              0.54619,
+              0.54900
+            ],
+            "preferred_references_in_compilation": [
+              "Kudryavtseva (1976)",
+              "Pavlenko (1974)",
+              "Bakowski (1938)"
+            ]
+          },
+          "downweighted_or_rejected_values": [
+            "Tegtmeier (1982): y_heptane = 0.58770 at 1 atm",
+            "Timoshenko (1988): y_heptane = 0.52500 at 1 atm",
+            "Clearly inconsistent or malformed low-temperature pressure entries"
+          ]
+        }
+      },
+
+      "validation": {
+        "atmospheric_vlle": {
+          "pressure_kPa": 101.325,
+          "experimental_cluster": {
+            "temperature_K_approx": [
+              352.35,
+              352.55
+            ],
+            "heptane_vapor_mole_fraction_approx": [
+              0.54619,
+              0.54900
+            ]
+          },
+          "nrtl": {
+            "temperature_K": 352.3769,
+            "heptane_vapor_mole_fraction": 0.54651
+          },
+          "uniquac": {
+            "temperature_K": 352.3774,
+            "heptane_vapor_mole_fraction": 0.54650
+          },
+          "vapor_pressure_basis": {
+            "n-heptane": "NIST vapor-pressure correlation",
+            "water": "IAPWS-IF97 Region 4",
+            "physical_vapor_phase": "ideal vapor; phi_i = 1"
+          },
+          "assessment": "Excellent independent VLLE validation."
+        },
+
+        "model_agreement_at_upper_limit": {
+          "temperature_K": 413.15,
+          "nrtl_water_in_heptane_mole_fraction": 0.02585,
+          "uniquac_water_in_heptane_mole_fraction": 0.02609,
+          "relative_model_difference_percent_approx": 0.9,
+          "assessment": "The neighbor constraint removes the severe high-temperature divergence seen in unconstrained fits."
+        }
+      },
+
+      "model_selection": {
+        "preferred_model": "NRTL",
+        "preference_strength": "very slight",
+        "reason": "NRTL is marginally tighter on the modern water-in-heptane data, while UNIQUAC is marginally tighter on the evaluated aqueous branch.",
+        "temperature_term_selection": {
+          "constant_plus_1_over_T": "inadequate",
+          "H_term": "retained and materially improves temperature curvature",
+          "linear_T": "not justified over 273-413 K",
+          "quadratic_T": "not justified over 273-413 K"
+        }
+      },
+
+      "limitations": [
+        "The heptane-rich phase above approximately 318 K is not directly experimentally constrained.",
+        "The 333-413 K heptane-rich extension depends on smooth carbon-number interpolation between n-hexane and n-octane.",
+        "VLLE pressure and vapor composition provide only weak constraints on trace liquid mutual solubilities because both liquid phases are nearly pure in their major component.",
+        "The fit should not be presented as experimentally validated above 413 K."
+      ]
+    },
+
+    "water_n_octane": {
+      "components": [
+        {
+          "index": 1,
+          "name": "n-octane",
+          "cas": "111-65-9"
+        },
+        {
+          "index": 2,
+          "name": "water",
+          "cas": "7732-18-5"
+        }
+      ],
+
+      "fit_scope": {
+        "temperature_min_K": 273.15,
+        "temperature_max_K": 533.1,
+        "recommended_temperature_max_K": 533.0,
+        "recommended_temperature_range_K": [
+          273.15,
+          533.0
+        ],
+        "three_phase_critical_endpoint_K": 539.1,
+        "three_phase_critical_endpoint_uncertainty_K": 0.6,
+        "three_phase_critical_endpoint_pressure_MPa": 7.37,
+        "three_phase_critical_endpoint_pressure_uncertainty_MPa": 0.04,
+        "notes": [
+          "Direct octane-system information is available throughout essentially the entire fitted range.",
+          "No neighboring-alkane interpolation is required.",
+          "The final approximately 6 K below the three-phase critical endpoint develops critical scaling that ordinary smooth NRTL/UNIQUAC temperature functions do not reproduce accurately."
+        ]
+      },
+
+      "nrtl": {
+        "recommended": true,
+
+        "alpha": {
+          "alpha_12": 0.15,
+          "alpha_21": 0.15,
+          "fixed": true,
+          "selection_note": "alpha = 0.15 gave the best performance among the tested fixed values for the extended-temperature fit."
+        },
+
+        "temperature_dependence": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*H(T) + f_ij*T + g_ij*T^2",
+          "terms_retained": [
+            "constant",
+            "1/T",
+            "H(T)",
+            "T",
+            "T^2"
+          ]
+        },
+
+        "parameters": {
+          "12": {
+            "c": -406.625220,
+            "d": 58278.9782,
+            "e": -300.755332,
+            "f": 0.847097133,
+            "g": -0.000400236938
+          },
+          "21": {
+            "c": 384.278700,
+            "d": -49604.2056,
+            "e": 234.589449,
+            "f": -0.805739704,
+            "g": 0.000404465782
+          }
+        },
+
+        "parameter_units": {
+          "c": "dimensionless",
+          "d": "K",
+          "e": "dimensionless",
+          "f": "K^-1",
+          "g": "K^-2"
+        },
+
+        "centered_equivalent": {
+          "equation": "tau_ij(T) = value_at_Tref + d*(1/T - 1/Tref) + e*H(T) + f*(T-Tref) + g*(T^2-Tref^2)",
+          "12": {
+            "value_at_Tref": 5.82701012,
+            "d": 58278.9782,
+            "e": -300.755332,
+            "f": 0.847097133,
+            "g": -0.000400236938
+          },
+          "21": {
+            "value_at_Tref": 13.6284341,
+            "d": -49604.2056,
+            "e": 234.589449,
+            "f": -0.805739704,
+            "g": 0.000404465782
+          }
+        },
+
+        "fit_metrics": {
+          "octane_in_water_mape_percent": 0.87,
+          "water_in_octane_mape_percent": 1.26,
+          "basis": "Reproduction of the selected smooth mutual-solubility reference curves over approximately 273-533 K.",
+          "warning": "These sub-percent-to-percent errors are errors against the selected smooth target curves, not against every individual literature point."
+        }
+      },
+
+      "uniquac": {
+        "recommended": true,
+
+        "structural_parameters": {
+          "n-octane": {
+            "r": 5.8486,
+            "q": 4.9360
+          },
+          "water": {
+            "r": 0.9200,
+            "q": 1.4000
+          },
+          "coordination_number_z": 10.0
+        },
+
+        "temperature_dependence": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*H(T) + d_ij*T + e_ij*T^2",
+          "terms_retained": [
+            "constant",
+            "1/T",
+            "H(T)",
+            "T",
+            "T^2"
+          ]
+        },
+
+        "parameters": {
+          "12": {
+            "a": 32.2320299,
+            "b": -6424.35286,
+            "c": 14.5393376,
+            "d": -0.0629335446,
+            "e": 0.0000393979306
+          },
+          "21": {
+            "a": -105.604097,
+            "b": 13820.1602,
+            "c": -64.4006856,
+            "d": 0.227692477,
+            "e": -0.000118592839
+          }
+        },
+
+        "parameter_units": {
+          "a": "dimensionless",
+          "b": "K",
+          "c": "dimensionless",
+          "d": "K^-1",
+          "e": "K^-2"
+        },
+
+        "centered_equivalent": {
+          "equation": "ln(tau_ij(T)) = value_at_Tref + b*(1/T - 1/Tref) + c*H(T) + d*(T-Tref) + e*(T^2-Tref^2)",
+          "12": {
+            "value_at_Tref": -4.57677457,
+            "b": -6424.35286,
+            "c": 14.5393376,
+            "d": -0.0629335446,
+            "e": 0.0000393979306
+          },
+          "21": {
+            "value_at_Tref": -1.90666397,
+            "b": 13820.1602,
+            "c": -64.4006856,
+            "d": 0.227692477,
+            "e": -0.000118592839
+          }
+        },
+
+        "fit_metrics": {
+          "octane_in_water_mape_percent": 1.03,
+          "water_in_octane_mape_percent": 1.22,
+          "basis": "Reproduction of the selected smooth mutual-solubility reference curves over approximately 273-533 K."
+        }
+      },
+
+      "data_basis": {
+        "primary_high_temperature_source": {
+          "source": "Heidman, Tsonopoulos, Brady and Wilson, AIChE Journal 31 (1985) 376-384",
+          "doi": "10.1002/aic.690310304",
+          "role": [
+            "Primary high-temperature mutual-solubility data",
+            "Both liquid branches",
+            "Published smooth correlations",
+            "Three-phase critical endpoint"
+          ],
+          "notes": [
+            "Measurements extend from ordinary temperatures deep into the high-temperature three-phase region.",
+            "Reported replicate precision is approximately ±5%."
+          ]
+        },
+
+        "nist_iupac_evaluation": {
+          "source": "IUPAC-NIST Solubility Data Series / NIST SRD 106",
+          "role": [
+            "Critical evaluation of octane-water literature",
+            "Compilation of Heidman and earlier measurements",
+            "Identification of literature scatter",
+            "Critical-endpoint information"
+          ],
+          "notes": [
+            "Independent octane-in-water measurements exhibit appreciable scatter.",
+            "Price high-temperature values are systematically lower than Heidman values."
+          ]
+        },
+
+        "modern_low_temperature_aqueous_source": {
+          "source": "Sarraute et al., Chemosphere 57 (2004) 1543-1551",
+          "doi": "10.1016/j.chemosphere.2004.07.046",
+          "temperature_range_K": [
+            274.15,
+            318.15
+          ],
+          "role": "Modern low-temperature octane-in-water validation",
+          "reported_scatter_about_smoothing_correlation_percent_approx": 3.0,
+          "estimated_accuracy_percent_approx": 10.0
+        },
+
+        "neighbor_interpolation_required": false
+      },
+
+      "validation": {
+        "high_temperature_mutual_solubility": {
+          "temperature_K": 533.1,
+          "measured_water_in_octane_mole_fraction": 0.387,
+          "nrtl": {
+            "predicted": 0.3821,
+            "relative_error_percent": -1.27
+          },
+          "uniquac": {
+            "predicted": 0.3797,
+            "relative_error_percent": -1.89
+          },
+          "assessment": "Excellent precritical high-temperature validation."
+        },
+
+        "atmospheric_vlle": {
+          "pressure_kPa": 101.325,
+          "literature_temperature_C_approx": 89.6,
+          "literature_octane_vapor_mole_fraction_approx": 0.3154,
+          "nrtl": {
+            "predicted_temperature_K": 362.5975,
+            "predicted_temperature_C": 89.4475,
+            "predicted_octane_vapor_mole_fraction": 0.32176
+          },
+          "uniquac": {
+            "predicted_temperature_K": 362.5964,
+            "predicted_temperature_C": 89.4464,
+            "predicted_octane_vapor_mole_fraction": 0.32179
+          },
+          "vapor_pressure_basis": {
+            "n-octane": "NIST vapor-pressure correlation",
+            "water": "IAPWS-IF97 Region 4",
+            "physical_vapor_phase": "ideal vapor; phi_i = 1"
+          },
+          "assessment": "Very good independent VLLE validation."
+        },
+
+        "critical_endpoint_extrapolation": {
+          "temperature_K": 539.1,
+          "measured_water_in_octane_mole_fraction": 0.527,
+          "nrtl_predicted": 0.4200,
+          "uniquac_predicted": 0.4192,
+          "assessment": "Outside the recommended ordinary NRTL/UNIQUAC fit range; critical scaling becomes dominant."
+        },
+
+        "critical_temperature_scaling_check": {
+          "method": "Fit the critical-temperature parameter of a Heidman-style critical correlation using only pre-endpoint data.",
+          "fitted_Tc_K": 538.98,
+          "measured_Tc_K": 539.1,
+          "difference_K": -0.12,
+          "part_of_nrtl_or_uniquac_fit": false,
+          "interpretation": "The location of the critical endpoint is strongly supported by the precritical data. The near-endpoint error is therefore principally a functional-form problem, not uncertainty in Tc."
+        }
+      },
+
+      "model_selection": {
+        "preferred_model": "NRTL",
+        "preference_strength": "very slight",
+        "reason": "NRTL gives marginally lower overall wide-range error, but the difference is negligible compared with experimental scatter.",
+        "temperature_term_selection": {
+          "constant_plus_1_over_T": "clearly inadequate for the full range",
+          "H_term": "required",
+          "linear_T": "required for good high-temperature behavior",
+          "quadratic_T": "meaningfully improves the fit near approximately 500-533 K",
+          "higher_order_terms": "not recommended because they would mostly fit literature scatter and still would not provide the correct critical asymptotic form"
+        }
+      },
+
+      "limitations": [
+        "Individual literature measurements scatter substantially more than the fitted smooth-curve MAPE values.",
+        "The five-term interaction parameters are highly correlated and should not be interpreted individually as physical quantities.",
+        "The standard coefficient representation contains substantial cancellation; the centered equivalent is preferable for numerical inspection.",
+        "Predictions above approximately 533 K should be regarded as extrapolation.",
+        "Accurate behavior in the final few kelvin approaching 539.1 K requires a dedicated critical-region correlation or a suitable high-pressure EOS."
+      ]
+    }
+  },
+
+  "cross_system_notes": {
+    "heptane_vs_octane": [
+      "The octane fit has substantially stronger direct high-temperature experimental support.",
+      "The heptane fit is directly well constrained to approximately 318 K on the hydrocarbon-rich branch and extended to 413 K using neighboring-alkane interpolation.",
+      "The octane fit is directly constrained into the precritical region and can therefore be recommended to approximately 533 K.",
+      "For both systems, atmospheric heterogeneous-azeotrope behavior provides a useful independent validation of vapor pressure and vapor composition but only weakly constrains trace liquid mutual solubilities."
+    ],
+    "recommended_database_usage": {
+      "water_n_heptane": {
+        "recommended_range_K": [
+          273.15,
+          413.15
+        ],
+        "provenance_flag": "high_T_water_in_heptane_neighbor_constrained"
+      },
+      "water_n_octane": {
+        "recommended_range_K": [
+          273.15,
+          533.0
+        ],
+        "provenance_flag": "direct_high_T_mutual_solubility_supported"
+      }
+    }
+  }
+}
