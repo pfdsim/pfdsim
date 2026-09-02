@@ -49,6 +49,7 @@ class VLLEColumnSolution:
     solver: dict
     active: list[bool]
     topology_history: list[str]
+    topology_events: list[dict]
     stability_checks: int
     stability_cache_hits: int
     outer_solves: int
@@ -58,10 +59,19 @@ class VLLEColumnSolution:
 
 
 class _ActiveSetChange(RuntimeError):
-    def __init__(self, profile: VLLEProfile, active: list[bool]):
+    def __init__(
+        self,
+        profile: VLLEProfile,
+        active: list[bool],
+        *,
+        reason: str,
+        residual_norm: float,
+    ):
         super().__init__("VLLE stage topology changed")
         self.profile = profile
         self.active = list(active)
+        self.reason = str(reason)
+        self.residual_norm = float(residual_norm)
 
 
 def _normalize(composition: dict[str, float], components) -> dict[str, float]:
@@ -112,6 +122,46 @@ def _composition_logits(composition: dict[str, float], components) -> list[float
 
 def topology_text(active: list[bool]) -> str:
     return "".join("L" if value else "." for value in active)
+
+
+def _split_phase_metrics(
+    has_lle: bool,
+    x1: dict[str, float],
+    x2: dict[str, float],
+    beta: float,
+    components,
+) -> tuple[float, float]:
+    if not has_lle:
+        return 0.0, 0.0
+    phase_fraction = min(max(float(beta), 0.0), max(1.0 - float(beta), 0.0))
+    distance = sum(
+        abs(float(x1.get(comp, 0.0)) - float(x2.get(comp, 0.0)))
+        for comp in components
+    )
+    return float(phase_fraction), float(distance)
+
+
+def _split_is_active(
+    has_lle: bool,
+    x1: dict[str, float],
+    x2: dict[str, float],
+    beta: float,
+    components,
+    phase_fraction_min: float,
+    phase_distance_min: float,
+) -> bool:
+    phase_fraction, distance = _split_phase_metrics(
+        has_lle,
+        x1,
+        x2,
+        beta,
+        components,
+    )
+    return bool(
+        has_lle
+        and phase_fraction > phase_fraction_min
+        and distance > phase_distance_min
+    )
 
 
 def shared_vlle_vapor_terms(
@@ -336,7 +386,39 @@ class EquationOrientedVLLEColumn:
         self.stability = stability
         self.phase_fraction_min = float(phase_fraction_min)
         self.phase_distance_min = float(phase_distance_min)
+        self.phase_fraction_appearance_min = float(unit.get_param(
+            "vlle_phase_fraction_appearance_min",
+            max(10.0 * self.phase_fraction_min, 1e-5),
+        ))
+        self.phase_distance_appearance_min = float(unit.get_param(
+            "vlle_phase_distance_appearance_min",
+            self.phase_distance_min,
+        ))
         self.topology_change_residual = float(topology_change_residual)
+        self.topology_policy = str(
+            unit.get_param("vlle_topology_policy", "adaptive")
+        ).strip().lower().replace("-", "_")
+        if self.topology_policy not in ("adaptive", "residual_gate"):
+            raise RuntimeError(
+                "vlle_topology_policy must be adaptive or residual_gate"
+            )
+        self.topology_progress_fraction = float(unit.get_param(
+            "vlle_topology_progress_fraction",
+            0.35,
+        ))
+        self.topology_candidate_streak = max(1, int(unit.get_param(
+            "vlle_topology_candidate_streak",
+            2,
+        )))
+        self.topology_stall_iterations = max(1, int(unit.get_param(
+            "vlle_topology_stall_iterations",
+            3,
+        )))
+        self._topology_initial_residual = None
+        self._topology_best_residual = math.inf
+        self._topology_no_progress = 0
+        self._topology_last_candidate = None
+        self._topology_candidate_count = 0
         self.solver_options = solver_options
         self.layouts, self.Q_cond_index, self.Q_reb_index, self.n_vars = self._layouts()
         self.stage_row_counts = [
@@ -631,34 +713,135 @@ class EquationOrientedVLLEColumn:
         matrix[spec_row + 1, top.vapor_flow] = 1
         return matrix.tocsr()
 
-    def topology_for_decoded(self, decoded: dict) -> list[bool]:
+    def topology_assessment(self, decoded: dict) -> tuple[list[bool], list[dict]]:
         topology = []
+        details = []
         for stage, state in enumerate(decoded["stages"]):
-            stable, _x1, _x2, _beta = self.stability.split(
+            has_lle, split_x1, split_x2, split_beta = self.stability.split(
                 state["T"], state["aggregate_x"]
             )
+            phase_fraction, distance = _split_phase_metrics(
+                has_lle,
+                split_x1,
+                split_x2,
+                split_beta,
+                self.components,
+            )
             if self.active[stage]:
-                distance = sum(
-                    abs(state["x1"].get(comp, 0.0) - state["x2"].get(comp, 0.0))
-                    for comp in self.components
-                )
-                topology.append(
-                    stable
-                    and self.phase_fraction_min
-                    < state["beta"]
-                    < 1.0 - self.phase_fraction_min
-                    and distance > self.phase_distance_min
-                )
+                fraction_min = self.phase_fraction_min
+                distance_min = self.phase_distance_min
             else:
-                topology.append(stable)
+                fraction_min = self.phase_fraction_appearance_min
+                distance_min = self.phase_distance_appearance_min
+            mapped_active = bool(
+                has_lle
+                and phase_fraction > fraction_min
+                and distance > distance_min
+            )
+            topology.append(mapped_active)
+            details.append({
+                "stage": stage,
+                "current_active": bool(self.active[stage]),
+                "mapped_active": mapped_active,
+                "has_lle": bool(has_lle),
+                "phase_fraction": phase_fraction,
+                "phase_distance": distance,
+            })
+        return topology, details
+
+    def topology_for_decoded(self, decoded: dict) -> list[bool]:
+        topology, _details = self.topology_assessment(decoded)
         return topology
+
+    def _adaptive_topology_change(
+        self,
+        updated: list[bool],
+        details: list[dict],
+        residual_norm: float,
+    ) -> tuple[bool, str]:
+        if updated == self.active:
+            self._topology_last_candidate = None
+            self._topology_candidate_count = 0
+            return False, "unchanged"
+
+        candidate_key = tuple(updated)
+        if candidate_key == self._topology_last_candidate:
+            self._topology_candidate_count += 1
+        else:
+            self._topology_last_candidate = candidate_key
+            self._topology_candidate_count = 1
+
+        if self._topology_initial_residual is None:
+            self._topology_initial_residual = max(residual_norm, 1e-30)
+        progress_tolerance = max(1e-8, 1e-3 * self._topology_best_residual)
+        if residual_norm < self._topology_best_residual - progress_tolerance:
+            self._topology_best_residual = residual_norm
+            self._topology_no_progress = 0
+        else:
+            self._topology_no_progress += 1
+
+        # Once Newton is already close, rebuilding is cheap and the mapped
+        # equilibrium topology is more useful than further persistence tests.
+        if residual_norm <= self.topology_change_residual:
+            return True, "residual_floor"
+
+        changed = [
+            item
+            for item in details
+            if item["mapped_active"] != item["current_active"]
+        ]
+        contraction_only = bool(changed) and all(
+            item["current_active"] and not item["mapped_active"]
+            for item in changed
+        )
+        # An active stage is represented by the larger VLLE equation set.  If
+        # an independent split projection says that phase is absent, retaining
+        # it risks a singular vanishing-phase block, so contract immediately.
+        if contraction_only:
+            return True, "confident_phase_contraction"
+
+        progress_limit = (
+            self.topology_progress_fraction * self._topology_initial_residual
+        )
+        if (
+            self._topology_candidate_count >= self.topology_candidate_streak
+            and residual_norm <= progress_limit
+        ):
+            return True, "persistent_candidate_after_progress"
+
+        if (
+            self._topology_candidate_count >= self.topology_candidate_streak
+            and self._topology_no_progress >= self.topology_stall_iterations
+        ):
+            return True, "persistent_candidate_at_stall"
+        return False, "deferred_candidate"
 
     def local_jacobian(self, vector, f0, rel_step: float):
         decoded = self.decode(vector)
-        updated = self.topology_for_decoded(decoded)
+        updated, details = self.topology_assessment(decoded)
         residual_norm = float(np.linalg.norm(f0, ord=np.inf))
-        if updated != self.active and residual_norm <= self.topology_change_residual:
-            raise _ActiveSetChange(self.profile_from_decoded(decoded), updated)
+        if self._topology_initial_residual is None:
+            self._topology_initial_residual = max(residual_norm, 1e-30)
+            self._topology_best_residual = residual_norm
+        if self.topology_policy == "residual_gate":
+            change_topology = (
+                updated != self.active
+                and residual_norm <= self.topology_change_residual
+            )
+            reason = "residual_gate"
+        else:
+            change_topology, reason = self._adaptive_topology_change(
+                updated,
+                details,
+                residual_norm,
+            )
+        if change_topology:
+            raise _ActiveSetChange(
+                self.profile_from_decoded(decoded),
+                updated,
+                reason=reason,
+                residual_norm=residual_norm,
+            )
 
         stages = decoded["stages"]
         props = [self.stage_properties(stage, state) for stage, state in enumerate(stages)]
@@ -868,6 +1051,16 @@ class EquationOrientedVLLEColumn:
             self.solver_options,
             jacobian=self.local_jacobian,
         )
+        if not solution["success"] and self.topology_policy == "adaptive":
+            decoded = self.decode(solution["x"])
+            updated = self.topology_for_decoded(decoded)
+            if updated != self.active:
+                raise _ActiveSetChange(
+                    self.profile_from_decoded(decoded),
+                    updated,
+                    reason="failed_iterate_recovery",
+                    residual_norm=float(solution["residual_norm"]),
+                )
         if (
             not solution["success"]
             and self.unit._truthy_param(
@@ -886,6 +1079,16 @@ class EquationOrientedVLLEColumn:
                 or fallback["residual_norm"] < solution["residual_norm"]
             ):
                 solution = fallback
+        if not solution["success"] and self.topology_policy == "adaptive":
+            decoded = self.decode(solution["x"])
+            updated = self.topology_for_decoded(decoded)
+            if updated != self.active:
+                raise _ActiveSetChange(
+                    self.profile_from_decoded(decoded),
+                    updated,
+                    reason="failed_iterate_recovery_after_fallback",
+                    residual_norm=float(solution["residual_norm"]),
+                )
         if not solution["success"]:
             raise RuntimeError(
                 f"VLLE MESH failed (residual {solution['residual_norm']:.3e}): "
@@ -921,18 +1124,42 @@ def solve_vlle_active_set(
 ) -> VLLEColumnSolution:
     phase_fraction_min = float(unit.get_param("vlle_phase_fraction_min", 1e-6))
     phase_distance_min = float(unit.get_param("vlle_phase_distance_min", 1e-3))
-    topology_change_residual = float(unit.get_param("vlle_topology_change_residual", 5e-2))
-    max_outer = int(unit.get_param("vlle_max_topology_updates", 8))
+    phase_fraction_appearance_min = float(unit.get_param(
+        "vlle_phase_fraction_appearance_min",
+        max(10.0 * phase_fraction_min, 1e-5),
+    ))
+    phase_distance_appearance_min = float(unit.get_param(
+        "vlle_phase_distance_appearance_min",
+        phase_distance_min,
+    ))
+    topology_change_residual = float(unit.get_param(
+        "vlle_topology_change_residual",
+        5e-2,
+    ))
+    configured_max_outer = unit.get_param("vlle_max_topology_updates")
+    max_outer = (
+        max(8, min(len(pressures) + 4, 24))
+        if configured_max_outer is None
+        else int(configured_max_outer)
+    )
     stability = VLLEStabilityCache(
         unit.thermo,
         components,
         float(unit.get_param("vlle_stability_tolerance", 1e-7)),
     )
     profile = initial_profile
-    screened_active = [
-        stability.split(T, x)[0]
-        for T, x in zip(profile.T, profile.aggregate_x)
-    ]
+    screened_active = []
+    for T, x in zip(profile.T, profile.aggregate_x):
+        has_lle, split_x1, split_x2, split_beta = stability.split(T, x)
+        screened_active.append(_split_is_active(
+            has_lle,
+            split_x1,
+            split_x2,
+            split_beta,
+            components,
+            phase_fraction_appearance_min,
+            phase_distance_appearance_min,
+        ))
     initial_topology = str(
         unit.get_param("vlle_initial_topology", "screened")
     ).strip().lower().replace("-", "_")
@@ -947,12 +1174,21 @@ def solve_vlle_active_set(
             "vlle_initial_topology must be screened, all_vle, or all_vlle"
         )
     history = [topology_text(active)]
+    topology_events = []
     # Absent liquid phases make the fixed-topology equations singular.  A
     # deliberately overactivated seed is therefore reconciled against the
     # seed-profile stability result before its first Newton system is built.
     if initial_topology in ("all_vlle", "vlle") and active != screened_active:
+        previous = topology_text(active)
         active = list(screened_active)
         history.append(topology_text(active))
+        topology_events.append({
+            "from": previous,
+            "to": topology_text(active),
+            "reason": "initial_profile_screen",
+            "residual_norm": None,
+        })
+    visited_topologies = {topology_text(active)}
     total_iterations = 0
     total_functions = 0
     total_jacobians = 0
@@ -986,12 +1222,26 @@ def solve_vlle_active_set(
         try:
             decoded, props, solution = model.solve()
         except _ActiveSetChange as change:
+            previous = topology_text(active)
+            proposed = topology_text(change.active)
+            if proposed in visited_topologies:
+                raise RuntimeError(
+                    "VLLE topology cycle detected while changing "
+                    f"{previous} -> {proposed}; history={history}"
+                ) from change
             profile = change.profile
             active = list(change.active)
             for stage, is_active in enumerate(active):
                 if not is_active:
                     profile.split_data[stage] = None
             history.append(topology_text(active))
+            topology_events.append({
+                "from": previous,
+                "to": topology_text(active),
+                "reason": change.reason,
+                "residual_norm": change.residual_norm,
+            })
+            visited_topologies.add(proposed)
             continue
         total_iterations += int(solution["iterations"])
         total_functions += int(solution["function_evaluations"])
@@ -1006,6 +1256,7 @@ def solve_vlle_active_set(
                 solver=solution,
                 active=active,
                 topology_history=history,
+                topology_events=topology_events,
                 stability_checks=stability.calls,
                 stability_cache_hits=stability.hits,
                 outer_solves=outer,
@@ -1013,6 +1264,19 @@ def solve_vlle_active_set(
                 total_function_evaluations=total_functions,
                 total_jacobian_evaluations=total_jacobians,
             )
+        topology_events.append({
+            "from": topology_text(active),
+            "to": topology_text(updated),
+            "reason": "post_convergence_screen",
+            "residual_norm": float(solution["residual_norm"]),
+        })
+        proposed = topology_text(updated)
+        if proposed in visited_topologies:
+            raise RuntimeError(
+                "VLLE topology cycle detected after convergence while changing "
+                f"{topology_text(active)} -> {proposed}; history={history}"
+            )
+        visited_topologies.add(proposed)
         active = updated
 
     raise RuntimeError(

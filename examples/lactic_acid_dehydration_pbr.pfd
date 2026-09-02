@@ -116,7 +116,16 @@ STREAM Extraction-Solvent : -> X-301.solvent
     F_mass = 2450 [kg/h]
     w = MIBK:1.0
 STREAM Extraction-Raffinate : X-301.raffinate
-STREAM Extraction-Extract : X-301.extract
+STREAM Extraction-Extract : X-301.extract -> M-401.extract
+STREAM Recovery-Water : FEED -> M-401.water
+    T = 25 [C]
+    P = 1.01325 [bar]
+    F_mass = 155.006683 [kg/h]
+    w = H2O:1.0
+STREAM Water-Assisted-Extract : M-401.out -> V-401.in
+STREAM Vacuum-Column-Feed : V-401.out -> C-401.feed
+STREAM Recovered-Azeotrope : C-401.distillate
+STREAM Acid-Product : C-401.bottoms
 
 # Supplied catalyst properties and preliminary bed assumptions:
 #   catalyst particle density = 1050 kg/m3
@@ -198,3 +207,30 @@ UNIT X-301 : RigorousLiquidLiquidExtractor
     T = 25 [C]
     solver_algorithm = equation_oriented
     thermo_scope = extraction
+
+# Add enough water to carry essentially all MIBK overhead at the fitted
+# 0.16-bar water/MIBK heteroazeotrope (59.3037 mol% water, 40.6963 mol% MIBK).
+# The mixed feed remains liquid through the isenthalpic pressure letdown.
+UNIT M-401 : Mixer
+    mode = adiabatic
+
+UNIT V-401 : Valve
+    P_out = 0.16 [bar]
+
+# Vacuum solvent-recovery column. The cut removes 99.95% of the balanced
+# water/MIBK carrier as heteroazeotrope while retaining virtually all AA and
+# PA. Adaptive topology relabeling contracts the VLLE region toward the top.
+UNIT C-401 : RigorousDistillation
+    N_stages = 20
+    feed_stage = 10
+    reflux_ratio = 1.2
+    D_to_F = 0.7395897574532703
+    P_condenser = 0.16 [bar]
+    P_drop_per_stage = 0
+    condenser_type = total
+    stage_phase_model = VLLE
+    vlle_seed = cheap
+    mesh_tolerance = 1e-5
+    acceptable_mesh_residual = 1e-4
+    max_iterations = 180
+    max_jacobian_evaluations = 180

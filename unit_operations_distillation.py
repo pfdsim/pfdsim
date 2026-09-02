@@ -3050,7 +3050,11 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'vlle_active_stages': active_stages,
             'vlle_topology': topology_text(solved.active),
             'vlle_topology_history': list(solved.topology_history),
+            'vlle_topology_events': list(solved.topology_events),
             'vlle_topology_solves': int(solved.outer_solves),
+            'vlle_topology_policy': str(self.get_param(
+                'vlle_topology_policy', 'adaptive'
+            )),
             'vlle_stability_checks': int(solved.stability_checks),
             'vlle_stability_cache_hits': int(solved.stability_cache_hits),
             'vlle_vapor_fugacity_closure': (

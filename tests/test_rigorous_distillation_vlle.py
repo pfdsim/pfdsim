@@ -1,5 +1,7 @@
 import unittest
+from pathlib import Path
 
+from simulator import Simulator
 from thermodynamics import create_thermodynamics
 from unit_operations_base import UnitOperationError
 from unit_operations_distillation import RigorousDistillation
@@ -405,6 +407,151 @@ class RigorousDistillationVLLETests(unittest.TestCase):
             1.0 - result.outlet_streams['bottoms'].composition['water'],
             places=6,
         )
+
+
+class AcrylicAcidRecoveryVLLETests(unittest.TestCase):
+    FEED_FLOW = 70.66427321297607
+    FEED_Z_RAW = {
+        'H2O': 0.37049321630854976,
+        'MIBK': 0.33780317143923255,
+        'AA': 0.28311082465910160,
+        'PA': 0.008592684817684328,
+    }
+    AZEOTROPE = {
+        'H2O': 0.6478905556344128,
+        'MIBK': 0.3521094443655872,
+    }
+
+    @classmethod
+    def setUpClass(cls):
+        pfd = (
+            Path(__file__).resolve().parents[1]
+            / 'examples'
+            / 'lactic_acid_dehydration_pbr.pfd'
+        )
+        cls.simulator = Simulator.from_file(str(pfd)).initialize()
+        cls.thermo = cls.simulator.thermo_packages['global']
+
+    def _base_feed(self):
+        return self.thermo.calculate_state(
+            298.3188792640525,
+            1.01325,
+            self.FEED_FLOW,
+            self.FEED_Z_RAW,
+            phase='liquid',
+            flash=False,
+        )
+
+    def _assert_efficient_topology_path(self, performance, maximum_events):
+        events = performance['vlle_topology_events']
+        self.assertLessEqual(len(events), maximum_events)
+        self.assertTrue(all(
+            event['from'] != event['to']
+            for event in events
+        ))
+        visited = [events[0]['from']] if events else []
+        visited.extend(event['to'] for event in events)
+        self.assertEqual(len(visited), len(set(visited)))
+
+    @staticmethod
+    def _params(cut):
+        return {
+            'N_stages': 20,
+            'feed_stage': 10,
+            'reflux_ratio': 1.2,
+            'D_to_F': cut,
+            'P_condenser': 1.01325,
+            'P_drop_per_stage': 0.0,
+            'condenser_type': 'total',
+            'stage_phase_model': 'VLLE',
+            'vlle_seed': 'cheap',
+            'mesh_tolerance': 1e-5,
+            'acceptable_mesh_residual': 1e-4,
+            'max_iterations': 140,
+            'max_jacobian_evaluations': 140,
+            'vlle_colored_jacobian_fallback': False,
+        }
+
+    def test_adaptive_topology_recovers_moderate_azeotrope_cut(self):
+        result = RigorousDistillation(
+            'AA-RECOVERY-056',
+            self.thermo,
+            self._params(0.56),
+        ).solve({'feed': self._base_feed()})
+
+        performance = result.performance
+        self.assertLess(performance['mesh_residual'], 1e-5)
+        self.assertEqual(performance['vlle_topology_policy'], 'adaptive')
+        self.assertEqual(performance['vlle_topology'], 'L' * 17 + '.' * 3)
+        self.assertTrue(performance['vlle_topology_events'])
+        self._assert_efficient_topology_path(performance, maximum_events=2)
+
+    def test_adaptive_topology_contracts_near_water_depletion(self):
+        result = RigorousDistillation(
+            'AA-RECOVERY-WATER-LIMIT',
+            self.thermo,
+            self._params(0.5718453727817714),
+        ).solve({'feed': self._base_feed()})
+
+        performance = result.performance
+        self.assertLess(performance['mesh_residual'], 1e-5)
+        self.assertEqual(performance['vlle_topology'], 'L' * 11 + '.' * 9)
+        self.assertLess(
+            result.outlet_streams['bottoms'].composition['H2O'],
+            1e-5,
+        )
+        self.assertLessEqual(performance['vlle_topology_solves'], 12)
+        self._assert_efficient_topology_path(performance, maximum_events=8)
+
+    def test_adaptive_topology_recovers_9995_percent_mibk_with_added_water(self):
+        feed = self._base_feed()
+        component_flows = {
+            comp: feed.F * feed.composition[comp]
+            for comp in self.FEED_Z_RAW
+        }
+        water_add = (
+            component_flows['MIBK']
+            * self.AZEOTROPE['H2O']
+            / self.AZEOTROPE['MIBK']
+            - component_flows['H2O']
+        )
+        mixed_flow = feed.F + water_add
+        mixed_z = {
+            'H2O': (component_flows['H2O'] + water_add) / mixed_flow,
+            'MIBK': component_flows['MIBK'] / mixed_flow,
+            'AA': component_flows['AA'] / mixed_flow,
+            'PA': component_flows['PA'] / mixed_flow,
+        }
+        watered_feed = self.thermo.calculate_state(
+            feed.T,
+            feed.P,
+            mixed_flow,
+            mixed_z,
+            phase='liquid',
+            flash=False,
+        )
+        target_distillate = (
+            0.9995
+            * component_flows['MIBK']
+            / self.AZEOTROPE['MIBK']
+        )
+        result = RigorousDistillation(
+            'AA-RECOVERY-WATERED-9995',
+            self.thermo,
+            self._params(target_distillate / mixed_flow),
+        ).solve({'feed': watered_feed})
+
+        distillate = result.outlet_streams['distillate']
+        mibk_recovery = (
+            distillate.F * distillate.composition['MIBK']
+            / component_flows['MIBK']
+        )
+        performance = result.performance
+        self.assertLess(performance['mesh_residual'], 1e-5)
+        self.assertGreater(mibk_recovery, 0.9994)
+        self.assertEqual(performance['vlle_topology'], 'L' * 13 + '.' * 7)
+        self.assertGreaterEqual(len(performance['vlle_topology_events']), 5)
+        self._assert_efficient_topology_path(performance, maximum_events=8)
 
 
 if __name__ == '__main__':
