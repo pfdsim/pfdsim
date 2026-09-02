@@ -66,6 +66,9 @@ class CompiledNRTLBackend:
         _nrtl_activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
         )
+        _nrtl_excess_enthalpy_numba.compile(
+            tuple(typeof(argument) for argument in args)
+        )
         self.compilation_complete = True
 
     def activity_coefficients(self, x: list[float] | np.ndarray, T: float) -> list[float]:
@@ -84,6 +87,23 @@ class CompiledNRTLBackend:
             self.alpha,
             self.interaction_temperature_caps,
         ).tolist()
+
+    def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
+        x_array = np.asarray(x, dtype=np.float64)
+        return float(_nrtl_excess_enthalpy_numba(
+            x_array,
+            float(T),
+            self.tau_mode,
+            self.tau_c,
+            self.tau_d,
+            self.tau_e,
+            self.tau_f,
+            self.tau_g,
+            self.tau_tref,
+            self.tau_energy,
+            self.alpha,
+            self.interaction_temperature_caps,
+        ))
 
 
 @dataclass
@@ -148,6 +168,9 @@ class CompiledUNIQUACBackend:
         _uniquac_activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
         )
+        _uniquac_excess_enthalpy_numba.compile(
+            tuple(typeof(argument) for argument in args)
+        )
         self.compilation_complete = True
 
     def activity_coefficients(self, x: list[float] | np.ndarray, T: float) -> list[float]:
@@ -167,6 +190,24 @@ class CompiledUNIQUACBackend:
             self.tau_tref,
             self.interaction_temperature_caps,
         ).tolist()
+
+    def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
+        x_array = np.asarray(x, dtype=np.float64)
+        return float(_uniquac_excess_enthalpy_numba(
+            x_array,
+            float(T),
+            self.r,
+            self.q,
+            self.q_residual,
+            self.tau_mode,
+            self.tau_a,
+            self.tau_b,
+            self.tau_c,
+            self.tau_d,
+            self.tau_e,
+            self.tau_tref,
+            self.interaction_temperature_caps,
+        ))
 
 
 if njit is not None:
@@ -259,6 +300,41 @@ if njit is not None:
                 value = 1e-12
             out[i] = value
         return out
+
+
+    @njit(cache=True)
+    def _nrtl_excess_enthalpy_numba(
+        x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref,
+        tau_energy, alpha, interaction_temperature_caps=None,
+    ):
+        total = 0.0
+        for value in x:
+            if value > 0.0:
+                total += value
+        if total <= 0.0:
+            return 0.0
+        xn = np.empty(x.shape[0], dtype=np.float64)
+        for i in range(x.shape[0]):
+            xn[i] = max(x[i], 0.0) / total
+        dT = max(1.0e-3, 1.0e-4 * T)
+        T_low = max(1.0, T - dT)
+        T_high = T + dT
+        gamma_low = _nrtl_activity_coefficients_numba(
+            xn, T_low, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g,
+            tau_tref, tau_energy, alpha, interaction_temperature_caps,
+        )
+        gamma_high = _nrtl_activity_coefficients_numba(
+            xn, T_high, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g,
+            tau_tref, tau_energy, alpha, interaction_temperature_caps,
+        )
+        derivative_sum = 0.0
+        for i in range(xn.shape[0]):
+            if xn[i] > 0.0:
+                derivative_sum += xn[i] * (
+                    np.log(max(gamma_high[i], 1.0e-300))
+                    - np.log(max(gamma_low[i], 1.0e-300))
+                ) / (T_high - T_low)
+        return -8.314 * T * T * derivative_sum
 
 
     @njit(cache=True)
@@ -380,10 +456,51 @@ if njit is not None:
             out[i] = value
         return out
 
+
+    @njit(cache=True)
+    def _uniquac_excess_enthalpy_numba(
+        x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
+        tau_e, tau_tref, interaction_temperature_caps=None,
+    ):
+        total = 0.0
+        for value in x:
+            if value > 0.0:
+                total += value
+        if total <= 0.0:
+            return 0.0
+        xn = np.empty(x.shape[0], dtype=np.float64)
+        for i in range(x.shape[0]):
+            xn[i] = max(x[i], 0.0) / total
+        dT = max(1.0e-3, 1.0e-4 * T)
+        T_low = max(1.0, T - dT)
+        T_high = T + dT
+        gamma_low = _uniquac_activity_coefficients_numba(
+            xn, T_low, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
+            tau_d, tau_e, tau_tref, interaction_temperature_caps,
+        )
+        gamma_high = _uniquac_activity_coefficients_numba(
+            xn, T_high, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
+            tau_d, tau_e, tau_tref, interaction_temperature_caps,
+        )
+        derivative_sum = 0.0
+        for i in range(xn.shape[0]):
+            if xn[i] > 0.0:
+                derivative_sum += xn[i] * (
+                    np.log(max(gamma_high[i], 1.0e-300))
+                    - np.log(max(gamma_low[i], 1.0e-300))
+                ) / (T_high - T_low)
+        return -8.314 * T * T * derivative_sum
+
 else:
 
     def _nrtl_activity_coefficients_numba(*_args, **_kwargs):  # pragma: no cover
         raise RuntimeError("Compiled NRTL backend is unavailable")
 
+    def _nrtl_excess_enthalpy_numba(*_args, **_kwargs):  # pragma: no cover
+        raise RuntimeError("Compiled NRTL backend is unavailable")
+
     def _uniquac_activity_coefficients_numba(*_args, **_kwargs):  # pragma: no cover
+        raise RuntimeError("Compiled UNIQUAC backend is unavailable")
+
+    def _uniquac_excess_enthalpy_numba(*_args, **_kwargs):  # pragma: no cover
         raise RuntimeError("Compiled UNIQUAC backend is unavailable")

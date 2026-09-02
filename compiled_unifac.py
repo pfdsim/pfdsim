@@ -128,6 +128,10 @@ class CompiledUNIFACBackend:
         _activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
         )
+        excess_args = args + (298.12, 298.18)
+        _excess_enthalpy_numba.compile(
+            tuple(typeof(argument) for argument in excess_args)
+        )
         self.compilation_complete = True
 
     def activity_coefficients(self, x: list[float] | np.ndarray, T: float) -> list[float]:
@@ -145,6 +149,29 @@ class CompiledUNIFACBackend:
             float(T),
         )
         return gamma.tolist()
+
+    def excess_enthalpy(
+        self,
+        x: list[float] | np.ndarray,
+        T: float,
+        activity_T_low: float,
+        activity_T_high: float,
+    ) -> float:
+        x_array = np.asarray(x, dtype=np.float64)
+        return float(_excess_enthalpy_numba(
+            self.nu,
+            self.r,
+            self.q,
+            self.subgroup_q,
+            self.interactions,
+            self.interactions_b,
+            self.interactions_c,
+            self.variant_id,
+            x_array,
+            float(T),
+            float(activity_T_low),
+            float(activity_T_high),
+        ))
 
 
 if njit is not None:
@@ -316,7 +343,45 @@ if njit is not None:
 
         return gamma
 
+
+    @njit(cache=True)
+    def _excess_enthalpy_numba(
+        nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
+        variant_id, x, T, activity_T_low, activity_T_high,
+    ):
+        total = 0.0
+        for value in x:
+            if value > 0.0:
+                total += value
+        if total <= 0.0:
+            return 0.0
+        xn = np.empty(x.shape[0], dtype=np.float64)
+        for i in range(x.shape[0]):
+            xn[i] = max(x[i], 0.0) / total
+        dT = max(1.0e-3, 1.0e-4 * T)
+        T_low = max(1.0, T - dT)
+        T_high = T + dT
+        gamma_low = _activity_coefficients_numba(
+            nu, r, q, subgroup_q, interactions, interactions_b,
+            interactions_c, variant_id, xn, activity_T_low,
+        )
+        gamma_high = _activity_coefficients_numba(
+            nu, r, q, subgroup_q, interactions, interactions_b,
+            interactions_c, variant_id, xn, activity_T_high,
+        )
+        derivative_sum = 0.0
+        for i in range(xn.shape[0]):
+            if xn[i] > 0.0:
+                derivative_sum += xn[i] * (
+                    math.log(max(gamma_high[i], 1.0e-300))
+                    - math.log(max(gamma_low[i], 1.0e-300))
+                ) / (T_high - T_low)
+        return -8.314 * T * T * derivative_sum
+
 else:
 
     def _activity_coefficients_numba(*args, **kwargs):  # pragma: no cover
+        raise RuntimeError("Numba is not available")
+
+    def _excess_enthalpy_numba(*args, **kwargs):  # pragma: no cover
         raise RuntimeError("Numba is not available")

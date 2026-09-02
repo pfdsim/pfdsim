@@ -381,6 +381,18 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         self._activity_cache[cache_key] = dict(gamma)
         return gamma
 
+    def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
+        backend = self._compiled_activity_backend(T)
+        if backend is None:
+            return super().excess_enthalpy(composition, T)
+        x = [
+            max(float(composition.get(comp, 0.0)), 0.0)
+            for comp in self.components
+        ]
+        if sum(x) <= 0.0:
+            return 0.0
+        return backend.excess_enthalpy(x, T)
+
 
 class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
     """UNIQUAC liquid activity coefficient model with Raoult-law vapor phase."""
@@ -883,6 +895,26 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
             self._activity_cache.clear()
         self._activity_cache[cache_key] = dict(gamma)
         return gamma
+
+    def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
+        backend = self._compiled_activity_backend(T)
+        if backend is None:
+            return super().excess_enthalpy(composition, T)
+        total = sum(
+            max(float(composition.get(comp, 0.0)), 0.0)
+            for comp in self.components
+        )
+        if total <= 0.0:
+            return 0.0
+        x_active = [
+            max(float(composition.get(comp, 0.0)), 0.0) / total
+            for comp in backend.components
+        ]
+        active_fraction = sum(x_active)
+        if active_fraction <= 0.0:
+            return 0.0
+        x_active = [value / active_fraction for value in x_active]
+        return active_fraction * backend.excess_enthalpy(x_active, T)
 
     def _activity_coefficients_for_components(
         self,

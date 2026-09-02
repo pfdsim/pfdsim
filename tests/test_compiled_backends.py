@@ -317,6 +317,34 @@ class CompiledBackendTests(unittest.TestCase):
                             delta=abs(reference[comp]) * 1e-10,
                         )
 
+    def test_compiled_excess_enthalpy_matches_generic_temperature_difference(self):
+        composition = {'ethanol': 0.35, 'water': 0.65}
+        for method in ('NRTL', 'UNIQUAC', 'UNIFDMD'):
+            with self.subTest(method=method):
+                thermo = create_thermodynamics(
+                    ['ethanol', 'water'],
+                    method,
+                    activity_interaction_max_temperature_K=320.0,
+                )
+                for temperature in (298.15, 320.0, 340.0):
+                    with self.subTest(temperature=temperature):
+                        reference = (
+                            ActivityCoefficientThermodynamics.excess_enthalpy(
+                                thermo,
+                                composition,
+                                temperature,
+                            )
+                        )
+                        compiled = thermo.excess_enthalpy(
+                            composition,
+                            temperature,
+                        )
+                        self.assertAlmostEqual(
+                            compiled,
+                            reference,
+                            delta=max(abs(reference) * 1e-10, 1e-8),
+                        )
+
     def test_compiled_nrtl_and_uniquac_preserve_infinite_dilution_activity(self):
         for method in ('NRTL', 'UNIQUAC'):
             with self.subTest(method=method):

@@ -397,6 +397,42 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
 
         return gamma
 
+    def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
+        backend = self._compiled_unifac
+        if backend is None:
+            return super().excess_enthalpy(composition, T)
+        total = sum(
+            max(float(composition.get(comp, 0.0)), 0.0)
+            for comp in self.components
+        )
+        if total <= 0.0:
+            return 0.0
+        x_active = [
+            max(float(composition.get(comp, 0.0)), 0.0) / total
+            for comp in backend.components
+        ]
+        active_fraction = sum(x_active)
+        if active_fraction <= 0.0:
+            return 0.0
+        x_active = [value / active_fraction for value in x_active]
+        dT = max(1e-3, 1e-4 * T)
+        T_low = max(1.0, T - dT)
+        T_high = T + dT
+        activity_T_low = self.activity_interaction_temperature_for_components(
+            self.component_groups,
+            T_low,
+        )
+        activity_T_high = self.activity_interaction_temperature_for_components(
+            self.component_groups,
+            T_high,
+        )
+        return active_fraction * backend.excess_enthalpy(
+            x_active,
+            T,
+            activity_T_low,
+            activity_T_high,
+        )
+
 
 class UNIFDMDThermodynamics(UNIFACThermodynamics):
     """Dortmund modified UNIFAC activity-coefficient model."""
