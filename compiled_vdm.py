@@ -70,6 +70,10 @@ def compile_vdm_kernels() -> bool:
     _vapor_closure_numba.compile(
         tuple(typeof(argument) for argument in closure_args)
     )
+    association_args = closure_args[1:7]
+    _association_enthalpy_numba.compile(
+        tuple(typeof(argument) for argument in association_args)
+    )
     _COMPILATION_COMPLETE = True
     return True
 
@@ -180,6 +184,30 @@ def solve_vapor_closure(
     }
 
 
+def solve_association_enthalpy(
+    nominal: list[float] | np.ndarray,
+    acid_indices: list[int] | np.ndarray,
+    pair_i: list[int] | np.ndarray,
+    pair_j: list[int] | np.ndarray,
+    pair_kappa: list[float] | np.ndarray,
+    pair_delta_h: list[float] | np.ndarray,
+) -> float | None:
+    """Return only the multi-acid association enthalpy for a nominal vapor."""
+    if njit is None:
+        return None
+    ok, association_enthalpy = _association_enthalpy_numba(
+        np.asarray(nominal, dtype=np.float64),
+        np.asarray(acid_indices, dtype=np.int64),
+        np.asarray(pair_i, dtype=np.int64),
+        np.asarray(pair_j, dtype=np.int64),
+        np.asarray(pair_kappa, dtype=np.float64),
+        np.asarray(pair_delta_h, dtype=np.float64),
+    )
+    if not ok:
+        return None
+    return float(association_enthalpy)
+
+
 if njit is not None:
 
     @njit(cache=True)
@@ -264,6 +292,29 @@ if njit is not None:
         for pair in range(extents.shape[0]):
             association_enthalpy += extents[pair] * pair_delta_h[pair]
         return True, phi, extents, association_enthalpy
+
+
+    @njit(cache=True)
+    def _association_enthalpy_numba(
+        nominal,
+        acid_indices,
+        pair_i,
+        pair_j,
+        pair_kappa,
+        pair_delta_h,
+    ):
+        valid, vapor = _normalize_positive(nominal)
+        if not valid:
+            return False, 0.0
+        ok, _phi, _extents, association_enthalpy = _association_arrays(
+            vapor,
+            acid_indices,
+            pair_i,
+            pair_j,
+            pair_kappa,
+            pair_delta_h,
+        )
+        return ok, association_enthalpy
 
 
     @njit(cache=True)
@@ -813,6 +864,9 @@ if njit is not None:
         return result
 
 else:
+
+    def _association_enthalpy_numba(*args, **kwargs):  # pragma: no cover
+        raise RuntimeError("Numba is not available")
 
     def _vapor_closure_numba(*args, **kwargs):  # pragma: no cover
         raise RuntimeError("Numba is not available")

@@ -33,6 +33,18 @@ from pathlib import Path
 R = 8.314          # J/mol·K
 P_STD = 1.0        # bar (standard state for fugacity-based K)
 DATA_DIR = Path(__file__).parent / "data"
+
+
+@lru_cache(maxsize=1)
+def _compiled_vdm_backend():
+    """Load the optional compiled backend once without eager global imports."""
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from . import compiled_vdm
+    else:
+        import compiled_vdm
+    return compiled_vdm
+
+
 GENERIC_MONOCARBOXYLIC_DELTA_H_J_MOL = -60500.0
 GENERIC_MONOCARBOXYLIC_DELTA_S_J_MOL_K = -144.0
 CROSS_DIMER_STATISTICAL_DELTA_S_J_MOL_K = R * math.log(2.0)
@@ -627,24 +639,7 @@ class MultiVaporDimerizationModel:
     ) -> Optional[dict]:
         """Run the ideal-physical-fugacity vapor closure in one array kernel."""
         order = tuple(component_order)
-        if not order:
-            return None
-        layout = self._compiled_closure_layout_cache.get(order)
-        if layout is None and order not in self._compiled_closure_layout_cache:
-            component_index = {component: index for index, component in enumerate(order)}
-            if any(component not in component_index for component in self.monomers):
-                self._compiled_closure_layout_cache[order] = None
-                return None
-            monomer_index = {
-                component: index for index, component in enumerate(self.monomers)
-            }
-            layout = {
-                'acid_indices': [component_index[component] for component in self.monomers],
-                'pair_i': [monomer_index[pair[0]] for pair in self._pair_keys],
-                'pair_j': [monomer_index[pair[1]] for pair in self._pair_keys],
-                'pair_delta_h': [self._pair_delta_H[pair] for pair in self._pair_keys],
-            }
-            self._compiled_closure_layout_cache[order] = layout
+        layout = self._compiled_closure_layout(order)
         if layout is None:
             return None
 
@@ -657,12 +652,7 @@ class MultiVaporDimerizationModel:
             for pair in self._pair_keys
         ]
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                from .compiled_vdm import solve_vapor_closure
-            else:
-                from compiled_vdm import solve_vapor_closure
-
-            solved = solve_vapor_closure(
+            solved = _compiled_vdm_backend().solve_vapor_closure(
                 [max(float(base_values.get(component, 0.0)), 0.0) for component in order],
                 [
                     max(float((liquid_composition or {}).get(component, 0.0)), 0.0)
@@ -704,6 +694,63 @@ class MultiVaporDimerizationModel:
             for index, pair in enumerate(self._pair_keys)
         }
         return solved
+
+    def compiled_association_enthalpy(
+        self,
+        T: float,
+        P: float,
+        component_order,
+        nominal_composition: dict[str, float],
+    ) -> Optional[float]:
+        """Return scalar ideal-path association enthalpy without a state dict."""
+        order = tuple(component_order)
+        layout = self._compiled_closure_layout(order)
+        if layout is None:
+            return None
+        pressure_factor = float(P) / P_STD
+        pair_kappa = [
+            math.exp(
+                self._pair_delta_S[pair] / R
+                - self._pair_delta_H[pair] / (R * float(T))
+            ) * pressure_factor
+            for pair in self._pair_keys
+        ]
+        try:
+            return _compiled_vdm_backend().solve_association_enthalpy(
+                [
+                    max(float(nominal_composition.get(component, 0.0)), 0.0)
+                    for component in order
+                ],
+                layout['acid_indices'],
+                layout['pair_i'],
+                layout['pair_j'],
+                pair_kappa,
+                layout['pair_delta_h'],
+            )
+        except Exception:
+            return None
+
+    def _compiled_closure_layout(self, order: tuple[str, ...]) -> Optional[dict]:
+        if not order:
+            return None
+        layout = self._compiled_closure_layout_cache.get(order)
+        if layout is not None or order in self._compiled_closure_layout_cache:
+            return layout
+        component_index = {component: index for index, component in enumerate(order)}
+        if any(component not in component_index for component in self.monomers):
+            self._compiled_closure_layout_cache[order] = None
+            return None
+        monomer_index = {
+            component: index for index, component in enumerate(self.monomers)
+        }
+        layout = {
+            'acid_indices': [component_index[component] for component in self.monomers],
+            'pair_i': [monomer_index[pair[0]] for pair in self._pair_keys],
+            'pair_j': [monomer_index[pair[1]] for pair in self._pair_keys],
+            'pair_delta_h': [self._pair_delta_H[pair] for pair in self._pair_keys],
+        }
+        self._compiled_closure_layout_cache[order] = layout
+        return layout
 
     def _cache_key(self, T: float, P: float, y_nominal: dict[str, float]) -> tuple:
         return (
@@ -907,12 +954,7 @@ class MultiVaporDimerizationModel:
                 pair_keys.append((comp_i, comp_j))
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                from .compiled_vdm import solve_n_acid_true_moles
-            else:
-                from compiled_vdm import solve_n_acid_true_moles
-
-            compiled = solve_n_acid_true_moles(
+            compiled = _compiled_vdm_backend().solve_n_acid_true_moles(
                 [max(n0.get(comp, 0.0), 0.0) for comp in acid_components],
                 inert_total,
                 pair_i_list,
@@ -1137,12 +1179,9 @@ class MultiVaporDimerizationModel:
         scale_b = max(n_b, 1e-12)
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                from .compiled_vdm import solve_two_acid_true_moles
-            else:
-                from compiled_vdm import solve_two_acid_true_moles
-
-            compiled = solve_two_acid_true_moles(n_a, n_b, inert_total, k_aa, k_ab, k_bb)
+            compiled = _compiled_vdm_backend().solve_two_acid_true_moles(
+                n_a, n_b, inert_total, k_aa, k_ab, k_bb
+            )
         except Exception:
             compiled = None
         if compiled is not None:

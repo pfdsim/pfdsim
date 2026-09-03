@@ -33,6 +33,12 @@ def arguments() -> argparse.Namespace:
         type=Path,
         help="Write raw cProfile statistics for the timed reactor solve.",
     )
+    parser.add_argument(
+        "--association-enthalpy-mode",
+        choices=("scalar", "state"),
+        default="scalar",
+        help="Use the compiled scalar path or reconstruct the complete state.",
+    )
     return parser.parse_args()
 
 
@@ -40,6 +46,10 @@ def main() -> None:
     options = arguments()
     if options.vdm_mode == "readable":
         MultiVaporDimerizationModel.compiled_vapor_closure = (
+            lambda *_args, **_kwargs: None
+        )
+    if options.association_enthalpy_mode == "state":
+        MultiVaporDimerizationModel.compiled_association_enthalpy = (
             lambda *_args, **_kwargs: None
         )
 
@@ -69,6 +79,7 @@ def main() -> None:
     print(json.dumps({
         "benchmark": "lactic_isolated_reactor",
         "vdm_mode": options.vdm_mode,
+        "association_enthalpy_mode": options.association_enthalpy_mode,
         "profiled": profiler is not None,
         "setup_elapsed_s": setup_elapsed,
         "reactor_elapsed_s": elapsed,

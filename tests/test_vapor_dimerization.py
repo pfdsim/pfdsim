@@ -391,6 +391,16 @@ class VaporDimerizationTests(unittest.TestCase):
             delta=max(abs(reference_state['association_enthalpy']) * 2e-10, 1e-9),
         )
         self.assertAlmostEqual(
+            compiled_model.compiled_association_enthalpy(
+                temperature,
+                pressure,
+                components,
+                vapor,
+            ),
+            reference_state['association_enthalpy'],
+            delta=max(abs(reference_state['association_enthalpy']) * 2e-10, 1e-9),
+        )
+        self.assertAlmostEqual(
             compiled_thermo._vapor_enthalpy_from_association_state(
                 vapor,
                 temperature,
@@ -474,6 +484,31 @@ class VaporDimerizationTests(unittest.TestCase):
                 reference_K[component],
                 delta=max(abs(reference_K[component]) * 2e-10, 1e-12),
             )
+        compiled_terms = {
+            component: liquid[component] * compiled['values'][component]
+            for component in order
+        }
+        compiled_total = sum(compiled_terms.values())
+        compiled_vapor = {
+            component: value / compiled_total
+            for component, value in compiled_terms.items()
+        }
+        reference_state = model.association_state(
+            temperature,
+            pressure,
+            compiled_vapor,
+            rk_model=None,
+        )
+        self.assertAlmostEqual(
+            model.compiled_association_enthalpy(
+                temperature,
+                pressure,
+                order,
+                compiled_vapor,
+            ),
+            reference_state['association_enthalpy'],
+            delta=max(abs(reference_state['association_enthalpy']) * 2e-10, 1e-9),
+        )
 
     def test_cross_dimer_uses_statistical_factor_plus_residual(self):
         acetic = VaporDimerizationModel('A', 'A2', delta_S=-150.0, delta_H=-60000.0)

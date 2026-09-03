@@ -3889,6 +3889,18 @@ class VaporDimerizationActivityMixin:
         nominal = {comp: value / total for comp, value in nominal.items()}
 
         try:
+            scalar_enthalpy = getattr(
+                model, 'compiled_association_enthalpy', None
+            )
+            if callable(scalar_enthalpy):
+                value = scalar_enthalpy(
+                    T,
+                    P,
+                    self.components,
+                    nominal,
+                )
+                if value is not None:
+                    return float(value)
             state = model.association_state(T, P, nominal, rk_model=None)
             return float(state.get("association_enthalpy", 0.0))
         except Exception as exc:
