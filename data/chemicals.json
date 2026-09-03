@@ -1047,12 +1047,51 @@
       "Pc": 220.6,
       "Tb": 373.2,
       "Tc": 647.1,
-      "Tm": 273.2,
+      "Tm": 273.1525190797695,
+      "Tt": 273.16,
       "Vc": 55.9,
       "formula": "H2O",
       "name": "Water",
       "omega": 0.344,
-      "phase_at_STP": "liquid"
+      "phase_at_STP": "liquid",
+      "property_correlations": {
+        "Cps": {
+          "equation": "poly_x",
+          "selected_model": "IAPWS R10-06(2009) ice Ih at 0.101325 MPa polynomial fit",
+          "quality": 0.995,
+          "quality_note": "Portable degree-5 fit to the IAPWS ice-Ih equation of state at 0.101325 MPa; maximum relative Cp error 0.0173% over 100-273.16 K. The 273.152519-273.16 K endpoint interval is the formulation's metastable continuation above the normal-pressure melting point.",
+          "Tmin_K": 100.0,
+          "Tmax_K": 273.16,
+          "units_note": "Cp in J/mol/K; x=(T-298.15 K)/100; IAPWS mass-basis Cp converted with M=18.015268 g/mol",
+          "coefficients": {
+            "A": 41.168789373446714,
+            "B": 13.889066629776217,
+            "C": 1.675921358339154,
+            "D": 2.0339381095978637,
+            "E": 1.4675519373991117,
+            "F": 0.36934935205419994
+          },
+          "source": "IAPWS R10-06(2009), Revised Release on the Equation of State 2006 for H2O Ice Ih"
+        },
+        "rhos": {
+          "equation": "poly_x",
+          "selected_model": "IAPWS R10-06(2009) ice Ih at 0.101325 MPa polynomial fit",
+          "quality": 0.995,
+          "quality_note": "Portable degree-5 fit to the IAPWS ice-Ih equation of state at 0.101325 MPa; maximum relative density error 0.000238% over 100-273.16 K. The 273.152519-273.16 K endpoint interval is the formulation's metastable continuation above the normal-pressure melting point.",
+          "Tmin_K": 100.0,
+          "Tmax_K": 273.16,
+          "units_note": "rho in kg/m^3; x=(T-298.15 K)/100; low-pressure ice-Ih fit at 0.101325 MPa",
+          "coefficients": {
+            "A": 912.894337382614,
+            "B": -15.930799177972396,
+            "C": -2.6621490413057036,
+            "D": -0.7661443966997277,
+            "E": -0.7510857602395634,
+            "F": -0.15242565437547895
+          },
+          "source": "IAPWS R10-06(2009), Revised Release on the Equation of State 2006 for H2O Ice Ih"
+        }
+      }
     },
     "H2S": {
       "CAS": "7783-06-4",

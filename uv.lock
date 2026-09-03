@@ -142,6 +142,18 @@ wheels = [
 ]
 
 [[package]]
+name = "iapws"
+version = "1.5.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ce/3f/9d90a362ef2f214965f98e8a11b2fbc3a315871f9a22c5e12a49d8e3286c/iapws-1.5.5.tar.gz", hash = "sha256:c86e1e171551877fe9ceb03ee415e4a4906d2e52698ff9d5656784609739df4d", size = 115380, upload-time = "2026-03-27T20:24:35.246Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/01/256404a8f1fec81606c7127fa99b5a45f88da3c5ecce7a07f38b46e54984/iapws-1.5.5-py3-none-any.whl", hash = "sha256:97810dca5155cce1e2ec964dd254fc9e4858fbb1c9967da6c4f817adaf3a818e", size = 117421, upload-time = "2026-03-27T20:24:33.765Z" },
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -454,6 +466,7 @@ web = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "iapws" },
     { name = "pytest" },
     { name = "pytest-xdist" },
     { name = "ruff" },
@@ -479,6 +492,7 @@ provides-extras = ["web"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "iapws", specifier = ">=1.5.5" },
     { name = "pytest", specifier = ">=9.1" },
     { name = "pytest-xdist", specifier = ">=3.8" },
     { name = "ruff", specifier = ">=0.16" },

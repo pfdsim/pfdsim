@@ -34,6 +34,7 @@ pfdsim = "pfdsim.cli:main"
 
 [dependency-groups]
 dev = [
+    "iapws>=1.5.5",
     "pytest>=9.1",
     "pytest-xdist>=3.8",
     "ruff>=0.16",

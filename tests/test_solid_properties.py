@@ -358,6 +358,29 @@ class SolidResolverTests(unittest.TestCase):
         self.assertEqual(density.method, 'solid_mass_density_from_molar_volume')
         self.assertAlmostEqual(density.value, 2169.99146, places=3)
 
+    def test_curated_water_ice_ih_cp_and_density_resolve_offline(self):
+        database = ChemicalDatabase(enable_online=False)
+        props = database.get('H2O', fetch_online=False).to_dict()
+        cp = self.resolver.resolve_heat_capacity(
+            'H2O', 250.0, 'solid', props, allow_online=False,
+        )
+        density = self.resolver.resolve_solid_mass_density(
+            'H2O', 250.0, props, allow_online=False,
+        )
+        volume = self.resolver.resolve_solid_molar_volume(
+            'H2O', 250.0, props, allow_online=False,
+        )
+        self.assertEqual(cp.method, 'provided_heat_capacity_fit')
+        self.assertEqual(density.method, 'provided_solid_density_fit')
+        self.assertEqual(volume.method, 'solid_molar_volume_from_mass_density')
+        self.assertAlmostEqual(cp.value, 34.7123542, places=3)
+        self.assertAlmostEqual(density.value, 919.9963944, places=2)
+        self.assertAlmostEqual(volume.value, 18.0153 / density.value, places=12)
+        self.assertAlmostEqual(props['Tm'], 273.1525190797695, places=12)
+        self.assertEqual(props['Tt'], 273.16)
+        self.assertEqual(props['property_correlations']['Cps']['quality'], 0.995)
+        self.assertEqual(props['property_correlations']['rhos']['quality'], 0.995)
+
     def test_provided_cps_correlation_precedes_scalar_and_canonical(self):
         props = {
             'CAS': '7647-14-5', 'formula': 'NaCl', 'MW': 58.44277,
