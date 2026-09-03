@@ -2,15 +2,21 @@
 Compiled vapor-dimerization backend.
 
 The readable VDM implementation in vapor_dimerization.py handles names,
-cross-association metadata, fallbacks, and reporting. This module only
-accelerates the hot numeric kernel for the common two-acid case:
+cross-association metadata, fallbacks, and reporting. This module accelerates
+numeric association kernels for both the common two-acid case and general
+multi-acid mixtures. The specialized two-acid kernel handles:
 
     A + A <-> A2
     A + B <-> AB
     B + B <-> B2
 
-The public wrapper returns ``None`` when Numba is unavailable or the numeric
-solve fails, so callers can safely fall back to the generic SciPy machinery.
+The generic N-acid kernel handles every upper-triangular homo- and cross-dimer
+pair. Both kernels are also used inside fused VLE K-value and shared-VLLE
+vapor closures, which return the converged vapor composition, fugacity
+coefficients, dimer extents, and association enthalpy together.
+
+Public wrappers return ``None`` when Numba is unavailable or a numeric solve
+fails, so callers can safely fall back to the readable Python/SciPy machinery.
 """
 
 from __future__ import annotations
