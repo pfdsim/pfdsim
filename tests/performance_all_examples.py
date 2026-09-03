@@ -35,7 +35,16 @@ import unittest
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 DISABLED_EXAMPLES = {
+    'ethyl_acetate_batch_synthesis.pfd': (
+        'Pending a dedicated normalized performance benchmark and baseline.'
+    ),
     'haber_bosch_full.pfd': (
+        'Pending a dedicated normalized performance benchmark and baseline.'
+    ),
+    'isopropanol_diisopropyl_ether_distillation_nrtl_estimated.pfd': (
+        'Pending a dedicated normalized performance benchmark and baseline.'
+    ),
+    'lactic_acid_dehydration_pbr.pfd': (
         'Pending a dedicated normalized performance benchmark and baseline.'
     ),
     'saponification_cstr.pfd': (
@@ -73,9 +82,9 @@ MIN_EXAMPLE_SLOWDOWN_SECONDS = 0.03
 
 BASELINE_WALL_SECONDS = 12.087
 BASELINE_EXAMPLE_SECONDS = {
-    '3methylpyridine_ether_extraction_recycle.pfd': 2.394,
+    '3methylpyridine_ether_extraction_recycle.pfd': 1.445,
     'adaptive_spinodal_water_toluene.pfd': 0.016,
-    'acrylic_acid_rigorous_extraction.pfd': 0.764,
+    'acrylic_acid_rigorous_extraction.pfd': 0.288,
     'air_3a_molecular_sieve_drying.pfd': 0.007,
     'ammonia_oxidation.pfd': 0.037,
     'ammonia_synthesis.pfd': 0.021,
@@ -92,7 +101,7 @@ BASELINE_EXAMPLE_SECONDS = {
     'ethanol_pressure_swing_recycle_wasteful.pfd': 6.941,
     'ethanol_water_inclined_pipe_unifac.pfd': 0.468,
     'ethylene_oxide.pfd': 0.227,
-    'ethylene_oxide_simple.pfd': 0.353,
+    'ethylene_oxide_simple.pfd': 0.305,
     'equilibrium_methanol_synthesis_recycle.pfd': 0.415,
     'global_vlle_water_methanol_benzene.pfd': 0.019,
     'jacketed_cstr_ignition_extinction.pfd': 0.198,
@@ -102,10 +111,10 @@ BASELINE_EXAMPLE_SECONDS = {
     'methanol_ethanol_light_gas_cleanup_compact.pfd': 1.461,
     'methanol_synthesis.pfd': 0.164,
     'methanol_synthesis_psrk.pfd': 0.164,
-    'mixed_acid_dehydration_uniquac_vdm.pfd': 2.316,
+    'mixed_acid_dehydration_uniquac_vdm.pfd': 0.744,
     'permanent_solid_global_vlle_flash.pfd': 0.019,
     'permanent_solid_slurry_operations.pfd': 0.003,
-    'pyridine_ether_extraction.pfd': 0.627,
+    'pyridine_ether_extraction.pfd': 0.256,
     'rk_thermodynamics_pfr.pfd': 0.310,
     'simple_flash.pfd': 0.005,
     'simple_rankine_cycle_steam.pfd': 0.001,
