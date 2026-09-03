@@ -282,6 +282,7 @@ class IdealThermodynamics:
         self.components = list(components)
         self.process_components = list(components)
         self.permanent_solid_components: tuple[str, ...] = ()
+        self.conventional_solid_components: tuple[str, ...] = ()
         self.solid_particle_defaults: dict[str, dict[str, float]] = {}
         self.fluid_phase_model = 'VLE'
         self.interaction_overrides = list(interaction_overrides or [])
@@ -358,15 +359,25 @@ class IdealThermodynamics:
         process_components: Iterable[str],
         permanent_solid_components: Iterable[str],
         particle_defaults: Optional[dict[str, dict[str, float]]] = None,
+        conventional_solid_components: Iterable[str] = (),
     ) -> None:
-        """Attach process-only permanent solids without adding them to fluid backends."""
+        """Configure fixed solids and fluid components that may also freeze."""
         process = list(dict.fromkeys(str(component) for component in process_components))
         solids = tuple(dict.fromkeys(str(component) for component in permanent_solid_components))
-        unknown = sorted(set(solids) - set(process))
+        conventional_solids = tuple(dict.fromkeys(
+            str(component) for component in conventional_solid_components
+        ))
+        unknown = sorted((set(solids) | set(conventional_solids)) - set(process))
         if unknown:
             raise ThermodynamicsError(
-                "Permanent-solid components are not process components: "
+                "Solid-enabled components are not process components: "
                 + ', '.join(unknown)
+            )
+        overlap = sorted(set(solids) & set(conventional_solids))
+        if overlap:
+            raise ThermodynamicsError(
+                "Components cannot be both permanent-solid and conventional-with-solid: "
+                + ', '.join(overlap)
             )
         fluid_expected = [component for component in process if component not in solids]
         if fluid_expected != list(self.components):
@@ -377,6 +388,7 @@ class IdealThermodynamics:
 
         self.process_components = process
         self.permanent_solid_components = solids
+        self.conventional_solid_components = conventional_solids
         self.solid_particle_defaults = {
             component: {
                 key: float(value)
@@ -4208,6 +4220,141 @@ class IdealThermodynamics:
             fluid_state=fluid_state,
             include_set=include_set,
         )
+
+    def calculate_state_with_solid_flows(
+        self,
+        T: float,
+        P: float,
+        F: float,
+        composition: dict[str, float],
+        solid_component_flows: dict[str, float],
+        phase: Optional[str] = None,
+        flash: bool = True,
+        include: Optional[Union[str, Iterable[str]]] = None,
+    ) -> StreamState:
+        """Calculate a state with an explicit conventional solid inventory.
+
+        ``composition`` and ``F`` describe the total stream. Values in
+        ``solid_component_flows`` are kmol/h removed from the fluid subtotal
+        before its phase calculation. Only components configured as
+        ``conventional_with_solid`` may be allocated this way. Permanent-solid
+        components remain entirely solid without an explicit allocation.
+        """
+        total_flow = float(F)
+        if not math.isfinite(total_flow) or total_flow < 0.0:
+            raise ThermodynamicsError(
+                "Stream total molar flow must be finite and nonnegative"
+            )
+        (
+            normalized,
+            _automatic_fluid_fraction,
+            _automatic_fluid_composition,
+            _permanent_solid_fraction,
+            _permanent_solid_composition,
+        ) = self._split_permanent_solid_composition(composition)
+        total_component_flows = {
+            component: total_flow * fraction
+            for component, fraction in normalized.items()
+        }
+        allowed = set(self.conventional_solid_components)
+        explicit_solid_flows = {}
+        for raw_component, raw_flow in (solid_component_flows or {}).items():
+            component = str(raw_component)
+            if component not in allowed:
+                raise ThermodynamicsError(
+                    f"Component '{component}' cannot have an explicit solid flow; "
+                    "declare phase_behavior=conventional_with_solid"
+                )
+            flow = float(raw_flow)
+            if not math.isfinite(flow) or flow < 0.0:
+                raise ThermodynamicsError(
+                    f"Solid flow for component '{component}' must be finite and nonnegative"
+                )
+            available = total_component_flows.get(component, 0.0)
+            tolerance = max(1.0e-12, abs(available) * 1.0e-12)
+            if flow > available + tolerance:
+                raise ThermodynamicsError(
+                    f"Solid flow for component '{component}' ({flow:g} kmol/h) "
+                    f"exceeds its total stream flow ({available:g} kmol/h)"
+                )
+            if flow > 1.0e-15:
+                explicit_solid_flows[component] = min(flow, available)
+
+        permanent_solid_flows = {
+            component: total_component_flows[component]
+            for component in self.permanent_solid_components
+            if total_component_flows.get(component, 0.0) > 1.0e-15
+        }
+        combined_solid_flows = dict(permanent_solid_flows)
+        combined_solid_flows.update(explicit_solid_flows)
+        solid_flow = sum(combined_solid_flows.values())
+        if solid_flow <= 1.0e-15:
+            return self.calculate_state(
+                T, P, F, normalized, phase=phase, flash=flash, include=include
+            )
+        if total_flow <= 1.0e-15:
+            raise ThermodynamicsError(
+                "A zero-flow stream cannot contain positive solid component flows"
+            )
+
+        fluid_component_flows = {
+            component: max(
+                0.0,
+                component_flow - combined_solid_flows.get(component, 0.0),
+            )
+            for component, component_flow in total_component_flows.items()
+        }
+        fluid_flow = sum(fluid_component_flows.values())
+        fluid_composition = (
+            {
+                component: flow / fluid_flow
+                for component, flow in fluid_component_flows.items()
+                if flow > 1.0e-15
+            }
+            if fluid_flow > 1.0e-15 else {}
+        )
+        solid_composition = {
+            component: flow / solid_flow
+            for component, flow in combined_solid_flows.items()
+        }
+        include_set = self._normalize_state_include(include)
+        fluid_state = None
+        if fluid_flow > 1.0e-15:
+            fluid_state = self.calculate_state(
+                T,
+                P,
+                fluid_flow,
+                fluid_composition,
+                phase=phase,
+                flash=flash,
+                include=include_set,
+            )
+        state = self._combine_permanent_solid_state(
+            T=T,
+            P=P,
+            F=total_flow,
+            composition=normalized,
+            fluid_fraction=fluid_flow / total_flow,
+            solid_fraction=solid_flow / total_flow,
+            solid_composition=solid_composition,
+            fluid_state=fluid_state,
+            include_set=include_set,
+        )
+        state.solid_component_flows = combined_solid_flows
+        state.phase_details.pop('permanent_solids', None)
+        if permanent_solid_flows:
+            state.phase_details['permanent_solids'] = {
+                'components': list(permanent_solid_flows),
+                'component_flows': dict(permanent_solid_flows),
+                'model': 'permanent_solid',
+            }
+        if explicit_solid_flows:
+            state.phase_details['conventional_solids'] = {
+                'components': list(explicit_solid_flows),
+                'component_flows': dict(explicit_solid_flows),
+                'model': 'explicit_solid_flow',
+            }
+        return state
     
     def _populate_multifluid_state_properties(
         self,

@@ -263,9 +263,13 @@ initialization error.
 near-spellings of `VLE`. Their parse diagnostic instead explains the available
 component-level solid declarations. A nonparticipating process solid can use
 `phase_behavior=permanent_solid` and optionally select a
-`solid_material_form`. Components that dissolve or precipitate will use the
-future `phase_behavior=soluble_solid` declaration when soluble-solid/SLE
-equilibrium support is implemented.
+`solid_material_form`. A conventional fluid component whose stream inventory
+may also contain an explicitly assigned solid portion can use
+`phase_behavior=conventional_with_solid` or its `three_phase` alias. This
+declaration enables accounting only; it does not freeze the component during a
+state calculation. Components that dissolve or precipitate will use the future
+`phase_behavior=soluble_solid` declaration when soluble-solid/SLE equilibrium
+support is implemented.
 
 The current frozen pure-water Henry standard-state path supports `VLE` only.
 If an aqueous unit activates Henry treatment while `VL(L)E` or `VLLE` is
@@ -488,12 +492,15 @@ Critical and phase-change fields:
   `glass`.
 - `solid_polymorph` - Optional free-text polymorph or allotrope selector. A
   form-labelled source is not guessed when no default form is available.
-- `phase_behavior` - `conventional` by default, or `permanent_solid` for an
+- `phase_behavior` - `conventional` by default; `permanent_solid` for an
   explicit process-model assertion that the component never enters vapor or
-  liquid equilibrium. `type=permanent_solid` is accepted as a compact alias.
-  This setting is not inferred from `phase_at_STP`. `soluble_solid` is reserved
-  for future dissolving/precipitating-component and SLE support and is not yet
-  an accepted declaration.
+  liquid equilibrium; or `conventional_with_solid` for a conventional fluid
+  component that may also have an explicitly assigned solid flow.
+  `type=permanent_solid` is accepted as a compact alias, and `three_phase` is
+  an alias for `conventional_with_solid`. The latter marker does not perform a
+  freezing or SLE calculation. These settings are not inferred from
+  `phase_at_STP`. `soluble_solid` is reserved for future
+  dissolving/precipitating-component and SLE support and is not yet accepted.
 - `particle_diameter` - Optional representative permanent-solid particle
   diameter [m]. `particle_diameter_m` is an alias.
 - `particle_sphericity` - Optional permanent-solid sphericity in `(0, 1]`.

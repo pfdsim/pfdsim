@@ -52,11 +52,13 @@ else:
     from fluid_phase_models import LLE_CAPABLE_THERMO_METHODS
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .phase_behaviors import (
+        CONVENTIONAL_WITH_SOLID_PHASE_BEHAVIOR,
         PERMANENT_SOLID_PHASE_BEHAVIOR,
         normalize_phase_behavior,
     )
 else:
     from phase_behaviors import (
+        CONVENTIONAL_WITH_SOLID_PHASE_BEHAVIOR,
         PERMANENT_SOLID_PHASE_BEHAVIOR,
         normalize_phase_behavior,
     )
@@ -1332,6 +1334,12 @@ class Simulator:
             == PERMANENT_SOLID_PHASE_BEHAVIOR
         ]
         permanent_solid_set = set(permanent_solid_components)
+        conventional_solid_components = [
+            component.symbol
+            for component in self.pfd.components
+            if normalize_phase_behavior(component.phase_behavior)
+            == CONVENTIONAL_WITH_SOLID_PHASE_BEHAVIOR
+        ]
         fluid_components = [
             component for component in components
             if component not in permanent_solid_set
@@ -1595,6 +1603,7 @@ class Simulator:
                     components,
                     permanent_solid_components,
                     particle_defaults,
+                    conventional_solid_components=conventional_solid_components,
                 )
                 thermo.set_fluid_phase_model(
                     getattr(self.pfd.metadata, 'fluid_phase_model', 'VLE')
