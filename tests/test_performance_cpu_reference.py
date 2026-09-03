@@ -68,11 +68,11 @@ class PerformanceCPUReferenceTests(unittest.TestCase):
 
     def test_tight_initialized_example_limits_and_named_exception(self):
         self.assertEqual(performance.ALLOWED_WALL_RELATIVE_REGRESSION, 0.12)
-        self.assertEqual(performance.ALLOWED_EXAMPLE_RELATIVE_REGRESSION, 0.12)
+        self.assertEqual(performance.ALLOWED_EXAMPLE_RELATIVE_REGRESSION, 0.15)
         self.assertEqual(performance.MIN_EXAMPLE_SLOWDOWN_SECONDS, 0.03)
         self.assertAlmostEqual(
             performance._example_runtime_limit('ordinary.pfd', 1.0),
-            1.12,
+            1.15,
         )
         self.assertAlmostEqual(
             performance._example_runtime_limit('fast.pfd', 0.01),

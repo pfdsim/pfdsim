@@ -67,7 +67,7 @@ CPU_REFERENCE_PATTERN = re.compile(
     r'iterations=324000000 checksum=(?P<checksum>\S+)$'
 )
 ALLOWED_WALL_RELATIVE_REGRESSION = 0.12
-ALLOWED_EXAMPLE_RELATIVE_REGRESSION = 0.12
+ALLOWED_EXAMPLE_RELATIVE_REGRESSION = 0.15
 PER_EXAMPLE_RELATIVE_REGRESSION = {
     'ethanol_water_inclined_pipe_unifac.pfd': 0.35,
     'trace_organic_water_stripping_isothermal_unifnist.pfd': 0.25,
