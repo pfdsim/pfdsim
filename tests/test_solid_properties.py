@@ -157,12 +157,59 @@ class SolidCpKernelTests(unittest.TestCase):
         self.assertClose(kernel.cp(298.15), 203.52)
         self.assertEqual(solid_kernel_from_payload(kernel.to_payload()).atom_counts, counts)
 
-    def test_solid_range_is_strict_not_far_clamped(self):
-        kernel = ConstantSolidCpKernel(**self.common(Tmin=293.15, Tmax=303.15), value=100.0)
-        self.assertEqual(kernel.cp(308.15), 100.0)
-        self.assertLess(kernel.quality_at(308.15), kernel.quality)
-        with self.assertRaisesRegex(ValueError, 'source range'):
-            kernel.cp(309.0)
+    def test_solid_range_conditioning_matches_gas_policy(self):
+        kernel = PolynomialSolidCpKernel(
+            **self.common(Tmin=300.0, Tmax=500.0, quality=0.98),
+            coefficients=(20.0, 0.1),
+        )
+        self.assertClose(kernel.evaluate(505.0).quality, 0.96)
+        self.assertClose(kernel.evaluate(510.0).quality, 0.96)
+        self.assertClose(kernel.evaluate(515.0).quality, 0.94)
+        self.assertClose(kernel.cp(510.0), 71.0)
+        self.assertClose(kernel.cp(511.0), 71.0)
+        self.assertClose(kernel.evaluate(1000.0).quality, 0.58)
+
+        step = 1.0e-4
+        for temperature in (295.0, 505.0, 510.0, 520.0):
+            derivative = (
+                kernel.delta_h(298.15, temperature + step)
+                - kernel.delta_h(298.15, temperature - step)
+            ) / (2.0 * step)
+            self.assertClose(derivative, kernel.cp(temperature), rel=1.0e-7)
+
+    def test_solid_cryogenic_queries_require_native_coverage(self):
+        ordinary = ConstantSolidCpKernel(
+            **self.common(Tmin=200.0, Tmax=400.0), value=80.0,
+        )
+        with self.assertRaisesRegex(ValueError, 'explicit correlation coverage'):
+            ordinary.cp(99.0)
+        with self.assertRaisesRegex(ValueError, 'explicit correlation coverage'):
+            ordinary.delta_h(99.0, 250.0)
+
+        cryogenic = ConstantSolidCpKernel(
+            **self.common(Tmin=20.0, Tmax=150.0), value=40.0,
+        )
+        self.assertEqual(cryogenic.cp(50.0), 40.0)
+        self.assertEqual(cryogenic.delta_h(50.0, 120.0), 2800.0)
+        with self.assertRaisesRegex(ValueError, 'explicit correlation coverage'):
+            cryogenic.cp(15.0)
+
+    def test_solid_collection_clamps_outside_aggregate_range(self):
+        kernel = SolidCpCollectionKernel(
+            **self.common(Tmin=200.0, Tmax=400.0, quality=0.95),
+            candidates=(
+                ConstantSolidCpKernel(
+                    **self.common(Tmin=200.0, Tmax=300.0, quality=0.95),
+                    value=60.0,
+                ),
+                ConstantSolidCpKernel(
+                    **self.common(Tmin=300.0, Tmax=400.0, quality=0.95),
+                    value=90.0,
+                ),
+            ),
+        )
+        self.assertEqual(kernel.cp(500.0), 90.0)
+        self.assertEqual(kernel.delta_h(350.0, 450.0), 9000.0)
 
 
 class SolidDatabaseTests(unittest.TestCase):
@@ -396,10 +443,11 @@ class SolidResolverTests(unittest.TestCase):
         with patch('property_resolution.heat_capacity.lookup_bundled_solid_cas', return_value=None):
             kernel = self.resolver.resolve_solid_cp_kernel('fixture salt', props, allow_online=False)
         self.assertIsInstance(kernel, ModifiedKoppSolidCpKernel)
-        self.assertAlmostEqual(kernel.cp(298.15), 3 * 28.25 + 2 * 26.63)
+        expected = 3 * 28.25 + 2 * 26.63
+        self.assertAlmostEqual(kernel.cp(298.15), expected)
         self.assertEqual(kernel.quality, 0.64)
-        with self.assertRaises(ValueError):
-            kernel.cp(350.0)
+        self.assertAlmostEqual(kernel.cp(350.0), expected)
+        self.assertLess(kernel.quality_at(350.0), kernel.quality)
 
     def test_modified_kopp_rejects_net_charged_formula(self):
         self.assertIsNone(self.resolver._modified_kopp_solid_cp_kernel(

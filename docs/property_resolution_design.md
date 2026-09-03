@@ -314,13 +314,16 @@ NIST Cp behavior:
 - Solid tabular tables retain exact piecewise-linear analytic primitives and
   preserve duplicate-temperature transition boundaries.
 
-Out-of-range provided/Perry Cp behavior is bounded. Up to 20 K outside the
-valid range, the correlation is evaluated at the requested temperature; farther
-outside, it clamps to the 20 K extrapolated boundary value and reports an
-estimation warning.
+All three heat-capacity phases use one bounded range policy. Up to 10 K outside
+the valid range, the correlation is evaluated at the requested temperature and
+its quality is reduced by `0.02`. Farther outside, evaluation clamps to the
+10 K continuation boundary; the quality penalty then grows by `0.02` per
+additional 5 K and is capped at `0.40`.
 
-Solid Cp instead permits at most 5 K source extrapolation and never far-clamps
-a curve, because doing so could silently cross a physical solid transition.
+Solid Cp retains an additional cryogenic guard: below 100 K, extrapolation and
+clamping are forbidden, but a correlation whose native range explicitly covers
+the requested temperature remains valid. Solid-solid transition boundaries are
+still enforced independently of this outer-range policy.
 
 ## Solid Volume and Density
 

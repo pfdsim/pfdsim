@@ -64,7 +64,7 @@ class LiquidCpKernelTests(unittest.TestCase):
             self.assertIsNone(load_bundled_liquid_kernel('64-17-5', path=empty))
             self.assertIsNotNone(load_bundled_liquid_kernel('64-17-5'))
 
-    def test_liquid_range_penalties_are_half_the_gas_values(self):
+    def test_liquid_range_penalties_match_the_gas_values(self):
         kernel = PolynomialLiquidCpKernel(
             Tmin=300.0,
             Tmax=500.0,
@@ -73,9 +73,9 @@ class LiquidCpKernelTests(unittest.TestCase):
             method='test',
             coefficients=(20.0, 0.1),
         )
-        self.assertClose(kernel.evaluate(505.0).quality, 0.97)
-        self.assertClose(kernel.evaluate(510.0).quality, 0.97)
-        self.assertClose(kernel.evaluate(515.0).quality, 0.96)
+        self.assertClose(kernel.evaluate(505.0).quality, 0.96)
+        self.assertClose(kernel.evaluate(510.0).quality, 0.96)
+        self.assertClose(kernel.evaluate(515.0).quality, 0.94)
         self.assertClose(kernel.cp(510.0), 71.0)
         self.assertClose(kernel.cp(511.0), 71.0)
         self.assertClose(kernel.evaluate(1000.0).quality, 0.58)
@@ -303,7 +303,7 @@ class LiquidCpResolverTests(unittest.TestCase):
         )
         self.assertEqual((kernel.Tmin, kernel.Tmax), (293.15, 303.15))
         self.assertEqual(kernel.quality_at(298.15), 0.95)
-        self.assertEqual(kernel.quality_at(313.15), 0.94)
+        self.assertAlmostEqual(kernel.quality_at(313.15), 0.93)
         self.assertLess(kernel.quality_at(400.0), 0.95)
 
     def test_pfd_kernel_forms_and_default_range(self):

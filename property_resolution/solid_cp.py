@@ -20,7 +20,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
-from .ideal_gas_cp import IdealGasCpKernel, KernelEvaluation, _finite
+from .ideal_gas_cp import (
+    CLAMP_QUALITY_PENALTY_PER_5K,
+    EXTRAPOLATION_QUALITY_PENALTY,
+    EXTRAPOLATION_WIDTH_K,
+    MAX_RANGE_QUALITY_PENALTY,
+    IdealGasCpKernel,
+    KernelEvaluation,
+    _finite,
+)
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..solid_material_forms import normalize_solid_material_form
 else:
@@ -30,8 +38,11 @@ else:
 ROOT = Path(__file__).resolve().parent.parent
 CANONICAL_DATABASE_PATH = ROOT / "data" / "solid_heat_capacity.sqlite"
 KERNEL_CONTRACT_VERSION = 1
-SOLID_EXTRAPOLATION_WIDTH_K = 5.0
-SOLID_EXTRAPOLATION_QUALITY_PENALTY = 0.03
+SOLID_MINIMUM_TEMPERATURE_K = 100.0
+SOLID_EXTRAPOLATION_WIDTH_K = EXTRAPOLATION_WIDTH_K
+SOLID_EXTRAPOLATION_QUALITY_PENALTY = EXTRAPOLATION_QUALITY_PENALTY
+SOLID_CLAMP_QUALITY_PENALTY_PER_5K = CLAMP_QUALITY_PENALTY_PER_5K
+SOLID_MAX_RANGE_QUALITY_PENALTY = MAX_RANGE_QUALITY_PENALTY
 REFERENCE_TEMPERATURE_K = 298.15
 
 MODIFIED_KOPP_CONTRIBUTIONS_J_MOL_K = {
@@ -53,7 +64,7 @@ class SolidCpTransitionError(ValueError):
 
 @dataclass(frozen=True)
 class SolidCpKernel(IdealGasCpKernel):
-    """Common solid-Cp contract with strict, non-clamping range behavior."""
+    """Solid-Cp contract with gas-style conditioning and guarded cryogenics."""
 
     material_form: str = "unspecified"
     polymorph: str = ""
@@ -84,36 +95,38 @@ class SolidCpKernel(IdealGasCpKernel):
     def notes_at(self, T: float) -> str:
         return self.active_kernel(T).notes
 
-    @property
-    def extended_Tmin(self) -> float:
-        return max(1.0e-9, self.Tmin - SOLID_EXTRAPOLATION_WIDTH_K)
-
-    @property
-    def extended_Tmax(self) -> float:
-        return self.Tmax + SOLID_EXTRAPOLATION_WIDTH_K
-
     def _condition_temperature(self, T: float) -> tuple[float, float, str]:
         temperature = _finite(T)
-        if temperature <= 0.0:
-            raise ValueError("solid heat-capacity temperature must be positive")
-        if self.Tmin <= temperature <= self.Tmax:
-            return temperature, 0.0, ""
-        if temperature < self.Tmin:
-            distance = self.Tmin - temperature
-            direction = "below"
-        else:
-            distance = temperature - self.Tmax
-            direction = "above"
-        if distance > SOLID_EXTRAPOLATION_WIDTH_K + 1.0e-12:
+        if (
+            temperature < SOLID_MINIMUM_TEMPERATURE_K
+            and not self.covers(temperature)
+        ):
             raise ValueError(
-                f"solid heat-capacity query is {distance:g} K {direction} the "
-                f"source range {self.Tmin:g}-{self.Tmax:g} K"
+                f"solid heat-capacity below {SOLID_MINIMUM_TEMPERATURE_K:g} K "
+                "requires explicit correlation coverage"
             )
-        return (
-            temperature,
-            SOLID_EXTRAPOLATION_QUALITY_PENALTY,
-            f"extrapolated {distance:g} K {direction} solid source range",
-        )
+        return super()._condition_temperature(temperature)
+
+    def _integrate_conditioned(
+        self,
+        T1: float,
+        T2: float,
+        *,
+        entropy: bool,
+    ) -> float:
+        lower = min(float(T1), float(T2))
+        upper = max(float(T1), float(T2))
+        cryogenic_upper = min(upper, SOLID_MINIMUM_TEMPERATURE_K)
+        if (
+            lower < SOLID_MINIMUM_TEMPERATURE_K
+            and not (self.Tmin <= lower and cryogenic_upper <= self.Tmax)
+        ):
+            raise ValueError(
+                f"solid heat-capacity integration below "
+                f"{SOLID_MINIMUM_TEMPERATURE_K:g} K requires explicit "
+                "correlation coverage"
+            )
+        return super()._integrate_conditioned(T1, T2, entropy=entropy)
 
     def _validate_curve(self, points: int = 65) -> None:
         if self.Tmax == self.Tmin:
@@ -175,12 +188,17 @@ class ConstantSolidCpKernel(SolidCpKernel):
         if self.unbounded:
             temperature = _finite(T)
             if temperature <= 0.0:
-                raise ValueError("solid heat-capacity temperature must be positive")
+                raise ValueError(
+                    "solid heat-capacity temperature must be positive"
+                )
             return temperature, 0.0, ""
         return super()._condition_temperature(T)
 
     def covers(self, T: float) -> bool:
-        return float(T) > 0.0 if self.unbounded else super().covers(T)
+        return (
+            float(T) > 0.0
+            if self.unbounded else super().covers(T)
+        )
 
     def covers_interval(self, T1: float, T2: float) -> bool:
         if self.unbounded:
@@ -420,6 +438,10 @@ class PiecewiseSolidCpKernel(SolidCpKernel):
         exact = [segment for segment in self.segments if segment.covers(temperature)]
         if exact:
             return exact[0].active_kernel(temperature)
+        if temperature < self.Tmin:
+            return self.segments[0].active_kernel(temperature)
+        if temperature > self.Tmax:
+            return self.segments[-1].active_kernel(temperature)
         raise ValueError(f"no solid Cp segment covers T={temperature:g} K")
 
     def _cp_native(self, T: float) -> float:
@@ -442,10 +464,11 @@ class PiecewiseSolidCpKernel(SolidCpKernel):
         cuts = sorted(set(cuts))
         total = 0.0
         for left, right in zip(cuts, cuts[1:]):
-            segment = self.active_kernel(0.5 * (left + right))
+            midpoint = 0.5 * (left + right)
+            segment = self.active_kernel(midpoint)
             total += (
-                segment._delta_s_native(left, right)
-                if entropy else segment._delta_h_native(left, right)
+                segment.delta_s(left, right)
+                if entropy else segment.delta_h(left, right)
             )
         return total
 
@@ -572,16 +595,25 @@ class SolidCpCollectionKernel(SolidCpKernel):
         return (-item.quality, item.source_priority, item.method)
 
     def active_kernel(self, T: float) -> SolidCpKernel:
+        temperature = float(T)
         exact = [item for item in self.candidates if item.covers(T)]
         if exact:
             return min(exact, key=self._rank).active_kernel(T)
         extended = [
             item for item in self.candidates
-            if item.extended_Tmin <= float(T) <= item.extended_Tmax
+            if item.extended_Tmin <= temperature <= item.extended_Tmax
         ]
         if extended:
             return min(extended, key=self._rank).active_kernel(T)
-        raise ValueError(f"no solid Cp source covers T={float(T):g} K")
+        if temperature < self.Tmin:
+            boundary = min(item.Tmin for item in self.candidates)
+            candidates = [item for item in self.candidates if item.Tmin == boundary]
+            return min(candidates, key=self._rank).active_kernel(T)
+        if temperature > self.Tmax:
+            boundary = max(item.Tmax for item in self.candidates)
+            candidates = [item for item in self.candidates if item.Tmax == boundary]
+            return min(candidates, key=self._rank).active_kernel(T)
+        raise ValueError(f"no solid Cp source covers T={temperature:g} K")
 
     def evaluate(self, T: float) -> KernelEvaluation:
         return self.active_kernel(T).evaluate(T)
@@ -613,10 +645,15 @@ class SolidCpCollectionKernel(SolidCpKernel):
         for left, right in zip(cuts, cuts[1:]):
             eligible = [item for item in self.candidates if item.covers_interval(left, right)]
             if not eligible:
-                raise ValueError(
-                    f"solid Cp sources do not continuously cover {left:g}-{right:g} K"
-                )
-            item = min(eligible, key=self._rank)
+                midpoint = 0.5 * (left + right)
+                if right <= self.Tmin or left >= self.Tmax:
+                    item = self.active_kernel(midpoint)
+                else:
+                    raise ValueError(
+                        f"solid Cp sources do not continuously cover {left:g}-{right:g} K"
+                    )
+            else:
+                item = min(eligible, key=self._rank)
             total += item.delta_s(left, right) if entropy else item.delta_h(left, right)
         return total
 

@@ -2,9 +2,8 @@
 
 The runtime contract intentionally mirrors :mod:`property_resolution.ideal_gas_cp`:
 one immutable resolved curve supplies scalar heat capacity plus analytic enthalpy
-and entropy increments.  Liquid kernels use the same 10 K continuation policy,
-with half of the ideal-gas range-quality penalty as requested for the normally
-weaker temperature dependence of liquid heat capacity.
+and entropy increments. Liquid kernels use the same 10 K continuation and
+range-quality penalty policy as ideal-gas kernels.
 """
 
 from __future__ import annotations
@@ -20,10 +19,13 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Sequence
 
 from .ideal_gas_cp import (
+    CLAMP_QUALITY_PENALTY_PER_5K,
     DEFAULT_TMAX_K,
     DEFAULT_TMIN_K,
+    EXTRAPOLATION_QUALITY_PENALTY,
     EXTRAPOLATION_WIDTH_K,
     IdealGasCpKernel,
+    MAX_RANGE_QUALITY_PENALTY,
     _finite,
     _polynomial_difference,
     _polynomial_value,
@@ -35,9 +37,6 @@ ROOT = Path(__file__).resolve().parent.parent
 CANONICAL_DATABASE_PATH = ROOT / "data" / "liquid_heat_capacity.sqlite"
 KERNEL_CONTRACT_VERSION = 1
 STP_POINT_HALF_WIDTH_K = 5.0
-EXTRAPOLATION_QUALITY_PENALTY = 0.01
-CLAMP_QUALITY_PENALTY_PER_5K = 0.01
-MAX_RANGE_QUALITY_PENALTY = 0.40
 ROWLINSON_BONDI_QUALITY_FACTOR = 0.89
 HBD_RATIO_GC_QUALITY_FACTOR = 0.82
 MIXED_DONOR_BONDI_QUALITY_FACTOR = 0.70
