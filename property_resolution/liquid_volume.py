@@ -1,5 +1,4 @@
 from .common import *
-from collections import Counter
 from collections.abc import Iterable, Mapping
 import sqlite3
 
@@ -14,10 +13,9 @@ class LiquidVolumeMixin:
         ASSUMED_BARE_DENSITY_TEMPERATURE_K = 293.15
         DENSITY_PHASE_MARGIN_K = 2.0
         DENSITY_PHASE_MARGIN_REL = 0.01
-        SOLID_DENSITY_HEURISTIC_MIN_HEAVY_ATOMS = 4
-        SOLID_DENSITY_HEURISTIC_SYMMETRIC_FRACTION = 0.60
+        SOLID_DENSITY_HEURISTIC_AUTOMORPHISM_LIMIT = 10
+        SOLID_DENSITY_HEURISTIC_MIN_REDUCED_TEMPERATURE = 0.30
         SOLID_DENSITY_HEURISTIC_LIQUID_MIN_QUALITY = 0.55
-        SOLID_DENSITY_HEURISTIC_REFERENCE_TEMPERATURE_K = 293.15
         # Organic-crystal volumetric expansion heuristic.  van der Lee and
         # Dumitrescu, "Thermal expansion properties of organic crystals: a
         # CSD study", Chem. Sci. 2021, 12, 8537-8547,
@@ -2369,9 +2367,18 @@ class LiquidVolumeMixin:
             props: Dict[str, Any],
             *,
             allow_online: bool,
+            requested_temperature: Optional[float] = None,
         ) -> tuple[Optional[PropertyResolutionResult], str]:
+            def applicable(result: Optional[PropertyResolutionResult]) -> bool:
+                if not self._solid_density_transition_is_usable(result):
+                    return False
+                return (
+                    requested_temperature is None
+                    or float(result.value) + 1.0e-9 >= float(requested_temperature)
+                )
+
             direct_tt = self._source_result_for_value(props, 'Tt', units='K')
-            if self._solid_density_transition_is_usable(direct_tt):
+            if applicable(direct_tt):
                 return direct_tt, 'Tt'
             try:
                 triple = self.resolve_triple_point(
@@ -2382,11 +2389,11 @@ class LiquidVolumeMixin:
             except Exception:
                 triple = {}
             resolved_tt = triple.get('Tt') if isinstance(triple, Mapping) else None
-            if self._solid_density_transition_is_usable(resolved_tt):
+            if applicable(resolved_tt):
                 return resolved_tt, 'Tt'
 
             direct_tm = self._source_result_for_value(props, 'Tm', units='K')
-            if self._solid_density_transition_is_usable(direct_tm):
+            if applicable(direct_tm):
                 return direct_tm, 'Tm'
             try:
                 resolved_tm = self.resolve_melting_point(
@@ -2396,7 +2403,7 @@ class LiquidVolumeMixin:
                 )
             except Exception:
                 resolved_tm = None
-            if self._solid_density_transition_is_usable(resolved_tm):
+            if applicable(resolved_tm):
                 return resolved_tm, 'Tm'
             return None, ''
 
@@ -2429,6 +2436,7 @@ class LiquidVolumeMixin:
             molecule = Chem.MolFromSmiles(str(smiles_result.value))
             if molecule is None:
                 return None, 'the resolved molecular structure is invalid'
+            molecule = Chem.RemoveHs(molecule)
             if len(Chem.GetMolFrags(molecule)) != 1:
                 return None, 'multi-fragment structures are outside the neutral molecular domain'
             if any(atom.GetFormalCharge() != 0 for atom in molecule.GetAtoms()):
@@ -2446,51 +2454,54 @@ class LiquidVolumeMixin:
             if any(atom.GetAtomicNum() not in allowed_atomic_numbers for atom in heavy_atoms):
                 return None, 'metal-containing and nonstandard-element structures are excluded'
             heavy_count = len(heavy_atoms)
-            if heavy_count < self.SOLID_DENSITY_HEURISTIC_MIN_HEAVY_ATOMS:
-                return None, (
-                    f'{heavy_count} heavy atoms; more than 3 are required'
-                )
-            ranks = list(Chem.CanonicalRankAtoms(
+            automorphism_count = len(molecule.GetSubstructMatches(
                 molecule,
-                breakTies=False,
-                includeChirality=True,
+                uniquify=False,
+                useChirality=True,
+                maxMatches=self.SOLID_DENSITY_HEURISTIC_AUTOMORPHISM_LIMIT,
             ))
-            rank_counts = Counter(
-                ranks[atom.GetIdx()]
-                for atom in heavy_atoms
-            )
-            repeated_atoms = sum(
-                count
-                for count in rank_counts.values()
-                if count > 1
-            )
-            symmetric_fraction = repeated_atoms / heavy_count
-            linear_hydrocarbon = (
-                all(atom.GetAtomicNum() == 6 for atom in heavy_atoms)
-                and molecule.GetRingInfo().NumRings() == 0
-                and all(
-                    sum(
-                        neighbor.GetAtomicNum() > 1
-                        for neighbor in atom.GetNeighbors()
-                    ) <= 2
-                    for atom in heavy_atoms
-                )
-            )
             if (
-                symmetric_fraction >= self.SOLID_DENSITY_HEURISTIC_SYMMETRIC_FRACTION
-                and not linear_hydrocarbon
+                automorphism_count
+                >= self.SOLID_DENSITY_HEURISTIC_AUTOMORPHISM_LIMIT
             ):
                 return None, (
-                    f'clearly symmetric molecular graph: {repeated_atoms}/{heavy_count} '
-                    'heavy atoms belong to repeated symmetry classes'
+                    'highly symmetric molecular graph: at least '
+                    f'{self.SOLID_DENSITY_HEURISTIC_AUTOMORPHISM_LIMIT} '
+                    'heavy-atom graph automorphisms'
                 )
-            note = (
-                f'neutral single-fragment organic; {heavy_count} heavy atoms; '
-                f'{repeated_atoms}/{heavy_count} heavy atoms in repeated symmetry classes'
+            return smiles_result, (
+                f'neutral single-fragment organic; {heavy_count} heavy atom(s); '
+                f'{automorphism_count} heavy-atom graph automorphism(s)'
             )
-            if linear_hydrocarbon:
-                note += '; linear hydrocarbon symmetry exemption'
-            return smiles_result, note
+
+
+        def _solid_density_intervening_transition(
+            self,
+            symbol: str,
+            T: float,
+            transition_temperature: float,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+        ) -> Optional[float]:
+            """Return the first known solid transition crossed by the estimate."""
+            try:
+                kernel = self.resolve_solid_cp_kernel(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                )
+            except Exception:
+                return None
+            if kernel is None:
+                return None
+            low, high = sorted((float(T), float(transition_temperature)))
+            crossed = sorted(
+                float(value)
+                for value in kernel.transition_temperatures
+                if low + 1.0e-9 < float(value) < high - 1.0e-9
+            )
+            return crossed[0] if crossed else None
 
 
         def _solid_density_organic_fallback(
@@ -2509,18 +2520,38 @@ class LiquidVolumeMixin:
             if structure_result is None:
                 return None, eligibility_note
             transition, transition_kind = self._solid_density_transition_temperature(
-                symbol,
-                props,
+                symbol, props,
                 allow_online=allow_online,
+                requested_temperature=T,
             )
             if transition is None:
                 return None, 'no trustworthy Tt or Tm is available'
             transition_temperature = float(transition.value)
-            reference_temperature = self.SOLID_DENSITY_HEURISTIC_REFERENCE_TEMPERATURE_K
-            if transition_temperature <= reference_temperature:
+            minimum_temperature = (
+                self.SOLID_DENSITY_HEURISTIC_MIN_REDUCED_TEMPERATURE
+                * transition_temperature
+            )
+            if T < minimum_temperature:
                 return None, (
-                    f'the solid transition {transition_kind}={transition_temperature:g} K '
-                    f'is not above the {reference_temperature:g} K heuristic reference state'
+                    f'T={T:g} K is below 0.3*{transition_kind}='
+                    f'{minimum_temperature:g} K'
+                )
+            if T > transition_temperature:
+                return None, (
+                    f'T={T:g} K is above {transition_kind}='
+                    f'{transition_temperature:g} K'
+                )
+            intervening = self._solid_density_intervening_transition(
+                symbol,
+                T,
+                transition_temperature,
+                props,
+                allow_online=allow_online,
+            )
+            if intervening is not None:
+                return None, (
+                    f'a known solid transition at {intervening:g} K lies between '
+                    f'T={T:g} K and {transition_kind}={transition_temperature:g} K'
                 )
             liquid_props = dict(props)
             if not allow_online:
@@ -2550,14 +2581,10 @@ class LiquidVolumeMixin:
                 liquid_density = (
                     float(mw_result.value) * float(liquid_molar_density.value)
                 )
-                ratio = 1.28 - 0.16 * reference_temperature / transition_temperature
-                reference_density = ratio * liquid_density
-                density = self._solid_density_at_temperature(
-                    reference_density,
-                    T,
-                    reference_temperature,
-                    self.SOLID_ORGANIC_VOLUMETRIC_EXPANSION_K_INV,
-                )
+                # Temperature-general organic volume-of-fusion correlation:
+                # J. Chem. Eng. Data (2004) 49 (6): 1512–1514.
+                ratio = 1.28 - 0.16 * float(T) / transition_temperature
+                density = ratio * liquid_density
             except (TypeError, ValueError, ZeroDivisionError, OverflowError):
                 return None, 'the heuristic density calculation was not finite'
             if (
@@ -2565,43 +2592,31 @@ class LiquidVolumeMixin:
                 or liquid_density <= 0.0
                 or not math.isfinite(ratio)
                 or ratio <= 0.0
-                or density is None
+                or not math.isfinite(density)
+                or density <= 0.0
             ):
                 return None, 'the heuristic density calculation was not positive and finite'
             base_quality = 0.70 * min(
                 self._result_quality(transition, 0.0),
                 self._result_quality(liquid_molar_density, 0.0),
             )
-            temperature_steps = self._solid_density_temperature_steps(
-                T,
-                reference_temperature,
-            )
-            quality_penalty = (
-                self.SOLID_ORGANIC_EXPANSION_QUALITY_PENALTY_PER_5K
-                * temperature_steps
-            )
-            quality = max(0.0, base_quality - quality_penalty)
             notes = (
-                f'rho_s(Tref)=(1.28-0.16*Tref/{transition_kind})*rho_l({transition_kind}); '
-                f'Tref={reference_temperature:g} K fixed at 20 deg C; '
+                f'rho_s(T)=(1.28-0.16*T/{transition_kind})*rho_l({transition_kind}); '
+                f'T={T:g} K; '
                 f'{transition_kind}={transition_temperature:g} K from '
                 f'{transition.source}/{transition.method}; rho_l={liquid_density:g} kg/m^3 '
                 f'from {liquid_molar_density.source}/{liquid_molar_density.method}; '
-                f'multiplier={ratio:g}; rho_s(Tref)={reference_density:g} kg/m^3; '
-                'reported heuristic performance is 6% MAE overall and <4% error at '
-                'the transition-density comparison (MAE is not an uncertainty interval); '
-                f'rho_s(T)=rho_s(Tref)/(1+alpha_v*(T-Tref)) with '
-                f'alpha_v={self.SOLID_ORGANIC_VOLUMETRIC_EXPANSION_K_INV:g} 1/K '
-                'from the 700-organic-crystal average (standard deviation 0.7e-4 1/K); '
-                f'requested T={T:g} K; quality penalty={quality_penalty:g} from '
-                f'{temperature_steps} complete 5 K interval(s); '
+                f'multiplier={ratio:g}; reported MAPE at multiple temperatures is '
+                '5.6% (not an uncertainty interval); source: J. Chem. Eng. Data '
+                '(2004) 49 (6): 1512–1514; no known solid transition lies between '
+                f'T and {transition_kind}; '
                 f'eligibility: {eligibility_note}; units kg/m^3'
             )
             return PropertyResolutionResult(
                 value=density,
                 source='estimated',
                 method='organic_volume_of_fusion_solid_density',
-                quality=quality,
+                quality=base_quality,
                 notes=notes,
             ), ''
 

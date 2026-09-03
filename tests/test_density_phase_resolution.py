@@ -495,7 +495,7 @@ class DensityPhaseResolutionTests(unittest.TestCase):
                     'parent monohydrate', 298.15, props,
                 )
 
-    def test_organic_fallback_domain_requires_asymmetric_neutral_organic_structure(self):
+    def test_organic_fallback_domain_rejects_only_high_graph_symmetry_and_nonorganics(self):
         resolver = PropertyResolver()
 
         def check(smiles, expected, reason=''):
@@ -516,12 +516,16 @@ class DensityPhaseResolutionTests(unittest.TestCase):
                 self.assertIn(reason, note)
 
         cases = (
-            ('CCCCO', True, '5 heavy atoms'),
-            ('CCCCCC', True, 'linear hydrocarbon symmetry exemption'),
-            ('C=CCCCC', True, 'linear hydrocarbon symmetry exemption'),
-            ('CCO', False, 'more than 3'),
-            ('c1ccccc1', False, 'clearly symmetric'),
-            ('ClC(Cl)(Cl)Cl', False, 'clearly symmetric'),
+            ('CCCCO', True, '1 heavy-atom graph automorphism'),
+            ('CCCCCC', True, '2 heavy-atom graph automorphism'),
+            ('C=CCCCC', True, '1 heavy-atom graph automorphism'),
+            ('CO', True, '1 heavy-atom graph automorphism'),
+            ('CCO', True, '1 heavy-atom graph automorphism'),
+            ('C1CCC1', True, '8 heavy-atom graph automorphism'),
+            ('c1ccccc1', False, 'at least 10'),
+            ('C1CCCCC1', False, 'at least 10'),
+            ('C12C3C4C1C5C2C3C45', False, 'at least 10'),
+            ('ClC(Cl)(Cl)Cl', False, 'at least 10'),
             ('O=S=O', False, 'not a molecular organic'),
             ('C[N+](C)(C)C', False, 'formally charged'),
             ('C[Mg]C', False, 'metal-containing'),
@@ -567,7 +571,22 @@ class DensityPhaseResolutionTests(unittest.TestCase):
         self.assertIs(selected, tm)
         self.assertEqual(kind, 'Tm')
 
-    def test_organic_fallback_uses_fixed_20c_anchor_then_separate_expansion(self):
+        with patch.object(
+            resolver,
+            'resolve_triple_point',
+            return_value={'Tt': tt},
+        ), patch.object(
+            resolver,
+            'resolve_melting_point',
+            return_value=tm,
+        ):
+            selected, kind = resolver._solid_density_transition_temperature(
+                'fixture', {}, allow_online=False, requested_temperature=312.0,
+            )
+        self.assertIs(selected, tm)
+        self.assertEqual(kind, 'Tm')
+
+    def test_organic_fallback_uses_requested_temperature_directly(self):
         resolver = PropertyResolver()
         structure = PropertyResolutionResult(
             'CCCCO', 'local', 'fixture_smiles', 0.99,
@@ -599,26 +618,37 @@ class DensityPhaseResolutionTests(unittest.TestCase):
                 'fixture', 150.0, props, allow_online=False,
             )
         self.assertEqual(reason, '')
-        reference = (1.28 - 0.16 * 293.15 / 300.0) * 1000.0
-        self.assertAlmostEqual(
-            at_transition.value,
-            reference / (1.0 + 1.7e-4 * (300.0 - 293.15)),
-        )
-        self.assertAlmostEqual(
-            colder.value,
-            reference / (1.0 + 1.7e-4 * (150.0 - 293.15)),
-        )
-        self.assertAlmostEqual(at_transition.quality, 0.70 * 0.80 - 0.01)
-        self.assertAlmostEqual(colder.quality, 0.70 * 0.80 - 0.28)
+        self.assertAlmostEqual(at_transition.value, 1.12 * 1000.0)
+        self.assertAlmostEqual(colder.value, 1.20 * 1000.0)
+        self.assertAlmostEqual(at_transition.quality, 0.70 * 0.80)
+        self.assertAlmostEqual(colder.quality, 0.70 * 0.80)
         self.assertEqual(
             at_transition.method,
             'organic_volume_of_fusion_solid_density',
         )
-        self.assertIn('6% MAE', at_transition.notes)
-        self.assertIn('Tref=293.15 K fixed at 20 deg C', at_transition.notes)
-        self.assertIn('alpha_v=0.00017 1/K', at_transition.notes)
-        self.assertIn('standard deviation 0.7e-4 1/K', at_transition.notes)
-        self.assertIn('quality penalty=0.01', at_transition.notes)
+        self.assertIn('5.6%', at_transition.notes)
+        self.assertIn('J. Chem. Eng. Data (2004) 49 (6): 1512–1514', at_transition.notes)
+        self.assertIn('rho_s(T)=(1.28-0.16*T/Tt)', at_transition.notes)
+
+    def test_intervening_transition_comes_from_solid_cp_kernel(self):
+        resolver = PropertyResolver()
+
+        class Kernel:
+            transition_temperatures = (125.0, 225.0, 300.0)
+
+        with patch.object(
+            resolver,
+            'resolve_solid_cp_kernel',
+            return_value=Kernel(),
+        ):
+            transition = resolver._solid_density_intervening_transition(
+                'fixture', 150.0, 300.0, {}, allow_online=False,
+            )
+            boundary_only = resolver._solid_density_intervening_transition(
+                'fixture', 225.0, 300.0, {}, allow_online=False,
+            )
+        self.assertEqual(transition, 225.0)
+        self.assertIsNone(boundary_only)
 
     def test_solid_expansion_policy_applies_only_to_neutral_organic_crystals(self):
         resolver = PropertyResolver()
@@ -695,7 +725,7 @@ class DensityPhaseResolutionTests(unittest.TestCase):
         self.assertAlmostEqual(inorganic.quality, 0.70)
         self.assertIn('quality penalty=0.2', inorganic.notes)
 
-    def test_organic_fallback_refuses_no_room_temperature_solid_or_weak_liquid_density(self):
+    def test_organic_fallback_accepts_low_transition_and_enforces_reduced_temperature(self):
         resolver = PropertyResolver()
         structure = PropertyResolutionResult(
             'CCCCO', 'local', 'fixture_smiles', 0.99,
@@ -735,12 +765,34 @@ class DensityPhaseResolutionTests(unittest.TestCase):
             resolver,
             '_solid_density_transition_temperature',
             return_value=(low_transition, 'Tm'),
+        ), patch.object(
+            resolver,
+            'resolve_liquid_molar_density',
+            return_value=PropertyResolutionResult(
+                10.0, 'calculated', 'fixture_liquid_density', 0.80,
+            ),
         ):
             result, reason = resolver._solid_density_organic_fallback(
                 'fixture', 250.0, props, allow_online=False,
             )
+        self.assertIsNotNone(result)
+        self.assertEqual(reason, '')
+        self.assertAlmostEqual(result.value, (1.28 - 0.16 * 250.0 / 290.0) * 1000.0)
+
+        with patch.object(
+            resolver,
+            '_solid_density_heuristic_structure',
+            return_value=(structure, 'eligible fixture'),
+        ), patch.object(
+            resolver,
+            '_solid_density_transition_temperature',
+            return_value=(low_transition, 'Tm'),
+        ):
+            result, reason = resolver._solid_density_organic_fallback(
+                'fixture', 86.0, props, allow_online=False,
+            )
         self.assertIsNone(result)
-        self.assertIn('not above the 293.15 K heuristic reference state', reason)
+        self.assertIn('below 0.3*Tm=87 K', reason)
 
         weak_liquid = PropertyResolutionResult(
             10.0, 'estimated', 'weak_liquid_density', 0.54,
@@ -763,6 +815,33 @@ class DensityPhaseResolutionTests(unittest.TestCase):
             )
         self.assertIsNone(result)
         self.assertIn('below quality 0.55', reason)
+
+    def test_organic_fallback_rejects_intervening_solid_transition(self):
+        resolver = PropertyResolver()
+        structure = PropertyResolutionResult(
+            'CCCCO', 'local', 'fixture_smiles', 0.99,
+        )
+        transition = PropertyResolutionResult(
+            300.0, 'local', 'fixture_tm', 0.95,
+        )
+        with patch.object(
+            resolver,
+            '_solid_density_heuristic_structure',
+            return_value=(structure, 'eligible fixture'),
+        ), patch.object(
+            resolver,
+            '_solid_density_transition_temperature',
+            return_value=(transition, 'Tm'),
+        ), patch.object(
+            resolver,
+            '_solid_density_intervening_transition',
+            return_value=225.0,
+        ):
+            result, reason = resolver._solid_density_organic_fallback(
+                'fixture', 150.0, {'MW': 100.0}, allow_online=False,
+            )
+        self.assertIsNone(result)
+        self.assertIn('solid transition at 225 K', reason)
 
     def test_reported_solid_density_remains_ahead_of_organic_fallback(self):
         resolver = PropertyResolver()

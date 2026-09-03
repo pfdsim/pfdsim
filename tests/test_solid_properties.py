@@ -545,6 +545,26 @@ class SolidResolverTests(unittest.TestCase):
         self.assertIs(result, fallback)
         resolver_fallback.assert_called_once()
 
+    def test_small_associators_use_organic_solid_density_fallback_offline(self):
+        database = ChemicalDatabase(enable_online=False)
+        for symbol in ('CH3OH', 'C2H5OH', 'CH3COOH'):
+            with self.subTest(symbol=symbol):
+                props = database.get(symbol, fetch_online=False).to_dict()
+                result = self.resolver.resolve_solid_mass_density(
+                    symbol, float(props['Tm']), props, allow_online=False,
+                )
+                self.assertEqual(
+                    result.method,
+                    'organic_volume_of_fusion_solid_density',
+                )
+                self.assertGreater(result.value, 0.0)
+
+        benzene = database.get('C6H6', fetch_online=False).to_dict()
+        with self.assertRaisesRegex(PropertyResolutionError, 'highly symmetric'):
+            self.resolver.resolve_solid_mass_density(
+                'C6H6', float(benzene['Tm']), benzene, allow_online=False,
+            )
+
     def test_nist_parser_preserves_solid_transition_and_shomate(self):
         html = '''
         <table class="data" aria-label="Constant pressure heat capacity of solid">

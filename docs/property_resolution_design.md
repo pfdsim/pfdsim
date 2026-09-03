@@ -333,6 +333,19 @@ the selected molecular weight. Explicit `Vm_solid`, `rho_solid`, and `rhos`
 PFD data take priority, followed by the bundled CRC source, form-qualified
 PubChem observations, and the existing strict organic density heuristic.
 
+The organic no-observation fallback uses the temperature-general correlation
+`rho_s(T) = (1.28 - 0.16*T/T_transition)*rho_l(T_transition)` from
+*J. Chem. Eng. Data* (2004) 49 (6): 1512–1514, which reports 5.6% MAPE across
+the evaluated temperatures. It is admitted from `0.3*T_transition` through the
+selected trustworthy triple or melting point, provided no known solid-Cp
+transition boundary lies between the requested temperature and that point.
+Neutral, single-fragment molecular organics are eligible regardless of size or
+whether their transition is below room temperature. Inorganic, metallic,
+formally charged, hydrate, and solvate identities remain excluded. An empirical
+packing-risk guard also excludes molecules with at least 10 chirality-aware
+heavy-atom graph automorphisms; this guard reflects local validation rather
+than a claim made by the cited correlation source.
+
 The CRC source has no temperature correlation. Inorganic thermal expansion is
 therefore zero rather than guessed; quality decreases by 0.01 per complete
 25 K away from 298.15 K, capped at a 0.30 penalty. Neutral molecular-organic
