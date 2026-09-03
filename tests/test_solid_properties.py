@@ -378,6 +378,7 @@ class SolidResolverTests(unittest.TestCase):
         self.assertAlmostEqual(volume.value, 18.0153 / density.value, places=12)
         self.assertAlmostEqual(props['Tm'], 273.1525190797695, places=12)
         self.assertEqual(props['Tt'], 273.16)
+        self.assertEqual(props['Pt'], 0.00611657)
         self.assertEqual(props['property_correlations']['Cps']['quality'], 0.995)
         self.assertEqual(props['property_correlations']['rhos']['quality'], 0.995)
 
