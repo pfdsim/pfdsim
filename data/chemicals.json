@@ -109,16 +109,44 @@
     "C2H5COOH": {
       "CAS": "79-09-4",
       "Hf": -455.8,
+      "Hfus": 10.66,
       "MW": 74.08,
       "Pc": 46.68,
       "Tb": 414.0,
       "Tc": 600.8,
-      "Tm": 252.0,
+      "Tm": 252.7,
       "Vc": 232.0,
       "formula": "C3H6O2",
+      "fusion_transitions": [
+        {
+          "enthalpy_kJ_mol": 10.66,
+          "temperature_K": 252.7,
+          "material_form": "unspecified",
+          "is_source_default": true,
+          "source": "nist_phase_change",
+          "method": "nist_reported_fusion",
+          "quality": 0.94,
+          "reference": "Domalski and Hearing, 1996",
+          "comment": "See also Martin and Andon, 1982; AC"
+        }
+      ],
       "name": "Propionic acid",
       "omega": 0.536,
-      "phase_at_STP": "liquid"
+      "phase_at_STP": "liquid",
+      "property_sources": {
+        "Tm": {
+          "source": "nist_phase_change",
+          "method": "nist_reported_fusion",
+          "quality": 0.94,
+          "notes": "Paired fusion-transition temperature reported by Domalski and Hearing (1996)."
+        },
+        "Hfus": {
+          "source": "nist_phase_change",
+          "method": "nist_reported_fusion",
+          "quality": 0.94,
+          "notes": "Enthalpy of fusion at 252.7 K reported by Domalski and Hearing (1996)."
+        }
+      }
     },
     "C2H5OH": {
       "CAS": "64-17-5",

@@ -196,6 +196,7 @@ limitations.
 | Distillation | `ShortcutDistillation`, `McCabeThieleDistillation`, `CMODistillation`, `RigorousDistillation` |
 | Absorption and stripping | `Absorber`, `Stripper`, `RigorousAbsorber`, `RigorousStripper` |
 | Extraction and drying | `ShortcutExtractor`, `Extractor`, `MolecularSieveDryer` |
+| Crystallization | `Crystallizer` |
 | Reaction | `Reactor`, `EquilibriumReactor`, `CSTR`, `PFR` |
 
 The parser also recognizes some forward-looking unit names that are not fully

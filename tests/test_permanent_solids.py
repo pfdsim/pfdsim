@@ -11,6 +11,7 @@ from unit_operations_base import UnitOperationError
 from unit_operations import UNIT_CLASSES
 from unit_operations_basic import Cooler, Flash, HeatExchanger, Heater, Mixer, Pump, Splitter
 from unit_operations_separation import Flash3
+from unit_operations_solids import Crystallizer
 
 
 WATER_SALT_COMPONENTS = """
@@ -447,7 +448,10 @@ UNIT P
             flash3.solve({'in': slurry})
 
     def test_unit_registry_capability_boundary_is_explicit(self):
-        supported = {Mixer, Splitter, Heater, Cooler, HeatExchanger, Flash}
+        supported = {
+            Mixer, Splitter, Heater, Cooler, HeatExchanger, Flash,
+            Crystallizer,
+        }
         for unit_class in set(UNIT_CLASSES.values()):
             with self.subTest(unit_class=unit_class.__name__):
                 self.assertEqual(

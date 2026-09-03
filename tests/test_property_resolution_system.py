@@ -136,6 +136,57 @@ class PropertyResolutionSystemTests(unittest.TestCase):
                 self.assertEqual(source['method'], 'chemicals_json')
                 self.assertClose(source['quality'], 0.995)
 
+    def test_unlabeled_chemicals_json_phase_change_values_have_quality_095(self):
+        for raw in (
+            {'Tm': 250.0, 'Hfus': 10.0},
+            {
+                'Tm': 250.0,
+                'Hfus': 10.0,
+                'property_sources': {
+                    'dataset': {
+                        'source': 'curated test dataset',
+                        'method': 'manual transcription',
+                        'quality': 0.99,
+                    },
+                },
+            },
+        ):
+            has_dataset = 'dataset' in raw.get('property_sources', {})
+            with self.subTest(has_dataset=has_dataset):
+                sources = ChemicalDatabase._expand_dataset_property_sources(raw)
+                for name in ('Tm', 'Hfus'):
+                    self.assertEqual(sources[name]['quality'], 0.95)
+                    self.assertFalse(
+                        ChemicalDatabase._stored_source_is_estimated(
+                            SimpleNamespace(property_sources=sources), name
+                        )
+                    )
+
+        database = ChemicalDatabase(enable_online=False)
+        acrylic_acid = database.get('Acrylic acid', fetch_online=False)
+        solid_volume = PropertyResolver().resolve_solid_molar_volume(
+            acrylic_acid.symbol,
+            280.0,
+            database._resolver_props_dict(acrylic_acid),
+            allow_online=False,
+        )
+        self.assertGreater(solid_volume.value, 0.0)
+        self.assertIn('Tm=285.7 K from local/chemicals_json', solid_volume.notes)
+
+    def test_propionic_acid_fusion_data_is_available_offline(self):
+        props = ChemicalDatabase(enable_online=False).get('79-09-4')
+
+        self.assertIsNotNone(props)
+        self.assertClose(props.Tm, 252.7)
+        self.assertClose(props.Hfus, 10.66)
+        self.assertEqual(props.property_sources['Tm']['quality'], 0.94)
+        self.assertEqual(props.property_sources['Hfus']['quality'], 0.94)
+        self.assertTrue(any(
+            math.isclose(record['temperature_K'], 252.7)
+            and math.isclose(record['enthalpy_kJ_mol'], 10.66)
+            for record in props.fusion_transitions
+        ))
+
     def test_database_can_resolve_perry_only_compound_before_online_lookup(self):
         database = ChemicalDatabase(enable_online=True)
 

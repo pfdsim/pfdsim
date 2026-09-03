@@ -635,16 +635,41 @@ UNIT_DOF_RULES = {
     # SOLID HANDLING
     # =========================================================================
     'Crystallizer': {
-        'description': 'Crystallization unit',
+        'description': (
+            'Equilibrium cooling crystallizer with retained slurry or ideal '
+            'cake/mother-liquor split'
+        ),
         'category': 'solid',
         'phase_support': ['SLE'],
-        'required_specs': ['T', 'crystal_product'],
+        'required_specs': ['T_out|T'],
         'optional_specs': {
-            'type': {'values': ['cooling', 'evaporative', 'reaction'], 'default': 'cooling'},
-            'residence_time': {'unit': 'h'},
+            'P_out': {'unit': 'bar'},
+            'P_drop': {'unit': 'bar', 'default': 0.0},
+            'equilibrium_tolerance': {'default': 1e-8},
+            'max_iterations': {'default': 500},
+            'mother_liquor_retention': {
+                'description': (
+                    'Fraction of equilibrium mother liquor retained with the '
+                    'cake; specifying it enables cake/mother-liquor outlets'
+                ),
+            },
+            'mother_liquor_retention_rate': {
+                'description': (
+                    'Mass of equilibrium mother liquor retained per mass of '
+                    'conventional crystals; specifying it enables cake/mother-'
+                    'liquor outlets'
+                ),
+            },
         },
-        'calculated': ['crystal_yield', 'mother_liquor_composition'],
-        'dof_notes': 'Solid-liquid equilibrium.',
+        'calculated': [
+            'solid_component_flows', 'crystal_yields',
+            'mother_liquor_composition', 'heat_duty',
+        ],
+        'dof_notes': (
+            'Specify outlet temperature. Pressure defaults to inlet pressure; '
+            'without a retention specification, solid and mother liquor remain '
+            'in one slurry outlet.'
+        ),
     },
     'Filter': {
         'description': 'Solid-liquid separation',
@@ -991,6 +1016,74 @@ class DOFAnalyzer:
                 dof = 1
                 status = SpecificationStatus.UNDER_SPECIFIED
                 message = f"Unit '{unit.id}' needs T_out, Q, or vapor_frac"
+
+        elif unit_type == 'Crystallizer':
+            has_temperature = any(
+                name in param_names
+                for name in ('t_out', 'tout', 't', 'temperature')
+            )
+            has_pressure = any(
+                name in param_names
+                for name in ('p_out', 'pout', 'p', 'pressure')
+            )
+            has_pressure_drop = 'p_drop' in param_names
+            retention_fraction_names = {
+                'mother_liquor_retention',
+                'mother_liquor_retention_fraction',
+            }
+            specified_retention_fractions = (
+                retention_fraction_names & param_names
+            )
+            has_retention_rate = 'mother_liquor_retention_rate' in param_names
+            has_retention = bool(
+                specified_retention_fractions or has_retention_rate
+            )
+            outlet_ports = {
+                port.id
+                for port in unit.ports
+                if port.port_type.value.endswith('outlet')
+            }
+            if not has_temperature:
+                dof = 1
+                status = SpecificationStatus.UNDER_SPECIFIED
+                message = f"Unit '{unit.id}' needs outlet temperature T_out/T"
+            elif has_pressure and has_pressure_drop:
+                dof = -1
+                status = SpecificationStatus.OVER_SPECIFIED
+                message = (
+                    f"Unit '{unit.id}' cannot specify both outlet pressure and P_drop"
+                )
+            elif (
+                len(specified_retention_fractions) > 1
+                or (specified_retention_fractions and has_retention_rate)
+            ):
+                dof = -1
+                status = SpecificationStatus.OVER_SPECIFIED
+                message = (
+                    f"Unit '{unit.id}' must specify only one mother-liquor "
+                    "retention basis"
+                )
+            elif has_retention and 'out' in outlet_ports:
+                dof = -1
+                status = SpecificationStatus.OVER_SPECIFIED
+                message = (
+                    f"Unit '{unit.id}' uses slurry outlet 'out' with a "
+                    "mother-liquor-retention cake split"
+                )
+            elif has_retention and not {'cake', 'mother_liquor'} <= outlet_ports:
+                dof = 1
+                status = SpecificationStatus.UNDER_SPECIFIED
+                message = (
+                    f"Unit '{unit.id}' cake-split mode requires cake and "
+                    "mother_liquor outlets"
+                )
+            elif not has_retention and outlet_ports & {'cake', 'mother_liquor'}:
+                dof = 1
+                status = SpecificationStatus.UNDER_SPECIFIED
+                message = (
+                    f"Unit '{unit.id}' cake/mother_liquor outlets require "
+                    "mother_liquor_retention"
+                )
                 
         elif unit_type == 'HeatExchanger':
             has_u = 'u' in param_names

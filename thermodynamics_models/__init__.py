@@ -44,6 +44,12 @@ from .gamma_phi import (
     UNIFNISTRKThermodynamics, UNIFNISTPRThermodynamics,
 )
 from .factory import create_thermodynamics, create_experiment_thermo
+from .sle import (
+    PureSolidSLEResult,
+    liquid_solution_activities,
+    pure_solid_log_saturation_activity,
+    solve_pure_solid_sle,
+)
 
 __all__ = [
     'R', 'R_BAR', 'T_REF', 'P_REF', 'LIQUID_VOLUME_EXTRAPOLATION_LIMIT_K',
@@ -68,4 +74,6 @@ __all__ = [
     'UNIFACPRThermodynamics', 'UNIFDMDRKThermodynamics', 'UNIFDMDPRThermodynamics',
     'UNIFNISTRKThermodynamics', 'UNIFNISTPRThermodynamics',
     'create_thermodynamics', 'create_experiment_thermo',
+    'PureSolidSLEResult', 'liquid_solution_activities',
+    'pure_solid_log_saturation_activity', 'solve_pure_solid_sle',
 ]

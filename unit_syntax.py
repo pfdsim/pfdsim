@@ -57,6 +57,7 @@ UNIT_TYPE_ALIASES = {
     'PackedBedReactor': 'PackedBedReactor',
     'PBR': 'PackedBedReactor',
     'KineticsPackedBed': 'PackedBedReactor',
+    'Crystallizer': 'Crystallizer',
 }
 
 
@@ -76,6 +77,7 @@ UNIT_PORT_FAMILIES = {
     'BatchReactor': 'batch_reactor',
     'PFR': 'reactor',
     'PackedBedReactor': 'reactor',
+    'Crystallizer': 'crystallizer',
     'HeatExchanger': 'heat_exchanger',
     'Flash': 'flash',
     'Flash3': 'flash3',
@@ -249,6 +251,25 @@ PORT_FAMILY_SCHEMAS = {
         ('effluent', 'reactor_effluent', 'products', 'reaction_products',
          'reactor_product'),
     ),
+    'crystallizer': {
+        'inlets': {
+            **_COMMON_IN,
+            **_names('in', 'crystallizer_feed', 'solution',
+                     'mother_liquor_feed'),
+        },
+        'outlets': {
+            **_COMMON_OUT,
+            **_names('out', 'slurry', 'slurry_out', 'crystallizer_product'),
+            **_names('cake', 'crystals', 'crystal_cake', 'wet_cake'),
+            **_names('mother_liquor', 'liquor', 'filtrate', 'mother'),
+        },
+        'types': {
+            'in': 'inlet',
+            'out': 'outlet',
+            'cake': 'solid_outlet',
+            'mother_liquor': 'liquid_outlet',
+        },
+    },
     'batch_reactor': {
         'inlets': {
             **_COMMON_IN,

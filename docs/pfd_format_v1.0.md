@@ -1038,6 +1038,8 @@ serialization and `.pfr` reporting expose.
 - `Flash` - VLE flash drum
 - `Flash3` - Vapor-liquid-liquid flash drum; aliases: `ThreePhaseFlash`, `VLLEFlash`
 - `Decanter` - Liquid-liquid separator; aliases: `FlashLLE`, `LLSeparator`, `Settler`
+- `Crystallizer` - Pure-solid SLE cooling crystallizer with a retained slurry
+  or optional ideal cake/mother-liquor split
 - `ShortcutDistillation` - Shortcut distillation column
 - `McCabeThieleDistillation` - Binary McCabe-Thiele column with optional latent-heat-corrected operating curves
 - `CMODistillation` - Multicomponent stage-by-stage constant-molar-overflow column with total, partial, or mixed condenser
@@ -1062,9 +1064,9 @@ serialization and `.pfr` reporting expose.
 
 ##### Permanent-Solid Unit Capability
 
-The first permanent-solid routing layer supports `Mixer`, `Splitter`,
-`Heater`, `Cooler`, `HeatExchanger`, and ordinary `Flash`. Feeds and product
-sinks may be dry solids, slurries, or fluid/solid multiphase streams.
+The solid routing layer supports `Mixer`, `Splitter`, `Heater`, `Cooler`,
+`HeatExchanger`, ordinary `Flash`, and `Crystallizer`. Feeds and product sinks
+may be dry solids, slurries, or fluid/solid multiphase streams.
 
 - A proportional `Splitter` preserves phase inventory and particle defaults;
   component-split mode may explicitly route solid components.
@@ -1075,13 +1077,17 @@ sinks may be dry solids, slurries, or fluid/solid multiphase streams.
 - Ordinary `Flash` sends no permanent solid to its vapor outlet. Its single
   nonvapor outlet retains all permanent solids and one or two liquid phases;
   it does not claim filtration or particle classification.
+- `Crystallizer` preserves permanent solids and equilibrates only components
+  declared `conventional_with_solid` against a homogeneous liquid mother phase.
 
 Other registered units reject permanent-solid-bearing inlets explicitly,
 including pressure machines and pipes, `Flash3`, decanters/extractors,
 distillation, absorbers/strippers, reactors, and `MolecularSieveDryer`.
-Existing `Crystallizer` and `Filter` enum labels are not implemented unit
-models. Melting, dissolution, SLE, precipitation, crystallization, filtration,
-settling, and slurry transport remain outside format 1.0.
+The existing `Filter` enum label is not an implemented unit model. Solid
+solutions, co-crystals, polymorph selection, all-solid topology, particle-size
+prediction, filtration transport, settling, and slurry transport remain
+outside format 1.0. Multiple independent pure solids may coexist with the
+retained mother liquor.
 
 #### Port Types
 
@@ -1312,6 +1318,44 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   result has at most one liquid phase. A state that simultaneously requires a
   pure-water Henry phase and a second liquid phase is rejected explicitly;
   coupled Henry/VLLE standard states are not currently implemented.
+
+**Crystallizer:**
+
+- One `in`/`solution` inlet is cooled to a specified `T_out`/`T`/`temperature`.
+- `P_out`/`P`/`pressure` optionally specifies outlet pressure. Otherwise inlet
+  pressure minus optional `P_drop` is used. Do not specify both an absolute
+  outlet pressure and `P_drop`.
+- Every feed component declared `phase_behavior=conventional_with_solid`
+  (alias `three_phase`) participates in pure-solid SLE. Ordinary conventional
+  components remain in the liquid, and permanent solids pass through unchanged.
+- A declared candidate above its pure-component melting point is retained in
+  the liquid without requesting metastable-solid properties. Other subcooled
+  candidates continue through the SLE calculation normally.
+- The equilibrium equation uses the resolved `Tm` and `Hfus`, integrated
+  temperature-dependent liquid and solid heat capacities, liquid activity
+  coefficients (or liquid EOS fugacity ratios), and a solid/liquid molar-volume
+  pressure correction. Each crystallizing component forms its own pure solid;
+  co-crystallization is not modeled.
+- By default the sole `out`/`slurry` outlet retains all mother liquor and solid.
+- Specifying `mother_liquor_retention` (alias
+  `mother_liquor_retention_fraction`) enables `cake` and `mother_liquor`
+  outlets. It is the fraction from 0 to 1 of the equilibrium mother liquor
+  sent with the cake. Alternatively, `mother_liquor_retention_rate` specifies
+  retained mother-liquor mass per mass of conventional crystals in kg/kg.
+  The two bases are mutually exclusive, and a mass rate requiring more mother
+  liquor than exists is infeasible. All solid is sent to the cake. This is an
+  ideal bookkeeping split, not a filtration or centrifuge transport model.
+- `equilibrium_tolerance` and `max_iterations` control the complementarity
+  solve; defaults are `1e-8` and 500.
+- The reported duty is the enthalpy difference between the inlet and the
+  equilibrium outlet stream or streams. Conventional-solid enthalpy and entropy
+  are anchored to the liquid at `Tm` through `Hfus`, consistent with the SLE
+  thermodynamic cycle.
+- The first implementation assumes one homogeneous liquid mother phase and
+  requires some liquid to remain. It supports multiple coexisting pure solids
+  but fails explicitly for an all-solid topology rather than substituting an
+  approximate result. PSD, nucleation, growth, agglomeration, and breakage are
+  not modeled.
 
 **MolecularSieveDryer / Dryer:**
 

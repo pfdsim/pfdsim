@@ -289,7 +289,10 @@ class FlowsheetSolver:
                 
                 # Handle temperature unit conversion
                 param_lower = param.name.lower()
-                if isinstance(value, (int, float)) and ('t_' in param_lower or param_lower == 't'):
+                if isinstance(value, (int, float)) and (
+                    't_' in param_lower
+                    or param_lower in {'t', 'temperature'}
+                ):
                     unit_str = param.unit.upper() if param.unit else ''
                     if unit_str in ['C', '°C', 'CELSIUS']:
                         value = value + 273.15  # Convert to Kelvin
@@ -302,6 +305,12 @@ class FlowsheetSolver:
                 params[param.name] = value
                 if param.unit:
                     params[f"__unit__{param.name}"] = param.unit
+
+            if unit.unit_type == 'Crystallizer':
+                params['__connected_outlet_ports__'] = [
+                    self.stream_connections[stream_id][1]
+                    for stream_id in self.unit_outlets.get(unit.id, [])
+                ]
             
             # Add reactions if present
             if unit.reactions:

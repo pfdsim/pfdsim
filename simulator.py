@@ -220,7 +220,7 @@ class Simulator:
             
             # Solid handling is not supported by any current thermo method
             if (
-                unit_type != 'MolecularSieveDryer'
+                unit_type not in {'MolecularSieveDryer', 'Crystallizer'}
                 and any(phase in unit_type.lower() for phase in ['solid', 'crystal', 'filter', 'dryer'])
             ):
                 raise SimulationError(
@@ -1466,8 +1466,10 @@ class Simulator:
                 '_cp_ideal_cache', '_cp_liquid_cache',
                 '_cp_solid_cache', '_cp_integral_cache', '_enthalpy_ideal_cache',
                 '_enthalpy_liquid_cache', '_enthalpy_solid_cache',
+                '_enthalpy_process_solid_cache',
                 '_entropy_ideal_cache', '_entropy_liquid_cache',
                 '_entropy_solid_cache', '_hvap_cache', '_hvap_T_cache',
+                '_entropy_process_solid_cache',
                 '_liquid_molar_volume_cache', '_liquid_molar_volume_info_cache',
                 '_solid_molar_volume_cache',
                 '_pure_saturation_temperature_cache', '_phi_sat_cache',

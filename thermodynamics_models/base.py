@@ -298,9 +298,11 @@ class IdealThermodynamics:
         self._enthalpy_ideal_cache: dict[tuple[str, float], float] = {}
         self._enthalpy_liquid_cache: dict[tuple[str, float], float] = {}
         self._enthalpy_solid_cache: dict[tuple[str, float], float] = {}
+        self._enthalpy_process_solid_cache: dict[tuple[str, float], float] = {}
         self._entropy_ideal_cache: dict[tuple[str, float], float] = {}
         self._entropy_liquid_cache: dict[tuple[str, float], float] = {}
         self._entropy_solid_cache: dict[tuple[str, float], float] = {}
+        self._entropy_process_solid_cache: dict[tuple[str, float], float] = {}
         self._hvap_cache: dict[str, float] = {}
         self._hvap_T_cache: dict[tuple[str, float], float] = {}
         self._liquid_molar_volume_cache: dict[tuple[str, float], float] = {}
@@ -389,6 +391,8 @@ class IdealThermodynamics:
         self.process_components = process
         self.permanent_solid_components = solids
         self.conventional_solid_components = conventional_solids
+        self._enthalpy_process_solid_cache.clear()
+        self._entropy_process_solid_cache.clear()
         self.solid_particle_defaults = {
             component: {
                 key: float(value)
@@ -3190,6 +3194,29 @@ class IdealThermodynamics:
         value = reference + self._integrate_solid_cp(comp, T_REF, T)
         return self._set_limited_cache(self._enthalpy_solid_cache, cache_key, value)
 
+    def process_solid_enthalpy(self, comp: str, T: float) -> float:
+        """Solid enthalpy using the phase-behavior-appropriate reference."""
+        if comp not in self.conventional_solid_components:
+            return self.enthalpy_solid(comp, T)
+        cache_key = (comp, float(T))
+        cached = self._enthalpy_process_solid_cache.get(cache_key)
+        if cached is not None:
+            return cached
+        props = self.props.get(comp)
+        if props is None or props.Tm is None or props.Hfus is None:
+            raise ThermodynamicsError(
+                f"Conventional solid '{comp}' requires Tm and Hfus for enthalpy"
+            )
+        melting_temperature = float(props.Tm)
+        value = (
+            self.enthalpy_liquid(comp, melting_temperature)
+            - float(props.Hfus)
+            + self._integrate_solid_cp(comp, melting_temperature, T)
+        )
+        return self._set_limited_cache(
+            self._enthalpy_process_solid_cache, cache_key, value
+        )
+
     def _integrate_cp_over_T(self, comp: str, T1: float, T2: float,
                              phase: str = 'ideal_gas') -> float:
         """Integral of Cp/T from T1 to T2 [kJ/kmol-K]."""
@@ -3305,6 +3332,31 @@ class IdealThermodynamics:
             self.mark_property_source_context_once(comp, 'S_solid', phase='solid_entropy')
         value = reference + self._integrate_cp_over_T(comp, T_REF, T, 'solid')
         return self._set_limited_cache(self._entropy_solid_cache, cache_key, value)
+
+    def process_solid_entropy(self, comp: str, T: float) -> float:
+        """Solid entropy using the phase-behavior-appropriate reference."""
+        if comp not in self.conventional_solid_components:
+            return self.entropy_solid(comp, T)
+        cache_key = (comp, float(T))
+        cached = self._entropy_process_solid_cache.get(cache_key)
+        if cached is not None:
+            return cached
+        props = self.props.get(comp)
+        if props is None or props.Tm is None or props.Hfus is None:
+            raise ThermodynamicsError(
+                f"Conventional solid '{comp}' requires Tm and Hfus for entropy"
+            )
+        melting_temperature = float(props.Tm)
+        value = (
+            self.entropy_liquid(comp, melting_temperature)
+            - 1000.0 * float(props.Hfus) / melting_temperature
+            + self._integrate_cp_over_T(
+                comp, melting_temperature, T, 'solid'
+            )
+        )
+        return self._set_limited_cache(
+            self._entropy_process_solid_cache, cache_key, value
+        )
 
     def standard_chemical_potential(self, comp: str, T: float) -> float:
         """Ideal-gas standard chemical potential at ``P_REF`` [kJ/kmol].
@@ -4124,8 +4176,8 @@ class IdealThermodynamics:
         state.MW = self.mixture_MW(composition)
 
         solid_total_fractions = {
-            component: float(composition.get(component, 0.0))
-            for component in solid_composition
+            component: solid_fraction * float(fraction)
+            for component, fraction in solid_composition.items()
         }
         if 'Cp' in include_set:
             fluid_cp = fluid_state.Cp if fluid_state is not None else 0.0
@@ -4142,7 +4194,7 @@ class IdealThermodynamics:
                 state.H = None
             else:
                 state.H = fluid_fraction * float(fluid_H) + sum(
-                    fraction * 1000.0 * self.enthalpy_solid(component, T)
+                    fraction * 1000.0 * self.process_solid_enthalpy(component, T)
                     for component, fraction in solid_total_fractions.items()
                 )
         if 'S' in include_set:
@@ -4151,7 +4203,7 @@ class IdealThermodynamics:
                 state.S = None
             else:
                 state.S = fluid_fraction * float(fluid_S) + sum(
-                    fraction * self.entropy_solid(component, T)
+                    fraction * self.process_solid_entropy(component, T)
                     for component, fraction in solid_total_fractions.items()
                 )
         if 'rho' in include_set:
@@ -4407,7 +4459,8 @@ class IdealThermodynamics:
                 + L1 * self.mixture_enthalpy(x1, state.T, 0.0, x1, None, state.P)
                 + L2 * self.mixture_enthalpy(x2, state.T, 0.0, x2, None, state.P)
                 + sum(
-                    fraction * 1000.0 * self.enthalpy_solid(component, state.T)
+                    fraction * 1000.0
+                    * self.process_solid_enthalpy(component, state.T)
                     for component, fraction in solid_fractions.items()
                 )
             )
@@ -4417,7 +4470,7 @@ class IdealThermodynamics:
                 + L1 * self.mixture_entropy(x1, state.T, 0.0, x1, None, state.P)
                 + L2 * self.mixture_entropy(x2, state.T, 0.0, x2, None, state.P)
                 + sum(
-                    fraction * self.entropy_solid(component, state.T)
+                    fraction * self.process_solid_entropy(component, state.T)
                     for component, fraction in solid_fractions.items()
                 )
             )

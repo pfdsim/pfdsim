@@ -1545,6 +1545,18 @@ class ChemicalDatabase:
                     'quality': 0.995,
                     'notes': 'Curated bundled chemicals.json critical property',
                 })
+            for key in ('Tm', 'Hfus'):
+                if props.get(key) is None:
+                    continue
+                property_sources.setdefault(key, {
+                    'source': 'local',
+                    'method': 'chemicals_json',
+                    'quality': 0.95,
+                    'notes': (
+                        'Bundled chemicals.json solid-liquid phase-change '
+                        'property'
+                    ),
+                })
             return property_sources
         dataset_source = dict(dataset_source)
         dataset_source.setdefault('quality', 0.98)
@@ -1573,6 +1585,12 @@ class ChemicalDatabase:
             source = dict(dataset_source)
             if key in {'Cp_coeffs', 'Cp_liquid', 'Cp_solid'}:
                 source['quality'] = 0.95
+            elif key in {'Tm', 'Hfus'}:
+                source['quality'] = 0.95
+                source['notes'] = (
+                    'Bundled chemicals.json solid-liquid phase-change '
+                    'property without more specific per-property provenance'
+                )
             return source
 
         for key in scalar_keys:

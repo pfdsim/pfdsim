@@ -18,6 +18,7 @@ from unit_operations import (
     Absorber,
     CMODistillation,
     Compressor,
+    Crystallizer,
     Cooler,
     Decanter,
     ShortcutDistillation,
@@ -107,6 +108,21 @@ class UnitOperationSmokeTests(unittest.TestCase):
             composition={'water': 0.20, 'methanol': 0.30, 'benzene': 0.50},
             vapor_fraction=0.0,
         )
+        crystal_thermo = create_thermodynamics(
+            ['water', 'ethanol'], 'IDEAL'
+        )
+        crystal_thermo.configure_permanent_solids(
+            ['water', 'ethanol'],
+            [],
+            conventional_solid_components=['water'],
+        )
+        crystal_feed = crystal_thermo.calculate_state(
+            280.0,
+            1.0,
+            10.0,
+            {'water': 0.9, 'ethanol': 0.1},
+            phase='liquid',
+        )
         cases = [
             (Mixer('U', self.ideal, {'mode': 'adiabatic'}), {'in1': self.liquid, 'in2': self.liquid2}, True),
             (Splitter('U', self.ideal, {'split_frac': 0.4}), {'in': self.liquid}, True),
@@ -138,6 +154,7 @@ class UnitOperationSmokeTests(unittest.TestCase):
             (KineticsBatch('U', self.reactive, {'V_batch': 5, 't_reaction': 0.01, 'T': 523.15, 'phase': 'vapor', 'profile_points': 3, 'reactions': [{'equation': 'CO + 2 H2 -> CH3OH', 'A': '10', 'Ea': '0', 'Ea_unit': 'J/mol', 'rate_basis': 'concentration', 'concentration_unit': 'kmol/m3', 'pressure_unit': 'bar', 'rate_unit': 'kmol/m3/h'}]}), {'in': self.reactive_feed}, False),
             (KineticsPFR('U', self.reactive, {'volume': 5, 'T': 523.15, 'phase': 'vapor', 'profile_points': 6, 'reactions': [{'equation': 'CO + 2 H2 -> CH3OH', 'A': '10', 'Ea': '0', 'Ea_unit': 'J/mol', 'rate_basis': 'concentration', 'concentration_unit': 'kmol/m3', 'pressure_unit': 'bar', 'rate_unit': 'kmol/m3/h'}]}), {'in': self.reactive_feed}, False),
             (KineticsPackedBed('U', self.reactive, {'catalyst_mass': 5, 'bulk_catalyst_density': 500, 'bed_void_fraction': 0.4, 'diameter': 0.5, 'particle_diameter': 0.005, 'T': 523.15, 'phase': 'vapor', 'profile_points': 3, 'reactions': [{'equation': 'CO + 2 H2 -> CH3OH', 'A': '0.01', 'Ea': '0', 'Ea_unit': 'J/mol', 'rate_basis': 'concentration', 'concentration_unit': 'kmol/m3', 'pressure_unit': 'bar', 'rate_unit': 'kmol/kg_cat/h'}]}), {'in': self.reactive_feed}, False),
+            (Crystallizer('U', crystal_thermo, {'T': 250.0}), {'in': crystal_feed}, True),
         ]
 
         tested_classes = {type(unit) for unit, _, _ in cases}
