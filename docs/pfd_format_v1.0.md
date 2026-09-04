@@ -300,6 +300,91 @@ entering fluid equilibrium. Inactive liquid-2 and solid slots remain present
 in memory but are omitted from serialized/PFR reporting until they contain a
 fraction, composition, component flow, or particle value.
 
+Particle-size distributions are stored on each stream's solid-component
+inventory. A component declaration can provide the default population used
+whenever that component enters the solid phase:
+
+```text
+COMPONENTS:
+    salt | Sodium chloride | type=permanent_solid, PSD={diameters_um:[50, 100, 200], fractions:[0.2, 0.3, 0.5], basis:mass}
+```
+
+`diameters_m`, `diameters_mm`, or `diameters_um` supplies strictly increasing
+representative volume-equivalent class diameters. `fractions` must be
+nonnegative and have a positive sum; it is normalized during parsing. The
+accepted input bases are `mole`, `mass`, `volume`, and `number`. Internally,
+every distribution is converted to component molar flow in each size class,
+so PSD material is extensive and conserved by mixers and non-size-selective
+splits. For one pure component, mass, volume, and mole fractions are
+equivalent; number fractions are converted using particle volume proportional
+to diameter cubed.
+
+Two conventional continuous distributions are also accepted:
+
+```text
+# Lognormal cumulative distribution on the declared basis.
+PSD={distribution:lognormal, d50_um:200, GSD:1.6, basis:mass, classes:20}
+
+# Weibull, also known as Rosin-Rammler or RRSB for particle sizing.
+PSD={distribution:rosin_rammler, d63_2_um:500, shape:2.5, basis:volume, classes:20}
+```
+
+For `lognormal`, `d50` is the median diameter of the distribution on the
+declared basis and `GSD` is the geometric standard deviation. The canonical
+names are `d50_m` and `geometric_standard_deviation`; `d50`, `d50_mm`,
+`d50_um`, `median_diameter`, `GSD`, and `sigma_g` are accepted input forms.
+GSD must be at least one; exactly one represents a monodisperse population.
+
+For `weibull`/`rosin_rammler`, the cumulative undersize fraction is
+
+```text
+Q(d) = 1 - exp(-(d / d63.2)^shape)
+```
+
+Consequently, the scale or characteristic diameter is the diameter at
+`1 - exp(-1)`, approximately 63.2% cumulative undersize, on the declared
+basis. The canonical names are `scale_diameter_m` and `shape`;
+`characteristic_diameter`, `d63_2`, `spread_parameter`, and `exponent` are
+accepted input forms, with the same `_m`, `_mm`, and `_um` diameter suffixes.
+
+Parametric PSDs require an explicit basis because a median or percentile is
+not meaningful without its weighting basis. `classes` is an integer from 2 to
+1000 and defaults to 20. Parametric distributions are converted to the
+canonical discrete population using equal-probability classes: every class
+represents the same fraction on the declared basis and its representative
+diameter is the inverse cumulative distribution at the class midpoint. This
+accounts for the complete analytical distribution without selecting arbitrary
+finite tail cutoffs. The normalized PFD representation retains the analytical
+distribution and parameters; stream results contain the instantiated discrete
+class flows.
+
+A feed stream may override the component default independently for a
+`permanent_solid` component:
+
+```text
+STREAM SaltFeed : FEED -> MIX.salt
+    T = 25 [C]
+    P = 1 [bar]
+    F = 2 [kmol/h]
+    x = salt:1
+    PSD = {salt:{diameters_um:[25, 75], fractions:[0.6, 0.4], basis:number}}
+```
+
+`PSD` is a map because a stream can carry independent populations for several
+solid components. Each attached population must account for the entire solid
+flow of that component. The legacy `particle_diameter` field is interpreted
+as a one-class monodisperse PSD when no explicit PSD is supplied; a component
+cannot declare both fields.
+
+A `conventional_with_solid` component may declare a component-level PSD
+default, which is instantiated when a crystallizer or another solid-forming
+calculation creates an explicit solid inventory. Stream-level PSD overrides
+for such components are not currently accepted because the PFD stream format
+cannot yet allocate the component between fluid and solid phases. Explicit
+stream solid-component allocation is reserved for a future format extension;
+when introduced, it will provide the solid flow to which the stream PSD is
+attached.
+
 ### 5. Recycle Solver Method
 
 ```
@@ -501,11 +586,17 @@ Critical and phase-change fields:
   freezing or SLE calculation. These settings are not inferred from
   `phase_at_STP`. `soluble_solid` is reserved for future
   dissolving/precipitating-component and SLE support and is not yet accepted.
-- `particle_diameter` - Optional representative permanent-solid particle
-  diameter [m]. `particle_diameter_m` is an alias.
-- `particle_sphericity` - Optional permanent-solid sphericity in `(0, 1]`.
+- `particle_diameter` - Optional representative solid particle diameter [m]
+  for a `permanent_solid` or `conventional_with_solid` component.
+  `particle_diameter_m` is an alias.
+- `particle_sphericity` - Optional solid-particle sphericity in `(0, 1]`.
   `sphericity` is an alias and the runtime default is 1.0. Particle defaults
   are invalid on a `conventional` component in the current model.
+- `particle_size_distribution` / `PSD` - Optional normalized particle-size
+  default for a `permanent_solid` or `conventional_with_solid` component. It
+  may contain representative diameters and fractions, or a lognormal or
+  Weibull/Rosin-Rammler analytical distribution, with a fraction basis as
+  described above.
 - `uniquac_r`, `uniquac_q` - UNIQUAC pure-component volume and surface-area parameters; if supplied, they take precedence over the built-in CAS-keyed r/q table and UNIFAC-based estimation
 - `VDM` - Atomic vapor-dimerization parameter bundle for any component,
   including non-acids. It requires `delta_H` [J/mol dimer] and `delta_S`

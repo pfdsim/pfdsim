@@ -13,6 +13,16 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..fluid_phase_models import normalize_fluid_phase_model
 else:
     from fluid_phase_models import normalize_fluid_phase_model
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..particle_size_distributions import (
+        ParticleSizeDistribution,
+        instantiate_particle_size_distribution,
+    )
+else:
+    from particle_size_distributions import (
+        ParticleSizeDistribution,
+        instantiate_particle_size_distribution,
+    )
 
 from .common import (
     DEFAULT_STATE_INCLUDE,
@@ -88,6 +98,9 @@ class StreamState:
     solid_composition: Optional[dict[str, float]] = None
     solid_component_flows: dict[str, float] = field(default_factory=dict)
     solid_particle_properties: dict[str, dict[str, float]] = field(default_factory=dict)
+    solid_particle_size_distributions: dict[
+        str, ParticleSizeDistribution
+    ] = field(default_factory=dict)
     fluid_phase_model: str = 'VLE'
     phase_status: str = 'unspecified'
     phase_stability: str = 'not_checked'
@@ -175,6 +188,9 @@ class StreamState:
                 component: dict(values)
                 for component, values in self.solid_particle_properties.items()
             },
+            solid_particle_size_distributions=dict(
+                self.solid_particle_size_distributions
+            ),
             fluid_phase_model=self.fluid_phase_model,
             phase_status=self.phase_status,
             phase_stability=self.phase_stability,
@@ -248,9 +264,36 @@ class StreamState:
                     component: dict(values)
                     for component, values in self.solid_particle_properties.items()
                 }
+            if self.solid_particle_size_distributions:
+                self.validate_particle_size_distributions()
+                payload['solid_particle_size_distributions'] = {
+                    component: distribution.to_dict()
+                    for component, distribution in (
+                        self.solid_particle_size_distributions.items()
+                    )
+                }
         if self.phase_details:
             payload['phase_details'] = dict(self.phase_details)
         return payload
+
+    def validate_particle_size_distributions(self) -> None:
+        """Require each attached PSD to account for its full solid component."""
+        for component, distribution in (
+            self.solid_particle_size_distributions.items()
+        ):
+            solid_flow = float(self.solid_component_flows.get(component, 0.0))
+            tolerance = max(1.0e-12, abs(solid_flow) * 1.0e-10)
+            if solid_flow <= 1.0e-15:
+                raise ValueError(
+                    f"Particle-size distribution for '{component}' has no "
+                    "corresponding solid component flow"
+                )
+            if abs(distribution.total_molar_flow - solid_flow) > tolerance:
+                raise ValueError(
+                    f"Particle-size distribution for '{component}' accounts for "
+                    f"{distribution.total_molar_flow:g} kmol/h but its solid "
+                    f"component flow is {solid_flow:g} kmol/h"
+                )
 
 
 class IdealThermodynamics:
@@ -395,12 +438,16 @@ class IdealThermodynamics:
         self._entropy_process_solid_cache.clear()
         self.solid_particle_defaults = {
             component: {
-                key: float(value)
+                key: (
+                    dict(value)
+                    if key == 'particle_size_distribution'
+                    else float(value)
+                )
                 for key, value in values.items()
                 if value is not None
             }
             for component, values in (particle_defaults or {}).items()
-            if component in solids
+            if component in set(solids) | set(conventional_solids)
         }
 
         for comp in solids:
@@ -4118,8 +4165,53 @@ class IdealThermodynamics:
         solid_composition: dict[str, float],
         fluid_state: Optional[StreamState],
         include_set: frozenset[str],
+        solid_component_flows_override: Optional[dict[str, float]] = None,
     ) -> StreamState:
         """Combine a fluid-subtotal state with authoritative permanent solids."""
+        solid_component_flows = (
+            {
+                component: float(flow)
+                for component, flow in solid_component_flows_override.items()
+                if float(flow) > 0.0
+            }
+            if solid_component_flows_override is not None else {
+                component: float(F) * float(composition.get(component, 0.0))
+                for component in solid_composition
+                if float(composition.get(component, 0.0)) > 0.0
+            }
+        )
+        particle_properties = {
+            component: {
+                key: float(value)
+                for key, value in self.solid_particle_defaults.get(
+                    component, {}
+                ).items()
+                if key in {'diameter_m', 'sphericity'}
+            }
+            for component in solid_composition
+            if any(
+                key in self.solid_particle_defaults.get(component, {})
+                for key in {'diameter_m', 'sphericity'}
+            )
+        }
+        particle_size_distributions = {}
+        for component, solid_component_flow in solid_component_flows.items():
+            defaults = self.solid_particle_defaults.get(component, {})
+            specification = defaults.get('particle_size_distribution')
+            if specification is None and defaults.get('diameter_m') is not None:
+                specification = {
+                    'diameters_m': [defaults['diameter_m']],
+                    'fractions': [1.0],
+                    'basis': 'mole',
+                }
+            if specification is not None:
+                particle_size_distributions[component] = (
+                    instantiate_particle_size_distribution(
+                        specification,
+                        solid_component_flow,
+                    )
+                )
+
         state = StreamState(
             T=float(T),
             P=float(P),
@@ -4143,16 +4235,9 @@ class IdealThermodynamics:
             x2=(dict(fluid_state.x2) if fluid_state is not None and fluid_state.x2 else None),
             solid_fraction=solid_fraction,
             solid_composition=dict(solid_composition) or None,
-            solid_component_flows={
-                component: float(F) * float(composition.get(component, 0.0))
-                for component in solid_composition
-                if float(composition.get(component, 0.0)) > 0.0
-            },
-            solid_particle_properties={
-                component: dict(self.solid_particle_defaults.get(component, {}))
-                for component in solid_composition
-                if self.solid_particle_defaults.get(component)
-            },
+            solid_component_flows=solid_component_flows,
+            solid_particle_properties=particle_properties,
+            solid_particle_size_distributions=particle_size_distributions,
             fluid_phase_model=self.fluid_phase_model,
             phase_status=(
                 f"solid_bearing_{fluid_state.phase_status}"
@@ -4391,6 +4476,7 @@ class IdealThermodynamics:
             solid_composition=solid_composition,
             fluid_state=fluid_state,
             include_set=include_set,
+            solid_component_flows_override=combined_solid_flows,
         )
         state.solid_component_flows = combined_solid_flows
         state.phase_details.pop('permanent_solids', None)

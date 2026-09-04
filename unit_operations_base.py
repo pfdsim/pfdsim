@@ -11,6 +11,14 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .thermodynamics import StreamState, IdealThermodynamics
 else:
     from thermodynamics import StreamState, IdealThermodynamics
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .particle_size_distributions import (
+        propagate_particle_size_distributions,
+    )
+else:
+    from particle_size_distributions import (
+        propagate_particle_size_distributions,
+    )
 
 
 class UnitOperationError(Exception):
@@ -43,6 +51,7 @@ class UnitOperation:
     """Base class for unit operations"""
 
     supports_permanent_solids = False
+    particle_size_behavior = 'unsupported'
 
     def __init_subclass__(cls, **kwargs):
         """Apply the material-capability guard to each concrete solve method."""
@@ -57,7 +66,16 @@ class UnitOperation:
         @wraps(solve_method)
         def guarded_solve(self, inlets, *args, **kwargs):
             self.validate_permanent_solid_inlets(inlets)
-            return solve_method(self, inlets, *args, **kwargs)
+            result = solve_method(self, inlets, *args, **kwargs)
+            if self.particle_size_behavior == 'nonselective':
+                for outlet_name, outlet in result.outlet_streams.items():
+                    propagate_particle_size_distributions(
+                        self.particle_size_sources_for_outlet(
+                            outlet_name, inlets, result
+                        ),
+                        outlet,
+                    )
+            return result
 
         guarded_solve._permanent_solid_guarded = True
         cls.solve = guarded_solve
@@ -91,6 +109,20 @@ class UnitOperation:
                 "permanent-solid-bearing inlet streams; active solid "
                 f"component(s): {', '.join(components)}"
             )
+
+    def particle_size_sources_for_outlet(
+        self,
+        outlet_name: str,
+        inlets: dict[str, StreamState],
+        result: UnitResult,
+    ):
+        """Return populations feeding one non-size-selective outlet."""
+        if len(inlets) == 1:
+            return inlets.values()
+        raise UnitOperationError(
+            f"{type(self).__name__} '{self.unit_id}' must map inlet particle "
+            f"populations to outlet '{outlet_name}'"
+        )
 
     def _consume_recycle_warm_start_skip(self) -> bool:
         remaining = int(getattr(self, '_recycle_warm_start_skip_count', 0) or 0)

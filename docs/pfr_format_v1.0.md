@@ -126,11 +126,15 @@ STREAM_RESULT <stream_name>:
   SOLID_PARTICLE_PROPERTIES:
     <solid_comp>: diameter=<diameter> [m], sphericity=<sphericity>
 
+  SOLID_PARTICLE_SIZE_DISTRIBUTIONS:
+    <solid_comp>: basis=component_molar_flow, D32=<Sauter mean diameter> [m]
+        diameter=<representative diameter> [m], F=<class flow> [kmol/h], fraction=<component molar fraction>
+
   Distinct phase compositions are also reported when active. `x` remains the
   pooled liquid compatibility composition, while `LIQUID1_COMPOSITION` and
-  `LIQUID2_COMPOSITION` retain an LLE/VLLE split. Permanent-solid component
-  flow and particle sections are reported only when present. All primary phase
-  fractions use total-stream mole basis; `fluid_vapor_fraction` separately
+  `LIQUID2_COMPOSITION` retain an LLE/VLLE split. Solid-component flow,
+  particle-property, and PSD sections are reported only when present. All
+  primary phase fractions use total-stream mole basis; `fluid_vapor_fraction` separately
   reports vapor divided by vapor plus both liquid phases. Inactive liquid-2,
   solid, and particle fields are omitted rather than emitted as empty/null
   sections.

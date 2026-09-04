@@ -1345,12 +1345,19 @@ class Simulator:
             if component not in permanent_solid_set
         ]
         particle_defaults = {}
+        solid_enabled_set = permanent_solid_set | set(
+            conventional_solid_components
+        )
         for component in self.pfd.components:
-            if component.symbol not in permanent_solid_set:
+            if component.symbol not in solid_enabled_set:
                 continue
             values = {'sphericity': float(component.particle_sphericity or 1.0)}
             if component.particle_diameter is not None:
                 values['diameter_m'] = float(component.particle_diameter)
+            if component.particle_size_distribution is not None:
+                values['particle_size_distribution'] = dict(
+                    component.particle_size_distribution
+                )
             particle_defaults[component.symbol] = values
         
         # Collect UNIFAC groups if specified in PFD
@@ -2175,6 +2182,26 @@ class Simulator:
                         )
                     if fields:
                         lines.append(f"        {comp}: {', '.join(fields)}")
+            if state.solid_particle_size_distributions:
+                state.validate_particle_size_distributions()
+                lines.append("    SOLID_PARTICLE_SIZE_DISTRIBUTIONS:")
+                for comp, distribution in sorted(
+                    state.solid_particle_size_distributions.items()
+                ):
+                    d32 = distribution.sauter_mean_diameter_m
+                    summary = "basis=component_molar_flow"
+                    if d32 is not None:
+                        summary += f", D32={d32:.8g} [m]"
+                    lines.append(f"        {comp}: {summary}")
+                    for diameter, flow, fraction in zip(
+                        distribution.diameters_m,
+                        distribution.molar_flows_kmol_per_h,
+                        distribution.molar_fractions,
+                    ):
+                        lines.append(
+                            f"            diameter={diameter:.8g} [m], "
+                            f"F={flow:.8g} [kmol/h], fraction={fraction:.8g}"
+                        )
             
             lines.append("")
         

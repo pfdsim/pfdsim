@@ -1168,6 +1168,10 @@ class Mixer(UnitOperation):
     """Mix streams with optional outlet pressure, temperature, or duty specs."""
 
     supports_permanent_solids = True
+    particle_size_behavior = 'nonselective'
+
+    def particle_size_sources_for_outlet(self, outlet_name, inlets, result):
+        return inlets.values()
     
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         if not inlets:
@@ -1349,6 +1353,7 @@ class Splitter(UnitOperation):
     """Split or component-split a stream into named outlet streams."""
 
     supports_permanent_solids = True
+    particle_size_behavior = 'nonselective'
     
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         if not inlets:
@@ -2409,6 +2414,7 @@ class Valve(_IsentropicPressureMachine):
 class Heater(UnitOperation):
     """Add heat to stream"""
     supports_permanent_solids = True
+    particle_size_behavior = 'nonselective'
     heat_direction = 1
     direction_label = 'heat'
     
@@ -2671,6 +2677,18 @@ class HeatExchanger(UnitOperation):
     """Exchange heat between two streams"""
 
     supports_permanent_solids = True
+    particle_size_behavior = 'nonselective'
+
+    def particle_size_sources_for_outlet(self, outlet_name, inlets, result):
+        performance = result.performance
+        if outlet_name == performance.get('hot_out_port'):
+            return (inlets[performance['hot_in_port']],)
+        if outlet_name == performance.get('cold_out_port'):
+            return (inlets[performance['cold_in_port']],)
+        raise UnitOperationError(
+            f"HeatExchanger '{self.unit_id}' cannot map particle population "
+            f"for outlet '{outlet_name}'"
+        )
 
     U_ESTIMATE_TABLE = {
         # Values are preliminary dirty-service estimates converted from
@@ -4461,6 +4479,7 @@ class Flash(UnitOperation):
     """Single-stage vapor-liquid flash separation"""
 
     supports_permanent_solids = True
+    particle_size_behavior = 'nonselective'
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         if len(inlets) != 1:

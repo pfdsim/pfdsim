@@ -19,6 +19,18 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from thermodynamics import StreamState, IdealThermodynamics, ThermodynamicsError
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .particle_size_distributions import (
+        carry_particle_size_distributions,
+        instantiate_particle_size_distribution,
+        propagate_particle_size_distributions,
+    )
+else:
+    from particle_size_distributions import (
+        carry_particle_size_distributions,
+        instantiate_particle_size_distribution,
+        propagate_particle_size_distributions,
+    )
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .recycle_controls import (
         normalize_recycle_method,
         resolved_recycle_options,
@@ -627,21 +639,45 @@ class FlowsheetSolver:
 
         if vapor_fraction is not None:
             direct_pq = getattr(self.thermo, 'calculate_state_PQ', None)
+            state = None
             if direct_pq is not None:
                 try:
-                    return direct_pq(P, vapor_fraction, F, composition)
+                    state = direct_pq(P, vapor_fraction, F, composition)
                 except (NotImplementedError, AttributeError):
                     pass
-            if T is None:
-                raise FlowsheetError(
-                    f"{label} specified vapor_fraction but the thermodynamic "
-                    "method does not support direct P,VF states"
-                )
+            if state is None:
+                if T is None:
+                    raise FlowsheetError(
+                        f"{label} specified vapor_fraction but the thermodynamic "
+                        "method does not support direct P,VF states"
+                    )
+                state = self.thermo.calculate_state(T, P, F, composition)
+                state.vapor_fraction = vapor_fraction
+        else:
             state = self.thermo.calculate_state(T, P, F, composition)
-            state.vapor_fraction = vapor_fraction
-            return state
 
-        return self.thermo.calculate_state(T, P, F, composition)
+        for component, specification in (
+            stream.particle_size_distributions.items()
+        ):
+            solid_flow = float(state.solid_component_flows.get(component, 0.0))
+            if solid_flow <= 1.0e-15:
+                raise FlowsheetError(
+                    f"{label} specifies a PSD for '{component}', but that "
+                    "component has no solid flow in the initialized state"
+                )
+            try:
+                state.solid_particle_size_distributions[component] = (
+                    instantiate_particle_size_distribution(
+                        specification,
+                        solid_flow,
+                    )
+                )
+            except (TypeError, ValueError) as error:
+                raise FlowsheetError(
+                    f"{label} has an invalid PSD for '{component}': {error}"
+                ) from error
+        state.validate_particle_size_distributions()
+        return state
 
     def _initialize_streams(self):
         """Initialize stream states from PFD specifications"""
@@ -736,6 +772,14 @@ class FlowsheetSolver:
                             component: 0.5 * flow
                             for component, flow in state.solid_component_flows.items()
                         }
+                        self.streams[
+                            stream_id
+                        ].solid_particle_size_distributions = {
+                            component: distribution.scaled(0.5)
+                            for component, distribution in (
+                                state.solid_particle_size_distributions.items()
+                            )
+                        }
                         break
                 else:
                     # No feed stream found - create default
@@ -788,15 +832,33 @@ class FlowsheetSolver:
         thermo = self.thermo_packages[scope]
         phase = self._scope_phase_constraint(state)
         include = ['H', 'S', 'Cp', 'rho', 'mu']
-        converted = thermo.calculate_state(
-            state.T,
-            state.P,
-            state.F,
-            dict(state.composition),
-            phase=phase,
-            flash=phase is None,
-            include=include,
-        )
+        conventional_solid_flows = {
+            component: flow
+            for component, flow in state.solid_component_flows.items()
+            if component in thermo.conventional_solid_components
+        }
+        if conventional_solid_flows:
+            converted = thermo.calculate_state_with_solid_flows(
+                state.T,
+                state.P,
+                state.F,
+                dict(state.composition),
+                conventional_solid_flows,
+                phase=phase,
+                flash=phase is None,
+                include=include,
+            )
+        else:
+            converted = thermo.calculate_state(
+                state.T,
+                state.P,
+                state.F,
+                dict(state.composition),
+                phase=phase,
+                flash=phase is None,
+                include=include,
+            )
+        propagate_particle_size_distributions((state,), converted)
         converted.thermo_scope = scope
         return converted
 
@@ -1092,9 +1154,86 @@ class FlowsheetSolver:
         residual = (new_vector - old_vector) / scale
         residual = self._mask_trace_residuals(tear_streams, old_vector, new_vector, scale, residual)
         max_error, worst = self._max_recycle_error(tear_streams, residual)
+        particle_error, particle_worst = self._particle_size_error(
+            tear_streams,
+            old_states,
+            {stream_id: self.streams[stream_id] for stream_id in tear_streams},
+        )
+        if particle_error > max_error:
+            max_error = particle_error
+            worst = particle_worst
         self._recycle_worst_error = max_error
         self._recycle_worst_variable = worst
         return max_error < tolerance, max_error
+
+    def _particle_size_error(
+        self,
+        tear_streams: list[str],
+        old_states: dict[str, StreamState],
+        new_states: dict[str, StreamState],
+    ) -> tuple[float, str]:
+        """Return the largest PSD-shape recycle residual.
+
+        Solid-component extent is already part of the accelerated tear vector,
+        so this comparison only needs to establish convergence of the passive
+        class fractions.
+        """
+        maximum = 0.0
+        worst = ''
+        for stream_id in tear_streams:
+            old_state = old_states[stream_id]
+            new_state = new_states[stream_id]
+            components = set(old_state.solid_particle_size_distributions) | set(
+                new_state.solid_particle_size_distributions
+            )
+            for component in components:
+                old_flow = float(
+                    old_state.solid_component_flows.get(component, 0.0)
+                )
+                new_flow = float(
+                    new_state.solid_component_flows.get(component, 0.0)
+                )
+                stream_flow_scale = max(
+                    abs(float(old_state.F)),
+                    abs(float(new_state.F)),
+                    1.0,
+                )
+                trace_flow = (
+                    self._recycle_trace_tolerance * stream_flow_scale
+                )
+                if abs(old_flow) < trace_flow and abs(new_flow) < trace_flow:
+                    continue
+                old_distribution = old_state.solid_particle_size_distributions.get(
+                    component
+                )
+                new_distribution = new_state.solid_particle_size_distributions.get(
+                    component
+                )
+                old_bins = (
+                    dict(zip(
+                        old_distribution.diameters_m,
+                        old_distribution.molar_fractions,
+                    ))
+                    if old_distribution is not None else {}
+                )
+                new_bins = (
+                    dict(zip(
+                        new_distribution.diameters_m,
+                        new_distribution.molar_fractions,
+                    ))
+                    if new_distribution is not None else {}
+                )
+                for diameter in set(old_bins) | set(new_bins):
+                    error = abs(
+                        new_bins.get(diameter, 0.0)
+                        - old_bins.get(diameter, 0.0)
+                    )
+                    if error > maximum:
+                        maximum = error
+                        worst = (
+                            f"{stream_id}.PSD[{component},{diameter:.8g}m]"
+                        )
+        return maximum, worst
     
     def _state_to_vector(self, state: StreamState) -> list[float]:
         """Aspen-like tear variables: total flow, component flows, pressure, enthalpy."""
@@ -1249,6 +1388,7 @@ class FlowsheetSolver:
             start = i * width
             end = start + width
             fallback = fallback_states.get(stream_id, self.streams[stream_id])
+            population_source = self.streams.get(stream_id)
             source_scope = self.stream_thermo_scopes[stream_id][0]
             thermo = self.thermo_packages[source_scope]
             context = getattr(thermo, 'quality_context', None)
@@ -1270,6 +1410,10 @@ class FlowsheetSolver:
                         fallback,
                         source_scope,
                     )
+            if population_source is not None:
+                carry_particle_size_distributions(
+                    population_source, state
+                )
             self.streams[stream_id] = state
     
     def _make_recycle_scale(self, tear_streams: list[str],
@@ -1389,6 +1533,10 @@ class FlowsheetSolver:
 
         tear_vector = (np.asarray(scaled_vector, dtype=float) * scale).tolist()
         self._apply_tear_vector(tear_streams, tear_vector, fallback_states)
+        applied_states = {
+            stream_id: self.streams[stream_id].copy()
+            for stream_id in tear_streams
+        }
         applied_vector = np.array(
             self._tear_states_to_vector(
                 tear_streams,
@@ -1463,6 +1611,14 @@ class FlowsheetSolver:
             residual,
         )
         error, worst_variable = self._max_recycle_error(tear_streams, residual)
+        particle_error, particle_worst = self._particle_size_error(
+            tear_streams,
+            applied_states,
+            raw_states,
+        )
+        if particle_error > error:
+            error = particle_error
+            worst_variable = particle_worst
         self._recycle_worst_error = error
         self._recycle_worst_variable = worst_variable
         raw_summary = '; '.join(

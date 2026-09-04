@@ -9,6 +9,10 @@ from .base import (
     TransportPhaseValues,
     IdealThermodynamics,
 )
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..particle_size_distributions import ParticleSizeDistribution
+else:
+    from particle_size_distributions import ParticleSizeDistribution
 from .henry import (
     AqueousEquilibriumContext,
     HenryComponentData,
@@ -55,7 +59,8 @@ __all__ = [
     'R', 'R_BAR', 'T_REF', 'P_REF', 'LIQUID_VOLUME_EXTRAPOLATION_LIMIT_K',
     'DEFAULT_STATE_INCLUDE', 'STEAM_WATER_MW', 'STEAM_WATER_H_OFFSET',
     'STEAM_WATER_S_OFFSET', 'ThermodynamicsError', 'StreamState',
-    'FluidPhaseEquilibrium', 'TransportPhaseValues', 'IdealThermodynamics',
+    'FluidPhaseEquilibrium', 'TransportPhaseValues', 'ParticleSizeDistribution',
+    'IdealThermodynamics',
     'AqueousEquilibriumContext', 'HenryComponentData', 'HenryConstantDatabase',
     'HenryConstantRecord', 'get_henry_constant_database',
     'SteamThermodynamics', 'RKThermodynamics', 'CubicEOSThermodynamics',

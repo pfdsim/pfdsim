@@ -18,6 +18,7 @@ class Crystallizer(UnitOperation):
     """Equilibrium cooling crystallizer with one retained slurry outlet."""
 
     supports_permanent_solids = True
+    particle_size_behavior = 'nonselective'
 
     def _mother_liquor_retention_spec(self):
         fraction_names = (

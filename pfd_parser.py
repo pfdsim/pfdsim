@@ -27,6 +27,10 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from phase_behaviors import normalize_phase_behavior
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .particle_size_distributions import normalize_particle_size_distribution
+else:
+    from particle_size_distributions import normalize_particle_size_distribution
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .recycle_controls import (
         RECYCLE_METHOD_ALIASES,
         normalize_recycle_method,
@@ -104,6 +108,7 @@ _COMPONENT_PROPERTY_ALIASES = {
     'particle_diameter_m': 'particle_diameter',
     'diameter_particle': 'particle_diameter',
     'sphericity': 'particle_sphericity',
+    'psd': 'particle_size_distribution',
     'vdm': 'vapor_dimerization',
 }
 
@@ -119,6 +124,7 @@ _COMPONENT_PROPERTY_KEYS = frozenset({
     'Cp_coeffs', 'Cp_liquid', 'Cp_solid', 'rho_solid', 'Vm_solid',
     'solid_material_form', 'solid_polymorph',
     'phase_behavior', 'particle_diameter', 'particle_sphericity',
+    'particle_size_distribution',
     'antoine_A', 'antoine_B', 'antoine_C',
     'antoine_Tmin', 'antoine_Tmax', 'antoine_source', 'rho', 'rho_T',
     'uniquac_r', 'uniquac_q', 'phase_at_STP',
@@ -129,7 +135,7 @@ _COMPONENT_PROPERTY_KEYS = frozenset({
 _COMPONENT_PROPERTY_NAMES = tuple(sorted(
     _COMPONENT_PROPERTY_KEYS | {
         'MW', 'molecular_weight', 'CAS', 'UNIFAC', 'SMILES',
-        'T_rho', 'rho_T_K', 'VDM',
+        'T_rho', 'rho_T_K', 'VDM', 'PSD',
     },
     key=str.casefold,
 ))
@@ -849,6 +855,7 @@ class Component:
     phase_behavior: Optional[str] = None
     particle_diameter: Optional[float] = None  # Representative diameter [m]
     particle_sphericity: Optional[float] = None  # Dimensionless, (0, 1]
+    particle_size_distribution: Optional[dict] = None
     # Antoine equation: log10(P_bar) = A - B/(C + T_C)
     antoine_A: Optional[float] = None
     antoine_B: Optional[float] = None
@@ -950,6 +957,11 @@ class Component:
                 parts.append(f"{key}={self._format_pfd_value(value)}")
         if self.Cp_coeffs is not None:
             parts.append(f"Cp_coeffs={self._format_pfd_value(self.Cp_coeffs)}")
+        if self.particle_size_distribution is not None:
+            parts.append(
+                "PSD="
+                + self._format_pfd_value(self.particle_size_distribution)
+            )
         if self.unifac_groups is not None:
             groups_str = '+'.join(f"{v}{k}" for k, v in self.unifac_groups.items())
             parts.append(f"UNIFAC={groups_str}")
@@ -1081,6 +1093,7 @@ class Stream:
     destination: PortReference
     properties: list[StreamProperty] = field(default_factory=list)
     composition: Optional[Composition] = None
+    particle_size_distributions: dict[str, dict] = field(default_factory=dict)
     
     def to_pfd(self) -> str:
         lines = [f"STREAM {self.id} : {self.source.to_string()} -> {self.destination.to_string()}"]
@@ -1088,6 +1101,13 @@ class Stream:
             lines.append(prop.to_pfd())
         if self.composition:
             lines.append(self.composition.to_pfd())
+        if self.particle_size_distributions:
+            lines.append(
+                "    PSD = "
+                + Component._format_pfd_value(
+                    self.particle_size_distributions
+                )
+            )
         return '\n'.join(lines)
 
 
@@ -1569,6 +1589,9 @@ class ProcessFlowDiagram:
                     ],
                     'composition': s.composition.fractions if s.composition else None,
                     'composition_basis': s.composition.basis if s.composition else None,
+                    'particle_size_distributions': dict(
+                        s.particle_size_distributions
+                    ),
                 }
                 for s in self.streams
             ],
@@ -1649,6 +1672,12 @@ class ProcessFlowDiagram:
                 component_data['vapor_dimerization'] = (
                     normalize_vdm_component_parameters(
                         component_data['vapor_dimerization']
+                    )
+                )
+            if component_data.get('particle_size_distribution') is not None:
+                component_data['particle_size_distribution'] = (
+                    normalize_particle_size_distribution(
+                        component_data['particle_size_distribution']
                     )
                 )
             pfd.components.append(Component(
@@ -1749,6 +1778,12 @@ class ProcessFlowDiagram:
                     fractions=s['composition'],
                     basis=s.get('composition_basis') or 'mole',
                 )
+            stream.particle_size_distributions = {
+                str(component): normalize_particle_size_distribution(specification)
+                for component, specification in (
+                    s.get('particle_size_distributions', {}) or {}
+                ).items()
+            }
             pfd.streams.append(stream)
         
         return pfd
@@ -2677,6 +2712,8 @@ class PFDParser:
                 parsed[attr] = self._parse_unifac_groups(value)
             elif attr == 'vapor_dimerization':
                 parsed[attr] = normalize_vdm_component_parameters(value)
+            elif attr == 'particle_size_distribution':
+                parsed[attr] = normalize_particle_size_distribution(value)
             elif attr == 'Cp_coeffs':
                 parsed[attr] = self._as_float_list(value)
             elif attr == 'critical_properties_unavailable':
@@ -3889,6 +3926,35 @@ class PFDParser:
             
             if stripped and not stripped.startswith('#'):
                 # Check for composition
+                psd_match = re.fullmatch(
+                    r'(?:PSD|PARTICLE_SIZE_DISTRIBUTIONS?)\s*=\s*(.+)',
+                    stripped,
+                    re.IGNORECASE,
+                )
+                if psd_match:
+                    try:
+                        raw_distributions = self._parse_property_value(
+                            psd_match.group(1)
+                        )
+                        if not isinstance(raw_distributions, dict):
+                            raise ValueError(
+                                "PSD must map solid component names to distributions"
+                            )
+                        if stream.particle_size_distributions:
+                            raise ValueError("duplicate PSD stream specification")
+                        stream.particle_size_distributions = {
+                            str(component): normalize_particle_size_distribution(
+                                specification
+                            )
+                            for component, specification in raw_distributions.items()
+                        }
+                    except (TypeError, ValueError) as error:
+                        self._record_error(
+                            f"Invalid PSD for stream '{stream_id}': {error}",
+                            i + 1,
+                        )
+                    i += 1
+                    continue
                 comp_key = None
                 if re.match(r'(x|mole_fractions?|molar_fractions?)\s*=', stripped, re.IGNORECASE):
                     comp_key = 'mole'
@@ -4313,6 +4379,14 @@ class PFDValidator:
                 self.errors.append(
                     f"Invalid particle_diameter for {comp.symbol}: {comp.particle_diameter}"
                 )
+            if (
+                comp.particle_diameter is not None
+                and comp.particle_size_distribution is not None
+            ):
+                self.errors.append(
+                    f"Component {comp.symbol} cannot specify both "
+                    "particle_diameter and particle_size_distribution"
+                )
 
             if (
                 comp.particle_sphericity is not None
@@ -4321,13 +4395,20 @@ class PFDValidator:
                 self.errors.append(
                     f"Invalid particle_sphericity for {comp.symbol}: {comp.particle_sphericity}"
                 )
+            has_particle_defaults = (
+                comp.particle_diameter is not None
+                or comp.particle_sphericity is not None
+                or comp.particle_size_distribution is not None
+            )
             if (
-                (comp.particle_diameter is not None or comp.particle_sphericity is not None)
-                and normalize_phase_behavior(comp.phase_behavior) != 'permanent_solid'
+                has_particle_defaults
+                and normalize_phase_behavior(comp.phase_behavior) not in {
+                    'permanent_solid', 'conventional_with_solid',
+                }
             ):
                 self.errors.append(
                     f"Particle defaults for {comp.symbol} require "
-                    "phase_behavior=permanent_solid"
+                    "phase_behavior=permanent_solid or conventional_with_solid"
                 )
             for label, value in (
                 ('Cp_solid', comp.Cp_solid),
@@ -4603,6 +4684,35 @@ class PFDValidator:
                 if abs(total - 1.0) > 0.001:
                     self.warnings.append(
                         f"Stream {stream.id} composition sums to {total:.4f}, not 1.0"
+                    )
+            for symbol in stream.particle_size_distributions:
+                component = self.pfd.get_component(symbol)
+                if component is None:
+                    self.errors.append(
+                        f"Stream {stream.id} PSD references undefined component: "
+                        f"{symbol}"
+                    )
+                    continue
+                phase_behavior = normalize_phase_behavior(
+                    component.phase_behavior
+                )
+                if phase_behavior == 'conventional_with_solid':
+                    self.errors.append(
+                        f"Stream {stream.id} PSD component {symbol} requires future "
+                        "explicit solid-allocation syntax"
+                    )
+                elif phase_behavior != 'permanent_solid':
+                    self.errors.append(
+                        f"Stream {stream.id} PSD component {symbol} requires "
+                        "phase_behavior=permanent_solid"
+                    )
+                if (
+                    stream.composition is not None
+                    and stream.composition.fractions.get(symbol, 0.0) <= 0.0
+                ):
+                    self.errors.append(
+                        f"Stream {stream.id} PSD component {symbol} has no positive "
+                        "stream composition fraction"
                     )
     
     def _validate_connections(self):
