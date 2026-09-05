@@ -58,6 +58,7 @@ UNIT_TYPE_ALIASES = {
     'PBR': 'PackedBedReactor',
     'KineticsPackedBed': 'PackedBedReactor',
     'Crystallizer': 'Crystallizer',
+    'Filter': 'Filter',
 }
 
 
@@ -78,6 +79,7 @@ UNIT_PORT_FAMILIES = {
     'PFR': 'reactor',
     'PackedBedReactor': 'reactor',
     'Crystallizer': 'crystallizer',
+    'Filter': 'filter',
     'HeatExchanger': 'heat_exchanger',
     'Flash': 'flash',
     'Flash3': 'flash3',
@@ -112,6 +114,10 @@ VARIABLE_UNIT_PORT_DIRECTIONS = frozenset({
 # splitter, and rigorous-distillation layouts depend on connection counts and
 # are completed by pfd_parser's collective numeric-port pass.
 NUMERIC_PORT_LAYOUTS = {
+    'filter': (
+        ('inlet', 'in'), ('inlet', 'wash'),
+        ('outlet', 'filtrate'), ('outlet', 'cake'),
+    ),
     'pump': (
         ('inlet', 'in'), ('outlet', 'out'),
     ),
@@ -214,6 +220,17 @@ for _index in range(1, 11):
 # Port types are stored as their PFD string values to keep this module
 # independent of pfd_parser.PortType.
 PORT_FAMILY_SCHEMAS = {
+    'filter': {
+        'inlets': {**_COMMON_IN, **_names('wash', 'wash_liquid', 'wash_in')},
+        'outlets': {
+            **_names('cake', 'wet_cake', 'solids'),
+            **_names('filtrate', 'liquor', 'liquid_out'),
+        },
+        'types': {
+            'in': 'inlet', 'wash': 'inlet',
+            'cake': 'solid_outlet', 'filtrate': 'liquid_outlet',
+        },
+    },
     'pump': _single_schema(
         ('suction', 'suct', 'suction_in', 'pump_in', 'low_pressure_in', 'lp_in'),
         ('discharge', 'disch', 'discharge_out', 'pump_out',

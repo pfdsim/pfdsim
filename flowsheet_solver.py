@@ -318,7 +318,7 @@ class FlowsheetSolver:
                 if param.unit:
                     params[f"__unit__{param.name}"] = param.unit
 
-            if unit.unit_type == 'Crystallizer':
+            if unit.unit_type in {'Crystallizer', 'Filter'}:
                 params['__connected_outlet_ports__'] = [
                     self.stream_connections[stream_id][1]
                     for stream_id in self.unit_outlets.get(unit.id, [])

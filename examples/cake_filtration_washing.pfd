@@ -1,0 +1,45 @@
+PROCESS: Pressure cake filtration with washing and deliquoring
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: IDEAL
+
+COMPONENTS:
+    water | Water | MW=18.0153
+    ethanol | Ethanol | MW=46.0684
+    salt | Sodium chloride | CAS=7647-14-5, MW=58.4428, type=permanent_solid, solid_material_form=crystalline, PSD={diameters_um:[10, 50, 100], fractions:[0.1, 0.3, 0.6], basis:mass}, particle_sphericity=0.9
+
+STREAM Slurry : FEED -> F.in
+    T = 25 [C]
+    P = 300 [kPa]
+    F = 100 [kmol/h]
+    x = water:0.89, ethanol:0.10, salt:0.01
+
+STREAM Wash : FEED -> F.wash
+    T = 25 [C]
+    P = 3 [bar]
+    F = 1 [kmol/h]
+    x = water:1
+
+STREAM Cake : F.cake -> PRODUCT
+STREAM Filtrate : F.filtrate -> PRODUCT
+
+UNIT F : Filter
+    cycle_time = 10 [min]
+    downtime = 30 [s]
+    P_drop = 200 [kPa]
+    porosity = 0.4
+    capture_cut_size = 20 [um]
+    capture_sharpness = 4
+    kozeny_constant = 5
+    medium_resistance = 1e9 [1/m]
+    compressibility = 0.3
+    reference_pressure = 100 [kPa]
+    wash_cells = 10
+    deliquoring_time = 60 [s]
+    entry_pressure = 20 [kPa]
+    residual_saturation = 0.1
+    pore_index = 0.5
+
+# Empirical cake parameters are illustrative, not measured NaCl cake data.
+# Area is sized to the specified cycle. Add area [m2] to rate a fixed filter.
+# Filtrate combines formation, wash effluent, and drained liquid.

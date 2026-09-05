@@ -687,15 +687,31 @@ UNIT_DOF_RULES = {
         ),
     },
     'Filter': {
-        'description': 'Solid-liquid separation',
+        'description': 'Cycle pressure cake filtration, washing and capillary deliquoring',
         'category': 'solid',
         'phase_support': ['SL'],
-        'required_specs': ['cake_moisture|wash_ratio'],
+        'required_specs': ['cycle_time', 'P_drop|area', 'porosity', 'capture_cut_size'],
         'optional_specs': {
-            'type': {'values': ['pressure', 'vacuum', 'centrifuge'], 'default': 'pressure'},
+            'area': {'unit': 'm2', 'description': 'Omit for sizing; specify for rating'},
+            'specific_cake_resistance': {'unit': 'm/kg', 'description': 'Overrides PSD-derived Kozeny-Carman resistance'},
+            'kozeny_constant': {'default': 5},
+            'capture_sharpness': {'default': 4},
+            'medium_resistance': {'unit': '1/m', 'default': 0},
+            'compressibility': {'default': 0},
+            'reference_pressure': {'unit': 'bar', 'default': 1},
+            'downtime': {'unit': 's', 'default': 0},
+            'wash_cells': {'default': 10},
+            'liquid_viscosity': {'unit': 'Pa*s'},
+            'wash_viscosity': {'unit': 'Pa*s'},
+            'deliquoring_time': {'unit': 's', 'default': 0},
+            'deliquoring_pressure': {'unit': 'bar'},
+            'entry_pressure': {'unit': 'bar'},
+            'residual_saturation': {},
+            'pore_index': {},
+            'relative_permeability_exponent': {},
         },
-        'calculated': ['filtrate_flow', 'cake_flow'],
-        'dof_notes': 'Specify cake moisture or wash amount.',
+        'calculated': ['filtrate_flow', 'cake_flow', 'required_area', 'cake_saturation', 'heat_duty'],
+        'dof_notes': 'Optional wash inlet sets wash amount. Positive deliquoring_time additionally requires entry_pressure, residual_saturation and pore_index.',
     },
     'Dryer': {
         'description': 'Remove moisture from solids',
@@ -1031,6 +1047,22 @@ class DOFAnalyzer:
                 dof = 1
                 status = SpecificationStatus.UNDER_SPECIFIED
                 message = f"Unit '{unit.id}' needs T_out, Q, or vapor_frac"
+
+        elif unit_type == 'Filter':
+            values = {param.name.lower(): param.value for param in unit.params}
+            missing = [name for name in ('cycle_time', 'porosity', 'capture_cut_size') if name not in param_names]
+            if not ({'p_drop', 'area'} & param_names):
+                missing.append('P_drop or area')
+            try:
+                drains = float(values.get('deliquoring_time', 0)) > 0
+            except (TypeError, ValueError):
+                drains = False
+            if drains:
+                missing.extend(name for name in ('entry_pressure', 'residual_saturation', 'pore_index') if name not in param_names)
+            if missing:
+                dof = len(missing)
+                status = SpecificationStatus.UNDER_SPECIFIED
+                message = f"Unit '{unit.id}' requires: {', '.join(missing)}"
 
         elif unit_type == 'Crystallizer':
             values = {param.name.lower(): param.value for param in unit.params}

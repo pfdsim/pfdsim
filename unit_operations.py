@@ -65,6 +65,10 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from unit_operations_solids import Crystallizer
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .unit_operations_filtration import Filter
+else:
+    from unit_operations_filtration import Filter
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_operations_distillation import (
         ShortcutDistillation,
         McCabeThieleDistillation,
@@ -142,6 +146,7 @@ _CANONICAL_UNIT_CLASSES = {
     'PFR': KineticsPFR,
     'PackedBedReactor': KineticsPackedBed,
     'Crystallizer': Crystallizer,
+    'Filter': Filter,
 }
 
 UNIT_CLASSES = {
@@ -187,6 +192,7 @@ __all__ = [
     'KineticsPFR',
     'KineticsPackedBed',
     'Crystallizer',
+    'Filter',
     'CMODistillation',
     'RigorousDistillation',
     'Flash3',

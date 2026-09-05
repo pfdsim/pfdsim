@@ -1156,8 +1156,8 @@ serialization and `.pfr` reporting expose.
 ##### Permanent-Solid Unit Capability
 
 The solid routing layer supports `Mixer`, `Splitter`, `Heater`, `Cooler`,
-`HeatExchanger`, ordinary `Flash`, and `Crystallizer`. Feeds and product sinks
-may be dry solids, slurries, or fluid/solid multiphase streams.
+`HeatExchanger`, ordinary `Flash`, `Crystallizer`, and `Filter`. Feeds and
+product sinks may be dry solids, slurries, or fluid/solid multiphase streams.
 
 - A proportional `Splitter` preserves phase inventory and particle defaults;
   component-split mode may explicitly route solid components.
@@ -1170,15 +1170,21 @@ may be dry solids, slurries, or fluid/solid multiphase streams.
   it does not claim filtration or particle classification.
 - `Crystallizer` preserves permanent solids and equilibrates only components
   declared `conventional_with_solid` against a homogeneous liquid mother phase.
+- `Filter` performs cycle pressure cake filtration, optional washing, and
+  capillary-limited deliquoring. Its capture curve classifies each PSD using
+  particle size and sphericity; the captured PSD determines Kozeny–Carman cake
+  resistance unless measured resistance is supplied. Specify `cycle_time`,
+  `porosity`, `capture_cut_size`, and `P_drop` or `area`. Connections are `in`,
+  optional `wash`, `cake`, and `filtrate`. See [filtration.md](filtration.md)
+  for units, equations, empirical closures, and model limitations.
 
 Other registered units reject permanent-solid-bearing inlets explicitly,
 including pressure machines and pipes, `Flash3`, decanters/extractors,
 distillation, absorbers/strippers, reactors, and `MolecularSieveDryer`.
-The existing `Filter` enum label is not an implemented unit model. Solid
-solutions, co-crystals, polymorph selection, all-solid topology, particle-size
-prediction, filtration transport, settling, and slurry transport remain
-outside format 1.0. Multiple independent pure solids may coexist with the
-retained mother liquor.
+Solid solutions, co-crystals, polymorph selection, all-solid topology,
+particle-size prediction, settling, and slurry transport remain outside
+format 1.0. Multiple independent pure solids may coexist with the retained
+mother liquor.
 
 #### Port Types
 

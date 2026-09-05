@@ -218,9 +218,9 @@ class Simulator:
                         f"Use a liquid activity model such as UNIFAC, NRTL, or UNIQUAC."
                     )
             
-            # Solid handling is not supported by any current thermo method
+            # These solid operations implement explicit solid inventory routing.
             if (
-                unit_type not in {'MolecularSieveDryer', 'Crystallizer'}
+                unit_type not in {'MolecularSieveDryer', 'Crystallizer', 'Filter'}
                 and any(phase in unit_type.lower() for phase in ['solid', 'crystal', 'filter', 'dryer'])
             ):
                 raise SimulationError(
