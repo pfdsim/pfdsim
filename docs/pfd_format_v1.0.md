@@ -1177,6 +1177,9 @@ product sinks may be dry solids, slurries, or fluid/solid multiphase streams.
   `porosity`, `capture_cut_size`, and `P_drop` or `area`. Connections are `in`,
   optional `wash`, `cake`, and `filtrate`. See [filtration.md](filtration.md)
   for units, equations, empirical closures, and model limitations.
+  `washing_model=equilibrium` enables adiabatic warm/melt washing with local
+  enthalpy/SLE contacts, evolving PSD and porosity, and updated hydraulic
+  resistance. See [equilibrium_washing.md](equilibrium_washing.md).
 
 Other registered units reject permanent-solid-bearing inlets explicitly,
 including pressure machines and pipes, `Flash3`, decanters/extractors,

@@ -1,0 +1,50 @@
+PROCESS: Equilibrium warm melt washing of an ice crystal cake
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: IDEAL
+
+COMPONENTS:
+    water | Water | type=conventional_with_solid, PSD={diameters_um:[10, 30, 80], fractions:[0.2, 0.4, 0.4], basis:mass}, particle_sphericity=0.9
+    ethanol | Ethanol
+
+# Illustrative transport fits covering the subcooled mother liquor; these are
+# engineering demonstration inputs, not validated water/ethanol viscosity fits.
+PROPERTY_CORRELATIONS:
+    water.mul | equation=exp_poly_x, A=-6.90775527898, B=-2, Tmin_K=220, Tmax_K=360
+    ethanol.mul | equation=exp_poly_x, A=-6.90775527898, B=-2, Tmin_K=220, Tmax_K=360
+
+STREAM Feed : FEED -> C.in
+    T = 275 [K]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:0.9, ethanol:0.1
+
+STREAM Slurry : C.out -> F.in
+STREAM WarmMelt : FEED -> F.wash
+    T = 290 [K]
+    P = 3 [bar]
+    F = 5 [kmol/h]
+    x = water:1
+
+STREAM WashedCake : F.cake -> PRODUCT
+STREAM Filtrate : F.filtrate -> PRODUCT
+
+UNIT C : Crystallizer
+    T = 250 [K]
+
+UNIT F : Filter
+    washing_model = equilibrium
+    cycle_time = 10 [min]
+    porosity = 0.4
+    capture_cut_size = 0 [um]
+    medium_resistance = 1e9 [1/m]
+    P_drop = 200 [kPa]
+    wash_cells = 2
+    wash_steps = 40
+    equilibrium_nucleus_diameter = 10 [um]
+    T_equilibrium_min = -53.15 [C]
+    T_equilibrium_max = 56.85 [C]
+
+# Warm water is the pure crystal melt. Local thermal/SLE contacts may either
+# melt ice or recrystallize wash water on the cold bed. Heat and impurities
+# move with the liquid; porosity, particle sizes, and resistance evolve.

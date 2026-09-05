@@ -28,7 +28,7 @@ else:
 
 
 class Filter(UnitOperation):
-    """Cycle-averaged, isothermal, size-selective cake filter.
+    """Cycle-averaged, size-selective cake filter with optional warm washing.
 
     See docs/filtration.md for specifications and constitutive limitations.
     Pressure parameters follow pfdsim's internal bar convention; all other
@@ -219,6 +219,9 @@ class Filter(UnitOperation):
             "capture_cut_size",
             "capture_sharpness",
             "kozeny_constant",
+            "washing_model", "wash_steps", "equilibrium_tolerance",
+            "t_equilibrium_min", "t_equilibrium_max",
+            "equilibrium_nucleus_diameter",
         }
         unknown = [
             str(k)
@@ -229,6 +232,22 @@ class Filter(UnitOperation):
             raise UnitOperationError(
                 f"Filter '{self.unit_id}' unknown parameter(s): {', '.join(unknown)}"
             )
+        washing_model = str(self.get_param('washing_model', 'isothermal')).lower()
+        if washing_model not in {'isothermal', 'equilibrium'}:
+            raise UnitOperationError('washing_model must be isothermal or equilibrium')
+        if washing_model == 'equilibrium':
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from .thermodynamics_models.common import ThermodynamicsError
+                from .unit_operations_warm_filtration import solve_equilibrium_filter
+            else:
+                from thermodynamics_models.common import ThermodynamicsError
+                from unit_operations_warm_filtration import solve_equilibrium_filter
+            try:
+                return solve_equilibrium_filter(self, inlets)
+            except ThermodynamicsError as error:
+                raise UnitOperationError(f"Filter '{self.unit_id}' equilibrium washing failed: {error}") from error
+        if any(str(k).lower().startswith(('equilibrium_', 't_equilibrium_')) or str(k).lower() == 'wash_steps' for k in self.params):
+            raise UnitOperationError('Equilibrium washing parameters require washing_model=equilibrium')
         feed = inlets["in"]
         liquid = self._liquid_flows(feed, "feed")
         if not any(f > 0 for f in feed.solid_component_flows.values()):

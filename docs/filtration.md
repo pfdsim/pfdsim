@@ -6,6 +6,10 @@ balances each component and each solid particle-size class. This is a
 mechanistic engineering model with explicit empirical closures, not a resolved
 two-phase porous-medium simulation.
 
+This page describes the default `washing_model=isothermal`. For different
+wash/feed temperatures, melting, and recrystallization with changing PSD and
+hydraulics, use [`washing_model=equilibrium`](equilibrium_washing.md).
+
 Run the maintained example:
 
 ```sh

@@ -92,6 +92,8 @@ def pure_solid_log_saturation_activity(
     component: str,
     T: float,
     P: float = P_REF,
+    *,
+    solid_volume_temperature: float | None = None,
 ) -> float:
     """Return ``ln(a_sat)`` for a pure solid and subcooled liquid.
 
@@ -99,6 +101,11 @@ def pure_solid_log_saturation_activity(
     the resolved, temperature-dependent liquid and solid heat capacities. A
     pressure correction based on the pure solid/liquid molar-volume difference
     is included away from the thermochemical standard pressure.
+
+    ``solid_volume_temperature`` explicitly selects the temperature at which
+    the solid volume in that correction is evaluated. This permits a stated
+    constant-volume extrapolation of a hypothetical superheated solid without
+    requesting a stable-solid density outside its supported temperature range.
     """
     temperature = float(T)
     pressure = float(P)
@@ -157,7 +164,10 @@ def pure_solid_log_saturation_activity(
     log_activity = -1000.0 * fusion_gibbs / (R * temperature)
 
     if abs(pressure - P_REF) > 1.0e-12:
-        solid_volume = thermo._solid_molar_volume(component, temperature)
+        volume_temperature = temperature if solid_volume_temperature is None else float(solid_volume_temperature)
+        if not math.isfinite(volume_temperature) or volume_temperature <= 0:
+            raise ThermodynamicsError('SLE solid-volume reference temperature must be positive and finite')
+        solid_volume = thermo._solid_molar_volume(component, volume_temperature)
         liquid_volume, _note = thermo._liquid_molar_volume_for_poynting(
             component, temperature
         )
