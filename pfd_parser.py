@@ -4534,6 +4534,89 @@ class PFDValidator:
                         f"Unit {unit.id} references unknown thermodynamic scope "
                         f"'{scope_name}'"
                     )
+
+            if unit.unit_type == UnitType.CRYSTALLIZER.value:
+                crystallizer_params = {
+                    param.name: param.value for param in unit.params
+                }
+                parameter_names = {
+                    str(name).lower(): name for name in crystallizer_params
+                }
+                model_key = parameter_names.get(
+                    'model', parameter_names.get('crystallizer_model')
+                )
+                raw_model = (
+                    crystallizer_params[model_key]
+                    if model_key is not None else 'equilibrium'
+                )
+                model = str(raw_model).strip().lower().replace('-', '_')
+                model = {
+                    'equilibrium_sle': 'equilibrium',
+                    'sle': 'equilibrium',
+                    'kinetic': 'msmpr',
+                    'steady_msmpr': 'msmpr',
+                }.get(model, model)
+                if model not in {'equilibrium', 'msmpr'}:
+                    self.errors.append(
+                        f"Unit {unit.id} crystallizer model must be equilibrium "
+                        "or MSMPR"
+                    )
+                elif model == 'equilibrium':
+                    msmpr_only = sorted(
+                        str(raw_name)
+                        for raw_name in crystallizer_params
+                        if (
+                            str(raw_name).lower() in {
+                                'residence_time', 'tau', 'volume', 'v',
+                                'crystallizing_component', 'component',
+                                'quadrature_classes', 'particle_classes',
+                                'maximum_output_classes', 'max_output_classes',
+                                'nucleus_diameter', 'nucleation_diameter', 'l0',
+                                'msmpr_tolerance', 'kinetic_tolerance',
+                                'msmpr_relative_tolerance',
+                                'kinetic_relative_tolerance',
+                                'growth', 'g', 'nucleation', 'b0',
+                            }
+                            or str(raw_name).lower().startswith((
+                                'growth_', 'g_', 'nucleation_', 'b0_',
+                            ))
+                        )
+                    )
+                    if msmpr_only:
+                        self.errors.append(
+                            f"Unit {unit.id} MSMPR parameter(s) require "
+                            "model=MSMPR: " + ', '.join(msmpr_only)
+                        )
+                elif model == 'msmpr':
+                    dimension_specs = sum(
+                        name in parameter_names
+                        for name in ('residence_time', 'tau', 'volume', 'v')
+                    )
+                    if dimension_specs != 1:
+                        self.errors.append(
+                            f"Unit {unit.id} MSMPR mode requires exactly one of "
+                            "residence_time/tau or volume/V"
+                        )
+                    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                        from .msmpr_models import (
+                            msmpr_rate_definition_from_parameters,
+                            msmpr_rate_law_from_mapping,
+                        )
+                    else:
+                        from msmpr_models import (
+                            msmpr_rate_definition_from_parameters,
+                            msmpr_rate_law_from_mapping,
+                        )
+                    for kind in ('growth', 'nucleation'):
+                        try:
+                            definition = msmpr_rate_definition_from_parameters(
+                                crystallizer_params, kind
+                            )
+                            msmpr_rate_law_from_mapping(definition, kind)
+                        except ValueError as error:
+                            self.errors.append(
+                                f"Unit {unit.id} MSMPR kinetics: {error}"
+                            )
             
             if not unit.unit_type:
                 self.errors.append(f"Unit {unit.id} has no TYPE specified")

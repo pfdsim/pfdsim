@@ -1412,6 +1412,9 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
 
 **Crystallizer:**
 
+- `model` selects `equilibrium` (the default) or `MSMPR`. The equilibrium
+  model retains the existing pure-solid SLE behavior. `MSMPR` enables the
+  steady kinetic population-balance model described below.
 - One `in`/`solution` inlet is cooled to a specified `T_out`/`T`/`temperature`.
 - `P_out`/`P`/`pressure` optionally specifies outlet pressure. Otherwise inlet
   pressure minus optional `P_drop` is used. Do not specify both an absolute
@@ -1436,8 +1439,13 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   The two bases are mutually exclusive, and a mass rate requiring more mother
   liquor than exists is infeasible. All solid is sent to the cake. This is an
   ideal bookkeeping split, not a filtration or centrifuge transport model.
-- `equilibrium_tolerance` and `max_iterations` control the complementarity
-  solve; defaults are `1e-8` and 500.
+- `equilibrium_tolerance` and `max_iterations` control the equilibrium
+  complementarity solve; defaults are `1e-8` and 500. In MSMPR mode,
+  `max_iterations` limits the coupled kinetic material-balance root solve and
+  `msmpr_tolerance` (default `1e-8` kmol/h) sets the absolute residual
+  tolerance. `msmpr_relative_tolerance` optionally sets a tolerance relative
+  to the inlet crystallizing-component flow and defaults to zero. The effective
+  MSMPR tolerance is the larger of the absolute and relative tolerances.
 - The reported duty is the enthalpy difference between the inlet and the
   equilibrium outlet stream or streams. Conventional-solid enthalpy and entropy
   are anchored to the liquid at `Tm` through `Hfus`, consistent with the SLE
@@ -1445,8 +1453,148 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
 - The first implementation assumes one homogeneous liquid mother phase and
   requires some liquid to remain. It supports multiple coexisting pure solids
   but fails explicitly for an all-solid topology rather than substituting an
-  approximate result. PSD, nucleation, growth, agglomeration, and breakage are
-  not modeled.
+  approximate result. In equilibrium mode, nucleation, growth, agglomeration,
+  breakage, and a predictive PSD are not modeled.
+
+**Steady kinetic MSMPR mode:**
+
+The first kinetic implementation represents one well-mixed, steady-state
+mixed-suspension, mixed-product-removal crystal population. It supports
+deterministic size-independent or size-dependent growth, primary or
+suspension-dependent secondary nucleation, and a same-component solid-bearing
+inlet as a seed population. It excludes agglomeration, breakage, growth-rate
+dispersion, classification, and spatial supersaturation gradients.
+
+```text
+UNIT C : Crystallizer
+    model = MSMPR
+    crystallizing_component = solute
+    T = 20 [C]
+    residence_time = 2 [h]
+    quadrature_classes = 20
+
+    growth_model = power_law
+    growth_coefficient = 2.4e-8
+    growth_g = 1.4
+    growth_rate_unit = m/s
+
+    nucleation_model = secondary_power_law
+    nucleation_coefficient = 1.0e10
+    nucleation_b = 2.1
+    nucleation_j = 0.8
+    nucleation_rate_unit = 1/m3/s
+```
+
+- Specify exactly one of `residence_time`/`tau` (hours by default) or
+  `volume`/`V` (m3 by default). When residence time is specified, vessel volume
+  is calculated from the mixed-product-removal volumetric rate; when volume is
+  specified, residence time is calculated from that same outlet rate. The rate
+  is coupled to the trial liquid density and solid molar volume rather than
+  assumed equal to a constant-density feed rate.
+- MSMPR mode currently requires exactly one
+  `phase_behavior=conventional_with_solid` component in the feed. An optional
+  `crystallizing_component`/`component` value may name it explicitly.
+- A solid-bearing inlet is accepted only when its sole solid component is the
+  crystallizing component and its PSD accounts for the complete inlet solid
+  flow. Those particles are treated as continuously fed seeds. Direct PFD feed
+  allocation to a conventional solid is still reserved for the future stream
+  solid-allocation syntax; seeded MSMPR feeds can currently originate from an
+  upstream solid-forming unit.
+- `quadrature_classes`/`particle_classes` is an integer from 2 to 200 and
+  defaults to 20. Gauss-Laguerre quadrature represents the complete exponential
+  MSMPR residence-age distribution without a finite size cutoff.
+- `maximum_output_classes`/`max_output_classes` is an integer from 2 to 1000
+  and defaults to 200. Seeded cascades are conservatively rebinned to this
+  limit on a number basis; each grouped representative diameter preserves both
+  the group's particle count and solid volume.
+- `nucleus_diameter`/`nucleation_diameter`/`L0` optionally supplies a finite
+  birth diameter (m by default; `mm`, `um`, and `µm` are accepted). The default
+  is zero. A size-dependent growth expression that has zero growth at `L=0`
+  generally needs a positive birth diameter.
+
+For a clear feed, no agglomeration/breakage/classification, and deterministic
+linear growth, the steady population balance is
+
+```text
+d(G n)/dL + n/tau = 0,       G(0) n(0) = B0
+```
+
+For size-independent growth this gives
+`n(L) = (B0/G) exp[-L/(G tau)]`. For size-dependent growth, the simulator
+integrates `dL/dage = G(L, ...)` over the exponential residence-age
+distribution. `L` is always volume-equivalent diameter [m], so `G` means
+`dL/dt`, not a radius-growth rate.
+
+The power-law presets are:
+
+- Growth `power_law`: `G = coefficient * sigma^g`. Supply
+  `growth_coefficient` (aliases `growth_k`, `growth_kg`) and `growth_g`
+  (aliases `growth_exponent`, `growth_supersaturation_exponent`).
+- Nucleation `primary_power_law`: `B0 = coefficient * sigma^b`. Supply
+  `nucleation_coefficient` (aliases `nucleation_k`, `nucleation_kb`) and
+  `nucleation_b`.
+- Nucleation `secondary_power_law`:
+  `B0 = coefficient * sigma^b * MT^j * G0^i`. Supply `nucleation_j`
+  (aliases `nucleation_mt_exponent`, `nucleation_suspension_exponent`). This is
+  suitable when secondary nucleation is empirically correlated with suspended
+  crystal mass. `nucleation_i` (alias `nucleation_growth_exponent`) optionally
+  adds birth-size growth-rate dependence and defaults to zero. This preset does
+  not itself model an attrition mechanism or mixing field.
+
+Growth units may be `m`, `mm`, `um`, or `µm` per `h`, `min`, or `s`.
+Nucleation units may use `1`, `#`, or `particles` per `m3` per `h` or `s`, and
+`1` or `#` per `L` per `h` or `s`. Units are mandatory because kinetic
+coefficients are not magnitude-inferred.
+
+Either law may instead use `model=custom` and an arithmetic expression:
+
+```text
+growth_model = custom
+growth_expression = kg * sigma^g * (1 - exp(-alpha*(L + L0)))
+growth_param_kg = 2.4e-8
+growth_param_g = 1.4
+growth_param_alpha = 25000
+growth_param_L0 = 1e-6
+growth_rate_unit = m/s
+```
+
+Custom expressions support `+`, `-`, `*`, `/`, powers, parentheses, and the
+safe functions `abs`, `exp`, `log`, `log10`, `sqrt`, `min`, and `max`.
+Arbitrary finite numeric constants are declared with `growth_param_<name>` or
+`nucleation_param_<name>`. Available state variables are:
+
+- `S = activity/a_sat`, `sigma = max(S - 1, 0)`, signed
+  `relative_supersaturation = S - 1`, and `lnS = log(S)`.
+- `Tsat` [K] is the temperature at which the current mother-liquor composition
+  is saturated at `P`; `deltaT`/`dT = Tsat - T` [K], and
+  `deltaT_reduced = deltaT/Tsat`.
+- `deltaT_fusion = Hfus*deltaT/(R*T*Tm)` is the fusion-scaled dimensionless
+  undercooling, with `Hfus` [J/mol] and `Tm` [K] also exposed. It is a common
+  approximate kinetic driving-force convention; `lnS` remains the rigorous
+  activity-based dimensionless chemical-potential driving force and can differ
+  from `deltaT_fusion`, especially for nonideal solutions.
+- `T` [K], `P` [bar], solute mole fraction `x`, solute concentration `C`
+  [kmol/m3], liquid `activity`/`a`, and saturation activity
+  `a_sat`/`asat`.
+- `MT` [kg crystals/m3 slurry], `tau` [h], `V` [m3], and `Q` [m3/h].
+- `L` [m] and `age` [h] for growth expressions only.
+- `G0`/`G0_m_h` [m/h] for nucleation expressions only. This is the evaluated
+  growth rate at the population-balance birth boundary (`L=L0`, `age=0`), so
+  it remains unambiguous when `G` is size-dependent and supports common
+  secondary-nucleation correlations such as `B0 = kb*MT**j*G0**i`.
+- Constants `pi` and `R` [J/mol/K].
+
+The steady supersaturation is calculated, not specified. The solver couples
+the liquid activity model, pure-solid saturation activity, user kinetics,
+third PSD moment, suspension density, and solute material balance. Positive
+growth and nucleation are suppressed at `S <= 1`; seed dissolution is outside
+this first kinetic model and an undersaturated seeded case fails explicitly.
+
+The ideal MSMPR balance and boundary condition follow the standard continuous
+crystallization formulation used in, for example,
+`doi:10.1021/acs.oprd.7b00225`. Suspension-dependent secondary nucleation and
+size-dependent growth are empirical extensions whose parameters must be
+obtained for the actual solute, solvent, crystal form, and equipment.
 
 **MolecularSieveDryer / Dryer:**
 

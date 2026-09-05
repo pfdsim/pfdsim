@@ -173,6 +173,19 @@ Unit: <unit_id>
 
 Unit-specific performance data:
 
+**Crystallizer (MSMPR mode):**
+- Calculated saturation ratio, relative supersaturation, and log saturation
+  ratio, saturation temperature, dimensional/reduced/fusion-scaled
+  undercooling, melting point, and heat of fusion for the crystallizing
+  component
+- Residence time, vessel volume, and operating volumetric flow
+- Suspension density, nucleation rate, birth-size growth rate, growth-rate
+  range, and seed/nucleated particle rates, plus the number-mean diameter
+- Selected kinetic models and normalized expressions
+- Population-balance quadrature class count, coupled material residual, and
+  configured absolute, relative, and effective residual tolerances
+- The extensive outlet PSD in the corresponding stream result
+
 **Flash:**
 - Vapor fraction
 - K-values for each component

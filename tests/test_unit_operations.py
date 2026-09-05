@@ -50,6 +50,7 @@ from unit_operations import (
     UnitOperationError,
     Valve,
 )
+from unit_operations_base import UnitOperation
 
 
 def component_moles(streams):
@@ -66,6 +67,17 @@ def relative_component_balance(inlets, outlets):
     keys = set(inlet_totals) | set(outlet_totals)
     denom = sum(abs(value) for value in inlet_totals.values()) or 1.0
     return sum(abs(outlet_totals.get(k, 0.0) - inlet_totals.get(k, 0.0)) for k in keys) / denom
+
+
+class UnitOperationParameterTests(unittest.TestCase):
+    def test_parameter_unit_lookup_is_case_insensitive(self):
+        unit = UnitOperation('U', None, {
+            'Volume': 210.0,
+            '__unit__Volume': 'L',
+        })
+        self.assertEqual(unit.get_param('volume'), 210.0)
+        self.assertEqual(unit.get_param_unit('volume'), 'L')
+        self.assertEqual(unit.get_param_unit('VOLUME'), 'L')
 
 
 class UnitOperationSmokeTests(unittest.TestCase):

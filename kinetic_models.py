@@ -153,7 +153,15 @@ class SafeRateExpression:
     _allowed_binary = (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow)
     _allowed_unary = (ast.UAdd, ast.USub)
 
-    def __init__(self, expression: object, parameter_names: Iterable[str]):
+    def __init__(
+        self,
+        expression: object,
+        parameter_names: Iterable[str],
+        *,
+        scalar_names: Optional[Iterable[str]] = None,
+        mapping_names: Optional[Iterable[str]] = None,
+        function_names: Optional[Iterable[str]] = None,
+    ):
         text = str(expression or '').strip()
         if not text:
             raise ReactionDefinitionError("Custom kinetics requires expression")
@@ -167,6 +175,25 @@ class SafeRateExpression:
             ) from error
         self.text = text
         self.parameter_names = frozenset(parameter_names)
+        self._scalar_names = frozenset(
+            {'T', 'k'} if scalar_names is None else scalar_names
+        )
+        self._allowed_mapping_names = frozenset(
+            {'C', 'p', 'f', 'a', 'volpct'}
+            if mapping_names is None else mapping_names
+        )
+        self._function_names = frozenset(
+            {'exp', 'log'} if function_names is None else function_names
+        )
+        supported_functions = {
+            'abs', 'exp', 'log', 'log10', 'max', 'min', 'sqrt',
+        }
+        unsupported_functions = self._function_names - supported_functions
+        if unsupported_functions:
+            raise ReactionDefinitionError(
+                "Unsupported kinetic expression function(s): "
+                + ', '.join(sorted(unsupported_functions))
+            )
         nodes = list(ast.walk(tree))
         if len(nodes) > 200:
             raise ReactionDefinitionError("Custom kinetic expression is too complex")
@@ -176,6 +203,13 @@ class SafeRateExpression:
             for node in nodes
             if isinstance(node, ast.Subscript)
             and isinstance(node.value, ast.Name)
+        )
+        self.names = frozenset(
+            node.id
+            for node in nodes
+            if isinstance(node, ast.Name)
+            and node.id not in self._function_names
+            and node.id not in self.mapping_names
         )
         self._tree = tree.body
 
@@ -188,7 +222,10 @@ class SafeRateExpression:
                 raise ReactionDefinitionError("Only numeric constants are allowed in kinetic expressions")
             return
         if isinstance(node, ast.Name):
-            if node.id not in {'T', 'k'} and node.id not in self.parameter_names:
+            if (
+                node.id not in self._scalar_names
+                and node.id not in self.parameter_names
+            ):
                 raise ReactionDefinitionError(
                     f"Unknown kinetic expression name {node.id!r}"
                 )
@@ -203,17 +240,24 @@ class SafeRateExpression:
         if isinstance(node, ast.Call):
             if (
                 not isinstance(node.func, ast.Name)
-                or node.func.id not in {'exp', 'log'}
-                or len(node.args) != 1
+                or node.func.id not in self._function_names
+                or not node.args
                 or node.keywords
             ):
-                raise ReactionDefinitionError("Only one-argument exp(...) and log(...) calls are allowed")
-            self._validate(node.args[0])
+                raise ReactionDefinitionError(
+                    "Kinetic expression call uses an unsupported function or signature"
+                )
+            if node.func.id not in {'min', 'max'} and len(node.args) != 1:
+                raise ReactionDefinitionError(
+                    f"Kinetic expression function {node.func.id}(...) requires one argument"
+                )
+            for argument in node.args:
+                self._validate(argument)
             return
         if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name):
-            if node.value.id not in {'C', 'p', 'f', 'a', 'volpct'}:
+            if node.value.id not in self._allowed_mapping_names:
                 raise ReactionDefinitionError(
-                    "Kinetic mappings are limited to C, p, f, a, and volpct"
+                    "Kinetic mapping is not available in this expression context"
                 )
             key = node.slice
             if not isinstance(key, ast.Constant) or not isinstance(key.value, str):
@@ -247,12 +291,30 @@ class SafeRateExpression:
                     return left / right
                 return _safe_power(left, right)
             if isinstance(node, ast.Call):
-                value = visit(node.args[0])
-                if node.func.id == 'log':
+                values = [visit(argument) for argument in node.args]
+                name = node.func.id
+                if name == 'log':
+                    value = values[0]
                     if value <= 0.0:
                         raise KineticsError("log(...) requires a positive argument")
                     return math.log(value)
-                return math.exp(value)
+                if name == 'log10':
+                    value = values[0]
+                    if value <= 0.0:
+                        raise KineticsError("log10(...) requires a positive argument")
+                    return math.log10(value)
+                if name == 'sqrt':
+                    value = values[0]
+                    if value < 0.0:
+                        raise KineticsError("sqrt(...) requires a nonnegative argument")
+                    return math.sqrt(value)
+                if name == 'abs':
+                    return abs(values[0])
+                if name == 'min':
+                    return min(values)
+                if name == 'max':
+                    return max(values)
+                return math.exp(values[0])
             if isinstance(node, ast.Subscript):
                 return float(context[node.value.id].get(node.slice.value, 0.0))
             raise KineticsError("Unsupported kinetic expression node")

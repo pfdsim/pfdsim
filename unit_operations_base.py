@@ -157,7 +157,14 @@ class UnitOperation:
 
     def get_param_unit(self, name: str) -> Optional[str]:
         """Get the original unit string for a parameter, if available."""
-        return self.params.get(f"__unit__{name}")
+        unit_name = f"__unit__{name}"
+        if unit_name in self.params:
+            return self.params[unit_name]
+        unit_name_lower = unit_name.lower()
+        for key, value in self.params.items():
+            if str(key).lower() == unit_name_lower:
+                return value
+        return None
 
     def get_temperature_param(self, name: str, default=None):
         """

@@ -636,8 +636,8 @@ UNIT_DOF_RULES = {
     # =========================================================================
     'Crystallizer': {
         'description': (
-            'Equilibrium cooling crystallizer with retained slurry or ideal '
-            'cake/mother-liquor split'
+            'Equilibrium cooling or steady kinetic MSMPR crystallizer with '
+            'retained slurry or ideal cake/mother-liquor split'
         ),
         'category': 'solid',
         'phase_support': ['SLE'],
@@ -647,6 +647,17 @@ UNIT_DOF_RULES = {
             'P_drop': {'unit': 'bar', 'default': 0.0},
             'equilibrium_tolerance': {'default': 1e-8},
             'max_iterations': {'default': 500},
+            'model': {'values': ['equilibrium', 'MSMPR'], 'default': 'equilibrium'},
+            'residence_time': {'unit': 'h'},
+            'volume': {'unit': 'm3'},
+            'msmpr_tolerance': {'unit': 'kmol/h', 'default': 1e-8},
+            'msmpr_relative_tolerance': {'default': 0.0},
+            'growth_*': {
+                'description': 'MSMPR crystal-growth kinetic definition',
+            },
+            'nucleation_*': {
+                'description': 'MSMPR nucleation kinetic definition',
+            },
             'mother_liquor_retention': {
                 'description': (
                     'Fraction of equilibrium mother liquor retained with the '
@@ -663,7 +674,8 @@ UNIT_DOF_RULES = {
         },
         'calculated': [
             'solid_component_flows', 'crystal_yields',
-            'mother_liquor_composition', 'heat_duty',
+            'mother_liquor_composition', 'supersaturation',
+            'particle_size_distribution', 'heat_duty',
         ],
         'dof_notes': (
             'Specify outlet temperature. Pressure defaults to inlet pressure; '
@@ -1018,6 +1030,14 @@ class DOFAnalyzer:
                 message = f"Unit '{unit.id}' needs T_out, Q, or vapor_frac"
 
         elif unit_type == 'Crystallizer':
+            values = {param.name.lower(): param.value for param in unit.params}
+            model = str(values.get(
+                'model', values.get('crystallizer_model', 'equilibrium')
+            )).strip().lower().replace('-', '_')
+            model = {
+                'kinetic': 'msmpr',
+                'steady_msmpr': 'msmpr',
+            }.get(model, model)
             has_temperature = any(
                 name in param_names
                 for name in ('t_out', 'tout', 't', 'temperature')
@@ -1038,6 +1058,20 @@ class DOFAnalyzer:
             has_retention = bool(
                 specified_retention_fractions or has_retention_rate
             )
+            msmpr_dimensions = sum(
+                name in param_names
+                for name in ('residence_time', 'tau', 'volume', 'v')
+            )
+            has_growth = any(
+                name in {'growth', 'g'}
+                or name.startswith(('growth_', 'g_'))
+                for name in param_names
+            )
+            has_nucleation = any(
+                name in {'nucleation', 'b0'}
+                or name.startswith(('nucleation_', 'b0_'))
+                for name in param_names
+            )
             outlet_ports = {
                 port.id
                 for port in unit.ports
@@ -1047,6 +1081,26 @@ class DOFAnalyzer:
                 dof = 1
                 status = SpecificationStatus.UNDER_SPECIFIED
                 message = f"Unit '{unit.id}' needs outlet temperature T_out/T"
+            elif model == 'msmpr' and msmpr_dimensions != 1:
+                dof = 1 if msmpr_dimensions < 1 else -1
+                status = (
+                    SpecificationStatus.UNDER_SPECIFIED
+                    if msmpr_dimensions < 1
+                    else SpecificationStatus.OVER_SPECIFIED
+                )
+                message = (
+                    f"Unit '{unit.id}' MSMPR mode requires exactly one of "
+                    "residence_time/tau or volume/V"
+                )
+            elif model == 'msmpr' and not (has_growth and has_nucleation):
+                missing = []
+                if not has_growth:
+                    missing.append('growth kinetics')
+                if not has_nucleation:
+                    missing.append('nucleation kinetics')
+                dof = len(missing)
+                status = SpecificationStatus.UNDER_SPECIFIED
+                message = f"Unit '{unit.id}' MSMPR mode missing: {', '.join(missing)}"
             elif has_pressure and has_pressure_drop:
                 dof = -1
                 status = SpecificationStatus.OVER_SPECIFIED
