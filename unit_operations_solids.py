@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import math
+from typing import ClassVar
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .crystallizer_specs import (
+        CrystallizerSpecificationError,
+        finite_crystallizer_number,
+        validate_crystallizer_specification,
+    )
     from .msmpr_models import (
         MSMPRConvergenceError,
         MSMPRDefinitionError,
@@ -13,10 +19,16 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
         solve_steady_msmpr,
     )
     from .particle_size_distributions import propagate_particle_size_distributions
+    from .thermodynamics_models.activity import ActivityCoefficientThermodynamics
     from .thermodynamics_models.common import ThermodynamicsError
     from .thermodynamics_models.sle import solve_pure_solid_sle
     from .unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 else:
+    from crystallizer_specs import (
+        CrystallizerSpecificationError,
+        finite_crystallizer_number,
+        validate_crystallizer_specification,
+    )
     from msmpr_models import (
         MSMPRConvergenceError,
         MSMPRDefinitionError,
@@ -25,6 +37,7 @@ else:
         solve_steady_msmpr,
     )
     from particle_size_distributions import propagate_particle_size_distributions
+    from thermodynamics_models.activity import ActivityCoefficientThermodynamics
     from thermodynamics_models.common import ThermodynamicsError
     from thermodynamics_models.sle import solve_pure_solid_sle
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
@@ -36,7 +49,147 @@ class Crystallizer(UnitOperation):
     supports_permanent_solids = True
     particle_size_behavior = 'custom'
 
-    _TIME_FACTORS_H = {
+    def _number(self, name, default=None, **constraints):
+        try:
+            return finite_crystallizer_number(
+                self.get_param(name, default), name, **constraints
+            )
+        except CrystallizerSpecificationError as error:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' {error}"
+            ) from error
+
+    def _lle_diagnostic(self, slurry):
+        """Probe the mother liquor without changing the homogeneous SLE result."""
+        mode = getattr(self.thermo, 'fluid_phase_model', 'VLE')
+        if mode not in {'VL(L)E', 'VLLE'} or not isinstance(
+            self.thermo, ActivityCoefficientThermodynamics
+        ):
+            return None, []
+        liquid_flows = slurry.phase_component_flows()['liquid1']
+        if sum(liquid_flows.values()) <= 1e-15:
+            return None, []
+        composition = self._composition_from_flows(liquid_flows, {})
+        try:
+            equilibrium = self.thermo._fluid_phase_equilibrium_TP(
+                composition, slurry.T, slurry.P
+            )
+        except ThermodynamicsError as error:
+            return {'checked': False, 'fluid_phase_model': mode, 'error': str(error)}, [
+                (
+                    f"Crystallizer '{self.unit_id}' outlet LLE check failed: {error}. "
+                    'The crystallizer assumes one homogeneous liquid mother phase.'
+                )
+            ]
+        detected = (
+            equilibrium.liquid1_fraction > 1e-10
+            and equilibrium.liquid2_fraction > 1e-10
+        )
+        diagnostic = {
+            'checked': True,
+            'fluid_phase_model': mode,
+            'lle_detected': detected,
+            'stability': equilibrium.stability,
+            'liquid1_fraction': equilibrium.liquid1_fraction,
+            'liquid2_fraction': equilibrium.liquid2_fraction,
+        }
+        warnings = []
+        if detected:
+            warnings.append(
+                f"Crystallizer '{self.unit_id}' outlet mother liquor exhibits LLE. "
+                'The crystallizer currently does not support crystallization with LLE present; '
+                'results assume one homogeneous liquid mother phase.'
+            )
+        return diagnostic, warnings
+
+    def _finalize(
+        self,
+        inlet,
+        slurry,
+        candidates,
+        specified_sphericity,
+        retention_spec,
+        performance,
+        phase_details,
+        *,
+        generated_psds=None,
+    ):
+        """Finalize either solver's slurry, particles, outlets, duty and diagnostics."""
+        candidate_set = set(candidates)
+        for component, properties in inlet.solid_particle_properties.items():
+            if (
+                component not in candidate_set
+                and slurry.solid_component_flows.get(component, 0) > 1e-15
+            ):
+                slurry.solid_particle_properties[component] = dict(properties)
+        self._apply_outlet_sphericity(inlet, slurry, candidates, specified_sphericity)
+        if 'particle_population_balance' in phase_details:
+            component = performance['crystallizing_component']
+            sphericity = slurry.solid_particle_properties.get(component, {}).get(
+                'sphericity'
+            )
+            performance['particle_sphericity'] = sphericity
+            phase_details['particle_population_balance']['particle_sphericity'] = (
+                sphericity
+            )
+        if generated_psds is None:
+            propagate_particle_size_distributions((inlet,), slurry)
+        else:
+            slurry.solid_particle_size_distributions.update(generated_psds)
+        slurry.validate_particle_size_distributions()
+        diagnostic, warnings = self._lle_diagnostic(slurry)
+        separation = None
+        if retention_spec is None:
+            outlets = {'out': slurry}
+        else:
+            cake, liquor, separation = self._split_slurry(slurry, retention_spec)
+            outlets = {'cake': cake, 'mother_liquor': liquor}
+            for stream in outlets.values():
+                propagate_particle_size_distributions((slurry,), stream)
+                stream.solid_particle_properties = {
+                    c: dict(p)
+                    for c, p in slurry.solid_particle_properties.items()
+                    if stream.solid_component_flows.get(c, 0) > 1e-15
+                }
+                stream.validate_particle_size_distributions()
+        for stream in outlets.values():
+            for name, details in phase_details.items():
+                stream.phase_details[name] = dict(details)
+            if diagnostic is not None:
+                stream.phase_details['crystallizer_lle_check'] = dict(diagnostic)
+        if any(
+            s.H is None or not math.isfinite(s.H) for s in (inlet, *outlets.values())
+        ):
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' requires finite inlet and outlet enthalpy"
+            )
+        duty = sum(s.F * s.H for s in outlets.values()) - inlet.F * inlet.H
+        performance = {
+            **performance,
+            'T_out_C': slurry.T - 273.15,
+            'P_out_bar': slurry.P,
+            'outlet_mode': 'slurry' if separation is None else 'cake_split',
+            **{
+                key: None if separation is None else separation[key]
+                for key in (
+                    'mother_liquor_retention_basis',
+                    'mother_liquor_retention_fraction',
+                    'mother_liquor_retention_rate_kg_per_kg_crystals',
+                    'retained_mother_liquor_mass_kg_per_h',
+                )
+            },
+            'duty_kW': duty / 3600.0,
+        }
+        if diagnostic is not None:
+            performance['outlet_lle_check'] = diagnostic
+        return UnitResult(
+            outlet_streams=outlets,
+            heat_duty=duty,
+            performance=performance,
+            warnings=warnings,
+        )
+
+    _TIME_FACTORS_H: ClassVar[dict] = {
         'h': 1.0,
         'hr': 1.0,
         'hour': 1.0,
@@ -49,14 +202,14 @@ class Crystallizer(UnitOperation):
         'second': 1.0 / 3600.0,
         'seconds': 1.0 / 3600.0,
     }
-    _VOLUME_FACTORS_M3 = {
+    _VOLUME_FACTORS_M3: ClassVar[dict] = {
         'm3': 1.0,
         'm^3': 1.0,
         'l': 1.0e-3,
         'liter': 1.0e-3,
         'litre': 1.0e-3,
     }
-    _DIAMETER_FACTORS_M = {
+    _DIAMETER_FACTORS_M: ClassVar[dict] = {
         'm': 1.0,
         'mm': 1.0e-3,
         'um': 1.0e-6,
@@ -84,7 +237,7 @@ class Crystallizer(UnitOperation):
         if len(found) > 1:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' received duplicate aliases for "
-                f"{label}: " + ', '.join(name for name, _value, _unit in found)
+                f'{label}: ' + ', '.join(name for name, _value, _unit in found)
             )
         if not found:
             return None
@@ -100,59 +253,15 @@ class Crystallizer(UnitOperation):
         if factor is None:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' does not recognize {label} "
-                f"unit {raw_unit!r}"
+                f'unit {raw_unit!r}'
             )
         value *= factor
-        if not math.isfinite(value) or (
-            value < 0.0 if allow_zero else value <= 0.0
-        ):
+        if not math.isfinite(value) or (value < 0.0 if allow_zero else value <= 0.0):
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' {name} must be "
-                f"{'nonnegative' if allow_zero else 'positive'} and finite"
+                f'{"nonnegative" if allow_zero else "positive"} and finite'
             )
         return value
-
-    def _crystallizer_model(self):
-        raw_model = self.get_param(
-            'model', self.get_param('crystallizer_model', 'equilibrium')
-        )
-        model = str(raw_model).strip().lower().replace('-', '_')
-        aliases = {
-            'equilibrium_sle': 'equilibrium',
-            'sle': 'equilibrium',
-            'kinetic': 'msmpr',
-            'steady_msmpr': 'msmpr',
-        }
-        model = aliases.get(model, model)
-        if model not in {'equilibrium', 'msmpr'}:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' model must be equilibrium or MSMPR"
-            )
-        msmpr_only = []
-        for raw_name in self.params:
-            name = str(raw_name).lower()
-            if name.startswith('__unit__'):
-                continue
-            if (
-                name in {
-                    'residence_time', 'tau', 'volume', 'v',
-                    'crystallizing_component', 'component',
-                    'quadrature_classes', 'particle_classes',
-                    'maximum_output_classes', 'max_output_classes',
-                    'nucleus_diameter', 'nucleation_diameter', 'l0',
-                    'msmpr_tolerance', 'kinetic_tolerance',
-                    'msmpr_relative_tolerance', 'kinetic_relative_tolerance',
-                }
-                or name in {'growth', 'g', 'nucleation', 'b0'}
-                or name.startswith(('growth_', 'g_', 'nucleation_', 'b0_'))
-            ):
-                msmpr_only.append(str(raw_name))
-        if model == 'equilibrium' and msmpr_only:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR parameter(s) require "
-                "model=MSMPR: " + ', '.join(sorted(msmpr_only))
-            )
-        return model
 
     def _specified_outlet_sphericity(self):
         raw_value = self.get_param('outlet_sphericity')
@@ -185,30 +294,25 @@ class Crystallizer(UnitOperation):
                 sphericity is None
                 and inlet.solid_component_flows.get(component, 0.0) > 1.0e-15
             ):
-                sphericity = inlet.solid_particle_properties.get(
-                    component, {}
-                ).get('sphericity')
+                sphericity = inlet.solid_particle_properties.get(component, {}).get(
+                    'sphericity'
+                )
                 if sphericity is not None:
                     try:
                         sphericity = float(sphericity)
                     except (TypeError, ValueError) as error:
                         raise UnitOperationError(
                             f"Crystallizer '{self.unit_id}' inlet sphericity for "
-                            f"{component!r} must be numeric"
+                            f'{component!r} must be numeric'
                         ) from error
-                    if (
-                        not math.isfinite(sphericity)
-                        or not 0.0 < sphericity <= 1.0
-                    ):
+                    if not math.isfinite(sphericity) or not 0.0 < sphericity <= 1.0:
                         raise UnitOperationError(
                             f"Crystallizer '{self.unit_id}' inlet sphericity for "
-                            f"{component!r} must be in (0, 1]"
+                            f'{component!r} must be in (0, 1]'
                         )
             if sphericity is None:
                 continue
-            properties = dict(
-                outlet.solid_particle_properties.get(component, {})
-            )
+            properties = dict(outlet.solid_particle_properties.get(component, {}))
             properties['sphericity'] = sphericity
             outlet.solid_particle_properties[component] = properties
 
@@ -236,7 +340,7 @@ class Crystallizer(UnitOperation):
         if (residence_time is None) == (volume is None):
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' MSMPR mode requires exactly one "
-                "of residence_time/tau or volume/V"
+                'of residence_time/tau or volume/V'
             )
         return residence_time, volume
 
@@ -254,26 +358,28 @@ class Crystallizer(UnitOperation):
         if len(fraction_specs) > 1 or (fraction_specs and rate is not None):
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' must specify only one mother-"
-                "liquor retention basis"
+                'liquor retention basis'
             )
         if fraction_specs:
-            name, value = fraction_specs[0]
-            retention = float(value)
+            name, _value = fraction_specs[0]
+            retention = self._number('mother_liquor_retention', minimum=-float('inf'))
             if not math.isfinite(retention) or not 0.0 <= retention <= 1.0:
                 raise UnitOperationError(
                     f"Crystallizer '{self.unit_id}' {name} must be a "
-                    "fraction between 0 and 1"
+                    'fraction between 0 and 1'
                 )
             return {
                 'basis': 'fraction_of_equilibrium_mother_liquor',
                 'value': retention,
             }
         if rate is not None:
-            retention_rate = float(rate)
+            retention_rate = self._number(
+                'mother_liquor_retention_rate', inclusive=True
+            )
             if not math.isfinite(retention_rate) or retention_rate < 0.0:
                 raise UnitOperationError(
                     f"Crystallizer '{self.unit_id}' mother_liquor_retention_rate "
-                    "must be a nonnegative mass ratio"
+                    'must be a nonnegative mass ratio'
                 )
             return {
                 'basis': 'kg_liquor_per_kg_crystals',
@@ -322,26 +428,22 @@ class Crystallizer(UnitOperation):
             if requested_rate > 0.0 and crystal_mass <= 1.0e-15:
                 raise UnitOperationError(
                     f"Crystallizer '{self.unit_id}' cannot apply a positive "
-                    "mother_liquor_retention_rate when no conventional "
-                    "crystals form"
+                    'mother_liquor_retention_rate when no conventional '
+                    'crystals form'
                 )
             retained_liquor_mass = requested_rate * crystal_mass
             tolerance = max(1.0e-10, 1.0e-12 * liquid_mass)
             if retained_liquor_mass > liquid_mass + tolerance:
                 available_rate = (
-                    liquid_mass / crystal_mass
-                    if crystal_mass > 0.0 else 0.0
+                    liquid_mass / crystal_mass if crystal_mass > 0.0 else 0.0
                 )
                 raise UnitOperationError(
                     f"Crystallizer '{self.unit_id}' mother_liquor_retention_rate "
-                    f"requires {retained_liquor_mass:g} kg/h mother liquor but "
-                    f"only {liquid_mass:g} kg/h is available (maximum rate "
-                    f"{available_rate:g} kg/kg crystals)"
+                    f'requires {retained_liquor_mass:g} kg/h mother liquor but '
+                    f'only {liquid_mass:g} kg/h is available (maximum rate '
+                    f'{available_rate:g} kg/kg crystals)'
                 )
-            retention = (
-                retained_liquor_mass / liquid_mass
-                if liquid_mass > 0.0 else 0.0
-            )
+            retention = retained_liquor_mass / liquid_mass if liquid_mass > 0.0 else 0.0
         cake_flows = {
             component: solid_flows.get(component, 0.0)
             + retention * liquid_flows.get(component, 0.0)
@@ -354,9 +456,7 @@ class Crystallizer(UnitOperation):
         cake_total = sum(cake_flows.values())
         liquor_total = sum(mother_liquor_flows.values())
         liquid_fallback = slurry.x1 or slurry.x or slurry.composition
-        cake_composition = self._composition_from_flows(
-            cake_flows, liquid_fallback
-        )
+        cake_composition = self._composition_from_flows(cake_flows, liquid_fallback)
         liquor_composition = self._composition_from_flows(
             mother_liquor_flows, liquid_fallback
         )
@@ -373,16 +473,6 @@ class Crystallizer(UnitOperation):
             cake_conventional_solids,
             phase='liquid',
         )
-        for component, properties in slurry.solid_particle_properties.items():
-            if (
-                cake.solid_component_flows.get(component, 0.0) > 1.0e-15
-                and properties.get('sphericity') is not None
-            ):
-                cake_properties = dict(
-                    cake.solid_particle_properties.get(component, {})
-                )
-                cake_properties['sphericity'] = properties['sphericity']
-                cake.solid_particle_properties[component] = cake_properties
         mother_liquor = self.thermo.calculate_state(
             slurry.T,
             slurry.P,
@@ -396,8 +486,7 @@ class Crystallizer(UnitOperation):
             'mother_liquor_retention_specified_value': retention_spec['value'],
             'mother_liquor_retention_fraction': retention,
             'mother_liquor_retention_rate_kg_per_kg_crystals': (
-                retained_liquor_mass / crystal_mass
-                if crystal_mass > 0.0 else 0.0
+                retained_liquor_mass / crystal_mass if crystal_mass > 0.0 else 0.0
             ),
             'dry_crystal_mass_kg_per_h': crystal_mass,
             'retained_mother_liquor_mass_kg_per_h': retained_liquor_mass,
@@ -419,7 +508,7 @@ class Crystallizer(UnitOperation):
         if len(candidates) != 1:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' MSMPR mode currently requires "
-                "exactly one conventional_with_solid component in the feed"
+                'exactly one conventional_with_solid component in the feed'
             )
         component = candidates[0]
         requested_component = self.get_param(
@@ -431,7 +520,7 @@ class Crystallizer(UnitOperation):
         ):
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' MSMPR crystallizing_component "
-                f"must be {component!r} for this feed"
+                f'must be {component!r} for this feed'
             )
         active_solids = {
             name: float(flow)
@@ -442,7 +531,7 @@ class Crystallizer(UnitOperation):
         if unsupported_solids:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' MSMPR mode only accepts seed "
-                f"solid {component!r}; unsupported solid component(s): "
+                f'solid {component!r}; unsupported solid component(s): '
                 + ', '.join(unsupported_solids)
             )
         seed_flow = active_solids.get(component, 0.0)
@@ -470,34 +559,14 @@ class Crystallizer(UnitOperation):
         )
         if nucleus_diameter is None:
             nucleus_diameter = 0.0
-        raw_classes = self.get_param(
-            'quadrature_classes', self.get_param('particle_classes', 20)
+        classes = self._number('quadrature_classes', 20, integer=True)
+        maximum_output_classes = self._number(
+            'maximum_output_classes', 200, integer=True
         )
-        raw_output_classes = self.get_param(
-            'maximum_output_classes', self.get_param('max_output_classes', 200)
+        residual_tolerance = self._number('msmpr_tolerance', 1e-8)
+        relative_residual_tolerance = self._number(
+            'msmpr_relative_tolerance', 0.0, inclusive=True
         )
-        try:
-            classes = int(raw_classes)
-            maximum_output_classes = int(raw_output_classes)
-            residual_tolerance = float(self.get_param(
-                'msmpr_tolerance', self.get_param('kinetic_tolerance', 1.0e-8)
-            ))
-            relative_residual_tolerance = float(self.get_param(
-                'msmpr_relative_tolerance',
-                self.get_param('kinetic_relative_tolerance', 0.0),
-            ))
-        except (TypeError, ValueError) as error:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR numerical controls must "
-                "be numeric"
-            ) from error
-        if (
-            float(raw_classes) != classes
-            or float(raw_output_classes) != maximum_output_classes
-        ):
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR class counts must be integers"
-            )
         total_component_flows = inlet.component_flows()
         fluid_component_flows = {
             name: total_component_flows.get(name, 0.0)
@@ -525,7 +594,8 @@ class Crystallizer(UnitOperation):
             )
             solid_flows = (
                 {component: kinetic.solid_flow_kmol_h}
-                if kinetic.solid_flow_kmol_h > 1.0e-15 else {}
+                if kinetic.solid_flow_kmol_h > 1.0e-15
+                else {}
             )
             outlet = self.thermo.calculate_state_with_solid_flows(
                 temperature,
@@ -544,46 +614,32 @@ class Crystallizer(UnitOperation):
                 f"Crystallizer '{self.unit_id}' MSMPR calculation failed: {error}"
             ) from error
 
-        self._apply_outlet_sphericity(
-            inlet,
-            outlet,
-            (component,),
-            specified_outlet_sphericity,
-        )
-
-        if kinetic.particle_size_distribution is not None:
-            outlet.solid_particle_size_distributions[component] = (
-                kinetic.particle_size_distribution
-            )
-        outlet.validate_particle_size_distributions()
-        population_details = {
+        population_performance = {
             'model': 'steady_ideal_msmpr',
-            'component': component,
-            'size_coordinate': 'volume_equivalent_diameter',
             'saturation_ratio': kinetic.saturation_ratio,
             'relative_supersaturation': kinetic.relative_supersaturation,
             'log_saturation_ratio': kinetic.log_saturation_ratio,
             'saturation_temperature_K': kinetic.saturation_temperature_K,
             'undercooling_K': kinetic.undercooling_K,
             'reduced_undercooling': kinetic.reduced_undercooling,
-            'fusion_scaled_undercooling': (
-                kinetic.fusion_scaled_undercooling
-            ),
+            'fusion_scaled_undercooling': kinetic.fusion_scaled_undercooling,
             'melting_temperature_K': kinetic.melting_temperature_K,
             'heat_of_fusion_J_mol': kinetic.heat_of_fusion_J_mol,
             'residence_time_h': kinetic.residence_time_h,
             'volume_m3': kinetic.volume_m3,
             'volumetric_flow_m3_h': kinetic.volumetric_flow_m3_h,
             'nucleation_rate_per_m3_h': kinetic.nucleation_rate_per_m3_h,
-            'growth_rate_range_m_h': kinetic.growth_rate_range_m_h,
             'birth_growth_rate_m_h': kinetic.birth_growth_rate_m_h,
             'suspension_density_kg_m3': kinetic.suspension_density_kg_m3,
-            'particle_sphericity': outlet.solid_particle_properties.get(
-                component, {}
-            ).get('sphericity'),
-            'quadrature': 'gauss_laguerre_residence_age',
             'quadrature_classes': classes,
             'maximum_output_classes': maximum_output_classes,
+        }
+        population_details = {
+            **population_performance,
+            'component': component,
+            'size_coordinate': 'volume_equivalent_diameter',
+            'growth_rate_range_m_h': kinetic.growth_rate_range_m_h,
+            'quadrature': 'gauss_laguerre_residence_age',
             'assumptions': [
                 'steady_state',
                 'perfect_mixing',
@@ -594,46 +650,9 @@ class Crystallizer(UnitOperation):
                 'no_classification',
             ],
         }
-        outlet.phase_details['particle_population_balance'] = dict(
-            population_details
-        )
-
-        separation = None
-        if mother_liquor_retention is None:
-            outlet_streams = {'out': outlet}
-        else:
-            cake, mother_liquor, separation = self._split_slurry(
-                outlet, mother_liquor_retention
-            )
-            cake.solid_particle_size_distributions = dict(
-                outlet.solid_particle_size_distributions
-            )
-            cake.phase_details['particle_population_balance'] = dict(
-                population_details
-            )
-            mother_liquor.phase_details['particle_population_balance'] = dict(
-                population_details
-            )
-            outlet_streams = {
-                'cake': cake,
-                'mother_liquor': mother_liquor,
-            }
-
-        if inlet.H is None or any(
-            stream.H is None for stream in outlet_streams.values()
-        ):
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires inlet and outlet enthalpy"
-            )
-        outlet_enthalpy_flow = sum(
-            stream.F * stream.H for stream in outlet_streams.values()
-        )
-        duty = outlet_enthalpy_flow - inlet.F * inlet.H
         crystallized_flow = max(0.0, kinetic.solid_flow_kmol_h - seed_flow)
         performance = {
-            'model': 'steady_ideal_msmpr',
-            'T_out_C': temperature - 273.15,
-            'P_out_bar': pressure,
+            **population_performance,
             'crystallizing_component': component,
             'solid_component_flows_kmol_per_h': {
                 component: kinetic.solid_flow_kmol_h,
@@ -649,83 +668,38 @@ class Crystallizer(UnitOperation):
             'mother_liquor_composition': dict(kinetic.liquid_composition),
             'liquid_activity': kinetic.liquid_activity,
             'saturation_activity': kinetic.saturation_activity,
-            'saturation_ratio': kinetic.saturation_ratio,
-            'relative_supersaturation': kinetic.relative_supersaturation,
-            'log_saturation_ratio': kinetic.log_saturation_ratio,
-            'saturation_temperature_K': kinetic.saturation_temperature_K,
-            'undercooling_K': kinetic.undercooling_K,
-            'reduced_undercooling': kinetic.reduced_undercooling,
-            'fusion_scaled_undercooling': (
-                kinetic.fusion_scaled_undercooling
-            ),
-            'melting_temperature_K': kinetic.melting_temperature_K,
-            'heat_of_fusion_J_mol': kinetic.heat_of_fusion_J_mol,
-            'solute_concentration_kmol_m3': (
-                kinetic.solute_concentration_kmol_m3
-            ),
-            'suspension_density_kg_m3': kinetic.suspension_density_kg_m3,
-            'residence_time_h': kinetic.residence_time_h,
-            'volume_m3': kinetic.volume_m3,
-            'volumetric_flow_m3_h': kinetic.volumetric_flow_m3_h,
-            'nucleation_rate_per_m3_h': kinetic.nucleation_rate_per_m3_h,
+            'solute_concentration_kmol_m3': kinetic.solute_concentration_kmol_m3,
             'growth_rate_min_m_h': kinetic.growth_rate_range_m_h[0],
             'growth_rate_max_m_h': kinetic.growth_rate_range_m_h[1],
-            'birth_growth_rate_m_h': kinetic.birth_growth_rate_m_h,
-            'nucleated_particle_rate_per_h': (
-                kinetic.nucleated_particle_rate_per_h
-            ),
+            'nucleated_particle_rate_per_h': kinetic.nucleated_particle_rate_per_h,
             'seed_particle_rate_per_h': kinetic.seed_particle_rate_per_h,
             'total_particle_rate_per_h': kinetic.total_particle_rate_per_h,
             'number_mean_diameter_m': kinetic.number_mean_diameter_m,
-            'particle_sphericity': outlet.solid_particle_properties.get(
-                component, {}
-            ).get('sphericity'),
             'material_residual_kmol_per_h': kinetic.material_residual_kmol_h,
-            'absolute_residual_tolerance_kmol_per_h': (
-                kinetic.absolute_residual_tolerance_kmol_h
-            ),
-            'relative_residual_tolerance': (
-                kinetic.relative_residual_tolerance
-            ),
-            'effective_residual_tolerance_kmol_per_h': (
-                kinetic.effective_residual_tolerance_kmol_h
-            ),
+            'absolute_residual_tolerance_kmol_per_h': kinetic.absolute_residual_tolerance_kmol_h,
+            'relative_residual_tolerance': kinetic.relative_residual_tolerance,
+            'effective_residual_tolerance_kmol_per_h': kinetic.effective_residual_tolerance_kmol_h,
             'population_balance_evaluations': kinetic.iterations,
-            'quadrature_classes': classes,
-            'maximum_output_classes': maximum_output_classes,
             'growth_model': growth_law.model,
             'growth_expression': growth_law.expression.text,
             'growth_rate_unit': growth_law.declared_rate_unit,
             'nucleation_model': nucleation_law.model,
             'nucleation_expression': nucleation_law.expression.text,
             'nucleation_rate_unit': nucleation_law.declared_rate_unit,
-            'outlet_mode': (
-                'slurry' if mother_liquor_retention is None else 'cake_split'
-            ),
-            'mother_liquor_retention_basis': (
-                None if separation is None
-                else separation['mother_liquor_retention_basis']
-            ),
-            'mother_liquor_retention_fraction': (
-                None if separation is None
-                else separation['mother_liquor_retention_fraction']
-            ),
-            'mother_liquor_retention_rate_kg_per_kg_crystals': (
-                None if separation is None
-                else separation[
-                    'mother_liquor_retention_rate_kg_per_kg_crystals'
-                ]
-            ),
-            'retained_mother_liquor_mass_kg_per_h': (
-                None if separation is None
-                else separation['retained_mother_liquor_mass_kg_per_h']
-            ),
-            'duty_kW': duty / 3600.0,
         }
-        return UnitResult(
-            outlet_streams=outlet_streams,
-            heat_duty=duty,
-            performance=performance,
+        return self._finalize(
+            inlet,
+            outlet,
+            candidates,
+            specified_outlet_sphericity,
+            mother_liquor_retention,
+            performance,
+            {'particle_population_balance': population_details},
+            generated_psds=(
+                {component: kinetic.particle_size_distribution}
+                if kinetic.particle_size_distribution is not None
+                else {}
+            ),
         )
 
     def solve(self, inlets) -> UnitResult:
@@ -734,46 +708,35 @@ class Crystallizer(UnitOperation):
                 f"Crystallizer '{self.unit_id}' requires exactly one inlet stream"
             )
         inlet = next(iter(inlets.values()))
-        if inlet.F <= 0.0:
+        if not math.isfinite(inlet.F) or inlet.F <= 0.0:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' requires positive inlet flow"
             )
 
-        temperature = self.get_temperature_param('T_out')
-        if temperature is None:
-            temperature = self.get_temperature_param('T')
-        if temperature is None:
-            temperature = self.get_temperature_param('temperature')
-        if (
-            temperature is None
-            or not math.isfinite(float(temperature))
-            or float(temperature) <= 0.0
-        ):
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires a positive outlet "
-                "temperature T_out/T"
+        try:
+            self.params = validate_crystallizer_specification(
+                self.params, self.get_param('__connected_outlet_ports__')
             )
-        temperature = float(temperature)
-
-        absolute_pressure = self.get_param(
-            'P_out', self.get_param('P', self.get_param('pressure'))
+        except CrystallizerSpecificationError as error:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' {error}"
+            ) from error
+        self._number('t_out', minimum=-float('inf'))
+        temperature = self.get_temperature_param('t_out')
+        if temperature <= 0:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' requires positive outlet temperature"
+            )
+        pressure = (
+            self._number('p_out')
+            if self.get_param('p_out') is not None
+            else inlet.P - self._number('p_drop', 0.0, inclusive=True)
         )
-        pressure_drop = self.get_param('P_drop')
-        if absolute_pressure is not None and pressure_drop is not None:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' cannot specify both outlet "
-                "pressure and P_drop"
-            )
-        if absolute_pressure is None:
-            pressure = inlet.P - float(pressure_drop or 0.0)
-        else:
-            pressure = float(absolute_pressure)
-        if not math.isfinite(pressure) or pressure <= 0.0:
+        if not math.isfinite(pressure) or pressure <= 0:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' outlet pressure must be positive"
             )
-
-        model = self._crystallizer_model()
+        model = self.get_param('model')
         specified_outlet_sphericity = self._specified_outlet_sphericity()
         candidates = [
             component
@@ -783,7 +746,7 @@ class Crystallizer(UnitOperation):
         if not candidates:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' feed contains no component "
-                "declared phase_behavior=conventional_with_solid"
+                'declared phase_behavior=conventional_with_solid'
             )
 
         total_component_flows = inlet.component_flows()
@@ -795,38 +758,9 @@ class Crystallizer(UnitOperation):
             component: inlet.solid_component_flows.get(component, 0.0)
             for component in candidates
         }
-        tolerance = float(self.get_param('equilibrium_tolerance', 1.0e-8))
-        max_iterations = int(self.get_param('max_iterations', 500))
+        tolerance = self._number('equilibrium_tolerance', 1e-8)
+        max_iterations = self._number('max_iterations', 500, integer=True)
         mother_liquor_retention = self._mother_liquor_retention_spec()
-        connected_outlets = set(
-            self.get_param('__connected_outlet_ports__', ()) or ()
-        )
-        split_ports = {'cake', 'mother_liquor'}
-        if mother_liquor_retention is None and connected_outlets & split_ports:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' cake/mother_liquor outlets "
-                "require mother_liquor_retention"
-            )
-        if mother_liquor_retention is not None and connected_outlets:
-            if 'out' in connected_outlets:
-                raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' uses cake and "
-                    "mother_liquor outlets when mother_liquor_retention is specified"
-                )
-            missing_split_ports = sorted(split_ports - connected_outlets)
-            if missing_split_ports:
-                raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' cake-split mode is missing "
-                    f"connected outlet(s): {', '.join(missing_split_ports)}"
-                )
-        if not math.isfinite(tolerance) or tolerance <= 0.0:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' equilibrium_tolerance must be positive"
-            )
-        if max_iterations <= 0:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' max_iterations must be positive"
-            )
 
         if model == 'msmpr':
             return self._solve_msmpr(
@@ -863,37 +797,6 @@ class Crystallizer(UnitOperation):
                 f"Crystallizer '{self.unit_id}' SLE calculation failed: {exc}"
             ) from exc
 
-        self._apply_outlet_sphericity(
-            inlet,
-            outlet,
-            candidates,
-            specified_outlet_sphericity,
-        )
-
-        if inlet.H is None or outlet.H is None:
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires inlet and outlet enthalpy"
-            )
-        if mother_liquor_retention is None:
-            outlet_streams = {'out': outlet}
-        else:
-            cake, mother_liquor, separation = self._split_slurry(
-                outlet, mother_liquor_retention
-            )
-            outlet_streams = {
-                'cake': cake,
-                'mother_liquor': mother_liquor,
-            }
-        outlet_enthalpy_flow = sum(
-            stream.F * stream.H
-            for stream in outlet_streams.values()
-            if stream.H is not None
-        )
-        if any(stream.H is None for stream in outlet_streams.values()):
-            raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires outlet enthalpy"
-            )
-        duty = outlet_enthalpy_flow - inlet.F * inlet.H
         crystallized = {
             component: max(
                 0.0,
@@ -926,62 +829,31 @@ class Crystallizer(UnitOperation):
             'iterations': equilibrium.iterations,
             'details': dict(equilibrium.details),
         }
-        for stream in outlet_streams.values():
-            stream.phase_details['solid_liquid_equilibrium'] = dict(sle_details)
-            propagate_particle_size_distributions((inlet,), stream)
-
-        return UnitResult(
-            outlet_streams=outlet_streams,
-            heat_duty=duty,
-            performance={
-                'model': 'equilibrium_pure_solids',
-                'T_out_C': temperature - 273.15,
-                'P_out_bar': pressure,
-                'crystallizable_components': candidates,
-                'solid_component_flows_kmol_per_h': dict(
-                    equilibrium.solid_component_flows
-                ),
-                'crystallized_component_flows_kmol_per_h': crystallized,
-                'dissolved_component_flows_kmol_per_h': dissolved,
-                'crystal_yields': crystal_yields,
-                'mother_liquor_composition': dict(
-                    equilibrium.liquid_composition
-                ),
-                'saturation_activities': dict(
-                    equilibrium.saturation_activities
-                ),
-                'liquid_activities': dict(equilibrium.liquid_activities),
-                'equilibrium_residuals': dict(
-                    equilibrium.saturation_residuals
-                ),
-                'iterations': equilibrium.iterations,
-                'equilibrium_details': dict(equilibrium.details),
-                'above_melting_candidates': list(
-                    equilibrium.details.get('above_melting_candidates', ())
-                ),
-                'outlet_mode': (
-                    'slurry' if mother_liquor_retention is None else 'cake_split'
-                ),
-                'mother_liquor_retention_basis': (
-                    None if mother_liquor_retention is None
-                    else separation['mother_liquor_retention_basis']
-                ),
-                'mother_liquor_retention_fraction': (
-                    None if mother_liquor_retention is None
-                    else separation['mother_liquor_retention_fraction']
-                ),
-                'mother_liquor_retention_rate_kg_per_kg_crystals': (
-                    None if mother_liquor_retention is None
-                    else separation[
-                        'mother_liquor_retention_rate_kg_per_kg_crystals'
-                    ]
-                ),
-                'retained_mother_liquor_mass_kg_per_h': (
-                    None if mother_liquor_retention is None
-                    else separation['retained_mother_liquor_mass_kg_per_h']
-                ),
-                'duty_kW': duty / 3600.0,
-            },
+        performance = {
+            'model': 'equilibrium_pure_solids',
+            'crystallizable_components': candidates,
+            'solid_component_flows_kmol_per_h': dict(equilibrium.solid_component_flows),
+            'crystallized_component_flows_kmol_per_h': crystallized,
+            'dissolved_component_flows_kmol_per_h': dissolved,
+            'crystal_yields': crystal_yields,
+            'mother_liquor_composition': dict(equilibrium.liquid_composition),
+            'saturation_activities': dict(equilibrium.saturation_activities),
+            'liquid_activities': dict(equilibrium.liquid_activities),
+            'equilibrium_residuals': dict(equilibrium.saturation_residuals),
+            'iterations': equilibrium.iterations,
+            'equilibrium_details': dict(equilibrium.details),
+            'above_melting_candidates': list(
+                equilibrium.details.get('above_melting_candidates', ())
+            ),
+        }
+        return self._finalize(
+            inlet,
+            outlet,
+            candidates,
+            specified_outlet_sphericity,
+            mother_liquor_retention,
+            performance,
+            {'solid_liquid_equilibrium': sle_details},
         )
 
 

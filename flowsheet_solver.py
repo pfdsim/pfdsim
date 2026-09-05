@@ -15,6 +15,11 @@ import time
 import math
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .crystallizer_specs import canonical_crystallizer_parameter
+else:
+    from crystallizer_specs import canonical_crystallizer_parameter
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .thermodynamics import StreamState, IdealThermodynamics, ThermodynamicsError
 else:
     from thermodynamics import StreamState, IdealThermodynamics, ThermodynamicsError
@@ -301,6 +306,8 @@ class FlowsheetSolver:
                 
                 # Handle temperature unit conversion
                 param_lower = param.name.lower()
+                if unit.unit_type == 'Crystallizer':
+                    param_lower = canonical_crystallizer_parameter(param.name)
                 if isinstance(value, (int, float)) and (
                     't_' in param_lower
                     or param_lower in {'t', 'temperature'}
@@ -311,7 +318,7 @@ class FlowsheetSolver:
                     elif unit_str in ['F', '°F', 'FAHRENHEIT']:
                         value = (value - 32) * 5/9 + 273.15
                     # If already K or no unit, keep as is
-                elif self._is_pressure_param(param.name):
+                elif self._is_pressure_param(param_lower):
                     value = self._convert_pressure_value(value, param.unit)
                 
                 params[param.name] = value

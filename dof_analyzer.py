@@ -17,6 +17,15 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .crystallizer_specs import (
+        CrystallizerSpecificationError, validate_crystallizer_specification,
+    )
+else:
+    from crystallizer_specs import (
+        CrystallizerSpecificationError, validate_crystallizer_specification,
+    )
+
 
 class SpecificationStatus(Enum):
     OK = "ok"
@@ -1065,115 +1074,18 @@ class DOFAnalyzer:
                 message = f"Unit '{unit.id}' requires: {', '.join(missing)}"
 
         elif unit_type == 'Crystallizer':
-            values = {param.name.lower(): param.value for param in unit.params}
-            model = str(values.get(
-                'model', values.get('crystallizer_model', 'equilibrium')
-            )).strip().lower().replace('-', '_')
-            model = {
-                'kinetic': 'msmpr',
-                'steady_msmpr': 'msmpr',
-            }.get(model, model)
-            has_temperature = any(
-                name in param_names
-                for name in ('t_out', 'tout', 't', 'temperature')
-            )
-            has_pressure = any(
-                name in param_names
-                for name in ('p_out', 'pout', 'p', 'pressure')
-            )
-            has_pressure_drop = 'p_drop' in param_names
-            retention_fraction_names = {
-                'mother_liquor_retention',
-                'mother_liquor_retention_fraction',
-            }
-            specified_retention_fractions = (
-                retention_fraction_names & param_names
-            )
-            has_retention_rate = 'mother_liquor_retention_rate' in param_names
-            has_retention = bool(
-                specified_retention_fractions or has_retention_rate
-            )
-            msmpr_dimensions = sum(
-                name in param_names
-                for name in ('residence_time', 'tau', 'volume', 'v')
-            )
-            has_growth = any(
-                name in {'growth', 'g'}
-                or name.startswith(('growth_', 'g_'))
-                for name in param_names
-            )
-            has_nucleation = any(
-                name in {'nucleation', 'b0'}
-                or name.startswith(('nucleation_', 'b0_'))
-                for name in param_names
-            )
-            outlet_ports = {
-                port.id
-                for port in unit.ports
-                if port.port_type.value.endswith('outlet')
-            }
-            if not has_temperature:
-                dof = 1
-                status = SpecificationStatus.UNDER_SPECIFIED
-                message = f"Unit '{unit.id}' needs outlet temperature T_out/T"
-            elif model == 'msmpr' and msmpr_dimensions != 1:
-                dof = 1 if msmpr_dimensions < 1 else -1
-                status = (
-                    SpecificationStatus.UNDER_SPECIFIED
-                    if msmpr_dimensions < 1
-                    else SpecificationStatus.OVER_SPECIFIED
+            try:
+                validate_crystallizer_specification(
+                    {param.name: param.value for param in unit.params},
+                    {port.id for port in unit.ports
+                     if port.port_type.value.endswith('outlet')},
                 )
-                message = (
-                    f"Unit '{unit.id}' MSMPR mode requires exactly one of "
-                    "residence_time/tau or volume/V"
-                )
-            elif model == 'msmpr' and not (has_growth and has_nucleation):
-                missing = []
-                if not has_growth:
-                    missing.append('growth kinetics')
-                if not has_nucleation:
-                    missing.append('nucleation kinetics')
-                dof = len(missing)
-                status = SpecificationStatus.UNDER_SPECIFIED
-                message = f"Unit '{unit.id}' MSMPR mode missing: {', '.join(missing)}"
-            elif has_pressure and has_pressure_drop:
-                dof = -1
-                status = SpecificationStatus.OVER_SPECIFIED
-                message = (
-                    f"Unit '{unit.id}' cannot specify both outlet pressure and P_drop"
-                )
-            elif (
-                len(specified_retention_fractions) > 1
-                or (specified_retention_fractions and has_retention_rate)
-            ):
-                dof = -1
-                status = SpecificationStatus.OVER_SPECIFIED
-                message = (
-                    f"Unit '{unit.id}' must specify only one mother-liquor "
-                    "retention basis"
-                )
-            elif has_retention and 'out' in outlet_ports:
-                dof = -1
-                status = SpecificationStatus.OVER_SPECIFIED
-                message = (
-                    f"Unit '{unit.id}' uses slurry outlet 'out' with a "
-                    "mother-liquor-retention cake split"
-                )
-            elif has_retention and not {'cake', 'mother_liquor'} <= outlet_ports:
-                dof = 1
-                status = SpecificationStatus.UNDER_SPECIFIED
-                message = (
-                    f"Unit '{unit.id}' cake-split mode requires cake and "
-                    "mother_liquor outlets"
-                )
-            elif not has_retention and outlet_ports & {'cake', 'mother_liquor'}:
-                dof = 1
-                status = SpecificationStatus.UNDER_SPECIFIED
-                message = (
-                    f"Unit '{unit.id}' cake/mother_liquor outlets require "
-                    "mother_liquor_retention"
-                )
-                
+            except CrystallizerSpecificationError as error:
+                dof = error.dof
+                status = (SpecificationStatus.UNDER_SPECIFIED if dof > 0
+                          else SpecificationStatus.OVER_SPECIFIED)
+                message = f"Unit '{unit.id}' {error}"
+
         elif unit_type == 'HeatExchanger':
             has_u = 'u' in param_names
             has_a = 'a' in param_names or 'area' in param_names

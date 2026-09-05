@@ -1421,8 +1421,8 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
 - `model` selects `equilibrium` (the default) or `MSMPR`. The equilibrium
   model retains the existing pure-solid SLE behavior. `MSMPR` enables the
   steady kinetic population-balance model described below.
-- One `in`/`solution` inlet is cooled to a specified `T_out`/`T`/`temperature`.
-- `P_out`/`P`/`pressure` optionally specifies outlet pressure. Otherwise inlet
+- One `in`/`solution` inlet is cooled to a specified `T_out`/`Tout`/`T`/`temperature`.
+- `P_out`/`Pout`/`P`/`pressure` optionally specifies outlet pressure. Otherwise inlet
   pressure minus optional `P_drop` is used. Do not specify both an absolute
   outlet pressure and `P_drop`.
 - Every feed component declared `phase_behavior=conventional_with_solid`
@@ -1459,6 +1459,8 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   override, a solid-bearing feed propagates its seed-crystal sphericity;
   newly formed crystals in a clear feed retain the component-level
   `particle_sphericity` default.
+  Inert permanent solids preserve their inlet particle properties and PSD,
+  including stream-specific sphericity, in either outlet mode.
 - The reported duty is the enthalpy difference between the inlet and the
   equilibrium outlet stream or streams. Conventional-solid enthalpy and entropy
   are anchored to the liquid at `Tm` through `Hfus`, consistent with the SLE
@@ -1468,6 +1470,18 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   but fails explicitly for an all-solid topology rather than substituting an
   approximate result. In equilibrium mode, nucleation, growth, agglomeration,
   breakage, and a predictive PSD are not modeled.
+- When global `FLUID_PHASE_MODEL` is `VL(L)E` or `VLLE` and the unit uses an
+  activity-coefficient model, the calculated outlet mother liquor is checked
+  using that fluid-equilibrium policy. `VL(L)E` uses its local spinodal test
+  before escalating to a split calculation; it is not a global stability
+  proof. `VLLE` uses the global phase search. If two liquid phases are found,
+  a warning states that the crystallizer does not support crystallization
+  with LLE present. This diagnostic does not alter the homogeneous-liquid
+  crystallization result or split its mother liquor into equilibrium phases.
+  The check runs once before the optional cake split, for both equilibrium
+  and MSMPR modes. Unit performance records `outlet_lle_check`; outlet phase
+  metadata records `crystallizer_lle_check`. A failed phase check produces an
+  explicit warning and `checked=false`, rather than claiming no LLE.
 
 **Steady kinetic MSMPR mode:**
 
