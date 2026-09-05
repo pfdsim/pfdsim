@@ -652,6 +652,9 @@ UNIT_DOF_RULES = {
             'volume': {'unit': 'm3'},
             'msmpr_tolerance': {'unit': 'kmol/h', 'default': 1e-8},
             'msmpr_relative_tolerance': {'default': 0.0},
+            'outlet_sphericity': {
+                'description': 'Assumed outlet-crystal sphericity in (0, 1]',
+            },
             'growth_*': {
                 'description': 'MSMPR crystal-growth kinetic definition',
             },
@@ -675,7 +678,7 @@ UNIT_DOF_RULES = {
         'calculated': [
             'solid_component_flows', 'crystal_yields',
             'mother_liquor_composition', 'supersaturation',
-            'particle_size_distribution', 'heat_duty',
+            'particle_size_distribution', 'particle_sphericity', 'heat_duty',
         ],
         'dof_notes': (
             'Specify outlet temperature. Pressure defaults to inlet pressure; '

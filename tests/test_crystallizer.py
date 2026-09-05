@@ -422,6 +422,26 @@ class CrystallizerUnitTests(unittest.TestCase):
             places=7,
         )
 
+    def test_outlet_sphericity_override_applies_to_equilibrium_crystals(self):
+        result = Crystallizer(
+            'C',
+            self.thermo,
+            {'T': 250.0, 'outlet_sphericity': 0.72},
+        ).solve({'in': self.make_feed()})
+        self.assertEqual(
+            result.outlet_streams['out']
+            .solid_particle_properties['water']['sphericity'],
+            0.72,
+        )
+
+    def test_outlet_sphericity_is_validated(self):
+        with self.assertRaisesRegex(UnitOperationError, r'in \(0, 1\]'):
+            Crystallizer(
+                'C',
+                self.thermo,
+                {'T': 250.0, 'outlet_sphericity': 0.0},
+            ).solve({'in': self.make_feed()})
+
     def test_conventional_solid_energy_reference_closes_at_melting_point(self):
         props = self.thermo.props['water']
         melting_temperature = float(props.Tm)
@@ -502,6 +522,21 @@ class CrystallizerUnitTests(unittest.TestCase):
             split_result.heat_duty,
             slurry_result.heat_duty,
             places=7,
+        )
+
+        shaped_split = Crystallizer(
+            'C',
+            self.thermo,
+            {
+                'T': 250.0,
+                'mother_liquor_retention': 0.2,
+                'outlet_sphericity': 0.68,
+            },
+        ).solve({'in': feed})
+        self.assertEqual(
+            shaped_split.outlet_streams['cake']
+            .solid_particle_properties['water']['sphericity'],
+            0.68,
         )
 
     def test_mother_liquor_retention_endpoints(self):

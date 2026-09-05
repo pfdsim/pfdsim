@@ -401,6 +401,7 @@ class MSMPRModelTests(unittest.TestCase):
             {'water': 0.01},
             phase='liquid',
         )
+        feed.solid_particle_properties['water'] = {'sphericity': 0.63}
         result = Crystallizer('C', self.thermo, {
             'model': 'MSMPR',
             'T': 250.0,
@@ -426,6 +427,12 @@ class MSMPRModelTests(unittest.TestCase):
         self.assertGreater(performance['suspension_density_kg_m3'], 0.0)
         self.assertGreater(performance['nucleation_rate_per_m3_h'], 0.0)
         self.assertGreater(performance['seed_particle_rate_per_h'], 0.0)
+        self.assertEqual(performance['particle_sphericity'], 0.63)
+        self.assertEqual(
+            result.outlet_streams['out']
+            .solid_particle_properties['water']['sphericity'],
+            0.63,
+        )
         result.outlet_streams['out'].validate_particle_size_distributions()
 
     def test_nonideal_msmpr_uses_activity_not_mole_fraction(self):
@@ -566,6 +573,7 @@ UNIT C : Crystallizer
     residence_time = 1 [h]
     quadrature_classes = 8
     msmpr_relative_tolerance = 1e-9
+    outlet_sphericity = 0.74
     growth_model = power_law
     growth_coefficient = 0.0001
     growth_g = 1
@@ -590,6 +598,7 @@ UNIT C : Crystallizer
         self.assertTrue(result.converged, result.errors)
         performance = result.units['C'].performance
         self.assertEqual(performance['model'], 'steady_ideal_msmpr')
+        self.assertEqual(performance['particle_sphericity'], 0.74)
         self.assertEqual(performance['relative_residual_tolerance'], 1.0e-9)
         self.assertGreaterEqual(
             performance['effective_residual_tolerance_kmol_per_h'],
@@ -600,6 +609,10 @@ UNIT C : Crystallizer
             result.streams['Product'].solid_component_flows['water'], 0.0
         )
         product = result.streams['Product']
+        self.assertEqual(
+            product.solid_particle_properties['water']['sphericity'],
+            0.74,
+        )
         self.assertAlmostEqual(
             performance['volumetric_flow_m3_h'],
             product.F / product.rho,
@@ -615,6 +628,7 @@ UNIT C : Crystallizer
         self.assertIn('saturation_ratio = ', report)
         self.assertIn('undercooling_K = ', report)
         self.assertIn('SOLID_PARTICLE_SIZE_DISTRIBUTIONS:', report)
+        self.assertIn('sphericity=0.74', report)
         self.assertGreater(performance['saturation_temperature_K'], 250.0)
         self.assertAlmostEqual(
             performance['undercooling_K'],
@@ -676,6 +690,10 @@ UNIT C : Crystallizer
         cake = result.streams['Cake']
         liquor = result.streams['MotherLiquor']
         self.assertIn('water', cake.solid_particle_size_distributions)
+        self.assertEqual(
+            cake.solid_particle_properties['water']['sphericity'],
+            0.74,
+        )
         cake.validate_particle_size_distributions()
         self.assertEqual(liquor.solid_particle_size_distributions, {})
         self.assertEqual(result.units['C'].performance['outlet_mode'], 'cake_split')

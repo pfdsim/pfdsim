@@ -1446,6 +1446,13 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   tolerance. `msmpr_relative_tolerance` optionally sets a tolerance relative
   to the inlet crystallizing-component flow and defaults to zero. The effective
   MSMPR tolerance is the larger of the absolute and relative tolerances.
+- `outlet_sphericity` optionally specifies a component-level crystal
+  sphericity in `(0, 1]` for the crystallizer outlet. It applies to every
+  crystallizing component because the current stream model stores one
+  sphericity per solid component rather than per PSD class. Without this
+  override, a solid-bearing feed propagates its seed-crystal sphericity;
+  newly formed crystals in a clear feed retain the component-level
+  `particle_sphericity` default.
 - The reported duty is the enthalpy difference between the inlet and the
   equilibrium outlet stream or streams. Conventional-solid enthalpy and entropy
   are anchored to the liquid at `Tm` through `Hfus`, consistent with the SLE

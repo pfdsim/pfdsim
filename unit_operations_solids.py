@@ -154,6 +154,64 @@ class Crystallizer(UnitOperation):
             )
         return model
 
+    def _specified_outlet_sphericity(self):
+        raw_value = self.get_param('outlet_sphericity')
+        if raw_value is None:
+            return None
+        try:
+            value = float(raw_value)
+        except (TypeError, ValueError) as error:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' outlet_sphericity must be numeric"
+            ) from error
+        if not math.isfinite(value) or not 0.0 < value <= 1.0:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' outlet_sphericity must be in (0, 1]"
+            )
+        return value
+
+    def _apply_outlet_sphericity(
+        self,
+        inlet,
+        outlet,
+        components,
+        specified_sphericity,
+    ):
+        for component in components:
+            if outlet.solid_component_flows.get(component, 0.0) <= 1.0e-15:
+                continue
+            sphericity = specified_sphericity
+            if (
+                sphericity is None
+                and inlet.solid_component_flows.get(component, 0.0) > 1.0e-15
+            ):
+                sphericity = inlet.solid_particle_properties.get(
+                    component, {}
+                ).get('sphericity')
+                if sphericity is not None:
+                    try:
+                        sphericity = float(sphericity)
+                    except (TypeError, ValueError) as error:
+                        raise UnitOperationError(
+                            f"Crystallizer '{self.unit_id}' inlet sphericity for "
+                            f"{component!r} must be numeric"
+                        ) from error
+                    if (
+                        not math.isfinite(sphericity)
+                        or not 0.0 < sphericity <= 1.0
+                    ):
+                        raise UnitOperationError(
+                            f"Crystallizer '{self.unit_id}' inlet sphericity for "
+                            f"{component!r} must be in (0, 1]"
+                        )
+            if sphericity is None:
+                continue
+            properties = dict(
+                outlet.solid_particle_properties.get(component, {})
+            )
+            properties['sphericity'] = sphericity
+            outlet.solid_particle_properties[component] = properties
+
     def _msmpr_rate_definition(self, kind):
         try:
             return msmpr_rate_definition_from_parameters(self.params, kind)
@@ -315,6 +373,16 @@ class Crystallizer(UnitOperation):
             cake_conventional_solids,
             phase='liquid',
         )
+        for component, properties in slurry.solid_particle_properties.items():
+            if (
+                cake.solid_component_flows.get(component, 0.0) > 1.0e-15
+                and properties.get('sphericity') is not None
+            ):
+                cake_properties = dict(
+                    cake.solid_particle_properties.get(component, {})
+                )
+                cake_properties['sphericity'] = properties['sphericity']
+                cake.solid_particle_properties[component] = cake_properties
         mother_liquor = self.thermo.calculate_state(
             slurry.T,
             slurry.P,
@@ -346,6 +414,7 @@ class Crystallizer(UnitOperation):
         candidates,
         mother_liquor_retention,
         max_iterations,
+        specified_outlet_sphericity,
     ):
         if len(candidates) != 1:
             raise UnitOperationError(
@@ -475,6 +544,13 @@ class Crystallizer(UnitOperation):
                 f"Crystallizer '{self.unit_id}' MSMPR calculation failed: {error}"
             ) from error
 
+        self._apply_outlet_sphericity(
+            inlet,
+            outlet,
+            (component,),
+            specified_outlet_sphericity,
+        )
+
         if kinetic.particle_size_distribution is not None:
             outlet.solid_particle_size_distributions[component] = (
                 kinetic.particle_size_distribution
@@ -502,6 +578,9 @@ class Crystallizer(UnitOperation):
             'growth_rate_range_m_h': kinetic.growth_rate_range_m_h,
             'birth_growth_rate_m_h': kinetic.birth_growth_rate_m_h,
             'suspension_density_kg_m3': kinetic.suspension_density_kg_m3,
+            'particle_sphericity': outlet.solid_particle_properties.get(
+                component, {}
+            ).get('sphericity'),
             'quadrature': 'gauss_laguerre_residence_age',
             'quadrature_classes': classes,
             'maximum_output_classes': maximum_output_classes,
@@ -598,6 +677,9 @@ class Crystallizer(UnitOperation):
             'seed_particle_rate_per_h': kinetic.seed_particle_rate_per_h,
             'total_particle_rate_per_h': kinetic.total_particle_rate_per_h,
             'number_mean_diameter_m': kinetic.number_mean_diameter_m,
+            'particle_sphericity': outlet.solid_particle_properties.get(
+                component, {}
+            ).get('sphericity'),
             'material_residual_kmol_per_h': kinetic.material_residual_kmol_h,
             'absolute_residual_tolerance_kmol_per_h': (
                 kinetic.absolute_residual_tolerance_kmol_h
@@ -692,6 +774,7 @@ class Crystallizer(UnitOperation):
             )
 
         model = self._crystallizer_model()
+        specified_outlet_sphericity = self._specified_outlet_sphericity()
         candidates = [
             component
             for component in self.thermo.conventional_solid_components
@@ -753,6 +836,7 @@ class Crystallizer(UnitOperation):
                 candidates,
                 mother_liquor_retention,
                 max_iterations,
+                specified_outlet_sphericity,
             )
 
         try:
@@ -778,6 +862,13 @@ class Crystallizer(UnitOperation):
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' SLE calculation failed: {exc}"
             ) from exc
+
+        self._apply_outlet_sphericity(
+            inlet,
+            outlet,
+            candidates,
+            specified_outlet_sphericity,
+        )
 
         if inlet.H is None or outlet.H is None:
             raise UnitOperationError(
