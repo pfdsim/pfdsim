@@ -40,6 +40,19 @@ class ConstantCpFusionThermo:
         return cp * math.log(T2 / T1)
 
 
+class PressureCorrectionFusionThermo(ConstantCpFusionThermo):
+    def __init__(self, *args, solid_volume, liquid_volume, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.solid_volume = solid_volume
+        self.liquid_volume = liquid_volume
+
+    def _solid_molar_volume(self, _component, _temperature):
+        return self.solid_volume
+
+    def _liquid_molar_volume_for_poynting(self, _component, _temperature):
+        return self.liquid_volume, None
+
+
 class PureSolidSLETests(unittest.TestCase):
     def test_fusion_equation_includes_liquid_solid_cp_difference(self):
         thermo = ConstantCpFusionThermo(
@@ -64,6 +77,32 @@ class PureSolidSLETests(unittest.TestCase):
             thermo, 'solute', temperature, P_REF
         )
         self.assertAlmostEqual(actual, expected, places=12)
+
+    def test_pressure_correction_uses_solid_minus_liquid_molar_volume(self):
+        thermo = PressureCorrectionFusionThermo(
+            liquid_cp=60.0,
+            solid_cp=60.0,
+            solid_volume=0.08,
+            liquid_volume=0.10,
+        )
+        temperature = 270.0
+        pressure = P_REF + 100.0
+        at_reference = pure_solid_log_saturation_activity(
+            thermo, 'solute', temperature, P_REF
+        )
+        at_pressure = pure_solid_log_saturation_activity(
+            thermo, 'solute', temperature, pressure
+        )
+        expected_shift = (
+            (thermo.solid_volume - thermo.liquid_volume)
+            * (pressure - P_REF)
+            * 100.0
+            / (R * temperature)
+        )
+        self.assertAlmostEqual(
+            at_pressure - at_reference, expected_shift, places=12
+        )
+        self.assertLess(at_pressure, at_reference)
 
     def test_ideal_binary_sle_matches_analytic_solubility(self):
         thermo = IdealThermodynamics(
@@ -95,6 +134,36 @@ class PureSolidSLETests(unittest.TestCase):
         )
         self.assertLess(
             abs(result.saturation_residuals['water']), 1.0e-10
+        )
+
+    def test_subcooled_unsaturated_solution_remains_all_liquid(self):
+        temperature = 270.0
+        melting_temperature = 300.0
+        target_solubility = 0.3
+        heat_of_fusion = (
+            -math.log(target_solubility)
+            * R
+            / (1.0 / temperature - 1.0 / melting_temperature)
+            / 1000.0
+        )
+        thermo = ConstantCpFusionThermo(
+            liquid_cp=60.0,
+            solid_cp=60.0,
+            Tm=melting_temperature,
+            Hfus=heat_of_fusion,
+        )
+        result = solve_pure_solid_sle(
+            thermo,
+            temperature,
+            P_REF,
+            {'solute': 1.0, 'solvent': 9.0},
+            ['solute'],
+        )
+        self.assertEqual(result.solid_component_flows, {})
+        self.assertEqual(result.iterations, 0)
+        self.assertGreater(result.saturation_residuals['solute'], 0.0)
+        self.assertEqual(
+            result.details['solver_message'], 'stable all-liquid state'
         )
 
     def test_missing_fusion_properties_fail_clearly(self):
@@ -168,6 +237,94 @@ class PureSolidSLETests(unittest.TestCase):
         )
         self.assertGreater(result.solid_component_flows['a'], 0.0)
         self.assertGreater(result.solid_component_flows['b'], 0.0)
+
+    def test_second_solid_activates_across_eutectic_boundary(self):
+        melting_temperature = 300.0
+        boundary_temperature = 270.0
+        target_solubility = 0.4
+        heat_of_fusion = (
+            -math.log(target_solubility)
+            * R
+            / (1.0 / boundary_temperature - 1.0 / melting_temperature)
+            / 1000.0
+        )
+        thermo = ConstantCpFusionThermo(
+            liquid_cp=60.0,
+            solid_cp=60.0,
+        )
+        thermo.components = ['a', 'b', 'solvent']
+        thermo.props = {
+            component: SimpleNamespace(
+                Tm=melting_temperature,
+                Hfus=heat_of_fusion,
+            )
+            for component in ('a', 'b')
+        }
+        flows = {'a': 6.0, 'b': 3.0, 'solvent': 1.0}
+
+        warmer = solve_pure_solid_sle(
+            thermo, 275.0, P_REF, flows, ['a', 'b']
+        )
+        colder = solve_pure_solid_sle(
+            thermo, boundary_temperature, P_REF, flows, ['a', 'b']
+        )
+
+        self.assertGreater(warmer.solid_component_flows['a'], 0.0)
+        self.assertNotIn('b', warmer.solid_component_flows)
+        self.assertGreater(warmer.saturation_residuals['b'], 0.0)
+        self.assertGreater(colder.solid_component_flows['a'], 0.0)
+        self.assertGreater(colder.solid_component_flows['b'], 0.0)
+        self.assertLess(abs(colder.saturation_residuals['a']), 1.0e-9)
+        self.assertLess(abs(colder.saturation_residuals['b']), 1.0e-9)
+
+    def test_trace_component_is_conserved_with_multiple_solids(self):
+        temperature = 270.0
+        melting_temperature = 300.0
+        target_solubility = 0.3
+        heat_of_fusion = (
+            -math.log(target_solubility)
+            * R
+            / (1.0 / temperature - 1.0 / melting_temperature)
+            / 1000.0
+        )
+        thermo = ConstantCpFusionThermo(
+            liquid_cp=60.0,
+            solid_cp=60.0,
+        )
+        thermo.components = ['a', 'b', 'trace', 'solvent']
+        thermo.props = {
+            component: SimpleNamespace(
+                Tm=melting_temperature,
+                Hfus=heat_of_fusion,
+            )
+            for component in ('a', 'b')
+        }
+        inlet_flows = {
+            'a': 4.45,
+            'b': 4.45,
+            'trace': 0.10,
+            'solvent': 1.0,
+        }
+        result = solve_pure_solid_sle(
+            thermo,
+            temperature,
+            P_REF,
+            inlet_flows,
+            ['a', 'b'],
+        )
+
+        self.assertAlmostEqual(
+            result.liquid_component_flows['trace'],
+            inlet_flows['trace'],
+            places=12,
+        )
+        self.assertNotIn('trace', result.solid_component_flows)
+        for component, inlet_flow in inlet_flows.items():
+            recovered = (
+                result.liquid_component_flows.get(component, 0.0)
+                + result.solid_component_flows.get(component, 0.0)
+            )
+            self.assertAlmostEqual(recovered, inlet_flow, places=10)
 
     def test_above_melting_candidate_stays_liquid_without_solid_properties(self):
         thermo = ConstantCpFusionThermo(
@@ -345,6 +502,36 @@ class CrystallizerUnitTests(unittest.TestCase):
             split_result.heat_duty,
             slurry_result.heat_duty,
             places=7,
+        )
+
+    def test_mother_liquor_retention_endpoints(self):
+        dry = Crystallizer(
+            'C0',
+            self.thermo,
+            {'T': 250.0, 'mother_liquor_retention': 0.0},
+        ).solve({'in': self.make_feed()})
+        full = Crystallizer(
+            'C1',
+            self.thermo,
+            {'T': 250.0, 'mother_liquor_retention': 1.0},
+        ).solve({'in': self.make_feed()})
+
+        dry_cake = dry.outlet_streams['cake']
+        dry_liquor = dry.outlet_streams['mother_liquor']
+        full_cake = full.outlet_streams['cake']
+        full_liquor = full.outlet_streams['mother_liquor']
+        self.assertAlmostEqual(
+            dry_cake.F,
+            sum(dry_cake.solid_component_flows.values()),
+            places=10,
+        )
+        self.assertGreater(dry_liquor.F, 0.0)
+        self.assertAlmostEqual(full_liquor.F, 0.0, places=12)
+        self.assertAlmostEqual(full_cake.F, self.make_feed().F, places=10)
+        self.assertAlmostEqual(
+            dry_cake.F + dry_liquor.F,
+            full_cake.F + full_liquor.F,
+            places=10,
         )
 
     def test_mass_retention_rate_uses_liquor_to_dry_crystal_mass_ratio(self):
