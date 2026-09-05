@@ -660,6 +660,53 @@ def _component_unifac_visco_groups(
     component_smiles: Optional[Mapping[str, str]] = None,
     component_props: Optional[Mapping[str, object]] = None,
 ) -> dict[str, float]:
+    """Resolve temperature-independent groups once per structural definition.
+
+    Keys contain values rather than object identities so edited properties,
+    explicit group overrides, and UNIFAC variants cannot reuse stale groups.
+    Failed structural assignments are cached too: the pair fallback should
+    not rebuild the chemical database at every mixture temperature.
+    """
+    props = component_props.get(comp) if component_props else None
+    properties = tuple(
+        (key, str(value) if value is not None else None)
+        for key in ('name', 'symbol', 'formula', 'smiles', 'MW', 'CAS', 'cas')
+        for value in (_props_value(props, key),)
+    )
+    groups = tuple(sorted(
+        (component_groups.get(comp) or {}).items(), key=lambda item: str(item[0])
+    )) if component_groups else ()
+    entries, error = _cached_component_unifac_visco_groups(
+        comp, groups, component_group_variant,
+        component_smiles.get(comp) if component_smiles else None, properties,
+    )
+    if error is not None:
+        raise LiquidMixtureViscosityError(error)
+    return dict(entries)
+
+
+@lru_cache(maxsize=1024)
+def _cached_component_unifac_visco_groups(comp, groups, variant, smiles, properties):
+    try:
+        result = _resolve_component_unifac_visco_groups(
+            comp, component_groups={comp: dict(groups)} if groups else None,
+            component_group_variant=variant,
+            component_smiles={comp: smiles} if smiles else None,
+            component_props={comp: dict(properties)},
+        )
+    except LiquidMixtureViscosityError as error:
+        return (), str(error)
+    return tuple(result.items()), None
+
+
+def _resolve_component_unifac_visco_groups(
+    comp: str,
+    *,
+    component_groups: Optional[Mapping[str, Mapping[object, float]]] = None,
+    component_group_variant: Optional[str] = None,
+    component_smiles: Optional[Mapping[str, str]] = None,
+    component_props: Optional[Mapping[str, object]] = None,
+) -> dict[str, float]:
     last_error = None
     if component_groups and comp in component_groups:
         try:
@@ -726,6 +773,7 @@ def _component_unifac_visco_groups(
                     str(identifier),
                     variant=variant,
                     expected_mw=expected_mw,
+                    smiles=str(smiles) if smiles else None,
                 )
                 return _utm_groups_from_unifac_groups(groups, variant=variant)
             except Exception as exc:

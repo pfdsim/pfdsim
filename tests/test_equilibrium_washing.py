@@ -228,3 +228,42 @@ def test_sensible_heat_front_and_mixed_cell_analytic_limit():
     t = [c.temperature for c in front.cells]
     assert 320 > t[0] > t[1] > t[2] > 280
     assert abs(front.energy_residual) < 1e-5
+
+
+def test_seeded_continuation_avoids_speculative_liquid_temperature_solve():
+    class CountingThermo(FusionThermo):
+        def __init__(self):
+            self.temperatures = []
+
+        def mixture_enthalpy(self, x, t, vapor_fraction, P=1):
+            self.temperatures.append(t)
+            return super().mixture_enthalpy(x, t, vapor_fraction, P=P)
+
+    thermo = CountingThermo()
+    result = equilibrate_enthalpy(
+        thermo,
+        {"A": 1.0},
+        -4990,
+        1,
+        initial_temperature=300,
+        initial_solids={"A": 0.5},
+        temperature_bounds=(250, 350),
+    )
+    assert result.solid["A"] == pytest.approx(0.499, abs=1e-8)
+    assert max(abs(t - 300) for t in thermo.temperatures) < 1
+    assert len(thermo.temperatures) < 20
+
+
+def test_hydraulics_evaluated_once_per_new_cell_state(monkeypatch):
+    import equilibrium_washing
+
+    original = equilibrium_washing.cell_hydraulics
+    calls = []
+
+    def counted(*args, **kwargs):
+        calls.append(1)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(equilibrium_washing, "cell_hydraulics", counted)
+    run_wash(8, cells=2)
+    assert len(calls) == 2 * (8 + 1)

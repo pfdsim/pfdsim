@@ -1,5 +1,6 @@
 import math
 import unittest
+from unittest.mock import patch
 
 from liquid_mixture_viscosity import (
     JouybanAcreeParameters,
@@ -15,6 +16,41 @@ from liquid_mixture_viscosity import (
 
 
 class LiquidMixtureViscosityTests(unittest.TestCase):
+    def test_known_structure_does_not_reload_database_for_unknown_alias(self):
+        import liquid_mixture_viscosity as viscosity
+        viscosity._cached_component_unifac_visco_groups.cache_clear()
+        with patch('unifac._resolve_smiles_locally', side_effect=AssertionError('unexpected database lookup')) as lookup:
+            groups = _component_unifac_visco_groups('provided_structure_perf_probe', component_smiles={'provided_structure_perf_probe': 'CCO'})
+            self.assertTrue(groups)
+            lookup.assert_not_called()
+        viscosity._cached_component_unifac_visco_groups.cache_clear()
+
+    def test_structural_group_resolution_cached_by_definition(self):
+        import liquid_mixture_viscosity as viscosity
+        viscosity._cached_component_unifac_visco_groups.cache_clear()
+        props = {'sample': {'name': 'sample', 'smiles': 'CCO', 'MW': 46}}
+        with patch.object(viscosity, '_resolve_component_unifac_visco_groups', return_value={'CH3': 1}) as resolve:
+            first = _component_unifac_visco_groups('sample', component_props=props)
+            first['CH3'] = 99
+            self.assertEqual(_component_unifac_visco_groups('sample', component_props=props), {'CH3': 1})
+            self.assertEqual(resolve.call_count, 1)
+            props['sample']['smiles'] = 'CCC'
+            _component_unifac_visco_groups('sample', component_props=props)
+            self.assertEqual(resolve.call_count, 2)
+            _component_unifac_visco_groups('sample', component_props=props, component_group_variant='UNIFDMD')
+            self.assertEqual(resolve.call_count, 3)
+        viscosity._cached_component_unifac_visco_groups.cache_clear()
+
+    def test_failed_group_assignment_is_not_repeated_per_temperature(self):
+        import liquid_mixture_viscosity as viscosity
+        viscosity._cached_component_unifac_visco_groups.cache_clear()
+        with patch.object(viscosity, '_resolve_component_unifac_visco_groups', side_effect=LiquidMixtureViscosityError('unsupported groups')) as resolve:
+            for _ in range(3):
+                with self.assertRaisesRegex(LiquidMixtureViscosityError, 'unsupported groups'):
+                    _component_unifac_visco_groups('unsupported_structure')
+            self.assertEqual(resolve.call_count, 1)
+        viscosity._cached_component_unifac_visco_groups.cache_clear()
+
     def test_grunberg_nissan_reduces_to_log_mixing_without_interactions(self):
         viscosity = grunberg_nissan_viscosity(
             {'a': 0.25, 'b': 0.75},

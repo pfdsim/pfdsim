@@ -10,7 +10,7 @@ import math
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.optimize import brentq, least_squares
+from scipy.optimize import brentq, least_squares, root
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .particle_size_distributions import ParticleSizeDistribution
@@ -130,8 +130,28 @@ def equilibrate_enthalpy(
     def liquid_energy(t):
         return inventory_enthalpy(thermo, t, pressure, fluid_totals, fixed)[0] - energy
 
-    if liquid_energy(lower) <= 0 <= liquid_energy(upper):
-        liquid_temperature = brentq(liquid_energy, lower, upper, xtol=1e-9)
+    def stable_liquid():
+        # Expand around the preceding contact temperature instead of probing
+        # the property models at both distant global bounds on every contact.
+        lo = hi = min(upper, max(lower, initial_temperature))
+        flo = fhi = liquid_energy(lo)
+        width = 1.0
+        while flo > 0 and lo > lower:
+            lo = max(lower, initial_temperature - width)
+            flo = liquid_energy(lo)
+            width *= 2
+        width = 1.0
+        while fhi < 0 and hi < upper:
+            hi = min(upper, initial_temperature + width)
+            fhi = liquid_energy(hi)
+            width *= 2
+        if flo > 0 or fhi < 0:
+            return None
+        liquid_temperature = (
+            lo
+            if flo == 0
+            else (hi if fhi == 0 else brentq(liquid_energy, lo, hi, xtol=1e-9))
+        )
         x = {c: n / sum(fluid_totals.values()) for c, n in fluid_totals.items()}
         activities = (
             liquid_solution_activities(thermo, liquid_temperature, pressure, x)
@@ -147,12 +167,30 @@ def equilibrate_enthalpy(
             return inventory_at_temperature(
                 thermo, liquid_temperature, pressure, fluid_totals, fixed
             )
+        return None
+
+    has_seed = any(initial_solids.get(c, 0) > total * tolerance for c in candidates)
+    if not has_seed:
+        liquid_state = stable_liquid()
+        if liquid_state is not None:
+            return liquid_state
     guess = [min(upper, max(lower, initial_temperature)) / 300]
     guess.extend(
         min(1 - 1e-10, max(1e-10, initial_solids.get(c, 0) / fluid_totals[c]))
         for c in candidates
     )
     latest = {}
+    saturation_cache = {}
+
+    def saturation_at(temperature):
+        # Numerical Jacobian columns for solid amounts share a temperature.
+        # Fusion Cp integrals and pure-reference fugacities must not be redone
+        # for each column. Exact keys preserve the unapproximated equations.
+        if temperature not in saturation_cache:
+            saturation_cache[temperature] = np.array(
+                [_log_saturation(thermo, c, temperature, pressure) for c in candidates]
+            )
+        return saturation_cache[temperature]
 
     def evaluate(values):
         temperature = values[0] * 300
@@ -170,12 +208,8 @@ def equilibrate_enthalpy(
             if candidates
             else {}
         )
-        gaps = np.array(
-            [
-                _log_saturation(thermo, c, temperature, pressure)
-                - math.log(max(activities.get(c, 0), 1e-300))
-                for c in candidates
-            ]
+        gaps = saturation_at(temperature) - np.array(
+            [math.log(max(activities.get(c, 0), 1e-300)) for c in candidates]
         )
         amounts = np.array([solids[c] / total for c in candidates])
         complementarity = np.hypot(amounts, gaps) - amounts - gaps
@@ -188,18 +222,60 @@ def equilibrate_enthalpy(
         )
         return np.r_[(trial_energy - energy) / heat_scale, complementarity]
 
-    solved = least_squares(
-        evaluate,
-        guess,
-        bounds=(
-            [lower / 300] + [0] * len(candidates),
-            [upper / 300] + [1 - 1e-14] * len(candidates),
-        ),
-        xtol=1e-11,
-        ftol=1e-11,
-        gtol=1e-11,
-        max_nfev=200,
-        x_scale="jac",
+    # Smooth continuation normally needs only a few Newton updates. The
+    # bounded complementarity solve remains the fallback at phase boundaries.
+    lower_values = np.array([lower / 300] + [0] * len(candidates))
+    upper_values = np.array([upper / 300] + [1 - 1e-14] * len(candidates))
+
+    class OutsideInventory(Exception):
+        pass
+
+    def continuation_residual(values):
+        if np.any(values < lower_values) or np.any(values > upper_values):
+            raise OutsideInventory
+        return evaluate(values)
+
+    def accepted(values):
+        residual = evaluate(values)
+        return float(np.max(np.abs(residual))) <= tolerance and all(
+            gap >= -10 * tolerance
+            and (amount <= tolerance or abs(gap) <= 10 * tolerance)
+            for gap, amount in zip(latest["gaps"], latest["amounts"])
+        )
+
+    continued = None
+    if has_seed:
+        try:
+            trial = root(
+                continuation_residual,
+                guess,
+                method="hybr",
+                options={"xtol": 1e-9, "maxfev": 30 + 4 * len(candidates)},
+            )
+            if (
+                np.all(trial.x >= lower_values)
+                and np.all(trial.x <= upper_values)
+                and accepted(trial.x)
+            ):
+                continued = trial
+        except OutsideInventory:
+            pass
+    solved = (
+        continued
+        if continued is not None
+        else least_squares(
+            evaluate,
+            guess,
+            bounds=(
+                [lower / 300] + [0] * len(candidates),
+                [upper / 300] + [1 - 1e-14] * len(candidates),
+            ),
+            xtol=1e-11,
+            ftol=1e-11,
+            gtol=1e-11,
+            max_nfev=200,
+            x_scale="jac",
+        )
     )
     residual = evaluate(solved.x)
     error = float(np.max(np.abs(residual)))
@@ -208,7 +284,11 @@ def equilibrate_enthalpy(
         gap >= -10 * tolerance and (amount <= tolerance or abs(gap) <= 10 * tolerance)
         for gap, amount in zip(gaps, latest["amounts"])
     )
-    if not solved.success or error > tolerance or not feasible:
+    if (continued is None and not solved.success) or error > tolerance or not feasible:
+        if has_seed:
+            liquid_state = stable_liquid()
+            if liquid_state is not None:
+                return liquid_state
         raise ThermodynamicsError(
             f"Warm washing enthalpy/SLE solve failed (residual={error:.3g}); "
             "check phase data, temperature bounds, and liquid-phase feasibility"
@@ -264,8 +344,15 @@ def contact_cell(
         raise ThermodynamicsError("Warm washing leaves no retained pore liquid")
     outgoing = {c: n * fraction for c, n in mixed.liquid.items()}
     remaining = {c: n - outgoing[c] for c, n in mixed.liquid.items()}
-    state = inventory_at_temperature(
-        thermo, mixed.temperature, pressure, remaining, mixed.solid
+    # Removing homogeneous liquid leaves all intensive properties unchanged.
+    state = EquilibriumInventory(
+        mixed.temperature,
+        remaining,
+        mixed.solid,
+        mixed.enthalpy - sum(outgoing.values()) * mixed.liquid_enthalpy,
+        mixed.liquid_enthalpy,
+        mixed.liquid_molar_volume,
+        mixed.solid_volume,
     )
     state.residual = mixed.residual
     return state, outgoing, sum(outgoing.values()) * mixed.liquid_enthalpy
@@ -424,6 +511,10 @@ def solve_warm_wash(
     effluent = {}
     wash_composition = {c: n / sum(wash.values()) for c, n in wash.items() if n > 0}
     inlet_vm = thermo.mixture_liquid_molar_volume(wash_composition, wash_temperature)
+    hydraulics = [
+        cell_hydraulics(thermo, state, psd, sphericities, cell_volume, kozeny, pressure)
+        for state, psd in zip(states, populations)
+    ]
     for _ in range(steps):
         previous_a, previous_b = a, b
         incoming = {c: n / steps for c, n in wash.items()}
@@ -431,9 +522,7 @@ def solve_warm_wash(
         incoming_volume = sum(incoming.values()) * inlet_vm
         for j in range(cells):
             old = states[j]
-            old_r, old_mu, _ = cell_hydraulics(
-                thermo, old, populations[j], sphericities, cell_volume, kozeny, pressure
-            )
+            old_r, old_mu, _ = hydraulics[j]
             state, outgoing, outgoing_energy = contact_cell(
                 thermo,
                 old,
@@ -449,7 +538,7 @@ def solve_warm_wash(
             populations[j] = resize_population(
                 thermo, old, state, populations[j], nucleus_diameter
             )
-            new_r, new_mu, _ = cell_hydraulics(
+            hydraulics[j] = cell_hydraulics(
                 thermo,
                 state,
                 populations[j],
@@ -458,6 +547,7 @@ def solve_warm_wash(
                 kozeny,
                 pressure,
             )
+            new_r, new_mu, _ = hydraulics[j]
             outgoing_volume = sum(outgoing.values()) * state.liquid_molar_volume
             a += (
                 (old_r * old_mu + new_r * new_mu)
@@ -479,10 +569,6 @@ def solve_warm_wash(
         for c, amount in incoming.items():
             effluent[c] = effluent.get(c, 0) + amount
         effluent_energy += incoming_energy
-    hydraulics = [
-        cell_hydraulics(thermo, state, psd, sphericities, cell_volume, kozeny, pressure)
-        for state, psd in zip(states, populations)
-    ]
     components = set(initial.liquid) | set(initial.solid) | set(wash)
     mass_error = max(
         abs(

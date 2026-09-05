@@ -157,6 +157,21 @@ error. More cells resolve sharper temperature and composition fronts and
 reduce mixed-cell dispersion; spatial refinement is a separate check. The
 default discretization is an engineering starting point, not an error bound.
 
+The solver reuses temperature-independent viscosity group assignments and
+the preceding cell hydraulics. Seeded equilibrium contacts first try a
+Newton continuation from the preceding state, with the bounded solver and
+an exact all-liquid stability branch retained as fallbacks. These execution
+optimizations do not relax phase checks, tolerances, or cell/increment counts.
+
+For reproducible performance checks, run
+`python scripts/benchmark_equilibrium_washing.py --acid-bottoms`.
+This standalone UNIQUAC case uses AA/PA/water/MIBK, a 400 µm mass-lognormal
+PSD, GSD 1.6, sphericity 0.75, and 10 cells × 100 increments. It assumes
+280 K crystallization and 12 kg/h wash per 100 kg/h feed; it does not solve
+for 60% crystal yield. It does not run the upstream lactic-acid process.
+`--revision <commit>` compares the same inputs with that implementation;
+`--stack-after <seconds>` provides a single diagnostic stack if a case stalls.
+
 ## Reports and limits
 
 Performance reports include cell temperatures, liquid compositions, solid

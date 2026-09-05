@@ -139,17 +139,17 @@ def solve_equilibrium_filter(unit, inlets):
         pass
 
     def validate_temperature_liquid(temperature, liquid, pressure):
-        liquid_state = thermo.calculate_state(
+        # Use the same phase-equilibrium dispatcher as calculate_state, without
+        # reconstructing a stream and evaluating its enthalpy a second time.
+        equilibrium = thermo._fluid_phase_equilibrium_TP(
+            unit._composition(liquid),
             temperature,
             pressure,
-            1.0,
-            unit._composition(liquid),
-            include=("H",),
         )
-        try:
-            unit._liquid_flows(liquid_state, "local equilibrium wash liquid")
-        except UnitOperationError as error:
-            raise LiquidRegionError(str(error)) from error
+        if equilibrium.vapor_fraction > 1e-10 or equilibrium.liquid2_fraction > 1e-10:
+            raise LiquidRegionError(
+                "Local equilibrium wash liquid requires one liquid phase and no vapor"
+            )
 
     def trial(drop):
         if drop in cache:
@@ -243,7 +243,8 @@ def solve_equilibrium_filter(unit, inlets):
             result = trial(drop)
             return result[3] / area_spec**2 + result[4] / area_spec - available
 
-        low = min(feed.P / 10, 0.1)
+        previous_pressure = getattr(unit, "_equilibrium_washing_pressure_guess", 0.1)
+        low = min(feed.P / 10, previous_pressure)
         while True:
             try:
                 if time_residual(low) >= 0:
@@ -257,7 +258,16 @@ def solve_equilibrium_filter(unit, inlets):
                 raise UnitOperationError(
                     "Required washing pressure is below numerical resolution"
                 )
-        high = min(low * 2, (low + feed.P) / 2)
+
+        # Use the pressure/time scaling as a bracket predictor. Full trials
+        # still verify the nonlinear equilibrium/hydraulic residual.
+        def predicted_high(drop, boundary):
+            duration = time_residual(drop) + available
+            return min(
+                max(drop * 1.1, drop * duration / available), (drop + boundary) / 2
+            )
+
+        high = predicted_high(low, feed.P)
         boundary = feed.P
         for _ in range(40):
             try:
@@ -269,7 +279,7 @@ def solve_equilibrium_filter(unit, inlets):
             if high_residual <= 0:
                 break
             low = high
-            high = min(2 * low, (low + boundary) / 2)
+            high = predicted_high(low, boundary)
             if boundary - low < max(1e-8, feed.P * 1e-8):
                 raise UnitOperationError(
                     "Required warm-washing pressure exceeds the liquid-only operating range; increase area or feed pressure"
@@ -280,6 +290,7 @@ def solve_equilibrium_filter(unit, inlets):
             )
         dp_spec = brentq(time_residual, low, high, xtol=1e-8, rtol=1e-8)
     formed, initial, washed, a, b, form_a, form_b = trial(dp_spec)
+    unit._equilibrium_washing_pressure_guess = dp_spec
     pressure = feed.P - dp_spec
     size = required_area(a, b, available)
     area = area_spec or size
