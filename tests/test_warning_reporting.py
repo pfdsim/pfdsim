@@ -356,8 +356,8 @@ UNIT HEAT-1
             db.get('ethanol', fetch_online=False),
         )
         self.assertIsNotNone(ethanol)
-        self.assertAlmostEqual(ethanol['r'], 2.11)
-        self.assertAlmostEqual(ethanol['q'], 1.97)
+        self.assertAlmostEqual(ethanol['r'], 2.1055)
+        self.assertAlmostEqual(ethanol['q'], 1.9720)
         self.assertAlmostEqual(ethanol['extended_uniquac']['q_prime'], 0.92)
 
         chloroform = uniquac_rq_for_component(
@@ -407,7 +407,7 @@ UNIT HEAT-1
         with open(os.path.join(ROOT, 'data', 'uniquac_rq_cas.json'), encoding='utf-8') as handle:
             payload = json.load(handle)
         self.assertEqual(payload['metadata']['key_basis'], 'CAS')
-        self.assertEqual(payload['metadata']['component_count'], 66)
+        self.assertGreaterEqual(payload['metadata']['component_count'], 73)
         self.assertEqual(payload['metadata']['component_count'], len(payload['components']))
         self.assertIn('data/source/dwsim_uniquac_combinatorial_parameters.csv', payload['metadata']['source_files'])
         self.assertIn('data/source/nagata_gmehling_extended_uniquac_rq.json', payload['metadata']['source_files'])

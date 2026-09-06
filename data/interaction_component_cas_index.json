@@ -221,7 +221,6 @@
     "76131": "76-13-1",
     "76153": "76-15-3",
     "7664417": "7664-41-7",
-    "7697372": "7697-37-2",
     "7727379": "7727-37-9",
     "7732185": "7732-18-5",
     "7782447": "7782-44-7",
@@ -405,7 +404,6 @@
     "nh3": "7664-41-7",
     "nheptano": "142-82-5",
     "nhexano": "110-54-3",
-    "nitricacid": "7697-37-2",
     "nitrobenzene": "98-95-3",
     "nitroethane": "79-24-3",
     "nitrogen": "7727-37-9",
@@ -2991,21 +2989,6 @@
       "name": "NH3",
       "source_component_ids": [
         "1911"
-      ],
-      "sources": [
-        "chemicals.json"
-      ]
-    },
-    "7697-37-2": {
-      "aliases": [
-        "Nitric Acid",
-        "Nitric acid"
-      ],
-      "cas": "7697-37-2",
-      "formula": "",
-      "name": "Nitric Acid",
-      "source_component_ids": [
-        "1903"
       ],
       "sources": [
         "chemicals.json"

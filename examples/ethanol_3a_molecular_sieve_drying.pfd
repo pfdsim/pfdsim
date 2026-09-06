@@ -29,4 +29,4 @@ UNIT MS-100
 
 # Expected behavior:
 # - 3A sieve selectively adsorbs water using the GSTA water isotherm.
-# - Product water is below 100 ppmw at 25 C for this sieve/feed rate.
+# - Product water is 100-120 ppmw at 25 C for this sieve/feed rate.

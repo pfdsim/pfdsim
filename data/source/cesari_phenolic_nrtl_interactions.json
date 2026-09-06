@@ -25,6 +25,7 @@
     {
       "components": ["Water", "Guaiacol"],
       "cas": ["7732-18-5", "90-05-1"],
+      "temperature_range_K": [298.15, 323.15],
       "table": 5,
       "fitted_equilibrium": "LLE",
       "a12_J_per_mol": -2904.47,
@@ -75,6 +76,7 @@
     {
       "components": ["Water", "Syringol"],
       "cas": ["7732-18-5", "91-10-1"],
+      "temperature_range_K": [293.15, 323.15],
       "table": 5,
       "fitted_equilibrium": "SLE",
       "a12_J_per_mol": -4.48,
@@ -86,6 +88,7 @@
     {
       "components": ["Water", "Pyrocatechol"],
       "cas": ["7732-18-5", "120-80-9"],
+      "temperature_range_K": [293.15, 323.15],
       "table": 5,
       "fitted_equilibrium": "SLE",
       "a12_J_per_mol": 2049.51,
@@ -97,6 +100,7 @@
     {
       "components": ["Water", "Vanillin"],
       "cas": ["7732-18-5", "121-33-5"],
+      "temperature_range_K": [293.15, 323.15],
       "table": 5,
       "fitted_equilibrium": "SLE",
       "a12_J_per_mol": 23464.72,
@@ -108,6 +112,7 @@
     {
       "components": ["Ethanol", "Phenol"],
       "cas": ["64-17-5", "108-95-2"],
+      "temperature_range_K": [303.0, 387.0],
       "table": 7,
       "fitted_equilibrium": "VLE",
       "a12_J_per_mol": -0.04,
@@ -119,6 +124,7 @@
     {
       "components": ["Ethanol", "Guaiacol"],
       "cas": ["64-17-5", "90-05-1"],
+      "temperature_range_K": [300.0, 410.0],
       "table": 7,
       "fitted_equilibrium": "VLE",
       "a12_J_per_mol": 3327.95,
@@ -130,6 +136,7 @@
     {
       "components": ["Ethanol", "2-Cresol"],
       "cas": ["64-17-5", "95-48-7"],
+      "temperature_range_K": [302.0, 395.0],
       "table": 7,
       "fitted_equilibrium": "VLE",
       "a12_J_per_mol": 142951.43,

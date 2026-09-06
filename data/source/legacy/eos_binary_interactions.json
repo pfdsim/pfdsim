@@ -1,0 +1,2524 @@
+{
+  "interactions": [
+    {
+      "comment": "Methanol/Water p730",
+      "id1": "1101",
+      "id2": "1921",
+      "kij": -0.0789,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/C2 p385",
+      "id1": "1",
+      "id2": "2",
+      "kij": -0.0089,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC3 p416",
+      "id1": "1",
+      "id2": "3",
+      "kij": 0.018,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC4 p422",
+      "id1": "1",
+      "id2": "5",
+      "kij": 0.0215,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC5 p438",
+      "id1": "1",
+      "id2": "7",
+      "kij": 0.018,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC6 p458",
+      "id1": "1",
+      "id2": "11",
+      "kij": 0.0378,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC7 p471",
+      "id1": "1",
+      "id2": "17",
+      "kij": 0.0274,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/m-Xylene p479",
+      "id1": "1",
+      "id2": "506",
+      "kij": 0.09,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC8 p477",
+      "id1": "1",
+      "id2": "27",
+      "kij": 0.0448,
+      "model": "SRK"
+    },
+    {
+      "comment": "C1/nC9 p481",
+      "id1": "1",
+      "id2": "46",
+      "kij": 0.0448,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/nC3 p539",
+      "id1": "2",
+      "id2": "3",
+      "kij": -0.0022,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/nC4 p544",
+      "id1": "2",
+      "id2": "5",
+      "kij": 0.0052,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/nC5 p550",
+      "id1": "2",
+      "id2": "7",
+      "kij": 0.0056,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/Benzene p561",
+      "id1": "2",
+      "id2": "501",
+      "kij": 0.0278,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/CycloHexane p 565",
+      "id1": "2",
+      "id2": "137",
+      "kij": 0.0122,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/nC6 p557",
+      "id1": "2",
+      "id2": "11",
+      "kij": -0.0433,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/nC7 p567",
+      "id1": "2",
+      "id2": "17",
+      "kij": 0.0041,
+      "model": "SRK"
+    },
+    {
+      "comment": "C2/nC8 p570",
+      "id1": "2",
+      "id2": "27",
+      "kij": 0.017,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/Ethanol p676",
+      "id1": "3",
+      "id2": "1102",
+      "kij": 0.0256,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/nC4 p666",
+      "id1": "3",
+      "id2": "5",
+      "kij": 0.0,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/nC5 p671",
+      "id1": "3",
+      "id2": "7",
+      "kij": 0.0233,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/Benzene p679",
+      "id1": "3",
+      "id2": "501",
+      "kij": 0.02,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/nC6 p674",
+      "id1": "3",
+      "id2": "11",
+      "kij": -0.0022,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/nC7 p681",
+      "id1": "3",
+      "id2": "17",
+      "kij": 0.0044,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC3/nC8 p683",
+      "id1": "3",
+      "id2": "27",
+      "kij": 0.0074,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC4/nC5 p704",
+      "id1": "5",
+      "id2": "7",
+      "kij": 0.0204,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC4/nC6 p706",
+      "id1": "5",
+      "id2": "11",
+      "kij": -0.0111,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC4/nC7 p707",
+      "id1": "5",
+      "id2": "17",
+      "kij": -0.0004,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC4/nC8 p708",
+      "id1": "5",
+      "id2": "27",
+      "kij": 0.0044,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC5/Benzene p716",
+      "id1": "7",
+      "id2": "501",
+      "kij": 0.0244,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC5/Cyclohexane p719",
+      "id1": "7",
+      "id2": "137",
+      "kij": 0.0041,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC5/nC7 p720",
+      "id1": "7",
+      "id2": "17",
+      "kij": 0.0019,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC5/nC8 p721",
+      "id1": "7",
+      "id2": "27",
+      "kij": -0.0022,
+      "model": "SRK"
+    },
+    {
+      "comment": "Benzene/nC7",
+      "id1": "501",
+      "id2": "17",
+      "kij": 0.0048,
+      "model": "SRK"
+    },
+    {
+      "comment": "Benzene/nC8",
+      "id1": "501",
+      "id2": "27",
+      "kij": 0.007,
+      "model": "SRK"
+    },
+    {
+      "comment": "CycloHexane/Benzene p752",
+      "id1": "137",
+      "id2": "501",
+      "kij": 0.0322,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC6/Benzene p740",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.0156,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC6/CycloHexane p742",
+      "id1": "11",
+      "id2": "137",
+      "kij": -0.0011,
+      "model": "SRK"
+    },
+    {
+      "comment": "nC6/nC7 p745",
+      "id1": "11",
+      "id2": "17",
+      "kij": -0.0011,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "1",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "2",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "3",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "4",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "51",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "6",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "7",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "8",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "9",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "10",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "11",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "17",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "27",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "46",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "56",
+      "kij": 0.5,
+      "model": "SRK"
+    },
+    {
+      "comment": "Helium-4/CarbonMonoxide p203",
+      "id1": "913",
+      "id2": "908",
+      "kij": 0.5463,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Nitrogen T=90-113K p210",
+      "id1": "902",
+      "id2": "905",
+      "kij": 0.0711,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Nitrogen T=90-94.99K p212",
+      "id1": "902",
+      "id2": "905",
+      "kij": 0.1196,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Nitrogen T=77.35K p213",
+      "id1": "902",
+      "id2": "905",
+      "kij": 0.12,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/CarbonMonoxide T=68.2-88.2K p215",
+      "id1": "902",
+      "id2": "908",
+      "kij": 0.0919,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/CarbonMonoxide T=83.3-122.2K p217",
+      "id1": "902",
+      "id2": "908",
+      "kij": 0.1,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C1 T=90.3-127K p219",
+      "id1": "902",
+      "id2": "1",
+      "kij": 0.0263,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C1  T=116.48-172.04K p221",
+      "id1": "902",
+      "id2": "1",
+      "kij": 0.0151,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C1 T=90.65K p223",
+      "id1": "902",
+      "id2": "1",
+      "kij": 0.0596,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C1 T=103.15-173.65K p225",
+      "id1": "902",
+      "id2": "1",
+      "kij": -0.0044,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C1 T=103.15-163.15K p227",
+      "id1": "902",
+      "id2": "1",
+      "kij": -0.0144,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Ethylene T=123.15-248.15K p229",
+      "id1": "902",
+      "id2": "201",
+      "kij": 0.0633,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Ethylene T=158.15-255.35K p231",
+      "id1": "902",
+      "id2": "201",
+      "kij": -0.0122,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C2 T=149.61-189.57K p233",
+      "id1": "902",
+      "id2": "2",
+      "kij": -0.0756,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C2 T=144.25-283.15K p235",
+      "id1": "902",
+      "id2": "2",
+      "kij": -0.0781,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C2 T=158.15-188.15K p237",
+      "id1": "902",
+      "id2": "2",
+      "kij": 0.1896,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C2 T=144.21-199.65K p239",
+      "id1": "902",
+      "id2": "2",
+      "kij": -0.1104,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C2 T=148.15-223.15K p240",
+      "id1": "902",
+      "id2": "2",
+      "kij": -0.0022,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/CarbonDioxide p242",
+      "id1": "902",
+      "id2": "909",
+      "kij": -0.1622,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Propylene p244",
+      "id1": "902",
+      "id2": "202",
+      "kij": -0.1037,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C3 T=173.15-348.15K p245",
+      "id1": "902",
+      "id2": "3",
+      "kij": -0.1311,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/C3 T=172.05-297.05K p246",
+      "id1": "902",
+      "id2": "3",
+      "kij": -0.05,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/nC4 T=327.65-394.25K p247",
+      "id1": "902",
+      "id2": "5",
+      "kij": -0.397,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/nC4 T=355.37.388.71K p249",
+      "id1": "902",
+      "id2": "5",
+      "kij": -0.3759,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/nC6 p250",
+      "id1": "902",
+      "id2": "11",
+      "kij": -0.03,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/nC7 p253",
+      "id1": "902",
+      "id2": "17",
+      "kij": -0.1167,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Toluene p255",
+      "id1": "902",
+      "id2": "502",
+      "kij": -0.51,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Quinoline p259",
+      "id1": "902",
+      "id2": "1748",
+      "kij": -0.51,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/Bicyclohexyl p261",
+      "id1": "902",
+      "id2": "155",
+      "kij": -0.51,
+      "model": "PR"
+    },
+    {
+      "comment": "Hydrogen/1-Methylnaphthalene p263",
+      "id1": "902",
+      "id2": "702",
+      "kij": 0.0,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen//CarbonMonoxide T=83.82K p265",
+      "id1": "905",
+      "id2": "908",
+      "kij": 0.033,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonMonoxide T=70.00-122.00K p267",
+      "id1": "905",
+      "id2": "908",
+      "kij": 0.03,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Argon T=83.82K p268",
+      "id1": "905",
+      "id2": "914",
+      "kij": -0.0026,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Argon T=80.92-115.21K p271",
+      "id1": "905",
+      "id2": "914",
+      "kij": -0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Argon T=90.50-120.00K p272",
+      "id1": "905",
+      "id2": "914",
+      "kij": -0.0052,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Argon T=84.50K p273",
+      "id1": "905",
+      "id2": "914",
+      "kij": 0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Argon T=89.89-113.00K p274",
+      "id1": "905",
+      "id2": "914",
+      "kij": 0.0056,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Argon T=112.00K p275",
+      "id1": "905",
+      "id2": "914",
+      "kij": -0.01,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Oxygen T=90.53-124.96K P=1.189-29.72bar p277",
+      "id1": "905",
+      "id2": "901",
+      "kij": -0.0159,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Oxygen T=81.07-91.00K P=1.218-1.350bar p278",
+      "id1": "905",
+      "id2": "901",
+      "kij": -0.0093,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Oxygen T=79-116K P=1.141-8.967bar p279",
+      "id1": "905",
+      "id2": "901",
+      "kij": -0.0144,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Oxygen T=75-125K p281",
+      "id1": "905",
+      "id2": "901",
+      "kij": -0.0133,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Oxygen T=64.83-77.94K P=0.029-0.966bar p284",
+      "id1": "905",
+      "id2": "901",
+      "kij": -0.01,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C1 T=88.71-188.71K p285",
+      "id1": "905",
+      "id2": "1",
+      "kij": 0.0289,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C1 T=95-120K p287",
+      "id1": "905",
+      "id2": "1",
+      "kij": 0.033,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C1 T=112-180K p289",
+      "id1": "905",
+      "id2": "1",
+      "kij": 0.03,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C1 T=90.68K p292",
+      "id1": "905",
+      "id2": "1",
+      "kij": 0.0363,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C1 T=113.71-183.15K p294",
+      "id1": "905",
+      "id2": "1",
+      "kij": 0.0263,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C1 T=112K p296",
+      "id1": "905",
+      "id2": "1",
+      "kij": 0.0316,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Ethylene p298",
+      "id1": "905",
+      "id2": "201",
+      "kij": 0.0856,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C2 T=200-290K p300",
+      "id1": "905",
+      "id2": "2",
+      "kij": 0.0344,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C2 T=138.71-194.26K p302",
+      "id1": "905",
+      "id2": "2",
+      "kij": 0.0533,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/NitrousOxide p304",
+      "id1": "905",
+      "id2": "899",
+      "kij": 0.0044,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonDioxide T=223.15-273.15K p306",
+      "id1": "905",
+      "id2": "909",
+      "kij": -0.0222,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonDioxide T=273.15K p308",
+      "id1": "905",
+      "id2": "909",
+      "kij": -0.0119,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonDioxide T=273.15K p309",
+      "id1": "905",
+      "id2": "909",
+      "kij": -0.017,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonDioxide T=218.15-273.15K p310",
+      "id1": "905",
+      "id2": "909",
+      "kij": -0.0193,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonDioxide T=233.15-293.15K p312",
+      "id1": "905",
+      "id2": "909",
+      "kij": -0.0122,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/CarbonDioxide T=270K p314",
+      "id1": "905",
+      "id2": "909",
+      "kij": -0.01,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/HydrogenSulfide T=227.98.200.15K p316",
+      "id1": "905",
+      "id2": "1922",
+      "kij": 0.1789,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/HydrogenSulfide T=256.43-344.26K p318",
+      "id1": "905",
+      "id2": "1922",
+      "kij": 0.1652,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Propylene p320",
+      "id1": "905",
+      "id2": "202",
+      "kij": 0.09,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C3 T=143.15-353.15K p322",
+      "id1": "905",
+      "id2": "3",
+      "kij": 0.0878,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/C3 T=230-290K p324",
+      "id1": "905",
+      "id2": "3",
+      "kij": 0.0678,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Ammonia p326",
+      "id1": "905",
+      "id2": "1911",
+      "kij": 0.2193,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/DiChloroDiFlouroMethane p328",
+      "id1": "905",
+      "id2": "1601",
+      "kij": 0.0107,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Iso-C4 p330",
+      "id1": "905",
+      "id2": "4",
+      "kij": 0.1033,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/SulfurDioxide p332",
+      "id1": "905",
+      "id2": "910",
+      "kij": 0.08,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC4 T=310.93-422.04K p333",
+      "id1": "905",
+      "id2": "5",
+      "kij": 0.0711,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC4 T=310.93-410.93K p334",
+      "id1": "905",
+      "id2": "5",
+      "kij": 0.0867,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Iso-C5 p336",
+      "id1": "905",
+      "id2": "8",
+      "kij": 0.0922,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC5 p338",
+      "id1": "905",
+      "id2": "7",
+      "kij": 0.1,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Methanol p340",
+      "id1": "905",
+      "id2": "1101",
+      "kij": -0.2141,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC6 p341",
+      "id1": "905",
+      "id2": "11",
+      "kij": 0.1496,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/Benzene p343",
+      "id1": "905",
+      "id2": "501",
+      "kij": 0.1641,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC7 p344",
+      "id1": "905",
+      "id2": "17",
+      "kij": 0.1441,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC8 p347",
+      "id1": "905",
+      "id2": "27",
+      "kij": -0.4,
+      "model": "PR"
+    },
+    {
+      "comment": "Nitrogen/nC10 T=310.93-410.93K p349",
+      "id1": "905",
+      "id2": "56",
+      "kij": 0.1122,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonMonoxide/C1 p353",
+      "id1": "908",
+      "id2": "1",
+      "kij": 0.03,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonMonoxide/C2 p354",
+      "id1": "908",
+      "id2": "2",
+      "kij": -0.0226,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonMonoxide/HydrogenSulfide p356",
+      "id1": "908",
+      "id2": "1922",
+      "kij": 0.0544,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonMonoxide/C3 p358",
+      "id1": "908",
+      "id2": "3",
+      "kij": 0.0259,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/Oxygen T=89.95-109.95K P=1.045-6.618bar p360",
+      "id1": "914",
+      "id2": "901",
+      "kij": 0.0107,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/Oxygen T=90.5-120K P=1.043-12.092bar p362",
+      "id1": "914",
+      "id2": "901",
+      "kij": 0.0089,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/C1 T=91.6-123.9K p363",
+      "id1": "914",
+      "id2": "1",
+      "kij": 0.023,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/C1 T=123.4-164K P=10.132-35.434bar p364",
+      "id1": "914",
+      "id2": "1",
+      "kij": 0.0152,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/C1 T=150.72-178K p365",
+      "id1": "914",
+      "id2": "1",
+      "kij": 0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/C1 T=115.77K p367",
+      "id1": "914",
+      "id2": "1",
+      "kij": 0.0241,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/C1 T=112.55-132.97K p369",
+      "id1": "914",
+      "id2": "1",
+      "kij": 0.0311,
+      "model": "PR"
+    },
+    {
+      "comment": "Argon/Ammonia p371",
+      "id1": "914",
+      "id2": "1911",
+      "kij": -0.18,
+      "model": "PR"
+    },
+    {
+      "comment": "Oxygen/Krypton T=90.15-100.15K P=0.688-2.486bar p373",
+      "id1": "901",
+      "id2": "920",
+      "kij": 0.0256,
+      "model": "PR"
+    },
+    {
+      "comment": "Oxygen/Krypton T=94.15-150.9K P=1.504-6.893bar p375",
+      "id1": "901",
+      "id2": "920",
+      "kij": 0.0185,
+      "model": "PR"
+    },
+    {
+      "comment": "Oxygen/NitrousOxide p376",
+      "id1": "901",
+      "id2": "899",
+      "kij": 0.0478,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Ethylene T=198.15-248.15K p378",
+      "id1": "1",
+      "id2": "201",
+      "kij": 0.0378,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Ethylene T=148-169K p380",
+      "id1": "1",
+      "id2": "201",
+      "kij": 0.0204,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Ethylene T=150-190K p383",
+      "id1": "1",
+      "id2": "201",
+      "kij": 0.0244,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C2 T=130.37-199.93K p385",
+      "id1": "1",
+      "id2": "2",
+      "kij": -0.0033,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C2 T=158.15-213.7K p388",
+      "id1": "1",
+      "id2": "2",
+      "kij": -0.0037,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C2 T=144.26-283.15 p390",
+      "id1": "1",
+      "id2": "2",
+      "kij": -0.0059,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C2 T=160-180K p392",
+      "id1": "1",
+      "id2": "2",
+      "kij": -0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C2 T=250K p394",
+      "id1": "1",
+      "id2": "2",
+      "kij": 0.007,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/NitrousOxide p396",
+      "id1": "1",
+      "id2": "899",
+      "kij": 0.0256,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonDioxide T=173-220K P=26-66bar p398",
+      "id1": "1",
+      "id2": "909",
+      "kij": 0.0793,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonDioxide T=199.82-271.48K p399",
+      "id1": "1",
+      "id2": "909",
+      "kij": 0.0978,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonDioxide T=230-270K p401",
+      "id1": "1",
+      "id2": "909",
+      "kij": 0.0889,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonDioxide T=270K p403",
+      "id1": "1",
+      "id2": "909",
+      "kij": 0.107,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonDioxide T=153-219K p405",
+      "id1": "1",
+      "id2": "909",
+      "kij": 0.0885,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonDioxide T=153-219 p406",
+      "id1": "1",
+      "id2": "909",
+      "kij": 0.0889,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CarbonylSulfide p410",
+      "id1": "1",
+      "id2": "1893",
+      "kij": 0.0289,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Propylene p412",
+      "id1": "1",
+      "id2": "202",
+      "kij": 0.033,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C3 T=130.37-213.71K p413",
+      "id1": "1",
+      "id2": "3",
+      "kij": 0.0119,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/C3 T=277.59-360.93K p416",
+      "id1": "1",
+      "id2": "3",
+      "kij": 0.021,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Iso-C4 p419",
+      "id1": "1",
+      "id2": "4",
+      "kij": 0.0256,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/SulfurDioxide p421",
+      "id1": "1",
+      "id2": "910",
+      "kij": 0.1356,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC4 T=294-394K p422",
+      "id1": "1",
+      "id2": "5",
+      "kij": 0.0244,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC4 T=178-411K p425",
+      "id1": "1",
+      "id2": "5",
+      "kij": 0.0185,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC4 T=166-283K p428",
+      "id1": "1",
+      "id2": "5",
+      "kij": 0.0148,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC4 T=144-278K p430",
+      "id1": "1",
+      "id2": "5",
+      "kij": 0.0085,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Iso-C5 p436",
+      "id1": "1",
+      "id2": "8",
+      "kij": -0.0056,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC5 T=278-461K p438",
+      "id1": "1",
+      "id2": "7",
+      "kij": 0.023,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC5 T=311-444K p445",
+      "id1": "1",
+      "id2": "7",
+      "kij": 0.0241,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC5 T=176-273K p447",
+      "id1": "1",
+      "id2": "7",
+      "kij": 0.026,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC5 T=178-283K p449",
+      "id1": "1",
+      "id2": "7",
+      "kij": 0.0281,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC6 T=183-423K p453",
+      "id1": "1",
+      "id2": "11",
+      "kij": 0.04,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC6 T=310-410K p456",
+      "id1": "1",
+      "id2": "11",
+      "kij": 0.0244,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC6 T=182-273K p458",
+      "id1": "1",
+      "id2": "11",
+      "kij": 0.0444,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Benzene T=421-501K p463",
+      "id1": "1",
+      "id2": "501",
+      "kij": 0.0807,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Benzene T=338.71K p465",
+      "id1": "1",
+      "id2": "501",
+      "kij": 0.0304,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/CycloHexane p466",
+      "id1": "1",
+      "id2": "137",
+      "kij": 0.0389,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC7 T=200-255K p469",
+      "id1": "1",
+      "id2": "17",
+      "kij": 0.0401,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC7 T=277-511K p471",
+      "id1": "1",
+      "id2": "17",
+      "kij": 0.03,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Toluene p474",
+      "id1": "1",
+      "id2": "502",
+      "kij": 0.097,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC8 p477",
+      "id1": "1",
+      "id2": "27",
+      "kij": 0.0496,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/M-Xylene p479",
+      "id1": "1",
+      "id2": "506",
+      "kij": 0.0844,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC9 p481",
+      "id1": "1",
+      "id2": "46",
+      "kij": 0.0474,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC10 T=244-277K p485",
+      "id1": "1",
+      "id2": "56",
+      "kij": 0.0489,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC10 T=311-511K p486",
+      "id1": "1",
+      "id2": "56",
+      "kij": 0.0411,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/nC10 T=423-583K p489",
+      "id1": "1",
+      "id2": "56",
+      "kij": 0.0644,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/M-Cresol p492",
+      "id1": "1",
+      "id2": "1183",
+      "kij": 0.1285,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/Tetralin p494",
+      "id1": "1",
+      "id2": "706",
+      "kij": 0.1452,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/1-MethylNaphthalene p497",
+      "id1": "1",
+      "id2": "702",
+      "kij": 0.1244,
+      "model": "PR"
+    },
+    {
+      "comment": "C1/DiPhenylMethane p499",
+      "id1": "1",
+      "id2": "563",
+      "kij": 0.0874,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/C2 T=200-255K P=2.2-26.7bar p503",
+      "id1": "201",
+      "id2": "2",
+      "kij": 0.0119,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/C2 T=277-288K P=32-49bar p505",
+      "id1": "201",
+      "id2": "2",
+      "kij": 0.0278,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/C2 T=169-273K P=0.4-41.1bar p507",
+      "id1": "201",
+      "id2": "2",
+      "kij": 0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/C2 T=263-293K P=18.5-48.5bar p510",
+      "id1": "201",
+      "id2": "2",
+      "kij": 0.0089,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/Acetylene p512",
+      "id1": "201",
+      "id2": "401",
+      "kij": 0.0652,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/CarbonDioxide T=232-252K P=9.5-26.2bar p514",
+      "id1": "201",
+      "id2": "909",
+      "kij": 0.0578,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/CarbonDioxide T=223-293K P=6.8-64.9bar p516",
+      "id1": "201",
+      "id2": "909",
+      "kij": 0.0541,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/nC4 p518",
+      "id1": "201",
+      "id2": "5",
+      "kij": 0.0922,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/Benzene p520",
+      "id1": "201",
+      "id2": "501",
+      "kij": 0.0311,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/nC7 p522",
+      "id1": "201",
+      "id2": "17",
+      "kij": 0.0144,
+      "model": "PR"
+    },
+    {
+      "comment": "Ethylene/nC10 p524",
+      "id1": "201",
+      "id2": "56",
+      "kij": 0.0253,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C2 T=250K p525",
+      "id1": "909",
+      "id2": "2",
+      "kij": 0.1326,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C2 T=223-292K P=5.5-63bar p527",
+      "id1": "909",
+      "id2": "2",
+      "kij": 0.13,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C2 T=222-289K P=7-57bar p528",
+      "id1": "909",
+      "id2": "2",
+      "kij": 0.1344,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C2 T=283-298K P=30.4-66.3bar p529",
+      "id1": "909",
+      "id2": "2",
+      "kij": 0.0,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C2 T=252.95K p530",
+      "id1": "909",
+      "id2": "2",
+      "kij": 0.13,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C2 T=241-283K P=10-49.5bar p532",
+      "id1": "909",
+      "id2": "2",
+      "kij": 0.1278,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/HydrogenSulfide T=200-283 P=0.65-30.5bar p533",
+      "id1": "2",
+      "id2": "1922",
+      "kij": 0.0822,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/HydrogenSulfide T=251.5-368.5K p535",
+      "id1": "2",
+      "id2": "1922",
+      "kij": 0.0952,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/HydrogenSulfide T=283.15K p536",
+      "id1": "2",
+      "id2": "1922",
+      "kij": 0.0863,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/Propylene p537",
+      "id1": "2",
+      "id2": "202",
+      "kij": 0.0089,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/C3 p539",
+      "id1": "2",
+      "id2": "3",
+      "kij": 0.0011,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/Iso-C4 p542",
+      "id1": "2",
+      "id2": "4",
+      "kij": -0.0067,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC4 T=229-361K P=6.9-57.9bar p544",
+      "id1": "2",
+      "id2": "5",
+      "kij": 0.0089,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC4 T=338.7-394.3K p546",
+      "id1": "2",
+      "id2": "5",
+      "kij": 0.0374,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/EthylEther p548",
+      "id1": "2",
+      "id2": "1402",
+      "kij": 0.0181,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC5 p550",
+      "id1": "2",
+      "id2": "7",
+      "kij": 0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/Acetone p552",
+      "id1": "2",
+      "id2": "1051",
+      "kij": 0.1307,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/MethylAcetate p554",
+      "id1": "2",
+      "id2": "1312",
+      "kij": 0.1211,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/Methanol p555",
+      "id1": "2",
+      "id2": "1101",
+      "kij": 0.027,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC6 T=338.7-449.8K p557",
+      "id1": "2",
+      "id2": "11",
+      "kij": -0.04,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC6 T=298.15K p559",
+      "id1": "2",
+      "id2": "11",
+      "kij": 0.0041,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/Benzene T=273-553K p561",
+      "id1": "2",
+      "id2": "501",
+      "kij": 0.0322,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/Benzene T=298.15K p563",
+      "id1": "2",
+      "id2": "501",
+      "kij": 0.0493,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/CycloHexane p565",
+      "id1": "2",
+      "id2": "137",
+      "kij": 0.0178,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC7 P=6.89-86.186bar p567",
+      "id1": "2",
+      "id2": "17",
+      "kij": 0.0074,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC7 T=338.71-449.82K p568",
+      "id1": "2",
+      "id2": "17",
+      "kij": 0.0033,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC8 p570",
+      "id1": "2",
+      "id2": "27",
+      "kij": 0.0185,
+      "model": "PR"
+    },
+    {
+      "comment": "C2/nC10 p572",
+      "id1": "2",
+      "id2": "56",
+      "kij": 0.0144,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/NitrousOxide p575",
+      "id1": "909",
+      "id2": "899",
+      "kij": 0.0048,
+      "model": "PR"
+    },
+    {
+      "comment": "Acetylene/Propylene p576",
+      "id1": "401",
+      "id2": "202",
+      "kij": -0.43,
+      "model": "PR"
+    },
+    {
+      "comment": "TriFluoroMethane/TriFlouroChloroMethane p577",
+      "id1": "1615",
+      "id2": "1606",
+      "kij": 0.1,
+      "model": "PR"
+    },
+    {
+      "comment": "TriFluoroChloroMethane/DiChloroFluoroMethane p579",
+      "id1": "1606",
+      "id2": "1601",
+      "kij": 0.0337,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/HydrogenSulfide T=225-363K p581",
+      "id1": "909",
+      "id2": "1922",
+      "kij": 0.0978,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/HydrogenSulfide T=254-366K p583",
+      "id1": "909",
+      "id2": "1922",
+      "kij": 0.0967,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/DiFluoroMethane p585",
+      "id1": "909",
+      "id2": "1614",
+      "kij": 0.017,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Propylene p587",
+      "id1": "909",
+      "id2": "202",
+      "kij": 0.0933,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C3 T=277.59-344.26K p589",
+      "id1": "909",
+      "id2": "3",
+      "kij": 0.1315,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C3 T=233.15-273.15K p591",
+      "id1": "909",
+      "id2": "3",
+      "kij": 0.0744,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C3 T=272-366K P=33.3-53.3bar p593",
+      "id1": "909",
+      "id2": "3",
+      "kij": 0.0978,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C3 T=244.26-266.48K p594",
+      "id1": "909",
+      "id2": "3",
+      "kij": 0.1281,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C3 T=252.95-273.15K p596",
+      "id1": "909",
+      "id2": "3",
+      "kij": 0.1241,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/C3 p598",
+      "id1": "909",
+      "id2": "1601",
+      "kij": 0.0474,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Iso-C4 T=310.93-394.26K p601",
+      "id1": "909",
+      "id2": "4",
+      "kij": 0.13,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Iso-C4 P=273.15K p603",
+      "id1": "909",
+      "id2": "4",
+      "kij": 0.1174,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/1-Butene p605",
+      "id1": "909",
+      "id2": "204",
+      "kij": 0.0593,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC4 T=310.93-410.93K p607",
+      "id1": "909",
+      "id2": "5",
+      "kij": 0.1352,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC4 T=227.98-283.15K p609",
+      "id1": "909",
+      "id2": "5",
+      "kij": 0.1415,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC4 T=273.15K p610",
+      "id1": "909",
+      "id2": "5",
+      "kij": 0.1122,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Iso-C5 p612",
+      "id1": "909",
+      "id2": "8",
+      "kij": 0.1219,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/EthylEther p614",
+      "id1": "909",
+      "id2": "1402",
+      "kij": 0.047,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC5 P=41.33-82.79bar p616",
+      "id1": "909",
+      "id2": "7",
+      "kij": -0.01,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC5 T=277.65-377.59K p617",
+      "id1": "909",
+      "id2": "7",
+      "kij": 0.1252,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/MethylAcetate p619",
+      "id1": "909",
+      "id2": "1312",
+      "kij": -0.0493,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Methanol T=213-247K p621",
+      "id1": "909",
+      "id2": "1101",
+      "kij": 0.022,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Methanol T=298-313K p623",
+      "id1": "909",
+      "id2": "1101",
+      "kij": 0.0583,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC6 p625",
+      "id1": "909",
+      "id2": "11",
+      "kij": 0.11,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Benzene p627",
+      "id1": "909",
+      "id2": "501",
+      "kij": 0.0774,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/CycloHexane p629",
+      "id1": "909",
+      "id2": "137",
+      "kij": 0.1052,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC7 p631",
+      "id1": "909",
+      "id2": "17",
+      "kij": 0.1,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/Toluene p636",
+      "id1": "909",
+      "id2": "502",
+      "kij": 0.1056,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nC10 p638",
+      "id1": "909",
+      "id2": "56",
+      "kij": 0.1141,
+      "model": "PR"
+    },
+    {
+      "comment": "CarbonDioxide/nButylBenzene p641",
+      "id1": "909",
+      "id2": "518",
+      "kij": 0.1144,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/C3 P=27.58-41.44bar p643",
+      "id1": "1922",
+      "id2": "3",
+      "kij": 0.06,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/C3 T=217-344K p644",
+      "id1": "1922",
+      "id2": "3",
+      "kij": 0.0878,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/Iso-C4 p645",
+      "id1": "1922",
+      "id2": "4",
+      "kij": 0.0474,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/nC5 p647",
+      "id1": "1922",
+      "id2": "7",
+      "kij": 0.063,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/Water T=303-443K p648",
+      "id1": "1922",
+      "id2": "1921",
+      "kij": 0.0394,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/Water T=311-444K p650",
+      "id1": "1922",
+      "id2": "1921",
+      "kij": 0.0096,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/nC10 p652",
+      "id1": "1922",
+      "id2": "56",
+      "kij": 0.0333,
+      "model": "PR"
+    },
+    {
+      "comment": "HydrogenSulfide/C3 p653",
+      "id1": "1922",
+      "id2": "3",
+      "kij": -0.0189,
+      "model": "PR"
+    },
+    {
+      "comment": "Propylene/C3 T=223.75-239.35K P=0.724-1.833bar p654",
+      "id1": "202",
+      "id2": "3",
+      "kij": 0.0096,
+      "model": "PR"
+    },
+    {
+      "comment": "Propylene/C3 T=269.54-333.93K P=4.385-23.594bar p656",
+      "id1": "202",
+      "id2": "3",
+      "kij": 0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "Propylene/C3 T=260.93-360.93K P=3.416-41.613bar p657",
+      "id1": "202",
+      "id2": "3",
+      "kij": 0.0074,
+      "model": "PR"
+    },
+    {
+      "comment": "Propylene/C3 T=310.93-344.26K P=13-31.356bar p658",
+      "id1": "202",
+      "id2": "3",
+      "kij": 0.0063,
+      "model": "PR"
+    },
+    {
+      "comment": "Propylene/Iso-C4 p660",
+      "id1": "202",
+      "id2": "4",
+      "kij": -0.0144,
+      "model": "PR"
+    },
+    {
+      "comment": "Propylene/1-C4 p661",
+      "id1": "202",
+      "id2": "204",
+      "kij": 0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/Iso-C4 p663",
+      "id1": "3",
+      "id2": "4",
+      "kij": -0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/nC4 p666",
+      "id1": "3",
+      "id2": "5",
+      "kij": 0.0033,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/Iso-C5 p668",
+      "id1": "3",
+      "id2": "8",
+      "kij": 0.0111,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/nC5 p671",
+      "id1": "3",
+      "id2": "7",
+      "kij": 0.0267,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/nC6 p674",
+      "id1": "3",
+      "id2": "11",
+      "kij": 0.0007,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/Ethanol p676",
+      "id1": "3",
+      "id2": "1102",
+      "kij": 0.0315,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/Benzene p679",
+      "id1": "3",
+      "id2": "501",
+      "kij": 0.0233,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/nC7 p681",
+      "id1": "3",
+      "id2": "17",
+      "kij": 0.0056,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/nC8 p683",
+      "id1": "3",
+      "id2": "27",
+      "kij": 0.0,
+      "model": "PR"
+    },
+    {
+      "comment": "C3/nC10 p686",
+      "id1": "3",
+      "id2": "56",
+      "kij": 0.0,
+      "model": "PR"
+    },
+    {
+      "comment": "PentaFlouroChloroEthane/DiFluoroChloroMethane p688",
+      "id1": "2692",
+      "id2": "1604",
+      "kij": 0.0874,
+      "model": "PR"
+    },
+    {
+      "comment": "DiFluoroChloroMethane/DiChloroDiFluoroMethane p689",
+      "id1": "1604",
+      "id2": "1601",
+      "kij": 0.0522,
+      "model": "PR"
+    },
+    {
+      "comment": "Iso-C4/nC4 p694",
+      "id1": "4",
+      "id2": "5",
+      "kij": -0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "SulfurDioxide/Benzene p696",
+      "id1": "910",
+      "id2": "501",
+      "kij": 0.0015,
+      "model": "PR"
+    },
+    {
+      "comment": "1-Butene/1.3-Butadiene p697",
+      "id1": "204",
+      "id2": "303",
+      "kij": 0.0022,
+      "model": "PR"
+    },
+    {
+      "comment": "1-Butene/nC4 T=311-411K P=3.55-34.89bar p699",
+      "id1": "204",
+      "id2": "5",
+      "kij": 0.0007,
+      "model": "PR"
+    },
+    {
+      "comment": "1-Butene/nC4 T=311-339K P=3.55-8.69bar p700",
+      "id1": "204",
+      "id2": "5",
+      "kij": 0.0041,
+      "model": "PR"
+    },
+    {
+      "comment": "1.3-Butadiene/nC4 p702",
+      "id1": "303",
+      "id2": "5",
+      "kij": 0.0141,
+      "model": "PR"
+    },
+    {
+      "comment": "nC4/nC5 p704",
+      "id1": "5",
+      "id2": "7",
+      "kij": 0.0174,
+      "model": "PR"
+    },
+    {
+      "comment": "nC4/nC6 p706",
+      "id1": "5",
+      "id2": "11",
+      "kij": -0.0056,
+      "model": "PR"
+    },
+    {
+      "comment": "nC4/nC7 p707",
+      "id1": "5",
+      "id2": "17",
+      "kij": 0.0033,
+      "model": "PR"
+    },
+    {
+      "comment": "nC4/nC8 p708",
+      "id1": "5",
+      "id2": "27",
+      "kij": 0.0074,
+      "model": "PR"
+    },
+    {
+      "comment": "nC4/nC10 p710",
+      "id1": "5",
+      "id2": "56",
+      "kij": 0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "Iso-C5/nC5 p715",
+      "id1": "8",
+      "id2": "7",
+      "kij": 0.06,
+      "model": "PR"
+    },
+    {
+      "comment": "nC5/Benzene T=255-289K P=0.069-0.469bar p716",
+      "id1": "7",
+      "id2": "501",
+      "kij": 0.0189,
+      "model": "PR"
+    },
+    {
+      "comment": "nC5/Benzene P=1.014bar p718",
+      "id1": "7",
+      "id2": "501",
+      "kij": 0.0167,
+      "model": "PR"
+    },
+    {
+      "comment": "nC5/CycleHexane p719",
+      "id1": "7",
+      "id2": "137",
+      "kij": 0.0037,
+      "model": "PR"
+    },
+    {
+      "comment": "nC5/nC7 p720",
+      "id1": "7",
+      "id2": "17",
+      "kij": 0.0074,
+      "model": "PR"
+    },
+    {
+      "comment": "nC5/nC8 p721",
+      "id1": "7",
+      "id2": "27",
+      "kij": 0.0,
+      "model": "PR"
+    },
+    {
+      "comment": "2.2-DiMethylButane/1-Pentanol p722",
+      "id1": "14",
+      "id2": "1109",
+      "kij": 0.0452,
+      "model": "PR"
+    },
+    {
+      "comment": "2.3-DiMethylButane/1-Pentanol p724",
+      "id1": "15",
+      "id2": "1109",
+      "kij": 0.0467,
+      "model": "PR"
+    },
+    {
+      "comment": "2-MethylPentane/1-Pentanol p726",
+      "id1": "12",
+      "id2": "1109",
+      "kij": 0.0467,
+      "model": "PR"
+    },
+    {
+      "comment": "1-Pentanol/3-MethylPentane p728",
+      "id1": "1109",
+      "id2": "13",
+      "kij": 0.0478,
+      "model": "PR"
+    },
+    {
+      "comment": "Methanol/Water p730",
+      "id1": "1101",
+      "id2": "1921",
+      "kij": -0.0778,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/Benzene T=298.15K p732",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.0089,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/Benzene T=333.15K p734",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.0096,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/Benzene P=980bar p737",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.0122,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/Benzene T=341.75-351.05K P=1.014bar p738",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.1,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/Benzene T=341.50-353.30K P=1.014bar p739",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/Benzene T=278-298K P=0.053-0.205bar p740",
+      "id1": "11",
+      "id2": "501",
+      "kij": 0.0037,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/CycloHexane P=1.014bar p742",
+      "id1": "11",
+      "id2": "137",
+      "kij": -0.003,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/CycloHexane T=273-298K P=0.041-0.203bar p743",
+      "id1": "11",
+      "id2": "137",
+      "kij": -0.0049,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/2-Propanol p744",
+      "id1": "11",
+      "id2": "1104",
+      "kij": 0.0844,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/nC7 p745",
+      "id1": "11",
+      "id2": "17",
+      "kij": -0.0078,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/I-Pentanol p747",
+      "id1": "11",
+      "id2": "1123",
+      "kij": 0.0485,
+      "model": "PR"
+    },
+    {
+      "comment": "nC6/1-Pentanol p749",
+      "id1": "11",
+      "id2": "1109",
+      "kij": 0.0456,
+      "model": "PR"
+    },
+    {
+      "comment": "CycloHexane/Benzene p752",
+      "id1": "137",
+      "id2": "501",
+      "kij": 0.0126,
+      "model": "PR"
+    },
+    {
+      "comment": "Benzene/nC7 T=333.15K P=0.316-0.518bar p753",
+      "id1": "501",
+      "id2": "17",
+      "kij": 0.0011,
+      "model": "PR"
+    },
+    {
+      "comment": "Benzene/nC7 T=353-371K P=1.014bar p755",
+      "id1": "501",
+      "id2": "17",
+      "kij": 0.0022,
+      "model": "PR"
+    },
+    {
+      "comment": "Benzene/nC7 T=353.3-371.6K P=1.014bar p756",
+      "id1": "501",
+      "id2": "17",
+      "kij": 0.0011,
+      "model": "PR"
+    },
+    {
+      "comment": "Benzene/I-Octane p757",
+      "id1": "501",
+      "id2": "41",
+      "kij": 0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "Benzene/nC8 p758",
+      "id1": "501",
+      "id2": "27",
+      "kij": 0.003,
+      "model": "PR"
+    },
+    {
+      "comment": "CycloHexene/CycloHexane p761",
+      "id1": "270",
+      "id2": "137",
+      "kij": 0.0011,
+      "model": "PR"
+    },
+    {
+      "comment": "CycloHexane/1.2-DiChloroEthane p762",
+      "id1": "137",
+      "id2": "1523",
+      "kij": 0.073,
+      "model": "PR"
+    },
+    {
+      "comment": "CycloHexane/CycloHexanone p763",
+      "id1": "137",
+      "id2": "1080",
+      "kij": 0.0659,
+      "model": "PR"
+    },
+    {
+      "comment": "1.2-DiChloroEthane/CycloHexene p765",
+      "id1": "1523",
+      "id2": "270",
+      "kij": 0.043,
+      "model": "PR"
+    },
+    {
+      "comment": "nC7/I-Octane p766",
+      "id1": "17",
+      "id2": "41",
+      "kij": 0.0004,
+      "model": "PR"
+    },
+    {
+      "comment": "nC7/2-Pentanone p767",
+      "id1": "17",
+      "id2": "1060",
+      "kij": 0.0693,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/CO2",
+      "id1": "1921",
+      "id2": "909",
+      "kij": -0.12155,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/Ammonia",
+      "id1": "1921",
+      "id2": "1911",
+      "kij": -0.2533,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/H2S",
+      "id1": "1921",
+      "id2": "1922",
+      "kij": 0.0819,
+      "model": "PR"
+    },
+    {
+      "comment": "H2S/CO2",
+      "id1": "1922",
+      "id2": "909",
+      "kij": 0.1,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "1",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "2",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "3",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "4",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "5",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "6",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "7",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "8",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "9",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "10",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "11",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "17",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "27",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "46",
+      "kij": 0.5,
+      "model": "PR"
+    },
+    {
+      "comment": "Water/HC",
+      "id1": "1921",
+      "id2": "56",
+      "kij": 0.5,
+      "model": "PR"
+    }
+  ]
+}

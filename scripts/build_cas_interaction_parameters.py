@@ -16,7 +16,7 @@ from typing import Any, Optional
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
-ARCHIVED_DATA = DATA / "archived"
+LEGACY_SOURCE_DATA = SOURCE_DATA / "legacy"
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 
 ASSORTED_ALCOHOL_ETHER_CAS = {
@@ -326,7 +326,7 @@ def collect_component_candidates() -> dict[str, list[str]]:
         ]
 
     for filename in SOURCE_INTERACTION_FILES:
-        for record in load_json(ARCHIVED_DATA / filename)["interactions"]:
+        for record in load_json(LEGACY_SOURCE_DATA / filename)["interactions"]:
             comment = record.get("comment", "")
             if "/" not in comment:
                 continue
@@ -348,7 +348,7 @@ def collect_component_candidates() -> dict[str, list[str]]:
 def interaction_source_ids() -> set[str]:
     ids: set[str] = set()
     for filename in SOURCE_INTERACTION_FILES:
-        for record in load_json(ARCHIVED_DATA / filename)["interactions"]:
+        for record in load_json(LEGACY_SOURCE_DATA / filename)["interactions"]:
             ids.add(str(record["id1"]))
             ids.add(str(record["id2"]))
     return ids
@@ -484,7 +484,7 @@ def convert_records(filename: str, resolved: dict[str, dict]) -> tuple[list[dict
     converted: list[dict] = []
     skipped: list[dict] = []
     record_overrides = load_record_identity_overrides().get(filename, {})
-    for index, record in enumerate(load_json(ARCHIVED_DATA / filename)["interactions"]):
+    for index, record in enumerate(load_json(LEGACY_SOURCE_DATA / filename)["interactions"]):
         id1, id2 = str(record["id1"]), str(record["id2"])
         override = record_overrides.get(str(index), {})
         comp1 = component_from_record_override(override, "component1") or resolved.get(id1)
@@ -596,6 +596,7 @@ def supplemental_nrtl_matrix_records(existing: list[dict]) -> tuple[list[dict], 
                 "alpha12": max(float(forward.get("c", 0.0)), float(reverse.get("c", 0.0))),
                 "comment": f"{comp_i}/{comp_j} supplemental NRTL matrix; tau_ij = a_ij + b_ij/T",
                 "source": payload.get("source", "supplemental NRTL matrix"),
+                "source_file": "data/source/nrtl_temperature_matrix_interactions.json",
             }
             disabled_reason = disabled_pairs.get(tuple(sorted((comp_i, comp_j))))
             if disabled_reason:
@@ -638,6 +639,7 @@ def supplemental_water_aromatic_regression_records(
             "Tmin_K": float(system["applicable_temperature_range_K"][0]),
             "Tmax_K": float(system["applicable_temperature_range_K"][1]),
             "source": payload["source"],
+            "source_file": "data/source/water_aromatic_solubility_regression.json",
             "comment": (
                 f"{component1}/{component2} water/aromatic solubility regression "
                 f"from {payload['source']}"
@@ -1578,6 +1580,7 @@ def supplemental_phenolic_temperature_records(
             continue
         component1, component2 = system["components"]
         cas1, cas2 = system["cas"]
+        temperature_range = system["temperature_range_K"]
         pair = tuple(sorted((cas1, cas2)))
         if pair not in existing_pairs:
             new_pairs += 1
@@ -1590,7 +1593,10 @@ def supplemental_phenolic_temperature_records(
             "cas2": cas2,
             "component1": component1,
             "component2": component2,
+            "Tmin_K": float(temperature_range[0]),
+            "Tmax_K": float(temperature_range[1]),
             "source": payload["metadata"]["source"],
+            "source_file": "data/source/phenolic_temperature_interactions.json",
             "comment": (
                 f"{component1}/{component2} phenolic temperature-dependent "
                 f"{model_key} Table 5; Cij = CijC + CijT*(T - 273.15 K)"
@@ -1652,6 +1658,7 @@ def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[lis
             continue
         component1, component2 = system["components"]
         cas1, cas2 = system["cas"]
+        temperature_range = system["temperature_range_K"]
         pair = tuple(sorted((cas1, cas2)))
         if pair not in existing_pairs:
             new_pairs += 1
@@ -1660,7 +1667,10 @@ def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[lis
             "cas2": cas2,
             "component1": component1,
             "component2": component2,
+            "Tmin_K": float(temperature_range[0]),
+            "Tmax_K": float(temperature_range[1]),
             "source": payload["metadata"]["source"],
+            "source_file": "data/source/cesari_phenolic_nrtl_interactions.json",
             "alpha12": alpha,
             "tau12_c": float(system["b12_J_per_mol_K"]) / r_j_per_mol_k,
             "tau12_d": float(system["a12_J_per_mol"]) / r_j_per_mol_k,
@@ -1766,6 +1776,7 @@ def supplemental_1_butanol_water_records(
     metadata = payload["metadata"]
     cas1, cas2 = metadata["cas"]
     component1, component2 = metadata["components"]
+    temperature_range = metadata["applicable_temperature_range_K"]
     pair = tuple(sorted((cas1, cas2)))
     existing_pairs = {
         tuple(sorted((record["cas1"], record["cas2"])))
@@ -1776,7 +1787,10 @@ def supplemental_1_butanol_water_records(
         "cas2": cas2,
         "component1": component1,
         "component2": component2,
+        "Tmin_K": float(temperature_range[0]),
+        "Tmax_K": float(temperature_range[1]),
         "source": metadata["source"],
+        "source_file": "data/source/1_butanol_water_interactions.json",
         "comment": f"{component1}/{component2} temperature-dependent {model_key}",
     }
     if model_key == "NRTL":
@@ -1948,6 +1962,7 @@ def supplemental_ester_alcohol_fit_records(
             "fit_vapor_composition_AAD": float(fit["y1_AAD"]),
             "selection_reason": fit["selection_reason"],
             "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
+            "source_file": "data/source/ester_alcohol_nrtl_uniquac_recommended_fits.json",
             "comment": (
                 f"{fit['pair']} recommended {model_key} {fit['form']} fit; "
                 f"vapor={fit['vapor_treatment']}; n={fit['n_points']} from "
@@ -2019,6 +2034,7 @@ def supplemental_water_ethylene_oxide_records(
             "component1": component1,
             "component2": component2,
             "source": metadata["source"],
+            "source_file": "data/source/water_ethylene_oxide_interactions.json",
             "comment": (
                 f"{component1}/{component2} fitted {model_key}; "
                 f"{metadata['source']}"
@@ -2118,6 +2134,7 @@ def supplemental_extended_uniquac_records(existing: list[dict]) -> tuple[list[di
             "use_q_prime": True,
             "tau_expression": payload["metadata"]["tau_expression"],
             "source": payload["metadata"]["source"],
+            "source_file": "data/source/nagata_gmehling_extended_uniquac_interactions.json",
             "comment": f"{comp_i}/{comp_j} extended UNIQUAC Table 2; tau_ij = exp(-B_ij - A_ij/T - C_ij*T)",
         })
     return records, new_pairs
@@ -2835,7 +2852,7 @@ def build_interaction_payload(
     payload = {
         "metadata": {
             "key_basis": "CAS",
-            "source_file": source_name,
+            "source_file": f"data/source/legacy/{source_name}",
             "converted_records": len(records),
             "base_converted_records": len(records) - len(supplemental_records) - len(hydration_records),
             "supplemental_records": len(supplemental_records),
@@ -2867,7 +2884,7 @@ def build_interaction_payload(
             "isopropanol_water_overlay_replaced_records": isopropanol_water_overlay_replaced_records,
             "isopropanol_water_overlay_replaced_pairs": isopropanol_water_overlay_replaced_pairs,
         })
-    source_payload = load_json(ARCHIVED_DATA / source_name)
+    source_payload = load_json(LEGACY_SOURCE_DATA / source_name)
     for key in ("source", "units"):
         if key in source_payload:
             payload["metadata"][key] = source_payload[key]

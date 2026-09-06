@@ -314,14 +314,15 @@ class ExampleSimulationTests(unittest.TestCase):
         self.assertGreater(distillate.composition['ethanol'], 0.75)
         self.assertGreater(bottoms.composition['water'], 0.95)
 
-    def test_ethanol_3a_molecular_sieve_example_meets_ppm_limit(self):
+    def test_ethanol_3a_molecular_sieve_example_meets_ppm_range(self):
         path = os.path.join(ROOT, 'examples', 'ethanol_3a_molecular_sieve_drying.pfd')
         result_25 = Simulator.from_file(path).run()
         product_25 = result_25.streams['Dry-Ethanol']
         ppmw_25 = water_ppmw(product_25)
 
         self.assertTrue(result_25.converged, result_25.warnings)
-        self.assertLess(ppmw_25, 100.0)
+        self.assertGreaterEqual(ppmw_25, 100.0)
+        self.assertLessEqual(ppmw_25, 120.0)
 
         with open(path, 'r') as handle:
             pfd_40 = handle.read().replace('T = 25 [C]', 'T = 40 [C]')

@@ -830,10 +830,10 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         validator = melting_source.get('independent_validator')
         self.assertIsInstance(validator, dict)
         self.assertAlmostEqual(validator['value'], 54.4)
-        self.assertEqual(validator['method'], 'direct')
+        self.assertEqual(validator['method'], 'chemicals_json')
         self.assertEqual(oxygen.property_sources['Tt']['quality'], 0.995)
         self.assertIn(
-            'independent provided/direct Tm=54.4 K',
+            'independent local/chemicals_json Tm=54.4 K',
             oxygen.property_sources['Tt']['notes'],
         )
 

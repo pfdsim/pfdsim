@@ -5,6 +5,7 @@
     "component_order": "1 = 1-butanol, 2 = water",
     "components": ["1-Butanol", "Water"],
     "cas": ["71-36-3", "7732-18-5"],
+    "applicable_temperature_range_K": [298.15, 397.75],
     "fit_diagnostics": {
       "data_basis": {
         "description": "1-atm n-butanol/water LLE data from 302.95-397.75 K, plus the supplied 298.15 K tie-line point.",

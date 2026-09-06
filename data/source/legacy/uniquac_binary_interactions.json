@@ -1,0 +1,2638 @@
+{
+  "interactions": [
+    {
+      "a12_cal_per_mol": 1289.4881,
+      "a21_cal_per_mol": 6.7114,
+      "comment": "Butane/Methanol p126 1/2c",
+      "id1": "5",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 938.0838,
+      "a21_cal_per_mol": -112.7209,
+      "comment": "Pentane/Ethanol p376 1/2c",
+      "id1": "7",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 849.013,
+      "a21_cal_per_mol": -56.7699,
+      "comment": "2-Methylbutane/Ethanol p373 1/2c",
+      "id1": "8",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1056.8977,
+      "a21_cal_per_mol": -135.5484,
+      "comment": "Hexane/Ethanol p437 1/2c",
+      "id1": "11",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 743.1034,
+      "a21_cal_per_mol": -127.2476,
+      "comment": "Hexane/1-Propanol p550 1/2c",
+      "id1": "11",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 1251.6417,
+      "a21_cal_per_mol": -391.9511,
+      "comment": "Cyclohexane/1-Propanol p542 1/2c",
+      "id1": "137",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 1525.5351,
+      "a21_cal_per_mol": -516.0584,
+      "comment": "MethylCycloHexane/Phenol p482 1/2d",
+      "id1": "138",
+      "id2": "1181"
+    },
+    {
+      "a12_cal_per_mol": 1403.5125,
+      "a21_cal_per_mol": -70.3003,
+      "comment": "Isobutylene/Methanol p105 1/2c",
+      "id1": "207",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1499.6766,
+      "a21_cal_per_mol": -66.3796,
+      "comment": "2-Methyl-2-Butene/Methanol p154 1/2c",
+      "id1": "214",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 983.1208,
+      "a21_cal_per_mol": -123.8651,
+      "comment": "2-Methyl-2-Butene/Ethanol p365 1/2c",
+      "id1": "214",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1329.9294,
+      "a21_cal_per_mol": -21.5842,
+      "comment": "1-Hexene/Methanol p212 1/2c",
+      "id1": "216",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 970.6914,
+      "a21_cal_per_mol": -128.7022,
+      "comment": "1-Hexene/Ethanol p420 1/2c",
+      "id1": "216",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1300.2481,
+      "a21_cal_per_mol": -72.9715,
+      "comment": "1.3-Butadiene/Methanol p103 1/2c",
+      "id1": "302",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1489.1438,
+      "a21_cal_per_mol": -97.747,
+      "comment": "1.3-Pentadiene(CIS)/Methanol p147 1/2c",
+      "id1": "305",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1477.5985,
+      "a21_cal_per_mol": -92.9294,
+      "comment": "Trans-1.3-Pentadiene/Methanol p148 1/2c",
+      "id1": "306",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1514.3534,
+      "a21_cal_per_mol": -144.3088,
+      "comment": "Isoprene/Methanol p145 1/2c",
+      "id1": "309",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 912.9208,
+      "a21_cal_per_mol": -118.3758,
+      "comment": "Isoprene/Ethanol p358 1/2c",
+      "id1": "309",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1410.4509,
+      "a21_cal_per_mol": -61.3753,
+      "comment": "Cyclopentadiene/Methanol p144 1/2c",
+      "id1": "315",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": -119.7224,
+      "a21_cal_per_mol": -29.4499,
+      "comment": "Benzene/Chloroform 1/7",
+      "id1": "501",
+      "id2": "1521"
+    },
+    {
+      "a12_cal_per_mol": 72.2429,
+      "a21_cal_per_mol": 197.453,
+      "comment": "Benzene/Phenol p482 1/2d",
+      "id1": "501",
+      "id2": "1181"
+    },
+    {
+      "a12_cal_per_mol": 70.7224,
+      "a21_cal_per_mol": -58.3017,
+      "comment": "Benzene/Toluene p282 1/7",
+      "id1": "501",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": 5.7397,
+      "a21_cal_per_mol": 0.5699,
+      "comment": "Benzene/pXylene p310 1/7",
+      "id1": "501",
+      "id2": "507"
+    },
+    {
+      "a12_cal_per_mol": 378.6125,
+      "a21_cal_per_mol": 20.5261,
+      "comment": "Benzene/1-Propanol p537 1/2c",
+      "id1": "501",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 860.8206,
+      "a21_cal_per_mol": -554.8868,
+      "comment": "Toluene/Chloroform p352 1/7",
+      "id1": "502",
+      "id2": "1521"
+    },
+    {
+      "a12_cal_per_mol": 121.3912,
+      "a21_cal_per_mol": -119.706,
+      "comment": "Toluene/pXylene p444 1/7",
+      "id1": "502",
+      "id2": "507"
+    },
+    {
+      "a12_cal_per_mol": -1132.16,
+      "a21_cal_per_mol": -231.7521,
+      "comment": "Acetaldehyde/Water p86 1/1a",
+      "id1": "1002",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 735.9692,
+      "a21_cal_per_mol": 208.343,
+      "comment": "Propionicaldehyde/Water p209 1/1a",
+      "id1": "1003",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 416.3831,
+      "a21_cal_per_mol": -377.9488,
+      "comment": "PropionicAldehyde/Methanol p79 1/2c",
+      "id1": "1003",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1263.005,
+      "a21_cal_per_mol": -81.883,
+      "comment": "Isobutyraldehyde/Water p280 1/1a",
+      "id1": "1006",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 1566.0069,
+      "a21_cal_per_mol": -781.5877,
+      "comment": "Acetone/Chloroform p92 1/3+4",
+      "id1": "1051",
+      "id2": "1521"
+    },
+    {
+      "a12_cal_per_mol": -358.9226,
+      "a21_cal_per_mol": 604.28,
+      "comment": "Acetone/Benzene p195 1/3+4",
+      "id1": "1051",
+      "id2": "501"
+    },
+    {
+      "a12_cal_per_mol": -468.3882,
+      "a21_cal_per_mol": 27.3851,
+      "comment": "Acetone/Phenol",
+      "id1": "1051",
+      "id2": "1181"
+    },
+    {
+      "a12_cal_per_mol": -77.5361,
+      "a21_cal_per_mol": 543.595,
+      "comment": "Acetone/CycloHexane p213 1/3+4",
+      "id1": "1051",
+      "id2": "137"
+    },
+    {
+      "a12_cal_per_mol": -315.279,
+      "a21_cal_per_mol": 555.7418,
+      "comment": "Acetone/Toluene p236 1/3+4",
+      "id1": "1051",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": 94.5536,
+      "a21_cal_per_mol": 117.867,
+      "comment": "Acetone/Ethanol p312 1/2c",
+      "id1": "1051",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": -300.8429,
+      "a21_cal_per_mol": 385.863,
+      "comment": "2-Butanone/Benzene p291 1/3+4",
+      "id1": "1052",
+      "id2": "501"
+    },
+    {
+      "a12_cal_per_mol": 146.0313,
+      "a21_cal_per_mol": 100.2596,
+      "comment": "2-Butanone/CycloHexane p297 1/3+4",
+      "id1": "1052",
+      "id2": "137"
+    },
+    {
+      "a12_cal_per_mol": 366.3689,
+      "a21_cal_per_mol": -250.2784,
+      "comment": "2-Butanone/Toluene p308 1/3+4",
+      "id1": "1052",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": -184.485,
+      "a21_cal_per_mol": 559.8999,
+      "comment": "2-Butanone/n-Heptane p311 1/3+4",
+      "id1": "1052",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": 775.153,
+      "a21_cal_per_mol": 30.4806,
+      "comment": "2-Butanone/Water p279 1/1a",
+      "id1": "1052",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 147.6576,
+      "a21_cal_per_mol": -8.2705,
+      "comment": "2-Butanone/1-Propanol p496 1/2c",
+      "id1": "1052",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": -337.1298,
+      "a21_cal_per_mol": 549.2958,
+      "comment": "Methanol/Water (Kojima+Kato)",
+      "id1": "1101",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -271.0633,
+      "a21_cal_per_mol": 1304.9835,
+      "comment": "Methanol/Chloroform p23 1/2a",
+      "id1": "1101",
+      "id2": "1521"
+    },
+    {
+      "a12_cal_per_mol": -474.7791,
+      "a21_cal_per_mol": 762.8153,
+      "comment": "Methanol/Ethanol p55 1/2a",
+      "id1": "1101",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": -84.2364,
+      "a21_cal_per_mol": 403.8524,
+      "comment": "Methanol/Acetone",
+      "id1": "1101",
+      "id2": "1051"
+    },
+    {
+      "a12_cal_per_mol": -67.7213,
+      "a21_cal_per_mol": 1117.8797,
+      "comment": "Methanol/Benzene p232 1/2a",
+      "id1": "1101",
+      "id2": "501"
+    },
+    {
+      "a12_cal_per_mol": -32.2887,
+      "a21_cal_per_mol": 1703.2055,
+      "comment": "Methanol/CycloHexane p243 1/2a",
+      "id1": "1101",
+      "id2": "137"
+    },
+    {
+      "a12_cal_per_mol": -58.1103,
+      "a21_cal_per_mol": 1190.6454,
+      "comment": "Methanol/Toluene p269 1/2a",
+      "id1": "1101",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": 17.9144,
+      "a21_cal_per_mol": 1360.0217,
+      "comment": "Methanol/n-Heptane",
+      "id1": "1101",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": -95.2921,
+      "a21_cal_per_mol": 1463.4548,
+      "comment": "Methanol/Tetrachloromethane p18 1/2c",
+      "id1": "1101",
+      "id2": "1501"
+    },
+    {
+      "a12_cal_per_mol": -92.0642,
+      "a21_cal_per_mol": 984.2538,
+      "comment": "Methanol/Tribromomethane p19 1/2c",
+      "id1": "1101",
+      "id2": "1698"
+    },
+    {
+      "a12_cal_per_mol": 101.9628,
+      "a21_cal_per_mol": 334.9587,
+      "comment": "Methanol/Acetonitrile p42 1/2c",
+      "id1": "1101",
+      "id2": "1772"
+    },
+    {
+      "a12_cal_per_mol": -80.7067,
+      "a21_cal_per_mol": 1094.1304,
+      "comment": "Methanol/1.2-Dichloroethane p44 1/2c",
+      "id1": "1101",
+      "id2": "1523"
+    },
+    {
+      "a12_cal_per_mol": -40.7254,
+      "a21_cal_per_mol": -51.0491,
+      "comment": "Methanol/AceticAcid p46 1/2c",
+      "id1": "1101",
+      "id2": "1252"
+    },
+    {
+      "a12_cal_per_mol": -202.1377,
+      "a21_cal_per_mol": 258.6928,
+      "comment": "Methanol/Ethanol p60 1/2c",
+      "id1": "1101",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": -366.7607,
+      "a21_cal_per_mol": 84.4189,
+      "comment": "Methanol/Dimethylsulfoxide p61 1/2c",
+      "id1": "1101",
+      "id2": "1844"
+    },
+    {
+      "a12_cal_per_mol": 7.1816,
+      "a21_cal_per_mol": 0.3295,
+      "comment": "Methanol/PropionicAcid p87 1/2c",
+      "id1": "1101",
+      "id2": "1253"
+    },
+    {
+      "a12_cal_per_mol": -156.3839,
+      "a21_cal_per_mol": 103.9406,
+      "comment": "Methanol/N.N-Dimethylformamide p88 1/2c",
+      "id1": "1101",
+      "id2": "1876"
+    },
+    {
+      "a12_cal_per_mol": -26.2861,
+      "a21_cal_per_mol": 113.5565,
+      "comment": "Methanol/Propanol p96 1/2c",
+      "id1": "1101",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": -265.3781,
+      "a21_cal_per_mol": 1099.9741,
+      "comment": "Methanol/Thiophene p101 1/2c",
+      "id1": "1101",
+      "id2": "1821"
+    },
+    {
+      "a12_cal_per_mol": -25.1614,
+      "a21_cal_per_mol": 600.3028,
+      "comment": "Methanol/Methylacrylate p104 1/2c",
+      "id1": "1101",
+      "id2": "1341"
+    },
+    {
+      "a12_cal_per_mol": -136.0158,
+      "a21_cal_per_mol": 584.0634,
+      "comment": "Methanol/2-Butanone p106 1/2c",
+      "id1": "1101",
+      "id2": "1052"
+    },
+    {
+      "a12_cal_per_mol": -153.2518,
+      "a21_cal_per_mol": 629.7314,
+      "comment": "Methanol/Tetrahyrofuran p111 1/2c",
+      "id1": "1101",
+      "id2": "1479"
+    },
+    {
+      "a12_cal_per_mol": -19.0988,
+      "a21_cal_per_mol": 451.089,
+      "comment": "Methanol/1.4-Dioxane p116 1/2c",
+      "id1": "1101",
+      "id2": "1421"
+    },
+    {
+      "a12_cal_per_mol": -138.9829,
+      "a21_cal_per_mol": 770.3047,
+      "comment": "Methanol/Ethylacetate p117 1/2c",
+      "id1": "1101",
+      "id2": "1313"
+    },
+    {
+      "a12_cal_per_mol": -28.6882,
+      "a21_cal_per_mol": 675.1045,
+      "comment": "Methanol/Sulfolane p120 1/2c",
+      "id1": "1101",
+      "id2": "1845"
+    },
+    {
+      "a12_cal_per_mol": 40.3898,
+      "a21_cal_per_mol": 121.5049,
+      "comment": "Methanol/1-Butanol p127 1/2c",
+      "id1": "1101",
+      "id2": "1105"
+    },
+    {
+      "a12_cal_per_mol": 471.807,
+      "a21_cal_per_mol": -279.7321,
+      "comment": "Methanol/2-Butanol p128 1/2c",
+      "id1": "1101",
+      "id2": "1106"
+    },
+    {
+      "a12_cal_per_mol": -291.983,
+      "a21_cal_per_mol": 403.6892,
+      "comment": "Methanol/Tert-Butanol p131 1/2c",
+      "id1": "1101",
+      "id2": "1108"
+    },
+    {
+      "a12_cal_per_mol": -286.6527,
+      "a21_cal_per_mol": 490.8909,
+      "comment": "Methanol/1.4-Butanediol p138 1/2c",
+      "id1": "1101",
+      "id2": "1241"
+    },
+    {
+      "a12_cal_per_mol": 425.4563,
+      "a21_cal_per_mol": -393.3415,
+      "comment": "Methanol/Pyridine p141 1/2c",
+      "id1": "1101",
+      "id2": "1791"
+    },
+    {
+      "a12_cal_per_mol": -98.6602,
+      "a21_cal_per_mol": 843.2593,
+      "comment": "Methanol/MethylMethacrylate p152 1/2c",
+      "id1": "1101",
+      "id2": "1351"
+    },
+    {
+      "a12_cal_per_mol": -100.1669,
+      "a21_cal_per_mol": 594.2312,
+      "comment": "Methanol/MethylisopropylKetone p155 1/2c",
+      "id1": "1101",
+      "id2": "1061"
+    },
+    {
+      "a12_cal_per_mol": -83.8392,
+      "a21_cal_per_mol": 609.2057,
+      "comment": "Methanol/3-Pentanone p156 1/2c",
+      "id1": "1101",
+      "id2": "1053"
+    },
+    {
+      "a12_cal_per_mol": -383.9791,
+      "a21_cal_per_mol": 153.8253,
+      "comment": "Methanol/Piperidine p157 1/2c",
+      "id1": "1101",
+      "id2": "1745"
+    },
+    {
+      "a12_cal_per_mol": -90.0876,
+      "a21_cal_per_mol": 1245.166,
+      "comment": "Methanol/Hexafluorobenzene p170 1/2c",
+      "id1": "1101",
+      "id2": "1864"
+    },
+    {
+      "a12_cal_per_mol": -118.0717,
+      "a21_cal_per_mol": 1402.7818,
+      "comment": "Methanol/Chlorobenzene p174 1/2c",
+      "id1": "1101",
+      "id2": "1571"
+    },
+    {
+      "a12_cal_per_mol": -76.6223,
+      "a21_cal_per_mol": 1166.9276,
+      "comment": "Methanol/Benzene p191 1/2c",
+      "id1": "1101",
+      "id2": "501"
+    },
+    {
+      "a12_cal_per_mol": -144.7753,
+      "a21_cal_per_mol": 517.8626,
+      "comment": "Methanol/Aniline p192 1/2c",
+      "id1": "1101",
+      "id2": "1792"
+    },
+    {
+      "a12_cal_per_mol": -603.5633,
+      "a21_cal_per_mol": 950.103,
+      "comment": "Methanol/2-Methylpyridine p195 1/2c",
+      "id1": "1101",
+      "id2": "1797"
+    },
+    {
+      "a12_cal_per_mol": -206.2407,
+      "a21_cal_per_mol": 81.4664,
+      "comment": "Methanol/3-Methylpyridine p196 1/2c",
+      "id1": "1101",
+      "id2": "2797"
+    },
+    {
+      "a12_cal_per_mol": -78.8509,
+      "a21_cal_per_mol": -53.173,
+      "comment": "Methanol/4-Methylpyridine p198 1/2c",
+      "id1": "1101",
+      "id2": "2799"
+    },
+    {
+      "a12_cal_per_mol": -38.5257,
+      "a21_cal_per_mol": 1529.9926,
+      "comment": "Methanol/Cyclohexene p204 1/2c",
+      "id1": "1101",
+      "id2": "270"
+    },
+    {
+      "a12_cal_per_mol": 48.3262,
+      "a21_cal_per_mol": 1388.9672,
+      "comment": "Methanol/Cyclohexane p211 1/2c",
+      "id1": "1101",
+      "id2": "137"
+    },
+    {
+      "a12_cal_per_mol": -174.2617,
+      "a21_cal_per_mol": 892.9417,
+      "comment": "Methanol/n-ButylAcetate p217 1/2c",
+      "id1": "1101",
+      "id2": "1315"
+    },
+    {
+      "a12_cal_per_mol": 38.3254,
+      "a21_cal_per_mol": 1391.4917,
+      "comment": "Methanol/Hexane p224 1/2c",
+      "id1": "1101",
+      "id2": "11"
+    },
+    {
+      "a12_cal_per_mol": -318.8007,
+      "a21_cal_per_mol": 905.0708,
+      "comment": "Methanol/Triethylamine p226 1/2c",
+      "id1": "1101",
+      "id2": "1706"
+    },
+    {
+      "a12_cal_per_mol": -65.2736,
+      "a21_cal_per_mol": 1201.3122,
+      "comment": "Methanol/Toluene p237 1/2c",
+      "id1": "1101",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": -502.2428,
+      "a21_cal_per_mol": 548.3889,
+      "comment": "Methanol/2-Methylphenol p238 1/2c",
+      "id1": "1101",
+      "id2": "1182"
+    },
+    {
+      "a12_cal_per_mol": -272.5909,
+      "a21_cal_per_mol": 272.4921,
+      "comment": "Methanol/2.6-Dimethylpyridine p239 1/2c",
+      "id1": "1101",
+      "id2": "2796"
+    },
+    {
+      "a12_cal_per_mol": -12.605,
+      "a21_cal_per_mol": 1363.9261,
+      "comment": "Methanol/1-Heptane p241 1/2c",
+      "id1": "1101",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": 1.0023,
+      "a21_cal_per_mol": 1552.7297,
+      "comment": "Methanol/Methylcyclohexane p242 1/2c",
+      "id1": "1101",
+      "id2": "138"
+    },
+    {
+      "a12_cal_per_mol": -27.9877,
+      "a21_cal_per_mol": 1578.6097,
+      "comment": "Methanol/Heptane p243 1/2c",
+      "id1": "1101",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": -57.095,
+      "a21_cal_per_mol": 1259.4286,
+      "comment": "Methanol/Ethylbenzene p245 1/2c",
+      "id1": "1101",
+      "id2": "504"
+    },
+    {
+      "a12_cal_per_mol": -41.7377,
+      "a21_cal_per_mol": 1208.1529,
+      "comment": "Methanol/M-xylene p246 1/2c",
+      "id1": "1101",
+      "id2": "506"
+    },
+    {
+      "a12_cal_per_mol": -47.6694,
+      "a21_cal_per_mol": 1231.2086,
+      "comment": "Methanol/P-xylene p247 1/2c",
+      "id1": "1101",
+      "id2": "507"
+    },
+    {
+      "a12_cal_per_mol": -32.2567,
+      "a21_cal_per_mol": 1396.3019,
+      "comment": "Methanol/1-Octene p248 1/2c",
+      "id1": "1101",
+      "id2": "250"
+    },
+    {
+      "a12_cal_per_mol": -32.7911,
+      "a21_cal_per_mol": 1561.8955,
+      "comment": "Methanol/Octane p249 1/2c",
+      "id1": "1101",
+      "id2": "27"
+    },
+    {
+      "a12_cal_per_mol": -59.6929,
+      "a21_cal_per_mol": 1577.3145,
+      "comment": "Methanol/2.2.4-Trimethylpentane p250 1/2c",
+      "id1": "1101",
+      "id2": "41"
+    },
+    {
+      "a12_cal_per_mol": 18.9334,
+      "a21_cal_per_mol": 484.2757,
+      "comment": "Methanol/1-Dodecanol p252 1/2c",
+      "id1": "1101",
+      "id2": "1140"
+    },
+    {
+      "a12_cal_per_mol": -149.1808,
+      "a21_cal_per_mol": 952.0283,
+      "comment": "Methanol/Oleic Acid p253 1/2c",
+      "id1": "1101",
+      "id2": "1279"
+    },
+    {
+      "a12_cal_per_mol": 173.801,
+      "a21_cal_per_mol": 109.8687,
+      "comment": "Ethanol/Water",
+      "id1": "1102",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -305.3246,
+      "a21_cal_per_mol": 881.3549,
+      "comment": "Ethanol/Chloroform p285 1/2a",
+      "id1": "1102",
+      "id2": "1521"
+    },
+    {
+      "a12_cal_per_mol": 94.2417,
+      "a21_cal_per_mol": 98.7523,
+      "comment": "Ethanol/Acetone p323 1/2a",
+      "id1": "1102",
+      "id2": "1051"
+    },
+    {
+      "a12_cal_per_mol": -25.7234,
+      "a21_cal_per_mol": 250.3958,
+      "comment": "Ethanol/2-Butanone p342 1/2a",
+      "id1": "1102",
+      "id2": "1052"
+    },
+    {
+      "a12_cal_per_mol": -127.9893,
+      "a21_cal_per_mol": 744.8826,
+      "comment": "Ethanol/Benzene p405 1/2a",
+      "id1": "1102",
+      "id2": "501"
+    },
+    {
+      "a12_cal_per_mol": -153.0128,
+      "a21_cal_per_mol": 1100.3231,
+      "comment": "Ethanol/CycloHexane p441 1/2a",
+      "id1": "1102",
+      "id2": "137"
+    },
+    {
+      "a12_cal_per_mol": -97.5633,
+      "a21_cal_per_mol": 698.6183,
+      "comment": "Ethanol/Toluene p470 1/2a",
+      "id1": "1102",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": -150.277,
+      "a21_cal_per_mol": 1127.5232,
+      "comment": "Ethanol/n-Heptane p489 1/2a",
+      "id1": "1102",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": -63.9673,
+      "a21_cal_per_mol": 664.259,
+      "comment": "Ethanol/p-Xylene p500 1/2a",
+      "id1": "1102",
+      "id2": "507"
+    },
+    {
+      "a12_cal_per_mol": -61.6485,
+      "a21_cal_per_mol": 783.4873,
+      "comment": "Ethanol/Tetrachloroethylene p285 1/2c",
+      "id1": "1102",
+      "id2": "1542"
+    },
+    {
+      "a12_cal_per_mol": 392.2083,
+      "a21_cal_per_mol": 91.3933,
+      "comment": "Ethanol/Acetonitrile p289 1/2c",
+      "id1": "1102",
+      "id2": "1772"
+    },
+    {
+      "a12_cal_per_mol": -39.1051,
+      "a21_cal_per_mol": 669.688,
+      "comment": "Ethanol/1.2-Dichloroethane p292 1/2c",
+      "id1": "1102",
+      "id2": "1523"
+    },
+    {
+      "a12_cal_per_mol": -25.2901,
+      "a21_cal_per_mol": -86.9343,
+      "comment": "Ethanol/Acetic Acid p293 1/2c",
+      "id1": "1102",
+      "id2": "1252"
+    },
+    {
+      "a12_cal_per_mol": 818.093,
+      "a21_cal_per_mol": -200.1567,
+      "comment": "Ethanol/1.2-Ethanediol p297 1/2c",
+      "id1": "1102",
+      "id2": "1201"
+    },
+    {
+      "a12_cal_per_mol": 437.5184,
+      "a21_cal_per_mol": -324.6275,
+      "comment": "Ethanol/2-Propanol p317 1/2c",
+      "id1": "1102",
+      "id2": "1104"
+    },
+    {
+      "a12_cal_per_mol": 181.0206,
+      "a21_cal_per_mol": -57.8238,
+      "comment": "Ethanol/1.2-Propanediol p319 1/2c",
+      "id1": "1102",
+      "id2": "1211"
+    },
+    {
+      "a12_cal_per_mol": -77.9585,
+      "a21_cal_per_mol": 662.4746,
+      "comment": "Ethanol/Thiophene p320 1/2c",
+      "id1": "1102",
+      "id2": "1821"
+    },
+    {
+      "a12_cal_per_mol": -169.9082,
+      "a21_cal_per_mol": 480.2791,
+      "comment": "Ethanol/2-Butanone p327 1/2c",
+      "id1": "1102",
+      "id2": "1052"
+    },
+    {
+      "a12_cal_per_mol": 50.8172,
+      "a21_cal_per_mol": 212.2982,
+      "comment": "Ethanol/1.4-Dioxane p331 1/2c",
+      "id1": "1102",
+      "id2": "1421"
+    },
+    {
+      "a12_cal_per_mol": 177.7675,
+      "a21_cal_per_mol": 306.35,
+      "comment": "Ethanol/Sulfolane p341 1/2c",
+      "id1": "1102",
+      "id2": "1845"
+    },
+    {
+      "a12_cal_per_mol": -712.473,
+      "a21_cal_per_mol": 1116.7138,
+      "comment": "Ethanol/Morpholine p345 1/2c",
+      "id1": "1102",
+      "id2": "1765"
+    },
+    {
+      "a12_cal_per_mol": -311.9029,
+      "a21_cal_per_mol": 474.5511,
+      "comment": "Ethanol/2-Butanol p346 1/2c",
+      "id1": "1102",
+      "id2": "1106"
+    },
+    {
+      "a12_cal_per_mol": -117.4292,
+      "a21_cal_per_mol": 220.9133,
+      "comment": "Ethanol/2-Methyl-1-Propanol p349 1/2c",
+      "id1": "1102",
+      "id2": "1106"
+    },
+    {
+      "a12_cal_per_mol": 378.8209,
+      "a21_cal_per_mol": -378.8991,
+      "comment": "Ethanol/Pyridine p356 1/2c",
+      "id1": "1102",
+      "id2": "1791"
+    },
+    {
+      "a12_cal_per_mol": -105.4041,
+      "a21_cal_per_mol": 544.4089,
+      "comment": "Ethanol/MethylMethacrylate p363 1/2c",
+      "id1": "1102",
+      "id2": "1351"
+    },
+    {
+      "a12_cal_per_mol": -260.5944,
+      "a21_cal_per_mol": 652.4019,
+      "comment": "Ethanol/Methylisopropyl p366 1/2c",
+      "id1": "1102",
+      "id2": "1061"
+    },
+    {
+      "a12_cal_per_mol": -13.0186,
+      "a21_cal_per_mol": 405.1733,
+      "comment": "Ethanol/PropylAcetate p367 1/2c",
+      "id1": "1102",
+      "id2": "1314"
+    },
+    {
+      "a12_cal_per_mol": 82.3751,
+      "a21_cal_per_mol": -18.3336,
+      "comment": "Ethanol/3-Methyl-1-butanol p377 1/2c",
+      "id1": "1102",
+      "id2": "1123"
+    },
+    {
+      "a12_cal_per_mol": -169.9204,
+      "a21_cal_per_mol": 998.8196,
+      "comment": "Ethanol/Bromobenzene p378 1/2c",
+      "id1": "1102",
+      "id2": "1680"
+    },
+    {
+      "a12_cal_per_mol": -205.6039,
+      "a21_cal_per_mol": 1032.724,
+      "comment": "Ethanol/Chlorobezene p380 1/2c",
+      "id1": "1102",
+      "id2": "1571"
+    },
+    {
+      "a12_cal_per_mol": -105.3291,
+      "a21_cal_per_mol": 766.4564,
+      "comment": "Ethanol/Benzene p406 1/2c",
+      "id1": "1102",
+      "id2": "501"
+    },
+    {
+      "a12_cal_per_mol": 1262.584,
+      "a21_cal_per_mol": -446.4834,
+      "comment": "Ethanol/Aniline p410 1/2c",
+      "id1": "1102",
+      "id2": "1792"
+    },
+    {
+      "a12_cal_per_mol": 139.4905,
+      "a21_cal_per_mol": -225.4203,
+      "comment": "Ethanol/2-Methylpyridine p411 1/2c",
+      "id1": "1102",
+      "id2": "1797"
+    },
+    {
+      "a12_cal_per_mol": -578.9542,
+      "a21_cal_per_mol": 942.9023,
+      "comment": "Ethanol/3-Methylpyridine p412 1/2c",
+      "id1": "1102",
+      "id2": "2797"
+    },
+    {
+      "a12_cal_per_mol": -85.691,
+      "a21_cal_per_mol": 925.1697,
+      "comment": "Ethanol/Cyclohexane p419 1/2c",
+      "id1": "1102",
+      "id2": "137"
+    },
+    {
+      "a12_cal_per_mol": 634.1484,
+      "a21_cal_per_mol": -339.732,
+      "comment": "Ethanol/Cyclohexanol p421 1/2c",
+      "id1": "1102",
+      "id2": "1151"
+    },
+    {
+      "a12_cal_per_mol": -38.4912,
+      "a21_cal_per_mol": 384.6715,
+      "comment": "Ethanol/ButylAcetate p424 1/2c",
+      "id1": "1102",
+      "id2": "1315"
+    },
+    {
+      "a12_cal_per_mol": -177.4837,
+      "a21_cal_per_mol": 780.0513,
+      "comment": "Ethanol/Dipropylether p438 1/2c",
+      "id1": "1102",
+      "id2": "1446"
+    },
+    {
+      "a12_cal_per_mol": -305.4069,
+      "a21_cal_per_mol": 674.3341,
+      "comment": "Ethanol/Triethylamine p440 1/2c",
+      "id1": "1102",
+      "id2": "1706"
+    },
+    {
+      "a12_cal_per_mol": -147.1104,
+      "a21_cal_per_mol": 878.1135,
+      "comment": "Ethanol/Toluene p444 1/2c",
+      "id1": "1102",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": 928.9185,
+      "a21_cal_per_mol": -379.9781,
+      "comment": "Ethanol/Anisole p445 1/2c",
+      "id1": "1102",
+      "id2": "1461"
+    },
+    {
+      "a12_cal_per_mol": -432.4206,
+      "a21_cal_per_mol": 583.2958,
+      "comment": "Ethanol/2.6-Dimethylpyridine p447 1/2c",
+      "id1": "1102",
+      "id2": "2797"
+    },
+    {
+      "a12_cal_per_mol": -161.4264,
+      "a21_cal_per_mol": 631.1662,
+      "comment": "Ethanol/Pentylacetate p449 1/2c",
+      "id1": "1102",
+      "id2": "138"
+    },
+    {
+      "a12_cal_per_mol": -115.7807,
+      "a21_cal_per_mol": 1040.2891,
+      "comment": "Ethanol/Heptane p459 1/2c",
+      "id1": "1102",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": -127.6343,
+      "a21_cal_per_mol": 841.5199,
+      "comment": "Ethanol/Ethylbezene p460 1/2c",
+      "id1": "1102",
+      "id2": "504"
+    },
+    {
+      "a12_cal_per_mol": -100.7193,
+      "a21_cal_per_mol": 794.4242,
+      "comment": "Ethanol/P-xylene p461 1/2c",
+      "id1": "1102",
+      "id2": "507"
+    },
+    {
+      "a12_cal_per_mol": -152.8323,
+      "a21_cal_per_mol": 1156.688,
+      "comment": "Ethanol/Octane p466 1/2c",
+      "id1": "1102",
+      "id2": "27"
+    },
+    {
+      "a12_cal_per_mol": -165.9382,
+      "a21_cal_per_mol": 1120.4853,
+      "comment": "Ethanol/2.2.4-Trimethylpentane p468 1/2c",
+      "id1": "1102",
+      "id2": "22"
+    },
+    {
+      "a12_cal_per_mol": -401.4408,
+      "a21_cal_per_mol": 1783.7857,
+      "comment": "Ethanol/Hexadecane p470 1/2c",
+      "id1": "1102",
+      "id2": "68"
+    },
+    {
+      "a12_cal_per_mol": -180.7604,
+      "a21_cal_per_mol": 627.9668,
+      "comment": "Ethanol/Oleicacid p471 1/2c",
+      "id1": "1102",
+      "id2": "1279"
+    },
+    {
+      "a12_cal_per_mol": 190.5947,
+      "a21_cal_per_mol": 290.554,
+      "comment": "1-propanol/Water p240 1/1a",
+      "id1": "1103",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -13.5513,
+      "a21_cal_per_mol": 473.6899,
+      "comment": "1-Propanol/Tetrachloroethylene p473 1/2c",
+      "id1": "1103",
+      "id2": "1542"
+    },
+    {
+      "a12_cal_per_mol": -729.0848,
+      "a21_cal_per_mol": 1660.0903,
+      "comment": "1-Propanol/Aceticacid p479 1/2c",
+      "id1": "1103",
+      "id2": "1252"
+    },
+    {
+      "a12_cal_per_mol": -83.3064,
+      "a21_cal_per_mol": -4.418,
+      "comment": "1-Propanol/Propionicacid p486 1/2c",
+      "id1": "1103",
+      "id2": "1253"
+    },
+    {
+      "a12_cal_per_mol": -300.7498,
+      "a21_cal_per_mol": 511.0851,
+      "comment": "1-Propanol/2-Methoxy-ethanol p490 1/2c",
+      "id1": "1103",
+      "id2": "2860"
+    },
+    {
+      "a12_cal_per_mol": -274.4208,
+      "a21_cal_per_mol": 15.9476,
+      "comment": "Propylamine/1-Propanol p492 1/2c",
+      "id1": "1103",
+      "id2": "1711"
+    },
+    {
+      "a12_cal_per_mol": 114.789,
+      "a21_cal_per_mol": -169.5098,
+      "comment": "1-Propanol/Methacrylicacid p495 1/2c",
+      "id1": "1103",
+      "id2": "1278"
+    },
+    {
+      "a12_cal_per_mol": 47.0059,
+      "a21_cal_per_mol": -46.6524,
+      "comment": "1-Propanol/2-Methyl-1-Propanol p505 1/2c",
+      "id1": "1103",
+      "id2": "1106"
+    },
+    {
+      "a12_cal_per_mol": 423.4439,
+      "a21_cal_per_mol": -423.9207,
+      "comment": "1-Propanol/Pyridine p513 1/2c",
+      "id1": "1103",
+      "id2": "1791"
+    },
+    {
+      "a12_cal_per_mol": -27.435,
+      "a21_cal_per_mol": 256.1456,
+      "comment": "1-Propanol/Methylmethacrylate p514 1/2c",
+      "id1": "1103",
+      "id2": "1351"
+    },
+    {
+      "a12_cal_per_mol": -91.8942,
+      "a21_cal_per_mol": 278.7259,
+      "comment": "1-Propnaol/Propylacetate p517 1/2c",
+      "id1": "1103",
+      "id2": "1314"
+    },
+    {
+      "a12_cal_per_mol": -19.2402,
+      "a21_cal_per_mol": 27.9161,
+      "comment": "1-Propanol/3-Methylbutanol p521 1/2c",
+      "id1": "1103",
+      "id2": "1123"
+    },
+    {
+      "a12_cal_per_mol": 1.3035,
+      "a21_cal_per_mol": 311.4544,
+      "comment": "1-Propnaol/Chlorobenzene p527 1/2c",
+      "id1": "1103",
+      "id2": "1571"
+    },
+    {
+      "a12_cal_per_mol": 163.7157,
+      "a21_cal_per_mol": -281.9383,
+      "comment": "1-Propanol/2-Methylpyridine p538 1/2c",
+      "id1": "1103",
+      "id2": "1797"
+    },
+    {
+      "a12_cal_per_mol": 199.1862,
+      "a21_cal_per_mol": -290.3666,
+      "comment": "1-Propanol/3-Methylpyridine p539 1/2c",
+      "id1": "1103",
+      "id2": "2797"
+    },
+    {
+      "a12_cal_per_mol": 180.7309,
+      "a21_cal_per_mol": -293.8268,
+      "comment": "1-Propanol/4-Methylpyridine p540 1/2c",
+      "id1": "1103",
+      "id2": "2799"
+    },
+    {
+      "a12_cal_per_mol": -585.5214,
+      "a21_cal_per_mol": 1186.3162,
+      "comment": "1-Propanol/Propylpropionate p545 1/2c",
+      "id1": "1103",
+      "id2": "1324"
+    },
+    {
+      "a12_cal_per_mol": -1.1304,
+      "a21_cal_per_mol": 48.1557,
+      "comment": "1-Propanol/Dipropylamine p551 1/2c",
+      "id1": "1103",
+      "id2": "1707"
+    },
+    {
+      "a12_cal_per_mol": -218.4928,
+      "a21_cal_per_mol": 677.0367,
+      "comment": "1-Propanol/Hexamethyldisiloxane p555 1/2c",
+      "id1": "1103",
+      "id2": "1965"
+    },
+    {
+      "a12_cal_per_mol": -1.7464,
+      "a21_cal_per_mol": 340.4905,
+      "comment": "1-Propanol/Toluene p556 1/2c",
+      "id1": "1103",
+      "id2": "502"
+    },
+    {
+      "a12_cal_per_mol": -595.2165,
+      "a21_cal_per_mol": 936.7248,
+      "comment": "1-Propnaol/2.6-Dimethylpyridine p557 1/2c",
+      "id1": "1103",
+      "id2": "2796"
+    },
+    {
+      "a12_cal_per_mol": -91.2018,
+      "a21_cal_per_mol": 743.266,
+      "comment": "1-Propanol/Heptane p573 1/2c",
+      "id1": "1103",
+      "id2": "17"
+    },
+    {
+      "a12_cal_per_mol": -74.7475,
+      "a21_cal_per_mol": 427.6292,
+      "comment": "1-Propanol/P-xylene p574 1/2c",
+      "id1": "1103",
+      "id2": "504"
+    },
+    {
+      "a12_cal_per_mol": -48.752,
+      "a21_cal_per_mol": 525.9933,
+      "comment": "1-Propanol/Octane p576 1/2c",
+      "id1": "1103",
+      "id2": "27"
+    },
+    {
+      "a12_cal_per_mol": -175.9432,
+      "a21_cal_per_mol": 744.763,
+      "comment": "1-Propanol/Decane p577 1/2c",
+      "id1": "1103",
+      "id2": "56"
+    },
+    {
+      "a12_cal_per_mol": 89.4506,
+      "a21_cal_per_mol": 31.0832,
+      "comment": "1-Propanol/1-Decanol 579 1/2c",
+      "id1": "1103",
+      "id2": "1136"
+    },
+    {
+      "a12_cal_per_mol": 327.443,
+      "a21_cal_per_mol": 64.4408,
+      "comment": "2-propanol/Water p251 1/1a",
+      "id1": "1104",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 103.5993,
+      "a21_cal_per_mol": -103.7179,
+      "comment": "2-Propanol/1-Propanol p488 1/2c",
+      "id1": "1104",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 350.1707,
+      "a21_cal_per_mol": 309.5428,
+      "comment": "isobutanol/Water p339 1/1a",
+      "id1": "1106",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 230.5098,
+      "a21_cal_per_mol": 271.3048,
+      "comment": "Tert-butanol/Water p343 1/1a",
+      "id1": "1108",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 281.7442,
+      "a21_cal_per_mol": 47.6526,
+      "comment": "Allylalcohol/Water p208 1/1a",
+      "id1": "1167",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 623.2636,
+      "a21_cal_per_mol": -2.0107,
+      "comment": "MethylFormate/Methanol p51 1/2c",
+      "id1": "1301",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 830.7943,
+      "a21_cal_per_mol": 47.5023,
+      "comment": "Methylacetate/Water p214 1/1a",
+      "id1": "1312",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 611.2312,
+      "a21_cal_per_mol": -70.982,
+      "comment": "MethylAcetate/Methanol p86 1/2c",
+      "id1": "1312",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 267.0169,
+      "a21_cal_per_mol": -79.2922,
+      "comment": "MethylAcetate/Ethanol p315 1/2c",
+      "id1": "1312",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1441.5619,
+      "a21_cal_per_mol": -205.7336,
+      "comment": "Ethylacetate/Water p304 1/1a",
+      "id1": "1313",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 436.0416,
+      "a21_cal_per_mol": -98.562,
+      "comment": "EthylAcetate/Ethanol p338 1/2c",
+      "id1": "1313",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 483.9533,
+      "a21_cal_per_mol": -67.6116,
+      "comment": "VinylAcetate/Ethanol p324 1/2c",
+      "id1": "1321",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1198.9207,
+      "a21_cal_per_mol": 102.271,
+      "comment": "Diethylether/Water p344 1/1a",
+      "id1": "1402",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 906.3646,
+      "a21_cal_per_mol": -157.3556,
+      "comment": "DiethylEther/Methanol p133 1/2c",
+      "id1": "1402",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 642.6982,
+      "a21_cal_per_mol": -171.8091,
+      "comment": "DiethylEther/Ethanol p347 1/2c",
+      "id1": "1402",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1415.2748,
+      "a21_cal_per_mol": 81.2811,
+      "comment": "Diisopropylether/Water p421 1/1a",
+      "id1": "1403",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 1024.985,
+      "a21_cal_per_mol": -203.711,
+      "comment": "MethylTert-ButylEther/Methanol p160 1/2c",
+      "id1": "1405",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1098.9416,
+      "a21_cal_per_mol": -44.1418,
+      "comment": "Dimethoxymethane/Water p252 1/1a",
+      "id1": "1431",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 657.2765,
+      "a21_cal_per_mol": -4.6934,
+      "comment": "Dimethoxymethane/Methanol p97 1/2c",
+      "id1": "1431",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 10542.2026,
+      "a21_cal_per_mol": -344.1682,
+      "comment": "Ethyleneoxide/Water p88 1/1a",
+      "id1": "1441",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 791.0185,
+      "a21_cal_per_mol": -210.2403,
+      "comment": "PropyleneOxide/Methanol p80 1/2c",
+      "id1": "1442",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 835.2626,
+      "a21_cal_per_mol": 10.5163,
+      "comment": "Tetrahydrofuran/Water p286 1/1a",
+      "id1": "1479",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 559.1539,
+      "a21_cal_per_mol": -260.1951,
+      "comment": "Tetrahydrofuran/Ethanol p328 1/2c",
+      "id1": "1479",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 381.8256,
+      "a21_cal_per_mol": -244.669,
+      "comment": "Tetrahydrofuran/1-Propanol p497 1/2c",
+      "id1": "1479",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 1029.3332,
+      "a21_cal_per_mol": -171.0842,
+      "comment": "Tetrachloromethane/Methanol p279 1/2c",
+      "id1": "1501",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 957.274,
+      "a21_cal_per_mol": -252.3762,
+      "comment": "Tertachloromethane/1-Propanol p472 1/2c",
+      "id1": "1501",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 7661.2894,
+      "a21_cal_per_mol": -187.7083,
+      "comment": "VinylCloride/Methanol p36 1/2c",
+      "id1": "1504",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 1516.5558,
+      "a21_cal_per_mol": -229.3734,
+      "comment": "Dichloromethane/Methanol p26 1/2c",
+      "id1": "1511",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 796.2935,
+      "a21_cal_per_mol": -172.0713,
+      "comment": "Dichloromethane/Ethanol p284 1/2c",
+      "id1": "1511",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 1295.4282,
+      "a21_cal_per_mol": -271.461,
+      "comment": "Chloroform/Methanol p25 1/2c",
+      "id1": "1521",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 981.7658,
+      "a21_cal_per_mol": -335.4504,
+      "comment": "Chloroform/Ethanol p282 1/2c",
+      "id1": "1521",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 272.4952,
+      "a21_cal_per_mol": 107.634,
+      "comment": "1.2-Dichloroethane/1-Propanol p478 1/2c",
+      "id1": "1523",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 538.1802,
+      "a21_cal_per_mol": -90.5235,
+      "comment": "Trichloroethylene/1-Propanol p474 1/2c",
+      "id1": "1541",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 1260.1312,
+      "a21_cal_per_mol": 81.3308,
+      "comment": "3-chloro-1-propene/Water p188 1/1a",
+      "id1": "1544",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 748.22,
+      "a21_cal_per_mol": -172.7007,
+      "comment": "Butylchloride/1-Propanol p502 1/2c",
+      "id1": "1586",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": -1070.3252,
+      "a21_cal_per_mol": 1057.3916,
+      "comment": "Dimethylamine/Water p174 1/1a",
+      "id1": "1702",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -520.5358,
+      "a21_cal_per_mol": -200.8021,
+      "comment": "Dimethylamine/Methanol p64 1/2c",
+      "id1": "1702",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": -1071.4286,
+      "a21_cal_per_mol": 1018.5371,
+      "comment": "Dimethylamine/Ethanol p299 1/2c",
+      "id1": "1702",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": -71.2521,
+      "a21_cal_per_mol": -231.1124,
+      "comment": "Dimethylamine/1-Propanol p484 1/2c",
+      "id1": "1702",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 149.3345,
+      "a21_cal_per_mol": -412.065,
+      "comment": "Ethylamine/Water p177 1/1a",
+      "id1": "1704",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 242.4137,
+      "a21_cal_per_mol": 2458.766,
+      "comment": "Triethylamine/Water p444 1/1a",
+      "id1": "1706",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 701.924,
+      "a21_cal_per_mol": -371.1197,
+      "comment": "Triethylamine/1-Propanol p552 1/2c",
+      "id1": "1706",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": 721.1889,
+      "a21_cal_per_mol": -312.3228,
+      "comment": "Diethylamine/Water p355 1/1a",
+      "id1": "1710",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -613.4553,
+      "a21_cal_per_mol": 1006.1474,
+      "comment": "Diethylamine/Ethanol p353 1/2c",
+      "id1": "1710",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": 426.0894,
+      "a21_cal_per_mol": -302.8076,
+      "comment": "Propylamine/Water p267 1/1a",
+      "id1": "1711",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -379.6694,
+      "a21_cal_per_mol": 874.815,
+      "comment": "n-Butylamine/Water p354 1/1a",
+      "id1": "1712",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -17.1391,
+      "a21_cal_per_mol": -220.6087,
+      "comment": "Butylamine/Ethanol p351 1/2c",
+      "id1": "1712",
+      "id2": "1102"
+    },
+    {
+      "a12_cal_per_mol": -188.4751,
+      "a21_cal_per_mol": -68.9772,
+      "comment": "Butylamine/1-Propanol p510 1/2c",
+      "id1": "1712",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": -553.685,
+      "a21_cal_per_mol": 1001.0323,
+      "comment": "Isopropylamine/Water p266 1/1a",
+      "id1": "1719",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 266.3109,
+      "a21_cal_per_mol": 332.5988,
+      "comment": "Acetonitrile/Water p76 1/1a",
+      "id1": "1772",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 367.0686,
+      "a21_cal_per_mol": 510.5582,
+      "comment": "Propionitrile/Water p189 1/1a",
+      "id1": "1773",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 395.4004,
+      "a21_cal_per_mol": 537.1531,
+      "comment": "Acrylonitrile/Water p182 1/1a",
+      "id1": "1774",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 535.7543,
+      "a21_cal_per_mol": -38.2344,
+      "comment": "Hexafluorobenzene/1-Propnaol p526 1/2c",
+      "id1": "1864",
+      "id2": "1103"
+    },
+    {
+      "a12_cal_per_mol": -110.3829,
+      "a21_cal_per_mol": 698.7989,
+      "comment": "Water/Acetone (Kato et al.)",
+      "id1": "1921",
+      "id2": "1051"
+    },
+    {
+      "a12_cal_per_mol": 752.9217,
+      "a21_cal_per_mol": 39.6746,
+      "comment": "Water/2-Butanone p277 1/1a",
+      "id1": "1921",
+      "id2": "1052"
+    },
+    {
+      "a12_cal_per_mol": 934.8834,
+      "a21_cal_per_mol": -501.3763,
+      "comment": "Water/Phenol p394 1/1a",
+      "id1": "1921",
+      "id2": "1181"
+    },
+    {
+      "a12_cal_per_mol": -251.6868,
+      "a21_cal_per_mol": 407.0073,
+      "comment": "Water/Aceticacid p100 1/1a",
+      "id1": "1921",
+      "id2": "1252"
+    },
+    {
+      "a12_cal_per_mol": -867.7066,
+      "a21_cal_per_mol": 2091.772,
+      "comment": "Water/n-Methylformamide p115 1/1a",
+      "id1": "1921",
+      "id2": "2852"
+    },
+    {
+      "a12_cal_per_mol": -292.3021,
+      "a21_cal_per_mol": -523.6271,
+      "comment": "Water/Dimethylsulfoxide p165 1/1a",
+      "id1": "1921",
+      "id2": "1844"
+    },
+    {
+      "a12_cal_per_mol": -175.0216,
+      "a21_cal_per_mol": -724.876,
+      "comment": "Water/Ethylenediamine p179 1/1a",
+      "id1": "1921",
+      "id2": "1741"
+    },
+    {
+      "a12_cal_per_mol": -417.4722,
+      "a21_cal_per_mol": 1189.9025,
+      "comment": "Water/Acrylicacid p186 1/1a",
+      "id1": "1921",
+      "id2": "1277"
+    },
+    {
+      "a12_cal_per_mol": 486.4688,
+      "a21_cal_per_mol": -146.6582,
+      "comment": "Water/Propionicacid p215 1/1a",
+      "id1": "1921",
+      "id2": "1253"
+    },
+    {
+      "a12_cal_per_mol": -210.5536,
+      "a21_cal_per_mol": 915.1339,
+      "comment": "Water/1.3.5-trioxane p225 1/1a",
+      "id1": "1921",
+      "id2": "1422"
+    },
+    {
+      "a12_cal_per_mol": 639.5742,
+      "a21_cal_per_mol": -556.8715,
+      "comment": "Water/N.n-dimethylformamide p234 1/1a",
+      "id1": "1921",
+      "id2": "1876"
+    },
+    {
+      "a12_cal_per_mol": -444.013,
+      "a21_cal_per_mol": 1302.0378,
+      "comment": "Water/1.4-dioxane p303 1/1a",
+      "id1": "1921",
+      "id2": "1421"
+    },
+    {
+      "a12_cal_per_mol": -397.8616,
+      "a21_cal_per_mol": 997.3999,
+      "comment": "Water/Sulfolane p307 1/1a",
+      "id1": "1921",
+      "id2": "1845"
+    },
+    {
+      "a12_cal_per_mol": 453.4841,
+      "a21_cal_per_mol": -463.0383,
+      "comment": "Water/N.n-dimethylacetamide p325 1/1a",
+      "id1": "1921",
+      "id2": "2856"
+    },
+    {
+      "a12_cal_per_mol": 933.6195,
+      "a21_cal_per_mol": -802.5279,
+      "comment": "Water/Morpholine p327 1/1a",
+      "id1": "1921",
+      "id2": "1765"
+    },
+    {
+      "a12_cal_per_mol": 548.2453,
+      "a21_cal_per_mol": 89.0444,
+      "comment": "Water/n-butanol p336 1/1a",
+      "id1": "1921",
+      "id2": "1105"
+    },
+    {
+      "a12_cal_per_mol": -370.3689,
+      "a21_cal_per_mol": 1635.7568,
+      "comment": "Water/1.4-butanediol p346 1/1a",
+      "id1": "1921",
+      "id2": "1241"
+    },
+    {
+      "a12_cal_per_mol": 489.1312,
+      "a21_cal_per_mol": -286.7611,
+      "comment": "Water/2.3-butanediol p351 1/1a",
+      "id1": "1921",
+      "id2": "1238"
+    },
+    {
+      "a12_cal_per_mol": -346.2827,
+      "a21_cal_per_mol": 900.5916,
+      "comment": "Water/diethylenegylcol p352 1/1a",
+      "id1": "1921",
+      "id2": "1202"
+    },
+    {
+      "a12_cal_per_mol": 537.7334,
+      "a21_cal_per_mol": -36.221,
+      "comment": "Water/Furfural p361 1/1a",
+      "id1": "1921",
+      "id2": "1889"
+    },
+    {
+      "a12_cal_per_mol": -56.5403,
+      "a21_cal_per_mol": -97.5005,
+      "comment": "Water/Pyridine p374 1/1a",
+      "id1": "1921",
+      "id2": "1791"
+    },
+    {
+      "a12_cal_per_mol": -801.2765,
+      "a21_cal_per_mol": 1402.6755,
+      "comment": "Water/n-Methylpyrrolidone p380 1/1a",
+      "id1": "1921",
+      "id2": "1767"
+    },
+    {
+      "a12_cal_per_mol": 819.6231,
+      "a21_cal_per_mol": -223.7898,
+      "comment": "Water/3-methylbutanol p382 1/1a",
+      "id1": "1921",
+      "id2": "1123"
+    },
+    {
+      "a12_cal_per_mol": -178.9352,
+      "a21_cal_per_mol": 1021.7979,
+      "comment": "Water/2-methyl-2-butanol p384 1/1a",
+      "id1": "1921",
+      "id2": "1111"
+    },
+    {
+      "a12_cal_per_mol": 712.2793,
+      "a21_cal_per_mol": -382.5734,
+      "comment": "Water/Phenol p399 1/1a",
+      "id1": "1921",
+      "id2": "1181"
+    },
+    {
+      "a12_cal_per_mol": -91.7122,
+      "a21_cal_per_mol": 485.3384,
+      "comment": "Water/Aniline p401 1/1a",
+      "id1": "1921",
+      "id2": "1792"
+    },
+    {
+      "a12_cal_per_mol": -657.2675,
+      "a21_cal_per_mol": 1253.468,
+      "comment": "Water/2-methylpyridine p402 1/1a",
+      "id1": "1921",
+      "id2": "1797"
+    },
+    {
+      "a12_cal_per_mol": 1280.6209,
+      "a21_cal_per_mol": -655.1387,
+      "comment": "Water/3-methylpyridine p406 1/1a",
+      "id1": "1921",
+      "id2": "2797"
+    },
+    {
+      "a12_cal_per_mol": -358.5748,
+      "a21_cal_per_mol": 333.911,
+      "comment": "Water/4-methylpyridine p408 1/1a",
+      "id1": "1921",
+      "id2": "2799"
+    },
+    {
+      "a12_cal_per_mol": -334.1695,
+      "a21_cal_per_mol": 857.6208,
+      "comment": "Water/Phenylhydrazine p409 1/1a",
+      "id1": "1921",
+      "id2": "1757"
+    },
+    {
+      "a12_cal_per_mol": 316.6082,
+      "a21_cal_per_mol": 95.0342,
+      "comment": "Water/Cyclohexanone p410 1/1a",
+      "id1": "1921",
+      "id2": "1080"
+    },
+    {
+      "a12_cal_per_mol": -56.9399,
+      "a21_cal_per_mol": 1043.7692,
+      "comment": "Water/Mesityloxide p411 1/1a",
+      "id1": "1921",
+      "id2": "1065"
+    },
+    {
+      "a12_cal_per_mol": -286.8493,
+      "a21_cal_per_mol": 1023.7144,
+      "comment": "Water/Cyclohexanol p415 1/1a",
+      "id1": "1921",
+      "id2": "1151"
+    },
+    {
+      "a12_cal_per_mol": 394.2396,
+      "a21_cal_per_mol": 756.4163,
+      "comment": "Water/n-Butylacetate p418 1/1a",
+      "id1": "1921",
+      "id2": "1315"
+    },
+    {
+      "a12_cal_per_mol": -351.0861,
+      "a21_cal_per_mol": 1188.5242,
+      "comment": "Water/Diacetonealcohol p419 1/1a",
+      "id1": "1921",
+      "id2": "2854"
+    },
+    {
+      "a12_cal_per_mol": -9.7248,
+      "a21_cal_per_mol": 802.6348,
+      "comment": "Water/1-hexanol p426 1/1a",
+      "id1": "1921",
+      "id2": "1114"
+    },
+    {
+      "a12_cal_per_mol": -172.0599,
+      "a21_cal_per_mol": 1138.3704,
+      "comment": "Water/2-hexanol p427 1/1a",
+      "id1": "1921",
+      "id2": "1115"
+    },
+    {
+      "a12_cal_per_mol": -178.571,
+      "a21_cal_per_mol": 670.1422,
+      "comment": "Water/2-butoxy-ethanol p433 1/1a",
+      "id1": "1921",
+      "id2": "2862"
+    },
+    {
+      "a12_cal_per_mol": 83.4921,
+      "a21_cal_per_mol": 304.0167,
+      "comment": "Water/Benzylalcohol p450 1/1a",
+      "id1": "1921",
+      "id2": "1180"
+    },
+    {
+      "a12_cal_per_mol": -497.9465,
+      "a21_cal_per_mol": 893.7955,
+      "comment": "Water/2.6-dimethylpyridinr p457 1/1a",
+      "id1": "1921",
+      "id2": "2796"
+    },
+    {
+      "a12_cal_per_mol": -250.5667,
+      "a21_cal_per_mol": 1438.236,
+      "comment": "Water/Isopentylacetate p459 1/1a",
+      "id1": "1921",
+      "id2": "1317"
+    },
+    {
+      "a12_cal_per_mol": 234.4706,
+      "a21_cal_per_mol": 641.1422,
+      "comment": "Water/Acetophenone p460 1/1a",
+      "id1": "1921",
+      "id2": "1090"
+    },
+    {
+      "a12_cal_per_mol": -847.2235,
+      "a21_cal_per_mol": 663.5428,
+      "comment": "Water/Quinoline p464 1/1a",
+      "id1": "1921",
+      "id2": "1748"
+    },
+    {
+      "a12_cal_per_mol": -310.5637,
+      "a21_cal_per_mol": 1655.4649,
+      "comment": "Water/Isopropylbenzene p465 1/1a",
+      "id1": "1921",
+      "id2": "510"
+    },
+    {
+      "a12_cal_per_mol": 1653.8373,
+      "a21_cal_per_mol": -379.2679,
+      "comment": "Halothane/Methanol p33 1/2c",
+      "id1": "2640",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 319.3243,
+      "a21_cal_per_mol": -34.2606,
+      "comment": "Methanol/Formamide p30 1/2c",
+      "id1": "2851",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Water/Water",
+      "id1": "1921",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -1.67124361,
+      "a21_cal_per_mol": 11.6847948,
+      "comment": "Methane/Water",
+      "id1": "1",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -8.1873052,
+      "a21_cal_per_mol": -3.2590244,
+      "comment": "Ethane/Water",
+      "id1": "2",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 6.3988162,
+      "a21_cal_per_mol": 14.7252261,
+      "comment": "Propane/Water",
+      "id1": "3",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -4.9878971,
+      "a21_cal_per_mol": 15.0233076,
+      "comment": "Isobutane/Water",
+      "id1": "4",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 1.08104224,
+      "a21_cal_per_mol": 16.096401,
+      "comment": "N-butane/Water",
+      "id1": "5",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 2.4641404,
+      "a21_cal_per_mol": 1.51226681,
+      "comment": "Carbon dioxide/Water",
+      "id1": "909",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -0.1589768,
+      "a21_cal_per_mol": 17.8451458,
+      "comment": "Hydrogen sulfide/Water",
+      "id1": "1922",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 5.365467,
+      "a21_cal_per_mol": -4.769304,
+      "comment": "Nitrogen/Water",
+      "id1": "900",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": -1.192326,
+      "a21_cal_per_mol": -6.359072,
+      "comment": "Methanol/Water",
+      "id1": "1101",
+      "id2": "1921"
+    },
+    {
+      "a12_cal_per_mol": 11.6847948,
+      "a21_cal_per_mol": -1.67124361,
+      "comment": "Water/Methane",
+      "id1": "1921",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Methane/Methane",
+      "id1": "1",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 10.6514456,
+      "a21_cal_per_mol": 0.020070821,
+      "comment": "Ethane/Methane",
+      "id1": "2",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 2.8615824,
+      "a21_cal_per_mol": -0.8942445,
+      "comment": "Propane/Methane",
+      "id1": "3",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 13.711749,
+      "a21_cal_per_mol": -0.7551398,
+      "comment": "Isobutane/Methane",
+      "id1": "4",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 1.39899584,
+      "a21_cal_per_mol": 0.82071773,
+      "comment": "N-butane/Methane",
+      "id1": "5",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 2.2455473,
+      "a21_cal_per_mol": 0.040936526,
+      "comment": "Carbon dioxide/Methane",
+      "id1": "909",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": -1.2121981,
+      "a21_cal_per_mol": 17.487448,
+      "comment": "Hydrogen sulfide/Methane",
+      "id1": "1922",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": -1.0333492,
+      "a21_cal_per_mol": 8.2866657,
+      "comment": "Nitrogen/Methane",
+      "id1": "900",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": 8.942445,
+      "a21_cal_per_mol": -15.89768,
+      "comment": "Methanol/Methane",
+      "id1": "1101",
+      "id2": "1"
+    },
+    {
+      "a12_cal_per_mol": -3.2590244,
+      "a21_cal_per_mol": -8.1873052,
+      "comment": "Water/Ethane",
+      "id1": "1921",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 0.020070821,
+      "a21_cal_per_mol": 10.6514456,
+      "comment": "Methane/Ethane",
+      "id1": "1",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Ethane/Ethane",
+      "id1": "2",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 5.0673855,
+      "a21_cal_per_mol": -1.6295122,
+      "comment": "Propane/Ethane",
+      "id1": "3",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 12.718144,
+      "a21_cal_per_mol": 9.141166,
+      "comment": "Isobutane/Ethane",
+      "id1": "4",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "N-butane/Ethane",
+      "id1": "5",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 0.9339887,
+      "a21_cal_per_mol": 17.3284712,
+      "comment": "Carbon dioxide/Ethane",
+      "id1": "909",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Hydrogen sulfide/Ethane",
+      "id1": "1922",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 13.91047,
+      "a21_cal_per_mol": -7.94884,
+      "comment": "Nitrogen/Ethane",
+      "id1": "900",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": -10.929655,
+      "a21_cal_per_mol": -17.090006,
+      "comment": "Methanol/Ethane",
+      "id1": "1101",
+      "id2": "2"
+    },
+    {
+      "a12_cal_per_mol": 14.7252261,
+      "a21_cal_per_mol": 6.3988162,
+      "comment": "Water/Propane",
+      "id1": "1921",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": -0.8942445,
+      "a21_cal_per_mol": 2.8615824,
+      "comment": "Methane/Propane",
+      "id1": "1",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": -1.6295122,
+      "a21_cal_per_mol": 5.0673855,
+      "comment": "Ethane/Propane",
+      "id1": "2",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Propane/Propane",
+      "id1": "3",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": 16.295122,
+      "a21_cal_per_mol": 13.91047,
+      "comment": "Isobutane/Propane",
+      "id1": "4",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": -2.185931,
+      "a21_cal_per_mol": -38.353153,
+      "comment": "N-butane/Propane",
+      "id1": "5",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": 7.2135723,
+      "a21_cal_per_mol": 1.21021089,
+      "comment": "Carbon dioxide/Propane",
+      "id1": "909",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": -4.0936526,
+      "a21_cal_per_mol": 17.686169,
+      "comment": "Hydrogen sulfide/Propane",
+      "id1": "1922",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": -3.3583849,
+      "a21_cal_per_mol": 12.320702,
+      "comment": "Nitrogen/Propane",
+      "id1": "900",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": 13.314307,
+      "a21_cal_per_mol": -20.070821,
+      "comment": "Methanol/Propane",
+      "id1": "1101",
+      "id2": "3"
+    },
+    {
+      "a12_cal_per_mol": 15.0233076,
+      "a21_cal_per_mol": -4.9878971,
+      "comment": "Water/Isobutane",
+      "id1": "1921",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": -0.7551398,
+      "a21_cal_per_mol": 13.711749,
+      "comment": "Methane/Isobutane",
+      "id1": "1",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 9.141166,
+      "a21_cal_per_mol": 12.718144,
+      "comment": "Ethane/Isobutane",
+      "id1": "2",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 13.91047,
+      "a21_cal_per_mol": 16.295122,
+      "comment": "Propane/Isobutane",
+      "id1": "3",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Isobutane/Isobutane",
+      "id1": "4",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 22.455473,
+      "a21_cal_per_mol": 11.6053064,
+      "comment": "N-butane/Isobutane",
+      "id1": "5",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 2.384652,
+      "a21_cal_per_mol": 8.1674331,
+      "comment": "Carbon dioxide/Isobutane",
+      "id1": "909",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Hydrogen sulfide/Isobutane",
+      "id1": "1922",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": -13.91047,
+      "a21_cal_per_mol": -9.93605,
+      "comment": "Nitrogen/Isobutane",
+      "id1": "900",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Methanol/Isobutane",
+      "id1": "1101",
+      "id2": "4"
+    },
+    {
+      "a12_cal_per_mol": 16.096401,
+      "a21_cal_per_mol": 1.08104224,
+      "comment": "Water/N-butane",
+      "id1": "1921",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 0.82071773,
+      "a21_cal_per_mol": 1.39899584,
+      "comment": "Methane/N-butane",
+      "id1": "1",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Ethane/N-butane",
+      "id1": "2",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": -38.353153,
+      "a21_cal_per_mol": -2.185931,
+      "comment": "Propane/N-butane",
+      "id1": "3",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 11.6053064,
+      "a21_cal_per_mol": 22.455473,
+      "comment": "Isobutane/N-butane",
+      "id1": "4",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "N-butane/N-butane",
+      "id1": "5",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": -22.455473,
+      "a21_cal_per_mol": -6.3391999,
+      "comment": "Carbon dioxide/N-butane",
+      "id1": "909",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Hydrogen sulfide/N-butane",
+      "id1": "1922",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Nitrogen/N-butane",
+      "id1": "900",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Methanol/N-butane",
+      "id1": "1101",
+      "id2": "5"
+    },
+    {
+      "a12_cal_per_mol": 1.51226681,
+      "a21_cal_per_mol": 2.4641404,
+      "comment": "Water/Carbon dioxide",
+      "id1": "1921",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 0.040936526,
+      "a21_cal_per_mol": 2.2455473,
+      "comment": "Methane/Carbon dioxide",
+      "id1": "1",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 17.3284712,
+      "a21_cal_per_mol": 0.9339887,
+      "comment": "Ethane/Carbon dioxide",
+      "id1": "2",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 1.21021089,
+      "a21_cal_per_mol": 7.2135723,
+      "comment": "Propane/Carbon dioxide",
+      "id1": "3",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 8.1674331,
+      "a21_cal_per_mol": 2.384652,
+      "comment": "Isobutane/Carbon dioxide",
+      "id1": "4",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": -6.3391999,
+      "a21_cal_per_mol": -22.455473,
+      "comment": "N-butane/Carbon dioxide",
+      "id1": "5",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Carbon dioxide/Carbon dioxide",
+      "id1": "909",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 12.718144,
+      "a21_cal_per_mol": 15.301517,
+      "comment": "Hydrogen sulfide/Carbon dioxide",
+      "id1": "1922",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": -9.3200149,
+      "a21_cal_per_mol": -28.218382,
+      "comment": "Nitrogen/Carbon dioxide",
+      "id1": "900",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 16.295122,
+      "a21_cal_per_mol": 2.583373,
+      "comment": "Methanol/Carbon dioxide",
+      "id1": "1101",
+      "id2": "909"
+    },
+    {
+      "a12_cal_per_mol": 17.8451458,
+      "a21_cal_per_mol": -0.1589768,
+      "comment": "Water/Hydrogen sulfide",
+      "id1": "1921",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 17.487448,
+      "a21_cal_per_mol": -1.2121981,
+      "comment": "Methane/Hydrogen sulfide",
+      "id1": "1",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Ethane/Hydrogen sulfide",
+      "id1": "2",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 17.686169,
+      "a21_cal_per_mol": -4.0936526,
+      "comment": "Propane/Hydrogen sulfide",
+      "id1": "3",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Isobutane/Hydrogen sulfide",
+      "id1": "4",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "N-butane/Hydrogen sulfide",
+      "id1": "5",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 15.301517,
+      "a21_cal_per_mol": 12.718144,
+      "comment": "Carbon dioxide/Hydrogen sulfide",
+      "id1": "909",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Hydrogen sulfide/Hydrogen sulfide",
+      "id1": "1922",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Nitrogen/Hydrogen sulfide",
+      "id1": "900",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": 12.320702,
+      "a21_cal_per_mol": -0.198721,
+      "comment": "Methanol/Hydrogen sulfide",
+      "id1": "1101",
+      "id2": "1922"
+    },
+    {
+      "a12_cal_per_mol": -4.769304,
+      "a21_cal_per_mol": 5.365467,
+      "comment": "Water/Nitrogen",
+      "id1": "1921",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": 8.2866657,
+      "a21_cal_per_mol": -1.0333492,
+      "comment": "Methane/Nitrogen",
+      "id1": "1",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": -7.94884,
+      "a21_cal_per_mol": 13.91047,
+      "comment": "Ethane/Nitrogen",
+      "id1": "2",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": 12.320702,
+      "a21_cal_per_mol": -3.3583849,
+      "comment": "Propane/Nitrogen",
+      "id1": "3",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": -9.93605,
+      "a21_cal_per_mol": -13.91047,
+      "comment": "Isobutane/Nitrogen",
+      "id1": "4",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "N-butane/Nitrogen",
+      "id1": "5",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": -28.218382,
+      "a21_cal_per_mol": -9.3200149,
+      "comment": "Carbon dioxide/Nitrogen",
+      "id1": "909",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Hydrogen sulfide/Nitrogen",
+      "id1": "1922",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Nitrogen/Nitrogen",
+      "id1": "900",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Methanol/Nitrogen",
+      "id1": "1101",
+      "id2": "900"
+    },
+    {
+      "a12_cal_per_mol": -6.359072,
+      "a21_cal_per_mol": -1.192326,
+      "comment": "Water/Methanol",
+      "id1": "1921",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": -15.89768,
+      "a21_cal_per_mol": 8.942445,
+      "comment": "Methane/Methanol",
+      "id1": "1",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": -17.090006,
+      "a21_cal_per_mol": -10.929655,
+      "comment": "Ethane/Methanol",
+      "id1": "2",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": -20.070821,
+      "a21_cal_per_mol": 13.314307,
+      "comment": "Propane/Methanol",
+      "id1": "3",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Isobutane/Methanol",
+      "id1": "4",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "N-butane/Methanol",
+      "id1": "5",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 2.583373,
+      "a21_cal_per_mol": 16.295122,
+      "comment": "Carbon dioxide/Methanol",
+      "id1": "909",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": -0.198721,
+      "a21_cal_per_mol": 12.320702,
+      "comment": "Hydrogen sulfide/Methanol",
+      "id1": "1922",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Nitrogen/Methanol",
+      "id1": "900",
+      "id2": "1101"
+    },
+    {
+      "a12_cal_per_mol": 0.0,
+      "a21_cal_per_mol": 0.0,
+      "comment": "Methanol/Methanol",
+      "id1": "1101",
+      "id2": "1101"
+    }
+  ],
+  "source": "ChemSep DECHEMA UNIQUAC data at 1 atm",
+  "units": "a*_cal_per_mol records are cal/mol; tau* records are direct dimensionless UNIQUAC tau coefficients"
+}

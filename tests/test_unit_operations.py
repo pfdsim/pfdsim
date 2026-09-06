@@ -24,6 +24,7 @@ from unit_operations import (
     ShortcutDistillation,
     EquilibriumReactor,
     Expander,
+    Filter,
     Flash,
     Flash3,
     HeatExchanger,
@@ -135,6 +136,19 @@ class UnitOperationSmokeTests(unittest.TestCase):
             {'water': 0.9, 'ethanol': 0.1},
             phase='liquid',
         )
+        filter_thermo = create_thermodynamics(['ethanol'], 'IDEAL')
+        filter_thermo.configure_permanent_solids(
+            ['ethanol', 'NaCl'],
+            ['NaCl'],
+            {'NaCl': {'diameter_m': 1e-4, 'sphericity': 0.9}},
+        )
+        filter_feed = filter_thermo.calculate_state(
+            298.15,
+            3.0,
+            100.0,
+            {'ethanol': 0.99, 'NaCl': 0.01},
+            phase='liquid',
+        )
         cases = [
             (Mixer('U', self.ideal, {'mode': 'adiabatic'}), {'in1': self.liquid, 'in2': self.liquid2}, True),
             (Splitter('U', self.ideal, {'split_frac': 0.4}), {'in': self.liquid}, True),
@@ -154,6 +168,7 @@ class UnitOperationSmokeTests(unittest.TestCase):
             (RigorousDistillation('U', self.ideal, {'N_stages': 4, 'feed_stage': 2, 'reflux_ratio': 2, 'D_to_F': 0.4, 'P_drop_per_stage': 0.0, 'mesh_tolerance': 1e-5}), {'feed': self.liquid}, True),
             (Decanter('U', self.unifac, {'T': 25, 'P': 1}), {'in': self.lle_feed}, True),
             (MolecularSieveDryer('U', self.ideal, {'target_water_mole_fraction': 0.01}), {'feed': self.liquid}, True),
+            (Filter('U', filter_thermo, {'cycle_time': 600, 'P_drop': 2.0, 'porosity': 0.4, 'capture_cut_size': 0.0, 'specific_cake_resistance': 1e10, 'medium_resistance': 1e9, 'liquid_viscosity': 0.001}), {'in': filter_feed}, True),
             (ShortcutExtractor('U', self.unifac, {'N_stages': 3, 'T': 25}), {'feed': self.lle_feed, 'solvent': self.solvent}, True),
             (RigorousLiquidLiquidExtractor('U', self.unifac, {'N_stages': 1, 'T': 25}), {'feed': self.lle_feed, 'solvent': self.solvent}, True),
             (Absorber('U', self.ideal, {'N_stages': 3, 'T': 25, 'P': 1}), {'gas': self.gas, 'liquid': self.liquid}, True),

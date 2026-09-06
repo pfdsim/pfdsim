@@ -214,27 +214,40 @@ class InteractionParameterTests(unittest.TestCase):
         ))
 
     def test_uniquac_supports_temperature_dependent_direct_tau_parameters(self):
-        forward = uniquac_binary_interaction('7697-37-2', '7732-18-5')
-        reverse = uniquac_binary_interaction('7732-18-5', '7697-37-2')
+        forward = uniquac_binary_interaction('71-36-3', '142-96-1')
+        reverse = uniquac_binary_interaction('142-96-1', '71-36-3')
 
-        self.assertAlmostEqual(forward['tau12_a'], 0.23936, places=6)
-        self.assertAlmostEqual(forward['tau12_b'], -85.163, places=6)
-        self.assertAlmostEqual(reverse['tau12_a'], -0.59832, places=6)
-        self.assertAlmostEqual(reverse['tau12_b'], 626.111, places=6)
+        self.assertAlmostEqual(forward['tau12_a'], -0.12533602, places=8)
+        self.assertAlmostEqual(forward['tau12_b'], 147.409781, places=6)
+        self.assertAlmostEqual(reverse['tau12_a'], 0.72435572, places=8)
+        self.assertAlmostEqual(reverse['tau12_b'], -522.450397, places=6)
 
-        thermo = create_thermodynamics(['HNO3', 'H2O'], 'UNIQUAC')
-        tau = thermo._uniquac_tau_matrix(298.15)
+        temperature = 350.0
+        thermo = create_thermodynamics(['1-butanol', 'dibutyl ether'], 'UNIQUAC')
+        tau = thermo._uniquac_tau_matrix(temperature)
 
-        self.assertAlmostEqual(tau[0][1], math.exp(0.23936 - 85.163 / 298.15))
-        self.assertAlmostEqual(tau[1][0], math.exp(-0.59832 + 626.111 / 298.15))
+        self.assertAlmostEqual(
+            tau[0][1],
+            math.exp(-0.12533602 + 147.409781 / temperature),
+        )
+        self.assertAlmostEqual(
+            tau[1][0],
+            math.exp(0.72435572 - 522.450397 / temperature),
+        )
 
-        rk_thermo = create_thermodynamics(['HNO3', 'H2O'], 'UNIQUAC-RK')
-        self.assertEqual(rk_thermo.r['HNO3'], thermo.r['HNO3'])
-        self.assertEqual(rk_thermo.q['HNO3'], thermo.q['HNO3'])
+        rk_thermo = create_thermodynamics(
+            ['1-butanol', 'dibutyl ether'],
+            'UNIQUAC-RK',
+        )
+        self.assertEqual(rk_thermo.r['1-butanol'], thermo.r['1-butanol'])
+        self.assertEqual(rk_thermo.q['1-butanol'], thermo.q['1-butanol'])
 
-        pr_thermo = create_thermodynamics(['HNO3', 'H2O'], 'UNIQUAC-PR')
-        self.assertEqual(pr_thermo.r['HNO3'], thermo.r['HNO3'])
-        self.assertEqual(pr_thermo.q['HNO3'], thermo.q['HNO3'])
+        pr_thermo = create_thermodynamics(
+            ['1-butanol', 'dibutyl ether'],
+            'UNIQUAC-PR',
+        )
+        self.assertEqual(pr_thermo.r['1-butanol'], thermo.r['1-butanol'])
+        self.assertEqual(pr_thermo.q['1-butanol'], thermo.q['1-butanol'])
 
     def test_nrtl_supports_anchored_log_and_quadratic_tau_terms(self):
         T = 360.0
@@ -383,6 +396,43 @@ class InteractionParameterTests(unittest.TestCase):
     def test_phenolic_temperature_interactions_use_paper_cij_form(self):
         T = 333.15
         tref = 273.15
+        expected_ranges = {
+            ('108-88-3', '108-95-2'): (333.15, 363.15),
+            ('108-88-3', '95-48-7'): (333.15, 363.15),
+            ('108-88-3', '108-39-4'): (333.15, 363.15),
+            ('108-88-3', '106-44-5'): (333.15, 363.15),
+            ('111-65-9', '95-48-7'): (333.15, 363.15),
+            ('111-65-9', '108-39-4'): (333.15, 363.15),
+            ('7732-18-5', '108-95-2'): (298.15, 363.15),
+            ('7732-18-5', '95-48-7'): (298.15, 363.15),
+            ('7732-18-5', '108-39-4'): (298.15, 363.15),
+            ('7732-18-5', '106-44-5'): (298.15, 363.15),
+        }
+        for filename in (
+            'nrtl_binary_interactions_cas.json',
+            'uniquac_binary_interactions_cas.json',
+        ):
+            with open(
+                os.path.join(ROOT, 'data', filename),
+                encoding='utf-8',
+            ) as handle:
+                records = json.load(handle)['interactions']
+            phenolic_records = [
+                record for record in records
+                if record.get('source_file')
+                == 'data/source/phenolic_temperature_interactions.json'
+            ]
+            self.assertEqual(len(phenolic_records), len(expected_ranges))
+            self.assertEqual(
+                {
+                    (record['cas1'], record['cas2']): (
+                        record['Tmin_K'],
+                        record['Tmax_K'],
+                    )
+                    for record in phenolic_records
+                },
+                expected_ranges,
+            )
 
         nrtl = nrtl_binary_interaction('108-88-3', '108-95-2')
         self.assertIn('phenolic temperature-dependent NRTL', nrtl['comment'])
@@ -446,6 +496,36 @@ class InteractionParameterTests(unittest.TestCase):
     def test_cesari_phenolic_nrtl_interactions_use_energy_over_rt_form(self):
         R = 8.31446261815324
         T = 323.15
+        with open(
+            os.path.join(ROOT, 'data', 'nrtl_binary_interactions_cas.json'),
+            encoding='utf-8',
+        ) as handle:
+            records = json.load(handle)['interactions']
+        cesari_records = [
+            record for record in records
+            if record.get('source_file')
+            == 'data/source/cesari_phenolic_nrtl_interactions.json'
+        ]
+        expected_ranges = {
+            ('7732-18-5', '90-05-1'): (298.15, 323.15),
+            ('7732-18-5', '91-10-1'): (293.15, 323.15),
+            ('7732-18-5', '120-80-9'): (293.15, 323.15),
+            ('7732-18-5', '121-33-5'): (293.15, 323.15),
+            ('64-17-5', '108-95-2'): (303.0, 387.0),
+            ('64-17-5', '90-05-1'): (300.0, 410.0),
+            ('64-17-5', '95-48-7'): (302.0, 395.0),
+        }
+        self.assertEqual(len(cesari_records), len(expected_ranges))
+        self.assertEqual(
+            {
+                (record['cas1'], record['cas2']): (
+                    record['Tmin_K'],
+                    record['Tmax_K'],
+                )
+                for record in cesari_records
+            },
+            expected_ranges,
+        )
 
         water_guaiacol = nrtl_binary_interaction('7732-18-5', '90-05-1')
         self.assertIn('Water/Guaiacol Cesari phenolic NRTL', water_guaiacol['comment'])
@@ -514,6 +594,30 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertAlmostEqual(uniquac['tau21_b'], 2315.818669335, places=8)
 
     def test_1_butanol_water_temperature_interactions_override_legacy_records(self):
+        for filename in (
+            'nrtl_binary_interactions_cas.json',
+            'uniquac_binary_interactions_cas.json',
+        ):
+            with open(
+                os.path.join(ROOT, 'data', filename),
+                encoding='utf-8',
+            ) as handle:
+                records = json.load(handle)['interactions']
+            record = next(
+                item for item in records
+                if item['cas1'] == '71-36-3' and item['cas2'] == '7732-18-5'
+            )
+            self.assertEqual(
+                record['source_file'],
+                'data/source/1_butanol_water_interactions.json',
+            )
+            self.assertEqual(
+                record['source'],
+                'J. Chem. Thermodynamics 1978, 10, 1173-1179',
+            )
+            self.assertAlmostEqual(record['Tmin_K'], 298.15)
+            self.assertAlmostEqual(record['Tmax_K'], 397.75)
+
         nrtl = nrtl_binary_interaction('71-36-3', '7732-18-5')
         self.assertIn('temperature-dependent NRTL', nrtl['comment'])
         self.assertAlmostEqual(nrtl['tau12_c'], 3.07626601, places=8)
@@ -543,6 +647,21 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertEqual(payload['metadata']['disabled_records'], 39)
         self.assertEqual(payload['metadata']['activity_curated_disabled_records'], 10)
         records = payload['interactions']
+        nagata_records = [
+            record for record in records
+            if record.get('source', '').startswith('Nagata and Gmehling')
+        ]
+        self.assertEqual(len(nagata_records), 29)
+        self.assertTrue(all(record['disabled'] for record in nagata_records))
+        self.assertTrue(all(
+            record.get('source_file')
+            == 'data/source/nagata_gmehling_extended_uniquac_interactions.json'
+            for record in nagata_records
+        ))
+        self.assertTrue(all(
+            'Tmin_K' not in record and 'Tmax_K' not in record
+            for record in nagata_records
+        ))
         extended = [
             record for record in records
             if record.get('comment', '').startswith('Ethanol/Benzene extended UNIQUAC')
@@ -631,6 +750,22 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertEqual(payload['metadata']['disabled_records'], 15)
         self.assertEqual(payload['metadata']['activity_curated_disabled_records'], 9)
 
+        matrix_records = [
+            record for record in payload['interactions']
+            if record.get('source')
+            == 'User-supplied NRTL temperature-dependent matrix'
+        ]
+        self.assertEqual(len(matrix_records), 26)
+        self.assertTrue(all(
+            record.get('source_file')
+            == 'data/source/nrtl_temperature_matrix_interactions.json'
+            for record in matrix_records
+        ))
+        self.assertTrue(all(
+            'Tmin_K' not in record and 'Tmax_K' not in record
+            for record in matrix_records
+        ))
+
         disabled = [
             record for record in payload['interactions']
             if record.get('disabled')
@@ -678,21 +813,32 @@ class InteractionParameterTests(unittest.TestCase):
                 self.assertEqual(nrtl_binary_interaction(cas1, cas2)['comment'], comment)
 
     def test_nrtl_supports_temperature_dependent_tau_parameters(self):
-        forward = nrtl_binary_interaction('7697-37-2', '7732-18-5')
-        reverse = nrtl_binary_interaction('7732-18-5', '7697-37-2')
+        forward = nrtl_binary_interaction('71-36-3', '142-96-1')
+        reverse = nrtl_binary_interaction('142-96-1', '71-36-3')
 
-        self.assertAlmostEqual(forward['tau12_c'], 1.533, places=6)
-        self.assertAlmostEqual(forward['tau12_d'], 84.6, places=6)
-        self.assertAlmostEqual(reverse['tau12_c'], 0.178, places=6)
-        self.assertAlmostEqual(reverse['tau12_d'], -865.8, places=6)
+        self.assertAlmostEqual(forward['tau12_c'], 0.20308121, places=8)
+        self.assertAlmostEqual(forward['tau12_d'], 152.334314, places=6)
+        self.assertAlmostEqual(reverse['tau12_c'], -2.2428764, places=7)
+        self.assertAlmostEqual(reverse['tau12_d'], 1056.184603, places=6)
 
-        thermo = create_thermodynamics(['HNO3', 'H2O'], 'NRTL')
-        tau, alpha = thermo._nrtl_matrices(298.15)
+        temperature = 350.0
+        thermo = create_thermodynamics(['1-butanol', 'dibutyl ether'], 'NRTL')
+        tau, alpha = thermo._nrtl_matrices(temperature)
 
-        self.assertAlmostEqual(tau[0][1], 1.817, places=3)
-        self.assertAlmostEqual(tau[1][0], -2.726, places=3)
-        self.assertAlmostEqual(alpha[0][1], 0.3, places=6)
-        self.assertAlmostEqual(alpha[1][0], 0.3, places=6)
+        self.assertAlmostEqual(
+            tau[0][1],
+            0.20308121 + 152.334314 / temperature,
+        )
+        self.assertAlmostEqual(
+            tau[1][0],
+            -2.2428764 + 1056.184603 / temperature,
+        )
+        self.assertAlmostEqual(alpha[0][1], 0.59840813, places=8)
+        self.assertAlmostEqual(alpha[1][0], 0.59840813, places=8)
+
+    def test_neutral_nitric_acid_water_interactions_are_not_registered(self):
+        self.assertIsNone(nrtl_binary_interaction('7697-37-2', '7732-18-5'))
+        self.assertIsNone(uniquac_binary_interaction('7697-37-2', '7732-18-5'))
 
     def test_interaction_parameter_tables_are_cas_keyed(self):
         def load_data(filename):
@@ -761,8 +907,8 @@ class InteractionParameterTests(unittest.TestCase):
         )
         nrtl_payload = load_data('nrtl_binary_interactions_cas.json')
         self.assertEqual(nrtl_payload['metadata']['skipped_records'], 0)
-        self.assertEqual(nrtl_payload['metadata']['converted_records'], 465)
-        self.assertEqual(nrtl_payload['metadata']['base_converted_records'], 345)
+        self.assertEqual(nrtl_payload['metadata']['converted_records'], 464)
+        self.assertEqual(nrtl_payload['metadata']['base_converted_records'], 344)
         self.assertEqual(nrtl_payload['metadata']['supplemental_records'], 115)
         self.assertEqual(nrtl_payload['metadata']['supplemental_new_pairs'], 80)
         self.assertEqual(nrtl_payload['metadata']['water_organic_overlay_records'], 7)
@@ -797,8 +943,8 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertIsNotNone(nrtl_binary_interaction('106-99-0', '67-56-1'))
         uniquac_payload = load_data('uniquac_binary_interactions_cas.json')
         self.assertEqual(uniquac_payload['metadata']['skipped_records'], 0)
-        self.assertEqual(uniquac_payload['metadata']['converted_records'], 445)
-        self.assertEqual(uniquac_payload['metadata']['base_converted_records'], 323)
+        self.assertEqual(uniquac_payload['metadata']['converted_records'], 444)
+        self.assertEqual(uniquac_payload['metadata']['base_converted_records'], 322)
         self.assertEqual(uniquac_payload['metadata']['supplemental_records'], 104)
         self.assertEqual(uniquac_payload['metadata']['supplemental_new_pairs'], 72)
         self.assertEqual(uniquac_payload['metadata']['water_organic_overlay_records'], 7)
@@ -833,6 +979,48 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertIsNotNone(nrtl_binary_interaction('67-56-1', '75-25-2'))
         self.assertEqual(cas_for_component('3-Methylpyridien'), '108-99-6')
         self.assertEqual(cas_for_component('p-Xylene'), '106-42-3')
+
+    def test_tau_activity_interactions_have_sources_and_temperature_ranges(self):
+        matrix_source = 'data/source/nrtl_temperature_matrix_interactions.json'
+
+        def is_tau_coefficient(key):
+            return key.startswith(('tau12_', 'tau21_'))
+
+        for filename in (
+            'nrtl_binary_interactions_cas.json',
+            'uniquac_binary_interactions_cas.json',
+        ):
+            with open(
+                os.path.join(ROOT, 'data', filename),
+                encoding='utf-8',
+            ) as handle:
+                records = json.load(handle)['interactions']
+            tau_records = [
+                record for record in records
+                if any(is_tau_coefficient(key) for key in record)
+            ]
+            for record in tau_records:
+                pair = (record['cas1'], record['cas2'])
+                with self.subTest(filename=filename, pair=pair):
+                    source_file = record.get('source_file')
+                    self.assertTrue(source_file)
+                    self.assertTrue(os.path.isfile(os.path.join(ROOT, source_file)))
+
+                    tau_values = [
+                        float(value)
+                        for key, value in record.items()
+                        if is_tau_coefficient(key)
+                    ]
+                    defensible_zero = all(value == 0.0 for value in tau_values)
+                    if (
+                        record.get('disabled')
+                        or source_file == matrix_source
+                        or defensible_zero
+                    ):
+                        continue
+                    self.assertIsNotNone(record.get('Tmin_K'))
+                    self.assertIsNotNone(record.get('Tmax_K'))
+                    self.assertLessEqual(record['Tmin_K'], record['Tmax_K'])
 
     def test_binary_interaction_builders_match_runtime_json(self):
         resolved, unresolved = resolve_component_ids()
