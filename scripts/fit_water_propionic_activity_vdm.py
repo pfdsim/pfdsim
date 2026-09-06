@@ -9,8 +9,10 @@ Txy dataset is intentionally excluded.
 from __future__ import annotations
 
 from concurrent.futures import ProcessPoolExecutor
+from functools import partial
 import json
 import math
+import os
 from pathlib import Path
 import sys
 
@@ -357,20 +359,72 @@ def pinned_azeotrope_diagnostics(thermo) -> dict:
     }
 
 
-def fit_worker(task: tuple[str, float | None]) -> dict:
-    model, alpha = task
-    unconstrained_solutions = [
-        least_squares(
-            lambda parameters: objective(model, parameters, alpha),
-            start,
-            bounds=([-20.0, -10000.0, -20.0, -10000.0],
-                    [20.0, 10000.0, 20.0, 10000.0]),
-            x_scale="jac", xtol=1.0e-11, ftol=1.0e-11, gtol=1.0e-11,
-            max_nfev=1500,
-        )
-        for start in starts_for(model)
-    ]
-    unconstrained = min(unconstrained_solutions, key=lambda item: item.cost)
+def fit_unconstrained_start(task):
+    model, alpha, start = task
+    result = least_squares(
+        lambda parameters: objective(model, parameters, alpha),
+        start,
+        bounds=([-20.0, -10000.0, -20.0, -10000.0],
+                [20.0, 10000.0, 20.0, 10000.0]),
+        x_scale="jac", xtol=1.0e-11, ftol=1.0e-11, gtol=1.0e-11,
+        max_nfev=1500,
+    )
+    return model, alpha, result
+
+
+def _scaled_to_parameters(scaled):
+    return np.asarray((
+        scaled[0], 1000.0 * scaled[1], scaled[2], 1000.0 * scaled[3]
+    ))
+
+
+def _parameters_to_scaled(parameters):
+    return np.asarray((
+        parameters[0], parameters[1] / 1000.0,
+        parameters[2], parameters[3] / 1000.0,
+    ))
+
+
+def _constrained_scaled_cost(scaled, *, model, alpha):
+    residuals = objective(model, _scaled_to_parameters(scaled), alpha)
+    return 0.5 * float(np.dot(residuals, residuals))
+
+
+def _scaled_azeotrope_constraints(scaled, *, model, alpha):
+    return azeotrope_constraints(
+        model,
+        _scaled_to_parameters(scaled),
+        alpha,
+    )
+
+
+def fit_constrained_start(task, workers):
+    model, alpha, start = task
+
+    result = minimize(
+        partial(_constrained_scaled_cost, model=model, alpha=alpha),
+        _parameters_to_scaled(start),
+        method="SLSQP",
+        bounds=[(-20.0, 20.0), (-10.0, 10.0),
+                (-20.0, 20.0), (-10.0, 10.0)],
+        constraints={
+            "type": "eq",
+            "fun": partial(
+                _scaled_azeotrope_constraints,
+                model=model,
+                alpha=alpha,
+            ),
+        },
+        options={
+            "ftol": 1.0e-12,
+            "maxiter": 1000,
+            "workers": workers,
+        },
+    )
+    return model, alpha, result
+
+
+def assemble_fit(model, alpha, unconstrained, constrained_solutions) -> dict:
     unconstrained_thermo = make_thermo(model, unconstrained.x, alpha)
     unconstrained_reference = {
         "parameters": [float(value) for value in unconstrained.x],
@@ -397,43 +451,14 @@ def fit_worker(task: tuple[str, float | None]) -> dict:
         "azeotropes_at_101_325_kPa": azeotropes(unconstrained_thermo),
     }
 
-    def scaled_to_parameters(scaled):
-        return np.asarray((scaled[0], 1000.0 * scaled[1], scaled[2], 1000.0 * scaled[3]))
-
-    def parameters_to_scaled(parameters):
-        return np.asarray((parameters[0], parameters[1] / 1000.0,
-                           parameters[2], parameters[3] / 1000.0))
-
-    def scaled_cost(scaled):
-        residuals = objective(model, scaled_to_parameters(scaled), alpha)
-        return 0.5 * float(np.dot(residuals, residuals))
-
-    constrained_starts = [unconstrained.x] + starts_for(model)
-    constrained_solutions = [
-        minimize(
-            scaled_cost,
-            parameters_to_scaled(start),
-            method="SLSQP",
-            bounds=[(-20.0, 20.0), (-10.0, 10.0),
-                    (-20.0, 20.0), (-10.0, 10.0)],
-            constraints={
-                "type": "eq",
-                "fun": lambda scaled: azeotrope_constraints(
-                    model, scaled_to_parameters(scaled), alpha
-                ),
-            },
-            options={"ftol": 1.0e-12, "maxiter": 1000},
-        )
-        for start in constrained_starts
-    ]
     feasible = [
         item for item in constrained_solutions
         if np.max(np.abs(azeotrope_constraints(
-            model, scaled_to_parameters(item.x), alpha
+            model, _scaled_to_parameters(item.x), alpha
         ))) < 1.0e-7
     ]
     result = min(feasible or constrained_solutions, key=lambda item: item.fun)
-    parameters = scaled_to_parameters(result.x)
+    parameters = _scaled_to_parameters(result.x)
     thermo = make_thermo(model, parameters, alpha)
     return {
         "model": model, "alpha12": alpha,
@@ -469,8 +494,74 @@ def main() -> None:
     tasks = [("UNIQUAC-VDM", None)] + [
         ("NRTL-VDM", alpha) for alpha in (0.2, 0.3, 0.4, 0.5)
     ]
-    with ProcessPoolExecutor(max_workers=5) as executor:
-        fits = list(executor.map(fit_worker, tasks))
+    unconstrained_jobs = [
+        (model, alpha, start)
+        for model, alpha in tasks
+        for start in starts_for(model)
+    ]
+    max_workers = min(os.cpu_count() or 1, len(unconstrained_jobs))
+    print(
+        f"Running {len(unconstrained_jobs)} unconstrained starts "
+        f"across {max_workers} workers...",
+        file=sys.stderr,
+        flush=True,
+    )
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        unconstrained_results = list(executor.map(
+            fit_unconstrained_start,
+            unconstrained_jobs,
+        ))
+        unconstrained_by_task = {
+            task: min(
+                (
+                    result for model, alpha, result in unconstrained_results
+                    if (model, alpha) == task
+                ),
+                key=lambda item: item.cost,
+            )
+            for task in tasks
+        }
+        constrained_jobs = [
+            (model, alpha, start)
+            for model, alpha in tasks
+            for start in (
+                [unconstrained_by_task[(model, alpha)].x]
+                + starts_for(model)
+            )
+        ]
+        print(
+            f"Running {len(constrained_jobs)} constrained starts with "
+            f"{max_workers}-worker numerical Jacobians...",
+            file=sys.stderr,
+            flush=True,
+        )
+        constrained_results = []
+        for index, job in enumerate(constrained_jobs, start=1):
+            model, alpha, _ = job
+            label = model if alpha is None else f"{model} alpha={alpha}"
+            print(
+                f"  constrained start {index}/{len(constrained_jobs)}: "
+                f"{label}",
+                file=sys.stderr,
+                flush=True,
+            )
+            constrained_results.append(
+                fit_constrained_start(job, executor.map)
+            )
+    print("Scoring fitted models...", file=sys.stderr, flush=True)
+    fits = [
+        assemble_fit(
+            model,
+            alpha,
+            unconstrained_by_task[(model, alpha)],
+            [
+                result for result_model, result_alpha, result
+                in constrained_results
+                if (result_model, result_alpha) == (model, alpha)
+            ],
+        )
+        for model, alpha in tasks
+    ]
     uniquac, nrtl_candidates = fits[0], fits[1:]
     selected_nrtl = min(nrtl_candidates, key=lambda item: item["optimizer"]["cost"])
     print(json.dumps({
@@ -493,7 +584,7 @@ def main() -> None:
             "delta_H_J_per_mol": -63490.0, "delta_S_J_per_mol_K": -152.4,
         },
         "parallelism": {
-            "max_workers": 5,
+            "max_workers": max_workers,
             "tasks": ["one UNIQUAC-VDM"] + [
                 f"NRTL-VDM alpha={alpha}" for alpha in (0.2, 0.3, 0.4, 0.5)
             ],
