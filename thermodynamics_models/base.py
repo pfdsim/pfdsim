@@ -4685,6 +4685,8 @@ class IdealThermodynamics:
         if not accepted_liquids:
             return
         for pair_key, details in metadata.items():
+            if details.get('do_not_extrapolate', False):
+                continue
             comp1 = details['component1']
             comp2 = details['component2']
             relevant = any(

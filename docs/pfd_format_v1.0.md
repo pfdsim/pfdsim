@@ -113,28 +113,6 @@ This changes the qualified lower Psat domain and enables the A-H inverse-tail
 fit retry when the declared pressure is below the default. It does not impose
 an exact lower-pressure fit constraint.
 
-### Activity-Interaction Extrapolation Limits
-
-```pfd
-ACTIVITY_INTERACTION_MAX_PSAT: 10 [bar]
-ACTIVITY_INTERACTION_MAX_TEMPERATURE: 423.15 [K]
-```
-
-`ACTIVITY_INTERACTION_MAX_PSAT` limits extrapolation of liquid activity-model
-interactions. It defaults to `10 bar`. For each NRTL or UNIQUAC molecular pair,
-the interaction parameters are evaluated at no more than the lower of the two
-pure-component saturation temperatures at this pressure. UNIFAC uses the most
-restrictive active-component cap because its residual interactions operate on
-functional groups rather than molecular binary parameters. Stream temperature,
-pure-component vapor pressure, and vapor fugacity are not clipped.
-
-`ACTIVITY_INTERACTION_MAX_TEMPERATURE` is optional and applies an additional
-absolute upper temperature to every activity interaction. When both directives
-apply, the lowest limiting temperature is used. Pressure units accepted by
-`PSAT_MINIMUM_PRESSURE` and temperature units `K`, `C`, and `F` are supported.
-These limits constrain interaction extrapolation; they do not extend the
-general pressure validity of a gamma-phi method.
-
 ### 4. Thermodynamics Method
 
 ```
@@ -801,7 +779,8 @@ INTERACTION_ESTIMATION:
 Global rows begin with the destination molecular activity model (`UNIQUAC` or
 `NRTL`). Pair-specific rows begin with a PFD component pair and require
 `model=UNIQUAC` or `model=NRTL`. Pair rows inherit the global rule and may
-override `source`, `Tmin`, `Tmax`, `T_ref`, and, for NRTL, `alpha`.
+override `source`, `Tmin`, `Tmax`, `T_ref`, `do_not_extrapolate`, and, for
+NRTL, `alpha`.
 Without `scope=...`, a rule belongs to the global thermodynamic context.
 Records in different scopes may repeat the same model and component pair.
 Within one scope, duplicate global rules or duplicate pair rules are errors.
@@ -840,12 +819,11 @@ INTERACTION_ESTIMATION:
     H2O/PD23 | model=NRTL, alpha=0.2, Tmin=303.15 [K], Tmax=393.15 [K]
 ```
 
-`Tmin` and `Tmax` define the regression/calibration domain, not hard runtime
-limits. Frozen parameters continue to evaluate outside that range. Internal
-root-search trials, vapor-only states, and unused pairs do not warn merely for
-leaving the range. An accepted VLE/LLE/VLLE state warns once per relevant pair
-and extrapolation direction when a liquid phase actually uses an estimated
-interaction outside its fitted range. Fit source, range, sample count, and
+`Tmin` and `Tmax` define the regression/calibration domain. Frozen parameters
+continue to evaluate outside that range by default. With
+`do_not_extrapolate=true`, each generated binary record instead clamps its
+interaction evaluation temperature to the inherited or pair-specific range.
+Fit source, range, sample count, and
 `ln(gamma)` error metrics are retained as thermodynamic provenance.
 
 #### Explicit Interaction Parameters
@@ -880,13 +858,17 @@ Supported models and fields:
   `tau21_d`, `tau21_e`, `tau21_f`, `tau21_g`, and optional
   `tau_tref`/`tref`. The direct form is
   `tau = c + d/T + e*((Tref-T)/T + ln(T/Tref)) + f*T + g*T^2`; omitted
-  `d`, `e`, `f`, and `g` coefficients default to zero
+  `d`, `e`, `f`, and `g` coefficients default to zero. Optional
+  `do_not_extrapolate=true` requires `Tmin_K` and `Tmax_K` and clamps only this
+  pair's interaction evaluation temperature to that range
 - `UNIQUAC` - either scalar energy fields `a12`/`a21` [cal/mol] or direct tau
   fields `tau12_a`, `tau12_b`, `tau12_c`, `tau12_d`, `tau12_e`, `tau21_a`,
   `tau21_b`, `tau21_c`, `tau21_d`, `tau21_e`, and optional
   `tau_tref`/`tref`, `use_q_prime`, and `model_variant`. The direct form is
   `ln(tau) = a + b/T + c*((Tref-T)/T + ln(T/Tref)) + d*T + e*T^2`;
-  omitted `b`, `c`, `d`, and `e` coefficients default to zero
+  omitted `b`, `c`, `d`, and `e` coefficients default to zero. Optional
+  `do_not_extrapolate=true` requires `Tmin_K` and `Tmax_K` and clamps only this
+  pair's interaction evaluation temperature to that range
 - `PR` or `SRK` - constant `kij`/`k_ij`, optionally with `Tmin_K`/`Tmax_K`, or
   temperature-dependent `kij_a`, `kij_b`, `kij_c` using
   `k_ij = kij_a + kij_b/T + kij_c*T`; `T_ref_K` is accepted as provenance

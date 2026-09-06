@@ -376,18 +376,6 @@ class Simulator:
             'psat_minimum_pressure_bar',
             None,
         )
-        activity_interaction_max_psat_bar = getattr(
-            self.pfd.metadata,
-            'activity_interaction_max_psat_bar',
-            None,
-        )
-        if activity_interaction_max_psat_bar is None:
-            activity_interaction_max_psat_bar = 10.0
-        activity_interaction_max_temperature_K = getattr(
-            self.pfd.metadata,
-            'activity_interaction_max_temperature_K',
-            None,
-        )
         db = ChemicalDatabase(enable_online=allow_online_lookup)
 
         try:
@@ -724,6 +712,21 @@ class Simulator:
                 return value.strip().lower() in {'true', 'yes', '1', 'on'}
             return bool(value)
 
+        def strict_boolean(value, field: str) -> bool:
+            if isinstance(value, bool):
+                return value
+            if isinstance(value, str):
+                normalized = value.strip().lower()
+                if normalized in {'true', 'yes', '1', 'on'}:
+                    return True
+                if normalized in {'false', 'no', '0', 'off'}:
+                    return False
+            if isinstance(value, (int, float)) and value in (0, 1):
+                return bool(value)
+            raise SimulationError(
+                f"INTERACTION_PARAMETERS field '{field}' must be boolean; got {value!r}."
+            )
+
         def normalize_interaction_parameters() -> list[dict]:
             overrides = []
             activity_override_keys = set()
@@ -957,6 +960,35 @@ class Simulator:
 
                 if model == 'NRTL':
                     remember_activity_override(scope, model, comp1, comp2)
+                    record['do_not_extrapolate'] = strict_boolean(
+                        params.get('do_not_extrapolate', False),
+                        'do_not_extrapolate',
+                    )
+                    for aliases, target in (
+                        (('tmin', 'tmin_k'), 'Tmin_K'),
+                        (('tmax', 'tmax_k'), 'Tmax_K'),
+                    ):
+                        present = [name for name in aliases if name in params]
+                        if len(present) > 1:
+                            raise SimulationError(
+                                f"NRTL INTERACTION_PARAMETERS specifies duplicate aliases for {target}."
+                            )
+                        if present:
+                            record[target] = numeric(params[present[0]], present[0])
+                    if record['do_not_extrapolate'] and (
+                        'Tmin_K' not in record or 'Tmax_K' not in record
+                    ):
+                        raise SimulationError(
+                            "NRTL do_not_extrapolate=true requires Tmin_K and Tmax_K."
+                        )
+                    if 'Tmin_K' in record and 'Tmax_K' in record and not (
+                        math.isfinite(record['Tmin_K'])
+                        and math.isfinite(record['Tmax_K'])
+                        and 0.0 < record['Tmin_K'] < record['Tmax_K']
+                    ):
+                        raise SimulationError(
+                            "NRTL INTERACTION_PARAMETERS requires 0 < Tmin_K < Tmax_K."
+                        )
                     alpha = params.get('alpha12', params.get('alpha'))
                     record['alpha12'] = numeric(alpha if alpha is not None else 0.3, 'alpha')
                     has_tau = any(key in params for key in (
@@ -988,6 +1020,35 @@ class Simulator:
 
                 if model == 'UNIQUAC':
                     remember_activity_override(scope, model, comp1, comp2)
+                    record['do_not_extrapolate'] = strict_boolean(
+                        params.get('do_not_extrapolate', False),
+                        'do_not_extrapolate',
+                    )
+                    for aliases, target in (
+                        (('tmin', 'tmin_k'), 'Tmin_K'),
+                        (('tmax', 'tmax_k'), 'Tmax_K'),
+                    ):
+                        present = [name for name in aliases if name in params]
+                        if len(present) > 1:
+                            raise SimulationError(
+                                f"UNIQUAC INTERACTION_PARAMETERS specifies duplicate aliases for {target}."
+                            )
+                        if present:
+                            record[target] = numeric(params[present[0]], present[0])
+                    if record['do_not_extrapolate'] and (
+                        'Tmin_K' not in record or 'Tmax_K' not in record
+                    ):
+                        raise SimulationError(
+                            "UNIQUAC do_not_extrapolate=true requires Tmin_K and Tmax_K."
+                        )
+                    if 'Tmin_K' in record and 'Tmax_K' in record and not (
+                        math.isfinite(record['Tmin_K'])
+                        and math.isfinite(record['Tmax_K'])
+                        and 0.0 < record['Tmin_K'] < record['Tmax_K']
+                    ):
+                        raise SimulationError(
+                            "UNIQUAC INTERACTION_PARAMETERS requires 0 < Tmin_K < Tmax_K."
+                        )
                     record['model_variant'] = str(params.get('model_variant') or 'standard_uniquac')
                     record['use_q_prime'] = boolean(params.get('use_q_prime', False))
                     uniquac_tau_fields = (
@@ -1236,6 +1297,11 @@ class Simulator:
                             "parameter_order=source."
                         )
                     record['parameter_order'] = order
+                if 'do_not_extrapolate' in raw:
+                    record['do_not_extrapolate'] = strict_boolean(
+                        raw['do_not_extrapolate'],
+                        'do_not_extrapolate',
+                    )
                 if 'alpha' in raw or 'alpha12' in raw:
                     if model != 'NRTL':
                         raise SimulationError(
@@ -1597,8 +1663,6 @@ class Simulator:
                         unifac_groups,
                         constructor_overrides,
                         constructor_estimation,
-                        None,
-                        None,
                     )
                 else:
                     thermo = IdealThermodynamics([], db, [])
@@ -1624,16 +1688,6 @@ class Simulator:
                             pfd_comp.symbol,
                             thermo.props[pfd_comp.symbol],
                         )
-                configure_activity_limits = getattr(
-                    thermo,
-                    'configure_activity_interaction_limits',
-                    None,
-                )
-                if callable(configure_activity_limits):
-                    configure_activity_limits(
-                        max_psat_bar=activity_interaction_max_psat_bar,
-                        max_temperature_K=activity_interaction_max_temperature_K,
-                    )
                 thermo_warnings = getattr(thermo, 'warnings', None)
                 if isinstance(thermo_warnings, list):
                     for warning in package_warnings:

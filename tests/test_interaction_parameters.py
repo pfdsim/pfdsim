@@ -1492,7 +1492,6 @@ class InteractionParameterTests(unittest.TestCase):
                     thermo = create_thermodynamics(
                         [hydrocarbon, 'water'],
                         model,
-                        activity_interaction_max_psat_bar=None,
                     )
                     actual = direct_split(
                         thermo,

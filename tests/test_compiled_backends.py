@@ -2,6 +2,7 @@ import os
 import sys
 import unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if ROOT not in sys.path:
@@ -12,6 +13,59 @@ from simulator import Simulator
 
 
 class CompiledBackendTests(unittest.TestCase):
+    def test_activity_initialization_compiles_without_evaluating_a_state(self):
+        for model in ('NRTL', 'UNIQUAC', 'UNIFAC'):
+            record = {
+                'component1': 'water',
+                'component2': 'ethanol',
+                'model': model,
+                'do_not_extrapolate': True,
+                'Tmin_K': 300.0,
+                'Tmax_K': 350.0,
+            }
+            if model == 'NRTL':
+                record.update({
+                    'alpha12': 0.3,
+                    'tau12_c': 0.1,
+                    'tau12_d': 0.0,
+                    'tau21_c': -0.2,
+                    'tau21_d': 0.0,
+                })
+            elif model == 'UNIQUAC':
+                record.update({
+                    'tau12_a': 0.1,
+                    'tau12_b': 0.0,
+                    'tau21_a': -0.2,
+                    'tau21_b': 0.0,
+                })
+            with self.subTest(model=model):
+                thermo = create_thermodynamics(
+                    ['water', 'ethanol'],
+                    model,
+                    interaction_overrides=(
+                        [record] if model != 'UNIFAC' else None
+                    ),
+                )
+                backend = (
+                    thermo._compiled_unifac
+                    if model == 'UNIFAC'
+                    else thermo._compiled_activity_backend()
+                )
+                if backend is None:
+                    self.skipTest(f'Compiled {model} backend is unavailable')
+                backend.compilation_complete = False
+                with patch.object(
+                    thermo,
+                    'activity_coefficients',
+                    side_effect=AssertionError('synthetic state evaluated'),
+                ):
+                    thermo.initialize()
+                self.assertTrue(backend.compilation_complete)
+                self.assertFalse(any(
+                    'do_not_extrapolate=true' in warning
+                    for warning in thermo.warnings
+                ))
+
     def test_simulator_initialization_compiles_only_reachable_backends(self):
         ordinary = Simulator.from_file(
             os.path.join(ROOT, 'examples', 'unifac_flash.pfd')
@@ -324,7 +378,6 @@ class CompiledBackendTests(unittest.TestCase):
                 thermo = create_thermodynamics(
                     ['ethanol', 'water'],
                     method,
-                    activity_interaction_max_temperature_K=320.0,
                 )
                 for temperature in (298.15, 320.0, 340.0):
                     with self.subTest(temperature=temperature):
@@ -527,7 +580,6 @@ class CompiledBackendTests(unittest.TestCase):
         thermo = create_thermodynamics(
             components,
             'UNIFNIST',
-            activity_interaction_max_temperature_K=320.0,
         )
         backend = thermo.compiled_vlle_backend()
         if backend is None:
@@ -882,7 +934,6 @@ class CompiledBackendTests(unittest.TestCase):
                 thermo = create_thermodynamics(
                     components,
                     method,
-                    activity_interaction_max_temperature_K=T - 15.0,
                 )
                 backend = thermo.compiled_vlle_backend()
                 if backend is None:

@@ -67,145 +67,6 @@ class PFDComponentPropertyTests(unittest.TestCase):
                 with self.assertRaises(ParseError):
                     self.parse(declaration)
 
-    def test_activity_interaction_limits_parse_and_round_trip(self):
-        pfd = self.parse(
-            'ACTIVITY_INTERACTION_MAX_PSAT: 2 [MPa]\n'
-            'ACTIVITY_INTERACTION_MAX_TEMPERATURE: 150 [C]\n'
-        )
-
-        self.assertEqual(pfd.metadata.activity_interaction_max_psat_bar, 20.0)
-        self.assertAlmostEqual(
-            pfd.metadata.activity_interaction_max_temperature_K,
-            423.15,
-        )
-        restored = type(pfd).from_dict(pfd.to_dict())
-        self.assertEqual(restored.metadata.activity_interaction_max_psat_bar, 20.0)
-        self.assertAlmostEqual(
-            restored.metadata.activity_interaction_max_temperature_K,
-            423.15,
-        )
-        serialized = pfd.to_pfd()
-        self.assertIn('ACTIVITY_INTERACTION_MAX_PSAT: 20 [bar]', serialized)
-        self.assertIn(
-            'ACTIVITY_INTERACTION_MAX_TEMPERATURE: 423.15 [K]',
-            serialized,
-        )
-
-        for declaration in (
-            'ACTIVITY_INTERACTION_MAX_PSAT: 0 [bar]',
-            'ACTIVITY_INTERACTION_MAX_TEMPERATURE: -1 [K]',
-            'ACTIVITY_INTERACTION_MAX_TEMPERATURE: 300 [rankine]',
-        ):
-            with self.subTest(declaration=declaration):
-                with self.assertRaises(ParseError):
-                    self.parse(declaration)
-
-    def test_simulator_configures_activity_limits_after_pfd_snapshot(self):
-        from thermodynamics_models.nrtl_uniquac import UNIQUACThermodynamics
-
-        source = '''ONLINE_LOOKUP: false
-THERMO_METHOD: UNIQUAC
-ACTIVITY_INTERACTION_MAX_PSAT: 10 [bar]
-ACTIVITY_INTERACTION_MAX_TEMPERATURE: 350 [K]
-COMPONENTS:
-    W | Water
-    E | Ethanol
-'''
-        original = UNIQUACThermodynamics.configure_activity_interaction_limits
-        observed = []
-
-        def record_configuration(thermo, **options):
-            observed.append({
-                'options': dict(options),
-                'snapshot_ready': all(
-                    '_allow_online_lookup' in thermo._resolver_known_props[component]
-                    for component in thermo.components
-                ),
-            })
-            return original(thermo, **options)
-
-        with patch.object(
-            UNIQUACThermodynamics,
-            'configure_activity_interaction_limits',
-            record_configuration,
-        ):
-            thermo = Simulator(PFDParser().parse(source)).initialize().thermo
-
-        active = [
-            item for item in observed
-            if item['options'].get('max_psat_bar') == 10.0
-        ]
-        self.assertEqual(len(active), 1)
-        self.assertTrue(active[0]['snapshot_ready'])
-        self.assertEqual(thermo.activity_interaction_max_psat_bar, 10.0)
-        self.assertEqual(thermo.activity_interaction_max_temperature_K, 350.0)
-
-    def test_plain_eos_skips_activity_limits_but_activity_scope_keeps_them(self):
-        from thermodynamics_models.eos import RKThermodynamics
-        from thermodynamics_models.nrtl_uniquac import NRTLThermodynamics
-
-        source = '''ONLINE_LOOKUP: false
-THERMO_METHOD: RK
-ACTIVITY_INTERACTION_MAX_PSAT: 10 [bar]
-ACTIVITY_INTERACTION_MAX_TEMPERATURE: 350 [K]
-THERMO_SCOPES:
-    extraction | method=NRTL
-COMPONENTS:
-    W | Water
-    E | Ethanol
-STREAM Feed : FEED -> H-1.in
-    T = 25 [C]
-    P = 1 [bar]
-    F = 1 [kmol/h]
-    x = W:0.5, E:0.5
-STREAM Product : H-1.out -> PRODUCT
-UNIT H-1 : Heater
-    T = 30 [C]
-    thermo_scope = extraction
-'''
-        original = NRTLThermodynamics.configure_activity_interaction_limits
-        observed = []
-
-        def record_configuration(thermo, **options):
-            observed.append((thermo, dict(options)))
-            return original(thermo, **options)
-
-        with (
-            patch.object(
-                RKThermodynamics,
-                'Psat',
-                side_effect=AssertionError('plain RK initialization requested Psat'),
-            ) as rk_psat,
-            patch.object(NRTLThermodynamics, 'Psat', return_value=1.0),
-            patch.object(
-                NRTLThermodynamics,
-                'configure_activity_interaction_limits',
-                record_configuration,
-            ),
-        ):
-            simulator = Simulator(PFDParser().parse(source)).initialize()
-
-        global_thermo = simulator.thermo_packages['global']
-        scoped_thermo = simulator.thermo_packages['extraction']
-        self.assertIsInstance(global_thermo, RKThermodynamics)
-        self.assertFalse(hasattr(global_thermo, 'configure_activity_interaction_limits'))
-        rk_psat.assert_not_called()
-
-        active = [
-            (thermo, options)
-            for thermo, options in observed
-            if options.get('max_psat_bar') == 10.0
-        ]
-        self.assertEqual(active, [(scoped_thermo, {
-            'max_psat_bar': 10.0,
-            'max_temperature_K': 350.0,
-        })])
-        self.assertEqual(scoped_thermo.activity_interaction_max_psat_bar, 10.0)
-        self.assertEqual(
-            scoped_thermo.activity_interaction_max_temperature_K,
-            350.0,
-        )
-
     def test_component_inline_properties_parse_all_supported_fields(self):
         pfd = self.parse(
             'PROCESS: Inline Properties\n'
@@ -1149,6 +1010,61 @@ UNIT H-1 : Heater
         interaction = sim.thermo._uniquac_interaction_for_components('E', 'W')
         for field in ('tau12_c', 'tau12_d', 'tau12_e', 'tau21_c', 'tau21_d', 'tau21_e'):
             self.assertEqual(interaction[field], 0.0)
+
+    def test_activity_interaction_do_not_extrapolate_round_trips_and_requires_range(self):
+        source = (
+            'PROCESS: Pair Extrapolation Policy\n'
+            'VERSION: 1.0\n'
+            'THERMO_METHOD: UNIQUAC\n'
+            'ONLINE_LOOKUP: false\n\n'
+            'COMPONENTS:\n'
+            '    E | Ethanol | MW=46.068, CAS=64-17-5\n'
+            '    W | Water | MW=18.015, CAS=7732-18-5\n\n'
+            'INTERACTION_PARAMETERS:\n'
+            '    E/W | model=UNIQUAC, tau12_a=0.25, tau21_a=-0.5, '
+            'do_not_extrapolate=true, Tmin_K=300, Tmax_K=350\n'
+        )
+        parsed = self.parse(source)
+        restored = self.parse(parsed.to_pfd())
+        parameters = restored.interaction_parameters[0].parameters
+        self.assertTrue(parameters['do_not_extrapolate'])
+        self.assertEqual(parameters['Tmin_K'], 300.0)
+        self.assertEqual(parameters['Tmax_K'], 350.0)
+        thermo = Simulator(parsed).initialize().thermo
+        interaction = thermo._uniquac_interaction_for_components('E', 'W')
+        self.assertTrue(interaction['do_not_extrapolate'])
+        self.assertEqual(interaction['Tmin_K'], 300.0)
+        self.assertEqual(interaction['Tmax_K'], 350.0)
+
+        missing_range = source.replace(
+            ', Tmin_K=300, Tmax_K=350',
+            '',
+        )
+        with self.assertRaisesRegex(
+            SimulationError,
+            'do_not_extrapolate=true requires Tmin_K and Tmax_K',
+        ):
+            Simulator.from_string(missing_range).initialize()
+
+        invalid_boolean = source.replace(
+            'do_not_extrapolate=true',
+            'do_not_extrapolate=perhaps',
+        )
+        with self.assertRaisesRegex(
+            SimulationError,
+            "field 'do_not_extrapolate' must be boolean",
+        ):
+            Simulator.from_string(invalid_boolean).initialize()
+
+        reversed_range = source.replace(
+            'Tmin_K=300, Tmax_K=350',
+            'Tmin_K=350, Tmax_K=300',
+        )
+        with self.assertRaisesRegex(
+            SimulationError,
+            'requires 0 < Tmin_K < Tmax_K',
+        ):
+            Simulator.from_string(reversed_range).initialize()
 
     def test_pfd_pr_ranged_kij_override_applies_only_inside_temperature_range(self):
         pfd = (

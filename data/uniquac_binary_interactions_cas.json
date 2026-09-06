@@ -634,6 +634,7 @@
       "comment": "Water/Propionic acid temperature-dependent UNIQUAC literature regression with fixed VDM",
       "component1": "Water",
       "component2": "Propionic acid",
+      "do_not_extrapolate": true,
       "fit_status": "retained_literature_alternative",
       "model_variant": "standard_uniquac",
       "source": "water_c3_acid_vle_interactions.json",

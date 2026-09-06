@@ -8,7 +8,6 @@ else:
 
 from .common import ThermodynamicsError
 from .activity import ActivityCoefficientThermodynamics, VaporDimerizationActivityMixin
-from .base import IdealThermodynamics
 
 
 def _anchored_log_temperature_term(T: float, T_ref: float) -> float:
@@ -57,14 +56,8 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
         super().__init__(components, db, interaction_overrides)
-        self.configure_activity_interaction_limits(
-            max_psat_bar=activity_interaction_max_psat_bar,
-            max_temperature_K=activity_interaction_max_temperature_K,
-        )
         if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
             from ..interaction_parameters import cas_for_component
         else:
@@ -104,6 +97,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                 estimated, 'NRTL'
             )
             self.estimated_interaction_metadata = metadata
+        self._validate_activity_interactions(self._nrtl_interaction_for_components)
         self._warn_missing_nrtl_interactions()
 
     def prepare_compiled_backends(
@@ -112,11 +106,11 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         need_lle: bool = False,
         need_vlle: bool = False,
     ) -> None:
-        activity = self._compiled_activity_backend(self.T_REF)
+        activity = self._compiled_activity_backend()
         if activity is not None:
             activity.compile_kernels()
         if need_lle:
-            backend = self._compiled_lle_backend(self.T_REF)
+            backend = self._compiled_lle_backend()
             if backend is not None:
                 backend.compile_kernels()
         if need_vlle:
@@ -177,7 +171,15 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                         f"{comp_i}/{comp_j}; using tau_ij=tau_ji=0 with alpha_ij=0.3."
                     )
 
-    def _compiled_activity_backend(self, T: float):
+    def _warn_activity_interaction_extrapolation(self, T: float, components=None) -> None:
+        selected = list(self.components if components is None else components)
+        for index, comp_i in enumerate(selected):
+            for comp_j in selected[index + 1:]:
+                data = self._nrtl_interaction_for_components(comp_i, comp_j)
+                if data is not None:
+                    self._activity_interaction_temperature(data, comp_i, comp_j, T)
+
+    def _compiled_activity_backend(self, T: Optional[float] = None):
         cache_key = "all_temperatures"
         if cache_key in self._compiled_activity_cache:
             return self._compiled_activity_cache[cache_key]
@@ -193,7 +195,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         self._compiled_activity_cache[cache_key] = backend
         return backend
 
-    def _compiled_lle_backend(self, T: float):
+    def _compiled_lle_backend(self, T: Optional[float] = None):
         cache_key = "all_temperatures"
         if cache_key in self._compiled_lle_cache:
             return self._compiled_lle_cache[cache_key]
@@ -214,6 +216,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
 
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
                                   max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
+        self._warn_activity_interaction_extrapolation(T, composition)
         backend = self._compiled_lle_backend(T)
         if backend is not None:
             split = backend.split(composition, T, max_iter=max_iter, tol=tol)
@@ -241,10 +244,8 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                 data = self._nrtl_interaction_for_components(comp_i, comp_j)
                 if data is None:
                     continue
-                interaction_T = self.activity_interaction_temperature(
-                    comp_i,
-                    comp_j,
-                    T,
+                interaction_T = self._activity_interaction_temperature(
+                    data, comp_i, comp_j, T,
                 )
                 if "tau12_c" in data:
                     tref = data.get("tau_tref", self.T_REF)
@@ -285,6 +286,8 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         tau_tref = [[self.T_REF for _ in range(n)] for _ in range(n)]
         tau_energy = [[0.0 for _ in range(n)] for _ in range(n)]
         alpha = [[0.3 for _ in range(n)] for _ in range(n)]
+        interaction_tmin = [[-math.inf for _ in range(n)] for _ in range(n)]
+        interaction_tmax = [[math.inf for _ in range(n)] for _ in range(n)]
 
         for i, comp_i in enumerate(self.components):
             for j, comp_j in enumerate(self.components):
@@ -294,6 +297,9 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                 data = self._nrtl_interaction_for_components(comp_i, comp_j)
                 if data is None:
                     continue
+                low, high = self._activity_interaction_temperature_bounds(data)
+                interaction_tmin[i][j] = low
+                interaction_tmax[i][j] = high
                 alpha[i][j] = data["alpha12"]
                 if "tau12_c" in data:
                     tau_mode[i][j] = 1
@@ -317,6 +323,8 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
             "tau_tref": tau_tref,
             "tau_energy": tau_energy,
             "alpha": alpha,
+            "interaction_tmin": interaction_tmin,
+            "interaction_tmax": interaction_tmax,
         }
         return self._nrtl_parameter_cache
 
@@ -338,6 +346,8 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         if total <= 0.0:
             return {comp: 1.0 for comp in self.components}
         x = [value / total for value in x]
+
+        self._warn_activity_interaction_extrapolation(T)
 
         compiled = self._compiled_activity_backend(T)
         if compiled is not None:
@@ -382,6 +392,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         return gamma
 
     def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
+        self._warn_activity_interaction_extrapolation(T)
         backend = self._compiled_activity_backend(T)
         if backend is None:
             return super().excess_enthalpy(composition, T)
@@ -408,14 +419,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
         super().__init__(components, db, interaction_overrides)
-        self.configure_activity_interaction_limits(
-            max_psat_bar=activity_interaction_max_psat_bar,
-            max_temperature_K=activity_interaction_max_temperature_K,
-        )
         if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
             from ..interaction_parameters import cas_for_component
         else:
@@ -472,15 +477,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                 estimated, 'UNIQUAC'
             )
             self.estimated_interaction_metadata = metadata
+        self._validate_activity_interactions(self._uniquac_interaction_for_components)
         self._warn_missing_uniquac_interactions()
-
-    def initialize(self) -> 'UNIQUACThermodynamics':
-        """Initialize vapor/property providers without forcing deferred liquid data."""
-        if not self._deferred_uniquac_rq_errors:
-            return super().initialize()
-        IdealThermodynamics.initialize(self)
-        self._activity_runtime_initialized = True
-        return self
 
     def prepare_compiled_backends(
         self,
@@ -488,11 +486,11 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         need_lle: bool = False,
         need_vlle: bool = False,
     ) -> None:
-        activity = self._compiled_activity_backend(298.15)
+        activity = self._compiled_activity_backend()
         if activity is not None:
             activity.compile_kernels()
         if need_lle:
-            backend = self._compiled_lle_backend(298.15)
+            backend = self._compiled_lle_backend()
             if backend is not None:
                 backend.compile_kernels()
         if need_vlle:
@@ -558,7 +556,15 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                         f"{comp_i}/{comp_j}; using tau_ij=tau_ji=1."
                     )
 
-    def _compiled_activity_backend(self, T: float):
+    def _warn_activity_interaction_extrapolation(self, T: float, components=None) -> None:
+        selected = list(self.components if components is None else components)
+        for index, comp_i in enumerate(selected):
+            for comp_j in selected[index + 1:]:
+                data = self._uniquac_interaction_for_components(comp_i, comp_j)
+                if data is not None:
+                    self._activity_interaction_temperature(data, comp_i, comp_j, T)
+
+    def _compiled_activity_backend(self, T: Optional[float] = None):
         active_components = tuple(
             comp for comp in self.components
             if comp not in self._deferred_uniquac_rq_errors
@@ -581,7 +587,7 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         self._compiled_activity_cache[cache_key] = backend
         return backend
 
-    def _compiled_lle_backend(self, T: float):
+    def _compiled_lle_backend(self, T: Optional[float] = None):
         cache_key = "all_temperatures"
         if cache_key in self._compiled_lle_cache:
             return self._compiled_lle_cache[cache_key]
@@ -602,6 +608,7 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
 
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
                                   max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
+        self._warn_activity_interaction_extrapolation(T, composition)
         backend = self._compiled_lle_backend(T)
         if backend is not None:
             split = backend.split(composition, T, max_iter=max_iter, tol=tol)
@@ -720,10 +727,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                 data = self._uniquac_interaction_for_components(comp_i, comp_j)
                 if data is None:
                     continue
-                interaction_T = self.activity_interaction_temperature(
-                    comp_i,
-                    comp_j,
-                    T,
+                interaction_T = self._activity_interaction_temperature(
+                    data, comp_i, comp_j, T,
                 )
                 if "tau12_a" in data:
                     tref = data.get("tau_tref", self.T_REF)
@@ -759,6 +764,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         tau_e = [[0.0 for _ in range(n)] for _ in range(n)]
         tau_tref = [[self.T_REF for _ in range(n)] for _ in range(n)]
         use_q_prime = [[False for _ in range(n)] for _ in range(n)]
+        interaction_tmin = [[-math.inf for _ in range(n)] for _ in range(n)]
+        interaction_tmax = [[math.inf for _ in range(n)] for _ in range(n)]
 
         for i, comp_i in enumerate(self.components):
             for j, comp_j in enumerate(self.components):
@@ -767,6 +774,9 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                 data = self._uniquac_interaction_for_components(comp_i, comp_j)
                 if data is None:
                     continue
+                low, high = self._activity_interaction_temperature_bounds(data)
+                interaction_tmin[i][j] = low
+                interaction_tmax[i][j] = high
                 if "tau12_a" in data:
                     tau_mode[i][j] = 1
                     tau_a[i][j] = data["tau12_a"]
@@ -800,6 +810,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
             "tau_tref": tau_tref,
             "use_q_prime": use_q_prime,
             "q_residual": q_residual,
+            "interaction_tmin": interaction_tmin,
+            "interaction_tmax": interaction_tmax,
         }
         return self._uniquac_parameter_cache
 
@@ -833,6 +845,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         if total <= 0.0:
             return {comp: 1.0 for comp in self.components}
         x = [value / total for value in x]
+
+        self._warn_activity_interaction_extrapolation(T)
 
         compiled = self._compiled_activity_backend(T)
         if compiled is not None:
@@ -897,6 +911,7 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         return gamma
 
     def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
+        self._warn_activity_interaction_extrapolation(T)
         backend = self._compiled_activity_backend(T)
         if backend is None:
             return super().excess_enthalpy(composition, T)
@@ -932,6 +947,7 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         if total <= 0.0:
             return {comp: 1.0 for comp in components}
         x = [value / total for value in x]
+        self._warn_activity_interaction_extrapolation(T, components)
         compiled = self._compiled_activity_backend(T)
         if compiled is not None and tuple(components) == tuple(compiled.components):
             values = compiled.activity_coefficients(x, T)
@@ -959,10 +975,8 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                 data = self._uniquac_interaction_for_components(comp_i, comp_j)
                 if data is None:
                     continue
-                interaction_T = self.activity_interaction_temperature(
-                    comp_i,
-                    comp_j,
-                    T,
+                interaction_T = self._activity_interaction_temperature(
+                    data, comp_i, comp_j, T,
                 )
                 if "tau12_a" in data:
                     tref = data.get("tau_tref", self.T_REF)
@@ -1031,8 +1045,6 @@ class UNIQUACVDMThermodynamics(VaporDimerizationActivityMixin, UNIQUACThermodyna
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
         super().__init__(
             components,
@@ -1040,8 +1052,6 @@ class UNIQUACVDMThermodynamics(VaporDimerizationActivityMixin, UNIQUACThermodyna
             interaction_overrides,
             interaction_estimation,
             estimation_unifac_groups,
-            activity_interaction_max_psat_bar,
-            activity_interaction_max_temperature_K,
         )
         self._initialize_vdm()
 
@@ -1056,8 +1066,6 @@ class NRTLVDMThermodynamics(VaporDimerizationActivityMixin, NRTLThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
         super().__init__(
             components,
@@ -1065,7 +1073,5 @@ class NRTLVDMThermodynamics(VaporDimerizationActivityMixin, NRTLThermodynamics):
             interaction_overrides,
             interaction_estimation,
             estimation_unifac_groups,
-            activity_interaction_max_psat_bar,
-            activity_interaction_max_temperature_K,
         )
         self._initialize_vdm()

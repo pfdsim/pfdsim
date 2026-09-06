@@ -159,14 +159,6 @@ class CompiledActivityVLLEBackend:
                 return None
             model_id = 1
             integer_parameters = np.asarray(backend.tau_mode, dtype=np.int64)
-            alpha_with_caps = np.asarray(backend.alpha, dtype=np.float64).copy()
-            np.fill_diagonal(
-                alpha_with_caps,
-                np.asarray(
-                    backend.interaction_temperature_caps,
-                    dtype=np.float64,
-                ),
-            )
             parameters = (
                 backend.tau_c,
                 backend.tau_d,
@@ -175,9 +167,9 @@ class CompiledActivityVLLEBackend:
                 backend.tau_g,
                 backend.tau_tref,
                 backend.tau_energy,
-                alpha_with_caps,
-                np.zeros_like(backend.tau_c),
-                np.zeros_like(backend.tau_c),
+                backend.alpha,
+                backend.interaction_tmin,
+                backend.interaction_tmax,
             )
         elif "UNIQUAC" in method_name and CompiledUNIQUACBackend is not None:
             backend = CompiledUNIQUACBackend.from_thermo(thermo)
@@ -185,14 +177,11 @@ class CompiledActivityVLLEBackend:
                 return None
             model_id = 2
             integer_parameters = np.asarray(backend.tau_mode, dtype=np.int64)
-            caps = np.zeros_like(backend.tau_a, dtype=np.float64)
-            np.fill_diagonal(
-                caps,
-                np.asarray(
-                    backend.interaction_temperature_caps,
-                    dtype=np.float64,
-                ),
-            )
+            bounds = np.zeros_like(backend.tau_a, dtype=np.float64)
+            for i in range(bounds.shape[0]):
+                for j in range(i + 1, bounds.shape[1]):
+                    bounds[i, j] = backend.interaction_tmin[i, j]
+                    bounds[j, i] = backend.interaction_tmax[i, j]
             parameters = (
                 np.diag(np.asarray(backend.r, dtype=np.float64)),
                 np.diag(np.asarray(backend.q, dtype=np.float64)),
@@ -203,7 +192,7 @@ class CompiledActivityVLLEBackend:
                 backend.tau_d,
                 backend.tau_e,
                 backend.tau_tref,
-                caps,
+                bounds,
             )
         else:
             return None
@@ -322,23 +311,6 @@ class CompiledActivityVLLEBackend:
         tol: float,
     ) -> CompiledVLLEFlashResult:
         if self.model_id == 0:
-            interaction_T = self.thermo.activity_interaction_temperature_for_components(
-                self.components,
-                T,
-            )
-            if interaction_T < float(T) - 1.0e-12:
-                scale = float(T) / interaction_T
-                interactions = scale * (
-                    self.parameter_4
-                    + self.parameter_5 * interaction_T
-                    + self.parameter_6 * interaction_T * interaction_T
-                )
-                interactions_b = np.zeros_like(self.parameter_5)
-                interactions_c = np.zeros_like(self.parameter_6)
-            else:
-                interactions = self.parameter_4
-                interactions_b = self.parameter_5
-                interactions_c = self.parameter_6
             raw = _vlle_flash_tp_unifac_numba(
                 z,
                 float(T),
@@ -347,9 +319,9 @@ class CompiledActivityVLLEBackend:
                 self.parameter_1,
                 self.parameter_2,
                 self.parameter_3,
-                interactions,
-                interactions_b,
-                interactions_c,
+                self.parameter_4,
+                self.parameter_5,
+                self.parameter_6,
                 int(self.integer_parameters[0, 0]),
                 coeffs[0],
                 coeffs[1],
@@ -370,6 +342,8 @@ class CompiledActivityVLLEBackend:
 
     def flash_TP(self, composition: dict[str, float], T: float, P: float,
                  max_iter: int = 80, tol: float = 1e-10) -> CompiledVLLEFlashResult:
+        if self.model_id != 0:
+            self.thermo._warn_activity_interaction_extrapolation(T, self.components)
         z = self._z_array(composition)
         coeffs = self._psat_coefficients_for_temperature(float(T))
         return self._flash_TP_with_coefficients(z, T, P, coeffs, max_iter, tol)
@@ -378,6 +352,8 @@ class CompiledActivityVLLEBackend:
                      max_iter: int = 80, tol: float = 1e-10
                      ) -> tuple[float, np.ndarray, np.ndarray]:
         """Compiled constrained VLE candidate for adaptive spinodal mode."""
+        if self.model_id != 0:
+            self.thermo._warn_activity_interaction_extrapolation(T, self.components)
         z = self._z_array(composition)
         coeffs = self._psat_coefficients_for_temperature(float(T))
         if self.model_id == 0:
@@ -1683,51 +1659,69 @@ if (
     @njit(cache=True)
     def _activity_gamma(model_id, x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9):
         n = x.shape[0]
-        caps = np.empty(n, dtype=np.float64)
-        for i in range(n):
-            caps[i] = p7[i, i] if model_id == 1 else p9[i, i]
         if model_id == 1:
             return _nrtl_activity_coefficients_numba(
                 x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7,
-                caps,
+                p8, p9,
             )
         r = np.empty(n, dtype=np.float64)
         q = np.empty(n, dtype=np.float64)
         q_residual = np.empty(n, dtype=np.float64)
+        interaction_tmin = np.empty((n, n), dtype=np.float64)
+        interaction_tmax = np.empty((n, n), dtype=np.float64)
         for i in range(n):
             r[i] = p0[i, i]
             q[i] = p1[i, i]
             q_residual[i] = p2[i, i]
+            for j in range(n):
+                if i == j:
+                    interaction_tmin[i, j] = -np.inf
+                    interaction_tmax[i, j] = np.inf
+                elif i < j:
+                    interaction_tmin[i, j] = p9[i, j]
+                    interaction_tmax[i, j] = p9[j, i]
+                else:
+                    interaction_tmin[i, j] = p9[j, i]
+                    interaction_tmax[i, j] = p9[i, j]
         return _uniquac_activity_coefficients_numba(
             x, T, r, q, q_residual, integer_parameters,
             p3, p4, p5, p6, p7, p8,
-            caps,
+            interaction_tmin, interaction_tmax,
         )
 
 
     @njit(cache=True)
     def _activity_lle_split(model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                             max_iter, tol):
-        caps = np.empty(z.shape[0], dtype=np.float64)
-        for i in range(z.shape[0]):
-            caps[i] = p7[i, i] if model_id == 1 else p9[i, i]
         if model_id == 1:
             return _lle_split_nrtl_numba(
                 z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7,
-                caps, max_iter, tol
+                p8, p9, max_iter, tol
             )
         n = z.shape[0]
         r = np.empty(n, dtype=np.float64)
         q = np.empty(n, dtype=np.float64)
         q_residual = np.empty(n, dtype=np.float64)
+        interaction_tmin = np.empty((n, n), dtype=np.float64)
+        interaction_tmax = np.empty((n, n), dtype=np.float64)
         for i in range(n):
             r[i] = p0[i, i]
             q[i] = p1[i, i]
             q_residual[i] = p2[i, i]
+            for j in range(n):
+                if i == j:
+                    interaction_tmin[i, j] = -np.inf
+                    interaction_tmax[i, j] = np.inf
+                elif i < j:
+                    interaction_tmin[i, j] = p9[i, j]
+                    interaction_tmax[i, j] = p9[j, i]
+                else:
+                    interaction_tmin[i, j] = p9[j, i]
+                    interaction_tmax[i, j] = p9[i, j]
         return _lle_split_uniquac_numba(
             z, T, r, q, q_residual, integer_parameters,
             p3, p4, p5, p6, p7, p8,
-            caps, max_iter, tol
+            interaction_tmin, interaction_tmax, max_iter, tol
         )
 
 

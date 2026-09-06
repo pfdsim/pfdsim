@@ -296,12 +296,14 @@ _INTERACTION_PARAMETER_FIELDS = {
     'NRTL': frozenset({
         'comment', 'alpha', 'alpha12', 'a12', 'a21',
         'a12_cal_per_mol', 'a21_cal_per_mol',
+        'do_not_extrapolate', 'tmin', 'tmax', 'tmin_k', 'tmax_k',
         'tau12_c', 'tau12_d', 'tau12_e', 'tau12_f', 'tau12_g',
         'tau21_c', 'tau21_d', 'tau21_e', 'tau21_f', 'tau21_g',
         'tau_tref', 'tref',
     }),
     'UNIQUAC': frozenset({
         'comment', 'a12', 'a21', 'a12_cal_per_mol', 'a21_cal_per_mol',
+        'do_not_extrapolate', 'tmin', 'tmax', 'tmin_k', 'tmax_k',
         'tau12_a', 'tau12_b', 'tau12_c', 'tau12_d', 'tau12_e',
         'tau21_a', 'tau21_b', 'tau21_c', 'tau21_d', 'tau21_e',
         'tau_tref', 'tref',
@@ -324,6 +326,7 @@ _INTERACTION_PARAMETER_FIELDS = {
 
 _INTERACTION_ESTIMATION_FIELDS = frozenset({
     'source', 'policy', 'parameter_order', 'alpha', 'alpha12',
+    'do_not_extrapolate',
     'tmin', 'tmax', 'tmin_k', 'tmax_k',
     't_ref', 't_ref_k', 'tref', 'tref_k',
     'comment',
@@ -335,7 +338,6 @@ _TOP_LEVEL_DIRECTIVES = (
     'FLUID_PHASES', 'ONLINE_LOOKUP', 'ALLOW_ONLINE_LOOKUP', 'FETCH_ONLINE',
     'PSAT_MINIMUM_PRESSURE', 'MINIMUM_PRESSURE', 'MINIMUM_PSAT_PRESSURE',
     'MINIMUM_VAPOR_PRESSURE', 'RECYCLE_METHOD', 'RECYCLE_SOLVER',
-    'ACTIVITY_INTERACTION_MAX_PSAT', 'ACTIVITY_INTERACTION_MAX_TEMPERATURE',
     'TEAR_STREAMS', 'RECYCLE_TEAR_STREAMS', 'TEAR_STREAM',
     'RECYCLE_TRACE_TOLERANCE', 'TRACE_TOLERANCE', 'COMPONENTS',
     'THERMO_SCOPES', 'PROPERTY_CORRELATIONS', 'INTERACTION_ESTIMATION',
@@ -1291,8 +1293,6 @@ class Metadata:
     thermo_method: str = "IDEAL"
     online_lookup: bool = True
     psat_minimum_pressure_bar: Optional[float] = None
-    activity_interaction_max_psat_bar: Optional[float] = None
-    activity_interaction_max_temperature_K: Optional[float] = None
     recycle_method: str = "WEGSTEIN"
     recycle_options: dict[str, float | int] = field(default_factory=dict)
     recycle_tear_streams: list[str] = field(default_factory=list)
@@ -1329,16 +1329,6 @@ class Metadata:
             lines.append(
                 "PSAT_MINIMUM_PRESSURE: "
                 f"{self.psat_minimum_pressure_bar:g} [bar]"
-            )
-        if self.activity_interaction_max_psat_bar is not None:
-            lines.append(
-                "ACTIVITY_INTERACTION_MAX_PSAT: "
-                f"{self.activity_interaction_max_psat_bar:g} [bar]"
-            )
-        if self.activity_interaction_max_temperature_K is not None:
-            lines.append(
-                "ACTIVITY_INTERACTION_MAX_TEMPERATURE: "
-                f"{self.activity_interaction_max_temperature_K:g} [K]"
             )
         if self.recycle_method and (
             self.recycle_method != "WEGSTEIN" or self.recycle_options
@@ -1524,12 +1514,6 @@ class ProcessFlowDiagram:
                 'psat_minimum_pressure_bar': (
                     self.metadata.psat_minimum_pressure_bar
                 ),
-                'activity_interaction_max_psat_bar': (
-                    self.metadata.activity_interaction_max_psat_bar
-                ),
-                'activity_interaction_max_temperature_K': (
-                    self.metadata.activity_interaction_max_temperature_K
-                ),
                 'recycle_method': self.metadata.recycle_method,
                 'recycle_options': dict(self.metadata.recycle_options),
                 'recycle_tear_streams': self.metadata.recycle_tear_streams,
@@ -1653,12 +1637,6 @@ class ProcessFlowDiagram:
             online_lookup=meta.get('online_lookup', True),
             psat_minimum_pressure_bar=meta.get(
                 'psat_minimum_pressure_bar'
-            ),
-            activity_interaction_max_psat_bar=meta.get(
-                'activity_interaction_max_psat_bar'
-            ),
-            activity_interaction_max_temperature_K=meta.get(
-                'activity_interaction_max_temperature_K'
             ),
             recycle_method=meta.get('recycle_method', 'WEGSTEIN'),
             recycle_options=meta.get('recycle_options', {}),
@@ -2091,28 +2069,6 @@ class PFDParser:
                 try:
                     self.pfd.metadata.psat_minimum_pressure_bar = (
                         self._parse_pressure_bar(value)
-                    )
-                except ParseError as error:
-                    self._record_error(error)
-            elif stripped.startswith('ACTIVITY_INTERACTION_MAX_PSAT:'):
-                value = stripped.split(':', 1)[1].strip()
-                try:
-                    self.pfd.metadata.activity_interaction_max_psat_bar = (
-                        self._parse_pressure_bar(
-                            value,
-                            'ACTIVITY_INTERACTION_MAX_PSAT',
-                        )
-                    )
-                except ParseError as error:
-                    self._record_error(error)
-            elif stripped.startswith('ACTIVITY_INTERACTION_MAX_TEMPERATURE:'):
-                value = stripped.split(':', 1)[1].strip()
-                try:
-                    self.pfd.metadata.activity_interaction_max_temperature_K = (
-                        self._parse_temperature_K(
-                            value,
-                            'ACTIVITY_INTERACTION_MAX_TEMPERATURE',
-                        )
                     )
                 except ParseError as error:
                     self._record_error(error)

@@ -377,10 +377,21 @@ def _fit_pair(
         if isinstance(record, dict) and isinstance(metadata, dict):
             record = dict(record)
             metadata = dict(metadata)
+            for field in ('do_not_extrapolate', 'Tmin_K', 'Tmax_K'):
+                record.pop(field, None)
+            if options.get('do_not_extrapolate', False):
+                record.update({
+                    'do_not_extrapolate': True,
+                    'Tmin_K': float(options['Tmin_K']),
+                    'Tmax_K': float(options['Tmax_K']),
+                })
             record['component1'] = comp1
             record['component2'] = comp2
             metadata['component1'] = comp1
             metadata['component2'] = comp2
+            metadata['do_not_extrapolate'] = bool(
+                options.get('do_not_extrapolate', False)
+            )
             metadata['fit_cache_hit'] = True
             metadata['fit_cache_key'] = cache_key
             return record, metadata
@@ -492,6 +503,12 @@ def _fit_pair(
         )
     if destination == 'NRTL' and not modified:
         record['alpha12'] = alpha
+    if options.get('do_not_extrapolate', False):
+        record.update({
+            'do_not_extrapolate': True,
+            'Tmin_K': float(options['Tmin_K']),
+            'Tmax_K': float(options['Tmax_K']),
+        })
     metadata = {
         'component1': comp1,
         'component2': comp2,
@@ -499,6 +516,7 @@ def _fit_pair(
         'source': source_name,
         'fit_Tmin_K': float(options['Tmin_K']),
         'fit_Tmax_K': float(options['Tmax_K']),
+        'do_not_extrapolate': bool(options.get('do_not_extrapolate', False)),
         'parameter_order': 'source',
         'alpha12': alpha if destination == 'NRTL' else None,
         'rmse_ln_gamma': rmse,

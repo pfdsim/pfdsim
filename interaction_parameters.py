@@ -263,6 +263,9 @@ def _nrtl_interactions() -> dict[tuple[str, str], dict]:
             "alpha12": float(record["alpha12"]),
             "comment": record.get("comment", ""),
         }
+        for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+            if field in record:
+                interaction[field] = record[field]
         if "tau12_c" in record and "tau21_c" in record:
             interaction.update({
                 "tau12_c": float(record["tau12_c"]),
@@ -297,6 +300,9 @@ def _nrtl_oriented_record(data: dict, reverse: bool = False) -> dict:
         "alpha12": data["alpha12"],
         "comment": data.get("comment", ""),
     }
+    for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+        if field in data:
+            result[field] = data[field]
     if "tau12_c" in data:
         if not reverse:
             result.update({
@@ -374,6 +380,9 @@ def _uniquac_interactions() -> dict[tuple[str, str], dict]:
             "model_variant": record.get("model_variant", "standard_uniquac"),
             "use_q_prime": bool(record.get("use_q_prime", False)),
         }
+        for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+            if field in record:
+                interaction[field] = record[field]
         if "tau12_a" in record and "tau21_a" in record:
             interaction.update({
                 "tau12_a": float(record["tau12_a"]),
@@ -409,6 +418,9 @@ def _uniquac_oriented_record(data: dict, reverse: bool = False) -> dict:
         "model_variant": data.get("model_variant", "standard_uniquac"),
         "use_q_prime": bool(data.get("use_q_prime", False)),
     }
+    for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+        if field in data:
+            result[field] = data[field]
     if "tau12_a" in data:
         if not reverse:
             result.update({

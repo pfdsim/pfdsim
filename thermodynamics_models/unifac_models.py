@@ -290,13 +290,7 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
         # Prefer the compiled splitter whenever it can represent the component
         # set.  The readable implementation remains the fallback only for
         # component sets unsupported by the compiled backend.
-        if (
-            self._compiled_lle is not None
-            and not self.activity_interaction_clipping_active(
-                T,
-                self.component_groups,
-            )
-        ):
+        if self._compiled_lle is not None:
             split = self._compiled_lle.split(composition, T, max_iter=max_iter, tol=tol)
             if split is not None:
                 return split
@@ -326,10 +320,7 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
         if len(self.component_groups) < 2:
             return {comp: 1.0 for comp in self.components}
 
-        interaction_T = self.activity_interaction_temperature_for_components(
-            self.component_groups,
-            T,
-        )
+        interaction_T = float(T)
 
         if self._compiled_unifac is not None:
             active_components = self._compiled_unifac.components
@@ -418,14 +409,8 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
         dT = max(1e-3, 1e-4 * T)
         T_low = max(1.0, T - dT)
         T_high = T + dT
-        activity_T_low = self.activity_interaction_temperature_for_components(
-            self.component_groups,
-            T_low,
-        )
-        activity_T_high = self.activity_interaction_temperature_for_components(
-            self.component_groups,
-            T_high,
-        )
+        activity_T_low = T_low
+        activity_T_high = T_high
         return active_fraction * backend.excess_enthalpy(
             x_active,
             T,

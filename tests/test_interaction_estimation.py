@@ -380,63 +380,6 @@ COMPONENTS:
                 ))
             estimation._FIT_CACHE = None
 
-    def test_activity_interaction_pressure_and_temperature_caps(self):
-        thermo = create_thermodynamics(
-            ['water', 'propionic acid'],
-            'UNIQUAC',
-            activity_interaction_max_psat_bar=10.0,
-            activity_interaction_max_temperature_K=423.15,
-        )
-        actual_T = 626.45
-        interaction_T = thermo.activity_interaction_temperature(
-            'water',
-            'propionic acid',
-            actual_T,
-        )
-
-        self.assertLessEqual(interaction_T, 423.15)
-        self.assertLessEqual(thermo.Psat('water', interaction_T), 10.0 + 1e-7)
-        self.assertLessEqual(
-            thermo.Psat('propionic acid', interaction_T),
-            10.0 + 1e-7,
-        )
-        hot_tau = thermo._uniquac_tau_matrix(actual_T)
-        capped_tau = thermo._uniquac_tau_matrix(interaction_T)
-        for hot_row, capped_row in zip(hot_tau, capped_tau):
-            for hot_value, capped_value in zip(hot_row, capped_row):
-                self.assertAlmostEqual(hot_value, capped_value, places=12)
-        K = thermo.K_values(
-            actual_T,
-            1.01,
-            {'water': 0.999, 'propionic acid': 0.001},
-        )
-        self.assertGreater(min(K.values()), 1.0)
-
-        nrtl = create_thermodynamics(
-            ['water', 'ethanol'],
-            'NRTL',
-            interaction_overrides=[{
-                'component1': 'water',
-                'component2': 'ethanol',
-                'model': 'NRTL',
-                'alpha12': 0.3,
-                'tau12_c': 0.1,
-                'tau12_d': 20.0,
-                'tau12_e': 0.0,
-                'tau12_f': 0.002,
-                'tau21_c': -0.2,
-                'tau21_d': 15.0,
-                'tau21_e': 0.0,
-                'tau21_f': -0.001,
-                'tau_tref': 298.15,
-            }],
-            activity_interaction_max_psat_bar=1.0e6,
-            activity_interaction_max_temperature_K=350.0,
-        )
-        hot, _ = nrtl._nrtl_matrices(500.0)
-        capped, _ = nrtl._nrtl_matrices(350.0)
-        self.assertEqual(hot, capped)
-
     def test_nrtl_manual_five_term_temperature_form_and_orientation(self):
         source = '''ONLINE_LOOKUP: false
 THERMO_METHOD: NRTL
@@ -539,6 +482,28 @@ INTERACTION_PARAMETERS:
             if 'frozen interaction is being extrapolated' in warning
         ]
         self.assertEqual(len(extrapolation), 1)
+
+    def test_clamped_estimated_interaction_does_not_report_extrapolation(self):
+        thermo = create_thermodynamics(['water', 'ethanol'], 'NRTL')
+        thermo.estimated_interaction_metadata = {
+            ('ethanol', 'water'): {
+                'component1': 'water',
+                'component2': 'ethanol',
+                'model': 'NRTL',
+                'source': 'UNIFDMD',
+                'fit_Tmin_K': 290.0,
+                'fit_Tmax_K': 400.0,
+                'do_not_extrapolate': True,
+            }
+        }
+        thermo._record_estimated_interaction_extrapolation(
+            450.0,
+            ((1.0, {'water': 0.5, 'ethanol': 0.5}),),
+        )
+        self.assertFalse(any(
+            'frozen interaction is being extrapolated' in warning
+            for warning in thermo.warnings
+        ))
 
 
 if __name__ == '__main__':

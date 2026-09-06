@@ -554,6 +554,7 @@
         },
         "UNIQUAC-VDM": {
           "recommended": false,
+          "do_not_extrapolate": true,
           "model_variant": "standard_uniquac",
           "use_q_prime": false,
           "functional_form": {

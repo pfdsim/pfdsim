@@ -135,10 +135,8 @@ class UNIQUACRKThermodynamics(GammaPhiVaporBackendMixin, UNIQUACThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
-        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups)
         self._initialize_gamma_phi_backend(components, db, interaction_overrides)
 
 
@@ -154,10 +152,8 @@ class UNIQUACPRThermodynamics(GammaPhiVaporBackendMixin, UNIQUACThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
-        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups)
         self._initialize_gamma_phi_backend(components, db, interaction_overrides)
 
 
@@ -173,10 +169,8 @@ class NRTLRKThermodynamics(GammaPhiVaporBackendMixin, NRTLThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
-        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups)
         self._initialize_gamma_phi_backend(components, db, interaction_overrides)
 
 
@@ -192,10 +186,8 @@ class NRTLPRThermodynamics(GammaPhiVaporBackendMixin, NRTLThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
-        activity_interaction_max_psat_bar: Optional[float] = 10.0,
-        activity_interaction_max_temperature_K: Optional[float] = None,
     ):
-        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups)
         self._initialize_gamma_phi_backend(components, db, interaction_overrides)
 
 

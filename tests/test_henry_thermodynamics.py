@@ -341,6 +341,38 @@ class HenryThermodynamicsTests(unittest.TestCase):
             thermo.aqueous_liquid_enthalpy(composition, 298.15, 1.01325, context)
         ))
 
+    def test_deferred_uniquac_compiled_submixture_reports_interaction_clamp(self):
+        thermo = create_thermodynamics(
+            ['water', 'ethanol', 'ethylene'],
+            'UNIQUAC',
+            interaction_overrides=[{
+                'component1': 'water',
+                'component2': 'ethanol',
+                'model': 'UNIQUAC',
+                'tau12_a': 0.1,
+                'tau12_b': 0.0,
+                'tau21_a': -0.2,
+                'tau21_b': 0.0,
+                'do_not_extrapolate': True,
+                'Tmin_K': 300.0,
+                'Tmax_K': 350.0,
+            }],
+        )
+        self.assertIn('ethylene', thermo._deferred_uniquac_rq_errors)
+        if thermo._compiled_activity_backend() is None:
+            self.skipTest('Compiled UNIQUAC backend is unavailable')
+
+        thermo.activity_coefficients(
+            400.0,
+            {'water': 0.5, 'ethanol': 0.5, 'ethylene': 0.0},
+        )
+        warnings = [
+            warning for warning in thermo.warnings
+            if 'do_not_extrapolate=true' in warning
+        ]
+        self.assertEqual(len(warnings), 1)
+        self.assertIn('350 K instead of 400 K', warnings[0])
+
     def test_uniquac_excludes_formula_symbol_carbon_monoxide_from_liquid(self):
         components = ['water', 'acrylic acid', 'propionic acid', 'CO']
         thermo = create_thermodynamics(components, 'UNIQUAC-VDM')

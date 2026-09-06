@@ -27,7 +27,8 @@ class CompiledNRTLBackend:
     tau_tref: np.ndarray
     tau_energy: np.ndarray
     alpha: np.ndarray
-    interaction_temperature_caps: np.ndarray
+    interaction_tmin: np.ndarray
+    interaction_tmax: np.ndarray
     compilation_complete: bool = False
 
     @classmethod
@@ -46,10 +47,8 @@ class CompiledNRTLBackend:
             tau_tref=np.asarray(params["tau_tref"], dtype=np.float64),
             tau_energy=np.asarray(params["tau_energy"], dtype=np.float64),
             alpha=np.asarray(params["alpha"], dtype=np.float64),
-            interaction_temperature_caps=np.asarray(
-                thermo.activity_interaction_component_temperature_limits(),
-                dtype=np.float64,
-            ),
+            interaction_tmin=np.asarray(params["interaction_tmin"], dtype=np.float64),
+            interaction_tmax=np.asarray(params["interaction_tmax"], dtype=np.float64),
         )
         backend.compile_kernels()
         return backend
@@ -61,7 +60,7 @@ class CompiledNRTLBackend:
         args = (
             composition, 298.15, self.tau_mode, self.tau_c, self.tau_d,
             self.tau_e, self.tau_f, self.tau_g, self.tau_tref, self.tau_energy, self.alpha,
-            self.interaction_temperature_caps,
+            self.interaction_tmin, self.interaction_tmax,
         )
         _nrtl_activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
@@ -85,7 +84,8 @@ class CompiledNRTLBackend:
             self.tau_tref,
             self.tau_energy,
             self.alpha,
-            self.interaction_temperature_caps,
+            self.interaction_tmin,
+            self.interaction_tmax,
         ).tolist()
 
     def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
@@ -102,7 +102,8 @@ class CompiledNRTLBackend:
             self.tau_tref,
             self.tau_energy,
             self.alpha,
-            self.interaction_temperature_caps,
+            self.interaction_tmin,
+            self.interaction_tmax,
         ))
 
 
@@ -121,7 +122,8 @@ class CompiledUNIQUACBackend:
     tau_d: np.ndarray
     tau_e: np.ndarray
     tau_tref: np.ndarray
-    interaction_temperature_caps: np.ndarray
+    interaction_tmin: np.ndarray
+    interaction_tmax: np.ndarray
     compilation_complete: bool = False
 
     @classmethod
@@ -144,13 +146,8 @@ class CompiledUNIQUACBackend:
             tau_d=np.asarray(params["tau_d"], dtype=np.float64)[index_array, :][:, index_array],
             tau_e=np.asarray(params["tau_e"], dtype=np.float64)[index_array, :][:, index_array],
             tau_tref=np.asarray(params["tau_tref"], dtype=np.float64)[index_array, :][:, index_array],
-            interaction_temperature_caps=np.asarray(
-                [
-                    thermo.activity_interaction_component_temperature_limit(comp)
-                    for comp in selected_components
-                ],
-                dtype=np.float64,
-            ),
+            interaction_tmin=np.asarray(params["interaction_tmin"], dtype=np.float64)[index_array, :][:, index_array],
+            interaction_tmax=np.asarray(params["interaction_tmax"], dtype=np.float64)[index_array, :][:, index_array],
         )
         backend.compile_kernels()
         return backend
@@ -163,7 +160,7 @@ class CompiledUNIQUACBackend:
             composition, 298.15, self.r, self.q, self.q_residual,
             self.tau_mode, self.tau_a, self.tau_b, self.tau_c,
             self.tau_d, self.tau_e, self.tau_tref,
-            self.interaction_temperature_caps,
+            self.interaction_tmin, self.interaction_tmax,
         )
         _uniquac_activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
@@ -188,7 +185,8 @@ class CompiledUNIQUACBackend:
             self.tau_d,
             self.tau_e,
             self.tau_tref,
-            self.interaction_temperature_caps,
+            self.interaction_tmin,
+            self.interaction_tmax,
         ).tolist()
 
     def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
@@ -206,7 +204,8 @@ class CompiledUNIQUACBackend:
             self.tau_d,
             self.tau_e,
             self.tau_tref,
-            self.interaction_temperature_caps,
+            self.interaction_tmin,
+            self.interaction_tmax,
         ))
 
 
@@ -215,7 +214,7 @@ if njit is not None:
     @njit(cache=True)
     def _nrtl_activity_coefficients_numba(
         x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
-        interaction_temperature_caps=None,
+        interaction_tmin, interaction_tmax,
     ):
         n = x.shape[0]
         out = np.ones(n, dtype=np.float64)
@@ -243,11 +242,10 @@ if njit is not None:
                     continue
                 mode = tau_mode[i, j]
                 interaction_T = T
-                if interaction_temperature_caps is not None:
-                    if interaction_temperature_caps[i] < interaction_T:
-                        interaction_T = interaction_temperature_caps[i]
-                    if interaction_temperature_caps[j] < interaction_T:
-                        interaction_T = interaction_temperature_caps[j]
+                if interaction_T < interaction_tmin[i, j]:
+                    interaction_T = interaction_tmin[i, j]
+                elif interaction_T > interaction_tmax[i, j]:
+                    interaction_T = interaction_tmax[i, j]
                 if mode == 1:
                     tref = tau_tref[i, j]
                     tau_ij = (
@@ -305,7 +303,7 @@ if njit is not None:
     @njit(cache=True)
     def _nrtl_excess_enthalpy_numba(
         x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref,
-        tau_energy, alpha, interaction_temperature_caps=None,
+        tau_energy, alpha, interaction_tmin, interaction_tmax,
     ):
         total = 0.0
         for value in x:
@@ -321,11 +319,11 @@ if njit is not None:
         T_high = T + dT
         gamma_low = _nrtl_activity_coefficients_numba(
             xn, T_low, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g,
-            tau_tref, tau_energy, alpha, interaction_temperature_caps,
+            tau_tref, tau_energy, alpha, interaction_tmin, interaction_tmax,
         )
         gamma_high = _nrtl_activity_coefficients_numba(
             xn, T_high, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g,
-            tau_tref, tau_energy, alpha, interaction_temperature_caps,
+            tau_tref, tau_energy, alpha, interaction_tmin, interaction_tmax,
         )
         derivative_sum = 0.0
         for i in range(xn.shape[0]):
@@ -341,7 +339,7 @@ if njit is not None:
     def _uniquac_activity_coefficients_numba(
         x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d, tau_e,
         tau_tref,
-        interaction_temperature_caps=None,
+        interaction_tmin, interaction_tmax,
     ):
         n = x.shape[0]
         out = np.ones(n, dtype=np.float64)
@@ -367,11 +365,10 @@ if njit is not None:
                     continue
                 mode = tau_mode[i, j]
                 interaction_T = T
-                if interaction_temperature_caps is not None:
-                    if interaction_temperature_caps[i] < interaction_T:
-                        interaction_T = interaction_temperature_caps[i]
-                    if interaction_temperature_caps[j] < interaction_T:
-                        interaction_T = interaction_temperature_caps[j]
+                if interaction_T < interaction_tmin[i, j]:
+                    interaction_T = interaction_tmin[i, j]
+                elif interaction_T > interaction_tmax[i, j]:
+                    interaction_T = interaction_tmax[i, j]
                 if mode == 1:
                     tref = tau_tref[i, j]
                     exponent = (
@@ -460,7 +457,7 @@ if njit is not None:
     @njit(cache=True)
     def _uniquac_excess_enthalpy_numba(
         x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
-        tau_e, tau_tref, interaction_temperature_caps=None,
+        tau_e, tau_tref, interaction_tmin, interaction_tmax,
     ):
         total = 0.0
         for value in x:
@@ -476,11 +473,11 @@ if njit is not None:
         T_high = T + dT
         gamma_low = _uniquac_activity_coefficients_numba(
             xn, T_low, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
-            tau_d, tau_e, tau_tref, interaction_temperature_caps,
+            tau_d, tau_e, tau_tref, interaction_tmin, interaction_tmax,
         )
         gamma_high = _uniquac_activity_coefficients_numba(
             xn, T_high, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
-            tau_d, tau_e, tau_tref, interaction_temperature_caps,
+            tau_d, tau_e, tau_tref, interaction_tmin, interaction_tmax,
         )
         derivative_sum = 0.0
         for i in range(xn.shape[0]):

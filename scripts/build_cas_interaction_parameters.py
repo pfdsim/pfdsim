@@ -794,6 +794,7 @@ def supplemental_literature_vle_activity_records(
         parameters: dict,
         comment: str,
         temperature_range: tuple[float, float] | None = None,
+        do_not_extrapolate: bool = False,
         fit_status: str = "recommended_literature_interaction",
         fit_vapor_treatment: dict | None = None,
     ) -> None:
@@ -813,11 +814,17 @@ def supplemental_literature_vle_activity_records(
             "fit_status": fit_status,
             "comment": comment,
         }
+        if do_not_extrapolate and temperature_range is None:
+            raise ValueError(
+                f"{model_key} do_not_extrapolate=true requires a temperature range"
+            )
         if temperature_range is not None:
             record.update({
                 "Tmin_K": float(temperature_range[0]),
                 "Tmax_K": float(temperature_range[1]),
             })
+        if do_not_extrapolate:
+            record["do_not_extrapolate"] = True
         if fit_vapor_treatment is not None:
             record["fit_vapor_treatment"] = fit_vapor_treatment
         if model_key == "NRTL":
@@ -1042,6 +1049,7 @@ def supplemental_literature_vle_activity_records(
                 "literature regression with fixed VDM"
             ),
             temperature_range=water_acid_ranges[system_key],
+            do_not_extrapolate=bool(fit.get("do_not_extrapolate", False)),
             fit_status=(
                 "recommended_literature_interaction"
                 if fit["recommended"]
@@ -2274,6 +2282,16 @@ def reverse_activity_record(record: dict) -> bool:
     return (record["cas1"], record["cas2"]) != tuple(sorted((record["cas1"], record["cas2"])))
 
 
+def activity_extrapolation_signature(record: dict) -> tuple:
+    if not bool(record.get("do_not_extrapolate", False)):
+        return (False,)
+    return (
+        True,
+        float(record["Tmin_K"]),
+        float(record["Tmax_K"]),
+    )
+
+
 def activity_record_signature(record: dict, model: str) -> tuple:
     reverse = reverse_activity_record(record)
     model_key = model.upper()
@@ -2299,10 +2317,12 @@ def activity_record_signature(record: dict, model: str) -> tuple:
                 if forward[2] != 0.0 or backward[2] != 0.0
                 else None
             )
-            return ("tau", backward, forward, alpha, tref) if reverse else ("tau", forward, backward, alpha, tref)
+            policy = activity_extrapolation_signature(record)
+            return ("tau", backward, forward, alpha, tref, policy) if reverse else ("tau", forward, backward, alpha, tref, policy)
         forward = float(record["a12_cal_per_mol"])
         backward = float(record["a21_cal_per_mol"])
-        return ("energy", backward, forward, alpha) if reverse else ("energy", forward, backward, alpha)
+        policy = activity_extrapolation_signature(record)
+        return ("energy", backward, forward, alpha, policy) if reverse else ("energy", forward, backward, alpha, policy)
 
     if "tau12_a" in record and "tau21_a" in record:
         forward = (
@@ -2330,10 +2350,12 @@ def activity_record_signature(record: dict, model: str) -> tuple:
                 if forward[2] != 0.0 or backward[2] != 0.0
                 else None
             ),
+            activity_extrapolation_signature(record),
         )
     forward = float(record["a12_cal_per_mol"])
     backward = float(record["a21_cal_per_mol"])
-    return ("energy", backward, forward) if reverse else ("energy", forward, backward)
+    policy = activity_extrapolation_signature(record)
+    return ("energy", backward, forward, policy) if reverse else ("energy", forward, backward, policy)
 
 
 def activity_signatures_equivalent(first: Any, second: Any) -> bool:

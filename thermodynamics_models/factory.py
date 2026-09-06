@@ -37,9 +37,7 @@ def create_thermodynamics(components: list[str],
                           db: Optional[ChemicalDatabase] = None,
                           unifac_groups: Optional[dict] = None,
                           interaction_overrides: Optional[list[dict]] = None,
-                          interaction_estimation: Optional[list[dict]] = None,
-                          activity_interaction_max_psat_bar: Optional[float] = 10.0,
-                          activity_interaction_max_temperature_K: Optional[float] = None) -> Union[
+                          interaction_estimation: Optional[list[dict]] = None) -> Union[
                               IdealThermodynamics,
                               SteamThermodynamics,
                               RKThermodynamics,
@@ -88,13 +86,6 @@ def create_thermodynamics(components: list[str],
     """
     method = method.upper()
 
-    def configured_activity(model):
-        model.configure_activity_interaction_limits(
-            max_psat_bar=activity_interaction_max_psat_bar,
-            max_temperature_K=activity_interaction_max_temperature_K,
-        )
-        return model
-    
     if method == 'IDEAL':
         return IdealThermodynamics(components, db, interaction_overrides)
     elif method in ('STEAM', 'IF97', 'IAPWS-IF97', 'IAPWS_IF97'):
@@ -127,63 +118,63 @@ def create_thermodynamics(components: list[str],
     elif method in ('PRSV2', 'PR-SV2', 'PENG-ROBINSON-SV2', 'PENG_ROBINSON_SV2'):
         return CubicEOSThermodynamics(components, 'PRSV2', db, interaction_overrides)
     elif method == 'UNIFAC':
-        return configured_activity(UNIFACThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides))
+        return UNIFACThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides)
     elif method == 'UNIFAC2':
-        return configured_activity(UNIFAC2Thermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides))
+        return UNIFAC2Thermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides)
     elif method in ('UNIFDMD', 'UNIFAC-DMD', 'UNIFAC_DMD', 'DORTMUND-UNIFAC',
                     'DORTMUND_UNIFAC', 'MODIFIED-UNIFAC', 'MODIFIED_UNIFAC'):
-        return configured_activity(UNIFDMDThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides))
+        return UNIFDMDThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides)
     elif method == 'UNIFM2':
-        return configured_activity(UNIFM2Thermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides))
+        return UNIFM2Thermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides)
     elif method in ('UNIFNIST', 'UNIFAC-NIST', 'UNIFAC_NIST', 'NIST-UNIFAC',
                     'NIST_UNIFAC', 'NIST-MODIFIED-UNIFAC', 'NIST_MODIFIED_UNIFAC'):
-        return configured_activity(UNIFNISTThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides))
+        return UNIFNISTThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides)
     elif method in ('UNIFAC-VDM', 'UNIFAC_VDM'):
-        return configured_activity(UNIFACVDMThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFACVDMThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFDMD-VDM', 'UNIFDMD_VDM', 'UNIFAC-DMD-VDM',
                     'UNIFAC_DMD_VDM', 'DORTMUND-UNIFAC-VDM',
                     'DORTMUND_UNIFAC_VDM'):
-        return configured_activity(UNIFDMDVDMThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFDMDVDMThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFNIST-VDM', 'UNIFNIST_VDM', 'UNIFAC-NIST-VDM',
                     'UNIFAC_NIST_VDM', 'NIST-UNIFAC-VDM',
                     'NIST_UNIFAC_VDM'):
-        return configured_activity(UNIFNISTVDMThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFNISTVDMThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFAC-RK', 'UNIFAC_RK', 'GAMMA-PHI-RK', 'GAMMA_PHI_RK'):
-        return configured_activity(UNIFACRKThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFACRKThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFAC-PR', 'UNIFAC_PR', 'UNIFAC-PENG-ROBINSON',
                     'UNIFAC_PENG_ROBINSON', 'GAMMA-PHI-PR', 'GAMMA_PHI_PR'):
-        return configured_activity(UNIFACPRThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFACPRThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFDMD-RK', 'UNIFDMD_RK', 'UNIFAC-DMD-RK', 'UNIFAC_DMD_RK',
                     'DORTMUND-UNIFAC-RK', 'DORTMUND_UNIFAC_RK'):
-        return configured_activity(UNIFDMDRKThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFDMDRKThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFDMD-PR', 'UNIFDMD_PR', 'UNIFAC-DMD-PR', 'UNIFAC_DMD_PR',
                     'DORTMUND-UNIFAC-PR', 'DORTMUND_UNIFAC_PR',
                     'MODIFIED-UNIFAC-PR', 'MODIFIED_UNIFAC_PR'):
-        return configured_activity(UNIFDMDPRThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFDMDPRThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFNIST-RK', 'UNIFNIST_RK', 'UNIFAC-NIST-RK',
                     'UNIFAC_NIST_RK', 'NIST-UNIFAC-RK', 'NIST_UNIFAC_RK'):
-        return configured_activity(UNIFNISTRKThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFNISTRKThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method in ('UNIFNIST-PR', 'UNIFNIST_PR', 'UNIFAC-NIST-PR',
                     'UNIFAC_NIST_PR', 'NIST-UNIFAC-PR', 'NIST_UNIFAC_PR',
                     'NIST-MODIFIED-UNIFAC-PR', 'NIST_MODIFIED_UNIFAC_PR'):
-        return configured_activity(UNIFNISTPRThermodynamics(components, db, unifac_groups, interaction_overrides))
+        return UNIFNISTPRThermodynamics(components, db, unifac_groups, interaction_overrides)
     elif method == 'NRTL':
-        return NRTLThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return NRTLThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('NRTL-VDM', 'NRTL_VDM'):
-        return NRTLVDMThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return NRTLVDMThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('NRTL-RK', 'NRTL_RK'):
-        return NRTLRKThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return NRTLRKThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('NRTL-PR', 'NRTL_PR', 'NRTL-PENG-ROBINSON', 'NRTL_PENG_ROBINSON'):
-        return NRTLPRThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return NRTLPRThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method == 'UNIQUAC':
-        return UNIQUACThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return UNIQUACThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('UNIQUAC-VDM', 'UNIQUAC_VDM'):
-        return UNIQUACVDMThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return UNIQUACVDMThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('UNIQUAC-RK', 'UNIQUAC_RK'):
-        return UNIQUACRKThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return UNIQUACRKThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('UNIQUAC-PR', 'UNIQUAC_PR', 'UNIQUAC-PENG-ROBINSON',
                     'UNIQUAC_PENG_ROBINSON'):
-        return UNIQUACPRThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups, activity_interaction_max_psat_bar, activity_interaction_max_temperature_K)
+        return UNIQUACPRThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     else:
         raise ThermodynamicsError(f"Unknown thermodynamic method: {method}")
 
