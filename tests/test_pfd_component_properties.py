@@ -85,6 +85,7 @@ class PFDComponentPropertyTests(unittest.TestCase):
             'Hf_liquid=-150.0, Gf_liquid=-100.0, S_liquid=180.0, '
             'Hf_solid=-160.0, Gf_solid=-110.0, S_solid=90.0, '
             'Hcomb=-2500.0, Hcomb_gross=-2600.0, Hvap=35.0, Hfus=8.0, '
+            'dipole_D=1.85, '
             'Cp_liquid=125.0, Cp_coeffs=[20.0, 0.1, -2e-4, 3e-7], '
             'antoine_A=4.1, antoine_B=1200.0, antoine_C=220.0, '
             'antoine_Tmin=280.0, antoine_Tmax=390.0, '
@@ -138,6 +139,7 @@ class PFDComponentPropertyTests(unittest.TestCase):
             'Hcomb_gross': -2600.0,
             'Hvap': 35.0,
             'Hfus': 8.0,
+            'dipole_moment': 1.85,
             'Cp_liquid': 125.0,
             'antoine_A': 4.1,
             'antoine_B': 1200.0,
@@ -156,6 +158,72 @@ class PFDComponentPropertyTests(unittest.TestCase):
         self.assertEqual(comp.smiles, 'CCCO')
         self.assertEqual(comp.phase_at_STP, 'liquid')
         self.assertFalse(comp.critical_properties_unavailable)
+
+    def test_component_dipole_aliases_parse_and_round_trip(self):
+        for key in ('dipole', 'dipole_D', 'dipole_moment'):
+            with self.subTest(key=key):
+                pfd = self.parse(
+                    'PROCESS: Dipole Override\n'
+                    'VERSION: 1.0\n'
+                    'COMPONENTS:\n'
+                    f'    ETOH | ethanol | {key}=1.85\n'
+                )
+
+                self.assertEqual(pfd.components[0].dipole_moment, 1.85)
+                serialized = pfd.to_pfd()
+                self.assertIn('dipole_moment=1.85', serialized)
+                self.assertEqual(
+                    self.parse(serialized).components[0].dipole_moment,
+                    1.85,
+                )
+
+    def test_invalid_component_dipole_is_rejected(self):
+        for value in ('-0.1', 'nan', 'inf'):
+            with self.subTest(value=value), self.assertRaisesRegex(
+                SimulationError,
+                'expected a finite nonnegative value in Debye',
+            ):
+                Simulator.from_string(
+                    'PROCESS: Invalid Dipole Override\n'
+                    'VERSION: 1.0\n'
+                    'COMPONENTS:\n'
+                    f'    ETOH | ethanol | dipole={value}\n'
+                )
+
+    def test_pfd_dipole_override_reaches_property_resolver(self):
+        sim = Simulator.from_string(
+            'PROCESS: Dipole Override Integration\n'
+            'VERSION: 1.0\n'
+            'ONLINE_LOOKUP: false\n'
+            'THERMO_METHOD: IDEAL\n'
+            'COMPONENTS:\n'
+            '    ETOH | ethanol | dipole=9.25\n'
+            'STREAM Feed : FEED -> PRODUCT\n'
+            '    T = 300 [K]\n'
+            '    P = 1 [bar]\n'
+            '    F = 1 [kmol/h]\n'
+            '    x = ETOH:1.0\n'
+        )
+        result = sim.run()
+        props = sim.thermo.props['ETOH']
+        known = sim.thermo._resolver_known_props['ETOH']
+        resolved = PropertyResolver().resolve_dipole_moment(
+            'ETOH',
+            known,
+            allow_online=False,
+        )
+
+        self.assertTrue(result.converged)
+        self.assertEqual(props.dipole_moment, 9.25)
+        self.assertEqual(known['dipole_moment'], 9.25)
+        self.assertEqual(
+            known['property_sources']['dipole_moment']['method'],
+            'pfd_component_override',
+        )
+        self.assertEqual(resolved.value, 9.25)
+        self.assertEqual(resolved.method, 'pfd_component_override')
+        self.assertEqual(resolved.quality, 1.0)
+        self.assertIn('Debye', resolved.notes)
 
     def test_unknown_inline_component_property_is_rejected_with_suggestion(self):
         source = (

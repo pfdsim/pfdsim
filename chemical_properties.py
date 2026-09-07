@@ -163,6 +163,7 @@ class ChemicalProperties:
     Cp_solid: Optional[float] = None  # J/mol-K (solid heat capacity reference/constant)
     rho_solid: Optional[float] = None  # kg/m3 (explicit constant solid mass density)
     Vm_solid: Optional[float] = None  # m3/kmol (explicit constant solid molar volume)
+    dipole_moment: Optional[float] = None  # permanent gas-phase dipole [Debye]
     solid_material_form: str = "unspecified"
     solid_polymorph: str = ""
     property_correlations: dict = field(default_factory=dict)
@@ -1490,6 +1491,7 @@ class ChemicalDatabase:
                 Cp_solid=props.get('Cp_solid'),
                 rho_solid=props.get('rho_solid'),
                 Vm_solid=props.get('Vm_solid'),
+                dipole_moment=props.get('dipole_moment'),
                 solid_material_form=props.get('solid_material_form', 'unspecified'),
                 solid_polymorph=props.get('solid_polymorph', ''),
                 property_correlations=props.get('property_correlations', {}),
@@ -1571,6 +1573,7 @@ class ChemicalDatabase:
             'Hcomb', 'Hcomb_gross',
             'Hvap', 'Hfus', 'Hsub',
             'Cp_coeffs', 'Cp_liquid', 'Cp_solid', 'rho_solid', 'Vm_solid',
+            'dipole_moment',
             'henry_Hcp', 'henry_B', 'henry_Tmin', 'henry_Tmax',
             'henry_Vinf', 'henry_Vinf_uncertainty',
             'uniquac_r', 'uniquac_q',
@@ -1784,6 +1787,7 @@ class ChemicalDatabase:
             'Cp_solid': props.Cp_solid,
             'rho_solid': props.rho_solid,
             'Vm_solid': props.Vm_solid,
+            'dipole_moment': props.dipole_moment,
             'solid_material_form': props.solid_material_form,
             'solid_polymorph': props.solid_polymorph,
             'property_correlations': props.property_correlations,

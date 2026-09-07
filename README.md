@@ -209,7 +209,7 @@ Component data can be supplied directly in a `.pfd` file:
 
 ```text
 COMPONENTS:
-    MIBK | Methyl isobutyl ketone | CAS=108-10-1, SMILES=CC(C)CC(=O)C, UNIFAC=2CH3+1CH+1CH2+1CH3CO
+    MIBK | Methyl isobutyl ketone | CAS=108-10-1, SMILES=CC(C)CC(=O)C, dipole=2.7, UNIFAC=2CH3+1CH+1CH2+1CH3CO
 ```
 
 PFD-supplied values are treated as authoritative overrides. Missing properties
@@ -217,6 +217,8 @@ are resolved through the local chemical database, identity aliases, Perry and
 textbook data, tabulated vapor-pressure data, correlation fallbacks, and
 optional online lookup. Set `ONLINE_LOOKUP: false` in a `.pfd` when an example
 or regression test should remain deterministic and self-contained.
+Permanent gas-phase dipoles may be supplied in Debye as `dipole_moment`,
+`dipole`, or `dipole_D`.
 
 Solid overrides use `Cp_solid`, `rho_solid`, `Vm_solid`, optional
 `solid_material_form`/`solid_polymorph`, and `Cps` or `rhos` entries in

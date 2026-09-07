@@ -10,6 +10,7 @@ from .viscosity import ViscosityMixin
 from .surface_tension import SurfaceTensionMixin
 from .formation import FormationPropertiesMixin
 from .online_phase_change import OnlinePhaseChangeMixin
+from .dipole_moment import DipoleMomentMixin
 
 
 class PropertyResolver(
@@ -23,6 +24,7 @@ class PropertyResolver(
     ViscosityMixin,
     SurfaceTensionMixin,
     FormationPropertiesMixin,
+    DipoleMomentMixin,
     ResolverIdentityMixin,
     PropertyResolverBase,
 ):

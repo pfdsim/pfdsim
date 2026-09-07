@@ -350,6 +350,22 @@ def resolve_surface_tension(
     return get_property_resolver().resolve_surface_tension(symbol, T, props)
 
 
+def resolve_dipole_moment(
+    symbol: str,
+    props: Dict = None,
+    *,
+    use_pvdz: bool = False,
+    allow_online: bool = True,
+) -> PropertyResolutionResult:
+    """Resolve the permanent gas-phase molecular dipole in Debye."""
+    return get_property_resolver().resolve_dipole_moment(
+        symbol,
+        props,
+        use_pvdz=use_pvdz,
+        allow_online=allow_online,
+    )
+
+
 def resolve_formation_properties(
     symbol: str,
     props: Dict = None,

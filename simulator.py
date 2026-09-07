@@ -443,6 +443,7 @@ class Simulator:
             ('Cp_solid', 'Cp_solid'),
             ('rho_solid', 'rho_solid'),
             ('Vm_solid', 'Vm_solid'),
+            ('dipole_moment', 'dipole_moment'),
             ('solid_material_form', 'solid_material_form'),
             ('solid_polymorph', 'solid_polymorph'),
             ('antoine_A', 'antoine_A'),

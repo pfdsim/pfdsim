@@ -28,6 +28,13 @@ web = [
     "Werkzeug>=3.1",
     "Gunicorn>=26.2",
 ]
+dipole-xtb = [
+    "tblite[ase]>=0.7",
+]
+dipole-pvdz = [
+    "tblite[ase]>=0.7",
+    "pyscf>=2.14",
+]
 
 [project.scripts]
 pfdsim = "pfdsim.cli:main"

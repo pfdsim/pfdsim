@@ -484,7 +484,8 @@ Property names are matched case-insensitively. Common aliases are
 spellings shown below. `Cps`/`solid_cp`, `rhos`/`solid_density`, `Vms`/
 `solid_molar_volume`, and `solid_form` are aliases for the corresponding solid
 property fields. `type` and `phase_model` are aliases for `phase_behavior`
-inside the `COMPONENTS:` section.
+inside the `COMPONENTS:` section. `dipole` and `dipole_D` are aliases for
+`dipole_moment`.
 
 Identity and structure fields:
 - `formula` - Molecular formula
@@ -545,6 +546,9 @@ Critical and phase-change fields:
 - `Tm` - Melting point [K]
 - `Hvap` - Heat of vaporization [kJ/mol], usually at `Tb`; when a temperature-dependent value is needed, the resolver can Watson-scale it using `Tb` and `Tc`
 - `Hfus` - Heat of fusion [kJ/mol]
+- `dipole_moment` - Permanent gas-phase molecular dipole [Debye]. An explicit
+  PFD value is authoritative and bypasses CCCBDB lookup and optional quantum
+  calculations. The value must be finite and nonnegative.
 - `rho` - Liquid mass-density reference [kg/m3], interpreted at `rho_T` if supplied, otherwise 298.15 K; this is used as a Rackett fit source when critical data is available
 - `rho_T` - Temperature for `rho` [K]
 - `rho_solid` - Explicit constant solid mass density [kg/m3]
@@ -617,7 +621,7 @@ Example:
 ```
 COMPONENTS:
     H2O    | Water   | MW=18.02, Tc=647.1, Pc=220.6, Tt=273.16, Pt=0.00611657
-    C2H5OH | Ethanol | MW=46.07, Tc=513.9, Pc=61.4, Tb=351.44, Hvap=38.56
+    C2H5OH | Ethanol | MW=46.07, Tc=513.9, Pc=61.4, Tb=351.44, Hvap=38.56, dipole=1.44
     MIBK   | Methyl isobutyl ketone | CAS=108-10-1, SMILES=CC(C)CC(=O)C, UNIFAC=2CH3+1CH+1CH2+1CH3CO
     ACETONE | Acetone | CAS=67-64-1, VDM={delta_H:-50000,delta_S:-125}
     SALT | Sodium chloride | CAS=7647-14-5, type=permanent_solid, solid_material_form=crystalline, particle_diameter=0.0002, particle_sphericity=0.85

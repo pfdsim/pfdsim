@@ -113,6 +113,9 @@ _COMPONENT_PROPERTY_ALIASES = {
     'vms': 'Vm_solid',
     'vm_solid': 'Vm_solid',
     'solid_molar_volume': 'Vm_solid',
+    'dipole': 'dipole_moment',
+    'dipole_d': 'dipole_moment',
+    'dipole_moment': 'dipole_moment',
     'solid_form': 'solid_material_form',
     'phase_model': 'phase_behavior',
     'type': 'phase_behavior',
@@ -133,6 +136,7 @@ _COMPONENT_PROPERTY_KEYS = frozenset({
     'S_solid', 'Hcomb', 'Hcomb_gross', 'Tb', 'Tt', 'Pt', 'Tm',
     'Hvap', 'Hfus',
     'Cp_coeffs', 'Cp_liquid', 'Cp_solid', 'rho_solid', 'Vm_solid',
+    'dipole_moment',
     'solid_material_form', 'solid_polymorph',
     'phase_behavior', 'particle_diameter', 'particle_sphericity',
     'particle_size_distribution',
@@ -146,7 +150,7 @@ _COMPONENT_PROPERTY_KEYS = frozenset({
 _COMPONENT_PROPERTY_NAMES = tuple(sorted(
     _COMPONENT_PROPERTY_KEYS | {
         'MW', 'molecular_weight', 'CAS', 'UNIFAC', 'SMILES',
-        'T_rho', 'rho_T_K', 'VDM', 'PSD',
+        'T_rho', 'rho_T_K', 'VDM', 'PSD', 'dipole', 'dipole_D',
     },
     key=str.casefold,
 ))
@@ -863,6 +867,7 @@ class Component:
     Cp_solid: Optional[float] = None  # Solid heat capacity [J/mol-K]
     rho_solid: Optional[float] = None  # Solid mass density [kg/m3]
     Vm_solid: Optional[float] = None  # Solid molar volume [m3/kmol]
+    dipole_moment: Optional[float] = None  # Permanent gas-phase dipole [Debye]
     solid_material_form: Optional[str] = None
     solid_polymorph: Optional[str] = None
     phase_behavior: Optional[str] = None
@@ -946,6 +951,7 @@ class Component:
             ('Cp_solid', 'Cp_solid'),
             ('rho_solid', 'rho_solid'),
             ('Vm_solid', 'Vm_solid'),
+            ('dipole_moment', 'dipole_moment'),
             ('solid_material_form', 'solid_material_form'),
             ('solid_polymorph', 'solid_polymorph'),
             ('phase_behavior', 'phase_behavior'),
@@ -4384,6 +4390,17 @@ class PFDValidator:
             ):
                 if value is not None and value <= 0:
                     self.errors.append(f"Invalid {label} for {comp.symbol}: {value}")
+            if (
+                comp.dipole_moment is not None
+                and (
+                    not math.isfinite(comp.dipole_moment)
+                    or comp.dipole_moment < 0.0
+                )
+            ):
+                self.errors.append(
+                    f"Invalid dipole_moment for {comp.symbol}: "
+                    f"{comp.dipole_moment}; expected a finite nonnegative value in Debye"
+                )
             if (
                 comp.molecular_weight is not None
                 and comp.rho_solid is not None
