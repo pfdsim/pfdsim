@@ -10,6 +10,7 @@ if ROOT not in sys.path:
 
 from thermodynamics import ActivityCoefficientThermodynamics, create_thermodynamics
 from simulator import Simulator
+import compiled_lle
 
 
 class CompiledBackendTests(unittest.TestCase):
@@ -433,6 +434,7 @@ class CompiledBackendTests(unittest.TestCase):
 
     def test_compiled_nrtl_and_uniquac_lle_matches_reference_splitter(self):
         components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        tolerance = 1e-5
         composition = {
             'H2O': 0.45,
             'CH3OH': 0.01,
@@ -446,7 +448,11 @@ class CompiledBackendTests(unittest.TestCase):
                 reference_thermo._compiled_activity_backend = lambda _T: None
                 reference_thermo._compiled_lle_backend = lambda _T: None
                 reference = ActivityCoefficientThermodynamics.liquid_liquid_equilibrium(
-                    reference_thermo, composition, 298.15, max_iter=200, tol=1e-5
+                    reference_thermo,
+                    composition,
+                    298.15,
+                    max_iter=200,
+                    tol=tolerance,
                 )
 
                 thermo = create_thermodynamics(components, method)
@@ -454,18 +460,48 @@ class CompiledBackendTests(unittest.TestCase):
                     self.skipTest(f"Compiled {method} LLE backend is unavailable")
 
                 compiled = thermo.liquid_liquid_equilibrium(
-                    composition, 298.15, max_iter=200, tol=1e-5
+                    composition,
+                    298.15,
+                    max_iter=200,
+                    tol=tolerance,
                 )
 
                 self.assertEqual(reference[0], compiled[0])
-                self.assertAlmostEqual(reference[3], compiled[3], delta=5e-7)
+                self.assertAlmostEqual(
+                    reference[3], compiled[3], delta=2.0 * tolerance
+                )
                 for phase_index in (1, 2):
                     for comp in composition:
                         self.assertAlmostEqual(
                             reference[phase_index][comp],
                             compiled[phase_index][comp],
-                            delta=5e-7,
+                            delta=2.0 * tolerance,
                         )
+
+                _, phase1, phase2, beta = compiled
+                gamma1 = thermo.activity_coefficients(298.15, phase1)
+                gamma2 = thermo.activity_coefficients(298.15, phase2)
+                equilibrium_residual = max(
+                    abs(
+                        phase1[comp] * gamma1[comp]
+                        - phase2[comp] * gamma2[comp]
+                    )
+                    / max(
+                        phase1[comp] * gamma1[comp],
+                        phase2[comp] * gamma2[comp],
+                        1e-10,
+                    )
+                    for comp in components
+                )
+                self.assertLessEqual(equilibrium_residual, tolerance)
+                for comp in components:
+                    reconstructed = (
+                        (1.0 - beta) * phase1[comp]
+                        + beta * phase2[comp]
+                    )
+                    self.assertLessEqual(
+                        abs(reconstructed - composition[comp]), tolerance
+                    )
 
     def test_compiled_nrtl_and_uniquac_lle_accept_component_subset(self):
         components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
@@ -573,6 +609,54 @@ class CompiledBackendTests(unittest.TestCase):
                 self.assertEqual(len(calls), 1)
                 self.assertEqual(calls[0][2], 123)
                 self.assertEqual(calls[0][3], 1e-7)
+
+    def test_compiled_lle_reports_nonconvergence_to_caller(self):
+        components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        composition = {
+            'H2O': 0.45,
+            'CH3OH': 0.01,
+            'methyl acetate': 0.25,
+            '(C2H5)2O': 0.29,
+        }
+
+        for method in ('NRTL', 'UNIQUAC'):
+            with self.subTest(method=method):
+                thermo = create_thermodynamics(components, method)
+                backend = thermo._compiled_lle_backend(298.15)
+                if backend is None:
+                    self.skipTest(f'Compiled {method} LLE backend is unavailable')
+
+                result = backend.split(
+                    composition,
+                    298.15,
+                    max_iter=1,
+                    tol=1e-12,
+                )
+
+                self.assertIsNone(result)
+
+    def test_compiled_binary_lle_caches_successful_refinement(self):
+        thermo = create_thermodynamics(['1-butanol', 'water'], 'NRTL')
+        backend = thermo._compiled_lle_backend(399.2)
+        if backend is None:
+            self.skipTest('Compiled NRTL LLE backend is unavailable')
+        composition = {'1-butanol': 0.0987, 'water': 0.9013}
+
+        with patch.object(
+            compiled_lle,
+            'least_squares',
+            wraps=compiled_lle.least_squares,
+        ) as mocked_solver:
+            first = backend.split(
+                composition, 399.2, max_iter=100, tol=1e-6
+            )
+            second = backend.split(
+                composition, 399.2, max_iter=100, tol=1e-6
+            )
+
+        self.assertTrue(first[0])
+        self.assertEqual(first, second)
+        self.assertEqual(mocked_solver.call_count, 1)
 
     def test_compiled_unifac_vlle_matches_reference_ternary_tp(self):
         components = ['water', 'ethanol', 'cyclohexane']

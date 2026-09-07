@@ -287,14 +287,30 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
 
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
                                   max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
+        self._validate_lle_solver_controls(max_iter, tol)
+        normalized = self._normalize_lle_composition(composition)
         # Prefer the compiled splitter whenever it can represent the component
         # set.  The readable implementation remains the fallback only for
         # component sets unsupported by the compiled backend.
         if self._compiled_lle is not None:
-            split = self._compiled_lle.split(composition, T, max_iter=max_iter, tol=tol)
+            split = self._compiled_lle.split(
+                normalized, T, max_iter=max_iter, tol=tol
+            )
             if split is not None:
                 return split
-        return super().liquid_liquid_equilibrium(composition, T, max_iter, tol)
+            if len(normalized) > 2:
+                return False, dict(normalized), dict(normalized), 0.0
+            binary_split = self._binary_liquid_liquid_equilibrium(
+                normalized,
+                T,
+                max_iter,
+                tol,
+                prefer_adaptive_starts=True,
+            )
+            if binary_split is not None:
+                return binary_split
+            return False, dict(normalized), dict(normalized), 0.0
+        return super().liquid_liquid_equilibrium(normalized, T, max_iter, tol)
     
     def activity_coefficients(self, T: float, composition: dict[str, float]) -> dict[str, float]:
         """

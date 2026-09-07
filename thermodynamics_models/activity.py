@@ -1889,13 +1889,59 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         V = self._rachford_rice_bounded(z, K, V)
         return (V, *self._flash_phase_compositions(z, K, V))
 
+    def _normalize_lle_composition(
+        self,
+        composition: dict[str, float],
+    ) -> dict[str, float]:
+        if not composition:
+            raise ThermodynamicsError("LLE composition must not be empty")
+        unknown = [comp for comp in composition if comp not in self.components]
+        if unknown:
+            raise ThermodynamicsError(
+                "LLE composition contains unknown component(s): "
+                + ", ".join(unknown)
+            )
+        normalized = {}
+        for comp, raw_value in composition.items():
+            try:
+                value = float(raw_value)
+            except (TypeError, ValueError) as error:
+                raise ThermodynamicsError(
+                    f"LLE composition for {comp} must be numeric"
+                ) from error
+            if not math.isfinite(value) or value < 0.0:
+                raise ThermodynamicsError(
+                    f"LLE composition for {comp} must be finite and nonnegative"
+                )
+            normalized[comp] = value
+        total = sum(normalized.values())
+        if total <= 0.0:
+            raise ThermodynamicsError("LLE composition must have a positive total")
+        return {comp: value / total for comp, value in normalized.items()}
+
+    @staticmethod
+    def _lle_phase_difference_tolerance(tol: float) -> float:
+        return max(1.0e-8, min(1.0e-4, 10.0 * float(tol)))
+
+    @staticmethod
+    def _validate_lle_solver_controls(max_iter: int, tol: float) -> None:
+        if not isinstance(max_iter, int) or isinstance(max_iter, bool) or max_iter < 1:
+            raise ThermodynamicsError("LLE max_iter must be a positive integer")
+        if not math.isfinite(float(tol)) or tol <= 0.0:
+            raise ThermodynamicsError("LLE tolerance must be positive and finite")
+
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
                                   max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
-        z = dict(composition)
+        self._validate_lle_solver_controls(max_iter, tol)
+        z = self._normalize_lle_composition(composition)
         comps = list(z.keys())
         n_comp = len(comps)
+        if n_comp < 2:
+            return False, dict(z), dict(z), 0.0
         if n_comp == 2:
-            binary_split = self._binary_liquid_liquid_equilibrium(z, T, tol)
+            binary_split = self._binary_liquid_liquid_equilibrium(
+                z, T, max_iter, tol
+            )
             if binary_split is not None:
                 return binary_split
             return False, dict(z), dict(z), 0.0
@@ -1915,6 +1961,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         x1 = {comp: value / s1 for comp, value in x1.items()}
         x2 = {comp: value / s2 for comp, value in x2.items()}
         beta = 0.5
+        phase_tolerance = self._lle_phase_difference_tolerance(tol)
 
         for _ in range(max_iter):
             gamma1 = self.activity_coefficients(T, x1)
@@ -1930,7 +1977,18 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 max_diff = max(max_diff, abs(act1 - act2) / max(act1, act2, 1e-10))
             if max_diff < tol:
                 phase_diff = sum(abs(x1[comp] - x2[comp]) for comp in comps) / n_comp
-                if phase_diff < 0.01:
+                if phase_diff < phase_tolerance:
+                    return False, dict(z), dict(z), 0.0
+                lever_denominator = sum(
+                    (x2[comp] - x1[comp]) ** 2 for comp in comps
+                )
+                if lever_denominator > 1e-30:
+                    beta = sum(
+                        (x2[comp] - x1[comp]) * (z[comp] - x1[comp])
+                        for comp in comps
+                    ) / lever_denominator
+                    beta = max(0.0, min(1.0, beta))
+                if beta <= 1e-10 or beta >= 1.0 - 1e-10:
                     return False, dict(z), dict(z), 0.0
                 return True, x1, x2, beta
 
@@ -1957,15 +2015,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             if s2 > 0:
                 x2 = {comp: value / s2 for comp, value in x2.items()}
 
-        phase_diff = sum(abs(x1[comp] - x2[comp]) for comp in comps) / n_comp
-        if phase_diff < 0.01:
-            return False, dict(z), dict(z), 0.0
-        if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-            return False, dict(z), dict(z), 0.0
-        return True, x1, x2, beta
+        return False, dict(z), dict(z), 0.0
 
     def _binary_liquid_liquid_equilibrium(
-        self, composition: dict[str, float], T: float, tol: float
+        self,
+        composition: dict[str, float],
+        T: float,
+        max_iter: int,
+        tol: float,
+        prefer_adaptive_starts: bool = False,
     ) -> Optional[tuple[bool, dict, dict, float]]:
 
         comps = list(composition.keys())
@@ -2006,7 +2064,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 - math.log(max(x2[comp_b] * gamma2.get(comp_b, 1.0), 1e-300)),
             ])
 
-        starts = [
+        primary_starts = [
             (1e-5, 1.0 - 1e-5),
             (1e-4, 1.0 - 1e-4),
             (1e-3, 1.0 - 1e-3),
@@ -2019,45 +2077,107 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             (0.45, 0.95),
             (0.65, 0.995),
         ]
-        best = None
-        for start_1, start_2 in starts:
-            x_low_start, x_high_start = sorted((start_1, start_2))
-            solved = least_squares(
-                residual,
-                np.array([
-                    logit(x_low_start),
-                    logit((x_high_start - x_low_start) / (1.0 - x_low_start)),
-                ], dtype=float),
-                method='trf',
-                ftol=1e-12,
-                xtol=1e-12,
-                gtol=1e-12,
-                max_nfev=200,
-            )
-            norm = float(np.linalg.norm(residual(solved.x), ord=np.inf))
-            x_a_1, x_a_2 = low_high_from_variables(solved.x)
-            if abs(x_a_1 - x_a_2) < 0.01:
-                continue
-            if best is None or norm < best[0]:
-                best = (norm, x_a_1, x_a_2)
-                if norm < 1e-9:
-                    break
-
-        if best is None or best[0] > max(tol * 100.0, 1e-6):
-            return None
-
-        _, x_a_1, x_a_2 = best
-        x_low, x_high = sorted((x_a_1, x_a_2))
         z_a = composition.get(comp_a, 0.0)
-        if z_a < x_low - 1e-9 or z_a > x_high + 1e-9:
-            return False, dict(composition), dict(composition), 0.0
+        adaptive_starts = []
+        for half_width in (0.005, 0.01, 0.025, 0.05, 0.10, 0.20):
+            low = max(1.0e-8, z_a - half_width)
+            high = min(1.0 - 1.0e-8, z_a + half_width)
+            if high - low > 2.0e-8:
+                adaptive_starts.append((low, high))
 
-        phase1 = phase(x_high)
-        phase2 = phase(x_low)
-        beta = min(max((z_a - x_high) / (x_low - x_high), 0.0), 1.0)
-        if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-            return False, dict(composition), dict(composition), 0.0
-        return True, phase1, phase2, beta
+        phase_tolerance = self._lle_phase_difference_tolerance(tol)
+        residual_limit = max(float(tol), 1.0e-9)
+
+        def solve_from_starts(starts) -> Optional[tuple[float, float, float]]:
+            best_local = None
+            for start_1, start_2 in starts:
+                x_low_start, x_high_start = sorted((start_1, start_2))
+                solved = least_squares(
+                    residual,
+                    np.array([
+                        logit(x_low_start),
+                        logit(
+                            (x_high_start - x_low_start)
+                            / (1.0 - x_low_start)
+                        ),
+                    ], dtype=float),
+                    method='trf',
+                    ftol=1e-12,
+                    xtol=1e-12,
+                    gtol=1e-12,
+                    max_nfev=max_iter,
+                )
+                residual_values = residual(solved.x)
+                if not np.all(np.isfinite(residual_values)):
+                    continue
+                norm = float(np.linalg.norm(residual_values, ord=np.inf))
+                x_a_1, x_a_2 = low_high_from_variables(solved.x)
+                if not math.isfinite(x_a_1) or not math.isfinite(x_a_2):
+                    continue
+                if abs(x_a_1 - x_a_2) < phase_tolerance:
+                    continue
+                if best_local is None or norm < best_local[0]:
+                    best_local = (norm, x_a_1, x_a_2)
+                    if norm <= min(residual_limit, 1.0e-9):
+                        break
+            return best_local
+
+        first_starts = (
+            adaptive_starts if prefer_adaptive_starts else primary_starts
+        )
+        retry_starts = (
+            primary_starts if prefer_adaptive_starts else adaptive_starts
+        )
+        best = solve_from_starts(first_starts)
+        retry_attempted = False
+        if best is None or best[0] > residual_limit:
+            retry_best = solve_from_starts(retry_starts)
+            retry_attempted = True
+            if retry_best is not None and (
+                best is None or retry_best[0] < best[0]
+            ):
+                best = retry_best
+
+        def dimensionless_gibbs(phase_composition: dict[str, float]) -> float:
+            gamma = self.activity_coefficients(T, phase_composition)
+            return sum(
+                fraction * math.log(max(fraction * gamma[comp], 1.0e-300))
+                for comp, fraction in phase_composition.items()
+            )
+
+        def split_from_candidate(candidate):
+            if candidate is None or candidate[0] > residual_limit:
+                return None
+            _, x_a_1, x_a_2 = candidate
+            x_low, x_high = sorted((x_a_1, x_a_2))
+            if z_a < x_low - 1e-9 or z_a > x_high + 1e-9:
+                return None
+            phase1 = phase(x_high)
+            phase2 = phase(x_low)
+            beta = min(max(
+                (z_a - x_high) / (x_low - x_high), 0.0
+            ), 1.0)
+            if beta <= 1e-10 or beta >= 1.0 - 1e-10:
+                return None
+            feed_gibbs = dimensionless_gibbs(composition)
+            split_gibbs = (
+                (1.0 - beta) * dimensionless_gibbs(phase1)
+                + beta * dimensionless_gibbs(phase2)
+            )
+            gibbs_scale = max(1.0, abs(feed_gibbs), abs(split_gibbs))
+            improvement = feed_gibbs - split_gibbs
+            if improvement <= 10.0 * np.finfo(float).eps * gibbs_scale:
+                return None
+            return True, phase1, phase2, beta
+
+        split = split_from_candidate(best)
+        if split is not None:
+            return split
+        if not retry_attempted:
+            split = split_from_candidate(solve_from_starts(retry_starts))
+            if split is not None:
+                return split
+        return False, dict(composition), dict(composition), 0.0
 
     def flash3_TP(self, composition: dict[str, float], T: float, P: float,
                   max_iter: int = 100, tol: float = 1e-9) -> VLLEFlashResult:

@@ -216,13 +216,27 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
 
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
                                   max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
-        self._warn_activity_interaction_extrapolation(T, composition)
+        self._validate_lle_solver_controls(max_iter, tol)
+        normalized = self._normalize_lle_composition(composition)
+        self._warn_activity_interaction_extrapolation(T, normalized)
         backend = self._compiled_lle_backend(T)
         if backend is not None:
-            split = backend.split(composition, T, max_iter=max_iter, tol=tol)
+            split = backend.split(normalized, T, max_iter=max_iter, tol=tol)
             if split is not None:
                 return split
-        return super().liquid_liquid_equilibrium(composition, T, max_iter, tol)
+            if len(normalized) > 2:
+                return False, dict(normalized), dict(normalized), 0.0
+            binary_split = self._binary_liquid_liquid_equilibrium(
+                normalized,
+                T,
+                max_iter,
+                tol,
+                prefer_adaptive_starts=True,
+            )
+            if binary_split is not None:
+                return binary_split
+            return False, dict(normalized), dict(normalized), 0.0
+        return super().liquid_liquid_equilibrium(normalized, T, max_iter, tol)
 
     def _nrtl_cached_matrices(
         self,
@@ -608,13 +622,27 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
 
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
                                   max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
-        self._warn_activity_interaction_extrapolation(T, composition)
+        self._validate_lle_solver_controls(max_iter, tol)
+        normalized = self._normalize_lle_composition(composition)
+        self._warn_activity_interaction_extrapolation(T, normalized)
         backend = self._compiled_lle_backend(T)
         if backend is not None:
-            split = backend.split(composition, T, max_iter=max_iter, tol=tol)
+            split = backend.split(normalized, T, max_iter=max_iter, tol=tol)
             if split is not None:
                 return split
-        return super().liquid_liquid_equilibrium(composition, T, max_iter, tol)
+            if len(normalized) > 2:
+                return False, dict(normalized), dict(normalized), 0.0
+            binary_split = self._binary_liquid_liquid_equilibrium(
+                normalized,
+                T,
+                max_iter,
+                tol,
+                prefer_adaptive_starts=True,
+            )
+            if binary_split is not None:
+                return binary_split
+            return False, dict(normalized), dict(normalized), 0.0
+        return super().liquid_liquid_equilibrium(normalized, T, max_iter, tol)
 
     def _uniquac_rq(self, comp: str) -> tuple[float, float]:
         data = self._uniquac_rq_data(comp)

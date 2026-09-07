@@ -10,9 +10,11 @@ compiled backend is unavailable or the component set does not match exactly.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 import numpy as np
+from scipy.optimize import least_squares
 
 try:
     from numba import njit, typeof
@@ -44,6 +46,95 @@ except Exception:  # pragma: no cover - exercised only without optional backend
     _uniquac_activity_coefficients_numba = None
 
 
+def _refine_binary_split(
+    z: np.ndarray,
+    T: float,
+    seed_x1: np.ndarray,
+    seed_x2: np.ndarray,
+    activity_coefficients,
+    max_iter: int,
+    tol: float,
+) -> tuple[bool, np.ndarray, np.ndarray, float] | None:
+    def sigmoid(value: float) -> float:
+        if value >= 0.0:
+            exp_neg = math.exp(-value)
+            return 1.0 / (1.0 + exp_neg)
+        exp_pos = math.exp(value)
+        return exp_pos / (1.0 + exp_pos)
+
+    def logit(value: float) -> float:
+        bounded = min(max(float(value), 1.0e-12), 1.0 - 1.0e-12)
+        return math.log(bounded / (1.0 - bounded))
+
+    def endpoints(variables) -> tuple[float, float]:
+        low = sigmoid(float(variables[0]))
+        high = low + (1.0 - low) * sigmoid(float(variables[1]))
+        return low, high
+
+    def phase(value: float) -> np.ndarray:
+        bounded = min(max(float(value), 1.0e-12), 1.0 - 1.0e-12)
+        return np.asarray((bounded, 1.0 - bounded), dtype=np.float64)
+
+    def residual(variables) -> np.ndarray:
+        low, high = endpoints(variables)
+        phase_low = phase(low)
+        phase_high = phase(high)
+        gamma_low = activity_coefficients(phase_low)
+        gamma_high = activity_coefficients(phase_high)
+        return np.log(np.maximum(phase_low * gamma_low, 1.0e-300)) - np.log(
+            np.maximum(phase_high * gamma_high, 1.0e-300)
+        )
+
+    seed_low, seed_high = sorted((float(seed_x1[0]), float(seed_x2[0])))
+    separation_coordinate = (
+        (seed_high - seed_low) / max(1.0 - seed_low, 1.0e-12)
+    )
+    solved = least_squares(
+        residual,
+        np.asarray(
+            (logit(seed_low), logit(separation_coordinate)), dtype=np.float64
+        ),
+        method="trf",
+        ftol=1.0e-12,
+        xtol=1.0e-12,
+        gtol=1.0e-12,
+        max_nfev=max_iter,
+    )
+    residual_values = residual(solved.x)
+    if not np.all(np.isfinite(residual_values)):
+        return None
+    if float(np.linalg.norm(residual_values, ord=np.inf)) > max(tol, 1.0e-9):
+        return None
+    low, high = endpoints(solved.x)
+    phase_tolerance = max(1.0e-8, min(1.0e-4, 10.0 * tol))
+    if high - low < phase_tolerance:
+        return False, z.copy(), z.copy(), 0.0
+    if z[0] < low - 1.0e-9 or z[0] > high + 1.0e-9:
+        return False, z.copy(), z.copy(), 0.0
+
+    phase1 = phase(high)
+    phase2 = phase(low)
+    beta = min(max((z[0] - high) / (low - high), 0.0), 1.0)
+    if beta <= 1.0e-10 or beta >= 1.0 - 1.0e-10:
+        return False, z.copy(), z.copy(), 0.0
+
+    def dimensionless_gibbs(values: np.ndarray) -> float:
+        gamma = activity_coefficients(values)
+        return float(np.sum(
+            values * np.log(np.maximum(values * gamma, 1.0e-300))
+        ))
+
+    feed_gibbs = dimensionless_gibbs(z)
+    split_gibbs = (
+        (1.0 - beta) * dimensionless_gibbs(phase1)
+        + beta * dimensionless_gibbs(phase2)
+    )
+    scale = max(1.0, abs(feed_gibbs), abs(split_gibbs))
+    if feed_gibbs - split_gibbs <= 10.0 * np.finfo(float).eps * scale:
+        return False, z.copy(), z.copy(), 0.0
+    return True, phase1, phase2, beta
+
+
 @dataclass
 class CompiledLLEBackend:
     """Compiled LLE splitter for one fixed UNIFAC component set."""
@@ -62,6 +153,9 @@ class CompiledLLEBackend:
     _ordered_arrays_cache: dict[
         tuple[str, ...],
         tuple[np.ndarray, np.ndarray, np.ndarray],
+    ] = field(default_factory=dict, init=False, repr=False)
+    _binary_refinement_cache: dict[
+        tuple, tuple[bool, np.ndarray, np.ndarray, float]
     ] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -136,7 +230,9 @@ class CompiledLLEBackend:
             [max(float(composition.get(comp, 0.0)), 0.0) for comp in order],
             dtype=np.float64,
         )
-        has_lle, x1, x2, beta = _lle_split_numba(
+        total = float(np.sum(z))
+        z = z / total if total > 0.0 else np.full(len(order), 1.0 / len(order))
+        converged, has_lle, x1, x2, beta = _lle_split_numba(
             nu,
             r,
             q,
@@ -150,6 +246,42 @@ class CompiledLLEBackend:
             int(max_iter),
             float(tol),
         )
+        if not converged:
+            if len(order) != 2:
+                return None
+            refinement_key = (
+                order, tuple(float(value) for value in z),
+                float(T), int(max_iter), float(tol),
+            )
+            refined = self._binary_refinement_cache.get(refinement_key)
+            if refined is None:
+                refined = _refine_binary_split(
+                    z,
+                    float(T),
+                    x1,
+                    x2,
+                    lambda values: _activity_coefficients_numba(
+                        nu,
+                        r,
+                        q,
+                        self.subgroup_q,
+                        self.interactions,
+                        self.interactions_b,
+                        self.interactions_c,
+                        self.variant_id,
+                        values,
+                        float(T),
+                    ),
+                    int(max_iter),
+                    float(tol),
+                )
+                if refined is not None:
+                    if len(self._binary_refinement_cache) >= 20000:
+                        self._binary_refinement_cache.clear()
+                    self._binary_refinement_cache[refinement_key] = refined
+            if refined is None:
+                return None
+            has_lle, x1, x2, beta = refined
         x1_dict = {comp: float(x1[index]) for index, comp in enumerate(order)}
         x2_dict = {comp: float(x2[index]) for index, comp in enumerate(order)}
         return bool(has_lle), x1_dict, x2_dict, float(beta)
@@ -176,6 +308,9 @@ class CompiledNRTLLLEBackend:
     _ordered_arrays_cache: dict[
         tuple[str, ...],
         tuple[np.ndarray, ...],
+    ] = field(default_factory=dict, init=False, repr=False)
+    _binary_refinement_cache: dict[
+        tuple, tuple[bool, np.ndarray, np.ndarray, float]
     ] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -266,7 +401,9 @@ class CompiledNRTLLLEBackend:
             [max(float(composition.get(comp, 0.0)), 0.0) for comp in order],
             dtype=np.float64,
         )
-        has_lle, x1, x2, beta = _lle_split_nrtl_numba(
+        total = float(np.sum(z))
+        z = z / total if total > 0.0 else np.full(len(order), 1.0 / len(order))
+        converged, has_lle, x1, x2, beta = _lle_split_nrtl_numba(
             z,
             float(T),
             tau_mode,
@@ -283,6 +420,45 @@ class CompiledNRTLLLEBackend:
             int(max_iter),
             float(tol),
         )
+        if not converged:
+            if len(order) != 2:
+                return None
+            refinement_key = (
+                order, tuple(float(value) for value in z),
+                float(T), int(max_iter), float(tol),
+            )
+            refined = self._binary_refinement_cache.get(refinement_key)
+            if refined is None:
+                refined = _refine_binary_split(
+                    z,
+                    float(T),
+                    x1,
+                    x2,
+                    lambda values: _nrtl_activity_coefficients_numba(
+                        values,
+                        float(T),
+                        tau_mode,
+                        tau_c,
+                        tau_d,
+                        tau_e,
+                        tau_f,
+                        tau_g,
+                        tau_tref,
+                        tau_energy,
+                        alpha,
+                        interaction_tmin,
+                        interaction_tmax,
+                    ),
+                    int(max_iter),
+                    float(tol),
+                )
+                if refined is not None:
+                    if len(self._binary_refinement_cache) >= 20000:
+                        self._binary_refinement_cache.clear()
+                    self._binary_refinement_cache[refinement_key] = refined
+            if refined is None:
+                return None
+            has_lle, x1, x2, beta = refined
         x1_dict = {comp: float(x1[index]) for index, comp in enumerate(order)}
         x2_dict = {comp: float(x2[index]) for index, comp in enumerate(order)}
         return bool(has_lle), x1_dict, x2_dict, float(beta)
@@ -310,6 +486,9 @@ class CompiledUNIQUACLLEBackend:
     _ordered_arrays_cache: dict[
         tuple[str, ...],
         tuple[np.ndarray, ...],
+    ] = field(default_factory=dict, init=False, repr=False)
+    _binary_refinement_cache: dict[
+        tuple, tuple[bool, np.ndarray, np.ndarray, float]
     ] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -403,7 +582,9 @@ class CompiledUNIQUACLLEBackend:
             [max(float(composition.get(comp, 0.0)), 0.0) for comp in order],
             dtype=np.float64,
         )
-        has_lle, x1, x2, beta = _lle_split_uniquac_numba(
+        total = float(np.sum(z))
+        z = z / total if total > 0.0 else np.full(len(order), 1.0 / len(order))
+        converged, has_lle, x1, x2, beta = _lle_split_uniquac_numba(
             z,
             float(T),
             r,
@@ -421,6 +602,46 @@ class CompiledUNIQUACLLEBackend:
             int(max_iter),
             float(tol),
         )
+        if not converged:
+            if len(order) != 2:
+                return None
+            refinement_key = (
+                order, tuple(float(value) for value in z),
+                float(T), int(max_iter), float(tol),
+            )
+            refined = self._binary_refinement_cache.get(refinement_key)
+            if refined is None:
+                refined = _refine_binary_split(
+                    z,
+                    float(T),
+                    x1,
+                    x2,
+                    lambda values: _uniquac_activity_coefficients_numba(
+                        values,
+                        float(T),
+                        r,
+                        q,
+                        q_residual,
+                        tau_mode,
+                        tau_a,
+                        tau_b,
+                        tau_c,
+                        tau_d,
+                        tau_e,
+                        tau_tref,
+                        interaction_tmin,
+                        interaction_tmax,
+                    ),
+                    int(max_iter),
+                    float(tol),
+                )
+                if refined is not None:
+                    if len(self._binary_refinement_cache) >= 20000:
+                        self._binary_refinement_cache.clear()
+                    self._binary_refinement_cache[refinement_key] = refined
+            if refined is None:
+                return None
+            has_lle, x1, x2, beta = refined
         x1_dict = {comp: float(x1[index]) for index, comp in enumerate(order)}
         x2_dict = {comp: float(x2[index]) for index, comp in enumerate(order)}
         return bool(has_lle), x1_dict, x2_dict, float(beta)
@@ -447,6 +668,19 @@ if njit is not None:
             for i in range(n):
                 out[i] /= total
         return out
+
+    @njit(cache=True)
+    def _lever_rule_phase_fraction(z, x1, x2, fallback):
+        numerator = 0.0
+        denominator = 0.0
+        for i in range(z.shape[0]):
+            difference = x2[i] - x1[i]
+            numerator += difference * (z[i] - x1[i])
+            denominator += difference * difference
+        if denominator <= 1.0e-30:
+            return fallback
+        beta = numerator / denominator
+        return max(0.0, min(1.0, beta))
 
 else:
 
@@ -484,6 +718,7 @@ if njit is not None and _activity_coefficients_numba is not None:
         beta = 0.5
         K = np.empty(n, dtype=np.float64)
         max_diff = 0.0
+        phase_tolerance = max(1.0e-8, min(1.0e-4, 10.0 * tol))
 
         for _iteration in range(max_iter):
             gamma1 = _activity_coefficients_numba(
@@ -513,11 +748,12 @@ if njit is not None and _activity_coefficients_numba is not None:
                 for i in range(n):
                     phase_diff += abs(x1[i] - x2[i])
                 phase_diff /= n
-                if phase_diff < 0.01:
-                    return False, z, z, 0.0
+                if phase_diff < phase_tolerance:
+                    return True, False, z, z, 0.0
+                beta = _lever_rule_phase_fraction(z, x1, x2, beta)
                 if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-                    return False, z, z, 0.0
-                return True, x1, x2, beta
+                    return True, False, z, z, 0.0
+                return True, True, x1, x2, beta
 
             for _inner in range(20):
                 f = 0.0
@@ -550,11 +786,11 @@ if njit is not None and _activity_coefficients_numba is not None:
         for i in range(n):
             phase_diff += abs(x1[i] - x2[i])
         phase_diff /= n
-        if phase_diff < 0.01:
-            return False, z, z, 0.0
+        if phase_diff < phase_tolerance:
+            return True, False, z, z, 0.0
         if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-            return False, z, z, 0.0
-        return True, x1, x2, beta
+            return True, False, z, z, 0.0
+        return False, False, x1, x2, beta
 
 else:
 
@@ -592,6 +828,7 @@ if njit is not None and _nrtl_activity_coefficients_numba is not None:
         x2 = _normalize(x2)
         beta = 0.5
         K = np.empty(n, dtype=np.float64)
+        phase_tolerance = max(1.0e-8, min(1.0e-4, 10.0 * tol))
 
         for _iteration in range(max_iter):
             gamma1 = _nrtl_activity_coefficients_numba(
@@ -621,11 +858,12 @@ if njit is not None and _nrtl_activity_coefficients_numba is not None:
                 for i in range(n):
                     phase_diff += abs(x1[i] - x2[i])
                 phase_diff /= n
-                if phase_diff < 0.01:
-                    return False, z, z, 0.0
+                if phase_diff < phase_tolerance:
+                    return True, False, z, z, 0.0
+                beta = _lever_rule_phase_fraction(z, x1, x2, beta)
                 if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-                    return False, z, z, 0.0
-                return True, x1, x2, beta
+                    return True, False, z, z, 0.0
+                return True, True, x1, x2, beta
 
             for _inner in range(20):
                 f = 0.0
@@ -658,11 +896,11 @@ if njit is not None and _nrtl_activity_coefficients_numba is not None:
         for i in range(n):
             phase_diff += abs(x1[i] - x2[i])
         phase_diff /= n
-        if phase_diff < 0.01:
-            return False, z, z, 0.0
+        if phase_diff < phase_tolerance:
+            return True, False, z, z, 0.0
         if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-            return False, z, z, 0.0
-        return True, x1, x2, beta
+            return True, False, z, z, 0.0
+        return False, False, x1, x2, beta
 
 else:
 
@@ -700,6 +938,7 @@ if njit is not None and _uniquac_activity_coefficients_numba is not None:
         x2 = _normalize(x2)
         beta = 0.5
         K = np.empty(n, dtype=np.float64)
+        phase_tolerance = max(1.0e-8, min(1.0e-4, 10.0 * tol))
 
         for _iteration in range(max_iter):
             gamma1 = _uniquac_activity_coefficients_numba(
@@ -731,11 +970,12 @@ if njit is not None and _uniquac_activity_coefficients_numba is not None:
                 for i in range(n):
                     phase_diff += abs(x1[i] - x2[i])
                 phase_diff /= n
-                if phase_diff < 0.01:
-                    return False, z, z, 0.0
+                if phase_diff < phase_tolerance:
+                    return True, False, z, z, 0.0
+                beta = _lever_rule_phase_fraction(z, x1, x2, beta)
                 if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-                    return False, z, z, 0.0
-                return True, x1, x2, beta
+                    return True, False, z, z, 0.0
+                return True, True, x1, x2, beta
 
             for _inner in range(20):
                 f = 0.0
@@ -768,11 +1008,11 @@ if njit is not None and _uniquac_activity_coefficients_numba is not None:
         for i in range(n):
             phase_diff += abs(x1[i] - x2[i])
         phase_diff /= n
-        if phase_diff < 0.01:
-            return False, z, z, 0.0
+        if phase_diff < phase_tolerance:
+            return True, False, z, z, 0.0
         if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-            return False, z, z, 0.0
-        return True, x1, x2, beta
+            return True, False, z, z, 0.0
+        return False, False, x1, x2, beta
 
 else:
 

@@ -5,7 +5,7 @@ import tempfile
 import unittest
 import warnings
 from unittest.mock import patch
-from scipy.optimize import brentq
+from scipy.optimize import brentq, least_squares
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if ROOT not in sys.path:
@@ -13,7 +13,11 @@ if ROOT not in sys.path:
 
 from pfd_parser import parse_pfd
 from simulator import Simulator
-from thermodynamics import ThermodynamicsError, create_thermodynamics
+from thermodynamics import (
+    ActivityCoefficientThermodynamics,
+    ThermodynamicsError,
+    create_thermodynamics,
+)
 from chemical_properties import ChemicalDatabase, ChemicalProperties
 from cubic_eos import CubicEOS
 from equilibrium_stage_vlle import (
@@ -1881,6 +1885,104 @@ class ThermodynamicMethodTests(unittest.TestCase):
         self.assertEqual(x1, {'ethanol': 0.5, 'hexane': 0.5})
         self.assertEqual(x2, {'ethanol': 0.5, 'hexane': 0.5})
         self.assertEqual(beta, 0.0)
+
+    def test_lle_normalizes_composition_and_rejects_invalid_inputs(self):
+        thermo = create_thermodynamics(['1-butanol', 'water'], 'NRTL')
+
+        normalized = thermo.liquid_liquid_equilibrium(
+            {'1-butanol': 0.3, 'water': 0.7}, 313.15
+        )
+        scaled = thermo.liquid_liquid_equilibrium(
+            {'1-butanol': 30.0, 'water': 70.0}, 313.15
+        )
+
+        self.assertEqual(normalized[0], scaled[0])
+        self.assertAlmostEqual(normalized[3], scaled[3], places=12)
+        for phase_index in (1, 2):
+            for component in ('1-butanol', 'water'):
+                self.assertAlmostEqual(
+                    normalized[phase_index][component],
+                    scaled[phase_index][component],
+                    places=12,
+                )
+
+        for composition in (
+            {},
+            {'1-butanol': 0.0, 'water': 0.0},
+            {'1-butanol': -0.1, 'water': 1.1},
+            {'1-butanol': math.nan, 'water': 1.0},
+            {'1-butanol': 0.5, 'unknown': 0.5},
+        ):
+            with self.subTest(composition=composition):
+                with self.assertRaises(ThermodynamicsError):
+                    thermo.liquid_liquid_equilibrium(composition, 313.15)
+
+    def test_binary_lle_detects_narrow_near_critical_splits(self):
+        cases = (
+            ('NRTL', 399.40, 0.0987),
+            ('UNIQUAC', 399.11, 0.0924),
+        )
+        for method, temperature, z_butanol in cases:
+            with self.subTest(method=method):
+                thermo = create_thermodynamics(
+                    ['1-butanol', 'water'], method
+                )
+                has_lle, phase1, phase2, beta = (
+                    thermo.liquid_liquid_equilibrium(
+                        {
+                            '1-butanol': z_butanol,
+                            'water': 1.0 - z_butanol,
+                        },
+                        temperature,
+                        max_iter=200,
+                        tol=1e-8,
+                    )
+                )
+
+                gap = abs(phase1['1-butanol'] - phase2['1-butanol'])
+                self.assertTrue(has_lle)
+                self.assertGreater(gap, 1e-4)
+                self.assertLess(gap, 0.01)
+                self.assertGreater(beta, 0.0)
+                self.assertLess(beta, 1.0)
+
+    def test_multicomponent_lle_rejects_unconverged_result(self):
+        thermo = create_thermodynamics(
+            ['water', 'n-octane', '1-butanol'], 'NRTL'
+        )
+        composition = {
+            'water': 0.45,
+            'n-octane': 0.45,
+            '1-butanol': 0.10,
+        }
+
+        has_lle, phase1, phase2, beta = thermo.liquid_liquid_equilibrium(
+            composition, 313.15, max_iter=1, tol=1e-8
+        )
+
+        self.assertFalse(has_lle)
+        self.assertEqual(phase1, composition)
+        self.assertEqual(phase2, composition)
+        self.assertEqual(beta, 0.0)
+
+    def test_binary_lle_honors_max_iter(self):
+        thermo = create_thermodynamics(['1-butanol', 'water'], 'NRTL')
+        with patch(
+            'thermodynamics_models.activity.least_squares',
+            wraps=least_squares,
+        ) as mocked_solver:
+            ActivityCoefficientThermodynamics.liquid_liquid_equilibrium(
+                thermo,
+                {'1-butanol': 0.3, 'water': 0.7},
+                313.15,
+                max_iter=37,
+            )
+
+        self.assertGreater(mocked_solver.call_count, 0)
+        self.assertTrue(all(
+            call.kwargs['max_nfev'] == 37
+            for call in mocked_solver.call_args_list
+        ))
 
     def test_reference_flash3_tp_reports_lle_only_and_single_liquid(self):
         lle = create_thermodynamics(['hexane', 'water'], 'UNIFAC')

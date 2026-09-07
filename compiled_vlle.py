@@ -1359,10 +1359,11 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
             max_iter, tol
         )
 
-        has_lle, feed_x1, feed_x2, feed_beta = _lle_split_numba(
+        lle_converged, has_lle, feed_x1, feed_x2, feed_beta = _lle_split_numba(
             nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
             variant_id, z, T, max_iter, 1e-6
         )
+        has_lle = lle_converged and has_lle
         if has_lle:
             if z.shape[0] == 2:
                 ok, v, l1, y, residual = _binary_invariant(
@@ -1395,10 +1396,11 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
                 return 2, 6, 0.0, 1.0 - feed_beta, feed_beta, z, feed_x1, feed_x2, 0.0, 0
             return 1, 0, 0.0, 1.0, 0.0, z, z, z, 0.0, 0
 
-        has_vle_lle, liquid_x1, liquid_x2, liquid_beta = _lle_split_numba(
+        lle_converged, has_vle_lle, liquid_x1, liquid_x2, liquid_beta = _lle_split_numba(
             nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
             variant_id, x_vle, T, max_iter, 1e-6
         )
+        has_vle_lle = lle_converged and has_vle_lle
         if has_vle_lle:
             out = _structured_vlle_from_seeds(
                 z, T, P, liquid_x1, liquid_x2, liquid_beta, V, 5,
@@ -1464,11 +1466,11 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
     def _heterogeneous_boundary_residual(z, T, P, nu, r, q, subgroup_q, interactions,
                                          interactions_b, interactions_c, variant_id,
                                          antoine_a, antoine_b, antoine_c, max_iter, tol):
-        has_lle, x1, x2, beta = _lle_split_numba(
+        lle_converged, has_lle, x1, x2, beta = _lle_split_numba(
             nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
             variant_id, z, T, max_iter, 1e-6
         )
-        if not has_lle:
+        if not lle_converged or not has_lle:
             return False, 0.0
         p1 = _bubble_point_p_unifac(x1, T, nu, r, q, subgroup_q, interactions,
                                     interactions_b, interactions_c, variant_id,
@@ -2137,10 +2139,11 @@ if (
             z, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             antoine_a, antoine_b, antoine_c, max_iter, tol
         )
-        has_lle, feed_x1, feed_x2, feed_beta = _activity_lle_split(
+        lle_converged, has_lle, feed_x1, feed_x2, feed_beta = _activity_lle_split(
             model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             max_iter, 1e-6
         )
+        has_lle = lle_converged and has_lle
         if has_lle:
             if z.shape[0] == 2:
                 ok, v, l1, y, residual = _binary_invariant_activity(
@@ -2171,10 +2174,11 @@ if (
             if has_lle:
                 return 2, 6, 0.0, 1.0 - feed_beta, feed_beta, z, feed_x1, feed_x2, 0.0, 0
             return 1, 0, 0.0, 1.0, 0.0, z, z, z, 0.0, 0
-        has_liquid_lle, liquid_x1, liquid_x2, liquid_beta = _activity_lle_split(
+        lle_converged, has_liquid_lle, liquid_x1, liquid_x2, liquid_beta = _activity_lle_split(
             model_id, x_vle, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             max_iter, 1e-6
         )
+        has_liquid_lle = lle_converged and has_liquid_lle
         if has_liquid_lle:
             out = _structured_vlle_activity(
                 z, T, P, liquid_x1, liquid_x2, liquid_beta, V, 5, model_id,
