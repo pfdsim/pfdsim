@@ -11,6 +11,7 @@ YOON_THODOS_SPARSE_HETEROATOM_FACTOR = 0.88
 YOON_THODOS_HETEROATOM_FACTOR = 0.75
 YOON_THODOS_SMALL_MOLECULE_FACTOR = 0.50
 REICHENBERG_SPARSE_HETEROATOM_FACTOR = 0.91
+REICHENBERG_TERMINAL_ALKYNE_FACTOR = 0.91
 REICHENBERG_POLAR_ORGANIC_FACTOR = 0.86
 REICHENBERG_INORGANIC_FACTOR = 0.80
 REICHENBERG_MINIMUM_HEAVY_ATOMS = 3
@@ -615,6 +616,63 @@ class ViscosityMixin:
             return structure_result, profile
 
 
+        def _reichenberg_fragmentation(
+            self,
+            structure_result: Optional[PropertyResolutionResult],
+        ):
+            if structure_result is None or not structure_result.value:
+                return None
+            try:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from .. import reichenberg_method
+                else:
+                    import reichenberg_method
+            except ImportError:
+                return None
+            smiles = str(structure_result.value)
+            cache = getattr(self, '_reichenberg_fragmentation_cache', None)
+            if cache is None:
+                cache = {}
+                self._reichenberg_fragmentation_cache = cache
+            fragmentation = cache.get(smiles)
+            if fragmentation is None:
+                try:
+                    fragmentation = reichenberg_method.fragment(smiles)
+                except reichenberg_method.ReichenbergFragmentationError as exc:
+                    cache[smiles] = exc
+                    return None
+                cache[smiles] = fragmentation
+            elif isinstance(
+                fragmentation,
+                reichenberg_method.ReichenbergFragmentationError,
+            ):
+                return None
+            return fragmentation
+
+
+        @staticmethod
+        def _is_unbranched_terminal_1_alkyne(fragmentation) -> bool:
+            groups = fragmentation.groups
+            return bool(
+                groups.get('alkyne_ch') == 1
+                and groups.get('alkyne_c') == 1
+                and groups.get('ch2', 0) >= 1
+                and groups.get('ch3') == 1
+                and set(groups) <= {'alkyne_ch', 'alkyne_c', 'ch2', 'ch3'}
+            )
+
+
+        @staticmethod
+        def _is_unbranched_c3_plus_aldehyde(fragmentation) -> bool:
+            groups = fragmentation.groups
+            return bool(
+                groups.get('aldehyde') == 1
+                and groups.get('ch2', 0) >= 1
+                and groups.get('ch3') == 1
+                and set(groups) <= {'aldehyde', 'ch2', 'ch3'}
+            )
+
+
         def _reichenberg_vapor_viscosity(
             self,
             symbol: str,
@@ -624,6 +682,7 @@ class ViscosityMixin:
             composition_class: str,
             heavy_atoms: int,
             structure_result: Optional[PropertyResolutionResult] = None,
+            fragmentation=None,
             inorganic: bool = False,
         ) -> Optional[PropertyResolutionResult]:
             try:
@@ -663,33 +722,20 @@ class ViscosityMixin:
             if min(mw, tc, pc_bar, T) <= 0.0:
                 return None
 
-            fragmentation = None
             if inorganic:
+                fragmentation = None
                 method_factor = REICHENBERG_INORGANIC_FACTOR
                 method = 'reichenberg_zero_dipole_inorganic_gas_viscosity'
                 branch_note = 'inorganic prefactor'
             else:
-                if structure_result is None or not structure_result.value:
-                    return None
-                smiles = str(structure_result.value)
-                cache = getattr(self, '_reichenberg_fragmentation_cache', None)
-                if cache is None:
-                    cache = {}
-                    self._reichenberg_fragmentation_cache = cache
-                fragmentation = cache.get(smiles)
                 if fragmentation is None:
-                    try:
-                        fragmentation = reichenberg_method.fragment(smiles)
-                    except reichenberg_method.ReichenbergFragmentationError as exc:
-                        cache[smiles] = exc
-                        return None
-                    cache[smiles] = fragmentation
-                elif isinstance(
-                    fragmentation,
-                    reichenberg_method.ReichenbergFragmentationError,
-                ):
+                    fragmentation = self._reichenberg_fragmentation(structure_result)
+                if fragmentation is None:
                     return None
-                if composition_class == 'sparse_heteroatom':
+                if composition_class == 'hydrocarbon':
+                    method_factor = REICHENBERG_TERMINAL_ALKYNE_FACTOR
+                    class_note = 'unbranched terminal C4+ 1-alkyne'
+                elif composition_class == 'sparse_heteroatom':
                     method_factor = REICHENBERG_SPARSE_HETEROATOM_FACTOR
                     class_note = 'slightly polar organic'
                 else:
@@ -751,18 +797,10 @@ class ViscosityMixin:
                 counts,
             )
             formula_has_no_hydrogen = bool(counts) and int(counts.get('H', 0)) == 0
-            if composition_class == 'hydrocarbon':
-                return self._yoon_thodos_viscosity(
-                    symbol,
-                    props,
-                    T,
-                    phase_key,
-                    method_factor=YOON_THODOS_HYDROCARBON_FACTOR,
-                    composition_note='hydrocarbon multiplier 0.88',
-                )
 
             structure_result = None
             structure_profile = None
+            fragmentation = None
             if composition_class not in {'inorganic'}:
                 structure_result, structure_profile = self._reichenberg_structure(
                     symbol,
@@ -781,8 +819,29 @@ class ViscosityMixin:
                         composition_class = 'sparse_heteroatom'
                     else:
                         composition_class = 'polar_organic'
+                fragmentation = self._reichenberg_fragmentation(structure_result)
 
             if composition_class == 'hydrocarbon':
+                # scripts/vapor_viscosity/benchmark_reichenberg_resolved_dipole.py
+                # found that all seven unbranched terminal C4+ 1-alkynes favored
+                # zero-dipole Reichenberg by 4.34 curve-MAPE points on average.
+                # The two-family rule lowered mean MAPE from 3.089% to 2.753%,
+                # outperforming the resolved-dipole classifier without QM.
+                if (
+                    fragmentation is not None
+                    and self._is_unbranched_terminal_1_alkyne(fragmentation)
+                ):
+                    reichenberg = self._reichenberg_vapor_viscosity(
+                        symbol,
+                        props,
+                        T,
+                        composition_class=composition_class,
+                        heavy_atoms=heavy_atoms,
+                        structure_result=structure_result,
+                        fragmentation=fragmentation,
+                    )
+                    if reichenberg is not None:
+                        return reichenberg
                 return self._yoon_thodos_viscosity(
                     symbol,
                     props,
@@ -790,6 +849,33 @@ class ViscosityMixin:
                     phase_key,
                     method_factor=YOON_THODOS_HYDROCARBON_FACTOR,
                     composition_note='hydrocarbon multiplier 0.88',
+                )
+
+            # scripts/vapor_viscosity/fit_reichenberg_aldehyde_group.py found
+            # no transferable replacement for Perry's published 14.02 group:
+            # the shared refit worsened LOO mean MAPE (3.969% -> 4.425%), and
+            # the affine refit still lost to Yoon-Thodos on 8/9 aldehydes.
+            # Unbranched C3+ homologs favor Yoon or practically tie; the C2
+            # member acetaldehyde remains eligible for Reichenberg.
+            if (
+                fragmentation is not None
+                and self._is_unbranched_c3_plus_aldehyde(fragmentation)
+            ):
+                factor = (
+                    YOON_THODOS_SPARSE_HETEROATOM_FACTOR
+                    if composition_class == 'sparse_heteroatom'
+                    else YOON_THODOS_HETEROATOM_FACTOR
+                )
+                return self._yoon_thodos_viscosity(
+                    symbol,
+                    props,
+                    T,
+                    phase_key,
+                    method_factor=factor,
+                    composition_note=(
+                        'unbranched C3+ aldehyde selected for Yoon-Thodos by '
+                        'the Perry aldehyde-family benchmark'
+                    ),
                 )
 
             if heavy_atoms is None:
@@ -836,6 +922,7 @@ class ViscosityMixin:
                     composition_class=composition_class,
                     heavy_atoms=heavy_atoms,
                     structure_result=structure_result,
+                    fragmentation=fragmentation,
                 )
                 if reichenberg is not None:
                     return reichenberg
@@ -1600,12 +1687,26 @@ class ViscosityMixin:
                 return baseline
 
             rho_r = float(rho_molar) / float(critical_density_result.value)
-            branch, classification_factor, classification_note = self._jossi_polarity(symbol, props)
-            if branch is None:
+            screened_branch, classification_factor, classification_note = (
+                self._jossi_polarity(symbol, props)
+            )
+            if screened_branch is None:
                 return self._viscosity_result_with_note(
                     baseline,
                     f'Jossi pressure correction skipped: {classification_note}',
                 )
+            # scripts/vapor_viscosity/benchmark_jossi_polarity_coolprop.py
+            # compared both equations over 56 fluids and a 4x9 (Tr, rho_r)
+            # grid. Always-nonpolar reduced mean MAPE from 12.179% for the
+            # structural split to 10.788% and raised decisive branch accuracy
+            # from 44.6% to 78.6%; raw and reduced dipole thresholds both
+            # independently collapsed to this same always-nonpolar policy.
+            # Keep the structural screen only for association exclusions.
+            branch = 'nonpolar'
+            classification_note = (
+                'nonpolar equation selected for every non-association-guarded '
+                f'gas; structural screen: {classification_note}'
+            )
             increment = self._jossi_dimensionless_increment(branch, rho_r)
             if increment is None or increment < 0.0 or not math.isfinite(increment):
                 return self._viscosity_result_with_note(

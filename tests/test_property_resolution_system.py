@@ -1897,7 +1897,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertIn('Jossi pressure correction skipped', result.notes)
         self.assertIn('small alcohol or amine', result.notes)
 
-    def test_jossi_applies_polar_branch_from_unifac_classification(self):
+    def test_jossi_uses_nonpolar_equation_after_polar_applicability_screen(self):
         resolver = PropertyResolver()
         props = {
             'formula': 'C3H6O',
@@ -1928,10 +1928,14 @@ class PropertyResolutionSystemTests(unittest.TestCase):
                 rho_molar=rho_c,
             )
 
-        self.assertEqual(result.method, 'jossi_stiel_thodos_polar')
+        self.assertEqual(result.method, 'jossi_stiel_thodos_nonpolar')
         self.assertGreater(result.value, baseline.value)
-        self.assertClose(result.quality, 0.484709)
-        self.assertIn('Dortmund groups classified as polar', result.notes)
+        self.assertClose(result.quality, 0.691125)
+        self.assertIn('nonpolar equation selected', result.notes)
+        self.assertIn(
+            'structural screen: Dortmund groups classified as polar',
+            result.notes,
+        )
 
     def test_jossi_pressure_quality_bins_follow_coolprop_benchmark(self):
         resolver = PropertyResolver()
@@ -2006,6 +2010,90 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertClose(viscosity.value, 9.842741087150416e-06)
         self.assertClose(viscosity.quality, 0.88)
         self.assertIn('hydrocarbon multiplier 0.88', viscosity.notes)
+
+    def test_terminal_1_alkyne_structure_selects_reichenberg(self):
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C6H10',
+            'smiles': 'C#CCCCC',
+            'MW': 82.146,
+            'Tc': 497.0,
+            'Pc': 39.5,
+        }
+
+        with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
+             patch.object(resolver, '_coolprop_viscosity', return_value=None):
+            viscosity = resolver.resolve_viscosity(
+                '1-hexyne fixture', 400.0, phase='vapor', props=props,
+            )
+
+        self.assertEqual(
+            viscosity.method,
+            'reichenberg_zero_dipole_organic_gas_viscosity',
+        )
+        self.assertClose(viscosity.quality, 0.91)
+        self.assertIn('unbranched terminal C4+ 1-alkyne', viscosity.notes)
+
+    def test_internal_alkyne_structure_stays_on_yoon_thodos(self):
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C6H10',
+            'smiles': 'CCC#CCC',
+            'MW': 82.146,
+            'Tc': 497.0,
+            'Pc': 39.5,
+        }
+
+        with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
+             patch.object(resolver, '_coolprop_viscosity', return_value=None):
+            viscosity = resolver.resolve_viscosity(
+                '3-hexyne fixture', 400.0, phase='vapor', props=props,
+            )
+
+        self.assertEqual(viscosity.method, 'yoon_thodos_gas_viscosity')
+        self.assertIn('hydrocarbon multiplier 0.88', viscosity.notes)
+
+    def test_unbranched_c3_plus_aldehyde_selects_yoon_thodos(self):
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C3H6O',
+            'smiles': 'CCC=O',
+            'MW': 58.08,
+            'Tc': 496.0,
+            'Pc': 47.0,
+        }
+
+        with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
+             patch.object(resolver, '_coolprop_viscosity', return_value=None):
+            viscosity = resolver.resolve_viscosity(
+                'propanal fixture', 400.0, phase='vapor', props=props,
+            )
+
+        self.assertEqual(viscosity.method, 'yoon_thodos_gas_viscosity')
+        self.assertClose(viscosity.quality, 0.75)
+        self.assertIn('unbranched C3+ aldehyde', viscosity.notes)
+
+    def test_acetaldehyde_remains_on_reichenberg(self):
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C2H4O',
+            'smiles': 'CC=O',
+            'MW': 44.053,
+            'Tc': 466.0,
+            'Pc': 55.7,
+        }
+
+        with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
+             patch.object(resolver, '_coolprop_viscosity', return_value=None):
+            viscosity = resolver.resolve_viscosity(
+                'acetaldehyde fixture', 350.0, phase='vapor', props=props,
+            )
+
+        self.assertEqual(
+            viscosity.method,
+            'reichenberg_zero_dipole_organic_gas_viscosity',
+        )
+        self.assertIn('polar organic', viscosity.notes)
 
     def test_yoon_thodos_quality_uses_sparse_heteroatom_multiplier(self):
         resolver = PropertyResolver()
