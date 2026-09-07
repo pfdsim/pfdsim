@@ -35,13 +35,7 @@ import unittest
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 DISABLED_EXAMPLES = {
-    'ethyl_acetate_batch_synthesis.pfd': (
-        'Pending a dedicated normalized performance benchmark and baseline.'
-    ),
     'haber_bosch_full.pfd': (
-        'Pending a dedicated normalized performance benchmark and baseline.'
-    ),
-    'isopropanol_diisopropyl_ether_distillation_nrtl_estimated.pfd': (
         'Pending a dedicated normalized performance benchmark and baseline.'
     ),
     'lactic_acid_dehydration_pbr.pfd': (
@@ -121,6 +115,12 @@ BASELINE_EXAMPLE_SECONDS = {
     'trace_organic_water_stripping_isothermal_unifnist.pfd': 0.501,
     'unifac_flash.pfd': 0.006,
     'vinegar_concentration_uniquac_vdm.pfd': 0.342,
+
+    'cake_filtration_washing.pfd': 0.079,
+    'equilibrium_warm_melt_washing.pfd': 0.355,
+    'ethyl_acetate_batch_synthesis.pfd': 0.079,
+    'isopropanol_diisopropyl_ether_distillation_nrtl_estimated.pfd': 0.098,
+    'isopropanol_water_nrtl_uniquac_comparison.pfd': 0.147,
 }
 
 

@@ -1,0 +1,56 @@
+# Isopropanol-Water Distillation: NRTL vs UNIQUAC
+# Two identical rigorous columns are solved in independent thermodynamic scopes.
+
+PROCESS: Isopropanol-Water NRTL and UNIQUAC Comparison
+VERSION: 1.0
+ONLINE_LOOKUP: false
+DESCRIPTION: Parallel 16-stage rigorous distillation of 20 mol% isopropanol in water using NRTL and UNIQUAC, with feed stage 8, reflux ratio 1.0, and D/F 0.2
+
+# The global context is unused by equipment; each column selects its own
+# isolated activity-coefficient scope.
+THERMO_METHOD: IDEAL
+THERMO_SCOPES:
+    nrtl    | method=NRTL
+    uniquac | method=UNIQUAC
+
+COMPONENTS:
+    IPA | 67-63-0   | MW=60.095
+    H2O | 7732-18-5 | MW=18.015
+
+STREAM NRTL-Feed : -> NRTL-COL.f
+    T = 35 [C]
+    P = 1 [atm]
+    F = 100 [kmol/h]
+    x = IPA:0.20, H2O:0.80
+
+STREAM NRTL-Distillate : NRTL-COL.d
+STREAM NRTL-Bottoms : NRTL-COL.b
+
+STREAM UNIQUAC-Feed : -> UNIQUAC-COL.f
+    T = 35 [C]
+    P = 1 [atm]
+    F = 100 [kmol/h]
+    x = IPA:0.20, H2O:0.80
+
+STREAM UNIQUAC-Distillate : UNIQUAC-COL.d
+STREAM UNIQUAC-Bottoms : UNIQUAC-COL.b
+
+UNIT NRTL-COL : RigorousDistillation
+    thermo_scope = nrtl
+    N_stages = 16
+    feed_stage = 8
+    reflux_ratio = 1.0
+    D_to_F = 0.2
+    P_condenser = 1 [atm]
+    P_drop_per_stage = 0 [bar]
+    condenser_type = total
+
+UNIT UNIQUAC-COL : RigorousDistillation
+    thermo_scope = uniquac
+    N_stages = 16
+    feed_stage = 8
+    reflux_ratio = 1.0
+    D_to_F = 0.2
+    P_condenser = 1 [atm]
+    P_drop_per_stage = 0 [bar]
+    condenser_type = total
