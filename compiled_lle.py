@@ -135,6 +135,40 @@ def _refine_binary_split(
     return True, phase1, phase2, beta
 
 
+def _accept_approximate_multicomponent_split(
+    z: np.ndarray,
+    x1: np.ndarray,
+    x2: np.ndarray,
+    beta: float,
+    activity_coefficients,
+    tol: float,
+) -> tuple[bool, np.ndarray, np.ndarray, float] | None:
+    if not np.all(np.isfinite(x1)) or not np.all(np.isfinite(x2)):
+        return None
+    phase_tolerance = max(1.0e-8, min(1.0e-4, 10.0 * tol))
+    if float(np.mean(np.abs(x1 - x2))) < phase_tolerance:
+        return False, z.copy(), z.copy(), 0.0
+    beta = float(np.dot(x2 - x1, z - x1) / max(
+        float(np.dot(x2 - x1, x2 - x1)), 1.0e-30
+    ))
+    if beta <= 1.0e-10 or beta >= 1.0 - 1.0e-10:
+        return False, z.copy(), z.copy(), 0.0
+    gamma1 = activity_coefficients(x1)
+    gamma2 = activity_coefficients(x2)
+    residual = float(np.max(np.abs(
+        np.log(np.maximum(x1 * gamma1, 1.0e-300))
+        - np.log(np.maximum(x2 * gamma2, 1.0e-300))
+    )))
+    if not math.isfinite(residual) or residual > max(100.0 * tol, 1.0e-4):
+        return None
+    material_residual = float(np.max(np.abs(
+        z - (1.0 - beta) * x1 - beta * x2
+    )))
+    if material_residual > max(10.0 * tol, 1.0e-7):
+        return None
+    return True, x1, x2, beta
+
+
 @dataclass
 class CompiledLLEBackend:
     """Compiled LLE splitter for one fixed UNIFAC component set."""
@@ -219,6 +253,7 @@ class CompiledLLEBackend:
         T: float,
         max_iter: int = 100,
         tol: float = 1e-6,
+        allow_unconverged_candidate: bool = False,
     ) -> tuple[bool, dict[str, float], dict[str, float], float] | None:
         order = tuple(composition.keys())
         ordered_arrays = self._ordered_arrays(order)
@@ -247,19 +282,20 @@ class CompiledLLEBackend:
             float(tol),
         )
         if not converged:
-            if len(order) != 2:
-                return None
-            refinement_key = (
-                order, tuple(float(value) for value in z),
-                float(T), int(max_iter), float(tol),
-            )
-            refined = self._binary_refinement_cache.get(refinement_key)
-            if refined is None:
-                refined = _refine_binary_split(
+            if allow_unconverged_candidate and len(order) > 2:
+                beta = float(np.dot(x2 - x1, z - x1) / max(
+                    float(np.dot(x2 - x1, x2 - x1)), 1.0e-30
+                ))
+                if 1.0e-10 < beta < 1.0 - 1.0e-10:
+                    has_lle = True
+                else:
+                    has_lle, x1, x2, beta = False, z, z, 0.0
+            elif len(order) != 2:
+                approximate = _accept_approximate_multicomponent_split(
                     z,
-                    float(T),
                     x1,
                     x2,
+                    beta,
                     lambda values: _activity_coefficients_numba(
                         nu,
                         r,
@@ -272,16 +308,45 @@ class CompiledLLEBackend:
                         values,
                         float(T),
                     ),
-                    int(max_iter),
                     float(tol),
                 )
-                if refined is not None:
-                    if len(self._binary_refinement_cache) >= 20000:
-                        self._binary_refinement_cache.clear()
-                    self._binary_refinement_cache[refinement_key] = refined
-            if refined is None:
-                return None
-            has_lle, x1, x2, beta = refined
+                if approximate is None:
+                    return None
+                has_lle, x1, x2, beta = approximate
+            else:
+                refinement_key = (
+                    order, tuple(float(value) for value in z),
+                    float(T), int(max_iter), float(tol),
+                )
+                refined = self._binary_refinement_cache.get(refinement_key)
+                if refined is None:
+                    refined = _refine_binary_split(
+                        z,
+                        float(T),
+                        x1,
+                        x2,
+                        lambda values: _activity_coefficients_numba(
+                            nu,
+                            r,
+                            q,
+                            self.subgroup_q,
+                            self.interactions,
+                            self.interactions_b,
+                            self.interactions_c,
+                            self.variant_id,
+                            values,
+                            float(T),
+                        ),
+                        int(max_iter),
+                        float(tol),
+                    )
+                    if refined is not None:
+                        if len(self._binary_refinement_cache) >= 20000:
+                            self._binary_refinement_cache.clear()
+                        self._binary_refinement_cache[refinement_key] = refined
+                if refined is None:
+                    return None
+                has_lle, x1, x2, beta = refined
         x1_dict = {comp: float(x1[index]) for index, comp in enumerate(order)}
         x2_dict = {comp: float(x2[index]) for index, comp in enumerate(order)}
         return bool(has_lle), x1_dict, x2_dict, float(beta)
@@ -391,6 +456,7 @@ class CompiledNRTLLLEBackend:
         T: float,
         max_iter: int = 100,
         tol: float = 1e-6,
+        allow_unconverged_candidate: bool = False,
     ) -> tuple[bool, dict[str, float], dict[str, float], float] | None:
         order = tuple(composition.keys())
         ordered_arrays = self._ordered_arrays(order)
@@ -421,19 +487,20 @@ class CompiledNRTLLLEBackend:
             float(tol),
         )
         if not converged:
-            if len(order) != 2:
-                return None
-            refinement_key = (
-                order, tuple(float(value) for value in z),
-                float(T), int(max_iter), float(tol),
-            )
-            refined = self._binary_refinement_cache.get(refinement_key)
-            if refined is None:
-                refined = _refine_binary_split(
+            if allow_unconverged_candidate and len(order) > 2:
+                beta = float(np.dot(x2 - x1, z - x1) / max(
+                    float(np.dot(x2 - x1, x2 - x1)), 1.0e-30
+                ))
+                if 1.0e-10 < beta < 1.0 - 1.0e-10:
+                    has_lle = True
+                else:
+                    has_lle, x1, x2, beta = False, z, z, 0.0
+            elif len(order) != 2:
+                approximate = _accept_approximate_multicomponent_split(
                     z,
-                    float(T),
                     x1,
                     x2,
+                    beta,
                     lambda values: _nrtl_activity_coefficients_numba(
                         values,
                         float(T),
@@ -449,16 +516,49 @@ class CompiledNRTLLLEBackend:
                         interaction_tmin,
                         interaction_tmax,
                     ),
-                    int(max_iter),
                     float(tol),
                 )
+                if approximate is None:
+                    return None
+                has_lle, x1, x2, beta = approximate
+            else:
+                refinement_key = (
+                    order, tuple(float(value) for value in z),
+                    float(T), int(max_iter), float(tol),
+                )
+                refined = self._binary_refinement_cache.get(refinement_key)
+                if refined is None:
+                    refined = _refine_binary_split(
+                        z,
+                        float(T),
+                        x1,
+                        x2,
+                        lambda values: _nrtl_activity_coefficients_numba(
+                            values,
+                            float(T),
+                            tau_mode,
+                            tau_c,
+                            tau_d,
+                            tau_e,
+                            tau_f,
+                            tau_g,
+                            tau_tref,
+                            tau_energy,
+                            alpha,
+                            interaction_tmin,
+                            interaction_tmax,
+                        ),
+                        int(max_iter),
+                        float(tol),
+                    )
+                    if refined is not None:
+                        if len(self._binary_refinement_cache) >= 20000:
+                            self._binary_refinement_cache.clear()
+                        self._binary_refinement_cache[refinement_key] = refined
                 if refined is not None:
-                    if len(self._binary_refinement_cache) >= 20000:
-                        self._binary_refinement_cache.clear()
-                    self._binary_refinement_cache[refinement_key] = refined
-            if refined is None:
-                return None
-            has_lle, x1, x2, beta = refined
+                    has_lle, x1, x2, beta = refined
+                else:
+                    return None
         x1_dict = {comp: float(x1[index]) for index, comp in enumerate(order)}
         x2_dict = {comp: float(x2[index]) for index, comp in enumerate(order)}
         return bool(has_lle), x1_dict, x2_dict, float(beta)
@@ -572,6 +672,7 @@ class CompiledUNIQUACLLEBackend:
         T: float,
         max_iter: int = 100,
         tol: float = 1e-6,
+        allow_unconverged_candidate: bool = False,
     ) -> tuple[bool, dict[str, float], dict[str, float], float] | None:
         order = tuple(composition.keys())
         ordered_arrays = self._ordered_arrays(order)
@@ -603,19 +704,20 @@ class CompiledUNIQUACLLEBackend:
             float(tol),
         )
         if not converged:
-            if len(order) != 2:
-                return None
-            refinement_key = (
-                order, tuple(float(value) for value in z),
-                float(T), int(max_iter), float(tol),
-            )
-            refined = self._binary_refinement_cache.get(refinement_key)
-            if refined is None:
-                refined = _refine_binary_split(
+            if allow_unconverged_candidate and len(order) > 2:
+                beta = float(np.dot(x2 - x1, z - x1) / max(
+                    float(np.dot(x2 - x1, x2 - x1)), 1.0e-30
+                ))
+                if 1.0e-10 < beta < 1.0 - 1.0e-10:
+                    has_lle = True
+                else:
+                    has_lle, x1, x2, beta = False, z, z, 0.0
+            elif len(order) != 2:
+                approximate = _accept_approximate_multicomponent_split(
                     z,
-                    float(T),
                     x1,
                     x2,
+                    beta,
                     lambda values: _uniquac_activity_coefficients_numba(
                         values,
                         float(T),
@@ -632,16 +734,50 @@ class CompiledUNIQUACLLEBackend:
                         interaction_tmin,
                         interaction_tmax,
                     ),
-                    int(max_iter),
                     float(tol),
                 )
+                if approximate is None:
+                    return None
+                has_lle, x1, x2, beta = approximate
+            else:
+                refinement_key = (
+                    order, tuple(float(value) for value in z),
+                    float(T), int(max_iter), float(tol),
+                )
+                refined = self._binary_refinement_cache.get(refinement_key)
+                if refined is None:
+                    refined = _refine_binary_split(
+                        z,
+                        float(T),
+                        x1,
+                        x2,
+                        lambda values: _uniquac_activity_coefficients_numba(
+                            values,
+                            float(T),
+                            r,
+                            q,
+                            q_residual,
+                            tau_mode,
+                            tau_a,
+                            tau_b,
+                            tau_c,
+                            tau_d,
+                            tau_e,
+                            tau_tref,
+                            interaction_tmin,
+                            interaction_tmax,
+                        ),
+                        int(max_iter),
+                        float(tol),
+                    )
+                    if refined is not None:
+                        if len(self._binary_refinement_cache) >= 20000:
+                            self._binary_refinement_cache.clear()
+                        self._binary_refinement_cache[refinement_key] = refined
                 if refined is not None:
-                    if len(self._binary_refinement_cache) >= 20000:
-                        self._binary_refinement_cache.clear()
-                    self._binary_refinement_cache[refinement_key] = refined
-            if refined is None:
-                return None
-            has_lle, x1, x2, beta = refined
+                    has_lle, x1, x2, beta = refined
+                else:
+                    return None
         x1_dict = {comp: float(x1[index]) for index, comp in enumerate(order)}
         x2_dict = {comp: float(x2[index]) for index, comp in enumerate(order)}
         return bool(has_lle), x1_dict, x2_dict, float(beta)

@@ -1,3 +1,4 @@
+import math
 import unittest
 from pathlib import Path
 
@@ -8,6 +9,100 @@ from unit_operations_distillation import RigorousDistillation
 
 
 class RigorousDistillationVLLETests(unittest.TestCase):
+    def test_lactic_recovery_column_retains_gibbs_favorable_stage_13_lle(self):
+        root = Path(__file__).resolve().parents[1]
+        simulator = Simulator.from_file(
+            root / 'examples' / 'lactic_acid_dehydration_pbr.pfd'
+        ).initialize()
+        thermo = simulator.thermo_packages['global']
+        column = simulator.solver.units['C-401']
+        feed = thermo.calculate_state(
+            298.48253699169915,
+            0.16,
+            79.79197900206256,
+            {
+                'H2O': 0.4393767665649053,
+                'AA': 0.25149758937416866,
+                'AcH': 9.632033783440319e-8,
+                'PA': 0.007609656944632908,
+                'MIBK': 0.3015158904858782,
+            },
+            phase='liquid',
+            flash=False,
+        )
+        feed.thermo_scope = 'global'
+        column.solve_context = {
+            'recycle_evaluation': 1,
+            'recycle_final_pass': False,
+            'expensive_diagnostics': True,
+        }
+        result = column.solve({'feed': feed})
+        column.solve_context = {}
+        performance = result.performance
+
+        self.assertEqual(
+            performance['vlle_active_stages'], list(range(1, 14))
+        )
+        self.assertEqual(
+            performance['vlle_topology'], 'L' * 13 + '.' * 7
+        )
+
+        stage = 12
+        temperature = performance['stage_temperatures_C'][stage] + 273.15
+        overall = performance['stage_liquid_compositions'][stage]
+        phase1 = performance['stage_liquid1_compositions'][stage]
+        phase2 = performance['stage_liquid2_compositions'][stage]
+        beta = performance['stage_liquid2_fractions'][stage]
+        gamma1 = thermo.activity_coefficients(temperature, phase1)
+        gamma2 = thermo.activity_coefficients(temperature, phase2)
+        components = tuple(overall)
+
+        equilibrium_residual = max(
+            abs(
+                math.log(max(phase1[component] * gamma1[component], 1e-300))
+                - math.log(max(
+                    phase2[component] * gamma2[component], 1e-300
+                ))
+            )
+            for component in components
+        )
+        material_residual = max(
+            abs(
+                overall[component]
+                - (1.0 - beta) * phase1[component]
+                - beta * phase2[component]
+            )
+            for component in components
+        )
+        phase_distance = sum(
+            abs(phase1[component] - phase2[component])
+            for component in components
+        ) / len(components)
+
+        def dimensionless_gibbs(composition, gamma):
+            return sum(
+                composition[component]
+                * math.log(max(
+                    composition[component] * gamma[component], 1e-300
+                ))
+                for component in components
+            )
+
+        homogeneous_gibbs = dimensionless_gibbs(
+            overall,
+            thermo.activity_coefficients(temperature, overall),
+        )
+        split_gibbs = (
+            (1.0 - beta) * dimensionless_gibbs(phase1, gamma1)
+            + beta * dimensionless_gibbs(phase2, gamma2)
+        )
+
+        self.assertGreater(min(beta, 1.0 - beta), 0.4)
+        self.assertGreater(phase_distance, 0.1)
+        self.assertLess(equilibrium_residual, 1e-8)
+        self.assertLess(material_residual, 1e-10)
+        self.assertGreater(homogeneous_gibbs - split_gibbs, 0.002)
+
     @staticmethod
     def _nrtl_rk_case(stages=16, condenser_type='total'):
         thermo = create_thermodynamics(

@@ -345,6 +345,7 @@ class VLLEStabilityCache:
                 float(T),
                 max_iter=100,
                 tol=self.tol,
+                allow_unconverged_candidate=True,
             )
 
         self._cached = cached

@@ -1363,7 +1363,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
             nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
             variant_id, z, T, max_iter, 1e-6
         )
-        has_lle = lle_converged and has_lle
+        has_lle = has_lle or not lle_converged
         if has_lle:
             if z.shape[0] == 2:
                 ok, v, l1, y, residual = _binary_invariant(
@@ -1400,7 +1400,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
             nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
             variant_id, x_vle, T, max_iter, 1e-6
         )
-        has_vle_lle = lle_converged and has_vle_lle
+        has_vle_lle = has_vle_lle or not lle_converged
         if has_vle_lle:
             out = _structured_vlle_from_seeds(
                 z, T, P, liquid_x1, liquid_x2, liquid_beta, V, 5,
@@ -1470,7 +1470,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
             nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
             variant_id, z, T, max_iter, 1e-6
         )
-        if not lle_converged or not has_lle:
+        if not has_lle and lle_converged:
             return False, 0.0
         p1 = _bubble_point_p_unifac(x1, T, nu, r, q, subgroup_q, interactions,
                                     interactions_b, interactions_c, variant_id,
@@ -2143,7 +2143,7 @@ if (
             model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             max_iter, 1e-6
         )
-        has_lle = lle_converged and has_lle
+        has_lle = has_lle or not lle_converged
         if has_lle:
             if z.shape[0] == 2:
                 ok, v, l1, y, residual = _binary_invariant_activity(
@@ -2178,7 +2178,7 @@ if (
             model_id, x_vle, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
             max_iter, 1e-6
         )
-        has_liquid_lle = lle_converged and has_liquid_lle
+        has_liquid_lle = has_liquid_lle or not lle_converged
         if has_liquid_lle:
             out = _structured_vlle_activity(
                 z, T, P, liquid_x1, liquid_x2, liquid_beta, V, 5, model_id,

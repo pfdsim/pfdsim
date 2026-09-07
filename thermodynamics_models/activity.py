@@ -1931,7 +1931,8 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             raise ThermodynamicsError("LLE tolerance must be positive and finite")
 
     def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
-                                  max_iter: int = 100, tol: float = 1e-6) -> tuple[bool, dict, dict, float]:
+                                  max_iter: int = 100, tol: float = 1e-6,
+                                  *, allow_unconverged_candidate: bool = False) -> tuple[bool, dict, dict, float]:
         self._validate_lle_solver_controls(max_iter, tol)
         z = self._normalize_lle_composition(composition)
         comps = list(z.keys())
@@ -2015,6 +2016,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             if s2 > 0:
                 x2 = {comp: value / s2 for comp, value in x2.items()}
 
+        if allow_unconverged_candidate:
+            phase_diff = sum(
+                abs(x1[comp] - x2[comp]) for comp in comps
+            ) / n_comp
+            if (
+                phase_diff >= phase_tolerance
+                and 1e-10 < beta < 1.0 - 1e-10
+            ):
+                return True, x1, x2, beta
         return False, dict(z), dict(z), 0.0
 
     def _binary_liquid_liquid_equilibrium(
@@ -2116,9 +2126,24 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     continue
                 if abs(x_a_1 - x_a_2) < phase_tolerance:
                     continue
-                if best_local is None or norm < best_local[0]:
+                x_low, x_high = sorted((x_a_1, x_a_2))
+                contains_feed = x_low - 1e-9 <= z_a <= x_high + 1e-9
+                best_contains_feed = False
+                if best_local is not None:
+                    best_low, best_high = sorted((best_local[1], best_local[2]))
+                    best_contains_feed = (
+                        best_low - 1e-9 <= z_a <= best_high + 1e-9
+                    )
+                if best_local is None or (
+                    contains_feed and not best_contains_feed
+                ) or (
+                    contains_feed == best_contains_feed and norm < best_local[0]
+                ):
                     best_local = (norm, x_a_1, x_a_2)
-                    if norm <= min(residual_limit, 1.0e-9):
+                    if (
+                        contains_feed
+                        and norm <= min(residual_limit, 1.0e-9)
+                    ):
                         break
             return best_local
 
@@ -2138,13 +2163,6 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             ):
                 best = retry_best
 
-        def dimensionless_gibbs(phase_composition: dict[str, float]) -> float:
-            gamma = self.activity_coefficients(T, phase_composition)
-            return sum(
-                fraction * math.log(max(fraction * gamma[comp], 1.0e-300))
-                for comp, fraction in phase_composition.items()
-            )
-
         def split_from_candidate(candidate):
             if candidate is None or candidate[0] > residual_limit:
                 return None
@@ -2158,15 +2176,6 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 (z_a - x_high) / (x_low - x_high), 0.0
             ), 1.0)
             if beta <= 1e-10 or beta >= 1.0 - 1e-10:
-                return None
-            feed_gibbs = dimensionless_gibbs(composition)
-            split_gibbs = (
-                (1.0 - beta) * dimensionless_gibbs(phase1)
-                + beta * dimensionless_gibbs(phase2)
-            )
-            gibbs_scale = max(1.0, abs(feed_gibbs), abs(split_gibbs))
-            improvement = feed_gibbs - split_gibbs
-            if improvement <= 10.0 * np.finfo(float).eps * gibbs_scale:
                 return None
             return True, phase1, phase2, beta
 
