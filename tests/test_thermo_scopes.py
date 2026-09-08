@@ -86,6 +86,49 @@ INTERACTION_ESTIMATION:
         rebuilt = ProcessFlowDiagram.from_dict(pfd.to_dict())
         self.assertEqual(rebuilt.to_dict(), pfd.to_dict())
 
+    def test_direct_hoc_suffix_is_valid_in_thermodynamic_scope(self):
+        pfd = PFDParser().parse(self._scope_header(
+            "    hoc | method=UNIQUAC-HOC\n"
+        ))
+        errors, _warnings = validate_pfd(pfd)
+        self.assertEqual(errors, [])
+        self.assertEqual(pfd.get_thermo_scope('hoc').method, 'UNIQUAC-HOC')
+
+    def test_vapor_parameter_overrides_follow_provider_scope(self):
+        simulator = Simulator.from_string("""
+PROCESS: scoped vapor-provider overrides
+THERMO_METHOD: NRTL-BV
+ONLINE_LOOKUP: false
+THERMO_SCOPES:
+    hoc | method=NRTL-HOC, inherit=global
+COMPONENTS:
+    H2O | Water | R_prime=0.8
+    ETOH | Ethanol | R_prime=1.7
+INTERACTION_PARAMETERS:
+    H2O/ETOH | model=TSONOPOULOS, kij=0.08
+    H2O/ETOH | model=HOC, eta=1.23
+""").initialize()
+        default_provider = simulator.thermo_packages['global'].vapor_eos.provider
+        hoc_provider = simulator.thermo_packages['hoc'].vapor_eos.provider
+        self.assertEqual(
+            default_provider.binary_kij_records[
+                frozenset(('H2O', 'ETOH'))
+            ].value,
+            0.08,
+        )
+        self.assertEqual(
+            hoc_provider.binary_eta_overrides[frozenset(('H2O', 'ETOH'))],
+            1.23,
+        )
+        self.assertTrue(any(
+            'Ignoring HOC vapor interaction parameters' in warning
+            for warning in simulator.thermo_packages['global'].warnings
+        ))
+        self.assertTrue(any(
+            'Ignoring TSONOPOULOS vapor interaction parameters' in warning
+            for warning in simulator.thermo_packages['hoc'].warnings
+        ))
+
     def test_scope_validation_rejects_bad_names_references_cycles_and_units(self):
         cases = {
             'reserved': (

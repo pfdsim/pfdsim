@@ -43,10 +43,25 @@ from .nrtl_uniquac import (
 )
 from .gamma_phi import (
     GammaPhiVaporBackendMixin, UNIQUACRKThermodynamics, UNIQUACPRThermodynamics,
-    NRTLRKThermodynamics, NRTLPRThermodynamics, UNIFACRKThermodynamics,
-    UNIFACPRThermodynamics, UNIFDMDRKThermodynamics, UNIFDMDPRThermodynamics,
-    UNIFNISTRKThermodynamics, UNIFNISTPRThermodynamics,
+    UNIQUACBVThermodynamics, NRTLRKThermodynamics, NRTLPRThermodynamics,
+    NRTLBVThermodynamics, UNIFACRKThermodynamics, UNIFACPRThermodynamics,
+    UNIFACBVThermodynamics, UNIFDMDRKThermodynamics, UNIFDMDPRThermodynamics,
+    UNIFDMDBVThermodynamics, UNIFNISTRKThermodynamics,
+    UNIFNISTPRThermodynamics, UNIFNISTBVThermodynamics,
 )
+from .second_virial import (
+    AbbottSecondVirialProvider,
+    ChemicalAssociationSecondVirialProvider,
+    ChemicalAssociationSecondVirialVaporBackend,
+    PitzerCurlSecondVirialProvider,
+    SecondVirialCoefficientProvider,
+    SecondVirialVaporBackend,
+    TsonopoulosSecondVirialProvider,
+    create_second_virial_provider,
+    create_second_virial_vapor_backend,
+    normalize_second_virial_correlation,
+)
+from .hayden_oconnell import HaydenOConnellSecondVirialProvider
 from .factory import create_thermodynamics, create_experiment_thermo
 from .sle import (
     PureSolidSLEResult,
@@ -75,9 +90,18 @@ __all__ = [
     'NRTLThermodynamics', 'NRTLVDMThermodynamics',
     'UNIQUACThermodynamics', 'UNIQUACVDMThermodynamics',
     'GammaPhiVaporBackendMixin', 'UNIQUACRKThermodynamics', 'UNIQUACPRThermodynamics',
-    'NRTLRKThermodynamics', 'NRTLPRThermodynamics', 'UNIFACRKThermodynamics',
-    'UNIFACPRThermodynamics', 'UNIFDMDRKThermodynamics', 'UNIFDMDPRThermodynamics',
-    'UNIFNISTRKThermodynamics', 'UNIFNISTPRThermodynamics',
+    'UNIQUACBVThermodynamics', 'NRTLRKThermodynamics', 'NRTLPRThermodynamics',
+    'NRTLBVThermodynamics', 'UNIFACRKThermodynamics', 'UNIFACPRThermodynamics',
+    'UNIFACBVThermodynamics', 'UNIFDMDRKThermodynamics', 'UNIFDMDPRThermodynamics',
+    'UNIFDMDBVThermodynamics', 'UNIFNISTRKThermodynamics',
+    'UNIFNISTPRThermodynamics', 'UNIFNISTBVThermodynamics',
+    'SecondVirialCoefficientProvider', 'SecondVirialVaporBackend',
+    'ChemicalAssociationSecondVirialProvider',
+    'ChemicalAssociationSecondVirialVaporBackend',
+    'TsonopoulosSecondVirialProvider', 'PitzerCurlSecondVirialProvider',
+    'AbbottSecondVirialProvider', 'create_second_virial_provider',
+    'create_second_virial_vapor_backend',
+    'normalize_second_virial_correlation', 'HaydenOConnellSecondVirialProvider',
     'create_thermodynamics', 'create_experiment_thermo',
     'PureSolidSLEResult', 'liquid_solution_activities',
     'pure_solid_log_saturation_activity', 'solve_pure_solid_sle',

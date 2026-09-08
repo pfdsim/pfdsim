@@ -116,6 +116,18 @@ _COMPONENT_PROPERTY_ALIASES = {
     'dipole': 'dipole_moment',
     'dipole_d': 'dipole_moment',
     'dipole_moment': 'dipole_moment',
+    'r': 'radius_of_gyration',
+    'rg': 'radius_of_gyration',
+    'r_g': 'radius_of_gyration',
+    'radius_of_gyration': 'radius_of_gyration',
+    'radius_of_gyration_a': 'radius_of_gyration',
+    'r_prime': 'modified_radius_of_gyration',
+    'r_hoc': 'modified_radius_of_gyration',
+    'modified_radius_of_gyration': 'modified_radius_of_gyration',
+    'thompson_radius_of_gyration': 'modified_radius_of_gyration',
+    'hoc_eta': 'hoc_eta',
+    'eta_hoc': 'hoc_eta',
+    'hoc_association_parameter': 'hoc_eta',
     'solid_form': 'solid_material_form',
     'phase_model': 'phase_behavior',
     'type': 'phase_behavior',
@@ -136,7 +148,8 @@ _COMPONENT_PROPERTY_KEYS = frozenset({
     'S_solid', 'Hcomb', 'Hcomb_gross', 'Tb', 'Tt', 'Pt', 'Tm',
     'Hvap', 'Hfus',
     'Cp_coeffs', 'Cp_liquid', 'Cp_solid', 'rho_solid', 'Vm_solid',
-    'dipole_moment',
+    'dipole_moment', 'radius_of_gyration', 'modified_radius_of_gyration',
+    'hoc_eta',
     'solid_material_form', 'solid_polymorph',
     'phase_behavior', 'particle_diameter', 'particle_sphericity',
     'particle_size_distribution',
@@ -151,6 +164,8 @@ _COMPONENT_PROPERTY_NAMES = tuple(sorted(
     _COMPONENT_PROPERTY_KEYS | {
         'MW', 'molecular_weight', 'CAS', 'UNIFAC', 'SMILES',
         'T_rho', 'rho_T_K', 'VDM', 'PSD', 'dipole', 'dipole_D',
+        'R', 'Rg', 'R_g', 'R_prime', 'R_HOC',
+        'HOC_eta', 'eta_HOC', 'HOC_association_parameter',
     },
     key=str.casefold,
 ))
@@ -273,9 +288,13 @@ _INTERACTION_MODEL_ALIASES = {
     'RK-SOAVE': 'SRK',
     'NRTL-RK': 'NRTL',
     'NRTL-PR': 'NRTL',
+    'NRTL-BV': 'NRTL',
+    'NRTL-HOC': 'NRTL',
     'NRTL-VDM': 'NRTL',
     'UNIQUAC-RK': 'UNIQUAC',
     'UNIQUAC-PR': 'UNIQUAC',
+    'UNIQUAC-BV': 'UNIQUAC',
+    'UNIQUAC-HOC': 'UNIQUAC',
     'UNIQUAC-VDM': 'UNIQUAC',
     'VISCOSITY': 'LIQUID_VISCOSITY',
     'LIQUID-VISCOSITY': 'LIQUID_VISCOSITY',
@@ -284,6 +303,11 @@ _INTERACTION_MODEL_ALIASES = {
     'MIXTURE-VISCOSITY': 'LIQUID_VISCOSITY',
     'VAPOR-DIMERIZATION': 'VDM',
     'VAPOR-DIMERISATION': 'VDM',
+    'TSONOPOULOS-1974': 'TSONOPOULOS',
+    'TSONOPOULOS-74': 'TSONOPOULOS',
+    'HAYDEN-OCONNELL': 'HOC',
+    "HAYDEN-O'CONNELL": 'HOC',
+    'HAYDEN-AND-OCONNELL': 'HOC',
 }
 
 _INTERACTION_PARAMETER_FIELDS = {
@@ -326,6 +350,8 @@ _INTERACTION_PARAMETER_FIELDS = {
         'delta_h_residual', 'delta_h_residual_j_per_mol',
         'delta_s_residual', 'delta_s_residual_j_per_mol_k',
     }),
+    'TSONOPOULOS': frozenset({'comment', 'kij', 'k_ij'}),
+    'HOC': frozenset({'comment', 'eta', 'eta_ij'}),
 }
 
 _INTERACTION_ESTIMATION_FIELDS = frozenset({
@@ -434,19 +460,6 @@ _KNOWN_UNSUPPORTED_THERMO_METHODS = {
         "There is no electrolyte-capable substitute yet.",
         "Electrolyte thermodynamics is a future implementation target.",
     ),
-    'NRTL-HOC': (
-        "Try NRTL-VDM when carboxylic-acid vapor dimerization is the important "
-        "association correction.",
-        "Hayden-O'Connell vapor association is a future implementation target.",
-    ),
-    'UNIQUAC-HOC': (
-        "Try UNIQUAC-VDM when vapor dimerization is the important correction.",
-        "General Hayden-O'Connell vapor association is a future implementation target.",
-    ),
-    'UNIF-HOC': (
-        "Try UNIFAC-VDM when vapor dimerization is the important correction.",
-        "General Hayden-O'Connell vapor association is a future implementation target.",
-    ),
     'UNIF-LBY': (
         "Try UNIFAC, UNIFDMD, or UNIFNIST depending on the parameter set needed.",
         "",
@@ -512,6 +525,15 @@ _KNOWN_UNSUPPORTED_THERMO_METHODS = {
     ),
 }
 
+_ACTIVITY_HOC_METHOD_ALIASES = {
+    'NRTL-HOC': 'NRTL-BV',
+    'UNIQUAC-HOC': 'UNIQUAC-BV',
+    'UNIFAC-HOC': 'UNIFAC-BV',
+    'UNIF-HOC': 'UNIFAC-BV',
+    'UNIFDMD-HOC': 'UNIFDMD-BV',
+    'UNIFNIST-HOC': 'UNIFNIST-BV',
+}
+
 _SUPPORTED_THERMO_SCOPE_METHODS = frozenset({
     'IDEAL', 'STEAM',
     'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM', 'SRK-MC', 'PR-MC',
@@ -520,9 +542,67 @@ _SUPPORTED_THERMO_SCOPE_METHODS = frozenset({
     'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM',
     'UNIFAC-RK', 'UNIFAC-PR', 'UNIFDMD-RK', 'UNIFDMD-PR',
     'UNIFNIST-RK', 'UNIFNIST-PR',
-    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR',
-    'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', 'UNIQUAC-PR',
+    'UNIFAC-BV', 'UNIFDMD-BV', 'UNIFNIST-BV',
+    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR', 'NRTL-BV',
+    'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', 'UNIQUAC-PR', 'UNIQUAC-BV',
+    *_ACTIVITY_HOC_METHOD_ALIASES,
 })
+
+
+def normalize_thermo_options(method: str, options: Optional[dict] = None) -> dict[str, str]:
+    """Validate provider options attached to a thermodynamic method."""
+    method_name = str(method).strip().upper().replace('_', '-')
+    implied_hoc = method_name in _ACTIVITY_HOC_METHOD_ALIASES
+    effective_method = _ACTIVITY_HOC_METHOD_ALIASES.get(
+        method_name,
+        method_name,
+    )
+    normalized = {}
+    for raw_name, value in (options or {}).items():
+        name = str(raw_name).strip().lower()
+        if name in normalized:
+            raise ValueError(f"Duplicate THERMO_METHOD option '{name}'.")
+        normalized[name] = str(value).strip().upper().replace('_', '-')
+    if normalized and not effective_method.endswith('-BV'):
+        raise ValueError(
+            f"THERMO_METHOD options are only supported for -BV methods, not {method}."
+        )
+    unknown = sorted(set(normalized) - {'correlation'})
+    if unknown:
+        raise ValueError(
+            unknown_name_message('THERMO_METHOD option', unknown[0], ('correlation',))
+        )
+    correlation = normalized.get('correlation')
+    aliases = {
+        'TSONOPOULOS': 'TSONOPOULOS',
+        'TSONOPOULOS-1974': 'TSONOPOULOS',
+        'TSONOPOULOS-74': 'TSONOPOULOS',
+        'PITZER-CURL': 'PITZER-CURL',
+        'PITZERCURL': 'PITZER-CURL',
+        'PITZER-CURL-1957': 'PITZER-CURL',
+        'ABBOTT': 'ABBOTT',
+        'ABBOTT-LEE-KESLER': 'ABBOTT',
+        'HOC': 'HOC',
+        'HAYDEN-OCONNELL': 'HOC',
+        "HAYDEN-O'CONNELL": 'HOC',
+        'HAYDEN-AND-OCONNELL': 'HOC',
+    }
+    if correlation is not None:
+        canonical = aliases.get(correlation)
+        if canonical is None:
+            raise ValueError(
+                f"Unsupported second-virial correlation '{correlation}'; "
+                "currently available: TSONOPOULOS, PITZER-CURL, ABBOTT, HOC."
+            )
+        normalized['correlation'] = canonical
+    if implied_hoc:
+        if normalized.get('correlation', 'HOC') != 'HOC':
+            raise ValueError(
+                f"THERMO_METHOD {method} implies correlation=HOC and cannot "
+                f"use correlation={normalized['correlation']}."
+            )
+        normalized['correlation'] = 'HOC'
+    return normalized
 
 _VDM_COMPONENT_PARAMETER_ALIASES = {
     'delta_h': 'delta_H_J_per_mol',
@@ -868,6 +948,9 @@ class Component:
     rho_solid: Optional[float] = None  # Solid mass density [kg/m3]
     Vm_solid: Optional[float] = None  # Solid molar volume [m3/kmol]
     dipole_moment: Optional[float] = None  # Permanent gas-phase dipole [Debye]
+    radius_of_gyration: Optional[float] = None  # Conventional mass-weighted Rg [angstrom]
+    modified_radius_of_gyration: Optional[float] = None  # Thompson R' [angstrom]
+    hoc_eta: Optional[float] = None  # HOC pure/self association parameter
     solid_material_form: Optional[str] = None
     solid_polymorph: Optional[str] = None
     phase_behavior: Optional[str] = None
@@ -952,6 +1035,9 @@ class Component:
             ('rho_solid', 'rho_solid'),
             ('Vm_solid', 'Vm_solid'),
             ('dipole_moment', 'dipole_moment'),
+            ('radius_of_gyration', 'R'),
+            ('modified_radius_of_gyration', 'R_prime'),
+            ('hoc_eta', 'HOC_eta'),
             ('solid_material_form', 'solid_material_form'),
             ('solid_polymorph', 'solid_polymorph'),
             ('phase_behavior', 'phase_behavior'),
@@ -1297,6 +1383,7 @@ class Metadata:
     author: str = ""
     date: str = ""
     thermo_method: str = "IDEAL"
+    thermo_options: dict[str, str] = field(default_factory=dict)
     online_lookup: bool = True
     psat_minimum_pressure_bar: Optional[float] = None
     recycle_method: str = "WEGSTEIN"
@@ -1306,6 +1393,16 @@ class Metadata:
     fluid_phase_model: str = "VLE"
 
     def __post_init__(self) -> None:
+        declared_thermo_method = str(self.thermo_method).strip()
+        self.thermo_options = normalize_thermo_options(
+            declared_thermo_method,
+            self.thermo_options,
+        )
+        normalized_method = declared_thermo_method.upper().replace('_', '-')
+        self.thermo_method = _ACTIVITY_HOC_METHOD_ALIASES.get(
+            normalized_method,
+            self.thermo_method,
+        )
         self.fluid_phase_model = normalize_fluid_phase_model(
             self.fluid_phase_model
         )
@@ -1326,7 +1423,14 @@ class Metadata:
         if self.date:
             lines.append(f"DATE: {self.date}")
         if self.thermo_method and self.thermo_method != "IDEAL":
-            lines.append(f"THERMO_METHOD: {self.thermo_method}")
+            directive = f"THERMO_METHOD: {self.thermo_method}"
+            if self.thermo_options:
+                rendered_options = ', '.join(
+                    f"{name}={value}"
+                    for name, value in self.thermo_options.items()
+                )
+                directive += f" | {rendered_options}"
+            lines.append(directive)
         if self.fluid_phase_model and self.fluid_phase_model != "VLE":
             lines.append(f"FLUID_PHASE_MODEL: {self.fluid_phase_model}")
         if self.online_lookup is False:
@@ -1515,6 +1619,7 @@ class ProcessFlowDiagram:
                 'author': self.metadata.author,
                 'date': self.metadata.date,
                 'thermo_method': self.metadata.thermo_method,
+                'thermo_options': dict(self.metadata.thermo_options),
                 'fluid_phase_model': self.metadata.fluid_phase_model,
                 'online_lookup': self.metadata.online_lookup,
                 'psat_minimum_pressure_bar': (
@@ -1637,6 +1742,7 @@ class ProcessFlowDiagram:
             author=meta.get('author', ''),
             date=meta.get('date', ''),
             thermo_method=meta.get('thermo_method', 'IDEAL'),
+            thermo_options=meta.get('thermo_options', {}),
             fluid_phase_model=normalize_fluid_phase_model(
                 meta.get('fluid_phase_model', 'VLE')
             ),
@@ -1894,11 +2000,18 @@ class PFDParser:
                 # Parse thermodynamic method. Keep the explicit method string so
                 # simulator.py can pass it through to create_thermodynamics().
                 if stripped.startswith('THERMO_METHOD:'):
-                    method = stripped[14:].strip().upper()
+                    value = stripped[14:].strip()
                 elif stripped.startswith('THERMO:'):
-                    method = stripped[7:].strip().upper()
+                    value = stripped[7:].strip()
                 else:  # PROPERTY_METHOD:
-                    method = stripped[16:].strip().upper()
+                    value = stripped[16:].strip()
+                pieces = self._split_top_level(value, '|')
+                if len(pieces) > 2:
+                    self._record_error(
+                        "THERMO_METHOD accepts one optional '| key=value, ...' block"
+                    )
+                    continue
+                method = pieces[0].strip().upper()
                 aliases = {
                     'REDLICH-KWONG': 'RK',
                     'REDLICHKWONG': 'RK',
@@ -1945,6 +2058,9 @@ class PFDParser:
                     'GAMMA-PHI-RK': 'UNIFAC-RK',
                     'GAMMA_PHI_RK': 'UNIFAC-RK',
                     'UNIFAC_PR': 'UNIFAC-PR',
+                    'UNIFAC_BV': 'UNIFAC-BV',
+                    'GAMMA-PHI-BV': 'UNIFAC-BV',
+                    'GAMMA_PHI_BV': 'UNIFAC-BV',
                     'UNIFAC-PENG-ROBINSON': 'UNIFAC-PR',
                     'UNIFAC_PENG_ROBINSON': 'UNIFAC-PR',
                     'GAMMA-PHI-PR': 'UNIFAC-PR',
@@ -1984,6 +2100,11 @@ class PFDParser:
                     'DORTMUND_UNIFAC_PR': 'UNIFDMD-PR',
                     'MODIFIED-UNIFAC-PR': 'UNIFDMD-PR',
                     'MODIFIED_UNIFAC_PR': 'UNIFDMD-PR',
+                    'UNIFDMD_BV': 'UNIFDMD-BV',
+                    'UNIFAC-DMD-BV': 'UNIFDMD-BV',
+                    'UNIFAC_DMD_BV': 'UNIFDMD-BV',
+                    'DORTMUND-UNIFAC-BV': 'UNIFDMD-BV',
+                    'DORTMUND_UNIFAC_BV': 'UNIFDMD-BV',
                     'UNIFNIST_RK': 'UNIFNIST-RK',
                     'UNIFAC-NIST-RK': 'UNIFNIST-RK',
                     'UNIFAC_NIST_RK': 'UNIFNIST-RK',
@@ -1996,16 +2117,29 @@ class PFDParser:
                     'NIST_UNIFAC_PR': 'UNIFNIST-PR',
                     'NIST-MODIFIED-UNIFAC-PR': 'UNIFNIST-PR',
                     'NIST_MODIFIED_UNIFAC_PR': 'UNIFNIST-PR',
+                    'UNIFNIST_BV': 'UNIFNIST-BV',
+                    'UNIFAC-NIST-BV': 'UNIFNIST-BV',
+                    'UNIFAC_NIST_BV': 'UNIFNIST-BV',
+                    'NIST-UNIFAC-BV': 'UNIFNIST-BV',
+                    'NIST_UNIFAC_BV': 'UNIFNIST-BV',
                     'NRTL_RK': 'NRTL-RK',
                     'NRTL_PR': 'NRTL-PR',
+                    'NRTL_BV': 'NRTL-BV',
+                    'NRTL_HOC': 'NRTL-HOC',
                     'NRTL_VDM': 'NRTL-VDM',
                     'NRTL-PENG-ROBINSON': 'NRTL-PR',
                     'NRTL_PENG_ROBINSON': 'NRTL-PR',
                     'UNIQUAC_RK': 'UNIQUAC-RK',
                     'UNIQUAC_PR': 'UNIQUAC-PR',
+                    'UNIQUAC_BV': 'UNIQUAC-BV',
+                    'UNIQUAC_HOC': 'UNIQUAC-HOC',
                     'UNIQUAC-PENG-ROBINSON': 'UNIQUAC-PR',
                     'UNIQUAC_PENG_ROBINSON': 'UNIQUAC-PR',
                     'UNIQUAC_VDM': 'UNIQUAC-VDM',
+                    'UNIFAC_HOC': 'UNIFAC-HOC',
+                    'UNIF_HOC': 'UNIF-HOC',
+                    'UNIFDMD_HOC': 'UNIFDMD-HOC',
+                    'UNIFNIST_HOC': 'UNIFNIST-HOC',
                     'IF97': 'STEAM',
                     'IAPWS-IF97': 'STEAM',
                     'IAPWS_IF97': 'STEAM',
@@ -2017,12 +2151,27 @@ class PFDParser:
                     'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM',
                     'UNIFAC-RK', 'UNIFDMD-RK', 'UNIFNIST-RK',
                     'UNIFAC-PR', 'UNIFDMD-PR', 'UNIFNIST-PR',
-                    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR',
+                    'UNIFAC-BV', 'UNIFDMD-BV', 'UNIFNIST-BV',
+                    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR', 'NRTL-BV',
                     'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', 'UNIQUAC-PR',
+                    'UNIQUAC-BV',
+                    *_ACTIVITY_HOC_METHOD_ALIASES,
                 }
                 method = aliases.get(method, method)
                 if method in supported:
-                    self.pfd.metadata.thermo_method = method
+                    try:
+                        raw_options = (
+                            self._parse_key_value_properties(pieces[1])
+                            if len(pieces) == 2 else {}
+                        )
+                        options = normalize_thermo_options(method, raw_options)
+                    except (TypeError, ValueError) as error:
+                        self._record_error(str(error))
+                    else:
+                        self.pfd.metadata.thermo_method = (
+                            _ACTIVITY_HOC_METHOD_ALIASES.get(method, method)
+                        )
+                        self.pfd.metadata.thermo_options = options
                 else:
                     self._record_error(
                         unsupported_thermo_method_message(
@@ -2424,7 +2573,7 @@ class PFDParser:
                         inherit_name = 'global'
                     self.pfd.thermo_scopes.append(ThermoScope(
                         name=name,
-                        method=str(method).strip().upper(),
+                        method=str(method).strip().upper().replace('_', '-'),
                         inherit=inherit_name,
                     ))
                 except ParseError as error:
@@ -4252,6 +4401,13 @@ class PFDValidator:
     def _validate_metadata(self):
         """Validate method-specific process-level numerical controls."""
         try:
+            normalize_thermo_options(
+                self.pfd.metadata.thermo_method,
+                self.pfd.metadata.thermo_options,
+            )
+        except ValueError as error:
+            self.errors.append(str(error))
+        try:
             method = normalize_recycle_method(self.pfd.metadata.recycle_method)
             normalize_recycle_options(
                 method,
@@ -4400,6 +4556,24 @@ class PFDValidator:
                 self.errors.append(
                     f"Invalid dipole_moment for {comp.symbol}: "
                     f"{comp.dipole_moment}; expected a finite nonnegative value in Debye"
+                )
+            for label, value in (
+                ('radius_of_gyration', comp.radius_of_gyration),
+                ('modified_radius_of_gyration', comp.modified_radius_of_gyration),
+            ):
+                if value is not None and (
+                    not math.isfinite(value) or value < 0.0
+                ):
+                    self.errors.append(
+                        f"Invalid {label} for {comp.symbol}: {value}; expected "
+                        "a finite nonnegative value in angstrom"
+                    )
+            if comp.hoc_eta is not None and (
+                not math.isfinite(comp.hoc_eta) or comp.hoc_eta < 0.0
+            ):
+                self.errors.append(
+                    f"Invalid HOC_eta for {comp.symbol}: {comp.hoc_eta}; "
+                    "expected a finite nonnegative dimensionless value"
                 )
             if (
                 comp.molecular_weight is not None

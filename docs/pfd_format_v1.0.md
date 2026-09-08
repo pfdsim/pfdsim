@@ -116,7 +116,7 @@ an exact lower-pressure fit constraint.
 ### 4. Thermodynamics Method
 
 ```
-THERMO_METHOD: <method>
+THERMO_METHOD: <method> | <option>=<value>, ...
 ```
 
 `THERMO:` and `PROPERTY_METHOD:` are accepted aliases. Unsupported method names
@@ -146,17 +146,84 @@ substitutions.
 - `PRSV1`, `PRSV2` - Peng-Robinson-Stryjek-Vera alpha variants; `PRSV` is an
   alias for `PRSV1`
 - `SRK-TWU`, `PR-TWU` - SRK and PR with Twu alpha parameters
-- `NRTL`, `NRTL-VDM`, `NRTL-RK`, `NRTL-PR` - NRTL liquid activity
-  coefficients, optionally with vapor-dimerization, RK, or PR vapor fugacity
+- `NRTL`, `NRTL-VDM`, `NRTL-RK`, `NRTL-PR`, `NRTL-BV` - NRTL liquid activity
+  coefficients, optionally with vapor-dimerization, RK, PR, or
+  second-virial vapor fugacity corrections
+- `UNIQUAC`, `UNIQUAC-RK`, `UNIQUAC-PR`, `UNIQUAC-BV` - UNIQUAC liquid activity
+  coefficients, optionally with RK, PR, or second-virial vapor fugacity
   corrections
-- `UNIQUAC`, `UNIQUAC-RK`, `UNIQUAC-PR` - UNIQUAC liquid activity coefficients,
-  optionally with RK or PR vapor fugacity corrections
-- `UNIFAC`, `UNIFAC-RK`, `UNIFAC-PR` - Original UNIFAC
-- `UNIFDMD`, `UNIFDMD-RK`, `UNIFDMD-PR` - Dortmund modified UNIFAC
-- `UNIFNIST`, `UNIFNIST-RK`, `UNIFNIST-PR` - NIST modified UNIFAC
+- `UNIFAC`, `UNIFAC-RK`, `UNIFAC-PR`, `UNIFAC-BV` - Original UNIFAC
+- `UNIFDMD`, `UNIFDMD-RK`, `UNIFDMD-PR`, `UNIFDMD-BV` - Dortmund modified UNIFAC
+- `UNIFNIST`, `UNIFNIST-RK`, `UNIFNIST-PR`, `UNIFNIST-BV` - NIST modified UNIFAC
 - `NRTL-VDM`, `UNIQUAC-VDM`, `UNIFAC-VDM`, `UNIFDMD-VDM`, `UNIFNIST-VDM` - Activity
   models with vapor-dimerization fugacity corrections
 - `STEAM` - CoolProp IF97 steam properties for water-only flowsheets
+
+The `-BV` variants use a pressure-truncated second-virial vapor EOS while
+retaining the selected activity model for the liquid. The default coefficient
+provider is Tsonopoulos, including its supported polar-fluid corrections and
+published binary interaction parameters. Binary-specific fitted values take
+precedence over the published critical-volume correlations and molecular-family
+defaults; `k_ij=0` is retained only for pairs without a supported rule. The
+parameter record retains its source, fitted uncertainty, and temperature range
+where those were reported. Explicit provider-level binary overrides have the
+highest precedence. Component dipoles are resolved through the normal dipole
+hierarchy, with published pure-component polar parameters used where required
+by the fitted binary table. Vapor fugacity coefficients use
+
+`ln(phi_i) = P/(R*T) * (2*sum_j(y_j*B_ij) - B_mix)`.
+
+The same `B_mix(T)` and its temperature derivatives supply vapor residual
+enthalpy, entropy, Gibbs energy, and heat capacity. The truncated virial form
+is intended for low-to-moderate vapor densities; it is not a liquid EOS.
+The provider can be selected explicitly. `PITZER-CURL` and `ABBOTT` use their
+respective nonpolar corresponding-states forms with the same cross-property
+combining rules; unlike the extended Tsonopoulos provider, they do not apply
+dipole-based polar corrections. `HOC` implements the Hayden-O'Connell physical,
+polar, association, and representative-group solvation contributions from the
+1975 paper and its core supplementary tables. It resolves both molecular
+dipole and Thompson's modified radius of gyration from the property system:
+
+```pfd
+THERMO_METHOD: NRTL-BV | correlation=TSONOPOULOS
+THERMO_METHOD: NRTL-BV | correlation=PITZER-CURL
+THERMO_METHOD: NRTL-BV | correlation=ABBOTT
+THERMO_METHOD: NRTL-BV | correlation=HOC
+```
+
+HOC also has direct activity-model suffixes. These are normalized internally
+to the corresponding `-BV` method with `correlation=HOC`:
+
+```pfd
+THERMO_METHOD: NRTL-HOC
+THERMO_METHOD: UNIQUAC-HOC
+THERMO_METHOD: UNIFAC-HOC
+THERMO_METHOD: UNIFDMD-HOC
+THERMO_METHOD: UNIFNIST-HOC
+```
+
+Canonical PFD serialization writes the expanded `-BV | correlation=HOC`
+form. `UNIF-HOC` is accepted as an alias for `UNIFAC-HOC`.
+
+HOC association and solvation parameters follow the generalized group values
+in supplementary Tables IV and V. A parenthesized Table IV group label is
+transferable to other members of that class, and Table V superscript-`e` rows
+are transferred across their stated solvating groups. Unlabelled Table V
+components remain identity-specific. The paper provides no additive rule for
+multifunctional compounds, so multiple association groups are not summed and
+receive no inferred association parameter. As specified by Table IV, water
+and monohydric alcohols share the transferable Hydroxyl association group.
+
+For systems without a carboxylic acid, HOC uses its total second virial
+coefficients in the ordinary pressure-truncated backend. When one or more
+monocarboxylic acids are present, the backend automatically uses the paper's
+equation 31 chemical theory: acid-pair physical fugacities use `B_free`, while
+`B_bound + B_metastable + B_chem` supplies the association equilibrium
+constants. Every acid homodimer and heterodimer is solved on the nominal
+monomer-equivalent composition basis. The unlike-acid equilibrium constant
+includes the required statistical factor of two, and two acids use the same
+organic-acid group value `eta=4.5` with HOC's ordinary cross molecular
+parameters. Internal dimers do not appear as flowsheet components.
 
 When Numba is available, the RK/SRK/PR family uses a shared dense compiled
 backend for alpha functions, temperature-dependent binary interactions,
@@ -485,7 +552,8 @@ spellings shown below. `Cps`/`solid_cp`, `rhos`/`solid_density`, `Vms`/
 `solid_molar_volume`, and `solid_form` are aliases for the corresponding solid
 property fields. `type` and `phase_model` are aliases for `phase_behavior`
 inside the `COMPONENTS:` section. `dipole` and `dipole_D` are aliases for
-`dipole_moment`.
+`dipole_moment`. `eta_HOC` and `HOC_association_parameter` are aliases for
+`HOC_eta`.
 
 Identity and structure fields:
 - `formula` - Molecular formula
@@ -549,6 +617,20 @@ Critical and phase-change fields:
 - `dipole_moment` - Permanent gas-phase molecular dipole [Debye]. An explicit
   PFD value is authoritative and bypasses CCCBDB lookup and optional quantum
   calculations. The value must be finite and nonnegative.
+- `R` - Conventional mass-weighted molecular radius of gyration [angstrom].
+  `Rg`, `R_g`, and `radius_of_gyration` are aliases.
+- `R_prime` - Thompson's modified mean radius `R'` [angstrom], used by the
+  Hayden-O'Connell second-virial provider. `R_HOC`,
+  `modified_radius_of_gyration`, and `thompson_radius_of_gyration` are aliases.
+  When either radius is absent,
+  both are evaluated from the same GFN2-xTB optimized geometry; a newly
+  generated geometry is cached before radius evaluation. These computed
+  radii carry quality `0.85`, consistent with approximately 4% MAE.
+- `HOC_eta` - Optional finite nonnegative pure/self association parameter for
+  the Hayden-O'Connell provider. It overrides the component's tabulated group
+  value and participates in the pure HOC molecular-parameter calculation. It
+  does not replace an unlike-pair `eta`; use an HOC interaction row for that.
+  It is ignored with a warning when no active thermodynamic scope uses HOC.
 - `rho` - Liquid mass-density reference [kg/m3], interpreted at `rho_T` if supplied, otherwise 298.15 K; this is used as a Rackett fit source when critical data is available
 - `rho_T` - Temperature for `rho` [K]
 - `rho_solid` - Explicit constant solid mass density [kg/m3]
@@ -877,6 +959,14 @@ Supported models and fields:
   temperature-dependent `kij_a`, `kij_b`, `kij_c` using
   `k_ij = kij_a + kij_b/T + kij_c*T`; `T_ref_K` is accepted as provenance
   (`t_ref`, `t_ref_k`, `tref`, and `tref_k` are aliases)
+- `TSONOPOULOS` - constant dimensionless `kij`/`k_ij` for the selected pair.
+  It overrides the built-in fitted binary value, critical-volume correlation,
+  or molecular-family default. `TSONOPOULOS-1974` and `TSONOPOULOS-74` are
+  model aliases. The row is ignored with a warning unless the scope uses the
+  Tsonopoulos vapor provider.
+- `HOC` - constant dimensionless unlike-pair `eta`/`eta_ij`. It overrides
+  HOC's exact-pair, same-group, group-pair, or correlated solvation rule. The
+  row is ignored with a warning unless the scope uses HOC.
 - `LIQUID_VISCOSITY` - binary liquid-mixture viscosity excess contribution for
   `ln(mu) = sum(x_i ln(mu_i)) + excess`. Supports multiple non-overlapping
   `Tmin_K`/`Tmax_K` rows for the same pair:
@@ -910,6 +1000,8 @@ Example:
 INTERACTION_PARAMETERS:
     EtOH/H2O | model=NRTL, alpha=0.3, tau12_c=-0.801, tau12_d=246.2, tau21_c=3.458, tau21_d=-586.1
     EtOH/H2O | model=PR, k_ij=-0.078
+    EtOH/H2O | model=TSONOPOULOS, kij=0.08
+    EtOH/H2O | model=HOC, eta=1.40
     CO2/H2S | model=PR, kij=0.5, Tmin_K=290, Tmax_K=310
     EtOH/H2O | model=LIQUID_VISCOSITY, form=grunberg_nissan, G=0.81
     ACETONE/EtOH | model=VDM, delta_H_residual=1000, delta_S_residual=-2.5

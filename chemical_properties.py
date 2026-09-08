@@ -164,6 +164,9 @@ class ChemicalProperties:
     rho_solid: Optional[float] = None  # kg/m3 (explicit constant solid mass density)
     Vm_solid: Optional[float] = None  # m3/kmol (explicit constant solid molar volume)
     dipole_moment: Optional[float] = None  # permanent gas-phase dipole [Debye]
+    radius_of_gyration: Optional[float] = None  # mass-weighted Rg [angstrom]
+    modified_radius_of_gyration: Optional[float] = None  # Thompson R' [angstrom]
+    hoc_eta: Optional[float] = None  # HOC pure/self association parameter
     solid_material_form: str = "unspecified"
     solid_polymorph: str = ""
     property_correlations: dict = field(default_factory=dict)
@@ -1492,6 +1495,11 @@ class ChemicalDatabase:
                 rho_solid=props.get('rho_solid'),
                 Vm_solid=props.get('Vm_solid'),
                 dipole_moment=props.get('dipole_moment'),
+                radius_of_gyration=props.get('radius_of_gyration'),
+                modified_radius_of_gyration=props.get(
+                    'modified_radius_of_gyration'
+                ),
+                hoc_eta=props.get('hoc_eta'),
                 solid_material_form=props.get('solid_material_form', 'unspecified'),
                 solid_polymorph=props.get('solid_polymorph', ''),
                 property_correlations=props.get('property_correlations', {}),
@@ -1573,7 +1581,9 @@ class ChemicalDatabase:
             'Hcomb', 'Hcomb_gross',
             'Hvap', 'Hfus', 'Hsub',
             'Cp_coeffs', 'Cp_liquid', 'Cp_solid', 'rho_solid', 'Vm_solid',
-            'dipole_moment',
+            'dipole_moment', 'radius_of_gyration',
+            'modified_radius_of_gyration',
+            'hoc_eta',
             'henry_Hcp', 'henry_B', 'henry_Tmin', 'henry_Tmax',
             'henry_Vinf', 'henry_Vinf_uncertainty',
             'uniquac_r', 'uniquac_q',
@@ -1788,6 +1798,9 @@ class ChemicalDatabase:
             'rho_solid': props.rho_solid,
             'Vm_solid': props.Vm_solid,
             'dipole_moment': props.dipole_moment,
+            'radius_of_gyration': props.radius_of_gyration,
+            'modified_radius_of_gyration': props.modified_radius_of_gyration,
+            'hoc_eta': props.hoc_eta,
             'solid_material_form': props.solid_material_form,
             'solid_polymorph': props.solid_polymorph,
             'property_correlations': props.property_correlations,

@@ -11,7 +11,7 @@ IDEAL Method:
 
 Activity-coefficient methods:
 - UNIFAC and NRTL liquid activity coefficients
-- Gamma-phi variants with RK or PR vapor fugacity coefficients
+- Gamma-phi variants with RK, PR, or second-virial vapor fugacity coefficients
 - VLE, LLE, VLLE, and excess enthalpy utilities
 
 EOS methods:

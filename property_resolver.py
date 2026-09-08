@@ -366,6 +366,48 @@ def resolve_dipole_moment(
     )
 
 
+def resolve_radius_of_gyration(
+    symbol: str,
+    props: Dict = None,
+    *,
+    allow_online: bool = True,
+) -> PropertyResolutionResult:
+    """Resolve the conventional mass-weighted radius of gyration [angstrom]."""
+    return get_property_resolver().resolve_radius_of_gyration(
+        symbol,
+        props,
+        allow_online=allow_online,
+    )
+
+
+def resolve_modified_radius_of_gyration(
+    symbol: str,
+    props: Dict = None,
+    *,
+    allow_online: bool = True,
+) -> PropertyResolutionResult:
+    """Resolve Thompson's modified radius of gyration ``R'`` [angstrom]."""
+    return get_property_resolver().resolve_modified_radius_of_gyration(
+        symbol,
+        props,
+        allow_online=allow_online,
+    )
+
+
+def resolve_radii_of_gyration(
+    symbol: str,
+    props: Dict = None,
+    *,
+    allow_online: bool = True,
+) -> Dict[str, PropertyResolutionResult]:
+    """Resolve both conventional and Thompson-modified gyration radii."""
+    return get_property_resolver().resolve_radii_of_gyration(
+        symbol,
+        props,
+        allow_online=allow_online,
+    )
+
+
 def resolve_formation_properties(
     symbol: str,
     props: Dict = None,

@@ -168,42 +168,11 @@ class DipoleMomentMixin:
         failure_note = ""
         if should_attempt:
             try:
-                geometry_record = self._load_dipole_artifact(identity, "geometry_xtb")
-                geometry_payload = (
-                    geometry_record.get("geometry")
-                    if isinstance(geometry_record, dict)
-                    else None
+                atoms, charge, multiplicity = self._resolve_xtb_geometry(
+                    identity,
+                    smiles,
+                    dependencies,
                 )
-                if isinstance(geometry_payload, dict):
-                    try:
-                        atoms, charge, multiplicity = self._atoms_from_payload(
-                            geometry_payload
-                        )
-                    except (KeyError, TypeError, ValueError):
-                        self._delete_dipole_artifact(identity, "geometry_xtb")
-                        atoms, charge, multiplicity = self._xtb_optimized_geometry(smiles)
-                        self._save_dipole_artifact(
-                            identity,
-                            "geometry_xtb",
-                            {
-                                "geometry": self._atoms_payload(
-                                    atoms,
-                                    charge,
-                                    multiplicity,
-                                ),
-                                "dependencies": dependencies,
-                            },
-                        )
-                else:
-                    atoms, charge, multiplicity = self._xtb_optimized_geometry(smiles)
-                    self._save_dipole_artifact(
-                        identity,
-                        "geometry_xtb",
-                        {
-                            "geometry": self._atoms_payload(atoms, charge, multiplicity),
-                            "dependencies": dependencies,
-                        },
-                    )
                 value = (
                     self._pvdz_dipole_at_geometry(atoms, charge, multiplicity)
                     if use_pvdz
@@ -468,6 +437,36 @@ class DipoleMomentMixin:
             self._dipole_cache().delete(key)
         except Exception:
             pass
+
+    def _resolve_xtb_geometry(
+        self,
+        identity: str,
+        smiles: str,
+        dependencies: Optional[dict[str, str]] = None,
+    ):
+        """Load or generate the shared GFN2-xTB optimized geometry artifact."""
+        geometry_record = self._load_dipole_artifact(identity, "geometry_xtb")
+        geometry_payload = (
+            geometry_record.get("geometry")
+            if isinstance(geometry_record, dict)
+            else None
+        )
+        if isinstance(geometry_payload, dict):
+            try:
+                return self._atoms_from_payload(geometry_payload)
+            except (KeyError, TypeError, ValueError):
+                self._delete_dipole_artifact(identity, "geometry_xtb")
+
+        atoms, charge, multiplicity = self._xtb_optimized_geometry(smiles)
+        self._save_dipole_artifact(
+            identity,
+            "geometry_xtb",
+            {
+                "geometry": self._atoms_payload(atoms, charge, multiplicity),
+                "dependencies": dependencies or self._dipole_dependency_state(),
+            },
+        )
+        return atoms, charge, multiplicity
 
     @classmethod
     def _calculate_gfn2_xtb_dipole(cls, smiles: str) -> float:

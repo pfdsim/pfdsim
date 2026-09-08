@@ -392,9 +392,10 @@ class ThermodynamicMethodTests(unittest.TestCase):
             'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
             'UNIFDMD-RK', 'UNIFNIST-RK',
             'UNIFDMD-PR', 'UNIFNIST-PR', 'UNIFAC-PR',
+            'UNIFAC-BV', 'UNIFDMD-BV', 'UNIFNIST-BV',
             'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM', 'UNIQUAC-VDM',
-            'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR',
-            'UNIQUAC', 'UNIQUAC-RK', 'UNIQUAC-PR',
+            'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR', 'NRTL-BV',
+            'UNIQUAC', 'UNIQUAC-RK', 'UNIQUAC-PR', 'UNIQUAC-BV',
         ]:
             with self.subTest(method=method):
                 thermo = create_thermodynamics(['ethanol', 'water'], method)

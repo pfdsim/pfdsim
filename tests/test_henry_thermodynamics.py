@@ -557,7 +557,10 @@ class HenryThermodynamicsTests(unittest.TestCase):
     def test_aqueous_k_paths_cover_activity_gamma_phi_and_eos_models(self):
         composition = {'water': 0.99999, 'ethylene': 1e-5}
         values = {}
-        for method in ('IDEAL', 'UNIFNIST', 'UNIFNIST-RK', 'UNIFNIST-PR', 'RK', 'PR'):
+        for method in (
+            'IDEAL', 'UNIFNIST', 'UNIFNIST-RK', 'UNIFNIST-PR',
+            'UNIFNIST-BV', 'RK', 'PR',
+        ):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(['water', 'ethylene'], method)
                 context = thermo.create_aqueous_equilibrium_context(['ethylene'], 'water')
@@ -568,6 +571,7 @@ class HenryThermodynamicsTests(unittest.TestCase):
 
         self.assertAlmostEqual(values['UNIFNIST'], values['IDEAL'])
         self.assertNotAlmostEqual(values['UNIFNIST-RK'], values['UNIFNIST'], places=4)
+        self.assertNotAlmostEqual(values['UNIFNIST-BV'], values['UNIFNIST'], places=4)
         self.assertNotAlmostEqual(values['PR'], values['UNIFNIST'], places=4)
 
     def test_vdm_aqueous_path_preserves_vapor_association(self):
@@ -589,6 +593,7 @@ class HenryThermodynamicsTests(unittest.TestCase):
     def test_henry_k_uses_converged_vapor_fugacity_coefficient(self):
         cases = [
             ('UNIFNIST-RK', ['water', 'ethylene'], {'water': 0.99999, 'ethylene': 1e-5}),
+            ('UNIFNIST-BV', ['water', 'ethylene'], {'water': 0.99999, 'ethylene': 1e-5}),
             ('PR', ['water', 'ethylene'], {'water': 0.99999, 'ethylene': 1e-5}),
             (
                 'UNIFNIST-VDM',

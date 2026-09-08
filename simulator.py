@@ -104,8 +104,10 @@ class Simulator:
         self.solver: Optional[FlowsheetSolver] = None
         self.result: Optional[SimulationResult] = None
         self.thermo_method: Optional[str] = None
+        self.thermo_options: dict[str, str] = {}
         self._initialized = False
         self._initialized_thermo_method: Optional[str] = None
+        self._initialized_thermo_options: dict[str, str] = {}
         self._initialized_fluid_phase_model: Optional[str] = None
         
         # Validate PFD
@@ -269,7 +271,7 @@ class Simulator:
         
         Args:
             thermo_method: Thermodynamic/property method (for example 'IDEAL',
-                'PR', 'PSRK', 'UNIFAC', 'UNIQUAC-RK', or 'UNIFAC-PR')
+                'PR', 'PSRK', 'UNIFAC', 'UNIQUAC-RK', or 'NRTL-BV')
             
         Returns:
             This simulator, fully initialized but not solved.
@@ -289,9 +291,15 @@ class Simulator:
         ):
             return self
         selected_method = self._resolve_thermo_method(thermo_method)
+        selected_options = (
+            {}
+            if thermo_method is not None
+            else dict(getattr(self.pfd.metadata, 'thermo_options', {}) or {})
+        )
         if (
             self._initialized
             and self._initialized_thermo_method == selected_method
+            and self._initialized_thermo_options == selected_options
             and self._initialized_fluid_phase_model == selected_phase_model
         ):
             return self
@@ -300,6 +308,7 @@ class Simulator:
         # only derived runtime state; the parsed PFD remains immutable input.
         self._initialized = False
         self._initialized_thermo_method = None
+        self._initialized_thermo_options = {}
         self._initialized_fluid_phase_model = None
         self.thermo = None
         self.thermo_packages = {}
@@ -307,6 +316,7 @@ class Simulator:
         self.solver = None
         self.result = None
         self.thermo_method = selected_method
+        self.thermo_options = selected_options
         self.thermo_scope_methods = {
             'global': self.thermo_method,
             **{
@@ -362,6 +372,10 @@ class Simulator:
         uses_vdm = any(
             method.endswith('-VDM')
             for method in normalized_thermo_methods
+        )
+        uses_hoc = (
+            str(self.thermo_options.get('correlation', '')).upper() == 'HOC'
+            or any(method.endswith('-HOC') for method in normalized_thermo_methods)
         )
         ignored_model_parameter_warnings: list[str] = []
         
@@ -444,6 +458,9 @@ class Simulator:
             ('rho_solid', 'rho_solid'),
             ('Vm_solid', 'Vm_solid'),
             ('dipole_moment', 'dipole_moment'),
+            ('radius_of_gyration', 'radius_of_gyration'),
+            ('modified_radius_of_gyration', 'modified_radius_of_gyration'),
+            ('hoc_eta', 'hoc_eta'),
             ('solid_material_form', 'solid_material_form'),
             ('solid_polymorph', 'solid_polymorph'),
             ('antoine_A', 'antoine_A'),
@@ -475,6 +492,7 @@ class Simulator:
             ignored_twu_vt_fields = []
             ignored_uniquac_fields = []
             ignored_vdm_fields = []
+            ignored_hoc_fields = []
             for component_attr, property_attr in pfd_property_attrs:
                 value = getattr(pfd_comp, component_attr, None)
                 if value is not None:
@@ -502,6 +520,9 @@ class Simulator:
                         continue
                     if property_attr == 'vapor_dimerization' and not uses_vdm:
                         ignored_vdm_fields.append(property_attr)
+                        continue
+                    if property_attr == 'hoc_eta' and not uses_hoc:
+                        ignored_hoc_fields.append(property_attr)
                         continue
                     if property_attr == 'vapor_dimerization':
                         value = normalize_vdm_component_parameters(value)
@@ -547,6 +568,11 @@ class Simulator:
                 ignored_model_parameter_warnings.append(
                     f"Ignoring vapor-dimerization parameters for {pfd_comp.symbol} "
                     f"because THERMO_METHOD {self.thermo_method} is not VDM-based."
+                )
+            if ignored_hoc_fields:
+                ignored_model_parameter_warnings.append(
+                    f"Ignoring HOC pure eta for {pfd_comp.symbol} because no "
+                    "active thermodynamic scope uses the HOC vapor provider."
                 )
             if pfd_comp.molecular_weight is not None:
                 props.MW = pfd_comp.molecular_weight
@@ -929,6 +955,46 @@ class Simulator:
                     'comment': str(params.get('comment') or 'PFD interaction override'),
                 }
 
+                if model == 'TSONOPOULOS':
+                    remember_activity_override(scope, model, comp1, comp2)
+                    if 'kij' in params and 'k_ij' in params:
+                        raise SimulationError(
+                            "TSONOPOULOS INTERACTION_PARAMETERS cannot specify "
+                            "both kij and k_ij."
+                        )
+                    kij = params.get('kij', params.get('k_ij'))
+                    if kij is None:
+                        raise SimulationError(
+                            "TSONOPOULOS INTERACTION_PARAMETERS require kij=... ."
+                        )
+                    record['kij'] = numeric(kij, 'kij')
+                    if not math.isfinite(record['kij']) or record['kij'] >= 1.0:
+                        raise SimulationError(
+                            "TSONOPOULOS kij must be finite and less than 1."
+                        )
+                    overrides.append(record)
+                    continue
+
+                if model == 'HOC':
+                    remember_activity_override(scope, model, comp1, comp2)
+                    if 'eta' in params and 'eta_ij' in params:
+                        raise SimulationError(
+                            "HOC INTERACTION_PARAMETERS cannot specify both "
+                            "eta and eta_ij."
+                        )
+                    eta = params.get('eta', params.get('eta_ij'))
+                    if eta is None:
+                        raise SimulationError(
+                            "HOC INTERACTION_PARAMETERS require eta=... ."
+                        )
+                    record['eta'] = numeric(eta, 'eta')
+                    if not math.isfinite(record['eta']):
+                        raise SimulationError(
+                            "HOC eta must be a finite dimensionless value."
+                        )
+                    overrides.append(record)
+                    continue
+
                 if model in {'PR', 'SRK'}:
                     if 'k_ij' in params and 'kij' not in params:
                         params['kij'] = params['k_ij']
@@ -1164,7 +1230,7 @@ class Simulator:
                 raise SimulationError(
                     f"Unsupported INTERACTION_PARAMETERS model '{item.model}'. "
                     "Supported models are NRTL, UNIQUAC, PR, SRK, "
-                    "LIQUID_VISCOSITY, and VDM."
+                    "LIQUID_VISCOSITY, VDM, TSONOPOULOS, and HOC."
                 )
             return overrides
 
@@ -1590,6 +1656,21 @@ class Simulator:
                     scope,
                 )
                 retained_overrides = []
+                normalized_method = method.replace('_', '-').upper()
+                active_virial_provider = None
+                if normalized_method.endswith('-HOC'):
+                    active_virial_provider = 'HOC'
+                elif normalized_method.endswith('-BV'):
+                    active_virial_provider = (
+                        str(
+                            self.thermo_options.get(
+                                'correlation',
+                                'TSONOPOULOS',
+                            )
+                        ).upper()
+                        if scope == 'global'
+                        else 'TSONOPOULOS'
+                    )
                 for record in scoped_overrides:
                     if (
                         record.get('model') == 'VDM'
@@ -1599,6 +1680,16 @@ class Simulator:
                             "Ignoring VDM cross-interaction parameters for "
                             f"{record['component1']}/{record['component2']} "
                             f"because THERMO_METHOD {method} is not VDM-based."
+                        )
+                        continue
+                    if record.get('model') in {'TSONOPOULOS', 'HOC'} and (
+                        record.get('model') != active_virial_provider
+                    ):
+                        package_warnings.append(
+                            f"Ignoring {record['model']} vapor interaction "
+                            f"parameters for {record['component1']}/"
+                            f"{record['component2']} because THERMO_METHOD "
+                            f"{method} does not use that vapor provider."
                         )
                         continue
                     if (
@@ -1664,6 +1755,9 @@ class Simulator:
                         unifac_groups,
                         constructor_overrides,
                         constructor_estimation,
+                        thermo_options=(
+                            self.thermo_options if scope == 'global' else None
+                        ),
                     )
                 else:
                     thermo = IdealThermodynamics([], db, [])
@@ -1730,6 +1824,7 @@ class Simulator:
 
         self._initialized = True
         self._initialized_thermo_method = self.thermo_method
+        self._initialized_thermo_options = dict(self.thermo_options)
         self._initialized_fluid_phase_model = selected_phase_model
         return self
 
@@ -2046,7 +2141,13 @@ class Simulator:
         lines.append("VERSION: " + (self.pfd.metadata.version or "1.0"))
         lines.append(f"GENERATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         lines.append("SIMULATOR: PFD-Editor v1.0")
-        lines.append(f"THERMO_METHOD: {getattr(self, 'thermo_method', 'IDEAL')}")
+        thermo_directive = f"THERMO_METHOD: {getattr(self, 'thermo_method', 'IDEAL')}"
+        if getattr(self, 'thermo_options', None):
+            thermo_directive += " | " + ', '.join(
+                f"{name}={value}"
+                for name, value in self.thermo_options.items()
+            )
+        lines.append(thermo_directive)
         for scope, method in getattr(
             self,
             'thermo_scope_methods',
@@ -2492,6 +2593,7 @@ class Simulator:
                 'version': self.pfd.metadata.version,
                 'generated': datetime.now().isoformat(),
                 'thermo_method': getattr(self, 'thermo_method', 'IDEAL'),
+                'thermo_options': dict(getattr(self, 'thermo_options', {})),
                 'thermo_scopes': dict(getattr(
                     self,
                     'thermo_scope_methods',

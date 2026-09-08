@@ -21,8 +21,12 @@ class GammaPhiVaporBackendMixin:
         components: list[str],
         db: Optional[ChemicalDatabase],
         interaction_overrides: Optional[list[dict]] = None,
+        *,
+        second_virial_provider=None,
+        second_virial_correlation: str = 'TSONOPOULOS',
     ) -> None:
         model = self.vapor_backend_model.upper()
+        self.vapor_backend_label = model
         if model == 'RK':
             if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
                 from ..rk_eos import RedlichKwong, RKError
@@ -43,6 +47,71 @@ class GammaPhiVaporBackendMixin:
                 self.vapor_eos = CubicEOS(components, 'PR', db, interaction_overrides)
             except CubicEOSError as e:
                 raise ThermodynamicsError(f"Failed to initialize PR vapor correction: {e}") from e
+        elif model == 'BV':
+            from .second_virial import (
+                create_second_virial_provider,
+                create_second_virial_vapor_backend,
+            )
+
+            try:
+                provider = second_virial_provider or create_second_virial_provider(
+                    second_virial_correlation,
+                    components,
+                    self.props,
+                    resolver_properties=getattr(self, '_resolver_known_props', None),
+                    allow_online=bool(getattr(self.db, 'enable_online', True)),
+                    chemical_database=getattr(self, 'db', db),
+                    interaction_overrides=interaction_overrides,
+                )
+                self.vapor_eos = create_second_virial_vapor_backend(
+                    components,
+                    provider,
+                )
+            except ThermodynamicsError:
+                raise
+            except Exception as e:
+                raise ThermodynamicsError(
+                    f"Failed to initialize second-virial vapor correction: {e}"
+                ) from e
+            self.vapor_backend_label = f"BV/{self.vapor_eos.correlation}"
+            for component, result in getattr(provider, 'dipole_results', {}).items():
+                props = self.props.get(component)
+                if props is None:
+                    continue
+                props.dipole_moment = float(result.value)
+                props.property_sources['dipole_moment'] = {
+                    'source': result.source,
+                    'method': result.method,
+                    'quality': result.quality,
+                    'notes': result.notes,
+                }
+                known = getattr(self, '_resolver_known_props', {}).get(component)
+                if isinstance(known, dict):
+                    known['dipole_moment'] = float(result.value)
+                    known.setdefault('property_sources', {})['dipole_moment'] = dict(
+                        props.property_sources['dipole_moment']
+                    )
+            for component, result in getattr(
+                provider,
+                'modified_radius_results',
+                {},
+            ).items():
+                props = self.props.get(component)
+                if props is None:
+                    continue
+                props.modified_radius_of_gyration = float(result.value)
+                props.property_sources['modified_radius_of_gyration'] = {
+                    'source': result.source,
+                    'method': result.method,
+                    'quality': result.quality,
+                    'notes': result.notes,
+                }
+                known = getattr(self, '_resolver_known_props', {}).get(component)
+                if isinstance(known, dict):
+                    known['modified_radius_of_gyration'] = float(result.value)
+                    known.setdefault('property_sources', {})[
+                        'modified_radius_of_gyration'
+                    ] = dict(props.property_sources['modified_radius_of_gyration'])
         else:
             raise ThermodynamicsError(f"Unsupported gamma-phi vapor backend: {model}")
         self.extend_warnings(getattr(self.vapor_eos, 'warnings', []))
@@ -51,6 +120,22 @@ class GammaPhiVaporBackendMixin:
                                composition: dict[str, float],
                                phase: str = 'vapor') -> dict[str, float]:
         return self.vapor_eos.fugacity_coefficients(T, P, composition, phase)
+
+    def vapor_molar_volume_for_density(
+        self,
+        T: float,
+        P: float,
+        composition: dict[str, float],
+    ) -> float:
+        """Use the second-virial vapor volume for ``-BV`` stream density."""
+        if self.vapor_backend_model == 'BV':
+            return self.vapor_eos.molar_volume(
+                T,
+                P,
+                composition,
+                'vapor',
+            ) / 1000.0
+        return super().vapor_molar_volume_for_density(T, P, composition)
 
     def K_values(self, T: float, P: float,
                  composition: dict[str, float]) -> dict[str, float]:
@@ -135,9 +220,18 @@ class UNIQUACRKThermodynamics(GammaPhiVaporBackendMixin, UNIQUACThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
+        *,
+        second_virial_provider=None,
+        second_virial_correlation: str = 'TSONOPOULOS',
     ):
         super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups)
-        self._initialize_gamma_phi_backend(components, db, interaction_overrides)
+        self._initialize_gamma_phi_backend(
+            components,
+            db,
+            interaction_overrides,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
 
 
 class UNIQUACPRThermodynamics(GammaPhiVaporBackendMixin, UNIQUACThermodynamics):
@@ -169,9 +263,18 @@ class NRTLRKThermodynamics(GammaPhiVaporBackendMixin, NRTLThermodynamics):
         interaction_overrides: Optional[list[dict]] = None,
         interaction_estimation: Optional[list[dict]] = None,
         estimation_unifac_groups: Optional[dict] = None,
+        *,
+        second_virial_provider=None,
+        second_virial_correlation: str = 'TSONOPOULOS',
     ):
         super().__init__(components, db, interaction_overrides, interaction_estimation, estimation_unifac_groups)
-        self._initialize_gamma_phi_backend(components, db, interaction_overrides)
+        self._initialize_gamma_phi_backend(
+            components,
+            db,
+            interaction_overrides,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
 
 
 class NRTLPRThermodynamics(GammaPhiVaporBackendMixin, NRTLThermodynamics):
@@ -206,7 +309,10 @@ class UNIFACRKThermodynamics(GammaPhiVaporBackendMixin, UNIFACThermodynamics):
     def __init__(self, components: list[str],
                  db: Optional[ChemicalDatabase] = None,
                  unifac_groups: Optional[dict[str, dict]] = None,
-                 interaction_overrides: Optional[list[dict]] = None):
+                 interaction_overrides: Optional[list[dict]] = None,
+                 *,
+                 second_virial_provider=None,
+                 second_virial_correlation: str = 'TSONOPOULOS'):
         super().__init__(
             components,
             db,
@@ -226,7 +332,13 @@ class UNIFACRKThermodynamics(GammaPhiVaporBackendMixin, UNIFACThermodynamics):
                 f"Missing for: {', '.join(missing_tc)}"
             )
 
-        self._initialize_gamma_phi_backend(components, db, interaction_overrides)
+        self._initialize_gamma_phi_backend(
+            components,
+            db,
+            interaction_overrides,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
 
     def bubble_point_T(self, composition: dict[str, float], P: float,
                        T_guess: float = 350.0) -> float:
@@ -237,6 +349,24 @@ class UNIFACPRThermodynamics(UNIFACRKThermodynamics):
     """Gamma-phi model with UNIFAC liquid activity and PR vapor fugacity."""
 
     vapor_backend_model = 'PR'
+
+
+class UNIFACBVThermodynamics(UNIFACRKThermodynamics):
+    """Gamma-phi model with UNIFAC liquid activity and second-virial vapor fugacity."""
+
+    vapor_backend_model = 'BV'
+
+
+class NRTLBVThermodynamics(NRTLRKThermodynamics):
+    """NRTL gamma-phi model using a second-virial vapor backend."""
+
+    vapor_backend_model = 'BV'
+
+
+class UNIQUACBVThermodynamics(UNIQUACRKThermodynamics):
+    """UNIQUAC gamma-phi model using a second-virial vapor backend."""
+
+    vapor_backend_model = 'BV'
 
 
 class UNIFDMDRKThermodynamics(UNIFACRKThermodynamics):
@@ -253,6 +383,13 @@ class UNIFDMDPRThermodynamics(UNIFACPRThermodynamics):
     default_unifac_data_filename = 'unifac_dmd.txt'
 
 
+class UNIFDMDBVThermodynamics(UNIFACBVThermodynamics):
+    """Dortmund modified UNIFAC with second-virial vapor fugacity."""
+
+    unifac_variant = 'UNIFDMD'
+    default_unifac_data_filename = 'unifac_dmd.txt'
+
+
 class UNIFNISTRKThermodynamics(UNIFACRKThermodynamics):
     """Gamma-phi model with NIST-modified UNIFAC liquid activity."""
 
@@ -262,6 +399,13 @@ class UNIFNISTRKThermodynamics(UNIFACRKThermodynamics):
 
 class UNIFNISTPRThermodynamics(UNIFACPRThermodynamics):
     """Gamma-phi model with NIST-modified UNIFAC liquid activity and PR vapor fugacity."""
+
+    unifac_variant = 'UNIFNIST'
+    default_unifac_data_filename = 'nist_modified_unifac_params.json'
+
+
+class UNIFNISTBVThermodynamics(UNIFACBVThermodynamics):
+    """NIST-modified UNIFAC with second-virial vapor fugacity."""
 
     unifac_variant = 'UNIFNIST'
     default_unifac_data_filename = 'nist_modified_unifac_params.json'

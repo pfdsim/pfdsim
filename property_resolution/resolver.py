@@ -11,6 +11,7 @@ from .surface_tension import SurfaceTensionMixin
 from .formation import FormationPropertiesMixin
 from .online_phase_change import OnlinePhaseChangeMixin
 from .dipole_moment import DipoleMomentMixin
+from .radius_of_gyration import RadiusOfGyrationMixin
 
 
 class PropertyResolver(
@@ -24,6 +25,7 @@ class PropertyResolver(
     ViscosityMixin,
     SurfaceTensionMixin,
     FormationPropertiesMixin,
+    RadiusOfGyrationMixin,
     DipoleMomentMixin,
     ResolverIdentityMixin,
     PropertyResolverBase,

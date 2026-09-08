@@ -650,14 +650,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def _vapor_residual_enthalpy(self, composition: dict[str, float], T: float, P: float) -> float:
         """Vapor residual enthalpy from the gamma-phi vapor backend [kJ/kmol]."""
-        rk_model = self.vapor_eos
-        if rk_model is None:
+        backend = self.vapor_eos
+        if backend is None:
             return 0.0
         try:
-            return rk_model.departure_enthalpy(T, P, composition, 'vapor')
+            return backend.departure_enthalpy(T, P, composition, 'vapor')
         except Exception as exc:
             self.add_warning(
-                f"Could not calculate RK vapor residual enthalpy for "
+                f"Could not calculate vapor residual enthalpy with "
+                f"{getattr(self, 'vapor_backend_label', 'the selected backend')} for "
                 f"{self.__class__.__name__}; using zero residual enthalpy fallback "
                 f"where unavailable ({exc})."
             )
@@ -666,14 +667,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     def _vapor_residual_entropy(self, composition: dict[str, float], T: float,
                                 P: float) -> float:
         """Vapor residual entropy from the gamma-phi vapor backend [kJ/kmol-K]."""
-        rk_model = self.vapor_eos
-        if rk_model is None or not hasattr(rk_model, 'departure_entropy'):
+        backend = self.vapor_eos
+        if backend is None or not hasattr(backend, 'departure_entropy'):
             return 0.0
         try:
-            return rk_model.departure_entropy(T, P, composition, 'vapor')
+            return backend.departure_entropy(T, P, composition, 'vapor')
         except Exception as exc:
             self.add_warning(
-                f"Could not calculate RK vapor residual entropy for "
+                f"Could not calculate vapor residual entropy with "
+                f"{getattr(self, 'vapor_backend_label', 'the selected backend')} for "
                 f"{self.__class__.__name__}; using zero residual entropy fallback "
                 f"where unavailable ({exc})."
             )
@@ -938,7 +940,12 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def _gamma_phi_K_values(self, T: float, P: float,
                             composition: dict[str, float]) -> dict[str, float]:
-        cache_key = self._k_values_cache_key('gamma_phi_rk', T, P, composition)
+        cache_key = self._k_values_cache_key(
+            f"gamma_phi_{getattr(self, 'vapor_backend_model', 'unknown').lower()}",
+            T,
+            P,
+            composition,
+        )
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached

@@ -15,7 +15,15 @@ from .nrtl_uniquac import (
     NRTLThermodynamics, NRTLVDMThermodynamics,
     UNIQUACThermodynamics, UNIQUACVDMThermodynamics,
 )
-from .gamma_phi import (UNIQUACRKThermodynamics, UNIQUACPRThermodynamics, NRTLRKThermodynamics, NRTLPRThermodynamics, UNIFACRKThermodynamics, UNIFACPRThermodynamics, UNIFDMDRKThermodynamics, UNIFDMDPRThermodynamics, UNIFNISTRKThermodynamics, UNIFNISTPRThermodynamics)
+from .gamma_phi import (
+    UNIQUACRKThermodynamics, UNIQUACPRThermodynamics, UNIQUACBVThermodynamics,
+    NRTLRKThermodynamics, NRTLPRThermodynamics, NRTLBVThermodynamics,
+    UNIFACRKThermodynamics, UNIFACPRThermodynamics, UNIFACBVThermodynamics,
+    UNIFDMDRKThermodynamics, UNIFDMDPRThermodynamics, UNIFDMDBVThermodynamics,
+    UNIFNISTRKThermodynamics, UNIFNISTPRThermodynamics,
+    UNIFNISTBVThermodynamics,
+)
+from .second_virial import normalize_second_virial_correlation
 
 # One canonical name per supported thermo method. Sweep-style tests
 # iterate this tuple, so methods added here are covered automatically.
@@ -27,9 +35,19 @@ SUPPORTED_METHODS = (
     'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM',
     'UNIFAC-RK', 'UNIFAC-PR', 'UNIFDMD-RK', 'UNIFDMD-PR',
     'UNIFNIST-RK', 'UNIFNIST-PR',
-    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR',
-    'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', 'UNIQUAC-PR',
+    'UNIFAC-BV', 'UNIFDMD-BV', 'UNIFNIST-BV',
+    'NRTL', 'NRTL-VDM', 'NRTL-RK', 'NRTL-PR', 'NRTL-BV',
+    'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', 'UNIQUAC-PR', 'UNIQUAC-BV',
 )
+
+ACTIVITY_HOC_METHOD_ALIASES = {
+    'NRTL-HOC': 'NRTL-BV',
+    'UNIQUAC-HOC': 'UNIQUAC-BV',
+    'UNIFAC-HOC': 'UNIFAC-BV',
+    'UNIF-HOC': 'UNIFAC-BV',
+    'UNIFDMD-HOC': 'UNIFDMD-BV',
+    'UNIFNIST-HOC': 'UNIFNIST-BV',
+}
 
 
 def create_thermodynamics(components: list[str], 
@@ -37,7 +55,9 @@ def create_thermodynamics(components: list[str],
                           db: Optional[ChemicalDatabase] = None,
                           unifac_groups: Optional[dict] = None,
                           interaction_overrides: Optional[list[dict]] = None,
-                          interaction_estimation: Optional[list[dict]] = None) -> Union[
+                          interaction_estimation: Optional[list[dict]] = None,
+                          thermo_options: Optional[dict] = None,
+                          second_virial_provider=None) -> Union[
                               IdealThermodynamics,
                               SteamThermodynamics,
                               RKThermodynamics,
@@ -65,6 +85,11 @@ def create_thermodynamics(components: list[str],
                               UNIQUACVDMThermodynamics,
                               UNIQUACRKThermodynamics,
                               UNIQUACPRThermodynamics,
+                              UNIQUACBVThermodynamics,
+                              NRTLBVThermodynamics,
+                              UNIFACBVThermodynamics,
+                              UNIFDMDBVThermodynamics,
+                              UNIFNISTBVThermodynamics,
                           ]:
     """
     Factory function to create thermodynamics calculator.
@@ -77,14 +102,60 @@ def create_thermodynamics(components: list[str],
             'UNIFAC-VDM', 'UNIFDMD-VDM',
             'UNIFNIST-VDM', 'UNIFAC-RK', 'UNIFDMD-RK', 'UNIFNIST-RK',
             'UNIFAC-PR', 'UNIFDMD-PR', 'UNIFNIST-PR', 'NRTL', 'NRTL-RK',
-            'NRTL-PR', 'NRTL-VDM', 'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK', or 'UNIQUAC-PR'
+            'NRTL-PR', 'NRTL-VDM', 'UNIQUAC', 'UNIQUAC-VDM', 'UNIQUAC-RK',
+            'UNIQUAC-PR', or the corresponding activity-model '-BV' variants
         db: Chemical database (uses default if None)
         unifac_groups: Dict mapping components to UNIFAC groups (for UNIFAC method)
+        thermo_options: Method-specific options; ``correlation`` selects the
+            coefficient provider for ``-BV`` methods.
+        second_virial_provider: Optional injected matrix provider for ``-BV``.
         
     Returns:
         Thermodynamics calculator instance
     """
-    method = method.upper()
+    declared_method = str(method).strip().upper().replace('_', '-')
+    options = {
+        str(name).strip().lower(): value
+        for name, value in (thermo_options or {}).items()
+    }
+    implied_hoc = declared_method in ACTIVITY_HOC_METHOD_ALIASES
+    method = ACTIVITY_HOC_METHOD_ALIASES.get(declared_method, declared_method)
+    if implied_hoc:
+        declared_correlation = normalize_second_virial_correlation(
+            options.get('correlation', 'HOC')
+        )
+        if declared_correlation != 'HOC':
+            raise ThermodynamicsError(
+                f"Thermodynamic method {declared_method} implies "
+                f"correlation=HOC and cannot use "
+                f"correlation={declared_correlation}"
+            )
+        if (
+            second_virial_provider is not None
+            and str(getattr(second_virial_provider, 'name', '')).upper() != 'HOC'
+        ):
+            raise ThermodynamicsError(
+                f"Thermodynamic method {declared_method} requires an HOC "
+                "second-virial provider"
+            )
+        options['correlation'] = 'HOC'
+    is_second_virial = method.replace('_', '-').endswith('-BV')
+    if options and not is_second_virial:
+        raise ThermodynamicsError(
+            f"THERMO_METHOD options are not supported for {method}"
+        )
+    unknown_options = sorted(set(options) - {'correlation'})
+    if unknown_options:
+        raise ThermodynamicsError(
+            f"Unknown {method} option: {unknown_options[0]}"
+        )
+    if second_virial_provider is not None and not is_second_virial:
+        raise ThermodynamicsError(
+            "A second-virial provider can only be used with a -BV activity method"
+        )
+    second_virial_correlation = normalize_second_virial_correlation(
+        options.get('correlation')
+    ) if is_second_virial else 'TSONOPOULOS'
 
     if method == 'IDEAL':
         return IdealThermodynamics(components, db, interaction_overrides)
@@ -144,6 +215,15 @@ def create_thermodynamics(components: list[str],
     elif method in ('UNIFAC-PR', 'UNIFAC_PR', 'UNIFAC-PENG-ROBINSON',
                     'UNIFAC_PENG_ROBINSON', 'GAMMA-PHI-PR', 'GAMMA_PHI_PR'):
         return UNIFACPRThermodynamics(components, db, unifac_groups, interaction_overrides)
+    elif method in ('UNIFAC-BV', 'UNIFAC_BV', 'GAMMA-PHI-BV', 'GAMMA_PHI_BV'):
+        return UNIFACBVThermodynamics(
+            components,
+            db,
+            unifac_groups,
+            interaction_overrides,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
     elif method in ('UNIFDMD-RK', 'UNIFDMD_RK', 'UNIFAC-DMD-RK', 'UNIFAC_DMD_RK',
                     'DORTMUND-UNIFAC-RK', 'DORTMUND_UNIFAC_RK'):
         return UNIFDMDRKThermodynamics(components, db, unifac_groups, interaction_overrides)
@@ -151,6 +231,17 @@ def create_thermodynamics(components: list[str],
                     'DORTMUND-UNIFAC-PR', 'DORTMUND_UNIFAC_PR',
                     'MODIFIED-UNIFAC-PR', 'MODIFIED_UNIFAC_PR'):
         return UNIFDMDPRThermodynamics(components, db, unifac_groups, interaction_overrides)
+    elif method in ('UNIFDMD-BV', 'UNIFDMD_BV', 'UNIFAC-DMD-BV',
+                    'UNIFAC_DMD_BV', 'DORTMUND-UNIFAC-BV',
+                    'DORTMUND_UNIFAC_BV'):
+        return UNIFDMDBVThermodynamics(
+            components,
+            db,
+            unifac_groups,
+            interaction_overrides,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
     elif method in ('UNIFNIST-RK', 'UNIFNIST_RK', 'UNIFAC-NIST-RK',
                     'UNIFAC_NIST_RK', 'NIST-UNIFAC-RK', 'NIST_UNIFAC_RK'):
         return UNIFNISTRKThermodynamics(components, db, unifac_groups, interaction_overrides)
@@ -158,6 +249,16 @@ def create_thermodynamics(components: list[str],
                     'UNIFAC_NIST_PR', 'NIST-UNIFAC-PR', 'NIST_UNIFAC_PR',
                     'NIST-MODIFIED-UNIFAC-PR', 'NIST_MODIFIED_UNIFAC_PR'):
         return UNIFNISTPRThermodynamics(components, db, unifac_groups, interaction_overrides)
+    elif method in ('UNIFNIST-BV', 'UNIFNIST_BV', 'UNIFAC-NIST-BV',
+                    'UNIFAC_NIST_BV', 'NIST-UNIFAC-BV', 'NIST_UNIFAC_BV'):
+        return UNIFNISTBVThermodynamics(
+            components,
+            db,
+            unifac_groups,
+            interaction_overrides,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
     elif method == 'NRTL':
         return NRTLThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('NRTL-VDM', 'NRTL_VDM'):
@@ -166,6 +267,16 @@ def create_thermodynamics(components: list[str],
         return NRTLRKThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('NRTL-PR', 'NRTL_PR', 'NRTL-PENG-ROBINSON', 'NRTL_PENG_ROBINSON'):
         return NRTLPRThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
+    elif method in ('NRTL-BV', 'NRTL_BV'):
+        return NRTLBVThermodynamics(
+            components,
+            db,
+            interaction_overrides,
+            interaction_estimation,
+            unifac_groups,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
     elif method == 'UNIQUAC':
         return UNIQUACThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
     elif method in ('UNIQUAC-VDM', 'UNIQUAC_VDM'):
@@ -175,6 +286,16 @@ def create_thermodynamics(components: list[str],
     elif method in ('UNIQUAC-PR', 'UNIQUAC_PR', 'UNIQUAC-PENG-ROBINSON',
                     'UNIQUAC_PENG_ROBINSON'):
         return UNIQUACPRThermodynamics(components, db, interaction_overrides, interaction_estimation, unifac_groups)
+    elif method in ('UNIQUAC-BV', 'UNIQUAC_BV'):
+        return UNIQUACBVThermodynamics(
+            components,
+            db,
+            interaction_overrides,
+            interaction_estimation,
+            unifac_groups,
+            second_virial_provider=second_virial_provider,
+            second_virial_correlation=second_virial_correlation,
+        )
     else:
         raise ThermodynamicsError(f"Unknown thermodynamic method: {method}")
 

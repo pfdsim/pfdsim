@@ -157,8 +157,12 @@ Supported method names are defined in `thermodynamics_models/factory.py`.
 | Ideal and steam | `IDEAL`, `STEAM` / `IF97` |
 | Cubic and predictive EOS | `RK`, `SRK`, `PR`, `PSRK`, `RKS-BM`, `PR-BM`, `SRK-MC`, `PR-MC`, `SRK-TWU`, `PR-TWU`, `PRSV1`, `PRSV2` |
 | Activity coefficient | `NRTL`, `UNIQUAC`, `UNIFAC`, `UNIFDMD`, `UNIFNIST` |
-| Gamma-phi | `NRTL-RK`, `NRTL-PR`, `UNIQUAC-RK`, `UNIQUAC-PR`, `UNIFAC-RK`, `UNIFAC-PR`, `UNIFDMD-RK`, `UNIFDMD-PR`, `UNIFNIST-RK`, `UNIFNIST-PR` |
+| Gamma-phi | `NRTL-RK`, `NRTL-PR`, `NRTL-BV`, `UNIQUAC-RK`, `UNIQUAC-PR`, `UNIQUAC-BV`, `UNIFAC-RK`, `UNIFAC-PR`, `UNIFAC-BV`, `UNIFDMD-RK`, `UNIFDMD-PR`, `UNIFDMD-BV`, `UNIFNIST-RK`, `UNIFNIST-PR`, `UNIFNIST-BV` |
 | Vapor dimerization | `NRTL-VDM`, `UNIQUAC-VDM`, `UNIFAC-VDM`, `UNIFDMD-VDM`, `UNIFNIST-VDM` |
+
+The direct `NRTL-HOC`, `UNIQUAC-HOC`, `UNIFAC-HOC`, `UNIFDMD-HOC`, and
+`UNIFNIST-HOC` spellings select the corresponding `-BV` method with the
+Hayden-O'Connell provider.
 
 Activity-model methods are required for LLE/VLLE units such as decanters,
 extractors, and three-phase flashes. `STEAM` is intended for water-only
@@ -219,6 +223,9 @@ optional online lookup. Set `ONLINE_LOOKUP: false` in a `.pfd` when an example
 or regression test should remain deterministic and self-contained.
 Permanent gas-phase dipoles may be supplied in Debye as `dipole_moment`,
 `dipole`, or `dipole_D`.
+Molecular gyration radii may be supplied in angstrom as `R` and `R_prime`
+(`R_HOC`); otherwise they can be evaluated from the shared cached GFN2-xTB
+geometry.
 
 Solid overrides use `Cp_solid`, `rho_solid`, `Vm_solid`, optional
 `solid_material_form`/`solid_polymorph`, and `Cps` or `rhos` entries in

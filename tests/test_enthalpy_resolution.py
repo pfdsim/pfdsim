@@ -336,7 +336,7 @@ class EnthalpyResolutionTests(unittest.TestCase):
         self.assertEqual(second, 0.0)
         warnings = [
             warning for warning in thermo.warnings
-            if 'RK vapor residual enthalpy' in warning
+            if 'vapor residual enthalpy with the selected backend' in warning
         ]
         self.assertEqual(len(warnings), 1)
 

@@ -396,11 +396,13 @@ class PFDComponentPropertyTests(unittest.TestCase):
         ):
             self.parse('THERMO_METHOD: PENG-ROBINSN\n')
 
-        with self.assertRaisesRegex(
-            ParseError,
-            r"NRTL-HOC.*Try NRTL.*future implementation target",
-        ):
-            self.parse('THERMO_METHOD: NRTL-HOC\n')
+        hoc = self.parse('THERMO_METHOD: NRTL-HOC\n')
+        self.assertEqual(hoc.metadata.thermo_method, 'NRTL-BV')
+        self.assertEqual(hoc.metadata.thermo_options, {'correlation': 'HOC'})
+        self.assertIn(
+            'THERMO_METHOD: NRTL-BV | correlation=HOC',
+            hoc.to_pfd(),
+        )
 
         planned_methods = {
             'PRWS': ('Wong-Sandler', 'PSRK'),
@@ -456,6 +458,31 @@ class PFDComponentPropertyTests(unittest.TestCase):
             parsed.components[0].vapor_dimerization,
         )
         self.assertIn('VDM={delta_H:-52000, delta_S:-130}', parsed.to_pfd())
+
+    def test_hoc_eta_aliases_parse_and_round_trip(self):
+        for spelling in ('HOC_eta', 'eta_HOC', 'HOC_association_parameter'):
+            with self.subTest(spelling=spelling):
+                parsed = self.parse(
+                    'PROCESS: HOC eta component override\n'
+                    'COMPONENTS:\n'
+                    f'    A | ethanol | {spelling}=1.7\n'
+                )
+                self.assertEqual(parsed.components[0].hoc_eta, 1.7)
+                reparsed = self.parse(parsed.to_pfd())
+                self.assertEqual(reparsed.components[0].hoc_eta, 1.7)
+                self.assertIn('HOC_eta=1.7', parsed.to_pfd())
+
+    def test_invalid_hoc_eta_is_rejected(self):
+        for value in ('-0.1', 'nan', 'inf'):
+            with self.subTest(value=value), self.assertRaisesRegex(
+                SimulationError,
+                'expected a finite nonnegative dimensionless value',
+            ):
+                Simulator.from_string(
+                    'PROCESS: Invalid HOC Eta Override\n'
+                    'COMPONENTS:\n'
+                    f'    ETOH | ethanol | HOC_eta={value}\n'
+                )
 
     def test_component_vdm_bundle_normalizes_through_dict_construction(self):
         parsed = self.parse(
