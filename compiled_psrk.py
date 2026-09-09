@@ -7,6 +7,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_BAR_CM3_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K
+
 try:
     from numba import njit, typeof
 except Exception:  # pragma: no cover - exercised only without optional numba
@@ -14,7 +19,7 @@ except Exception:  # pragma: no cover - exercised only without optional numba
     typeof = None
 
 
-R_BAR_CM3_PER_MOL_K = 83.14462618
+R_BAR_CM3_PER_MOL_K = R_BAR_CM3_MOL_K
 
 
 @dataclass

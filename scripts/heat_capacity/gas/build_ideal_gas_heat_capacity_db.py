@@ -43,6 +43,7 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from physical_constants import R_J_MOL_K  # noqa: E402
 
 OUTPUT = ROOT / "data" / "ideal_gas_heat_capacity.sqlite"
 SCHEMA_VERSION = 3
@@ -58,7 +59,7 @@ FIT_TMIN_RAISE_LIMIT_K = 273.15
 TRAINING_POINTS_PER_RANGE = 161
 VALIDATION_POINTS_PER_RANGE = 801
 COMPARISON_POINTS_PER_RANGE = 101
-R = 8.31446261815324
+R = R_J_MOL_K
 CAS_PATTERN = re.compile(r"^[1-9][0-9]{1,6}-[0-9]{2}-[0-9]$")
 
 # The chemicals 1.5.2 metadata row for this CAS is an unrelated complex

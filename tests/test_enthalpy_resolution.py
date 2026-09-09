@@ -15,6 +15,7 @@ from chemical_properties import ChemicalDatabase, ChemicalProperties, get_databa
 import property_resolver as property_resolver_module
 from property_resolver import HeatCapacityIntegralLookup, PropertyResolver, get_property_resolver
 from thermodynamics import ActivityCoefficientThermodynamics, T_REF, create_thermodynamics
+from physical_constants import R_BAR_M3_MOL_K
 
 
 class ConstantExcessActivityThermo(ActivityCoefficientThermodynamics):
@@ -424,7 +425,7 @@ class GammaPhiReferenceStateTests(unittest.TestCase):
         )
 
         poynting = thermo._gamma_phi_poynting_factor('X', 300.0, 20.0, 2.0)
-        expected = math.exp((50.0 / 1000.0 / 1000.0) * (20.0 - 2.0) / (8.314e-5 * 300.0))
+        expected = math.exp((50.0 / 1000.0 / 1000.0) * (20.0 - 2.0) / (R_BAR_M3_MOL_K * 300.0))
 
         self.assertAlmostEqual(poynting, expected, places=12)
         self.assertEqual(thermo.warnings, [])
@@ -475,7 +476,7 @@ class GammaPhiReferenceStateTests(unittest.TestCase):
                     thermo._resolver_known_props['X'],
                 )
 
-        expected = math.exp((resolver_volume.value / 1000.0) * (20.0 - 2.0) / (8.314e-5 * 400.0))
+        expected = math.exp((resolver_volume.value / 1000.0) * (20.0 - 2.0) / (R_BAR_M3_MOL_K * 400.0))
         self.assertAlmostEqual(poynting, expected, places=12)
         self.assertEqual(resolver_volume.method, 'rackett_fitted_zra')
         self.assertFalse(any('nearest supported temperature' in warning for warning in thermo.warnings))
@@ -496,7 +497,7 @@ class GammaPhiReferenceStateTests(unittest.TestCase):
         thermo.Psat = lambda comp, T: 2.0
 
         reference = thermo._gamma_phi_reference_factors(300.0, 20.0)
-        poynting = math.exp((50.0 / 1000.0 / 1000.0) * (20.0 - 2.0) / (8.314e-5 * 300.0))
+        poynting = math.exp((50.0 / 1000.0 / 1000.0) * (20.0 - 2.0) / (R_BAR_M3_MOL_K * 300.0))
 
         self.assertAlmostEqual(reference['X'], 0.75 * 2.0 * poynting, places=12)
 

@@ -22,6 +22,8 @@ from unit_operations_base import UnitOperationError
 from unit_operations_separation import Flash3
 
 
+from physical_constants import R_BAR_M3_MOL_K
+
 class HenryThermodynamicsTests(unittest.TestCase):
     @staticmethod
     def _hot_wet_ethylene_case():
@@ -438,7 +440,7 @@ class HenryThermodynamicsTests(unittest.TestCase):
         vapor_fraction = reference.performance['vapor_fraction']
         duty_kW = reference.heat_duty / 3600.0
 
-        self.assertAlmostEqual(vapor_fraction, 0.08843135859633866, places=9)
+        self.assertAlmostEqual(vapor_fraction, 0.08843135618358308, places=9)
         self.assertAlmostEqual(
             reference.outlet_streams['vapor_out'].F
             * reference.outlet_streams['vapor_out'].composition['ethylene']
@@ -719,7 +721,7 @@ class HenryThermodynamicsTests(unittest.TestCase):
         uncorrected = thermo.henry_constant_hcp('ethylene', 298.15, context)
         corrected = thermo.henry_constant_hcp('ethylene', 298.15, context, P=100.0)
         expected_factor = math.exp(
-            -data.vinf_cm3_per_mol * 1e-6 * (100.0 - 1.0) / (8.314e-5 * 298.15)
+            -data.vinf_cm3_per_mol * 1e-6 * (100.0 - 1.0) / (R_BAR_M3_MOL_K * 298.15)
         )
 
         self.assertAlmostEqual(corrected / uncorrected, expected_factor, places=12)

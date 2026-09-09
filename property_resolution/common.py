@@ -44,11 +44,16 @@ from pathlib import Path
 from statistics import median
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..pressure_standards import NORMAL_BOILING_PRESSURE_BAR, THERMOCHEMICAL_STANDARD_PRESSURE_BAR
 else:
     from pressure_standards import NORMAL_BOILING_PRESSURE_BAR, THERMOCHEMICAL_STANDARD_PRESSURE_BAR
 
-R = 8.314462618  # J/mol-K (gas constant)
+R = R_J_MOL_K  # J/mol-K (gas constant)
 
 ONLINE_ANTOINE_TB_REL_TOL = 0.02
 

@@ -29,6 +29,8 @@ from vapor_dimerization import (
 )
 
 
+from physical_constants import R_J_MOL_K
+
 class VaporDimerizationTests(unittest.TestCase):
     def test_common_acid_names_use_database_rows(self):
         exact = get_dimerization_params('CH3COOH')
@@ -543,7 +545,7 @@ class VaporDimerizationTests(unittest.TestCase):
             y_true['(A)(B)'] * P / P_STD
             / ((y_true['A'] * P / P_STD) * (y_true['B'] * P / P_STD))
         )
-        rhs = math.exp(delta_S / 8.314 - delta_H / (8.314 * T))
+        rhs = math.exp(delta_S / R_J_MOL_K - delta_H / (R_J_MOL_K * T))
         self.assertAlmostEqual(lhs, rhs, places=7)
 
     def test_cross_dimer_statistical_factor_is_exactly_two(self):
@@ -558,7 +560,7 @@ class VaporDimerizationTests(unittest.TestCase):
 
         delta_H_ab = model._pair_delta_H[('A', 'B')]
         delta_S_ab = model._pair_delta_S[('A', 'B')]
-        K_ab = math.exp(delta_S_ab / 8.314 - delta_H_ab / (8.314 * T))
+        K_ab = math.exp(delta_S_ab / R_J_MOL_K - delta_H_ab / (R_J_MOL_K * T))
 
         self.assertAlmostEqual(
             K_ab,
@@ -616,7 +618,7 @@ class VaporDimerizationTests(unittest.TestCase):
                     rhs = models[acid_i].K_eq(T)
                 else:
                     delta_H, delta_S = model._cross_delta(acid_i, acid_j)
-                    rhs = math.exp(delta_S / 8.314 - delta_H / (8.314 * T))
+                    rhs = math.exp(delta_S / R_J_MOL_K - delta_H / (R_J_MOL_K * T))
                 self.assertAlmostEqual(lhs, rhs, places=7)
 
     def test_compiled_n_acid_solver_satisfies_balances(self):

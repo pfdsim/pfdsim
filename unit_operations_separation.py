@@ -5,6 +5,11 @@ Liquid-liquid, adsorption, absorption, and stripping separation unit operations.
 import math
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .equilibrium_stage_column import EquilibriumStageColumnMixin
 else:
     from equilibrium_stage_column import EquilibriumStageColumnMixin
@@ -1055,7 +1060,7 @@ class MolecularSieveDryer(UnitOperation):
         removal_fraction: Optional direct fraction of inlet water removed
     """
 
-    R = 8.314462618
+    R = R_J_MOL_K
     WATER_MW_KG_PER_KMOL = 18.01528
     GSTA_3A_WATER = {
         'qmax_kg_per_kg': 0.21,

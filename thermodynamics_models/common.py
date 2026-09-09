@@ -24,6 +24,11 @@ import re
 from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_BAR_M3_MOL_K, R_J_MOL_K
+else:
+    from physical_constants import R_BAR_M3_MOL_K, R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..chemical_properties import ChemicalProperties
 else:
     from chemical_properties import ChemicalProperties
@@ -36,8 +41,8 @@ else:
 
 
 # Constants
-R = 8.314  # J/mol-K
-R_BAR = 8.314e-5  # bar-m3/mol-K
+R = R_J_MOL_K  # J/mol-K
+R_BAR = R_BAR_M3_MOL_K  # bar-m3/mol-K
 T_REF = 298.15  # K (reference temperature for enthalpy)
 P_REF = THERMOCHEMICAL_STANDARD_PRESSURE_BAR  # bar, thermochemical standard state
 LIQUID_VOLUME_EXTRAPOLATION_LIMIT_K = 20.0

@@ -14,6 +14,11 @@ import re
 from typing import Iterable, Mapping, Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .compound_identity import parse_formula_counts
 else:
     from compound_identity import parse_formula_counts
@@ -594,7 +599,7 @@ def solve_homogeneous_equilibrium(
         ))
         for specification in reaction_tuple
     ], dtype=float)
-    rt = 8.314 * temperature
+    rt = R_J_MOL_K * temperature
     mole_tolerance = max(1.0e-14 * flow_scale, 1.0e-15)
 
     def flows_for(extents):

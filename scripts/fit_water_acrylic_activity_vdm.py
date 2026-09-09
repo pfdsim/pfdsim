@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics
+from physical_constants import R_CAL_MOL_K
 
 
 ACID = "C2H3COOH"
@@ -253,7 +254,7 @@ def fit_uniquac() -> dict:
     ]
     result = min(solutions, key=lambda item: item.cost)
     residual = closure_residuals(result.x)
-    energy_to_b = lambda energy: -energy / 1.98720425864083
+    energy_to_b = lambda energy: -energy / R_CAL_MOL_K
     temperature_dependent_starts = [
         (0.0, energy_to_b(result.x[0]), 0.0, energy_to_b(result.x[1])),
         (math.log(0.50571), 0.0, math.log(0.51123), 0.0),

@@ -33,6 +33,11 @@ from .ideal_gas_cp import (
 )
 
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
 ROOT = Path(__file__).resolve().parent.parent
 CANONICAL_DATABASE_PATH = ROOT / "data" / "liquid_heat_capacity.sqlite"
 KERNEL_CONTRACT_VERSION = 1
@@ -46,7 +51,7 @@ ESTIMATOR_MAXIMUM_REDUCED_TEMPERATURE = 0.95
 HBD_RATIO_MINIMUM = 0.15
 HBD_RATIO_MAXIMUM = 1.25
 MINIMUM_ESTIMATOR_CRITICAL_QUALITY = 0.70
-R = 8.31446261815324
+R = R_J_MOL_K
 
 
 def _chebyshev_value(coefficients: Sequence[float], x: float) -> float:

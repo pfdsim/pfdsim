@@ -132,9 +132,9 @@ class HomogeneousEquilibriumSolverTests(unittest.TestCase):
 
     def test_ideal_pr_and_psrk_vapor_equilibria_match_reference_extents(self):
         expected = {
-            'IDEAL': 0.679222475567,
-            'PR': 0.738339493987,
-            'PSRK': 0.748216884144,
+            'IDEAL': 0.6792631683007853,
+            'PR': 0.7383797296064345,
+            'PSRK': 0.7482556863611427,
         }
         for method, expected_extent in expected.items():
             with self.subTest(method=method):

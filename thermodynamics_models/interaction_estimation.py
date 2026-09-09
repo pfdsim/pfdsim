@@ -13,6 +13,11 @@ import numpy as np
 from scipy.optimize import least_squares
 
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_CAL_MOL_K
+else:
+    from physical_constants import R_CAL_MOL_K
+
 _MODIFIED_SOURCES = frozenset({'UNIFDMD', 'UNIFM2', 'UNIFNIST'})
 _SOURCE_CLASSES = None
 _FIT_CACHE_SCHEMA_VERSION = 2
@@ -297,13 +302,13 @@ def _destination_ln_gamma(
     if not modified:
         a12, a21 = physical
         if destination == 'UNIQUAC':
-            tau12 = math.exp(max(min(-a12 / (1.98720425864083 * T), 50.0), -50.0))
-            tau21 = math.exp(max(min(-a21 / (1.98720425864083 * T), 50.0), -50.0))
+            tau12 = math.exp(max(min(-a12 / (R_CAL_MOL_K * T), 50.0), -50.0))
+            tau21 = math.exp(max(min(-a21 / (R_CAL_MOL_K * T), 50.0), -50.0))
             return _uniquac_ln_gamma(x1, r, q, tau12, tau21)
         return _nrtl_ln_gamma(
             x1,
-            a12 / (1.98720425864083 * T),
-            a21 / (1.98720425864083 * T),
+            a12 / (R_CAL_MOL_K * T),
+            a21 / (R_CAL_MOL_K * T),
             alpha,
         )
 

@@ -6,6 +6,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
 try:
     from numba import njit, typeof
 except Exception:  # pragma: no cover - exercised only without optional numba
@@ -332,7 +337,7 @@ if njit is not None:
                     np.log(max(gamma_high[i], 1.0e-300))
                     - np.log(max(gamma_low[i], 1.0e-300))
                 ) / (T_high - T_low)
-        return -8.314 * T * T * derivative_sum
+        return -R_J_MOL_K * T * T * derivative_sum
 
 
     @njit(cache=True)
@@ -486,7 +491,7 @@ if njit is not None:
                     np.log(max(gamma_high[i], 1.0e-300))
                     - np.log(max(gamma_low[i], 1.0e-300))
                 ) / (T_high - T_low)
-        return -8.314 * T * T * derivative_sum
+        return -R_J_MOL_K * T * T * derivative_sum
 
 else:
 

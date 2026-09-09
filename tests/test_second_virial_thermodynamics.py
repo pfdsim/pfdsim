@@ -10,6 +10,7 @@ from chemicals.virial import (
     BVirial_Tsonopoulos_extended,
 )
 
+from physical_constants import R_J_MOL_K
 from pfd_parser import ProcessFlowDiagram, parse_pfd
 from simulator import Simulator
 from thermodynamics_models.factory import create_thermodynamics
@@ -117,7 +118,7 @@ class SecondVirialBackendTests(unittest.TestCase):
 
         phi = backend.fugacity_coefficients(T, P, composition)
         B_mix = mixture(0)
-        factor = P * 1.0e5 / (8.314 * T)
+        factor = P * 1.0e5 / (R_J_MOL_K * T)
         for i, component in enumerate(('A', 'B')):
             partial = 2.0 * sum(
                 fractions[j]
@@ -142,14 +143,14 @@ class SecondVirialBackendTests(unittest.TestCase):
             backend.departure_heat_capacity(T, P, composition),
             -P * 1.0e5 * T * mixture(2),
         )
-        expected_Z = 1.0 + B_mix * P * 1.0e5 / (8.314 * T)
+        expected_Z = 1.0 + B_mix * P * 1.0e5 / (R_J_MOL_K * T)
         self.assertAlmostEqual(
             backend.compressibility_factor(T, P, composition),
             expected_Z,
         )
         self.assertAlmostEqual(
             backend.molar_volume(T, P, composition),
-            expected_Z * 8.314 * T / (P * 1.0e5) * 1.0e6,
+            expected_Z * R_J_MOL_K * T / (P * 1.0e5) * 1.0e6,
         )
 
     def test_custom_provider_is_independent_of_activity_model(self):
@@ -738,7 +739,7 @@ class HaydenOConnellProviderTests(unittest.TestCase):
         self.assertLess(total, physical)
         self.assertAlmostEqual(
             equilibrium,
-            -(total - physical) * 1.0e5 / (8.314 * T),
+            -(total - physical) * 1.0e5 / (R_J_MOL_K * T),
         )
 
     def test_multiple_acids_use_same_group_eta_and_cross_dimer_symmetry(self):
@@ -784,7 +785,7 @@ class HaydenOConnellProviderTests(unittest.TestCase):
         equilibrium = provider.association_constant_matrix(T)[0][1]
         self.assertAlmostEqual(
             equilibrium,
-            -2.0 * association.value * 1.0e5 / (8.314 * T),
+            -2.0 * association.value * 1.0e5 / (R_J_MOL_K * T),
         )
 
 
@@ -908,7 +909,7 @@ class HOCChemicalTheoryBackendTests(unittest.TestCase):
         T = 390.0
         P = 1.0e-7
         Z = backend.compressibility_factor(T, P, composition)
-        recovered = (Z - 1.0) * 8.314 * T / (P * 1.0e5)
+        recovered = (Z - 1.0) * R_J_MOL_K * T / (P * 1.0e5)
         fractions = tuple(composition[component] for component in provider.components)
         matrix = provider.second_virial_matrix(T)
         expected = sum(
@@ -946,7 +947,7 @@ class HOCChemicalTheoryBackendTests(unittest.TestCase):
         T = 391.1
         P = 1.01325
         phi = backend.fugacity_coefficients(T, P, composition)
-        expected_gibbs = 8.314 * T * sum(
+        expected_gibbs = R_J_MOL_K * T * sum(
             composition[component] * math.log(phi[component])
             for component in composition
         )
@@ -995,7 +996,7 @@ class HOCChemicalTheoryBackendTests(unittest.TestCase):
                 for component in composition
             )
 
-        numerical_enthalpy = -8.314 * T**2 * (
+        numerical_enthalpy = -R_J_MOL_K * T**2 * (
             dimensionless_gibbs(T + step)
             - dimensionless_gibbs(T - step)
         ) / (2.0 * step)

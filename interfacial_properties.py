@@ -26,7 +26,12 @@ import warnings as python_warnings
 import numpy as np
 
 
-R = 8.31446261815324  # J/mol/K
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+R = R_J_MOL_K  # J/mol/K
 SURFACE_AREA_TABLE_PATH = (
     Path(__file__).resolve().parent
     / 'data'

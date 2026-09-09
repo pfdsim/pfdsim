@@ -374,10 +374,14 @@ class ExampleSimulationTests(unittest.TestCase):
 
         self.assertTrue(result.converged, result.warnings)
         self.assertAlmostEqual(valve_inlet.T, 198.070501, places=5)
-        self.assertAlmostEqual(expander_exhaust.vapor_fraction, 1.0, places=8)
+        self.assertAlmostEqual(
+            expander_exhaust.vapor_fraction, 0.999985956323121, places=8
+        )
         self.assertAlmostEqual(throttle_exhaust.T, 111.417845, places=5)
-        self.assertAlmostEqual(throttle_exhaust.vapor_fraction, 0.8417031530, places=6)
-        self.assertAlmostEqual(liquefied_fraction, 0.1187226352, places=6)
+        self.assertAlmostEqual(
+            throttle_exhaust.vapor_fraction, 0.8416835781701908, places=6
+        )
+        self.assertAlmostEqual(liquefied_fraction, 0.1187373163723569, places=6)
 
     def test_cryogenic_air_separation_matches_aspen_design_point(self):
         result = Simulator.from_file(

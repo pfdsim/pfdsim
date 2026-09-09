@@ -30,6 +30,11 @@ from .ideal_gas_cp import (
     _finite,
 )
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..solid_material_forms import normalize_solid_material_form
 else:
     from solid_material_forms import normalize_solid_material_form
@@ -509,7 +514,7 @@ class LastovkaSolidCpKernel(SolidCpKernel):
         ratio = theta / T
         exponential = math.exp(ratio)
         mass_cp = alpha * (
-            3.0 * (A1 + A2 * alpha) * 8.31446261815324 * ratio * ratio
+            3.0 * (A1 + A2 * alpha) * R_J_MOL_K * ratio * ratio
             * exponential / ((exponential - 1.0) ** 2)
             + (C1 + C2 * alpha) * T
             + (D1 + D2 * alpha) * T * T
@@ -523,7 +528,7 @@ class LastovkaSolidCpKernel(SolidCpKernel):
         value = alpha * (
             T**3 * (D1 + D2 * alpha) / 3.0
             + 0.5 * T * T * (C1 + C2 * alpha)
-            + 3.0 * 8.31446261815324 * theta * (A1 + A2 * alpha)
+            + 3.0 * R_J_MOL_K * theta * (A1 + A2 * alpha)
             / math.expm1(theta / T)
         )
         return value * self.molecular_weight
@@ -535,10 +540,10 @@ class LastovkaSolidCpKernel(SolidCpKernel):
         exponential = math.exp(theta / T)
         Aterm = A1 + A2 * alpha
         value = alpha * (
-            -3.0 * 8.31446261815324 * Aterm * math.log(exponential - 1.0)
+            -3.0 * R_J_MOL_K * Aterm * math.log(exponential - 1.0)
             + 0.5 * T * T * (D1 + D2 * alpha)
             + T * (C1 + C2 * alpha)
-            + 3.0 * 8.31446261815324 * theta * Aterm
+            + 3.0 * R_J_MOL_K * theta * Aterm
             * (1.0 / (T * exponential - T) + 1.0 / T)
         )
         return value * self.molecular_weight

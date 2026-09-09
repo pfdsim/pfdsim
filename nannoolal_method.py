@@ -189,6 +189,11 @@ from rdkit import Chem
 from rdkit.Chem import Descriptors
 
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
 class NannoolalError(ValueError):
     """Base error for the Nannoolal method."""
 
@@ -539,7 +544,7 @@ PSAT_B0 = 4.1012            # eq. (6) of [3]
 PSAT_DB_OFFSET = 0.176055   # eq. (7) of [3]
 _DB_SCALE = 1.0e-3          # Tables 4-6 of [3] list contributions * 10^3
 _P_ATM_KPA = 101.325
-_R_GAS = 8.314462618        # J/(mol K)
+_R_GAS = R_J_MOL_K        # J/(mol K)
 
 PSAT_DB_GROUPS: dict[int, float | None] = {
     1: 13.3063,     2: 91.8000,     3: 50.1939,     4: 54.6564,

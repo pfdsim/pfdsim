@@ -26,10 +26,10 @@ sys.path.insert(0, str(ROOT))
 import domalski_hearing_method as dh  # noqa: E402
 from chemicals.heat_capacity import Zabransky_quasi_polynomial  # noqa: E402
 from chemicals.identifiers import search_chemical  # noqa: E402
+from physical_constants import R_J_MOL_K  # noqa: E402
 
 
 TEMPERATURE_K = 298.15
-R_J_MOL_K = 8.31446261815324
 GAS_DATABASE = ROOT / "data" / "ideal_gas_heat_capacity.sqlite"
 LIQUID_DATABASE = ROOT / "data" / "liquid_heat_capacity.sqlite"
 JSON_OUTPUT = ROOT / "outputs" / "domalski_hearing_all_local_cp_298k_benchmark.json"

@@ -13,6 +13,8 @@ from simulator import SimulationError, Simulator
 from unit_operations_distillation import McCabeThieleDistillation
 
 
+from physical_constants import R_J_MOL_K
+
 class PFDComponentPropertyTests(unittest.TestCase):
     maxDiff = None
 
@@ -2103,7 +2105,7 @@ class PFDComponentPropertyTests(unittest.TestCase):
         props = sim.thermo.props['ETOH']
         expected_zc = (
             props.Pc * 100000.0 * props.Vc * 1.0e-6
-            / (8.314462618 * props.Tc)
+            / (R_J_MOL_K * props.Tc)
         )
         self.assertAlmostEqual(props.Zc, expected_zc)
         self.assertEqual(

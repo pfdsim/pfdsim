@@ -32,9 +32,13 @@ from rdkit import Chem
 from rdkit.Chem import AllChem, rdMolDescriptors
 
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
 TEMPERATURE_K = 298.15
 PRESSURE_PA = 101_325.0
-R_J_MOL_K = 8.31451
 
 # Standard-state elemental entropies, J mol-1 K-1, from p. 808.  Values are
 # per mole of elemental standard-state substance, hence the 1/2 factors for

@@ -7,7 +7,14 @@ import math
 import numpy as np
 
 
-R = 8.31446261815324  # J/mol/K
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from physical_constants import R_J_MOL_K
+
+R = R_J_MOL_K  # J/mol/K
 
 
 @dataclass(frozen=True)

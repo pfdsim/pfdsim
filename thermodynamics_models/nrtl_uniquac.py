@@ -2,6 +2,11 @@ import math
 from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_CAL_MOL_K
+else:
+    from physical_constants import R_CAL_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..chemical_properties import ChemicalDatabase
 else:
     from chemical_properties import ChemicalDatabase
@@ -46,7 +51,7 @@ def _oriented_component_override(
 class NRTLThermodynamics(ActivityCoefficientThermodynamics):
     """NRTL liquid activity coefficient model with Raoult-law vapor phase."""
 
-    R_CAL = 1.98720425864083
+    R_CAL = R_CAL_MOL_K
     T_REF = 298.15
 
     def __init__(
@@ -434,7 +439,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
 class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
     """UNIQUAC liquid activity coefficient model with Raoult-law vapor phase."""
 
-    R_CAL = 1.98720425864083
+    R_CAL = R_CAL_MOL_K
     T_REF = 298.15
     Z = 10.0
 

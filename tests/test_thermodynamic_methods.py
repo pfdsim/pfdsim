@@ -2587,11 +2587,11 @@ class ThermodynamicMethodTests(unittest.TestCase):
             'toluene': 0.2111090099435087,
         }
         expected_vapor_fractions = {
-            352.2: 0.8482717473,
-            353.0: 0.8725868675,
-            354.0: 0.9060517107,
-            355.0: 0.9434663744,
-            356.0: 0.9855375146,
+            352.2: 0.8482717335477399,
+            353.0: 0.8725868528661532,
+            354.0: 0.9060516949264611,
+            355.0: 0.9434663573590181,
+            356.0: 0.9855374961252511,
         }
 
         previous_vapor_fraction = 0.0
@@ -2665,12 +2665,16 @@ class ThermodynamicMethodTests(unittest.TestCase):
         recovered_efficiency = (inlet_H - outlet_H) / (inlet_H - isentropic_H)
 
         self.assertEqual(inlet.status, 'single_vapor')
-        self.assertAlmostEqual(isentropic_T, 352.0901885, places=5)
-        self.assertAlmostEqual(isentropic.vapor_fraction, 0.8450888582, places=8)
+        self.assertAlmostEqual(isentropic_T, 352.0892832324934, places=5)
+        self.assertAlmostEqual(
+            isentropic.vapor_fraction, 0.8450627527393936, places=8
+        )
         self.assertLess(abs(entropy_residual), 1e-6)
         self.assertEqual(outlet.status, 'ordinary_vle')
-        self.assertAlmostEqual(outlet_T, 353.6090869, places=5)
-        self.assertAlmostEqual(outlet.vapor_fraction, 0.8925337283, places=8)
+        self.assertAlmostEqual(outlet_T, 353.60835124408015, places=5)
+        self.assertAlmostEqual(
+            outlet.vapor_fraction, 0.8925088643767791, places=8
+        )
         self.assertGreater(outlet.x1['water'], 0.999)
         self.assertLess(abs(enthalpy_residual), 1e-4)
         self.assertAlmostEqual(recovered_efficiency, efficiency, places=10)

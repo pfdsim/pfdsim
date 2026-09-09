@@ -11,6 +11,7 @@ from kinetic_models import (
     solve_isothermal_cstr,
 )
 from pfd_parser import PFDParser, validate_pfd
+from physical_constants import R_J_MOL_K
 from reaction_models import ReactionDefinitionError
 from thermodynamics import create_thermodynamics
 from unit_operations_base import UnitOperationError
@@ -193,6 +194,31 @@ class KineticReactionDefinitionTests(unittest.TestCase):
                         self.components,
                         self.thermo.props,
                     )
+
+    def test_custom_expression_uses_shared_gas_constant(self):
+        reaction = kinetic_reaction_from_mapping(
+            kinetic_definition(
+                'C2H4O -> CH3CHO', type='custom',
+                expression='exp(-E/(R*T))', param_E=12000.0,
+            ),
+            self.components,
+        )
+        state = HomogeneousRateState.from_flows(
+            self.thermo, {'C2H4O': 1.0, 'CH3CHO': 1.0},
+            500.0, 2.0, 'vapor',
+        )
+        self.assertAlmostEqual(
+            evaluate_reaction_rate(reaction, state, self.thermo),
+            math.exp(-12000.0 / (R_J_MOL_K * 500.0)),
+        )
+        with self.assertRaises(ReactionDefinitionError):
+            kinetic_reaction_from_mapping(
+                kinetic_definition(
+                    'C2H4O -> CH3CHO', type='custom',
+                    expression='R', param_R=1.0,
+                ),
+                self.components,
+            )
 
     def test_custom_expression_receives_declared_concentration_and_pressure_units(self):
         reaction = kinetic_reaction_from_mapping(

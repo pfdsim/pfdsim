@@ -26,14 +26,19 @@ from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
 import re
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_BAR_M3_MOL_K, R_J_MOL_K
+else:
+    from physical_constants import R_BAR_M3_MOL_K, R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .pressure_standards import NORMAL_BOILING_PRESSURE_BAR
 else:
     from pressure_standards import NORMAL_BOILING_PRESSURE_BAR
 
 
 # Gas constant
-R = 8.314  # J/mol-K
-R_BAR = 8.314e-5  # bar-m3/mol-K
+R = R_J_MOL_K  # J/mol-K
+R_BAR = R_BAR_M3_MOL_K  # bar-m3/mol-K
 
 # Memoized py2opsin package version; stamps persistent OPSIN negative-cache
 # rows so an OPSIN upgrade automatically invalidates cached failures.

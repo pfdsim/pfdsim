@@ -8,6 +8,11 @@ from .coolprop import (
 )
 
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_BAR_CM3_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K
+
 class LiquidVolumeMixin:
         PUBCHEM_DENSITY_CACHE_VERSION = 2
         ASSUMED_BARE_DENSITY_TEMPERATURE_K = 293.15
@@ -122,7 +127,7 @@ class LiquidVolumeMixin:
                     return None
                 Tr = min(T / Tc, 0.999999)
                 exponent = 1.0 + max(0.0, 1.0 - Tr) ** (2.0 / 7.0)
-                volume_cm3_mol = 83.14 * Tc / Pc_bar * (Zra ** exponent)
+                volume_cm3_mol = R_BAR_CM3_MOL_K * Tc / Pc_bar * (Zra ** exponent)
                 return self._positive_liquid_volume(volume_cm3_mol / 1000.0)
             except (TypeError, ValueError, ZeroDivisionError, OverflowError):
                 return None
@@ -321,7 +326,7 @@ class LiquidVolumeMixin:
             Pc: float,
         ) -> Optional[float]:
             log_values = []
-            base = 83.14 * float(Tc) / float(Pc)
+            base = R_BAR_CM3_MOL_K * float(Tc) / float(Pc)
             if base <= 0.0:
                 return None
             for sample_T, volume_m3_kmol in samples:
@@ -1643,10 +1648,10 @@ class LiquidVolumeMixin:
                 Tr = max(T / Tc, 1.0e-12)
                 m = 0.37464 + 1.54226 * omega - 0.26992 * omega**2
                 alpha = (1.0 + m * (1.0 - math.sqrt(Tr))) ** 2
-                a = 0.45724 * 83.14**2 * Tc**2 / Pc_bar * alpha
-                b = 0.07780 * 83.14 * Tc / Pc_bar
-                A = a * P_bar / (83.14**2 * T**2)
-                B = b * P_bar / (83.14 * T)
+                a = 0.45724 * R_BAR_CM3_MOL_K**2 * Tc**2 / Pc_bar * alpha
+                b = 0.07780 * R_BAR_CM3_MOL_K * Tc / Pc_bar
+                A = a * P_bar / (R_BAR_CM3_MOL_K**2 * T**2)
+                B = b * P_bar / (R_BAR_CM3_MOL_K * T)
                 roots = self._solve_cubic_real_roots(
                     -(1.0 - B),
                     A - 3.0 * B * B - 2.0 * B,
@@ -1655,7 +1660,7 @@ class LiquidVolumeMixin:
                 roots = [root for root in roots if root > B + 1.0e-12]
                 if not roots:
                     return None
-                volume_cm3_mol = min(roots) * 83.14 * T / P_bar
+                volume_cm3_mol = min(roots) * R_BAR_CM3_MOL_K * T / P_bar
                 return self._positive_liquid_volume(volume_cm3_mol / 1000.0)
             except (TypeError, ValueError, ZeroDivisionError, OverflowError):
                 return None
@@ -1686,12 +1691,12 @@ class LiquidVolumeMixin:
                     return None
                 m = 0.452413 + 1.30982 * omega - 0.295937 * omega**2
                 alpha = (1.0 + m * (1.0 - math.sqrt(max(T / Tc, 1.0e-12)))) ** 2
-                a = omega_a * 83.14**2 * Tc**2 / Pc_bar * alpha
-                b = omega_b * 83.14 * Tc / Pc_bar
-                c = omega_c * 83.14 * Tc / Pc_bar
-                A = a * P_bar / (83.14**2 * T**2)
-                B = b * P_bar / (83.14 * T)
-                C = c * P_bar / (83.14 * T)
+                a = omega_a * R_BAR_CM3_MOL_K**2 * Tc**2 / Pc_bar * alpha
+                b = omega_b * R_BAR_CM3_MOL_K * Tc / Pc_bar
+                c = omega_c * R_BAR_CM3_MOL_K * Tc / Pc_bar
+                A = a * P_bar / (R_BAR_CM3_MOL_K**2 * T**2)
+                B = b * P_bar / (R_BAR_CM3_MOL_K * T)
+                C = c * P_bar / (R_BAR_CM3_MOL_K * T)
                 roots = self._solve_cubic_real_roots(
                     C - 1.0,
                     A - 2.0 * B * C - B * B - B - C,
@@ -1700,7 +1705,7 @@ class LiquidVolumeMixin:
                 roots = [root for root in roots if root > B + 1.0e-12]
                 if not roots:
                     return None
-                volume_cm3_mol = min(roots) * 83.14 * T / P_bar
+                volume_cm3_mol = min(roots) * R_BAR_CM3_MOL_K * T / P_bar
                 return self._positive_liquid_volume(volume_cm3_mol / 1000.0)
             except (TypeError, ValueError, ZeroDivisionError, OverflowError):
                 return None

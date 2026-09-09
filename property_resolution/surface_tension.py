@@ -2,6 +2,11 @@ from .common import *
 from collections import Counter
 
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_BAR_CM3_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K
+
 SURFACE_TENSION_CORRELATIONS_PATH = (
     Path(__file__).resolve().parent.parent
     / 'data'
@@ -814,10 +819,10 @@ class SurfaceTensionMixin:
                 Tr = max(T / Tc, 1.0e-12)
                 m = 0.37464 + 1.54226 * omega - 0.26992 * omega**2
                 alpha = (1.0 + m * (1.0 - math.sqrt(Tr))) ** 2
-                a = 0.45724 * 83.14**2 * Tc**2 / Pc_bar * alpha
-                b = 0.07780 * 83.14 * Tc / Pc_bar
-                A = a * P_bar / (83.14**2 * T**2)
-                B = b * P_bar / (83.14 * T)
+                a = 0.45724 * R_BAR_CM3_MOL_K**2 * Tc**2 / Pc_bar * alpha
+                b = 0.07780 * R_BAR_CM3_MOL_K * Tc / Pc_bar
+                A = a * P_bar / (R_BAR_CM3_MOL_K**2 * T**2)
+                B = b * P_bar / (R_BAR_CM3_MOL_K * T)
                 roots = self._solve_cubic_real_roots(
                     -(1.0 - B),
                     A - 3.0 * B * B - 2.0 * B,
@@ -826,7 +831,7 @@ class SurfaceTensionMixin:
                 roots = [root for root in roots if root > B + 1.0e-12]
                 if not roots:
                     return None
-                volume_m3_kmol = max(roots) * 83.14 * T / P_bar / 1000.0
+                volume_m3_kmol = max(roots) * R_BAR_CM3_MOL_K * T / P_bar / 1000.0
                 if volume_m3_kmol <= 0.0 or not math.isfinite(volume_m3_kmol):
                     return None
                 density = 1.0 / volume_m3_kmol
@@ -860,12 +865,12 @@ class SurfaceTensionMixin:
                     return None
                 m = 0.452413 + 1.30982 * omega - 0.295937 * omega**2
                 alpha = (1.0 + m * (1.0 - math.sqrt(max(T / Tc, 1.0e-12)))) ** 2
-                a = omega_a * 83.14**2 * Tc**2 / Pc_bar * alpha
-                b = omega_b * 83.14 * Tc / Pc_bar
-                c = omega_c * 83.14 * Tc / Pc_bar
-                A = a * P_bar / (83.14**2 * T**2)
-                B = b * P_bar / (83.14 * T)
-                C = c * P_bar / (83.14 * T)
+                a = omega_a * R_BAR_CM3_MOL_K**2 * Tc**2 / Pc_bar * alpha
+                b = omega_b * R_BAR_CM3_MOL_K * Tc / Pc_bar
+                c = omega_c * R_BAR_CM3_MOL_K * Tc / Pc_bar
+                A = a * P_bar / (R_BAR_CM3_MOL_K**2 * T**2)
+                B = b * P_bar / (R_BAR_CM3_MOL_K * T)
+                C = c * P_bar / (R_BAR_CM3_MOL_K * T)
                 roots = self._solve_cubic_real_roots(
                     C - 1.0,
                     A - 2.0 * B * C - B * B - B - C,
@@ -874,7 +879,7 @@ class SurfaceTensionMixin:
                 roots = [root for root in roots if root > B + 1.0e-12]
                 if not roots:
                     return None
-                volume_m3_kmol = max(roots) * 83.14 * T / P_bar / 1000.0
+                volume_m3_kmol = max(roots) * R_BAR_CM3_MOL_K * T / P_bar / 1000.0
                 if volume_m3_kmol <= 0.0 or not math.isfinite(volume_m3_kmol):
                     return None
                 density = 1.0 / volume_m3_kmol

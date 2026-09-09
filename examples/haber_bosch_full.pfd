@@ -32,8 +32,8 @@ INTERACTION_PARAMETERS:
 # Keeping forward and reverse as separate nonnegative rates lets the PFR
 # pass through the zero-net-rate point without a signed custom-rate error.
 REACTIONS:
-    haber_forward : N2 + 3 H2 -> 2 NH3 | type=custom, expression=1e4*exp(-91000/(8.314*T))*p["N2"]**0.5*p["H2"]**1.5, Ea=0, Ea_unit=J/mol, concentration_unit=kmol/m3, pressure_unit=atm, rate_unit=kmol/m3/s
-    haber_reverse : 2 NH3 -> N2 + 3 H2 | type=custom, expression=1.3e10*exp(-140000/(8.314*T))*p["NH3"], Ea=0, Ea_unit=J/mol, concentration_unit=kmol/m3, pressure_unit=atm, rate_unit=kmol/m3/s
+    haber_forward : N2 + 3 H2 -> 2 NH3 | type=custom, expression=1e4*exp(-91000/(R*T))*p["N2"]**0.5*p["H2"]**1.5, Ea=0, Ea_unit=J/mol, concentration_unit=kmol/m3, pressure_unit=atm, rate_unit=kmol/m3/s
+    haber_reverse : 2 NH3 -> N2 + 3 H2 | type=custom, expression=1.3e10*exp(-140000/(R*T))*p["NH3"], Ea=0, Ea_unit=J/mol, concentration_unit=kmol/m3, pressure_unit=atm, rate_unit=kmol/m3/s
 
 # Air flow is sized so the column N2 product is approximately the stoichiometric
 # nitrogen requirement for 80,000 t/y NH3.

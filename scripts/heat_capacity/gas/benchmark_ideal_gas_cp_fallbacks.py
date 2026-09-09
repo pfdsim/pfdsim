@@ -16,6 +16,7 @@ import hashlib
 import json
 import math
 import sqlite3
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -28,8 +29,13 @@ from numpy.polynomial import chebyshev as ncheb
 
 
 ROOT = Path(__file__).resolve().parents[3]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from physical_constants import R_J_MOL_K
+
 DATABASE = ROOT / "data" / "ideal_gas_heat_capacity.sqlite"
-R = 8.31446261815324
+R = R_J_MOL_K
 REFERENCE_TEMPERATURES = (298.15, 500.0, 1000.0)
 
 CATEGORIES = (

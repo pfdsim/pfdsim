@@ -26,6 +26,8 @@ from property_resolver import AntoineCoefficients, FusionTransitionRecord, HeatC
 from thermodynamics import IdealThermodynamics, create_thermodynamics
 
 
+from physical_constants import R_J_MOL_K
+
 class PropertyResolutionSystemTests(unittest.TestCase):
     def assertClose(self, actual, expected, *, rel=1e-8, abs_tol=1e-12):
         self.assertTrue(
@@ -116,7 +118,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertEqual(water.property_sources['Zc']['method'], 'coolprop_critical_identity')
         self.assertClose(
             water.Zc,
-            water.Pc * 100000.0 * water.Vc * 1.0e-6 / (8.314462618 * water.Tc),
+            water.Pc * 100000.0 * water.Vc * 1.0e-6 / (R_J_MOL_K * water.Tc),
         )
 
         cyclohexane = database.get('cyclohexane', fetch_online=False)
@@ -384,7 +386,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertEqual(provided['omega'].source, 'provided')
         self.assertEqual(provided['Zc'].source, 'exact')
         self.assertEqual(provided['Zc'].method, 'critical_volume_identity')
-        self.assertClose(provided['Zc'].value, 50.0 * 100000.0 * 200.0e-6 / (8.314462618 * 500.0))
+        self.assertClose(provided['Zc'].value, 50.0 * 100000.0 * 200.0e-6 / (R_J_MOL_K * 500.0))
 
     def test_coolprop_critical_source_precedes_acs_and_keeps_partial_fill(self):
         resolver = PropertyResolver()
@@ -1249,7 +1251,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
 
         expected_zc = (
             50.0 * 100000.0 * critical['Vc'].value * 1.0e-6
-            / (8.314462618 * 500.0)
+            / (R_J_MOL_K * 500.0)
         )
         self.assertEqual(critical['Tc'].method, 'pfd_component_override')
         self.assertEqual(critical['Pc'].method, 'pfd_component_override')
@@ -1307,7 +1309,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
 
         expected_zc = (
             ethanol.Pc * 100000.0 * ethanol.Vc * 1.0e-6
-            / (8.314462618 * ethanol.Tc)
+            / (R_J_MOL_K * ethanol.Tc)
         )
         self.assertClose(ethanol.Zc, expected_zc)
         self.assertEqual(
@@ -1658,7 +1660,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
                 },
             },
         }
-        rho_c = 50.0 / (0.25 * (8.314462618 / 100.0) * 400.0)
+        rho_c = 50.0 / (0.25 * (R_J_MOL_K / 100.0) * 400.0)
 
         with patch.object(resolver, '_coolprop_viscosity', return_value=None):
             viscosity = resolver.resolve_viscosity(
@@ -1758,7 +1760,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         )
         rho_c = critical['Pc'].value / (
             critical['Zc'].value
-            * (8.314462618 / 100.0)
+            * (R_J_MOL_K / 100.0)
             * critical['Tc'].value
         )
         baseline = PropertyResolutionResult(
@@ -1907,7 +1909,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             'Pc': 47.0,
             'Zc': 0.233,
         }
-        rho_c = 47.0 / (0.233 * (8.314462618 / 100.0) * 508.1)
+        rho_c = 47.0 / (0.233 * (R_J_MOL_K / 100.0) * 508.1)
         baseline = PropertyResolutionResult(
             value=1.0e-5,
             source='local',
@@ -2613,7 +2615,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             formation = resolver.resolve_formation_properties('madeupium', props, allow_online=False)
 
         element_s = 130.7 + 0.5 * 205.2
-        expected_gf = -237.10 - 8.314462618 * 298.15 * math.log(0.0317) / 1000.0
+        expected_gf = -237.10 - R_J_MOL_K * 298.15 * math.log(0.0317) / 1000.0
         expected_s = (-241.83 - expected_gf) * 1000.0 / 298.15 + element_s
         self.assertEqual(formation['Gf'].method, 'liquid_gf_plus_standard_vaporization_gibbs')
         self.assertClose(formation['Gf'].value, expected_gf)
@@ -2651,7 +2653,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         element_s = 130.7 + 0.5 * 205.2
         hf_liquid = -241.83 - 43.99
         gf_liquid = hf_liquid - 298.15 * (69.91 - element_s) / 1000.0
-        expected_gf = gf_liquid - 8.314462618 * 298.15 * math.log(0.0317) / 1000.0
+        expected_gf = gf_liquid - R_J_MOL_K * 298.15 * math.log(0.0317) / 1000.0
         expected_s = (-241.83 - expected_gf) * 1000.0 / 298.15 + element_s
         self.assertEqual(formation['Gf'].method, 'liquid_gf_plus_standard_vaporization_gibbs')
         self.assertClose(formation['Gf'].value, expected_gf)
@@ -4053,7 +4055,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         )
 
         expected_vc = 260.86754483941434
-        expected_zc = 48.9 * 100000.0 * expected_vc * 1.0e-6 / (8.314462618 * 562.2)
+        expected_zc = 48.9 * 100000.0 * expected_vc * 1.0e-6 / (R_J_MOL_K * 562.2)
         self.assertEqual(critical['Vc'].method, 'nannoolal_vc')
         self.assertClose(critical['Vc'].value, expected_vc)
         self.assertClose(critical['Vc'].quality, 0.85)

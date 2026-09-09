@@ -41,6 +41,8 @@ from scripts.build_uniquac_rq_parameters import (
 )
 
 
+from physical_constants import R_J_MOL_K
+
 class InteractionParameterTests(unittest.TestCase):
     def test_uniquac_uses_voutsas_ethanol_water_interaction(self):
         thermo = create_thermodynamics(['ethanol', 'water'], 'UNIQUAC')
@@ -494,7 +496,7 @@ class InteractionParameterTests(unittest.TestCase):
         )
 
     def test_cesari_phenolic_nrtl_interactions_use_energy_over_rt_form(self):
-        R = 8.31446261815324
+        R = R_J_MOL_K
         T = 323.15
         with open(
             os.path.join(ROOT, 'data', 'nrtl_binary_interactions_cas.json'),
@@ -1926,7 +1928,7 @@ class InteractionParameterTests(unittest.TestCase):
             'C2H4O': 0.007669051266394127,
         }
         nrtl_temperature = nrtl_pr.bubble_point_T(bottoms, 2.24, 380.0)
-        self.assertAlmostEqual(nrtl_temperature, 382.21945717059197, places=6)
+        self.assertAlmostEqual(nrtl_temperature, 382.219436482183, places=6)
 
         uniquac_pr = create_thermodynamics(['H2O', 'C2H4O'], 'UNIQUAC-PR')
         self.assertAlmostEqual(uniquac_pr.r['C2H4O'], 1.59)
@@ -1945,7 +1947,7 @@ class InteractionParameterTests(unittest.TestCase):
             for warning in uniquac_pr.warnings
         ))
         uniquac_temperature = uniquac_pr.bubble_point_T(bottoms, 2.24, 380.0)
-        self.assertAlmostEqual(uniquac_temperature, 382.4763417742024, places=6)
+        self.assertAlmostEqual(uniquac_temperature, 382.4763210433524, places=6)
 
     def test_interaction_conversion_corrects_row_level_identity_mismatches(self):
         def records(filename, comment):

@@ -23,15 +23,20 @@ import math
 from typing import Optional
 from dataclasses import dataclass
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_BAR_CM3_MOL_K, R_BAR_M3_MOL_K, R_J_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K, R_BAR_M3_MOL_K, R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .chemical_properties import ChemicalProperties, ChemicalDatabase, get_database
 else:
     from chemical_properties import ChemicalProperties, ChemicalDatabase, get_database
 
 
 # Gas constant in different units
-R = 8.314  # J/mol-K
-R_BAR = 8.314e-5  # bar-m3/mol-K = 0.00008314 bar-m3/mol-K
-R_CM3 = 83.14  # bar-cm3/mol-K
+R = R_J_MOL_K  # J/mol-K
+R_BAR = R_BAR_M3_MOL_K  # bar-m3/mol-K (converted from SI)
+R_CM3 = R_BAR_CM3_MOL_K  # bar-cm3/mol-K
 
 
 class RKError(Exception):

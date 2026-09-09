@@ -26,7 +26,12 @@ from .ge_eos import (
 )
 
 
-R_BAR_CM3_PER_MOL_K = 83.14462618
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_BAR_CM3_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K
+
+R_BAR_CM3_PER_MOL_K = R_BAR_CM3_MOL_K
 PSRK_Q1 = -0.64663
 SRK_OMEGA_A = 0.42748
 SRK_OMEGA_B = 0.08664

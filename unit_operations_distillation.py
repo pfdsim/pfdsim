@@ -6,6 +6,11 @@ import math
 from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .thermodynamics import StreamState
 else:
     from thermodynamics import StreamState
@@ -4065,7 +4070,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
 
         reference_temperature = float(self.get_param('azeotropic_reference_temperature', inlet.T))
         hvap = float(self.get_param('azeotropic_hvap_kJ_per_kmol', 35000.0))
-        gas_constant = 8.314462618
+        gas_constant = R_J_MOL_K
         volatility = {
             item['name']: math.exp(
                 -hvap / gas_constant

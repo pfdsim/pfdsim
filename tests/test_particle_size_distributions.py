@@ -639,7 +639,11 @@ class ParticleSizeUnitPropagationTests(unittest.TestCase):
             distribution.total_molar_flow,
             slurry.solid_component_flows['water'],
         )
-        self.assertEqual(distribution.molar_fractions, (0.4, 0.6))
+        self.assertEqual(len(distribution.molar_fractions), 2)
+        for actual, expected in zip(
+            distribution.molar_fractions, (0.4, 0.6)
+        ):
+            self.assertAlmostEqual(actual, expected, places=15)
 
     def test_state_rejects_partial_population(self):
         state = self.make_thermo().calculate_state(

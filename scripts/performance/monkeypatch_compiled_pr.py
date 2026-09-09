@@ -20,7 +20,9 @@ if str(ROOT) not in sys.path:
 
 from simulator import Simulator
 
-R = 83.14
+from physical_constants import R_BAR_CM3_MOL_K
+
+R = R_BAR_CM3_MOL_K
 SQRT2 = math.sqrt(2.0)
 D1 = 1.0 + SQRT2
 D2 = 1.0 - SQRT2

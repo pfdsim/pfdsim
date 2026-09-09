@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics
+from physical_constants import R_CAL_MOL_K
 
 
 WATER = "H2O"
@@ -305,8 +306,8 @@ def azeotropes(thermo, pressure_bar: float = P_ATM_BAR) -> list[dict]:
 def starts_for(model: str) -> list[tuple[float, float, float, float]]:
     if model == "UNIQUAC-VDM":
         return [
-            (0.0, -486.4688 / 1.98720425864083,
-             0.0, 146.6582 / 1.98720425864083),
+            (0.0, -486.4688 / R_CAL_MOL_K,
+             0.0, 146.6582 / R_CAL_MOL_K),
             (-6.73772, 2210.71, 5.18562, -1827.73),
             (0.0, 0.0, 0.0, 0.0), (1.0, -300.0, -1.0, 300.0),
         ]

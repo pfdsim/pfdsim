@@ -30,7 +30,12 @@ from typing import Optional
 
 from pathlib import Path
 
-R = 8.314          # J/mol·K
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+R = R_J_MOL_K          # J/mol·K
 P_STD = 1.0        # bar (standard state for fugacity-based K)
 DATA_DIR = Path(__file__).parent / "data"
 

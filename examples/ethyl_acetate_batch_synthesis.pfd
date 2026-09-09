@@ -32,11 +32,11 @@ COMPONENTS:
     H2O   | Water         | formula=H2O, MW=18.015
     H2SO4 | Sulfuric Acid | formula=H2SO4, MW=98.079
 
-# Ea/R = 6500.1 K with the simulator's R = 8.314 J/mol/K. The empirical
+# The published exp(-6500.1/T) temperature dependence is used directly. The empirical
 # bracket is a complete signed net rate, so custom_net is used instead of the
 # automatic thermodynamic Q/K reversible-rate form.
 REACTIONS:
-    esterification : AcOH + EtOH -> EtOAc + H2O | type=custom_net, A=1, Ea=54041.8314, Ea_unit=J/mol, concentration_unit=mol/m3, pressure_unit=bar, rate_unit=mol/m3/s, expression=(4.195*volpct['H2SO4']+0.08815)*k*(C['AcOH']*C['EtOH']-C['EtOAc']*C['H2O']/(7.558-0.012*T))
+    esterification : AcOH + EtOH -> EtOAc + H2O | type=custom_net, A=1, Ea=0, Ea_unit=J/mol, concentration_unit=mol/m3, pressure_unit=bar, rate_unit=mol/m3/s, expression=(4.195*volpct['H2SO4']+0.08815)*exp(-6500.1/T)*(C['AcOH']*C['EtOH']-C['EtOAc']*C['H2O']/(7.558-0.012*T))
 
 #------------------------------------------------------------------------------
 # CONTINUOUS-EQUIVALENT FEEDS AND PRODUCT

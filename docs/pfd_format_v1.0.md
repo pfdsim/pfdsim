@@ -2382,7 +2382,8 @@ REACTIONS:
 ```
 
 Custom expressions permit only `+`, `-`, `*`, `/`, `**`, unary signs,
-`exp(...)`, and `log(...)`. Available values are temperature `T`, Arrhenius
+`exp(...)`, and `log(...)`. Available values are temperature `T`, the shared
+molar gas constant `R` in J/(mol K), Arrhenius
 constant `k`, concentrations `C['component']`, partial pressures
 `p['component']`, fugacities `f['component']`, activities `a['component']`, and
 raw liquid volume percentages `volpct['component']`, and declared `param_X`

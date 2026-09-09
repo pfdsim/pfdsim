@@ -45,6 +45,8 @@ from property_resolution.common import (
 from pressure_standards import NORMAL_BOILING_PRESSURE_BAR
 
 
+from physical_constants import R_J_MOL_K
+
 class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
     def test_provider_neutral_tb_validator_contract(self):
         target = NORMAL_BOILING_PRESSURE_BAR
@@ -2024,7 +2026,7 @@ class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
         boundary_slope = (
             40000.0
             / (
-                8.31446261815324
+                R_J_MOL_K
                 * boundary_temperature**2
                 * _peng_robinson_delta_z_or_ideal(
                     boundary_temperature,
@@ -3840,7 +3842,7 @@ class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
                 boundary_slope = (
                     40000.0
                     / (
-                        8.31446261815324
+                        R_J_MOL_K
                         * boundary_temperature**2
                         * delta_z
                     )
@@ -3925,7 +3927,7 @@ class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
         boundary_temperature = 300.0
         ideal_slope = (
             40000.0
-            / (8.31446261815324 * boundary_temperature**2)
+            / (R_J_MOL_K * boundary_temperature**2)
         )
         right = PsatEndpoint(
             temperature=boundary_temperature,
@@ -4014,7 +4016,7 @@ class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
         model_slope = (
             40000.0
             / (
-                8.31446261815324
+                R_J_MOL_K
                 * boundary_temperature**2
                 * _peng_robinson_delta_z_or_ideal(
                     boundary_temperature,
@@ -4106,7 +4108,7 @@ class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
         required_enthalpy = 40000.0
         boundary_slope = (
             required_enthalpy
-            / (8.31446261815324 * boundary_temperature**2)
+            / (R_J_MOL_K * boundary_temperature**2)
         )
         right = PsatEndpoint(
             temperature=boundary_temperature,

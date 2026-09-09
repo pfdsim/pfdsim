@@ -270,7 +270,7 @@ class PackedBedReactorUnitTests(unittest.TestCase):
                         'intrinsic_reaction_rates_kmol_kg_cat_h'
                     ][0]
                 )
-                concentration = 0.048111618955977875
+                concentration = 0.048108942017090414
                 phi = 0.0025 * math.sqrt(
                     (500.0 / 0.6) * inlet_rate
                     / (1.0e-9 * 3600.0 * concentration)

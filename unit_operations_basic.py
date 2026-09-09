@@ -7,6 +7,11 @@ import math
 from scipy.optimize import brentq
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .pressure_standards import ATM_PRESSURE_BAR, THERMOCHEMICAL_STANDARD_PRESSURE_BAR
 else:
     from pressure_standards import ATM_PRESSURE_BAR, THERMOCHEMICAL_STANDARD_PRESSURE_BAR
@@ -2172,7 +2177,7 @@ class _IsentropicPressureMachine(UnitOperation):
                 or P_out <= 0.0
             ):
                 return fallback
-            exponent = 8.314462618 / float(Cp_kJ_per_kmol_K)
+            exponent = R_J_MOL_K / float(Cp_kJ_per_kmol_K)
             seed = inlet.T * (P_out / inlet.P) ** exponent
             if not math.isfinite(seed) or seed <= 0.0:
                 return fallback

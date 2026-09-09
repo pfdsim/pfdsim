@@ -2420,8 +2420,8 @@ class UnitOperationSmokeTests(unittest.TestCase):
 
     def test_expander_keeps_superheated_ethylene_vapor(self):
         for method, expected_T_C, expected_power_kW in (
-            ('IDEAL', 96.7471755, 337.5478),
-            ('PR', 90.7494462, 329.4862),
+            ('IDEAL', 96.7365567759843, 337.56280055200983),
+            ('PR', 90.73860425612384, 329.50058307717273),
         ):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(['C2H4'], method)

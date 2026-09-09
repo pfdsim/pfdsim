@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 from chemical_properties import ChemicalDatabase, ChemicalProperties
 from pfd_parser import parse_and_validate
+from physical_constants import R_J_MOL_K
 from property_resolver import PropertyResolver
 from property_resolution.liquid_cp import (
     ConstantLiquidCpKernel,
@@ -529,7 +530,7 @@ PROPERTY_CORRELATIONS:
         Tc = 500.0
         Tr = T / Tc
         omega = 0.2
-        R = 8.31446261815324
+        R = R_J_MOL_K
         cp_ideal = 80.0
 
         bondi = self.resolve_estimator(

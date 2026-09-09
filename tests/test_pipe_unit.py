@@ -90,8 +90,12 @@ class PipeUnitTests(unittest.TestCase):
         ).solve({'in': inlet})
         performance = result.performance
 
-        self.assertAlmostEqual(performance['pressure_drop_bar'], 0.22157033, delta=2e-6)
-        self.assertAlmostEqual(performance['P_out_bar'], 19.77842967, delta=2e-6)
+        self.assertAlmostEqual(
+            performance['pressure_drop_bar'], 0.22158274728790772, delta=2e-6
+        )
+        self.assertAlmostEqual(
+            performance['P_out_bar'], 19.778417252712092, delta=2e-6
+        )
         self.assertAlmostEqual(performance['reynolds_in'], 1408811.0, delta=5.0)
         self.assertAlmostEqual(performance['reynolds_out'], 1409492.0, delta=5.0)
         self.assertGreater(performance['acceleration_pressure_drop_bar'], 0.0)

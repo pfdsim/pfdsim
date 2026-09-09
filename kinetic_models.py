@@ -105,7 +105,7 @@ _ACTIVATION_ENERGY_FACTORS = {
 }
 
 _RESERVED_EXPRESSION_NAMES = frozenset({
-    'T', 'k', 'C', 'p', 'f', 'a', 'volpct', 'exp', 'log',
+    'T', 'R', 'k', 'C', 'p', 'f', 'a', 'volpct', 'exp', 'log',
 })
 
 
@@ -176,7 +176,7 @@ class SafeRateExpression:
         self.text = text
         self.parameter_names = frozenset(parameter_names)
         self._scalar_names = frozenset(
-            {'T', 'k'} if scalar_names is None else scalar_names
+            {'T', 'R', 'k'} if scalar_names is None else scalar_names
         )
         self._allowed_mapping_names = frozenset(
             {'C', 'p', 'f', 'a', 'volpct'}
@@ -619,6 +619,7 @@ class HomogeneousRateState:
         p_factor = _PRESSURE_FACTORS[reaction.pressure_unit]
         context = {
             'T': self.T,
+            'R': R,  # J/(mol K), independent of the declared rate units.
             'C': {key: value * c_factor for key, value in self.concentrations_kmol_m3.items()},
             'p': {key: value * p_factor for key, value in self.partial_pressures_bar.items()},
             'f': {key: value * p_factor for key, value in self.fugacities_bar.items()},

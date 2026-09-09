@@ -7,18 +7,24 @@ import argparse
 import csv
 import math
 import sqlite3
+import sys
 from pathlib import Path
 from typing import Any, Optional
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from physical_constants import R_BAR_L_MOL_K
+
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
 SOURCE = SOURCE_DATA / "effective_criticals.txt"
 OUTPUT = DATA / "effective_criticals.sqlite"
 TABLE_NAME = "effective_criticals"
 
-R_BAR_L = 0.0831446261815324
+R_BAR_L = R_BAR_L_MOL_K
 GRADE_OFFSETS = {
     "A": 0,
     "B": 1,

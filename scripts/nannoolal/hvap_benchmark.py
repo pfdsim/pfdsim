@@ -34,7 +34,9 @@ from chemicals.acentric import LK_omega
 from chemicals.phase_change import Hvap_data_CRC
 from rdkit import Chem
 
-R = 8.314462618
+from physical_constants import R_J_MOL_K
+
+R = R_J_MOL_K
 TR_TARGETS = [0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95, 0.99]
 _COOH = Chem.MolFromSmarts("[CX3](=O)[OX2H1]")
 

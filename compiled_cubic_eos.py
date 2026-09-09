@@ -7,6 +7,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_BAR_CM3_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K
+
 try:
     from numba import njit, typeof
 except Exception:  # pragma: no cover - optional dependency fallback
@@ -14,7 +19,7 @@ except Exception:  # pragma: no cover - optional dependency fallback
     typeof = None
 
 
-R_CM3 = 83.14
+R_CM3 = R_BAR_CM3_MOL_K
 ALPHA_SOAVE = 0
 ALPHA_BOSTON_MATHIAS = 1
 ALPHA_MATHIAS_COPEMAN = 2

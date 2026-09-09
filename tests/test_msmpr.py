@@ -22,6 +22,8 @@ from unit_operations_base import UnitOperationError
 from unit_operations_solids import Crystallizer
 
 
+from physical_constants import R_J_MOL_K
+
 class MSMPRModelTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -340,7 +342,7 @@ class MSMPRModelTests(unittest.TestCase):
             'sigma': 0.2,
             'L': 1.0e-4,
             'T': 300.0,
-            'R': 8.314,
+            'R': R_J_MOL_K,
         })
         self.assertGreater(rate, 0.0)
         with self.assertRaisesRegex(MSMPRDefinitionError, 'Unknown'):

@@ -14,6 +14,11 @@ from typing import Any, Optional
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from physical_constants import R_J_MOL_K
+
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
 LEGACY_SOURCE_DATA = SOURCE_DATA / "legacy"
@@ -1653,7 +1658,7 @@ def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[lis
         return [], 0
 
     payload = load_json(path)
-    r_j_per_mol_k = 8.31446261815324
+    r_j_per_mol_k = R_J_MOL_K
     alpha = float(payload["metadata"]["alpha12"])
     existing_pairs = {
         tuple(sorted((record["cas1"], record["cas2"])))

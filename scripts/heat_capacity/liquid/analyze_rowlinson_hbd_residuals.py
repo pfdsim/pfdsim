@@ -21,7 +21,9 @@ from property_resolution.ideal_gas_cp import load_bundled_kernel
 from property_resolution.liquid_cp import load_bundled_liquid_kernel
 
 
-R = 8.31446261815324
+from physical_constants import R_J_MOL_K
+
+R = R_J_MOL_K
 HALOGENS = {9, 17, 35, 53}
 STRICT_INORGANIC_CAS = {"74-90-8"}
 STRICT_ORGANIC_CAS = {"144-62-7"}

@@ -11,6 +11,11 @@ from statistics import median
 from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .physical_constants import R_BAR_CM3_MOL_K
+else:
+    from physical_constants import R_BAR_CM3_MOL_K
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .chemical_properties import ChemicalDatabase, ChemicalProperties, get_database
 else:
     from chemical_properties import ChemicalDatabase, ChemicalProperties, get_database
@@ -35,7 +40,7 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from psrk_parameters import compatible_psrk_mathias_copeman
 
-R_CM3 = 83.14  # bar-cm3/mol-K
+R_CM3 = R_BAR_CM3_MOL_K  # bar-cm3/mol-K
 
 
 class CubicEOSError(Exception):

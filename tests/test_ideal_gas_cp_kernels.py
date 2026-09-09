@@ -23,6 +23,8 @@ from property_resolution.ideal_gas_cp import (
 from thermodynamics import IdealThermodynamics
 
 
+from physical_constants import R_J_MOL_K
+
 class IdealGasCpKernelTests(unittest.TestCase):
     def assertClose(self, actual, expected, *, rel=1e-10, abs_tol=1e-10):
         self.assertTrue(
@@ -147,7 +149,7 @@ class IdealGasCpKernelTests(unittest.TestCase):
         argon = model.kernel({'Ar': 1})
         self.assertClose(
             argon.cp(500.0),
-            2.5 * 8.31446261815324,
+            2.5 * R_J_MOL_K,
             rel=1.0e-4,
         )
         self.assertClose(argon.quality, 0.75)
