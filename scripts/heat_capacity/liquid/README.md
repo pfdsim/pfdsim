@@ -88,6 +88,13 @@ Ordinary-liquid resolution uses one retained executable kernel for scalar
 8. 1.3 x resolved ideal-gas Cp kernel
 ```
 
+An explicit range on a provided `Cpl` correlation is authoritative. When an
+endpoint is omitted, the lower endpoint defaults to resolved `Tm` and the upper
+endpoint defaults to resolved `Tb`. If the corresponding phase point cannot be
+resolved or would make the completed interval invalid, the endpoint falls back
+to 273.15 K or 1500 K, respectively. The selected values and phase-point
+provenance are stored with the kernel.
+
 The predictive rung was originally reserved for Rowlinson--Poling. The
 investigation below supports a hybrid Rowlinson--Bondi and HBD ratio-GC rung
 instead.
@@ -96,8 +103,8 @@ Liquid range conditioning uses:
 
 ```text
 Extrapolation width:                10 K
-Initial quality penalty:           0.01
-Additional penalty per 5 K:        0.01
+Initial quality penalty:           0.02
+Additional penalty per 5 K:        0.02
 Maximum accumulated penalty:       0.40
 ```
 

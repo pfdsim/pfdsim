@@ -298,6 +298,16 @@ Solid-solid boundaries are explicit. Cp can be evaluated on either side, but
 transition enthalpy is represented. Glass, crystalline, hydrate, solvate,
 allotrope, and named-polymorph records are not silently merged.
 
+Provided ordinary-liquid and solid correlations retain every explicit range
+endpoint. For a provided `Cpl` correlation, a missing lower endpoint defaults
+to resolved `Tm` and a missing upper endpoint defaults to resolved `Tb`; the
+respective fallbacks for unavailable or interval-incompatible phase points are
+273.15 K and 1500 K. For a provided `Cps` correlation, a missing upper endpoint
+defaults to resolved `Tm` and a missing lower endpoint defaults to
+`min(100 K, 0.8*Tm)`. If `Tm` is unavailable, the solid fallbacks are 100 K and
+1500 K. The effective inferred range and its phase-point provenance are
+retained in the kernel notes and fingerprint.
+
 NIST Cp behavior:
 
 - Native liquid and solid Shomate ranges are retained as executable kernels.
@@ -322,9 +332,11 @@ its quality is reduced by `0.02`. Farther outside, evaluation clamps to the
 additional 5 K and is capped at `0.40`.
 
 Solid Cp retains an additional cryogenic guard: below 100 K, extrapolation and
-clamping are forbidden, but a correlation whose native range explicitly covers
-the requested temperature remains valid. Solid-solid transition boundaries are
-still enforced independently of this outer-range policy.
+clamping are forbidden, but a correlation whose effective range covers the
+requested temperature remains valid. That range may be source-declared or the
+`0.8*Tm` lower range inferred for a provided `Cps` correlation. Solid-solid
+transition boundaries are still enforced independently of this outer-range
+policy.
 
 ## Solid Volume and Density
 

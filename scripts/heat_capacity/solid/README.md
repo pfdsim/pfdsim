@@ -35,10 +35,13 @@ Absolute-zero continuation is intentionally absent. JANAF's formal `(0 K,
 Lastovka begins at 100 K, and other sources retain their native lower bounds.
 Solid kernels use the ideal-gas range policy: 10 K of direct extrapolation with
 a quality penalty, followed by boundary-value clamping with an increasing
-penalty capped at 0.40. Below 100 K, extrapolation and clamping are forbidden;
-only a correlation whose native range explicitly covers the query is accepted.
-A future Debye/Einstein model can add broader third-law coverage when
-defensible characteristic temperatures exist.
+penalty capped at 0.40. A provided `Cps` correlation retains explicit range
+endpoints. Its omitted upper endpoint defaults to resolved `Tm`, and its
+omitted lower endpoint defaults to `min(100 K, 0.8*Tm)`. If `Tm` is unavailable,
+the fallbacks are 100 K and 1500 K. Below 100 K, extrapolation and clamping are
+forbidden; evaluation is allowed only where the source-declared or inferred
+effective range covers the query. A future Debye/Einstein model can add broader
+third-law coverage when defensible characteristic temperatures exist.
 
 The volume database contains 1,872 CRC constant solid molar volumes. Runtime
 preserves native molar volume and derives density through molecular weight.

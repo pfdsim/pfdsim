@@ -108,7 +108,7 @@ class SolidCpKernel(IdealGasCpKernel):
         ):
             raise ValueError(
                 f"solid heat-capacity below {SOLID_MINIMUM_TEMPERATURE_K:g} K "
-                "requires explicit correlation coverage"
+                "requires effective correlation coverage"
             )
         return super()._condition_temperature(temperature)
 
@@ -128,7 +128,7 @@ class SolidCpKernel(IdealGasCpKernel):
         ):
             raise ValueError(
                 f"solid heat-capacity integration below "
-                f"{SOLID_MINIMUM_TEMPERATURE_K:g} K requires explicit "
+                f"{SOLID_MINIMUM_TEMPERATURE_K:g} K requires effective "
                 "correlation coverage"
             )
         return super()._integrate_conditioned(T1, T2, entropy=entropy)

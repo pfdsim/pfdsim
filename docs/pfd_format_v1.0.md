@@ -814,6 +814,19 @@ Common optional fields are `Tmin_K`, `Tmax_K`, `Pmin_bar`, `Pmax_bar`,
 canonical unit-suffixed names. `Pmin_bar` and `Pmax_bar` bound pressure-specific
 viscosity fits; such fits are not pressure-corrected a second time.
 
+For `Cpl`, an omitted `Tmin_K` defaults to the resolved melting point and an
+omitted `Tmax_K` defaults to the resolved normal boiling point. If the
+corresponding phase point is unavailable or would make the completed interval
+invalid, the fallback is 273.15 K for `Tmin_K` or 1500 K for `Tmax_K`.
+Explicit endpoints always take precedence.
+
+For `Cps`, an omitted `Tmax_K` defaults to the resolved melting point. An
+omitted `Tmin_K` defaults to `min(100 K, 0.8*Tm)`, which keeps the lower bound
+below low melting points. If the melting point is unavailable, the fallbacks
+are 100 K and 1500 K. Explicit endpoints always take precedence. These
+phase-derived bounds describe the assumed range of a provided correlation;
+source correlations with known ranges should declare them explicitly.
+
 Property keys, correlation fields, equation names, and coefficient names are
 validated during parsing. Unknown names are fatal errors and include a close
 match suggestion when one is available.
@@ -2516,8 +2529,8 @@ interaction-model fields. Structural validation then:
    declared port IDs.
 5. Warns when a composition differs from 1.0 by more than 0.001; feed
    compositions are normalized when the simulation state is built.
-6. Warns when `Cpg`, `Cpl`, `Cps`, or legacy `Cp_coeffs` lacks a complete temperature
-   range and applies the documented default range.
+6. Warns when `Cpg`, `Cpl`, `Cps`, or legacy `Cp_coeffs` lacks a complete
+   temperature range and applies the documented property-specific default.
 7. Parses every declared reaction against the process component symbols and,
    when every participating component has a molecular formula, rejects
    elementally unbalanced stoichiometry. A missing or unparseable formula

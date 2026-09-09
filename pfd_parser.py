@@ -4602,7 +4602,9 @@ class PFDValidator:
             ):
                 self.warnings.append(
                     f"{comp.symbol}.Cpl has no complete temperature range; "
-                    "defaulting to 273.15-1500 K"
+                    "missing Tmin_K defaults to resolved Tm (273.15 K if "
+                    "unavailable or incompatible) and missing Tmax_K defaults "
+                    "to resolved Tb (1500 K if unavailable or incompatible)"
                 )
             cps = (comp.property_correlations or {}).get('Cps')
             if isinstance(cps, dict) and (
@@ -4610,7 +4612,9 @@ class PFDValidator:
             ):
                 self.warnings.append(
                     f"{comp.symbol}.Cps has no complete temperature range; "
-                    "defaulting to 273.15-1500 K"
+                    "missing Tmax_K defaults to resolved Tm (1500 K if "
+                    "unavailable), while missing Tmin_K defaults to "
+                    "min(100 K, 0.8*Tm) or 100 K when Tm is unavailable"
                 )
             if comp.Cp_coeffs is not None:
                 self.warnings.append(

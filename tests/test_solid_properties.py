@@ -180,9 +180,9 @@ class SolidCpKernelTests(unittest.TestCase):
         ordinary = ConstantSolidCpKernel(
             **self.common(Tmin=200.0, Tmax=400.0), value=80.0,
         )
-        with self.assertRaisesRegex(ValueError, 'explicit correlation coverage'):
+        with self.assertRaisesRegex(ValueError, 'effective correlation coverage'):
             ordinary.cp(99.0)
-        with self.assertRaisesRegex(ValueError, 'explicit correlation coverage'):
+        with self.assertRaisesRegex(ValueError, 'effective correlation coverage'):
             ordinary.delta_h(99.0, 250.0)
 
         cryogenic = ConstantSolidCpKernel(
@@ -190,7 +190,7 @@ class SolidCpKernelTests(unittest.TestCase):
         )
         self.assertEqual(cryogenic.cp(50.0), 40.0)
         self.assertEqual(cryogenic.delta_h(50.0, 120.0), 2800.0)
-        with self.assertRaisesRegex(ValueError, 'explicit correlation coverage'):
+        with self.assertRaisesRegex(ValueError, 'effective correlation coverage'):
             cryogenic.cp(15.0)
 
     def test_solid_collection_clamps_outside_aggregate_range(self):
@@ -417,6 +417,78 @@ class SolidResolverTests(unittest.TestCase):
                     f'fixture {equation}', props, allow_online=False,
                 )
                 self.assertAlmostEqual(kernel.cp(300.0), expected, places=8)
+
+    def test_undeclared_solid_cp_range_uses_melting_point(self):
+        for melting_temperature, expected_Tmin in (
+            (400.0, 100.0),
+            (120.0, 96.0),
+            (80.0, 64.0),
+        ):
+            with self.subTest(Tm=melting_temperature):
+                resolver = PropertyResolver()
+                props = {
+                    'property_correlations': {
+                        'Cps': {
+                            'equation': 'poly_x',
+                            'coefficients': {'A': 50.0},
+                            'Tmin_K': None,
+                            'Tmax_K': None,
+                        },
+                    },
+                }
+                melting = PropertyResolutionResult(
+                    value=melting_temperature,
+                    source='local',
+                    method='test_melting_point',
+                    quality=0.9,
+                )
+                with patch.object(
+                    resolver,
+                    'resolve_melting_point',
+                    return_value=melting,
+                ) as resolve_melting:
+                    kernel = resolver.resolve_solid_cp_kernel(
+                        'phase-bounded-cps',
+                        props,
+                        allow_online=False,
+                        allow_estimation=False,
+                    )
+
+                self.assertEqual(kernel.Tmin, expected_Tmin)
+                self.assertEqual(kernel.Tmax, melting_temperature)
+                self.assertIn(
+                    f'resolved Tm={melting_temperature:g} K', kernel.notes
+                )
+                resolve_melting.assert_called_once_with(
+                    'phase-bounded-cps', props, allow_online=False
+                )
+
+    def test_explicit_solid_cp_range_does_not_resolve_melting_point(self):
+        props = {
+            'property_correlations': {
+                'Cps': {
+                    'equation': 'poly_x',
+                    'coefficients': {'A': 50.0},
+                    'Tmin_K': 200.0,
+                    'Tmax_K': 500.0,
+                },
+            },
+        }
+        with patch.object(
+            self.resolver,
+            'resolve_melting_point',
+            side_effect=AssertionError('Tm should not be resolved'),
+        ):
+            kernel = self.resolver.resolve_solid_cp_kernel(
+                'explicit-range-cps',
+                props,
+                allow_online=False,
+                allow_estimation=False,
+            )
+
+        self.assertEqual(kernel.Tmin, 200.0)
+        self.assertEqual(kernel.Tmax, 500.0)
+        self.assertEqual(kernel.notes, '')
 
     def test_explicit_constant_solid_cp_is_authoritative_and_unbounded(self):
         props = {

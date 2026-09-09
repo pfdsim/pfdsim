@@ -218,6 +218,94 @@ class LiquidCpResolverTests(unittest.TestCase):
         )
         self.assertEqual(pfd.quality, 1.0)
 
+    def test_undeclared_cpl_range_uses_resolved_melting_and_boiling_points(self):
+        resolver = PropertyResolver()
+        props = {
+            'property_correlations': {
+                'Cpl': {
+                    'equation': 'poly_x',
+                    'coefficients': {'A': 123.0},
+                    'Tmin_K': None,
+                    'Tmax_K': None,
+                }
+            },
+        }
+        melting = PropertyResolutionResult(
+            value=180.0,
+            source='local',
+            method='test_melting_point',
+            quality=0.9,
+        )
+        boiling = PropertyResolutionResult(
+            value=360.0,
+            source='local',
+            method='test_boiling_point',
+            quality=0.9,
+        )
+        with (
+            patch.object(
+                resolver, 'resolve_melting_point', return_value=melting
+            ) as resolve_melting,
+            patch.object(
+                resolver, 'resolve_boiling_point', return_value=boiling
+            ) as resolve_boiling,
+        ):
+            kernel = resolver.resolve_liquid_cp_kernel(
+                'phase-bounded-cpl',
+                props,
+                allow_online=False,
+                allow_estimation=False,
+            )
+
+        self.assertEqual(kernel.Tmin, 180.0)
+        self.assertEqual(kernel.Tmax, 360.0)
+        self.assertIn('resolved Tm=180 K', kernel.notes)
+        self.assertIn('resolved Tb=360 K', kernel.notes)
+        resolve_melting.assert_called_once_with(
+            'phase-bounded-cpl', props, allow_online=False
+        )
+        resolve_boiling.assert_called_once_with(
+            'phase-bounded-cpl',
+            props,
+            allow_online=False,
+            allow_estimation=False,
+        )
+
+    def test_explicit_cpl_range_does_not_resolve_phase_boundaries(self):
+        resolver = PropertyResolver()
+        props = {
+            'property_correlations': {
+                'Cpl': {
+                    'equation': 'poly_x',
+                    'coefficients': {'A': 123.0},
+                    'Tmin_K': 250.0,
+                    'Tmax_K': 500.0,
+                }
+            },
+        }
+        with (
+            patch.object(
+                resolver,
+                'resolve_melting_point',
+                side_effect=AssertionError('Tm should not be resolved'),
+            ),
+            patch.object(
+                resolver,
+                'resolve_boiling_point',
+                side_effect=AssertionError('Tb should not be resolved'),
+            ),
+        ):
+            kernel = resolver.resolve_liquid_cp_kernel(
+                'explicit-range-cpl',
+                props,
+                allow_online=False,
+                allow_estimation=False,
+            )
+
+        self.assertEqual(kernel.Tmin, 250.0)
+        self.assertEqual(kernel.Tmax, 500.0)
+        self.assertEqual(kernel.notes, '')
+
     def test_explicit_pfd_constant_is_unbounded(self):
         resolver = PropertyResolver()
         props = {

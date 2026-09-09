@@ -43,6 +43,7 @@ from .liquid_cp import (
 from .solid_cp import (
     MODIFIED_KOPP_CONTRIBUTIONS_J_MOL_K,
     MODIFIED_KOPP_OTHER_J_MOL_K,
+    SOLID_MINIMUM_TEMPERATURE_K,
     ConstantSolidCpKernel,
     LastovkaSolidCpKernel,
     ModifiedKoppSolidCpKernel,
@@ -222,9 +223,13 @@ class HeatCapacityMixin:
 
 
         @staticmethod
-        def _liquid_cp_props_fingerprint(props: Dict[str, Any]) -> str:
+        def _liquid_cp_props_fingerprint(
+            props: Dict[str, Any],
+            provided_range: Optional[tuple[float, float, str]] = None,
+        ) -> str:
             payload = {
                 'Cpl': ((props or {}).get('property_correlations') or {}).get('Cpl'),
+                'provided_Cpl_effective_range': provided_range,
                 'Cp_liquid': (props or {}).get('Cp_liquid'),
                 'Cp_liquid_source': ((props or {}).get('property_sources') or {}).get('Cp_liquid'),
                 'CAS': (props or {}).get('CAS') or (props or {}).get('cas'),
@@ -254,6 +259,95 @@ class HeatCapacityMixin:
             return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
 
 
+        def _provided_liquid_cp_range(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+            allow_estimation: bool,
+        ) -> Optional[tuple[float, float, str]]:
+            """Select explicit or phase-bounded limits for a provided Cpl curve."""
+            correlations = (props or {}).get('property_correlations') or {}
+            correlation = correlations.get('Cpl') if isinstance(correlations, dict) else None
+            if not isinstance(correlation, dict):
+                return None
+
+            raw_Tmin = correlation.get('Tmin_K')
+            raw_Tmax = correlation.get('Tmax_K')
+            Tmin_missing = raw_Tmin is None
+            Tmax_missing = raw_Tmax is None
+            Tmin = float(raw_Tmin) if not Tmin_missing else DEFAULT_TMIN_K
+            Tmax = float(raw_Tmax) if not Tmax_missing else DEFAULT_TMAX_K
+            range_notes = {}
+
+            if Tmin_missing:
+                melting = self.resolve_melting_point(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                )
+                if melting.value is not None:
+                    try:
+                        candidate = float(melting.value)
+                    except (TypeError, ValueError, OverflowError):
+                        candidate = math.nan
+                    if math.isfinite(candidate) and candidate > 0.0:
+                        Tmin = candidate
+                        range_notes['Tmin'] = (
+                            f'undeclared Tmin defaulted to resolved Tm={candidate:g} K '
+                            f'({melting.source}/{melting.method})'
+                        )
+                if 'Tmin' not in range_notes:
+                    range_notes['Tmin'] = (
+                        f'undeclared Tmin defaulted to {DEFAULT_TMIN_K:g} K; '
+                        'Tm unavailable'
+                    )
+
+            if Tmax_missing:
+                boiling = self.resolve_boiling_point(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                    allow_estimation=allow_estimation,
+                )
+                if boiling.value is not None:
+                    try:
+                        candidate = float(boiling.value)
+                    except (TypeError, ValueError, OverflowError):
+                        candidate = math.nan
+                    if math.isfinite(candidate) and candidate > 0.0:
+                        Tmax = candidate
+                        range_notes['Tmax'] = (
+                            f'undeclared Tmax defaulted to resolved Tb={candidate:g} K '
+                            f'({boiling.source}/{boiling.method})'
+                        )
+                if 'Tmax' not in range_notes:
+                    range_notes['Tmax'] = (
+                        f'undeclared Tmax defaulted to {DEFAULT_TMAX_K:g} K; '
+                        'Tb unavailable'
+                    )
+
+            if Tmax <= Tmin:
+                if Tmin_missing:
+                    Tmin = DEFAULT_TMIN_K
+                    range_notes['Tmin'] = (
+                        f'undeclared Tmin defaulted to {DEFAULT_TMIN_K:g} K; '
+                        'resolved Tm did not produce a valid liquid interval'
+                    )
+                if Tmax_missing:
+                    Tmax = DEFAULT_TMAX_K
+                    range_notes['Tmax'] = (
+                        f'undeclared Tmax defaulted to {DEFAULT_TMAX_K:g} K; '
+                        'resolved Tb did not produce a valid liquid interval'
+                    )
+
+            notes = '; '.join(
+                range_notes[key] for key in ('Tmin', 'Tmax') if key in range_notes
+            )
+            return Tmin, Tmax, notes
+
+
         @staticmethod
         def _pfd_constant_liquid_cp(props: Dict[str, Any]) -> bool:
             source = ((props or {}).get('property_sources') or {}).get('Cp_liquid') or {}
@@ -263,6 +357,7 @@ class HeatCapacityMixin:
         def _provided_liquid_cp_kernel(
             self,
             props: Dict[str, Any],
+            provided_range: Optional[tuple[float, float, str]],
         ) -> Optional[LiquidCpKernel]:
             """Build an authoritative portable Cpl or explicit PFD constant."""
             correlations = (props or {}).get('property_correlations') or {}
@@ -270,22 +365,21 @@ class HeatCapacityMixin:
             if isinstance(correlation, dict):
                 equation = str(correlation.get('equation') or '').strip().lower()
                 coefficients = self._correlation_coefficients(correlation)
-                Tmin = float(correlation.get('Tmin_K', DEFAULT_TMIN_K))
-                Tmax = float(correlation.get('Tmax_K', DEFAULT_TMAX_K))
+                if provided_range is None:
+                    raise ValueError('provided liquid Cp correlation requires a selected range')
+                Tmin, Tmax, range_note = provided_range
                 default_quality = 1.0 if correlation.get('_pfd_override') else 0.96
                 try:
                     quality = float(correlation.get('quality', default_quality))
                 except (TypeError, ValueError):
                     quality = default_quality
                 source = str(correlation.get('source') or 'provided Cpl correlation')
-                range_note = ''
-                if correlation.get('Tmin_K') is None or correlation.get('Tmax_K') is None:
-                    range_note = (
-                        f'undeclared range defaulted to {DEFAULT_TMIN_K:g}-{DEFAULT_TMAX_K:g} K'
-                    )
                 fingerprint = hashlib.sha256(
                     json.dumps(
-                        correlation,
+                        {
+                            'correlation': correlation,
+                            'effective_range': provided_range,
+                        },
                         sort_keys=True,
                         separators=(',', ':'),
                         default=str,
@@ -400,9 +494,13 @@ class HeatCapacityMixin:
 
 
         @staticmethod
-        def _solid_cp_props_fingerprint(props: Dict[str, Any]) -> str:
+        def _solid_cp_props_fingerprint(
+            props: Dict[str, Any],
+            provided_range: Optional[tuple[float, float, str]] = None,
+        ) -> str:
             payload = {
                 'Cps': ((props or {}).get('property_correlations') or {}).get('Cps'),
+                'provided_Cps_effective_range': provided_range,
                 'Cp_solid': (props or {}).get('Cp_solid'),
                 'Cp_solid_source': ((props or {}).get('property_sources') or {}).get('Cp_solid'),
                 'CAS': (props or {}).get('CAS') or (props or {}).get('cas'),
@@ -416,6 +514,76 @@ class HeatCapacityMixin:
             }
             encoded = json.dumps(payload, sort_keys=True, separators=(',', ':'), default=str)
             return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+
+
+        def _provided_solid_cp_range(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+        ) -> Optional[tuple[float, float, str]]:
+            """Select explicit or melting-bounded limits for a provided Cps curve."""
+            correlations = (props or {}).get('property_correlations') or {}
+            correlation = correlations.get('Cps') if isinstance(correlations, dict) else None
+            if not isinstance(correlation, dict):
+                return None
+
+            raw_Tmin = correlation.get('Tmin_K')
+            raw_Tmax = correlation.get('Tmax_K')
+            Tmin_missing = raw_Tmin is None
+            Tmax_missing = raw_Tmax is None
+            Tmin = float(raw_Tmin) if not Tmin_missing else SOLID_MINIMUM_TEMPERATURE_K
+            Tmax = float(raw_Tmax) if not Tmax_missing else DEFAULT_TMAX_K
+            range_notes = {}
+
+            melting = None
+            if Tmin_missing or Tmax_missing:
+                result = self.resolve_melting_point(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                )
+                if result.value is not None:
+                    try:
+                        candidate = float(result.value)
+                    except (TypeError, ValueError, OverflowError):
+                        candidate = math.nan
+                    if math.isfinite(candidate) and candidate > 0.0:
+                        melting = candidate
+
+            if Tmin_missing:
+                Tmin = (
+                    min(SOLID_MINIMUM_TEMPERATURE_K, 0.8 * melting)
+                    if melting is not None
+                    else SOLID_MINIMUM_TEMPERATURE_K
+                )
+                range_notes['Tmin'] = (
+                    f'undeclared Tmin defaulted to {Tmin:g} K'
+                    + (
+                        f' from resolved Tm={melting:g} K'
+                        if melting is not None and Tmin < SOLID_MINIMUM_TEMPERATURE_K
+                        else ''
+                    )
+                )
+
+            if Tmax_missing:
+                if melting is not None:
+                    Tmax = melting
+                    range_notes['Tmax'] = (
+                        f'undeclared Tmax defaulted to resolved Tm={melting:g} K '
+                        f'({result.source}/{result.method})'
+                    )
+                else:
+                    range_notes['Tmax'] = (
+                        f'undeclared Tmax defaulted to {DEFAULT_TMAX_K:g} K; '
+                        'Tm unavailable'
+                    )
+
+            notes = '; '.join(
+                range_notes[key] for key in ('Tmin', 'Tmax') if key in range_notes
+            )
+            return Tmin, Tmax, notes
 
 
         @staticmethod
@@ -434,6 +602,7 @@ class HeatCapacityMixin:
         def _provided_solid_cp_kernel(
             self,
             props: Dict[str, Any],
+            provided_range: Optional[tuple[float, float, str]],
         ) -> Optional[SolidCpKernel]:
             correlations = (props or {}).get('property_correlations') or {}
             correlation = correlations.get('Cps') if isinstance(correlations, dict) else None
@@ -441,22 +610,25 @@ class HeatCapacityMixin:
             if isinstance(correlation, dict):
                 equation = str(correlation.get('equation') or '').strip().lower()
                 coefficients = self._correlation_coefficients(correlation)
-                Tmin = float(correlation.get('Tmin_K', DEFAULT_TMIN_K))
-                Tmax = float(correlation.get('Tmax_K', DEFAULT_TMAX_K))
+                if provided_range is None:
+                    raise ValueError('provided solid Cp correlation requires a selected range')
+                Tmin, Tmax, range_note = provided_range
                 default_quality = 1.0 if correlation.get('_pfd_override') else 0.96
                 try:
                     quality = float(correlation.get('quality', default_quality))
                 except (TypeError, ValueError):
                     quality = default_quality
                 source = str(correlation.get('source') or 'provided Cps correlation')
-                range_note = ''
-                if correlation.get('Tmin_K') is None or correlation.get('Tmax_K') is None:
-                    range_note = (
-                        f'undeclared range defaulted to {DEFAULT_TMIN_K:g}-'
-                        f'{DEFAULT_TMAX_K:g} K'
-                    )
                 fingerprint = hashlib.sha256(
-                    json.dumps(correlation, sort_keys=True, separators=(',', ':'), default=str).encode()
+                    json.dumps(
+                        {
+                            'correlation': correlation,
+                            'effective_range': provided_range,
+                        },
+                        sort_keys=True,
+                        separators=(',', ':'),
+                        default=str,
+                    ).encode()
                 ).hexdigest()
                 common = dict(
                     Tmin=Tmin, Tmax=Tmax, quality=quality, source=source,
@@ -1626,12 +1798,18 @@ class HeatCapacityMixin:
             allow_network = self._props_allow_online(props, allow_online)
             props = self._coerce_props(symbol, props, allow_online=allow_network)
             identity = self._ideal_gas_cp_identity(symbol, props)
-            fingerprint = self._liquid_cp_props_fingerprint(props)
+            provided_range = self._provided_liquid_cp_range(
+                symbol,
+                props,
+                allow_online=allow_network,
+                allow_estimation=allow_estimation,
+            )
+            fingerprint = self._liquid_cp_props_fingerprint(props, provided_range)
             cache_key = (identity, fingerprint, bool(allow_network), bool(allow_estimation))
             if cache_key in self._liquid_cp_kernel_cache:
                 return self._liquid_cp_kernel_cache[cache_key]
 
-            kernel = self._provided_liquid_cp_kernel(props)
+            kernel = self._provided_liquid_cp_kernel(props, provided_range)
             if kernel is None:
                 cas = str((props or {}).get('CAS') or (props or {}).get('cas') or '').strip()
                 if not cas and re.fullmatch(r'\d{2,7}-\d{2}-\d', str(symbol).strip()):
@@ -1834,14 +2012,19 @@ class HeatCapacityMixin:
             allow_network = self._props_allow_online(props, allow_online)
             props = self._coerce_props(symbol, props, allow_online=allow_network)
             identity = self._ideal_gas_cp_identity(symbol, props)
-            fingerprint = self._solid_cp_props_fingerprint(props)
+            provided_range = self._provided_solid_cp_range(
+                symbol,
+                props,
+                allow_online=allow_network,
+            )
+            fingerprint = self._solid_cp_props_fingerprint(props, provided_range)
             cache_key = (identity, fingerprint, bool(allow_network), bool(allow_estimation))
             if cache_key in self._solid_cp_kernel_cache:
                 return self._solid_cp_kernel_cache[cache_key]
 
             form, polymorph = self._solid_form_selection(props)
             derived_identity = f'{identity}|{form}|{polymorph.casefold()}'
-            kernel = self._provided_solid_cp_kernel(props)
+            kernel = self._provided_solid_cp_kernel(props, provided_range)
             if kernel is None:
                 cas = str((props or {}).get('CAS') or (props or {}).get('cas') or '').strip()
                 if not cas and re.fullmatch(r'\d{2,7}-\d{2}-\d', str(symbol).strip()):
