@@ -31,6 +31,7 @@ import tempfile
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Optional, Sequence
 
@@ -293,6 +294,33 @@ def finite_float(value: Any) -> Optional[float]:
 
 def valid_cas(value: Any) -> bool:
     return bool(CAS_PATTERN.fullmatch(str(value or "").strip()))
+
+
+@lru_cache(maxsize=None)
+def noncanonical_cas_details(cas: str) -> Optional[dict[str, str]]:
+    """Describe a CAS that chemicals resolves to a different preferred CAS.
+
+    Unresolved identifiers remain admissible: absence of corroborating identity
+    metadata is not evidence that a source key is wrong.  Known source-identity
+    overrides have already been independently verified and bypass this check.
+    """
+    if cas in SOURCE_IDENTITY_OVERRIDES:
+        return None
+    try:
+        from chemicals.identifiers import search_chemical
+
+        metadata = search_chemical(cas)
+    except Exception:
+        return None
+    canonical_cas = str(getattr(metadata, "CASs", "") or "").strip()
+    if not valid_cas(canonical_cas) or canonical_cas == cas:
+        return None
+    return {
+        "source_cas": cas,
+        "resolved_canonical_cas": canonical_cas,
+        "resolved_name": str(getattr(metadata, "common_name", "") or ""),
+        "resolved_formula": str(getattr(metadata, "formula", "") or ""),
+    }
 
 
 def identity_for_cas(cas: str, fallback_name: str = "", fallback_formula: str = "") -> tuple[str, str]:
@@ -1197,6 +1225,22 @@ def compile_records() -> tuple[
     by_cas: dict[str, list[SourceCandidate]] = {}
     validation_details: dict[tuple[str, str], dict[str, Any]] = {}
     for candidate in candidates:
+        identity_mismatch = noncanonical_cas_details(candidate.cas)
+        if identity_mismatch is not None:
+            candidate.status = "quarantined"
+            candidate.reason = "source CAS resolves to a different canonical CAS"
+            candidate.details = {
+                **candidate.details,
+                "identity_quarantine": identity_mismatch,
+            }
+            validation_details[(candidate.cas, candidate.source)] = identity_mismatch
+            quarantines.append(Quarantine(
+                candidate.cas,
+                candidate.source,
+                candidate.reason,
+                identity_mismatch,
+            ))
+            continue
         by_cas.setdefault(candidate.cas, []).append(candidate)
         valid, reason, details = validate_source(candidate)
         validation_details[(candidate.cas, candidate.source)] = details
@@ -1573,6 +1617,161 @@ def write_database(
     return backup
 
 
+def forward_existing_database(output: Path) -> dict[str, Any]:
+    """Copy forward an existing database while quarantining CAS redirects."""
+    if not output.is_file():
+        raise FileNotFoundError(f"existing canonical database not found: {output}")
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    backup = Path(tempfile.gettempdir()) / f"{output.stem}.backup-{timestamp}{output.suffix}"
+    shutil.copy2(output, backup)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{output.stem}-", suffix=".forward.sqlite", dir=output.parent,
+    )
+    os.close(descriptor)
+    temporary = Path(temporary_name)
+    shutil.copy2(output, temporary)
+
+    try:
+        with sqlite3.connect(temporary) as connection:
+            connection.row_factory = sqlite3.Row
+            cas_values = [
+                str(row[0])
+                for row in connection.execute(
+                    "SELECT DISTINCT cas FROM source_candidate_audit ORDER BY cas"
+                )
+            ]
+            redirects = {
+                cas: details
+                for cas in cas_values
+                if (details := noncanonical_cas_details(cas)) is not None
+            }
+            selected_removed = 0
+            audit_rows_quarantined = 0
+            quarantine_rows_added = 0
+            reason = "source CAS resolves to a different canonical CAS"
+            for cas, details in redirects.items():
+                selected_removed += connection.execute(
+                    "DELETE FROM canonical_ideal_gas_cp WHERE cas = ?", (cas,)
+                ).rowcount
+                connection.execute("DELETE FROM source_crosscheck WHERE cas = ?", (cas,))
+                audit_rows = connection.execute(
+                    "SELECT source, details_json FROM source_candidate_audit WHERE cas = ?",
+                    (cas,),
+                ).fetchall()
+                for audit in audit_rows:
+                    try:
+                        audit_details = json.loads(audit["details_json"])
+                    except (TypeError, json.JSONDecodeError):
+                        audit_details = {}
+                    audit_details["identity_quarantine"] = details
+                    connection.execute(
+                        """
+                        UPDATE source_candidate_audit
+                        SET status = 'quarantined', reason = ?, details_json = ?
+                        WHERE cas = ? AND source = ?
+                        """,
+                        (reason, canonical_json(audit_details), cas, audit["source"]),
+                    )
+                    audit_rows_quarantined += 1
+                    exists = connection.execute(
+                        """
+                        SELECT 1 FROM source_quarantine
+                        WHERE cas = ? AND source = ? AND reason = ?
+                        """,
+                        (cas, audit["source"], reason),
+                    ).fetchone()
+                    if exists is None:
+                        connection.execute(
+                            """
+                            INSERT INTO source_quarantine
+                                (cas, source, reason, details_json)
+                            VALUES (?, ?, ?, ?)
+                            """,
+                            (cas, audit["source"], reason, canonical_json(details)),
+                        )
+                        quarantine_rows_added += 1
+
+            def read_metadata(key: str, default: Any) -> Any:
+                row = connection.execute(
+                    "SELECT value_json FROM metadata WHERE key = ?", (key,)
+                ).fetchone()
+                if row is None:
+                    return default
+                try:
+                    return json.loads(row[0])
+                except (TypeError, json.JSONDecodeError):
+                    return default
+
+            def write_metadata(key: str, value: Any) -> None:
+                connection.execute(
+                    """
+                    INSERT INTO metadata (key, value_json) VALUES (?, ?)
+                    ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json
+                    """,
+                    (key, canonical_json(value)),
+                )
+
+            forwarded_at = datetime.now(timezone.utc).isoformat()
+            migration = {
+                "kind": "quarantine_noncanonical_source_cas",
+                "forwarded_at_utc": forwarded_at,
+                "policy": (
+                    "Retain unresolved CAS records; quarantine records whose CAS "
+                    "resolves to a different preferred CAS; never remap curves."
+                ),
+                "redirected_cas_count": len(redirects),
+                "selected_rows_removed": selected_removed,
+                "audit_rows_quarantined": audit_rows_quarantined,
+                "quarantine_rows_added": quarantine_rows_added,
+            }
+            patch_history = read_metadata("patch_history", [])
+            if not isinstance(patch_history, list):
+                patch_history = []
+            patch_history.append(migration)
+            write_metadata("patch_history", patch_history)
+            write_metadata("forwarded_at_utc", forwarded_at)
+
+            report = read_metadata("report", {})
+            if isinstance(report, dict):
+                report["selected_count"] = connection.execute(
+                    "SELECT count(*) FROM canonical_ideal_gas_cp"
+                ).fetchone()[0]
+                report["unique_cas_count"] = connection.execute(
+                    """
+                    SELECT count(DISTINCT cas) FROM source_candidate_audit
+                    WHERE status != 'quarantined'
+                    """
+                ).fetchone()[0]
+                report["quarantine_count"] = connection.execute(
+                    "SELECT count(*) FROM source_quarantine"
+                ).fetchone()[0]
+                report["selected_by_source"] = {
+                    str(row[0]): int(row[1])
+                    for row in connection.execute(
+                        """
+                        SELECT source, count(*) FROM canonical_ideal_gas_cp
+                        GROUP BY source ORDER BY source
+                        """
+                    )
+                }
+                write_metadata("report", report)
+
+            integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+            if integrity != "ok":
+                raise RuntimeError(f"forwarded database integrity check failed: {integrity}")
+            migration["integrity"] = integrity
+            connection.commit()
+            connection.execute("VACUUM")
+
+        os.replace(temporary, output)
+        output.chmod(0o644)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return {**migration, "output": str(output), "backup": str(backup)}
+
+
 def validate_database(path: Path) -> dict[str, Any]:
     with sqlite3.connect(path) as connection:
         connection.row_factory = sqlite3.Row
@@ -1698,9 +1897,21 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--report", type=Path, default=None)
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument(
+        "--forward-existing",
+        action="store_true",
+        help=(
+            "Copy existing records forward without refitting, quarantining source "
+            "CAS identifiers that resolve to a different preferred CAS."
+        ),
+    )
     args = parser.parse_args()
 
     self_test()
+    if args.forward_existing:
+        result = forward_existing_database(args.output)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
     if args.validate_only:
         result = validate_database(args.output)
         print(json.dumps(result, indent=2, sort_keys=True))
