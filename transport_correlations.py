@@ -26,6 +26,27 @@ def _positive_float(value: float, label: str) -> float:
     return value
 
 
+def laminar_flat_plate_transfer(reynolds: float, prandtl: float, schmidt: float) -> dict:
+    """Area-average Nu/Sh for parallel laminar flow over an isothermal plate.
+
+    Nu=0.664 Re**0.5 Pr**(1/3), with the heat/mass-transfer analogy for Sh.
+    Require Re<5e5, Pr/Sc>=0.6 and thermal/solute Peclet numbers >=100.
+    Sources: COMSOL Heat Transfer, External Forced Convection (plate);
+    COMSOL Multiphysics Cyclopedia, What Is Mass Transfer? (flat plate).
+    """
+    re = _positive_float(reynolds, 'Reynolds number')
+    pr = _positive_float(prandtl, 'Prandtl number')
+    sc = _positive_float(schmidt, 'Schmidt number')
+    if re >= 5e5 or min(pr, sc) < 0.6 or min(re * pr, re * sc) < 100:
+        raise TransportCorrelationError(
+            'Laminar flat-plate transfer requires Re<5e5, Pr and Sc>=0.6, '
+            'and thermal and solutal Peclet numbers>=100'
+        )
+    return {'reynolds': re, 'prandtl': pr, 'schmidt': sc,
+            'nusselt': 0.664 * math.sqrt(re) * pr**(1/3),
+            'sherwood': 0.664 * math.sqrt(re) * sc**(1/3)}
+
+
 def _profile_value(profile: ScalarProfile, position_m: float, label: str) -> float:
     value = profile(float(position_m)) if callable(profile) else profile
     return _finite_float(value, label)

@@ -644,8 +644,8 @@ UNIT_DOF_RULES = {
     # =========================================================================
     'Crystallizer': {
         'description': (
-            'Equilibrium cooling or steady kinetic MSMPR crystallizer with '
-            'retained slurry or ideal cake/mother-liquor split'
+            'Equilibrium suspension/layer, steady MSMPR, or finite-rate layer '
+            'crystallizer with optional bulk cooling and liquid inclusions'
         ),
         'category': 'solid',
         'phase_support': ['SLE'],
@@ -655,7 +655,25 @@ UNIT_DOF_RULES = {
             'P_drop': {'unit': 'bar', 'default': 0.0},
             'equilibrium_tolerance': {'default': 1e-8},
             'max_iterations': {'default': 500},
-            'model': {'values': ['equilibrium', 'MSMPR'], 'default': 'equilibrium'},
+            'model': {'values': ['equilibrium', 'MSMPR', 'layer_growth'], 'default': 'equilibrium'},
+            'crystallization_mode': {
+                'values': ['suspension', 'layer'], 'default': 'suspension',
+                'description': 'Layer mode uses equilibrium deposits and mother-liquor drainage',
+            },
+            'cooled_area': {'unit': 'm2'},
+            'film_thickness': {'unit': 'm'},
+            'thermal_film_thickness': {'unit': 'm'},
+            'thermal_mode': {'values': ['isothermal', 'cooling']},
+            'film_model': {'values': ['specified', 'flat_plate']},
+            'plate_length': {'unit': 'm'},
+            'liquid_velocity': {'unit': 'm/s'},
+            'inclusion_max_fraction': {'default': 0.0},
+            'growth_time': {'unit': 'h'},
+            'cycle_time': {'unit': 'h'},
+            'T_wall': {'unit': 'K'},
+            'binary_diffusivity': {'unit': 'm2/s'},
+            'layer_relative_tolerance': {'default': 1e-6},
+            'layer_profile_points': {'default': 21},
             'residence_time': {'unit': 'h'},
             'volume': {'unit': 'm3'},
             'msmpr_tolerance': {'unit': 'kmol/h', 'default': 1e-8},

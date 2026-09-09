@@ -1512,7 +1512,32 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
 
 **Crystallizer:**
 
-- `model` selects `equilibrium` (the default) or `MSMPR`. The equilibrium
+- `crystallization_mode` selects `suspension` (the default) or `layer`.
+  Layer mode is an **equilibrium endpoint** calculation using the same rigorous
+  pure-solid SLE and enthalpy model as suspension mode when used with
+  `model=equilibrium`. It requires a feed without solids. All equilibrium crystals are
+  assumed to deposit and are harvested through `layer` (alias of `cake`);
+  drained liquid leaves through `mother_liquor`. Both outlets must be connected.
+  Mother-liquor retention defaults to zero in layer mode; either retention
+  specification below can override it. Retention is specified, not predicted.
+  Deposited crystals carry no particle-size distribution, diameter, or
+  sphericity; `outlet_sphericity` is rejected in layer mode.
+  Flow rates represent equivalent throughput over complete harvest cycles.
+  This mode does not predict wall growth, layer thickness, cycle duration,
+  heat/mass-transfer limitations, impurity trapping, or sweating. Equal endpoint
+  temperature, pressure, feed, and retention give the same phase amounts and
+  duty as equilibrium suspension with a cake split.
+
+  ```pfd
+  UNIT C : Crystallizer
+      model = equilibrium
+      crystallization_mode = layer
+      T = 250 [K]
+  STREAM Layer : C.layer -> PRODUCT
+  STREAM Mother : C.mother_liquor -> PRODUCT
+  ```
+
+- `model` selects `equilibrium` (the default), `MSMPR`, or `layer_growth`. The equilibrium
   model retains the existing pure-solid SLE behavior. `MSMPR` enables the
   steady kinetic population-balance model described below.
 - One `in`/`solution` inlet is cooled to a specified `T_out`/`Tout`/`T`/`temperature`.
@@ -1530,7 +1555,8 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   coefficients (or liquid EOS fugacity ratios), and a solid/liquid molar-volume
   pressure correction. Each crystallizing component forms its own pure solid;
   co-crystallization is not modeled.
-- By default the sole `out`/`slurry` outlet retains all mother liquor and solid.
+- In suspension mode, by default the sole `out`/`slurry` outlet retains all
+  mother liquor and solid.
 - Specifying `mother_liquor_retention` (alias
   `mother_liquor_retention_fraction`) enables `cake` and `mother_liquor`
   outlets. It is the fraction from 0 to 1 of the equilibrium mother liquor
@@ -1576,6 +1602,198 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   and MSMPR modes. Unit performance records `outlet_lle_check`; outlet phase
   metadata records `crystallizer_lle_check`. A failed phase check produces an
   explicit warning and `checked=false`, rather than claiming no LLE.
+
+**Finite-rate layer growth:**
+
+`model = layer_growth` selects `crystallization_mode = layer` automatically.
+It accepts a multicomponent liquid feed with exactly one present component
+declared `conventional_with_solid` and at least one other liquid component.
+All other components remain liquid, either in the free mother liquor or in
+trapped inclusions. This is a planar, quasi-steady thermal model with
+time-dependent deposition, bulk composition, and optional bulk cooling.
+It is not a spatial transient conduction model.
+The layer starts at zero thickness with instantaneous surface nucleation.
+
+```pfd
+UNIT C : Crystallizer
+    model = layer_growth
+    T = 270 [K]
+    T_wall = 250 [K]
+    cooled_area = 10 [m2]
+    film_thickness = 1 [mm]
+    growth_time = 6 [min]
+    cycle_time = 60 [min]
+STREAM Layer : C.layer -> PRODUCT
+STREAM Mother : C.mother_liquor -> PRODUCT
+```
+
+Design/operating inputs:
+
+- `thermal_mode = isothermal` (default): `T`/`T_out` specifies the controlled
+  bulk-liquid and final harvested-product temperature, below the pure-component
+  melting point.
+- `thermal_mode = cooling`: omit `T`/`T_out`. The initial temperature is the
+  liquid inlet temperature; outlet temperature is predicted by integrating the
+  free-liquid enthalpy balance. Starting above the pure melting point is allowed.
+- `T_wall`: constant solid-side cold-wall temperature, below bulk temperature
+  and the pure-component melting point. Wall/coolant resistance upstream of
+  this specified surface temperature is outside the model.
+- `cooled_area`: planar deposition area in `m2` or `m^2`.
+- `film_model = specified` (default): `film_thickness` is the effective
+  mass-transfer film thickness in `m`, `mm`, or
+  `um`. Optional `thermal_film_thickness` independently specifies the thermal
+  film thickness in the same units; it defaults to `film_thickness`.
+  These are supplied hydrodynamic parameters, not inferred vessel dimensions.
+- `film_model = flat_plate`: supply `plate_length` (along the flow, in `m`,
+  `mm`, or `um`) and `liquid_velocity` (`m/s`, `cm/s`, or `m/h`). Omit both film
+  thickness inputs. The laminar flat-plate correlation calculates them instead.
+- `growth_time`: active deposition duration in `h`, `min`, or `s`.
+- `cycle_time`: full cycle duration in those same units, at least `growth_time`.
+  Inlet kmol/h times cycle hours defines charge kmol per batch; deposited kmol
+  divided by cycle hours defines the harvested flow. No separate batch charge
+  or retained seed is added to this balance.
+
+For example, cooling with correlated films and liquid inclusions:
+
+```pfd
+UNIT C : Crystallizer
+    model = layer_growth
+    thermal_mode = cooling
+    T_wall = 250 [K]
+    cooled_area = 10 [m2]
+    film_model = flat_plate
+    plate_length = 0.1 [m]
+    liquid_velocity = 0.1 [m/s]
+    growth_time = 6 [min]
+    cycle_time = 60 [min]
+    inclusion_max_fraction = 0.1
+    effective_diffusivity = 1e-9 [m2/s]
+```
+
+The inclusion parameter and diffusivity here are illustrative inputs, not
+recommended values for arbitrary compounds. Omitting diffusivity enables the
+estimates described below; specifying it bypasses those estimates.
+
+At each integration stage the interface solves pure-solid SLE and the Stefan
+balance `integral[T_wall,T_interface](k_s(T) dT)/thickness = q_liquid + N_crystal ΔH_fusion`.
+The heat of crystallization uses partial liquid molar enthalpy (including the
+thermodynamic model's heat of mixing) and the fusion-consistent solid enthalpy.
+Solid density is held at the wall-temperature value; solid conductivity is
+resolved and numerically integrated across the wall/interface temperature range.
+This is the steady planar Fourier-law integral, including nonlinear conductivity
+variation rather than a mean-temperature approximation. The zero-thickness limit
+sets the interface to wall temperature and obtains a finite rate from film
+mass transfer.
+
+Liquid-film heat transfer uses `h = k_liquid/thermal_film_thickness`. The shared
+`mixture_liquid_thermal_conductivity` method uses Li's volume-fraction mixing
+rule with harmonic pair conductivities:
+`k_mix = sum_i sum_j phi_i phi_j 2/(1/k_i + 1/k_j)`.
+Pure conductivities and pure liquid volumes come from existing resolver paths.
+The empirical rule does not represent anomalous mixture conductivity.
+
+Selective mass transfer uses a pseudo-binary solvent-blend film equation,
+integrating `c D_MS Gamma/(1-x_crystal)` over interface-to-bulk mole fraction;
+`Gamma = d ln(a_crystal)/d ln(x_crystal)` along a path with fixed relative
+proportions of all noncrystallizing components. Activities and enthalpies are
+evaluated for the full mixture. Film properties are evaluated at the
+bulk temperature, and thermal diffusion (Soret effect) is omitted. Nonpositive
+thermodynamic factors fail explicitly. For binary liquids this reduces to the
+zero-solvent-flux Maxwell–Stefan film model. For multicomponent liquids it is
+an effective approximation: differential diffusion among noncrystallizing
+components and the full Maxwell–Stefan matrix are not resolved.
+
+For each crystal-component/other-component pair, `D_MS` uses Vignes interpolation
+of Wilke–Chang infinite-dilution estimates with mole fractions normalized within
+that pair. The effective diffusivity is the harmonic average of those pair
+values, weighted by the noncrystallizing components' solvent-blend fractions.
+This mixture extension is a heuristic closure. Binary feeds retain the binary
+Vignes result. Estimates are updated with bulk temperature and composition.
+They use pure-solvent viscosity,
+solute liquid volume at its normal boiling point, and solvent association
+factors of 2.6 (water), 1.9 (methanol), 1.5 (ethanol), and 1 otherwise. Water
+as solute uses four times its liquid molar volume in the diffusivity estimate.
+These estimates are intended for molecular liquids, not electrolyte diffusion.
+Optional `binary_diffusivity` (alias `effective_diffusivity`) supplies a constant
+effective Maxwell–Stefan diffusivity instead (`m2/s`, `cm2/s`, or `m2/h`);
+the thermodynamic factor still applies. This override bypasses all pair estimates.
+
+The flat-plate option uses area-average `Nu=0.664 Re^0.5 Pr^(1/3)` and
+`Sh=0.664 Re^0.5 Sc^(1/3)`, giving `thermal_film_thickness=L/Nu` and
+`film_thickness=L/Sh`. Properties are evaluated at the instantaneous bulk
+temperature/composition; heat capacity comes from the liquid-enthalpy derivative.
+Schmidt number uses the effective Fick diffusivity `D_MS*Gamma` at bulk composition.
+The model requires `Re<5e5`, `Pr>=0.6`, `Sc>=0.6`, and both thermal and solutal
+Peclet numbers at least 100. Out-of-range conditions fail explicitly. This
+correlation assumes forced laminar flow along a smooth plate, approximates the
+surface by an area average, and does not describe stirred vessels, natural
+convection, or the changing hydrodynamics of a thick/rough deposit.
+
+`inclusion_max_fraction` enables a bounded mechanical-liquid-capture heuristic
+when greater than zero; default zero disables capture. Its range is `[0,1)`.
+At each step, `epsilon = inclusion_max_fraction * Pe_growth/(1+Pe_growth)`,
+where `Pe_growth = G_dense*film_thickness/D_Fick` and `G_dense=N_crystal*V_solid`.
+Captured volume rate is `epsilon/(1-epsilon)` times the newly formed solid
+volume rate. This is an adjustable engineering heuristic, not a fitted universal
+correlation. It vanishes with growth rate and is bounded by the specified fraction.
+
+Captured liquid has the instantaneous bulk composition and enthalpy. Mechanical
+engulfment is assumed to bypass the selective diffusion film, so it is separate
+from lattice incorporation or an interfacial partition coefficient. Each
+component's trapped amount is accumulated over time and removed from the free
+liquid inventory. Layer thickness includes the captured volume. Effective layer
+conductivity uses the harmonic solid/liquid mixing rule at the accumulated
+porosity, with liquid conductivity evaluated at bulk conditions. Captured liquid
+volumes remain at their capture values. Inclusions do not subsequently diffuse,
+freeze, drain, or undergo sweating; their liquid state is a metastable approximation.
+
+Cooling integrates free-liquid enthalpy, subtracting liquid-to-interface heat
+transfer and the enthalpy carried by material leaving the free liquid. The
+shared enthalpy-state solver recovers bulk temperature. An independent
+deposition-enthalpy ledger accumulates crystal enthalpy at interface temperature
+and trapped-liquid enthalpy at capture temperature. These equations obey
+`d(H_bulk + H_deposited)/dt = Q_wall` within the quasi-steady model, and the
+reported energy residual checks this identity. The ledger does not resolve
+sensible-heat redistribution in the existing layer or a spatial temperature
+field. In isothermal mode the ledger's bulk energy differs from actual bulk
+enthalpy; their difference is reported as `temperature_control_energy_kJ`.
+
+Solid conductivity is requested from the shared resolver with `phase='solid'`.
+The current resolver does not yet support that phase, so a normal production
+growth run will fail explicitly until that resolution chain is available.
+Neither a liquid-conductivity substitute nor a hardcoded solid value is used.
+Other missing transport properties also fail explicitly. Equilibrium layer
+mode does not require conductivity or diffusivity.
+
+`layer_relative_tolerance` (default `1e-6`) controls time integration;
+`layer_profile_points` (integer >= 2, default 21) sets reported profile points.
+Performance/phase details report thickness, deposited amount, interface
+temperature/composition, SLE and Stefan residuals, and wall heat removal.
+`wall_duty_kW` is cycle-averaged wall heat transfer (negative for cooling).
+Total `duty_kW` remains the exact inlet/outlet enthalpy difference.
+`conditioning_duty_kW = duty_kW - wall_duty_kW` accounts for thermostatted-bulk
+operation and feed/product conditioning, including bringing the harvested
+layer to the specified outlet temperature. Solid allocation is preserved during
+that conditioning; it does not perform another equilibrium/remelting stage.
+
+Mother-liquor retention/drainage applies only to the free liquid remaining after
+inclusion capture. All captured liquid stays with the harvested layer, including
+when drainage retention is zero. Its accumulated composition is preserved;
+it is not reassigned the final free-liquid composition. The stream represents
+trapped material as liquid, not as an additional crystalline impurity phase.
+No solid solution, bulk nucleation, sweating, or remelting stage is predicted.
+Significant reverse growth fails explicitly. The homogeneous-liquid limitation and outlet
+LLE diagnostics still apply. Predictions rely on the stated film and
+quasi-steady assumptions; the solver has not been calibrated to equipment data.
+
+Transport references:
+[Li (1976)](https://doi.org/10.1002/aic.690220520),
+[Wilke and Chang (1955)](https://doi.org/10.1002/aic.690010222),
+[Vignes (1966)](https://doi.org/10.1021/i160018a007), and the
+[water-solute correction discussion](https://www.sciencedirect.com/science/article/pii/S0021967311010089).
+For flat-plate transfer, see
+[COMSOL external forced convection](https://doc.comsol.com/6.4/doc/com.comsol.help.heat/heat_ug_theory.07.102.html)
+and [COMSOL mass-transfer theory](https://www.comsol.com/multiphysics/what-is-mass-transfer?parent=fluid-flow-heat-transfer-and-mass-transport-0402-372).
 
 **Steady kinetic MSMPR mode:**
 

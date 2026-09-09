@@ -352,6 +352,7 @@ class IdealThermodynamics:
         self._liquid_molar_volume_info_cache: dict[tuple[str, float], tuple[float, Optional[str]]] = {}
         self._solid_molar_volume_cache: dict[tuple[str, float], float] = {}
         self._viscosity_cache: dict[tuple[str, str, float, float], float] = {}
+        self._thermal_conductivity_cache: dict[tuple[str, str, float], float] = {}
         self._surface_tension_cache: dict[tuple[str, float], float] = {}
         self._surface_tension_calculators: dict[tuple[str, ...], object] = {}
         self._liquid_molar_volume_sources: dict[str, list[dict]] = {}
@@ -3659,6 +3660,54 @@ class IdealThermodynamics:
         """Mixture liquid molar density [kmol/m3]."""
         V_molar = self.mixture_liquid_molar_volume(composition, T)
         return 1.0 / V_molar
+
+    def pure_thermal_conductivity(self, comp: str, T: float, phase: str) -> float:
+        """Resolver-backed pure conductivity [W/(m K)], including solid requests."""
+        key = (phase, comp, float(T))
+        if key in self._thermal_conductivity_cache:
+            return self._thermal_conductivity_cache[key]
+        try:
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from ..property_resolver import get_property_resolver
+            else:
+                from property_resolver import get_property_resolver
+            result = get_property_resolver().resolve_thermal_conductivity(
+                _property_lookup_identifier(comp, self.props[comp]), T, phase=phase,
+                props=self._resolver_known_props.get(comp),
+            )
+            value = float(result.value)
+            if not math.isfinite(value) or value <= 0:
+                raise ValueError('conductivity must be positive and finite')
+        except Exception as error:
+            raise ThermodynamicsError(
+                f"Cannot resolve {phase} thermal conductivity for {comp!r} "
+                f"at T={T:g} K: {error}"
+            ) from error
+        self._record_lazy_property_source(comp, f'{phase}_thermal_conductivity', T, result)
+        return self._set_limited_cache(self._thermal_conductivity_cache, key, value)
+
+    def mixture_liquid_thermal_conductivity(self, composition: dict[str, float], T: float) -> float:
+        """Li (1976) volume-fraction/harmonic-pair liquid mixing [W/(m K)].
+
+        DOI: 10.1002/aic.690220520. Pure volumes use the same resolver path as
+        liquid density. This empirical rule is for homogeneous liquid mixtures.
+        """
+        composition = self._normalized_liquid_transport_composition(composition)
+        conductivities = {
+            c: self.pure_thermal_conductivity(c, T, 'liquid') for c in composition
+        }
+        if len(composition) == 1:
+            return next(iter(conductivities.values()))
+        volumes = {
+            c: x * self.mixture_liquid_molar_volume({c: 1.0}, T)
+            for c, x in composition.items()
+        }
+        total = sum(volumes.values())
+        return sum(
+            volumes[i] * volumes[j] / total**2
+            * 2 / (1 / conductivities[i] + 1 / conductivities[j])
+            for i in composition for j in composition
+        )
 
     def _pure_viscosity(self, comp: str, T: float, P: float, phase: str) -> float:
         """Resolve and cache pure-component dynamic viscosity [Pa*s]."""

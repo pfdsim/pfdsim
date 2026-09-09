@@ -277,7 +277,7 @@ PORT_FAMILY_SCHEMAS = {
         'outlets': {
             **_COMMON_OUT,
             **_names('out', 'slurry', 'slurry_out', 'crystallizer_product'),
-            **_names('cake', 'crystals', 'crystal_cake', 'wet_cake'),
+            **_names('cake', 'crystals', 'crystal_cake', 'wet_cake', 'layer'),
             **_names('mother_liquor', 'liquor', 'filtrate', 'mother'),
         },
         'types': {

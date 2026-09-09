@@ -19,6 +19,7 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
         solve_steady_msmpr,
     )
     from .particle_size_distributions import propagate_particle_size_distributions
+    from .layer_crystallization import solve_layer_growth
     from .thermodynamics_models.activity import ActivityCoefficientThermodynamics
     from .thermodynamics_models.common import ThermodynamicsError
     from .thermodynamics_models.sle import solve_pure_solid_sle
@@ -37,6 +38,7 @@ else:
         solve_steady_msmpr,
     )
     from particle_size_distributions import propagate_particle_size_distributions
+    from layer_crystallization import solve_layer_growth
     from thermodynamics_models.activity import ActivityCoefficientThermodynamics
     from thermodynamics_models.common import ThermodynamicsError
     from thermodynamics_models.sle import solve_pure_solid_sle
@@ -44,7 +46,7 @@ else:
 
 
 class Crystallizer(UnitOperation):
-    """Equilibrium or steady kinetic MSMPR cooling crystallizer."""
+    """Equilibrium suspension/layer or steady kinetic MSMPR crystallizer."""
 
     supports_permanent_solids = True
     particle_size_behavior = 'custom'
@@ -137,12 +139,21 @@ class Crystallizer(UnitOperation):
         else:
             slurry.solid_particle_size_distributions.update(generated_psds)
         slurry.validate_particle_size_distributions()
-        diagnostic, warnings = self._lle_diagnostic(slurry)
+        diagnostic_stream = slurry
         separation = None
         if retention_spec is None:
             outlets = {'out': slurry}
         else:
             cake, liquor, separation = self._split_slurry(slurry, retention_spec)
+            if retention_spec.get('trapped_component_flows'):
+                diagnostic_stream = liquor
+                if liquor.F <= 1e-15:
+                    # Fully retained free liquor still needs its own LLE check;
+                    # its composition differs from the historical inclusions.
+                    diagnostic_stream = self.thermo.calculate_state(
+                        slurry.T, slurry.P, 1.0,
+                        performance['mother_liquor_composition'], phase='liquid',
+                    )
             outlets = {'cake': cake, 'mother_liquor': liquor}
             for stream in outlets.values():
                 propagate_particle_size_distributions((slurry,), stream)
@@ -152,7 +163,14 @@ class Crystallizer(UnitOperation):
                     if stream.solid_component_flows.get(c, 0) > 1e-15
                 }
                 stream.validate_particle_size_distributions()
+        diagnostic, warnings = self._lle_diagnostic(diagnostic_stream)
         for stream in outlets.values():
+            if self.get_param('crystallization_mode') == 'layer':
+                # A deposited layer has no particle diameter or sphericity.
+                # State construction and split propagation may attach defaults.
+                for component in candidates:
+                    stream.solid_particle_size_distributions.pop(component, None)
+                    stream.solid_particle_properties.pop(component, None)
             for name, details in phase_details.items():
                 stream.phase_details[name] = dict(details)
             if diagnostic is not None:
@@ -166,9 +184,13 @@ class Crystallizer(UnitOperation):
         duty = sum(s.F * s.H for s in outlets.values()) - inlet.F * inlet.H
         performance = {
             **performance,
+            'crystallization_mode': self.get_param('crystallization_mode'),
             'T_out_C': slurry.T - 273.15,
             'P_out_bar': slurry.P,
-            'outlet_mode': 'slurry' if separation is None else 'cake_split',
+            'outlet_mode': (
+                'layer_drainage' if self.get_param('crystallization_mode') == 'layer'
+                else 'slurry' if separation is None else 'cake_split'
+            ),
             **{
                 key: None if separation is None else separation[key]
                 for key in (
@@ -182,6 +204,8 @@ class Crystallizer(UnitOperation):
         }
         if diagnostic is not None:
             performance['outlet_lle_check'] = diagnostic
+        if 'wall_duty_kW' in performance:
+            performance['conditioning_duty_kW'] = duty / 3600 - performance['wall_duty_kW']
         return UnitResult(
             outlet_streams=outlets,
             heat_duty=duty,
@@ -411,6 +435,12 @@ class Crystallizer(UnitOperation):
         for phase_name in ('liquid1', 'liquid2'):
             for component, flow in phase_flows[phase_name].items():
                 liquid_flows[component] = liquid_flows.get(component, 0.0) + flow
+        trapped_flows = retention_spec.get('trapped_component_flows', {})
+        for component, flow in trapped_flows.items():
+            available = liquid_flows.get(component, 0.0)
+            if not math.isfinite(flow) or flow < 0 or flow > available + max(1e-10, available * 1e-10):
+                raise UnitOperationError('Trapped liquid exceeds available component inventory')
+            liquid_flows[component] = max(0.0, available - flow)
         solid_flows = dict(phase_flows['solid'])
         conventional_solid_set = set(self.thermo.conventional_solid_components)
         crystal_flows = {
@@ -446,6 +476,7 @@ class Crystallizer(UnitOperation):
             retention = retained_liquor_mass / liquid_mass if liquid_mass > 0.0 else 0.0
         cake_flows = {
             component: solid_flows.get(component, 0.0)
+            + trapped_flows.get(component, 0.0)
             + retention * liquid_flows.get(component, 0.0)
             for component in set(solid_flows) | set(liquid_flows)
         }
@@ -455,7 +486,9 @@ class Crystallizer(UnitOperation):
         }
         cake_total = sum(cake_flows.values())
         liquor_total = sum(mother_liquor_flows.values())
-        liquid_fallback = slurry.x1 or slurry.x or slurry.composition
+        liquid_fallback = self._composition_from_flows(
+            liquid_flows, slurry.x1 or slurry.x or slurry.composition
+        )
         cake_composition = self._composition_from_flows(cake_flows, liquid_fallback)
         liquor_composition = self._composition_from_flows(
             mother_liquor_flows, liquid_fallback
@@ -489,6 +522,7 @@ class Crystallizer(UnitOperation):
                 retained_liquor_mass / crystal_mass if crystal_mass > 0.0 else 0.0
             ),
             'dry_crystal_mass_kg_per_h': crystal_mass,
+            'trapped_liquid_mass_kg_per_h': self._component_mass_flow(trapped_flows),
             'retained_mother_liquor_mass_kg_per_h': retained_liquor_mass,
         }
         cake.phase_details['crystallizer_separation'] = dict(separation)
@@ -702,6 +736,112 @@ class Crystallizer(UnitOperation):
             ),
         )
 
+    def _solve_layer_growth(self, inlet, temperature, pressure, candidates, retention):
+        if inlet.vapor_fraction > 1e-10:
+            raise UnitOperationError('Layer growth requires a liquid feed; condensation is not modeled')
+        if len(candidates) != 1:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' layer_growth requires one crystallizing component"
+            )
+        growth_time = self._one_dimension(('growth_time',), self._TIME_FACTORS_H, 'growth time', 'h')
+        cycle_time = self._one_dimension(('cycle_time',), self._TIME_FACTORS_H, 'cycle time', 'h')
+        if cycle_time < growth_time:
+            raise UnitOperationError('Layer cycle_time must be at least growth_time')
+        area = self._one_dimension(('cooled_area',), {'m2': 1, 'm^2': 1}, 'cooled area', 'm2')
+        film = self._one_dimension(('film_thickness',), self._DIAMETER_FACTORS_M, 'film thickness', 'm')
+        thermal_film = self._one_dimension(
+            ('thermal_film_thickness',), self._DIAMETER_FACTORS_M, 'thermal film thickness', 'm'
+        )
+        if thermal_film is None:
+            thermal_film = film
+        length = self._one_dimension(('plate_length',), self._DIAMETER_FACTORS_M, 'plate length', 'm')
+        velocity = self._one_dimension(
+            ('liquid_velocity',), {'m/s': 1, 'm/h': 1/3600, 'cm/s': 0.01}, 'liquid velocity', 'm/s'
+        )
+        diffusivity = self._one_dimension(
+            ('binary_diffusivity',), {'m2/s': 1, 'm^2/s': 1, 'cm2/s': 1e-4,
+                                      'cm^2/s': 1e-4, 'm2/h': 1/3600},
+            'binary diffusivity', 'm2/s',
+        )
+        self._number('t_wall', minimum=-float('inf'))
+        wall = self.get_temperature_param('t_wall')
+        component = candidates[0]
+        try:
+            growth = solve_layer_growth(
+                self.thermo, component=component,
+                amounts_kmol={c: n * cycle_time for c, n in inlet.component_flows().items()},
+                bulk_temperature_K=temperature, pressure_bar=pressure,
+                wall_temperature_K=wall, area_m2=area, film_thickness_m=film,
+                thermal_film_thickness_m=thermal_film,
+                thermal_mode=self.get_param('thermal_mode'), film_model=self.get_param('film_model'),
+                plate_length_m=length, liquid_velocity_m_s=velocity,
+                inclusion_max_fraction=self._number('inclusion_max_fraction', 0, inclusive=True, maximum=1),
+                growth_time_h=growth_time, binary_diffusivity_m2_s=diffusivity,
+                relative_tolerance=self._number('layer_relative_tolerance', 1e-6),
+                profile_points=self._number('layer_profile_points', 21, minimum=2, inclusive=True, integer=True),
+            )
+            solid_flow = growth.solid_amount_kmol / cycle_time
+            outlet = self.thermo.calculate_state_with_solid_flows(
+                growth.bulk_temperature_K, pressure, inlet.F, inlet.composition,
+                {component: solid_flow} if solid_flow > 1e-15 else {}, phase='liquid',
+            )
+        except (ThermodynamicsError, ValueError, TypeError) as error:
+            raise UnitOperationError(f"Crystallizer '{self.unit_id}' layer growth failed: {error}") from error
+        details = {
+            'model': 'planar_quasi_steady_layer_growth',
+            'component': component,
+            'layer_thickness_m': growth.thickness_m,
+            'cooled_area_m2': area,
+            'film_thickness_m': growth.profile[-1]['film_thickness_m'],
+            'thermal_film_thickness_m': growth.profile[-1]['thermal_film_thickness_m'],
+            'solid_conduction_model': 'integrated_temperature_dependent_conductivity',
+            'growth_time_h': growth_time,
+            'cycle_time_h': cycle_time,
+            'T_wall_K': wall,
+            'T_bulk_K': growth.bulk_temperature_K,
+            'T_initial_K': temperature,
+            'thermal_mode': self.get_param('thermal_mode'),
+            'film_model': self.get_param('film_model'),
+            'plate_length_m': length,
+            'liquid_velocity_m_s': velocity,
+            'inclusion_max_fraction': self.get_param('inclusion_max_fraction', 0),
+            'inclusion_model': 'mechanical_bulk_liquid_capture',
+            'mass_transfer_model': 'pseudo_binary_solvent_blend',
+            'trapped_component_amounts_kmol_per_batch': growth.trapped_component_amounts_kmol,
+            'energy_balance_residual_kJ_per_batch': growth.energy_residual_kJ,
+            'temperature_control_energy_kJ_per_batch': growth.profile[-1]['temperature_control_energy_kJ'],
+            'solid_amount_kmol_per_batch': growth.solid_amount_kmol,
+            'wall_energy_kJ_per_batch': growth.wall_energy_kJ,
+            'wall_duty_kW': growth.wall_energy_kJ / (cycle_time * 3600),
+            'mass_diffusivity_model': 'specified_maxwell_stefan' if diffusivity is not None else 'wilke_chang_vignes',
+            'liquid_conductivity_model': 'Li_1976',
+            'evaluations': growth.evaluations,
+            'assumptions': [
+                'multicomponent_homogeneous_liquid', 'one_pure_solid', 'planar_geometry',
+                'fixed_noncrystallizing_component_ratios_in_selective_film',
+                self.get_param('thermal_mode') + '_bulk', 'constant_wall_temperature',
+                'quasi_steady_thermal_profiles', 'constant_solid_density_at_wall',
+                'instantaneous_surface_nucleation', 'no_bulk_nucleation',
+                'no_soret_effect', 'no_sweating', 'harvest_conditioned_to_bulk_temperature',
+                'mechanical_inclusions_bypass_selective_film', 'harmonic_porous_conductivity',
+                'no_sensible_heat_redistribution_in_existing_layer',
+            ],
+            'profile': growth.profile,
+        }
+        performance = {
+            **details,
+            'crystallizing_component': component,
+            'solid_component_flows_kmol_per_h': {component: solid_flow},
+            'crystallized_component_flows_kmol_per_h': {component: solid_flow},
+            'crystal_yields': {component: solid_flow / inlet.component_flows()[component]},
+            'mother_liquor_composition': self._composition_from_flows(growth.liquid_component_amounts_kmol, {}),
+        }
+        retention = {**retention, 'trapped_component_flows': {
+            c: n / cycle_time for c, n in growth.trapped_component_amounts_kmol.items() if n > 0
+        }}
+        return self._finalize(inlet, outlet, candidates, None, retention, performance,
+                              {'layer_crystallization': details})
+
     def solve(self, inlets) -> UnitResult:
         if len(inlets) != 1:
             raise UnitOperationError(
@@ -721,8 +861,11 @@ class Crystallizer(UnitOperation):
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' {error}"
             ) from error
-        self._number('t_out', minimum=-float('inf'))
-        temperature = self.get_temperature_param('t_out')
+        if self.get_param('model') == 'layer_growth' and self.get_param('thermal_mode') == 'cooling':
+            temperature = inlet.T
+        else:
+            self._number('t_out', minimum=-float('inf'))
+            temperature = self.get_temperature_param('t_out')
         if temperature <= 0:
             raise UnitOperationError(
                 f"Crystallizer '{self.unit_id}' requires positive outlet temperature"
@@ -737,6 +880,13 @@ class Crystallizer(UnitOperation):
                 f"Crystallizer '{self.unit_id}' outlet pressure must be positive"
             )
         model = self.get_param('model')
+        if self.get_param('crystallization_mode') == 'layer' and any(
+            flow > 1e-15 for flow in inlet.solid_component_flows.values()
+        ):
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' layer mode requires a solid-free "
+                'liquid feed; suspended-solid capture is not modeled'
+            )
         specified_outlet_sphericity = self._specified_outlet_sphericity()
         candidates = [
             component
@@ -761,6 +911,11 @@ class Crystallizer(UnitOperation):
         tolerance = self._number('equilibrium_tolerance', 1e-8)
         max_iterations = self._number('max_iterations', 500, integer=True)
         mother_liquor_retention = self._mother_liquor_retention_spec()
+
+        if model == 'layer_growth':
+            return self._solve_layer_growth(
+                inlet, temperature, pressure, candidates, mother_liquor_retention,
+            )
 
         if model == 'msmpr':
             return self._solve_msmpr(
@@ -846,6 +1001,19 @@ class Crystallizer(UnitOperation):
                 equilibrium.details.get('above_melting_candidates', ())
             ),
         }
+        phase_details = {'solid_liquid_equilibrium': sle_details}
+        if self.get_param('crystallization_mode') == 'layer':
+            performance['model'] = 'equilibrium_pure_solid_layer'
+            phase_details['layer_crystallization'] = {
+                'model': 'equilibrium_pure_solid_layer',
+                'assumptions': [
+                    'equilibrium_endpoint',
+                    'one_homogeneous_mother_liquor',
+                    'pure_solid_deposits',
+                    'specified_mother_liquor_retention',
+                    'no_growth_or_transport_prediction',
+                ],
+            }
         return self._finalize(
             inlet,
             outlet,
@@ -853,7 +1021,7 @@ class Crystallizer(UnitOperation):
             specified_outlet_sphericity,
             mother_liquor_retention,
             performance,
-            {'solid_liquid_equilibrium': sle_details},
+            phase_details,
         )
 
 
