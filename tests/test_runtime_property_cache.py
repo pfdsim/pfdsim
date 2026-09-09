@@ -44,6 +44,12 @@ class RuntimePropertyCacheTests(unittest.TestCase):
             ),
             SELECTED_PROPERTY_CACHE_TTL_DAYS,
         )
+        self.assertIsNone(
+            sqlite_cache_ttl_days(
+                'property_cache.sqlite',
+                namespace='qm_artifacts_v1',
+            )
+        )
         self.assertEqual(
             sqlite_cache_ttl_days('saturation_properties_cache.sqlite'),
             SELECTED_PROPERTY_CACHE_TTL_DAYS,

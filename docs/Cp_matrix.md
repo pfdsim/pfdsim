@@ -1,5 +1,11 @@
 # Ideal-gas Cp fitting matrix
 
+> **Superseded (2026-09-09).** This atom-prior sparse-data policy is retained
+> as historical design context. Runtime selection is now governed by
+> [Sparse online ideal-gas Cp policy](ideal_gas_cp_sparse_online_policy.md),
+> which uses GFN2-xTB RRHO as the curve-shape prior and was validated against
+> sparse, narrow, noisy observation windows.
+
 The atom-increment Shomate model is the default prior for sparse, noisy, or
 poorly distributed ideal-gas heat-capacity data. Point count alone must not
 select a fit: temperature coverage, independently supportable noise, and the

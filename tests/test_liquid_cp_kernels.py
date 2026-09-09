@@ -430,7 +430,14 @@ PROPERTY_CORRELATIONS:
 '''
         _, errors, warnings = parse_and_validate(pfd)
         self.assertFalse(errors)
-        self.assertTrue(any('X.Cpl' in item and '273.15-1500 K' in item for item in warnings))
+        self.assertTrue(any(
+            'X.Cpl' in item
+            and 'missing Tmin_K defaults to resolved Tm' in item
+            and 'missing Tmax_K defaults to resolved Tb' in item
+            and '273.15 K if unavailable or incompatible' in item
+            and '1500 K if unavailable or incompatible' in item
+            for item in warnings
+        ))
 
     def test_cached_online_liquid_kernel_is_available_offline(self):
         source = {

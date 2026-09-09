@@ -2,12 +2,19 @@
 # This module retains compatibility exports alongside HeatCapacityMixin.
 from .common import *
 import sqlite3
+from dataclasses import replace
+from importlib.metadata import PackageNotFoundError, version
+
+import numpy as np
 
 from .ideal_gas_cp import (
     DEFAULT_TMAX_K,
     DEFAULT_TMIN_K,
+    GFN2_XTB_RRHO_QUALITY,
+    AffineIdealGasCpKernel,
     ChebyshevCpKernel,
     IdealGasCpKernel,
+    PiecewiseIdealGasCpKernel,
     PolynomialCpKernel,
     ShomateCpKernel,
     fit_chebyshev_kernel,
@@ -15,6 +22,7 @@ from .ideal_gas_cp import (
     kernel_from_payload,
     load_atom_increment_model,
     load_bundled_kernel,
+    rrho_ideal_gas_heat_capacity,
     shifted_polynomial_coefficients,
 )
 from .liquid_cp import (
@@ -71,6 +79,19 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from solid_material_forms import normalize_solid_material_form
 from .vapor_pressure import VaporPressureMixin
+
+
+XTB_RRHO_ARTIFACT_VERSION = 1
+XTB_RRHO_CACHE_NAMESPACE = 'qm_artifacts_v1'
+XTB_RRHO_DERIVED_ORIGIN = 'xtb_rrho_v2'
+XTB_RRHO_TMIN_K = DEFAULT_TMIN_K
+XTB_RRHO_TMAX_K = DEFAULT_TMAX_K
+XTB_RRHO_IMAGINARY_CUTOFF_CM_1 = 20.0
+NIST_DIRECT_CP_ORIGIN = 'online_nist_direct_v2'
+NIST_XTB_CP_ORIGIN = 'online_nist_xtb_policy_v1'
+NIST_SHOMATE_CP_ORIGIN = 'online_nist_shomate_v2'
+NIST_LEGACY_CP_ORIGIN = 'online_nist_legacy_v2'
+COMPUTATIONAL_RRHO_QUALITY = 0.89
 
 
 class HeatCapacityMixin:
@@ -789,6 +810,292 @@ class HeatCapacityMixin:
             return None
 
 
+        @staticmethod
+        def _xtb_rrho_dependency_state() -> dict[str, str]:
+            dependencies = {}
+            for name in ('tblite', 'ase', 'rdkit'):
+                try:
+                    dependencies[name] = version(name)
+                except PackageNotFoundError:
+                    dependencies[name] = 'missing'
+            return dependencies
+
+
+        def _xtb_rrho_artifact_cache(self):
+            from .runtime_cache import SQLiteJSONCache
+
+            path = self._runtime_json_cache().path
+            state = getattr(self, '_xtb_rrho_artifact_cache_state', None)
+            if state is not None and state[0] == path:
+                return state[1]
+            cache = SQLiteJSONCache(path, XTB_RRHO_CACHE_NAMESPACE)
+            self._xtb_rrho_artifact_cache_state = path, cache
+            return cache
+
+
+        @staticmethod
+        def _xtb_rrho_artifact_key(identity: str) -> str:
+            digest = hashlib.sha256(identity.encode('utf-8')).hexdigest()
+            return f'frequencies_v{XTB_RRHO_ARTIFACT_VERSION}_{digest}'
+
+
+        def _load_xtb_rrho_artifact(
+            self,
+            identity: str,
+        ) -> Optional[dict[str, Any]]:
+            key = self._xtb_rrho_artifact_key(identity)
+            try:
+                payload = self._xtb_rrho_artifact_cache().get(key)
+                if (
+                    not isinstance(payload, dict)
+                    or payload.get('version') != XTB_RRHO_ARTIFACT_VERSION
+                    or payload.get('identity') != identity
+                    or payload.get('method') != 'GFN2-xTB'
+                ):
+                    return None
+                geometry = str(payload['geometry'])
+                frequencies = tuple(float(value) for value in payload['frequencies_cm_1'])
+                atom_count = int(payload['atom_count'])
+                expected = (
+                    0
+                    if geometry == 'monatomic'
+                    else 3 * atom_count - (5 if geometry == 'linear' else 6)
+                )
+                if (
+                    geometry not in {'monatomic', 'linear', 'nonlinear'}
+                    or atom_count <= 0
+                    or len(frequencies) != expected
+                    or any(not math.isfinite(value) or value <= 0.0 for value in frequencies)
+                ):
+                    raise ValueError('invalid cached GFN2-xTB RRHO artifact')
+                return {
+                    **payload,
+                    'frequencies_cm_1': frequencies,
+                    'atom_count': atom_count,
+                }
+            except (OSError, sqlite3.Error, KeyError, TypeError, ValueError):
+                try:
+                    self._xtb_rrho_artifact_cache().delete(key)
+                except Exception:
+                    pass
+                return None
+
+
+        def _save_xtb_rrho_artifact(
+            self,
+            identity: str,
+            payload: dict[str, Any],
+        ) -> None:
+            record = {
+                **payload,
+                'version': XTB_RRHO_ARTIFACT_VERSION,
+                'identity': identity,
+                'method': 'GFN2-xTB',
+            }
+            try:
+                self._xtb_rrho_artifact_cache().set(
+                    self._xtb_rrho_artifact_key(identity),
+                    record,
+                )
+            except (OSError, sqlite3.Error, TypeError, ValueError):
+                pass
+
+
+        @staticmethod
+        def _xtb_rrho_geometry(atoms) -> str:
+            if len(atoms) == 1:
+                return 'monatomic'
+            if len(atoms) == 2:
+                return 'linear'
+            moments = np.sort(np.asarray(atoms.get_moments_of_inertia(), dtype=float))
+            return 'linear' if moments[0] <= 1.0e-5 * moments[-1] else 'nonlinear'
+
+
+        @classmethod
+        def _calculate_xtb_rrho_artifact(
+            cls,
+            atoms,
+            charge: int,
+            multiplicity: int,
+        ) -> dict[str, Any]:
+            import tempfile
+
+            from ase import units
+            from ase.vibrations import Vibrations
+            from tblite.ase import TBLite
+
+            geometry = cls._xtb_rrho_geometry(atoms)
+            if geometry == 'monatomic':
+                energies = []
+            else:
+                atoms.calc = TBLite(
+                    method='GFN2-xTB',
+                    charge=charge,
+                    multiplicity=multiplicity,
+                    verbosity=0,
+                )
+                with tempfile.TemporaryDirectory(prefix='pfdsim-xtb-rrho-') as directory:
+                    vibrations = Vibrations(
+                        atoms,
+                        name=str(Path(directory) / 'vib'),
+                        delta=0.01,
+                        nfree=2,
+                    )
+                    vibrations.run()
+                    raw_energies = [complex(value) for value in vibrations.get_energies()]
+                mode_count = 3 * len(atoms) - (5 if geometry == 'linear' else 6)
+                energies = sorted(raw_energies, key=abs)[-mode_count:]
+
+            cutoff_eV = XTB_RRHO_IMAGINARY_CUTOFF_CM_1 * units.invcm
+            significant_imaginary = [
+                energy for energy in energies if abs(energy.imag) > cutoff_eV
+            ]
+            if significant_imaginary:
+                raise RuntimeError(
+                    f'GFN2-xTB geometry has {len(significant_imaginary)} imaginary '
+                    f'mode(s) above {XTB_RRHO_IMAGINARY_CUTOFF_CM_1:g} cm^-1'
+                )
+            frequencies = tuple(float(abs(energy) / units.invcm) for energy in energies)
+            if any(not math.isfinite(value) or value <= 0.0 for value in frequencies):
+                raise ValueError('GFN2-xTB produced invalid vibrational frequencies')
+            return {
+                'geometry': geometry,
+                'atom_count': len(atoms),
+                'frequencies_cm_1': frequencies,
+                'imaginary_modes_below_cutoff': sum(bool(energy.imag) for energy in energies),
+                'settings': {
+                    'hessian': 'ASE central finite difference of tblite forces',
+                    'displacement_angstrom': 0.01,
+                    'imaginary_cutoff_cm_1': XTB_RRHO_IMAGINARY_CUTOFF_CM_1,
+                },
+            }
+
+
+        def _xtb_rrho_ideal_gas_cp_kernel(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+        ) -> Optional[IdealGasCpKernel]:
+            dependencies = self._xtb_rrho_dependency_state()
+            if dependencies.get('rdkit') == 'missing':
+                return None
+
+            smiles_result = self._resolve_smiles_result(
+                symbol,
+                props,
+                allow_online=allow_online,
+            )
+            smiles = str(smiles_result.value or '').strip() if smiles_result else ''
+            if not smiles:
+                return None
+            try:
+                from rdkit import Chem
+
+                molecule = self._validated_dipole_molecule(smiles)
+                if any(atom.GetIsotope() for atom in molecule.GetAtoms()):
+                    return None
+                canonical_smiles = Chem.MolToSmiles(molecule, isomericSmiles=True)
+            except Exception:
+                return None
+            identity = f'smiles:{canonical_smiles}'
+            cached_kernel = self._get_derived_cp_kernel(
+                XTB_RRHO_DERIVED_ORIGIN,
+                identity,
+            )
+            if cached_kernel is not None:
+                return cached_kernel
+
+            artifact = self._load_xtb_rrho_artifact(identity)
+            if artifact is None and any(
+                dependencies.get(name) == 'missing' for name in ('tblite', 'ase')
+            ):
+                return None
+
+            signature = (
+                f'artifact={XTB_RRHO_ARTIFACT_VERSION};'
+                + ';'.join(
+                    f'{name}={dependencies[name]}'
+                    for name in ('tblite', 'ase', 'rdkit')
+                )
+            )
+            attempts = getattr(self, '_xtb_rrho_attempt_cache', None)
+            if attempts is None:
+                attempts = {}
+                self._xtb_rrho_attempt_cache = attempts
+            attempt_key = (str(self.CACHE_DIR), identity)
+            if (attempts.get(attempt_key) or {}).get('signature') == signature:
+                return None
+
+            try:
+                if artifact is None:
+                    atoms, charge, multiplicity = self._resolve_xtb_geometry(
+                        identity,
+                        canonical_smiles,
+                        dependencies,
+                    )
+                    artifact = self._calculate_xtb_rrho_artifact(
+                        atoms,
+                        charge,
+                        multiplicity,
+                    )
+                    artifact['dependencies'] = dependencies
+                    self._save_xtb_rrho_artifact(identity, artifact)
+
+                fingerprint = hashlib.sha256(
+                    json.dumps(
+                        artifact,
+                        sort_keys=True,
+                        separators=(',', ':'),
+                        default=str,
+                    ).encode('utf-8')
+                ).hexdigest()
+                evaluator = lambda temperatures: rrho_ideal_gas_heat_capacity(
+                    temperatures,
+                    artifact['frequencies_cm_1'],
+                    artifact['geometry'],
+                )
+                kernel = None
+                for degree in (8, 12):
+                    candidate = fit_chebyshev_kernel(
+                        evaluator,
+                        XTB_RRHO_TMIN_K,
+                        XTB_RRHO_TMAX_K,
+                        quality=GFN2_XTB_RRHO_QUALITY,
+                        source='calculated',
+                        method='gfn2_xtb_rrho_ideal_gas_cp_kernel',
+                        notes=(
+                            'Gas-phase GFN2-xTB optimized-geometry numerical '
+                            'frequencies with plain rigid-rotor/harmonic-oscillator '
+                            'thermochemistry; fitted to a portable rational Chebyshev kernel'
+                        ),
+                        source_fingerprint=fingerprint,
+                        degree=degree,
+                    )
+                    if (
+                        candidate.fit_mape_percent < 0.01
+                        and candidate.fit_max_error_percent < 0.1
+                    ):
+                        kernel = candidate
+                        break
+                if kernel is None:
+                    raise ValueError('GFN2-xTB RRHO curve could not meet kernel fit tolerance')
+                self._set_derived_cp_kernel(
+                    XTB_RRHO_DERIVED_ORIGIN,
+                    identity,
+                    kernel,
+                )
+                attempts.pop(attempt_key, None)
+                return kernel
+            except Exception as exc:
+                attempts[attempt_key] = {
+                    'signature': signature,
+                    'error': f'{type(exc).__name__}: {exc}',
+                }
+                return None
+
+
         def _atom_increment_ideal_gas_cp_kernel(
             self,
             symbol: str,
@@ -1004,6 +1311,8 @@ class HeatCapacityMixin:
         def _kernel_from_nist_source(
             self,
             tables: Dict[str, Any],
+            *,
+            native_only: bool = False,
         ) -> Optional[IdealGasCpKernel]:
             fingerprint = hashlib.sha256(
                 json.dumps(tables, sort_keys=True, separators=(',', ':'), default=str).encode('utf-8')
@@ -1062,12 +1371,10 @@ class HeatCapacityMixin:
                         degree=8,
                     )
 
-            raw_points = tables.get('gas') or []
-            points = self._clean_cp_points([
-                (float(row[0]), float(row[1]))
-                for row in raw_points
-                if len(row) >= 2
-            ])
+            if native_only:
+                return None
+
+            points = self._nist_gas_cp_points(tables)
             if not points:
                 return None
             Tmin = points[0][0]
@@ -1128,6 +1435,293 @@ class HeatCapacityMixin:
             )
 
 
+        def _nist_gas_cp_points(
+            self,
+            tables: Dict[str, Any],
+        ) -> list[tuple[float, float]]:
+            raw_points = tables.get('gas') or []
+            points = []
+            for row in raw_points:
+                try:
+                    if len(row) >= 2:
+                        T = float(row[0])
+                        Cp = float(row[1])
+                        if math.isfinite(T) and T > 0.0 and math.isfinite(Cp) and Cp > 0.0:
+                            points.append((T, Cp))
+                except (TypeError, ValueError, OverflowError):
+                    continue
+            return self._clean_cp_points(points)
+
+
+        @staticmethod
+        def _nist_cp_source_fingerprint(tables: Dict[str, Any]) -> str:
+            return hashlib.sha256(
+                json.dumps(
+                    tables,
+                    sort_keys=True,
+                    separators=(',', ':'),
+                    default=str,
+                ).encode('utf-8')
+            ).hexdigest()
+
+
+        def _nist_tabulated_shomate_kernel(
+            self,
+            tables: Dict[str, Any],
+            *,
+            quality: float,
+            method: str,
+        ) -> tuple[Optional[ShomateCpKernel], list[tuple[float, float]]]:
+            points = self._nist_gas_cp_points(tables)
+            fit = self._fit_shomate_cp(points)
+            if fit is None:
+                return None, []
+            coefficients, kept, excluded, mape, maximum = fit
+            kernel = ShomateCpKernel(
+                Tmin=min(T for T, _ in kept),
+                Tmax=max(T for T, _ in kept),
+                quality=quality,
+                source='NIST Chemistry WebBook',
+                method=method,
+                notes=(
+                    f'Robust Shomate fit to {len(kept)} tabulated Cp points; '
+                    f'excluded {len(excluded)}/{len(points)} points'
+                ),
+                fit_mape_percent=mape,
+                fit_max_error_percent=maximum,
+                source_fingerprint=self._nist_cp_source_fingerprint(tables),
+                coefficients=tuple(coefficients),
+            )
+            return kernel, kept
+
+
+        @staticmethod
+        def _affine_cp_parameters(
+            base_kernel: IdealGasCpKernel,
+            points: list[tuple[float, float]],
+            *,
+            constant_only: bool,
+        ) -> Optional[tuple[float, float, float, float]]:
+            if not points or any(not base_kernel.covers(T) for T, _ in points):
+                return None
+            base_values = np.asarray([base_kernel.cp(T) for T, _ in points])
+            observed = np.asarray([Cp for _, Cp in points], dtype=float)
+            if constant_only:
+                intercept = float(np.mean(observed - base_values))
+                scale_factor = 1.0
+            else:
+                design = np.column_stack([np.ones(len(base_values)), base_values])
+                if np.linalg.matrix_rank(design) < 2:
+                    return None
+                intercept, scale_factor = (
+                    float(value)
+                    for value in np.linalg.lstsq(design, observed, rcond=None)[0]
+                )
+            predicted = intercept + scale_factor * base_values
+            errors = 100.0 * np.abs(predicted / observed - 1.0)
+            return (
+                intercept,
+                scale_factor,
+                float(np.mean(errors)),
+                float(np.max(errors)),
+            )
+
+
+        def _affine_xtb_cp_kernel(
+            self,
+            xtb_kernel: IdealGasCpKernel,
+            points: list[tuple[float, float]],
+            *,
+            constant_only: bool,
+            quality: float,
+            method: str,
+            source_fingerprint: str,
+        ) -> Optional[AffineIdealGasCpKernel]:
+            fit = self._affine_cp_parameters(
+                xtb_kernel,
+                points,
+                constant_only=constant_only,
+            )
+            if fit is None:
+                return None
+            intercept, scale_factor, mape, maximum = fit
+            try:
+                return AffineIdealGasCpKernel(
+                    Tmin=xtb_kernel.Tmin,
+                    Tmax=xtb_kernel.Tmax,
+                    quality=quality,
+                    source='NIST Chemistry WebBook + calculated',
+                    method=method,
+                    notes=(
+                        f'{"Constant-residual" if constant_only else "Affine"} '
+                        f'calibration of GFN2-xTB RRHO to {len(points)} online '
+                        'tabulated Cp points'
+                    ),
+                    fit_mape_percent=mape,
+                    fit_max_error_percent=maximum,
+                    source_fingerprint=source_fingerprint,
+                    base_kernel=xtb_kernel,
+                    intercept=intercept,
+                    scale_factor=scale_factor,
+                )
+            except ValueError:
+                return None
+
+
+        def _piecewise_shomate_affine_xtb_kernel(
+            self,
+            tables: Dict[str, Any],
+            xtb_kernel: IdealGasCpKernel,
+        ) -> Optional[PiecewiseIdealGasCpKernel]:
+            shomate, kept = self._nist_tabulated_shomate_kernel(
+                tables,
+                quality=0.94,
+                method='nist_tabulated_shomate_segment',
+            )
+            if shomate is None:
+                return None
+            fingerprint = hashlib.sha256(
+                (
+                    self._nist_cp_source_fingerprint(tables)
+                    + '|'
+                    + xtb_kernel.source_fingerprint
+                    + '|piecewise_shomate_affine_xtb_v1'
+                ).encode('utf-8')
+            ).hexdigest()
+            affine = self._affine_xtb_cp_kernel(
+                xtb_kernel,
+                kept,
+                constant_only=False,
+                quality=0.94,
+                method='nist_affine_xtb_calibration',
+                source_fingerprint=fingerprint,
+            )
+            if affine is None:
+                return None
+
+            segments: list[IdealGasCpKernel] = []
+            if xtb_kernel.Tmin < shomate.Tmin:
+                lower_intercept = (
+                    affine.intercept
+                    + shomate._cp_native(shomate.Tmin)
+                    - affine._cp_native(shomate.Tmin)
+                )
+                try:
+                    segments.append(AffineIdealGasCpKernel(
+                        Tmin=xtb_kernel.Tmin,
+                        Tmax=shomate.Tmin,
+                        quality=0.94,
+                        source='NIST Chemistry WebBook + calculated',
+                        method='lower_boundary_matched_affine_xtb_cp',
+                        notes=f'Affine xTB continuation matched at {shomate.Tmin:g} K',
+                        source_fingerprint=fingerprint,
+                        base_kernel=xtb_kernel,
+                        intercept=lower_intercept,
+                        scale_factor=affine.scale_factor,
+                    ))
+                except ValueError:
+                    return None
+            segments.append(shomate)
+            if xtb_kernel.Tmax > shomate.Tmax:
+                upper_intercept = (
+                    affine.intercept
+                    + shomate._cp_native(shomate.Tmax)
+                    - affine._cp_native(shomate.Tmax)
+                )
+                try:
+                    segments.append(AffineIdealGasCpKernel(
+                        Tmin=shomate.Tmax,
+                        Tmax=xtb_kernel.Tmax,
+                        quality=0.94,
+                        source='NIST Chemistry WebBook + calculated',
+                        method='upper_boundary_matched_affine_xtb_cp',
+                        notes=f'Affine xTB continuation matched at {shomate.Tmax:g} K',
+                        source_fingerprint=fingerprint,
+                        base_kernel=xtb_kernel,
+                        intercept=upper_intercept,
+                        scale_factor=affine.scale_factor,
+                    ))
+                except ValueError:
+                    return None
+            try:
+                return PiecewiseIdealGasCpKernel(
+                    Tmin=segments[0].Tmin,
+                    Tmax=segments[-1].Tmax,
+                    quality=0.94,
+                    source='NIST Chemistry WebBook + calculated',
+                    method='nist_shomate_affine_xtb_piecewise_ideal_gas_cp_kernel',
+                    notes=(
+                        f'NIST Shomate within {shomate.Tmin:g}-{shomate.Tmax:g} K; '
+                        'boundary-matched affine GFN2-xTB RRHO continuation outside'
+                    ),
+                    fit_mape_percent=shomate.fit_mape_percent,
+                    fit_max_error_percent=shomate.fit_max_error_percent,
+                    source_fingerprint=fingerprint,
+                    segments=tuple(segments),
+                    source_Tmin=shomate.Tmin,
+                    source_Tmax=shomate.Tmax,
+                )
+            except ValueError:
+                return None
+
+
+        def _nist_sparse_xtb_kernel(
+            self,
+            tables: Dict[str, Any],
+            xtb_kernel: IdealGasCpKernel,
+        ) -> Optional[IdealGasCpKernel]:
+            points = self._nist_gas_cp_points(tables)
+            fingerprint = hashlib.sha256(
+                (
+                    self._nist_cp_source_fingerprint(tables)
+                    + '|'
+                    + xtb_kernel.source_fingerprint
+                ).encode('utf-8')
+            ).hexdigest()
+            if len(points) >= 10:
+                return self._piecewise_shomate_affine_xtb_kernel(
+                    tables,
+                    xtb_kernel,
+                )
+            if len(points) >= 3:
+                return self._affine_xtb_cp_kernel(
+                    xtb_kernel,
+                    points,
+                    constant_only=False,
+                    quality=0.93,
+                    method='nist_affine_xtb_ideal_gas_cp_kernel',
+                    source_fingerprint=fingerprint,
+                )
+            if points:
+                return self._affine_xtb_cp_kernel(
+                    xtb_kernel,
+                    points,
+                    constant_only=True,
+                    quality=0.91,
+                    method='nist_constant_corrected_xtb_ideal_gas_cp_kernel',
+                    source_fingerprint=fingerprint,
+                )
+            return None
+
+
+        def _try_xtb_rrho_ideal_gas_cp_kernel(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+        ) -> Optional[IdealGasCpKernel]:
+            """Treat every optional xTB provider failure as a normal miss."""
+            try:
+                return self._xtb_rrho_ideal_gas_cp_kernel(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                )
+            except Exception:
+                return None
+
+
         def resolve_ideal_gas_cp_kernel(
             self,
             symbol: str,
@@ -1141,20 +1735,50 @@ class HeatCapacityMixin:
             props = self._coerce_props(symbol, props, allow_online=allow_network)
             identity = self._ideal_gas_cp_identity(symbol, props)
             fingerprint = self._ideal_gas_cp_props_fingerprint(props)
-            cache_key = (identity, fingerprint, bool(allow_network), bool(allow_estimation))
+            xtb_dependencies = (
+                tuple(sorted(self._xtb_rrho_dependency_state().items()))
+                if allow_estimation
+                else ()
+            )
+            cache_key = (
+                identity,
+                fingerprint,
+                bool(allow_network),
+                bool(allow_estimation),
+                XTB_RRHO_ARTIFACT_VERSION,
+                xtb_dependencies,
+            )
             if cache_key in self._ideal_gas_cp_kernel_cache:
                 return self._ideal_gas_cp_kernel_cache[cache_key]
 
             kernel = self._provided_ideal_gas_cp_kernel(props)
+            deferred_psi4 = None
             if kernel is None:
                 cas = str((props or {}).get('CAS') or (props or {}).get('cas') or '').strip()
                 if not cas and re.fullmatch(r'\d{2,7}-\d{2}-\d', str(symbol).strip()):
                     cas = str(symbol).strip()
                 if cas:
                     kernel = load_bundled_kernel(cas)
+                    if (
+                        kernel is not None
+                        and kernel.method == 'canonical_psi4_adjusted_ideal_gas_cp'
+                    ):
+                        deferred_psi4 = replace(
+                            kernel,
+                            quality=COMPUTATIONAL_RRHO_QUALITY,
+                            notes=(
+                                f'{kernel.notes}; computational fallback quality '
+                                f'{COMPUTATIONAL_RRHO_QUALITY:g}'
+                            ),
+                        )
+                        kernel = None
 
             if kernel is None:
-                kernel = self._get_derived_cp_kernel('online', identity)
+                kernel = self._get_derived_cp_kernel(
+                    NIST_DIRECT_CP_ORIGIN,
+                    identity,
+                )
+            source = None
             if kernel is None:
                 source = self._fetch_nist_cp_source(
                     symbol,
@@ -1163,19 +1787,91 @@ class HeatCapacityMixin:
                 )
                 if source:
                     try:
+                        kernel = self._kernel_from_nist_source(
+                            source,
+                            native_only=True,
+                        )
+                    except (TypeError, ValueError, OverflowError):
+                        kernel = None
+                    if kernel is not None:
+                        self._set_derived_cp_kernel(
+                            NIST_DIRECT_CP_ORIGIN,
+                            identity,
+                            kernel,
+                        )
+
+            points = self._nist_gas_cp_points(source) if source else []
+            xtb_kernel = None
+            if kernel is None and allow_estimation:
+                kernel = self._get_derived_cp_kernel(
+                    NIST_XTB_CP_ORIGIN,
+                    identity,
+                )
+                if kernel is None and points:
+                    xtb_kernel = self._try_xtb_rrho_ideal_gas_cp_kernel(
+                        symbol,
+                        props,
+                        allow_online=allow_network,
+                    )
+                if kernel is None and xtb_kernel is not None:
+                    try:
+                        kernel = self._nist_sparse_xtb_kernel(source, xtb_kernel)
+                    except (TypeError, ValueError, OverflowError):
+                        kernel = None
+                    if kernel is not None:
+                        self._set_derived_cp_kernel(
+                            NIST_XTB_CP_ORIGIN,
+                            identity,
+                            kernel,
+                        )
+
+            if kernel is None:
+                kernel = self._get_derived_cp_kernel(
+                    NIST_SHOMATE_CP_ORIGIN,
+                    identity,
+                )
+                if kernel is None and len(points) >= 10:
+                    try:
+                        kernel, _kept = self._nist_tabulated_shomate_kernel(
+                            source,
+                            quality=0.92,
+                            method='nist_in_range_shomate_ideal_gas_cp_kernel',
+                        )
+                    except (TypeError, ValueError, OverflowError):
+                        kernel = None
+                    if kernel is not None:
+                        self._set_derived_cp_kernel(
+                            NIST_SHOMATE_CP_ORIGIN,
+                            identity,
+                            kernel,
+                        )
+
+            if kernel is None and deferred_psi4 is not None:
+                kernel = deferred_psi4
+
+            if kernel is None and allow_estimation:
+                kernel = xtb_kernel or self._try_xtb_rrho_ideal_gas_cp_kernel(
+                    symbol,
+                    props,
+                    allow_online=allow_network,
+                )
+
+            if kernel is None:
+                kernel = self._get_derived_cp_kernel(
+                    NIST_LEGACY_CP_ORIGIN,
+                    identity,
+                )
+                if kernel is None and points:
+                    try:
                         kernel = self._kernel_from_nist_source(source)
                     except (TypeError, ValueError, OverflowError):
                         kernel = None
                     if kernel is not None:
-                        self._set_derived_cp_kernel('online', identity, kernel)
-
-            # Benson estimation belongs here once its independent implementation
-            # exists.  Its future derived kernel remains higher priority than
-            # the formula-only atom-increment estimator.
-            if kernel is None and allow_estimation:
-                smiles = str((props or {}).get('smiles') or (props or {}).get('SMILES') or '').strip()
-                if smiles:
-                    kernel = self._get_derived_cp_kernel('benson', smiles)
+                        self._set_derived_cp_kernel(
+                            NIST_LEGACY_CP_ORIGIN,
+                            identity,
+                            kernel,
+                        )
 
             if kernel is None and allow_estimation:
                 kernel = self._atom_increment_ideal_gas_cp_kernel(
@@ -2536,6 +3232,32 @@ class HeatCapacityMixin:
             return [1.0, t, t * t, t * t * t, 1.0 / (t * t)]
 
 
+        @classmethod
+        def _relative_shomate_cp_fit(
+            cls,
+            points: list[tuple[float, float]],
+        ) -> Optional[list[float]]:
+            if len(points) < 5:
+                return None
+            design = np.asarray([
+                cls._shomate_cp_basis(T) for T, _ in points
+            ], dtype=float)
+            values = np.asarray([Cp for _, Cp in points], dtype=float)
+            relative_design = design / values[:, None]
+            scales = np.sqrt(np.mean(relative_design * relative_design, axis=0))
+            if np.any(~np.isfinite(scales)) or np.any(scales <= 1.0e-14):
+                return None
+            scaled = np.linalg.lstsq(
+                relative_design / scales,
+                np.ones(len(values)),
+                rcond=1.0e-10,
+            )[0]
+            coefficients = scaled / scales
+            if np.any(~np.isfinite(coefficients)):
+                return None
+            return [float(value) for value in coefficients]
+
+
         def _fit_shomate_cp(
             self,
             points: list[tuple[float, float]],
@@ -2549,9 +3271,7 @@ class HeatCapacityMixin:
                 fit_points = [point for point, include in zip(points, kept) if include]
                 if len(fit_points) < 10:
                     return None
-                rows = [self._shomate_cp_basis(T) for T, _ in fit_points]
-                values = [Cp for _, Cp in fit_points]
-                coefficients = self._least_squares(rows, values)
+                coefficients = self._relative_shomate_cp_fit(fit_points)
                 if coefficients is None:
                     return None
 
@@ -2584,9 +3304,7 @@ class HeatCapacityMixin:
                 kept = new_kept
 
             kept_points = [point for point, include in zip(points, kept) if include]
-            rows = [self._shomate_cp_basis(T) for T, _ in kept_points]
-            values = [Cp for _, Cp in kept_points]
-            coefficients = self._least_squares(rows, values)
+            coefficients = self._relative_shomate_cp_fit(kept_points)
             if coefficients is None:
                 return None
 

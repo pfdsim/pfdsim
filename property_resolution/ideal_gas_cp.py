@@ -19,6 +19,10 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Sequence
 
 from .organic_classification import is_strict_organic_formula_counts
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..physical_constants import R_J_MOL_K
+else:
+    from physical_constants import R_J_MOL_K
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -35,6 +39,7 @@ CLAMP_QUALITY_PENALTY_PER_5K = 0.02
 MAX_RANGE_QUALITY_PENALTY = 0.40
 ATOM_INCREMENT_MODEL_QUALITY = 0.75
 ATOM_INCREMENT_ORGANIC_QUALITY = 0.80
+GFN2_XTB_RRHO_QUALITY = 0.89
 CONVENTIONAL_ORGANIC_CATEGORIES = frozenset({
     "H", "C", "O", "N", "F", "Cl", "P", "S", "Br", "I",
 })
@@ -346,6 +351,150 @@ class ShomateCpKernel(IdealGasCpKernel):
 
 
 @dataclass(frozen=True)
+class AffineIdealGasCpKernel(IdealGasCpKernel):
+    """Exact affine transformation of another ideal-gas Cp kernel."""
+
+    base_kernel: Optional[IdealGasCpKernel] = None
+    intercept: float = 0.0
+    scale_factor: float = 1.0
+    kind = "affine_ideal_gas"
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not isinstance(self.base_kernel, IdealGasCpKernel):
+            raise ValueError("affine ideal-gas Cp requires a base kernel")
+        object.__setattr__(self, "intercept", _finite(self.intercept))
+        object.__setattr__(self, "scale_factor", _finite(self.scale_factor))
+        if (
+            self.Tmin < self.base_kernel.Tmin - 1.0e-8
+            or self.Tmax > self.base_kernel.Tmax + 1.0e-8
+        ):
+            raise ValueError("affine ideal-gas Cp range exceeds its base kernel")
+        self._validate_curve()
+
+    def _cp_native(self, T: float) -> float:
+        return self.intercept + self.scale_factor * self.base_kernel._cp_native(T)
+
+    def _delta_h_native(self, T1: float, T2: float) -> float:
+        return (
+            self.intercept * (T2 - T1)
+            + self.scale_factor * self.base_kernel._delta_h_native(T1, T2)
+        )
+
+    def _delta_s_native(self, T1: float, T2: float) -> float:
+        return (
+            self.intercept * math.log(T2 / T1)
+            + self.scale_factor * self.base_kernel._delta_s_native(T1, T2)
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            **super().to_payload(),
+            "intercept_J_mol_K": self.intercept,
+            "scale_factor": self.scale_factor,
+            "base_kernel": self.base_kernel.to_payload(),
+        }
+
+
+@dataclass(frozen=True)
+class PiecewiseIdealGasCpKernel(IdealGasCpKernel):
+    """Contiguous ideal-gas Cp segments with exact piecewise primitives."""
+
+    segments: tuple[IdealGasCpKernel, ...] = ()
+    source_Tmin: Optional[float] = None
+    source_Tmax: Optional[float] = None
+    kind = "piecewise_ideal_gas"
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        segments = tuple(sorted(self.segments, key=lambda item: (item.Tmin, item.Tmax)))
+        if not segments:
+            raise ValueError("piecewise ideal-gas Cp requires segments")
+        if (
+            abs(segments[0].Tmin - self.Tmin) > 1.0e-8
+            or abs(segments[-1].Tmax - self.Tmax) > 1.0e-8
+        ):
+            raise ValueError("piecewise ideal-gas Cp range must match its segments")
+        for left, right in zip(segments, segments[1:]):
+            boundary = left.Tmax
+            if abs(boundary - right.Tmin) > 1.0e-8:
+                raise ValueError("piecewise ideal-gas Cp segments must be contiguous")
+            left_value = float(left._cp_native(boundary))
+            right_value = float(right._cp_native(boundary))
+            relative_jump = abs(left_value - right_value) / max(
+                abs(left_value), abs(right_value), 1.0
+            )
+            if relative_jump > 1.0e-7:
+                raise ValueError("piecewise ideal-gas Cp segments are discontinuous")
+        object.__setattr__(self, "segments", segments)
+        if self.source_Tmin is not None:
+            object.__setattr__(self, "source_Tmin", _finite(self.source_Tmin))
+        if self.source_Tmax is not None:
+            object.__setattr__(self, "source_Tmax", _finite(self.source_Tmax))
+        if (self.source_Tmin is None) != (self.source_Tmax is None):
+            raise ValueError(
+                "piecewise ideal-gas source range requires both endpoints"
+            )
+        if (
+            self.source_Tmin is not None
+            and self.source_Tmax is not None
+            and not self.Tmin <= self.source_Tmin <= self.source_Tmax <= self.Tmax
+        ):
+            raise ValueError("invalid piecewise ideal-gas source-supported range")
+        self._validate_curve()
+
+    def active_kernel(self, T: float) -> IdealGasCpKernel:
+        temperature = float(T)
+        for segment in self.segments:
+            if segment.Tmin <= temperature <= segment.Tmax:
+                return segment
+        if temperature < self.Tmin:
+            return self.segments[0]
+        if temperature > self.Tmax:
+            return self.segments[-1]
+        raise ValueError(f"no ideal-gas Cp segment covers T={temperature:g} K")
+
+    def _cp_native(self, T: float) -> float:
+        return self.active_kernel(T)._cp_native(T)
+
+    def _integral(self, T1: float, T2: float, entropy: bool) -> float:
+        if T1 == T2:
+            return 0.0
+        if T2 < T1:
+            return -self._integral(T2, T1, entropy)
+        cuts = [T1]
+        cuts.extend(
+            segment.Tmax
+            for segment in self.segments[:-1]
+            if T1 < segment.Tmax < T2
+        )
+        cuts.append(T2)
+        total = 0.0
+        for left, right in zip(cuts, cuts[1:]):
+            segment = self.active_kernel(0.5 * (left + right))
+            total += (
+                segment._delta_s_native(left, right)
+                if entropy
+                else segment._delta_h_native(left, right)
+            )
+        return total
+
+    def _delta_h_native(self, T1: float, T2: float) -> float:
+        return self._integral(T1, T2, False)
+
+    def _delta_s_native(self, T1: float, T2: float) -> float:
+        return self._integral(T1, T2, True)
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            **super().to_payload(),
+            "segments": [segment.to_payload() for segment in self.segments],
+            "source_Tmin_K": self.source_Tmin,
+            "source_Tmax_K": self.source_Tmax,
+        }
+
+
+@dataclass(frozen=True)
 class AtomIncrementCpModel:
     """Validated empirical atom-increment model loaded from bundled JSON."""
 
@@ -556,6 +705,20 @@ def kernel_from_payload(payload: Mapping[str, Any]) -> IdealGasCpKernel:
         return PolynomialCpKernel(**common, coefficients=tuple(payload["coefficients"]))
     if kind == "shomate":
         return ShomateCpKernel(**common, coefficients=tuple(payload["coefficients"]))
+    if kind == "affine_ideal_gas":
+        return AffineIdealGasCpKernel(
+            **common,
+            base_kernel=kernel_from_payload(payload["base_kernel"]),
+            intercept=payload["intercept_J_mol_K"],
+            scale_factor=payload["scale_factor"],
+        )
+    if kind == "piecewise_ideal_gas":
+        return PiecewiseIdealGasCpKernel(
+            **common,
+            segments=tuple(kernel_from_payload(item) for item in payload["segments"]),
+            source_Tmin=payload.get("source_Tmin_K"),
+            source_Tmax=payload.get("source_Tmax_K"),
+        )
     if kind == "chebyshev":
         return ChebyshevCpKernel(
             **common,
@@ -676,6 +839,40 @@ def fit_chebyshev_kernel(
         s_log_minus_coefficient=primitives[4],
         s_log_plus_coefficient=primitives[5],
     )
+
+
+def rrho_ideal_gas_heat_capacity(
+    temperatures: Any,
+    frequencies_cm_1: Sequence[float],
+    geometry: str,
+) -> Any:
+    """Evaluate ideal-gas harmonic-RRHO Cp in J/(mol*K)."""
+    import numpy as np
+
+    values = np.asarray(temperatures, dtype=float)
+    if np.any(~np.isfinite(values)) or np.any(values <= 0.0):
+        raise ValueError("RRHO heat-capacity temperatures must be finite and positive")
+    geometry_key = str(geometry).strip().lower()
+    rotational = {
+        "monatomic": 0.0,
+        "linear": 1.0,
+        "nonlinear": 1.5,
+    }.get(geometry_key)
+    if rotational is None:
+        raise ValueError(f"unsupported RRHO geometry {geometry!r}")
+    frequencies = np.asarray(frequencies_cm_1, dtype=float)
+    if np.any(~np.isfinite(frequencies)) or np.any(frequencies <= 0.0):
+        raise ValueError("RRHO frequencies must be finite and positive")
+
+    cp_over_r = np.full(values.shape, 2.5 + rotational, dtype=float)
+    for frequency in frequencies:
+        reduced = 1.4387768775039338 * frequency / values
+        small = reduced < 1.0e-5
+        denominator = -np.expm1(-reduced)
+        contribution = reduced * reduced * np.exp(-reduced) / (denominator * denominator)
+        cp_over_r += np.where(small, 1.0, contribution)
+    result = R_J_MOL_K * cp_over_r
+    return float(result) if result.ndim == 0 else result
 
 
 def shifted_polynomial_coefficients(

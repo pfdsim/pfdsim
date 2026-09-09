@@ -42,7 +42,8 @@ from .vapor_pressure_adapter import (
     PsatDomainSelection, PsatInputMethod, TsatAtPressure,
 )
 from .ideal_gas_cp import (
-    AtomIncrementCpModel, ChebyshevCpKernel, IdealGasCpKernel, KernelEvaluation,
+    AffineIdealGasCpKernel, AtomIncrementCpModel, ChebyshevCpKernel,
+    IdealGasCpKernel, KernelEvaluation, PiecewiseIdealGasCpKernel,
     PolynomialCpKernel, ShomateCpKernel,
     load_atom_increment_model,
 )
@@ -112,7 +113,7 @@ __all__ = [
     'PsatCanonicalizationAdapter', 'PsatCanonicalizationInputs',
     'PsatDomainSelection', 'PsatInputMethod', 'TsatAtPressure',
     'IdealGasCpKernel', 'KernelEvaluation', 'AtomIncrementCpModel',
-    'ChebyshevCpKernel',
+    'AffineIdealGasCpKernel', 'PiecewiseIdealGasCpKernel', 'ChebyshevCpKernel',
     'PolynomialCpKernel', 'ShomateCpKernel',
     'load_atom_increment_model',
     'LiquidCpKernel', 'ConstantLiquidCpKernel',

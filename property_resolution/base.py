@@ -24,6 +24,7 @@ class PropertyResolverBase:
             self._liquid_volume_zra_cache = None
             self._runtime_json_cache_state = None
             self._ideal_gas_cp_derived_cache_state = None
+            self._xtb_rrho_artifact_cache_state = None
             self._liquid_cp_derived_cache_state = None
             self._solid_cp_derived_cache_state = None
             self._ideal_gas_cp_kernel_cache = {}

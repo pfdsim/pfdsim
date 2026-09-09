@@ -6,19 +6,30 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import numpy as np
+
 from chemical_properties import ChemicalDatabase, ChemicalProperties
 from pfd_parser import parse_and_validate
 from property_resolver import PropertyResolver
 from property_resolution.ideal_gas_cp import (
     ATOM_INCREMENT_MODEL_PATH,
+    AffineIdealGasCpKernel,
     AtomIncrementCpModel,
     ChebyshevCpKernel,
+    PiecewiseIdealGasCpKernel,
     PolynomialCpKernel,
     ShomateCpKernel,
     kernel_from_payload,
     load_bundled_kernel,
     clear_bundled_kernel_cache,
     load_atom_increment_model,
+    rrho_ideal_gas_heat_capacity,
+)
+from property_resolution.common import PropertyResolutionResult
+from property_resolution.heat_capacity import (
+    NIST_LEGACY_CP_ORIGIN,
+    NIST_XTB_CP_ORIGIN,
+    XTB_RRHO_DERIVED_ORIGIN,
 )
 from thermodynamics import IdealThermodynamics
 
@@ -31,6 +42,149 @@ class IdealGasCpKernelTests(unittest.TestCase):
             math.isclose(actual, expected, rel_tol=rel, abs_tol=abs_tol),
             f'{actual!r} != {expected!r}',
         )
+
+    def test_rrho_heat_capacity_limits_and_vectorization(self):
+        monatomic = rrho_ideal_gas_heat_capacity(298.15, (), 'monatomic')
+        linear = rrho_ideal_gas_heat_capacity(
+            [298.15, 1500.0],
+            (4400.0,),
+            'linear',
+        )
+        self.assertClose(monatomic, 2.5 * R_J_MOL_K)
+        self.assertEqual(linear.shape, (2,))
+        self.assertGreater(linear[1], linear[0])
+        self.assertGreaterEqual(linear[0], 3.5 * R_J_MOL_K)
+        self.assertLessEqual(linear[1], 4.5 * R_J_MOL_K)
+
+    def test_affine_piecewise_kernel_round_trip_and_integrals(self):
+        base = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.89,
+            source='calculated',
+            method='test_base',
+            coefficients=(20.0, 0.01),
+        )
+        lower = AffineIdealGasCpKernel(
+            Tmin=273.15,
+            Tmax=300.0,
+            quality=0.94,
+            source='hybrid',
+            method='lower',
+            base_kernel=base,
+            intercept=5.0,
+        )
+        slope = 12.0 / 380.0
+        middle = ShomateCpKernel(
+            Tmin=300.0,
+            Tmax=680.0,
+            quality=0.94,
+            source='online',
+            method='middle',
+            coefficients=(28.0 - 300.0 * slope, 1000.0 * slope, 0.0, 0.0, 0.0),
+        )
+        upper = AffineIdealGasCpKernel(
+            Tmin=680.0,
+            Tmax=1500.0,
+            quality=0.94,
+            source='hybrid',
+            method='upper',
+            base_kernel=base,
+            intercept=13.2,
+        )
+        piecewise = PiecewiseIdealGasCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.94,
+            source='hybrid',
+            method='test_piecewise',
+            segments=(lower, middle, upper),
+            source_Tmin=300.0,
+            source_Tmax=680.0,
+        )
+        restored = kernel_from_payload(piecewise.to_payload())
+        self.assertIsInstance(restored, PiecewiseIdealGasCpKernel)
+        self.assertEqual(len(restored.segments), 3)
+        self.assertClose(restored.cp(300.0), 28.0)
+        self.assertClose(restored.cp(680.0), 40.0)
+        temperatures = np.linspace(280.0, 1200.0, 20001)
+        capacities = np.asarray([restored.cp(float(T)) for T in temperatures])
+        numerical_h = float(np.trapezoid(capacities, temperatures))
+        numerical_s = float(np.trapezoid(capacities / temperatures, temperatures))
+        self.assertClose(restored.delta_h(280.0, 1200.0), numerical_h, rel=1e-8)
+        self.assertClose(restored.delta_s(280.0, 1200.0), numerical_s, rel=1e-8)
+
+    def test_affine_and_piecewise_kernels_reject_invalid_contracts(self):
+        base = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.89,
+            source='calculated',
+            method='base',
+            coefficients=(30.0,),
+        )
+        with self.assertRaisesRegex(ValueError, 'exceeds its base'):
+            AffineIdealGasCpKernel(
+                Tmin=250.0,
+                Tmax=1500.0,
+                quality=0.93,
+                source='hybrid',
+                method='bad_range',
+                base_kernel=base,
+            )
+        left = AffineIdealGasCpKernel(
+            Tmin=273.15,
+            Tmax=500.0,
+            quality=0.94,
+            source='hybrid',
+            method='left',
+            base_kernel=base,
+        )
+        gap = AffineIdealGasCpKernel(
+            Tmin=501.0,
+            Tmax=1500.0,
+            quality=0.94,
+            source='hybrid',
+            method='gap',
+            base_kernel=base,
+        )
+        with self.assertRaisesRegex(ValueError, 'contiguous'):
+            PiecewiseIdealGasCpKernel(
+                Tmin=273.15,
+                Tmax=1500.0,
+                quality=0.94,
+                source='hybrid',
+                method='gap',
+                segments=(left, gap),
+            )
+        jump = AffineIdealGasCpKernel(
+            Tmin=500.0,
+            Tmax=1500.0,
+            quality=0.94,
+            source='hybrid',
+            method='jump',
+            base_kernel=base,
+            intercept=1.0,
+        )
+        with self.assertRaisesRegex(ValueError, 'discontinuous'):
+            PiecewiseIdealGasCpKernel(
+                Tmin=273.15,
+                Tmax=1500.0,
+                quality=0.94,
+                source='hybrid',
+                method='jump',
+                segments=(left, jump),
+            )
+        with self.assertRaisesRegex(ValueError, 'both endpoints'):
+            PiecewiseIdealGasCpKernel(
+                Tmin=273.15,
+                Tmax=500.0,
+                quality=0.94,
+                source='hybrid',
+                method='partial_source_range',
+                segments=(left,),
+                source_Tmin=300.0,
+            )
 
     def test_bundled_kernel_round_trip_and_primitives(self):
         kernel = load_bundled_kernel('64-17-5')
@@ -160,6 +314,29 @@ class IdealGasCpResolverTests(unittest.TestCase):
     def assertClose(self, actual, expected, *, rel=1e-10, abs_tol=1e-10):
         self.assertTrue(math.isclose(actual, expected, rel_tol=rel, abs_tol=abs_tol))
 
+    @staticmethod
+    def synthetic_xtb_kernel():
+        return PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.89,
+            source='calculated',
+            method='gfn2_xtb_rrho_ideal_gas_cp_kernel',
+            source_fingerprint='synthetic-xtb',
+            coefficients=(25.0, 0.02),
+        )
+
+    @staticmethod
+    def synthetic_nist_points(count):
+        rows = []
+        for temperature in np.linspace(300.0, 750.0, count):
+            reduced = temperature / 1000.0
+            rows.append([
+                float(temperature),
+                30.0 + 20.0 * reduced + 2.0 * reduced * reduced,
+            ])
+        return {'gas': rows, '_source': 'synthetic NIST'}
+
     def test_provided_override_precedes_bundled_database(self):
         resolver = PropertyResolver()
         props = {
@@ -230,6 +407,597 @@ class IdealGasCpResolverTests(unittest.TestCase):
             )
         self.assertIn('canonical_perry_9e', kernel.method)
 
+    def test_bundled_psi4_is_deferred_but_precedes_plain_xtb(self):
+        resolver = PropertyResolver()
+        bundled = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.90,
+            source='Adjusted Psi4 RRHO',
+            method='canonical_psi4_adjusted_ideal_gas_cp',
+            coefficients=(30.0,),
+        )
+        with (
+            patch(
+                'property_resolution.heat_capacity.load_bundled_kernel',
+                return_value=bundled,
+            ),
+            patch.object(resolver, '_fetch_nist_cp_source', return_value=None),
+            patch.object(
+                resolver,
+                '_xtb_rrho_ideal_gas_cp_kernel',
+                side_effect=AssertionError('xTB must remain below stored Psi4'),
+            ),
+        ):
+            selected = resolver.resolve_ideal_gas_cp_kernel(
+                'test molecule',
+                {'CAS': '999-99-9', 'smiles': '[H][H]'},
+                allow_online=False,
+            )
+        self.assertEqual(selected.method, bundled.method)
+        self.assertEqual(selected.quality, 0.89)
+
+    def test_native_online_shomate_precedes_xtb(self):
+        resolver = PropertyResolver()
+        source = {'gas_shomate': [{
+            'Tmin_K': 300.0,
+            'Tmax_K': 1000.0,
+            'A': 30.0,
+            'B': 1.0,
+            'C': 0.0,
+            'D': 0.0,
+            'E': 0.0,
+        }]}
+        with (
+            patch.object(resolver, '_fetch_nist_cp_source', return_value=source),
+            patch.object(
+                resolver,
+                '_xtb_rrho_ideal_gas_cp_kernel',
+                side_effect=AssertionError('xTB must remain below native Shomate'),
+            ),
+            patch.object(
+                resolver,
+                '_atom_increment_ideal_gas_cp_kernel',
+                side_effect=AssertionError('atom fallback must remain below native Shomate'),
+            ),
+        ):
+            selected = resolver.resolve_ideal_gas_cp_kernel(
+                'test molecule',
+                {'smiles': '[H][H]'},
+                allow_online=True,
+            )
+        self.assertEqual(selected.method, 'nist_native_shomate_ideal_gas_cp_kernel')
+
+    def test_sparse_nist_xtb_point_count_policy(self):
+        resolver = PropertyResolver()
+        xtb = self.synthetic_xtb_kernel()
+        cases = (
+            (1, AffineIdealGasCpKernel, 'nist_constant_corrected_xtb_ideal_gas_cp_kernel', 0.91),
+            (2, AffineIdealGasCpKernel, 'nist_constant_corrected_xtb_ideal_gas_cp_kernel', 0.91),
+            (3, AffineIdealGasCpKernel, 'nist_affine_xtb_ideal_gas_cp_kernel', 0.93),
+            (9, AffineIdealGasCpKernel, 'nist_affine_xtb_ideal_gas_cp_kernel', 0.93),
+            (10, PiecewiseIdealGasCpKernel, 'nist_shomate_affine_xtb_piecewise_ideal_gas_cp_kernel', 0.94),
+        )
+        for count, expected_type, method, quality in cases:
+            with self.subTest(count=count):
+                kernel = resolver._nist_sparse_xtb_kernel(
+                    self.synthetic_nist_points(count),
+                    xtb,
+                )
+                self.assertIsInstance(kernel, expected_type)
+                self.assertEqual(kernel.method, method)
+                self.assertEqual(kernel.quality, quality)
+                if count <= 2:
+                    self.assertEqual(kernel.scale_factor, 1.0)
+                if count >= 10:
+                    self.assertEqual(kernel.source_Tmin, 300.0)
+                    self.assertEqual(kernel.source_Tmax, 750.0)
+                    self.assertEqual(len(kernel.segments), 3)
+                    self.assertClose(
+                        kernel.segments[0].cp(300.0),
+                        kernel.segments[1].cp(300.0),
+                    )
+                    self.assertClose(
+                        kernel.segments[1].cp(750.0),
+                        kernel.segments[2].cp(750.0),
+                    )
+
+    def test_resolver_caches_piecewise_sparse_policy_for_offline_reuse(self):
+        source = self.synthetic_nist_points(10)
+        xtb = self.synthetic_xtb_kernel()
+        props = {'CAS': '999-99-9', 'smiles': 'CC'}
+        with tempfile.TemporaryDirectory() as directory:
+            first = PropertyResolver()
+            first.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(first, '_fetch_nist_cp_source', return_value=source),
+                patch.object(first, '_xtb_rrho_ideal_gas_cp_kernel', return_value=xtb),
+            ):
+                kernel = first.resolve_ideal_gas_cp_kernel(
+                    'test', props, allow_online=True
+                )
+            self.assertIsInstance(kernel, PiecewiseIdealGasCpKernel)
+            cached = first._get_derived_cp_kernel(
+                NIST_XTB_CP_ORIGIN,
+                '999-99-9',
+            )
+            self.assertIsInstance(cached, PiecewiseIdealGasCpKernel)
+
+            second = PropertyResolver()
+            second.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(second, '_fetch_nist_cp_source', return_value=None),
+                patch.object(
+                    second,
+                    '_xtb_rrho_ideal_gas_cp_kernel',
+                    side_effect=AssertionError('cached hybrid must avoid xTB'),
+                ),
+            ):
+                restored = second.resolve_ideal_gas_cp_kernel(
+                    'test', props, allow_online=False
+                )
+            self.assertIsInstance(restored, PiecewiseIdealGasCpKernel)
+            self.assertEqual(restored.to_payload(), kernel.to_payload())
+
+    def test_sparse_online_corrections_precede_deferred_psi4(self):
+        psi4 = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.90,
+            source='Adjusted Psi4 RRHO',
+            method='canonical_psi4_adjusted_ideal_gas_cp',
+            coefficients=(30.0,),
+        )
+        xtb = self.synthetic_xtb_kernel()
+        for count, expected_method, expected_quality in (
+            (1, 'nist_constant_corrected_xtb_ideal_gas_cp_kernel', 0.91),
+            (2, 'nist_constant_corrected_xtb_ideal_gas_cp_kernel', 0.91),
+            (3, 'nist_affine_xtb_ideal_gas_cp_kernel', 0.93),
+            (9, 'nist_affine_xtb_ideal_gas_cp_kernel', 0.93),
+            (10, 'nist_shomate_affine_xtb_piecewise_ideal_gas_cp_kernel', 0.94),
+        ):
+            with self.subTest(count=count), tempfile.TemporaryDirectory() as directory:
+                resolver = PropertyResolver()
+                resolver.CACHE_DIR = Path(directory)
+                with (
+                    patch(
+                        'property_resolution.heat_capacity.load_bundled_kernel',
+                        return_value=psi4,
+                    ),
+                    patch.object(
+                        resolver,
+                        '_fetch_nist_cp_source',
+                        return_value=self.synthetic_nist_points(count),
+                    ),
+                    patch.object(
+                        resolver,
+                        '_xtb_rrho_ideal_gas_cp_kernel',
+                        return_value=xtb,
+                    ),
+                ):
+                    kernel = resolver.resolve_ideal_gas_cp_kernel(
+                        'test', {'CAS': '999-99-9'}, allow_online=True
+                    )
+                self.assertEqual(kernel.method, expected_method)
+                self.assertEqual(kernel.quality, expected_quality)
+
+    def test_invalid_sparse_xtb_correction_falls_through_cleanly(self):
+        resolver = PropertyResolver()
+        xtb = self.synthetic_xtb_kernel()
+        hostile = {
+            'gas': [
+                [float(T), float(Cp)]
+                for T, Cp in zip(
+                    np.linspace(300.0, 750.0, 10),
+                    np.linspace(100.0, 20.0, 10),
+                    strict=True,
+                )
+            ]
+        }
+        self.assertIsNone(resolver._nist_sparse_xtb_kernel(hostile, xtb))
+
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(resolver, '_fetch_nist_cp_source', return_value=hostile),
+                patch.object(
+                    resolver,
+                    '_xtb_rrho_ideal_gas_cp_kernel',
+                    return_value=xtb,
+                ),
+            ):
+                fallback = resolver.resolve_ideal_gas_cp_kernel(
+                    'test', {'CAS': '999-99-9'}, allow_online=True
+                )
+        self.assertEqual(fallback.method, 'nist_in_range_shomate_ideal_gas_cp_kernel')
+        self.assertEqual(fallback.quality, 0.92)
+
+    def test_malformed_online_points_are_ignored_before_counting(self):
+        resolver = PropertyResolver()
+        source = {
+            'gas': [
+                None,
+                [],
+                ['bad', 40.0],
+                [300.0, 'bad'],
+                [0.0, 40.0],
+                [300.0, -1.0],
+                [400.0, 35.0],
+                [500.0, 37.0],
+            ],
+        }
+        self.assertEqual(
+            resolver._nist_gas_cp_points(source),
+            [(400.0, 35.0), (500.0, 37.0)],
+        )
+        hybrid = resolver._nist_sparse_xtb_kernel(
+            source,
+            self.synthetic_xtb_kernel(),
+        )
+        self.assertEqual(
+            hybrid.method,
+            'nist_constant_corrected_xtb_ideal_gas_cp_kernel',
+        )
+
+    def test_unexpected_xtb_exception_falls_through_to_legacy_online(self):
+        source = self.synthetic_nist_points(5)
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(resolver, '_fetch_nist_cp_source', return_value=source),
+                patch.object(
+                    resolver,
+                    '_xtb_rrho_ideal_gas_cp_kernel',
+                    side_effect=RuntimeError('unexpected optional backend failure'),
+                ),
+            ):
+                kernel = resolver.resolve_ideal_gas_cp_kernel(
+                    'test', {'CAS': '999-99-9'}, allow_online=True
+                )
+        self.assertEqual(kernel.method, 'nist_linear_ideal_gas_cp_kernel')
+
+    def test_xtb_unavailable_dense_points_precede_psi4_as_in_range_shomate(self):
+        psi4 = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.90,
+            source='Adjusted Psi4 RRHO',
+            method='canonical_psi4_adjusted_ideal_gas_cp',
+            coefficients=(30.0,),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=psi4,
+                ),
+                patch.object(
+                    resolver,
+                    '_fetch_nist_cp_source',
+                    return_value=self.synthetic_nist_points(10),
+                ),
+                patch.object(resolver, '_xtb_rrho_ideal_gas_cp_kernel', return_value=None),
+            ):
+                kernel = resolver.resolve_ideal_gas_cp_kernel(
+                    'test', {'CAS': '999-99-9'}, allow_online=True
+                )
+        self.assertEqual(kernel.method, 'nist_in_range_shomate_ideal_gas_cp_kernel')
+        self.assertEqual(kernel.quality, 0.92)
+        self.assertEqual((kernel.Tmin, kernel.Tmax), (300.0, 750.0))
+
+    def test_xtb_unavailable_sparse_points_fall_through_psi4_then_legacy(self):
+        psi4 = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.90,
+            source='Adjusted Psi4 RRHO',
+            method='canonical_psi4_adjusted_ideal_gas_cp',
+            coefficients=(30.0,),
+        )
+        source = self.synthetic_nist_points(5)
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=psi4,
+                ),
+                patch.object(resolver, '_fetch_nist_cp_source', return_value=source),
+                patch.object(resolver, '_xtb_rrho_ideal_gas_cp_kernel', return_value=None),
+            ):
+                selected_psi4 = resolver.resolve_ideal_gas_cp_kernel(
+                    'test', {'CAS': '999-99-9'}, allow_online=True
+                )
+        self.assertEqual(selected_psi4.method, psi4.method)
+        self.assertEqual(selected_psi4.quality, 0.89)
+
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(resolver, '_fetch_nist_cp_source', return_value=source),
+                patch.object(resolver, '_xtb_rrho_ideal_gas_cp_kernel', return_value=None),
+            ):
+                legacy = resolver.resolve_ideal_gas_cp_kernel(
+                    'test', {'CAS': '999-99-9'}, allow_online=True
+                )
+        self.assertEqual(legacy.method, 'nist_linear_ideal_gas_cp_kernel')
+
+    def test_xtb_unavailable_uses_legacy_sparse_point_boundaries(self):
+        for count, expected in (
+            (1, 'nist_constant_ideal_gas_cp_kernel'),
+            (2, 'nist_linear_ideal_gas_cp_kernel'),
+            (3, 'nist_linear_ideal_gas_cp_kernel'),
+            (9, 'nist_linear_ideal_gas_cp_kernel'),
+        ):
+            with self.subTest(count=count), tempfile.TemporaryDirectory() as directory:
+                resolver = PropertyResolver()
+                resolver.CACHE_DIR = Path(directory)
+                with (
+                    patch(
+                        'property_resolution.heat_capacity.load_bundled_kernel',
+                        return_value=None,
+                    ),
+                    patch.object(
+                        resolver,
+                        '_fetch_nist_cp_source',
+                        return_value=self.synthetic_nist_points(count),
+                    ),
+                    patch.object(
+                        resolver,
+                        '_xtb_rrho_ideal_gas_cp_kernel',
+                        return_value=None,
+                    ),
+                ):
+                    kernel = resolver.resolve_ideal_gas_cp_kernel(
+                        'test', {'CAS': '999-99-9'}, allow_online=True
+                    )
+                self.assertEqual(kernel.method, expected)
+
+    def test_online_unavailable_uses_plain_xtb_at_reduced_quality(self):
+        xtb = self.synthetic_xtb_kernel()
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(resolver, '_fetch_nist_cp_source', return_value=None),
+                patch.object(
+                    resolver,
+                    '_xtb_rrho_ideal_gas_cp_kernel',
+                    return_value=xtb,
+                ),
+            ):
+                kernel = resolver.resolve_ideal_gas_cp_kernel(
+                    'test', {'CAS': '999-99-9'}, allow_online=False
+                )
+        self.assertIs(kernel, xtb)
+        self.assertEqual(kernel.quality, 0.89)
+
+    def test_xtb_rrho_kernel_and_raw_frequencies_are_cached(self):
+        dependencies = {'tblite': '0.7.0', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
+        artifact = {
+            'geometry': 'linear',
+            'atom_count': 2,
+            'frequencies_cm_1': (4400.0,),
+            'imaginary_modes_below_cutoff': 0,
+            'settings': {'hessian': 'test'},
+        }
+        smiles_result = PropertyResolutionResult(
+            value='[H][H]',
+            source='test',
+            method='test_smiles',
+            quality=1.0,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            first = PropertyResolver()
+            first.CACHE_DIR = Path(directory)
+            with (
+                patch.object(first, '_fetch_nist_cp_source', return_value=None),
+                patch.object(first, '_resolve_smiles_result', return_value=smiles_result),
+                patch.object(first, '_xtb_rrho_dependency_state', return_value=dependencies),
+                patch.object(first, '_resolve_xtb_geometry', return_value=(object(), 0, 1)) as geometry,
+                patch.object(first, '_calculate_xtb_rrho_artifact', return_value=artifact) as calculate,
+            ):
+                kernel = first.resolve_ideal_gas_cp_kernel(
+                    'test hydrogen',
+                    {},
+                    allow_online=False,
+                )
+
+            geometry.assert_called_once()
+            calculate.assert_called_once()
+            self.assertIsInstance(kernel, ChebyshevCpKernel)
+            self.assertEqual(kernel.method, 'gfn2_xtb_rrho_ideal_gas_cp_kernel')
+            self.assertEqual(kernel.source, 'calculated')
+            self.assertEqual(kernel.quality, 0.89)
+            self.assertClose(
+                kernel.cp(500.0),
+                rrho_ideal_gas_heat_capacity(500.0, (4400.0,), 'linear'),
+                rel=1e-4,
+            )
+
+            identity = 'smiles:[H][H]'
+            raw = first._load_xtb_rrho_artifact(identity)
+            self.assertEqual(raw['frequencies_cm_1'], (4400.0,))
+            first._ideal_gas_cp_derived_cache().delete(
+                first._derived_cp_cache_key(XTB_RRHO_DERIVED_ORIGIN, identity)
+            )
+
+            second = PropertyResolver()
+            second.CACHE_DIR = Path(directory)
+            cached_only = {
+                'tblite': 'missing',
+                'ase': 'missing',
+                'rdkit': '2026.3.1',
+            }
+            with (
+                patch.object(second, '_fetch_nist_cp_source', return_value=None),
+                patch.object(second, '_resolve_smiles_result', return_value=smiles_result),
+                patch.object(second, '_xtb_rrho_dependency_state', return_value=cached_only),
+                patch.object(
+                    second,
+                    '_resolve_xtb_geometry',
+                    side_effect=AssertionError('cached frequencies must avoid geometry/QM'),
+                ),
+            ):
+                restored = second.resolve_ideal_gas_cp_kernel(
+                    'test hydrogen',
+                    {},
+                    allow_online=False,
+                )
+            self.assertEqual(restored.method, 'gfn2_xtb_rrho_ideal_gas_cp_kernel')
+            self.assertClose(restored.cp(500.0), kernel.cp(500.0), rel=1e-10)
+
+    def test_xtb_rrho_unavailable_or_failed_cleanly_falls_through(self):
+        missing = {'tblite': 'missing', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
+        smiles_result = PropertyResolutionResult(
+            value='[H][H]', source='test', method='test', quality=1.0
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch.object(resolver, '_xtb_rrho_dependency_state', return_value=missing),
+                patch.object(resolver, '_resolve_smiles_result', return_value=smiles_result),
+                patch.object(
+                    resolver,
+                    '_resolve_xtb_geometry',
+                    side_effect=AssertionError('missing backend must not generate geometry'),
+                ),
+            ):
+                self.assertIsNone(resolver._xtb_rrho_ideal_gas_cp_kernel(
+                    'test', {'smiles': '[H][H]'}, allow_online=False
+                ))
+
+        dependencies = {'tblite': '0.7.0', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch.object(resolver, '_xtb_rrho_dependency_state', return_value=dependencies),
+                patch.object(resolver, '_resolve_smiles_result', return_value=smiles_result),
+                patch.object(resolver, '_resolve_xtb_geometry', return_value=(object(), 0, 1)),
+                patch.object(
+                    resolver,
+                    '_calculate_xtb_rrho_artifact',
+                    side_effect=RuntimeError('frequency failure'),
+                ) as calculate,
+            ):
+                first = resolver._xtb_rrho_ideal_gas_cp_kernel(
+                    'test', {}, allow_online=False
+                )
+                second = resolver._xtb_rrho_ideal_gas_cp_kernel(
+                    'test', {}, allow_online=False
+                )
+            self.assertIsNone(first)
+            self.assertIsNone(second)
+            calculate.assert_called_once()
+
+    def test_xtb_rrho_failure_falls_through_to_atom_increment_kernel(self):
+        resolver = PropertyResolver()
+        fallback = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.80,
+            source='estimated',
+            method='atom_increment_shomate_ideal_gas_cp_kernel',
+            coefficients=(40.0,),
+        )
+        with (
+            patch.object(resolver, '_fetch_nist_cp_source', return_value=None),
+            patch.object(resolver, '_xtb_rrho_ideal_gas_cp_kernel', return_value=None) as xtb,
+            patch.object(
+                resolver,
+                '_atom_increment_ideal_gas_cp_kernel',
+                return_value=fallback,
+            ) as atom_increment,
+        ):
+            selected = resolver.resolve_ideal_gas_cp_kernel(
+                'madeupium',
+                {'formula': 'C2H6O'},
+                allow_online=False,
+            )
+        self.assertIs(selected, fallback)
+        xtb.assert_called_once()
+        atom_increment.assert_called_once()
+
+    def test_atom_fallback_upgrades_when_xtb_dependencies_appear(self):
+        resolver = PropertyResolver()
+        atom = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.80,
+            source='estimated',
+            method='atom_increment_shomate_ideal_gas_cp_kernel',
+            coefficients=(40.0,),
+        )
+        xtb = PolynomialCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.89,
+            source='calculated',
+            method='gfn2_xtb_rrho_ideal_gas_cp_kernel',
+            coefficients=(42.0,),
+        )
+        missing = {'tblite': 'missing', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
+        installed = {'tblite': '0.7.0', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
+        with (
+            patch.object(resolver, '_fetch_nist_cp_source', return_value=None),
+            patch.object(
+                resolver,
+                '_xtb_rrho_dependency_state',
+                side_effect=(missing, installed),
+            ),
+            patch.object(
+                resolver,
+                '_xtb_rrho_ideal_gas_cp_kernel',
+                side_effect=(None, xtb),
+            ) as xtb_provider,
+            patch.object(
+                resolver,
+                '_atom_increment_ideal_gas_cp_kernel',
+                return_value=atom,
+            ),
+        ):
+            first = resolver.resolve_ideal_gas_cp_kernel(
+                'madeupium', {'formula': 'C2H6O'}, allow_online=False
+            )
+            second = resolver.resolve_ideal_gas_cp_kernel(
+                'madeupium', {'formula': 'C2H6O'}, allow_online=False
+            )
+        self.assertIs(first, atom)
+        self.assertIs(second, xtb)
+        self.assertEqual(xtb_provider.call_count, 2)
+
     def test_cached_online_kernel_is_available_when_network_is_disabled(self):
         source = {
             'gas': [[300.0, 30.0], [400.0, 40.0], [500.0, 50.0], [600.0, 60.0]],
@@ -239,7 +1007,11 @@ class IdealGasCpResolverTests(unittest.TestCase):
             first = PropertyResolver()
             first.CACHE_DIR = Path(directory)
             kernel = first._kernel_from_nist_source(source)
-            first._set_derived_cp_kernel('online', 'madeupium', kernel)
+            first._set_derived_cp_kernel(
+                NIST_LEGACY_CP_ORIGIN,
+                'madeupium',
+                kernel,
+            )
 
             second = PropertyResolver()
             second.CACHE_DIR = Path(directory)
@@ -274,7 +1046,10 @@ class IdealGasCpResolverTests(unittest.TestCase):
                 )
             self.assertIsInstance(kernel, ShomateCpKernel)
             self.assertClose(kernel.cp(450.0), 45.0)
-            self.assertIsNotNone(second._get_derived_cp_kernel('online', 'madeupium'))
+            self.assertIsNotNone(second._get_derived_cp_kernel(
+                NIST_LEGACY_CP_ORIGIN,
+                'madeupium',
+            ))
 
     def test_fresh_cas_negative_skips_weaker_online_queries(self):
         with tempfile.TemporaryDirectory() as directory:

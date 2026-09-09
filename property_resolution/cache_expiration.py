@@ -16,6 +16,9 @@ DERIVED_LOCAL_PROPERTY_NAMESPACES = frozenset({
     'ideal_gas_cp_derived_v1',
     'liquid_cp_derived_v1',
 })
+PERSISTENT_LOCAL_ARTIFACT_NAMESPACES = frozenset({
+    'qm_artifacts_v1',
+})
 SOURCE_DATABASE_FILENAMES = frozenset({
     'effective_criticals.sqlite',
     'henry_constants.sqlite',
@@ -32,13 +35,16 @@ def sqlite_cache_ttl_days(
     """Return the TTL for a runtime cache, or ``None`` when exempt.
 
     Source databases such as effective criticals and Henry constants never
-    call this helper.  The only exempt runtime cache is the stable molecular-
-    structure cache.
+    call this helper. Stable molecular structures and versioned local QM
+    artifacts are exempt because they can be regenerated deterministically
+    and are expensive to replace.
     """
     filename = Path(path).name.lower()
     if filename in SOURCE_DATABASE_FILENAMES:
         return None
     if filename == SMILES_CACHE_FILENAME:
+        return None
+    if str(namespace) in PERSISTENT_LOCAL_ARTIFACT_NAMESPACES:
         return None
     if (
         str(namespace)
