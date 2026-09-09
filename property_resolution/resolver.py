@@ -8,6 +8,7 @@ from .liquid_volume import LiquidVolumeMixin
 from .solid_volume import SolidVolumeMixin
 from .viscosity import ViscosityMixin
 from .surface_tension import SurfaceTensionMixin
+from .thermal_conductivity import ThermalConductivityMixin
 from .formation import FormationPropertiesMixin
 from .online_phase_change import OnlinePhaseChangeMixin
 from .dipole_moment import DipoleMomentMixin
@@ -24,6 +25,7 @@ class PropertyResolver(
     LiquidVolumeMixin,
     ViscosityMixin,
     SurfaceTensionMixin,
+    ThermalConductivityMixin,
     FormationPropertiesMixin,
     RadiusOfGyrationMixin,
     DipoleMomentMixin,

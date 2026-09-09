@@ -145,14 +145,6 @@ class SolidVolumeMixin:
         polymorph = str((props or {}).get("solid_polymorph") or "").strip()
         return form or "unspecified", polymorph
 
-    @staticmethod
-    def _positive_number(value: Any) -> Optional[float]:
-        try:
-            result = float(value)
-        except (TypeError, ValueError):
-            return None
-        return result if math.isfinite(result) and result > 0.0 else None
-
     def _provided_solid_volume(self, props: Mapping[str, Any]) -> Optional[PropertyResolutionResult]:
         value = self._positive_number((props or {}).get("Vm_solid"))
         if value is None:

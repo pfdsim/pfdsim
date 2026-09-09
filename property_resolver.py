@@ -121,6 +121,7 @@ __all__ = (
     'resolve_liquid_molar_volume',
     'resolve_liquid_molar_volume_nearest',
     'resolve_viscosity',
+    'resolve_thermal_conductivity',
     'resolve_surface_tension',
     'resolve_dipole_moment',
     'resolve_radius_of_gyration',
@@ -417,6 +418,24 @@ def resolve_viscosity(
         props,
         P=P,
         rho_molar=rho_molar,
+    )
+
+
+def resolve_thermal_conductivity(
+    symbol: str,
+    T: float,
+    phase: str,
+    props: Dict = None,
+    *,
+    allow_online: bool = True,
+) -> PropertyResolutionResult:
+    """Resolve pure-component thermal conductivity in W/(m*K)."""
+    return get_property_resolver().resolve_thermal_conductivity(
+        symbol,
+        T,
+        phase,
+        props,
+        allow_online=allow_online,
     )
 
 

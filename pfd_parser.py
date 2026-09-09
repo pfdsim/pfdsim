@@ -188,6 +188,8 @@ _PROPERTY_CORRELATION_EQUATIONS = {
         'poly_x', 'exp_poly_x', 'poly_tp', 'exp_poly_tp', 'dippr_eq101',
         'viscosity_exp_rhor',
     }),
+    'kg': frozenset({'dippr_eq100', 'dippr_eq102'}),
+    'kl': frozenset({'dippr_eq100'}),
     'sigma': frozenset({
         'poly_x', 'exp_poly_x', 'dippr_eq106', 'eq106', 'constant',
         'constant_surface_tension', 'surface_tension_reference', 'jasper',
@@ -258,6 +260,8 @@ _PROPERTY_CORRELATION_COEFFICIENTS = {
     'canonical_psat_ag': frozenset('ABCDEFG'),
     'canonical_psat_ah': frozenset('ABCDEFGH'),
     'dippr_eq101': frozenset('ABCDE'),
+    'dippr_eq100': frozenset('ABCDE'),
+    'dippr_eq102': frozenset('ABCD'),
     'dippr_eq106': frozenset('ABCDE'),
     'eq106': frozenset('ABCDE'),
     'vdi_ppds_11': frozenset('ABCDE'),

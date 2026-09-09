@@ -69,6 +69,7 @@ from .organic_classification import (
 )
 from .dipole_moment import DipoleMomentMixin
 from .radius_of_gyration import RadiusOfGyrationMixin
+from .thermal_conductivity import ThermalConductivityMixin
 from .resolver import PropertyResolver
 
 __all__ = [
@@ -130,6 +131,6 @@ __all__ = [
     'HydrogenBondDonorProfile', 'StrictOrganicClassification',
     'classify_strict_molecular_organic', 'hydrogen_bond_donor_profile',
     'is_strict_organic_formula_counts',
-    'DipoleMomentMixin', 'RadiusOfGyrationMixin',
+    'DipoleMomentMixin', 'RadiusOfGyrationMixin', 'ThermalConductivityMixin',
     'PropertyResolver',
 ]

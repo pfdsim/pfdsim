@@ -9,14 +9,19 @@ from pathlib import Path
 from typing import Any, Optional
 from scipy.interpolate import PchipInterpolator
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .compound_identity import get_compound_identity_resolver
     from .pressure_standards import NORMAL_BOILING_PRESSURE_BAR
 else:
+    from compound_identity import get_compound_identity_resolver
     from pressure_standards import NORMAL_BOILING_PRESSURE_BAR
 
 
 DATA_PATH = Path(__file__).parent / "data" / "perry_properties.json"
 HEAT_OF_FUSION_DATA_PATH = Path(__file__).parent / "data" / "perry_heat_of_fusion.json"
 TABLE_2_10_DATA_PATH = Path(__file__).parent / "data" / "perry_table_2_10_vapor_pressure.json"
+THERMAL_CONDUCTIVITY_DATA_PATH = (
+    Path(__file__).parent / "data" / "perry_thermal_conductivity.json"
+)
 
 
 @dataclass(frozen=True)
@@ -36,13 +41,16 @@ class PerryPropertyLibrary:
         path: str | Path = DATA_PATH,
         heat_of_fusion_path: str | Path = HEAT_OF_FUSION_DATA_PATH,
         table_2_10_path: str | Path = TABLE_2_10_DATA_PATH,
+        thermal_conductivity_path: str | Path = THERMAL_CONDUCTIVITY_DATA_PATH,
     ):
         self.path = Path(path)
         self.heat_of_fusion_path = Path(heat_of_fusion_path)
         self.table_2_10_path = Path(table_2_10_path)
+        self.thermal_conductivity_path = Path(thermal_conductivity_path)
         self._loaded = False
         self._fusion_loaded = False
         self._table_2_10_loaded = False
+        self._thermal_conductivity_loaded = False
         self.metadata: dict[str, Any] = {}
         self.chemicals: dict[str, dict[str, Any]] = {}
         self.aliases: dict[str, str] = {}
@@ -53,6 +61,10 @@ class PerryPropertyLibrary:
         self.table_2_10_chemicals: dict[str, dict[str, Any]] = {}
         self.table_2_10_aliases: dict[str, str] = {}
         self._table_2_10_vapor_pressure_splines: dict[str, Any] = {}
+        self.thermal_conductivity_metadata: dict[str, Any] = {}
+        self.thermal_conductivity_chemicals: dict[str, dict[str, Any]] = {}
+        self.saturated_liquids: dict[str, dict[str, Any]] = {}
+        self.saturated_liquid_aliases: dict[str, str] = {}
 
     @staticmethod
     def _normalize(identifier: str) -> str:
@@ -180,6 +192,27 @@ class PerryPropertyLibrary:
             if cas:
                 return self.table_2_10_chemicals.get(cas)
         return None
+
+    def _load_thermal_conductivity(self) -> None:
+        if self._thermal_conductivity_loaded:
+            return
+        self._thermal_conductivity_loaded = True
+        if not self.thermal_conductivity_path.exists():
+            return
+
+        payload = json.loads(self.thermal_conductivity_path.read_text())
+        self.thermal_conductivity_metadata = payload.get("metadata", {})
+        self.thermal_conductivity_chemicals = payload.get("chemicals", {})
+        self.saturated_liquids = payload.get("saturated_liquids", {})
+        identities = get_compound_identity_resolver()
+        for name, entry in self.saturated_liquids.items():
+            for alias in (name, *entry.get("aliases", [])):
+                self.saturated_liquid_aliases.setdefault(self._normalize(alias), name)
+                cas = identities.resolve_cas(alias, allow_formula=False)
+                if cas:
+                    self.saturated_liquid_aliases.setdefault(
+                        self._normalize(cas), name
+                    )
 
     def get(self, identifier: str, expand_identity: bool = True) -> Optional[dict[str, Any]]:
         self._load()
@@ -864,6 +897,80 @@ class PerryPropertyLibrary:
             method=method,
             correlation=row,
         )
+
+    def thermal_conductivity_correlation(
+        self,
+        identifier: str,
+        T: float,
+        phase: str,
+    ) -> Optional[dict[str, Any]]:
+        """Return an in-range Perry conductivity row without evaluating it."""
+        self._load_thermal_conductivity()
+        entry = self.get(identifier, expand_identity=False)
+        if not entry:
+            return None
+        thermal_entry = self.thermal_conductivity_chemicals.get(entry.get("cas"))
+        if not thermal_entry:
+            return None
+        if phase == "vapor":
+            key = "vapor_thermal_conductivity"
+        elif phase == "liquid":
+            key = "liquid_thermal_conductivity"
+        else:
+            return None
+        return self._select_in_range(thermal_entry, key, T, supported={100, 102})
+
+    def saturated_liquid_thermal_conductivity_W_per_m_K(
+        self,
+        identifier: str,
+        T: float,
+    ) -> Optional[PerryEvaluation]:
+        """Interpolate one contiguous Table 2-146 conductivity run."""
+        self._load_thermal_conductivity()
+        name = self.saturated_liquid_aliases.get(self._normalize(identifier))
+        if name is None:
+            cas = get_compound_identity_resolver().resolve_cas(
+                identifier, allow_formula=False
+            )
+            if cas:
+                name = self.saturated_liquid_aliases.get(self._normalize(cas))
+        if name is None:
+            return None
+        entry = self.saturated_liquids[name]
+        for run in entry.get("runs", []):
+            samples = [(float(T_i), float(value)) for T_i, value in run]
+            if not samples or T < samples[0][0] or T > samples[-1][0]:
+                continue
+            for sample_T, value in samples:
+                if math.isclose(T, sample_T, abs_tol=1.0e-9):
+                    return PerryEvaluation(
+                        value=value,
+                        units="W/(m*K)",
+                        source=self._source("2-146"),
+                        method="perry_saturated_liquid_thermal_conductivity_tabulated",
+                        correlation={"source_table": "2-146", "temperature_K": sample_T},
+                    )
+            for (lower_T, lower_value), (upper_T, upper_value) in zip(
+                samples,
+                samples[1:],
+            ):
+                if lower_T < T < upper_T:
+                    fraction = (T - lower_T) / (upper_T - lower_T)
+                    return PerryEvaluation(
+                        value=lower_value + fraction * (upper_value - lower_value),
+                        units="W/(m*K)",
+                        source=self._source("2-146"),
+                        method=(
+                            "perry_saturated_liquid_thermal_conductivity_"
+                            "linear_interpolation"
+                        ),
+                        correlation={
+                            "source_table": "2-146",
+                            "T_min_K": lower_T,
+                            "T_max_K": upper_T,
+                        },
+                    )
+        return None
 
     def formation_properties(self, identifier: str) -> Optional[dict[str, PerryEvaluation]]:
         entry = self.get(identifier)

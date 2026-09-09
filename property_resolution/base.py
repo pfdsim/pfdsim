@@ -610,19 +610,18 @@ class PropertyResolverBase:
             return True
 
 
-        def _evaluate_provided_correlation(
+        def _evaluate_correlation(
             self,
-            props: Dict[str, Any],
-            key: str,
+            correlation: Dict[str, Any],
             T: float,
             *,
+            props: Optional[Dict[str, Any]] = None,
             P: Optional[float] = None,
             enforce_range: bool = True,
             rho_r: Optional[float] = None,
         ) -> Optional[tuple[float, Dict[str, Any]]]:
-            correlation = self._correlation_for(props, key)
-            if not correlation:
-                return None
+            """Evaluate one normalized correlation through the shared equation path."""
+            props = props or {}
             if enforce_range and not self._correlation_in_range(correlation, T):
                 return None
 
@@ -729,6 +728,24 @@ class PropertyResolverBase:
                         + coeffs.get('B', 0.0) / T
                         + coeffs.get('C', 0.0) * math.log(T)
                         + coeffs.get('D', 0.0) * T ** exponent_E
+                    )
+                    return value, correlation
+
+                if equation == 'dippr_eq100':
+                    # DIPPR equation 100: an ordinary polynomial in absolute
+                    # temperature, distinct from pfdsim's centered poly_x form.
+                    value = 0.0
+                    for power, name in enumerate(('A', 'B', 'C', 'D', 'E')):
+                        value += coeffs.get(name, 0.0) * T**power
+                    return value, correlation
+
+                if equation == 'dippr_eq102':
+                    # DIPPR equation 102: dilute-gas transport correlation.
+                    value = coeffs.get('A', 0.0) * T ** coeffs.get('B', 0.0)
+                    value /= (
+                        1.0
+                        + coeffs.get('C', 0.0) / T
+                        + coeffs.get('D', 0.0) / T**2
                     )
                     return value, correlation
 
@@ -839,6 +856,29 @@ class PropertyResolverBase:
             return None
 
 
+        def _evaluate_provided_correlation(
+            self,
+            props: Dict[str, Any],
+            key: str,
+            T: float,
+            *,
+            P: Optional[float] = None,
+            enforce_range: bool = True,
+            rho_r: Optional[float] = None,
+        ) -> Optional[tuple[float, Dict[str, Any]]]:
+            correlation = self._correlation_for(props, key)
+            if not correlation:
+                return None
+            return self._evaluate_correlation(
+                correlation,
+                T,
+                props=props,
+                P=P,
+                enforce_range=enforce_range,
+                rho_r=rho_r,
+            )
+
+
         def _evaluate_provided_correlation_bounded(
             self,
             props: Dict[str, Any],
@@ -906,6 +946,16 @@ class PropertyResolverBase:
                 quality=quality,
                 notes=notes,
             )
+
+
+        @staticmethod
+        def _positive_number(value: Any) -> Optional[float]:
+            """Return a positive finite float, or ``None`` for invalid input."""
+            try:
+                result = float(value)
+            except (TypeError, ValueError):
+                return None
+            return result if math.isfinite(result) and result > 0.0 else None
 
 
         @staticmethod
