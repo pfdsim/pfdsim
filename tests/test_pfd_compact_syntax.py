@@ -1,6 +1,6 @@
 import unittest
 
-from pfd_parser import PFDParser, ParseError, PortType, parse_pfd, validate_pfd
+from pfd_parser import ParseError, PortType, parse_pfd, validate_pfd
 from simulator import Simulator
 from unit_operations import UNIT_CLASSES
 from unit_syntax import (

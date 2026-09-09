@@ -311,7 +311,7 @@ def format_report(result: dict[str, Any]) -> str:
         lines.append(f"  {status}: {count}")
     for key, units in PROPERTIES.items():
         lines.extend(["", *format_metric(key, units, result["metrics"][key])])
-        lines.append(f"  largest absolute errors:")
+        lines.append("  largest absolute errors:")
         for row in result["worst"][key]:
             lines.append(
                 f"    {row['name']} ({row['cas']}): "

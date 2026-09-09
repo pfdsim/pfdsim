@@ -883,7 +883,6 @@ class PropertyResolverBase:
             default_quality: float = 0.96,
         ) -> PropertyResolutionResult:
             notes = notes_prefix
-            source = correlation.get('source') or correlation.get('selected_model') or 'provided correlation'
             Tmin = correlation.get('Tmin_K')
             Tmax = correlation.get('Tmax_K')
             if Tmin is not None and Tmax is not None:

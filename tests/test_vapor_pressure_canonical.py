@@ -22,7 +22,6 @@ from property_resolution import (
     PsatGapConsistency,
     PsatHandoffAction,
     PsatHandoffCoordinator,
-    PsatHandoffPolicy,
     PsatHandoffRequirement,
     PsatJunctionPolicy,
     PsatPriority,

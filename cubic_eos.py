@@ -1166,7 +1166,6 @@ class CubicEOS:
         comps = self.components
         x_values = [x[comp] for comp in comps]
         a_values = [a_i[comp] for comp in comps]
-        b_values = [b_i[comp] for comp in comps]
         kij_values = self._pair_kij_values(T)
         pair_index = 0
         for i, comp_i in enumerate(comps):

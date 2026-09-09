@@ -53,10 +53,10 @@ def simple_water_recycle_pfd(recycle_spec: str = ''):
 
 def initialized_recycle_stream(stream_id: str = 'Recycle') -> str:
     return (
-        f'    T = 25 [C]\n'
-        f'    P = 1 [bar]\n'
-        f'    F = 10 [kmol/h]\n'
-        f'    x = H2O:1.0\n'
+        '    T = 25 [C]\n'
+        '    P = 1 [bar]\n'
+        '    F = 10 [kmol/h]\n'
+        '    x = H2O:1.0\n'
     )
 
 

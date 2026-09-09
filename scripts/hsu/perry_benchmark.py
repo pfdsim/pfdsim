@@ -94,7 +94,7 @@ for cas, row in perry.items():
 results.sort(reverse=True)
 mapes = sorted(m for m, *_ in results)
 n = len(mapes)
-out = [f"Hsu native-engine benchmark vs Perry 2-313 correlations",
+out = ["Hsu native-engine benchmark vs Perry 2-313 correlations",
        f"eligible (correlation + criticals + SMILES): {len(perry) - no_input}",
        f"covered: {n}   rejected: {sum(rejects.values())}",
        "",

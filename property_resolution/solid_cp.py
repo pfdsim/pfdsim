@@ -18,7 +18,7 @@ import threading
 from contextlib import closing
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Mapping, Optional
 
 from .ideal_gas_cp import (
     CLAMP_QUALITY_PENALTY_PER_5K,

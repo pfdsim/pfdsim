@@ -32,7 +32,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional, Sequence
+from typing import Any, Callable, Optional, Sequence
 
 import numpy as np
 from numpy.polynomial import chebyshev as ncheb

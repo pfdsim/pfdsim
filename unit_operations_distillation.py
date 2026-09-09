@@ -2084,7 +2084,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
     """
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
-        import numpy as np
 
         if not inlets:
             raise UnitOperationError(f"RigorousDistillation '{self.unit_id}' has no inlet stream")

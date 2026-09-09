@@ -15,12 +15,11 @@ Usage:
     sim.write_results('process.pfr')
 """
 
-import json
 import math
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Callable, Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .pfd_parser import (
@@ -43,9 +42,9 @@ else:
         ParseError,
     )
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-    from .thermodynamics import IdealThermodynamics, ThermodynamicsError, StreamState
+    from .thermodynamics import IdealThermodynamics, ThermodynamicsError
 else:
-    from thermodynamics import IdealThermodynamics, ThermodynamicsError, StreamState
+    from thermodynamics import IdealThermodynamics, ThermodynamicsError
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .fluid_phase_models import LLE_CAPABLE_THERMO_METHODS
 else:
@@ -151,7 +150,7 @@ class Simulator:
         
         if errors:
             raise SimulationError(
-                f"PFD validation failed:\n" + "\n".join(f"  - {e}" for e in errors)
+                "PFD validation failed:\n" + "\n".join(f"  - {e}" for e in errors)
             )
         
         # DOF analysis
@@ -159,13 +158,13 @@ class Simulator:
         
         if dof_result.overall_status == SpecificationStatus.UNDER_SPECIFIED:
             raise SimulationError(
-                f"Process is under-specified:\n" + 
+                "Process is under-specified:\n" +
                 "\n".join(f"  - {e}" for e in dof_result.errors)
             )
         
         if dof_result.overall_status == SpecificationStatus.OVER_SPECIFIED:
             raise SimulationError(
-                f"Process is over-specified:\n" +
+                "Process is over-specified:\n" +
                 "\n".join(f"  - {e}" for e in dof_result.errors)
             )
         

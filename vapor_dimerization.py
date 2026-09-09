@@ -513,7 +513,7 @@ class VaporDimerizationModel:
             f"VDM diagnostics @ T={T:.2f} K, P={P:.4f} bar",
             f"  K_eq = {K:.4f}  (1 bar fugacity standard)",
             f"  alpha = {alpha:.6f}  (fraction dimerized)",
-            f"  Nominal composition (stoichiometric):",
+            "  Nominal composition (stoichiometric):",
         ]
         if rk_failure is not None:
             lines.append(f"  RK physical fugacity fallback: {rk_failure}")

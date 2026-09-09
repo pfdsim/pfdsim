@@ -1,8 +1,7 @@
 import csv
-import math
 from collections import defaultdict
 from pathlib import Path
-from statistics import mean, median
+from statistics import median
 
 from antoine_properties import get_antoine_table
 from benchmark_antoine_aw import curve_metrics, describe, endpoint_bin

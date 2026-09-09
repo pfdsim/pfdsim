@@ -66,20 +66,6 @@ def pure_a_and_derivative(T, Tc, omega, a0):
 
 
 @njit(cache=False)
-def pure_a_and_derivative(T, Tc, omega, a0):
-    values = np.empty(len(Tc))
-    derivatives = np.empty(len(Tc))
-    for i in range(len(Tc)):
-        tr = max(T / Tc[i], 1e-12)
-        sqrt_tr = math.sqrt(tr)
-        m = 0.37464 + 1.54226 * omega[i] - 0.26992 * omega[i] * omega[i]
-        factor = 1.0 + m * (1.0 - sqrt_tr)
-        values[i] = a0[i] * factor * factor
-        derivatives[i] = a0[i] * (-factor * m / (Tc[i] * sqrt_tr))
-    return values, derivatives
-
-
-@njit(cache=False)
 def cubic_roots(A, B):
     u = D1 + D2
     w = D1 * D2

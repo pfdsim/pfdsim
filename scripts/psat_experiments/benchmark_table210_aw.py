@@ -1,6 +1,5 @@
 import csv
 import math
-from collections import defaultdict
 from pathlib import Path
 from statistics import mean, median
 

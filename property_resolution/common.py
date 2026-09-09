@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+# Legacy mixin modules intentionally inherit shared imports from this module.
 """
 Property Resolution System
 

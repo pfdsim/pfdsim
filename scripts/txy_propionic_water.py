@@ -1,10 +1,9 @@
 """T-xy for water-propionic acid — UNIQUAC (fixed Antoine + VDM comparison)"""
-import sys, math
+import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 import numpy as np
 from thermodynamics import UNIQUACThermodynamics
-from unifac import UNIFACModel
 from vapor_dimerization import VaporDimerizationModel, get_dimerization_params
 from chemical_properties import get_database
 
@@ -109,7 +108,7 @@ for x1 in x_fine:
 if azeo_vdm:
     print(f'UNIQUAC+VDM: azeotrope at x≈{azeo_vdm:.4f}')
 else:
-    print(f'UNIQUAC+VDM: NO azeotrope')
+    print('UNIQUAC+VDM: NO azeotrope')
 
 Tb_h2o = thermo.bubble_point_T({'C2H5COOH': 0.001, 'H2O': 0.999}, P_atm) - 273.15
 Tb_pa  = thermo.bubble_point_T({'C2H5COOH': 0.999, 'H2O': 0.001}, P_atm) - 273.15

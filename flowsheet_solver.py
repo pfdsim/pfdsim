@@ -62,12 +62,12 @@ else:
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_operations import (
         UnitOperation, UnitResult, UnitOperationError, 
-        create_unit, UNIT_CLASSES
+        create_unit
     )
 else:
     from unit_operations import (
         UnitOperation, UnitResult, UnitOperationError, 
-        create_unit, UNIT_CLASSES
+        create_unit
     )
 
 

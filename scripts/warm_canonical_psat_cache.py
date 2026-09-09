@@ -161,12 +161,10 @@ def _warm_one(candidate: dict) -> dict:
                     allow_online=False,
                 )
             props = component.to_dict()
-            coefficients = (
-                _WORKER_RESOLVER.resolve_vapor_pressure_coefficients(
-                    component.symbol,
-                    props,
-                    allow_online=False,
-                )
+            _WORKER_RESOLVER.resolve_vapor_pressure_coefficients(
+                component.symbol,
+                props,
+                allow_online=False,
             )
             minimum_pressure_bar = (
                 _WORKER_RESOLVER._canonical_minimum_pressure_bar(props, None)

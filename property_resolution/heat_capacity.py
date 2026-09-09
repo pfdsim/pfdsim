@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+# This module retains compatibility exports alongside HeatCapacityMixin.
 from .common import *
 import sqlite3
 

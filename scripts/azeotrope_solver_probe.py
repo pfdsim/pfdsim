@@ -15,7 +15,6 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
 
 import numpy as np
 from scipy.optimize import brentq, least_squares, minimize_scalar
@@ -382,11 +381,11 @@ def find_ternary_homogeneous(thermo, comps_tuple: tuple[str, str, str], P: float
         y, K, bubble = vapor_from_liquid(thermo, x, T, P)
         if check_lle:
             try:
-                has_lle, x1, x2, beta = thermo.liquid_liquid_equilibrium(x, T, tol=1e-8)
+                has_lle, x1, x2, _ = thermo.liquid_liquid_equilibrium(x, T, tol=1e-8)
             except Exception:
-                has_lle, x1, x2, beta = False, x, x, 0.0
+                has_lle, x1, x2 = False, x, x
         else:
-            has_lle, x1, x2, beta = False, x, x, 0.0
+            has_lle, x1, x2 = False, x, x
         out.append(Azeotrope(
             kind='ternary_homogeneous',
             components=comps_tuple,

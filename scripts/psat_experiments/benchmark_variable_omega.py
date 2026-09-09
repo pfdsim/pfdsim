@@ -3,7 +3,6 @@ import math
 from pathlib import Path
 from statistics import mean, median
 
-from scipy.optimize import brentq
 
 from benchmark_lower_clapeyron import (
     correlation_hvap_kJ_mol,

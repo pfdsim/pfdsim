@@ -50,6 +50,27 @@ dev = [
 [tool.uv]
 package = true
 
+[tool.ruff]
+extend-exclude = ["data/archived"]
+
+[tool.ruff.lint]
+ignore = ["E731", "E741"]
+
+[tool.ruff.lint.per-file-ignores]
+"property_resolution/base.py" = ["F403", "F405"]
+"property_resolution/critical.py" = ["F403", "F405"]
+"property_resolution/formation.py" = ["F403", "F405"]
+"property_resolution/heat_capacity.py" = ["F403", "F405"]
+"property_resolution/identity.py" = ["F403", "F405"]
+"property_resolution/liquid_volume.py" = ["F403", "F405"]
+"property_resolution/phase_change.py" = ["F403", "F405"]
+"property_resolution/surface_tension.py" = ["F403", "F405"]
+"property_resolution/vapor_pressure.py" = ["F403", "F405"]
+"property_resolution/viscosity.py" = ["F403", "F405"]
+"scripts/**/*.py" = ["E402", "E701", "E702"]
+"tests/**/*.py" = ["E402"]
+"thermodynamics.py" = ["F403"]
+
 [tool.setuptools]
 packages = ["pfdsim", "pfdsim.property_resolution", "pfdsim.thermodynamics_models"]
 package-dir = {pfdsim = "."}

@@ -15,7 +15,6 @@ Supports:
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .crystallizer_specs import (
@@ -857,10 +856,14 @@ class DOFAnalyzer:
             dof = required_specs - specs_provided
             
             missing = []
-            if not has_thermal_spec: missing.append('T or vapor_fraction')
-            if not has_P: missing.append('P')
-            if not has_F: missing.append('F or F_mass')
-            if not has_composition: missing.append('composition (x or w)')
+            if not has_thermal_spec:
+                missing.append('T or vapor_fraction')
+            if not has_P:
+                missing.append('P')
+            if not has_F:
+                missing.append('F or F_mass')
+            if not has_composition:
+                missing.append('composition (x or w)')
             
             if dof > 0:
                 return DOFResult(
@@ -1199,10 +1202,12 @@ class DOFAnalyzer:
             has_product_spec = any(p in param_names for p in ['recovery', 'd_rate', 'distillate', 'purity', 'boilup'])
             
             missing = []
-            if not has_stages: missing.append('N_stages')
+            if not has_stages:
+                missing.append('N_stages')
             if unit_type == 'ReactiveDistillation' and not has_feed_stage:
                 missing.append('feed_stage')
-            if not has_reflux and not has_product_spec: missing.append('reflux_ratio or product spec')
+            if not has_reflux and not has_product_spec:
+                missing.append('reflux_ratio or product spec')
             
             if unit_type == 'ReactiveDistillation' and len(unit.reactions) == 0:
                 missing.append('reactions')
@@ -1248,7 +1253,8 @@ class DOFAnalyzer:
             missing = []
             if not has_volume and not has_length_diameter:
                 missing.append('volume or length+diameter')
-            if not has_kinetics: missing.append('reactions with kinetics')
+            if not has_kinetics:
+                missing.append('reactions with kinetics')
             if 'phase' not in param_names:
                 missing.append('phase=vapor or phase=liquid')
             
@@ -1319,8 +1325,10 @@ class DOFAnalyzer:
             has_sf = any(p in param_names for p in ['solvent_ratio', 's_f', 'sf'])
             
             missing = []
-            if not has_stages: missing.append('N_stages')
-            if not has_sf: missing.append('solvent_ratio')
+            if not has_stages:
+                missing.append('N_stages')
+            if not has_sf:
+                missing.append('solvent_ratio')
             
             if missing:
                 dof = len(missing)

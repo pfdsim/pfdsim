@@ -1,4 +1,3 @@
-import math
 import unittest
 
 from chemical_properties import ChemicalDatabase

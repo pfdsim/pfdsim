@@ -2037,7 +2037,7 @@ class VaporPressureMixin:
                 req.add_header('User-Agent', 'PFD-Editor/1.0')
 
                 with urllib.request.urlopen(req, timeout=10) as response:
-                    data = json.loads(response.read().decode('utf-8'))
+                    json.loads(response.read().decode('utf-8'))
 
                 # Look for vapor pressure in experimental data
                 # This is complex because PubChem structure varies

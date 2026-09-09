@@ -1952,7 +1952,7 @@ def supplemental_ester_alcohol_fit_records(
             missing_rq = [cas for cas in (cas1, cas2) if cas not in direct_rq]
             if missing_rq:
                 raise ValueError(
-                    f"Missing direct UNIQUAC r/q for ester interaction CAS: "
+                    "Missing direct UNIQUAC r/q for ester interaction CAS: "
                     + ", ".join(missing_rq)
                 )
         pair = tuple(sorted((cas1, cas2)))

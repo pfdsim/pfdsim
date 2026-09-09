@@ -240,7 +240,7 @@ def main() -> int:
         sys.path.insert(0, str(args.chemicals_path.resolve()))
     try:
         import chemicals
-        from chemicals.identifiers import search_chemical
+        from chemicals.identifiers import search_chemical  # noqa: F401
     except ImportError as exc:
         raise SystemExit(
             'Install chemicals into a temporary directory and pass --chemicals-path.'

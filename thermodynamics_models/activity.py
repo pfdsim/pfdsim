@@ -3295,7 +3295,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     'x1_phase2': x2_lle.get(comp1, 0),
                     'T_': None  # Will be found if VLLE exists
                 }
-        except:
+        except Exception:
             has_lle = False
         
         for i in range(n_points + 1):
@@ -3314,7 +3314,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             # Bubble point
             try:
                 T_bub = self.bubble_point_T(composition, P)
-            except:
+            except Exception:
                 # Skip this point if bubble point fails
                 continue
             
@@ -3331,7 +3331,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             y_comp = {comp1: y1, comp2: 1 - y1}
             try:
                 T_dw = self.dew_point_T(y_comp, P)
-            except:
+            except Exception:
                 T_dw = T_bub  # Fallback
             
             x_data.append(x1)
@@ -3394,8 +3394,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         
         for i in range(n_points + 1):
             x1 = i / n_points
-            if x1 < 0.001: x1 = 0.001
-            if x1 > 0.999: x1 = 0.999
+            if x1 < 0.001:
+                x1 = 0.001
+            if x1 > 0.999:
+                x1 = 0.999
             
             composition = {comp1: x1, comp2: 1 - x1}
             
@@ -3441,8 +3443,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         
         for i in range(n_points + 1):
             x1 = i / n_points
-            if x1 < 0.001: x1 = 0.001
-            if x1 > 0.999: x1 = 0.999
+            if x1 < 0.001:
+                x1 = 0.001
+            if x1 > 0.999:
+                x1 = 0.999
             
             composition = {comp1: x1, comp2: 1 - x1}
             

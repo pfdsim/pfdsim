@@ -2,7 +2,6 @@
 Shared base types for unit operation calculations.
 """
 
-import math
 from dataclasses import dataclass, field
 from functools import wraps
 from typing import Optional

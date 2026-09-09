@@ -1489,13 +1489,6 @@ class LiquidVolumeMixin:
             if value is None:
                 return None
             source_result = self._pubchem_density_source_result(online)
-            zra_result = PropertyResolutionResult(
-                value=zra,
-                source='online',
-                method='pubchem_density_zra_fit_source',
-                quality=source_result.quality,
-                notes=source_result.notes,
-            )
             inputs = [source_result, Tc_result, Pc_result]
             return PropertyResolutionResult(
                 value=value,

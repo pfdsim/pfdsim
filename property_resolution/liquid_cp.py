@@ -8,7 +8,6 @@ range-quality penalty policy as ideal-gas kernels.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import sqlite3
@@ -20,8 +19,6 @@ from typing import Any, Callable, Mapping, Optional, Sequence
 
 from .ideal_gas_cp import (
     CLAMP_QUALITY_PENALTY_PER_5K,
-    DEFAULT_TMAX_K,
-    DEFAULT_TMIN_K,
     EXTRAPOLATION_QUALITY_PENALTY,
     EXTRAPOLATION_WIDTH_K,
     IdealGasCpKernel,

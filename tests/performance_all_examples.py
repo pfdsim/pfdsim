@@ -31,6 +31,7 @@ import tempfile
 import time
 import traceback
 import unittest
+from typing import Optional
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 

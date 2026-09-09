@@ -22,7 +22,7 @@ from chemical_properties import (
 )
 import domalski_hearing_method as dh
 from perry_properties import get_perry_property_library
-from property_resolver import AntoineCoefficients, FusionTransitionRecord, HeatCapacityLookup, HvapTemperatureFit, PropertyResolutionError, PropertyResolutionResult, PropertyResolver
+from property_resolver import FusionTransitionRecord, HvapTemperatureFit, PropertyResolutionError, PropertyResolutionResult, PropertyResolver
 from thermodynamics import IdealThermodynamics, create_thermodynamics
 
 

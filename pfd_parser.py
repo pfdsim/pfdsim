@@ -1354,7 +1354,7 @@ class Unit:
         lines = [
             f"UNIT {self.id}",
             f"    TYPE: {self.unit_type}",
-            f"    PORTS:"
+            "    PORTS:"
         ]
         for port in self.ports:
             lines.append(port.to_pfd())
@@ -3449,7 +3449,7 @@ class PFDParser:
         if match:
             try:
                 return float(match.group(1))
-            except:
+            except ValueError:
                 pass
         return None
 

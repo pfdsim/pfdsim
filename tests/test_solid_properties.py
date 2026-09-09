@@ -1,5 +1,4 @@
 import json
-import math
 import sqlite3
 import unittest
 import warnings

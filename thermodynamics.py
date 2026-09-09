@@ -1,3 +1,4 @@
+# ruff: noqa: F401
 """Compatibility facade for thermodynamic property models."""
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':

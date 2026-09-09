@@ -6,7 +6,6 @@ from scipy.interpolate import PchipInterpolator
 
 from benchmark_perry_aw import percentile
 from benchmark_table210_aw import (
-    completed_table_ln_p,
     evaluate,
     inverse_temperature_quadratic_slope,
     load_matches,

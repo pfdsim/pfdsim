@@ -3529,7 +3529,7 @@ class VaporPressureCanonicalizationAdapterTests(unittest.TestCase):
                 right=PsatEndpoint.from_segment(source, Tb),
                 anchors=(boiling,),
             ))
-            completion = trim_psat_segment_to_validity(bound)
+            trim_psat_segment_to_validity(bound)
             reference_switch_temperature = brentq(
                 lambda T: source.raw_ln_pressure(T) - target,
                 source.T_min,

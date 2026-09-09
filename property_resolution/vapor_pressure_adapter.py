@@ -42,6 +42,7 @@ from .vapor_pressure_canonical import (
     CanonicalPsatForm,
     CanonicalPsatCurve,
     PsatAssemblyAnchorRequirement,
+    PsatBoundaryConditions,
     PsatBoundaryRequirement,
     PsatCanonicalizationError,
     PsatDerivativeBasis,

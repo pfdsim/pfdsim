@@ -1,6 +1,5 @@
 """Tests for hsu_method: fragmentation, worked example, corrections, guards,
 value regressions, and the property_resolution/viscosity.py integration."""
-import math
 import os
 import sys
 import unittest

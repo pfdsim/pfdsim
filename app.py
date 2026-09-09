@@ -1,5 +1,4 @@
 import os
-import json
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from io import BytesIO
@@ -364,7 +363,7 @@ def api_examples_list():
                     'name': name,
                     'thermo_method': thermo,
                 })
-            except:
+            except (OSError, UnicodeError):
                 pass
     
     return jsonify({

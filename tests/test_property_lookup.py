@@ -1,4 +1,3 @@
-import glob
 import json
 import math
 import os
@@ -11,7 +10,6 @@ import unittest
 import warnings
 from pathlib import Path
 from unittest.mock import patch
-from scipy.optimize import brentq
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -20,44 +18,14 @@ if ROOT not in sys.path:
 
 from simulator import Simulator
 from pfd_parser import parse_pfd
-from thermodynamics import ActivityCoefficientThermodynamics, create_thermodynamics
-from unit_operations import (
-    Absorber,
-    CMODistillation,
-    Compressor,
-    Cooler,
-    Decanter,
-    ShortcutDistillation,
-    EquilibriumReactor,
-    Expander,
-    Flash,
-    HeatExchanger,
-    Heater,
-    KineticsCSTR,
-    KineticsPFR,
-    LiquidLiquidExtractor,
-    Mixer,
-    MolecularSieveDryer,
-    Pump,
-    Reactor,
-    RigorousDistillation,
-    RigorousLiquidLiquidExtractor,
-    Splitter,
-    Stripper,
-    UNIT_CLASSES,
-    UnitOperationError,
-    Valve,
-)
+from thermodynamics import create_thermodynamics
 from chemical_properties import OnlinePropertyFetcher
 from chemical_properties import ChemicalProperties
 from chemical_properties import ChemicalDatabase
-from property_resolver import AntoineCoefficients
 from property_resolver import PropertyResolver
 from textbook_properties import TextbookPropertyLibrary
 from antoine_properties import get_antoine_table
 from vapor_pressure_tables import get_vapor_pressure_table_library
-from unifac import UNIFACModel, get_unifac_groups
-from interaction_parameters import nrtl_binary_interaction, uniquac_binary_interaction
 
 
 def component_moles(streams):

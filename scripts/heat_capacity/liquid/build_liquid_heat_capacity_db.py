@@ -38,7 +38,7 @@ from contextlib import closing
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Mapping, Optional, Sequence
+from typing import Any, Mapping, Optional, Sequence
 
 import numpy as np
 from numpy.polynomial import chebyshev as ncheb

@@ -2604,5 +2604,5 @@ class CriticalPropertiesMixin:
                     return None
 
                 return omega
-            except:
+            except (TypeError, ValueError, ZeroDivisionError, OverflowError):
                 return None

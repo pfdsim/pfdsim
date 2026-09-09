@@ -513,9 +513,6 @@ class EquilibriumStageColumnMixin:
             if 0 <= stage < N:
                 stage_feeds[stage].append(feed)
 
-        def stage_feed_flow(stage: int) -> float:
-            return sum(feed['F'] for feed in stage_feeds[stage])
-
         def stage_feed_component_flow(stage: int, comp: str) -> float:
             return sum(
                 feed['F'] * feed['z'].get(comp, 0.0)
@@ -700,7 +697,6 @@ class EquilibriumStageColumnMixin:
                 vapor_in_comp = None if stage == N - 1 else y[stage + 1]
                 vapor_in_h = 0.0 if stage == N - 1 else hV[stage + 1]
 
-                feed_flow = stage_feed_flow(stage)
                 heat = Q_cond if stage == 0 else (Q_reb if stage == N - 1 else 0.0)
 
                 stage_side_draws = [draw for draw in side_draws if draw['stage'] == stage]

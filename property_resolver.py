@@ -1,9 +1,9 @@
 """Compatibility facade for the property resolution system."""
 
 from typing import Optional, Dict
-import urllib.request
-import urllib.parse
 import urllib.error
+import urllib.parse
+import urllib.request
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .property_resolution import (
@@ -49,6 +49,81 @@ else:
         ModifiedKoppSolidCpKernel, SolidCpCollectionKernel,
         PropertyResolver,
     )
+
+__all__ = (
+    'urllib',
+    'R',
+    'ONLINE_ANTOINE_TB_REL_TOL',
+    'ONLINE_ANTOINE_TB_RANGE_TOLERANCE_K',
+    'CP_EXTRAPOLATION_LIMIT_K',
+    'LIQUID_VOLUME_EXTRAPOLATION_LIMIT_K',
+    'MIN_EOS_PRESSURE_BAR',
+    'REFERENCE_TEMPERATURE_K',
+    'WATER_HVAP_298_KJ_PER_MOL',
+    'SOFT_PROPERTY_QUALITY_THRESHOLD',
+    'NET_COMBUSTION_PRODUCT_HF_KJ_PER_MOL',
+    'DensityObservation',
+    'FusionTransitionRecord',
+    'MeltingTransitionRecord',
+    'PropertyResolutionResult',
+    'AntoineCoefficients',
+    'HvapTemperatureFit',
+    'HeatCapacityLookup',
+    'HeatCapacityIntegralLookup',
+    'PropertyResolutionError',
+    'IdealGasCpKernel',
+    'KernelEvaluation',
+    'ChebyshevCpKernel',
+    'PolynomialCpKernel',
+    'ShomateCpKernel',
+    'LiquidCpKernel',
+    'ConstantLiquidCpKernel',
+    'LinearChebyshevLiquidCpKernel',
+    'NativeZabranskyLiquidCpKernel',
+    'PolynomialLiquidCpKernel',
+    'ScaledIdealGasLiquidCpKernel',
+    'ShomateLiquidCpKernel',
+    'SolidCpKernel',
+    'ConstantSolidCpKernel',
+    'PolynomialSolidCpKernel',
+    'ShomateSolidCpKernel',
+    'Perry151SolidCpKernel',
+    'TabularSolidCpKernel',
+    'PiecewiseSolidCpKernel',
+    'LastovkaSolidCpKernel',
+    'ModifiedKoppSolidCpKernel',
+    'SolidCpCollectionKernel',
+    'PropertyResolver',
+    'get_property_resolver',
+    'resolve_vapor_pressure',
+    'resolve_vapor_pressure_coefficients',
+    'resolve_critical_properties',
+    'resolve_boiling_point',
+    'resolve_melting_point',
+    'resolve_triple_point',
+    'resolve_hvap',
+    'resolve_hfus',
+    'resolve_fusion_transitions',
+    'resolve_melting_transitions',
+    'resolve_heat_capacity',
+    'resolve_ideal_gas_cp_kernel',
+    'resolve_liquid_cp_kernel',
+    'resolve_solid_cp_kernel',
+    'resolve_liquid_molar_density',
+    'resolve_density_observations',
+    'resolve_solid_mass_density',
+    'resolve_solid_molar_volume',
+    'resolve_solid_molar_density',
+    'resolve_liquid_molar_volume',
+    'resolve_liquid_molar_volume_nearest',
+    'resolve_viscosity',
+    'resolve_surface_tension',
+    'resolve_dipole_moment',
+    'resolve_radius_of_gyration',
+    'resolve_modified_radius_of_gyration',
+    'resolve_radii_of_gyration',
+    'resolve_formation_properties',
+)
 
 # Global resolver instance
 _resolver: Optional[PropertyResolver] = None

@@ -1633,7 +1633,8 @@ class ShortcutExtractor(UnitOperation):
         T = self.get_param('T', (feed.T + solvent.T) / 2)
         if T is not None:
             T = float(T)
-            if T < 200: T += 273.15
+            if T < 200:
+                T += 273.15
         
         P = feed.P
         
@@ -1690,8 +1691,10 @@ class ShortcutExtractor(UnitOperation):
             x_raf[c] = feed_mol * (1-frac_ext)
         
         F_raf, F_ext = sum(x_raf.values()), sum(x_ext.values())
-        if F_raf > 0: x_raf = {c: v/F_raf for c,v in x_raf.items()}
-        if F_ext > 0: x_ext = {c: v/F_ext for c,v in x_ext.items()}
+        if F_raf > 0:
+            x_raf = {c: v/F_raf for c,v in x_raf.items()}
+        if F_ext > 0:
+            x_ext = {c: v/F_ext for c,v in x_ext.items()}
         
         raf = self.thermo.calculate_state(T, P, F_raf, x_raf, phase='liquid', flash=False)
         ext = self.thermo.calculate_state(T, P, F_ext, x_ext, phase='liquid', flash=False)
@@ -3603,10 +3606,6 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
             raise UnitOperationError(
                 f"{column_name} '{self.unit_id}' needs >= 2 active components"
             )
-        feed_z = self._normalize({
-            comp: aggregate.composition.get(comp, 0.0)
-            for comp in comps
-        })
         pressures = self._absorber_pressure_profile(N, aggregate.P)
         if any(P <= 0.0 for P in pressures):
             raise UnitOperationError(
@@ -3761,8 +3760,6 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
             for stage in range(N)
         ]
         y = [props['y'] for props in stage_props]
-        hL = [props['hL'] for props in stage_props]
-        hV = [props['hV'] for props in stage_props]
 
         gas_comp = {comp: float(y[0].get(comp, 0.0)) for comp in comps}
         liquid_comp = {comp: float(x[-1].get(comp, 0.0)) for comp in comps}
@@ -4694,7 +4691,6 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
 
         def stage_energy_residuals(T, x, L, V):
             props = [stage_properties(stage, T[stage], x[stage]) for stage in range(N)]
-            y = [item['y'] for item in props]
             hL = [item['hL'] for item in props]
             hV = [item['hV'] for item in props]
             residuals = []
@@ -5149,8 +5145,10 @@ class Absorber(UnitOperation):
             else:
                 liquid_in = stream
         
-        if not gas_in: gas_in = inlets.get('gas') or inlets.get('vapor')
-        if not liquid_in: liquid_in = inlets.get('liquid') or inlets.get('solvent')
+        if not gas_in:
+            gas_in = inlets.get('gas') or inlets.get('vapor')
+        if not liquid_in:
+            liquid_in = inlets.get('liquid') or inlets.get('solvent')
         
         if not gas_in or not liquid_in:
             raise UnitOperationError(f"Absorber '{self.unit_id}' needs gas and liquid inlets")
@@ -5158,7 +5156,8 @@ class Absorber(UnitOperation):
         N = int(self.get_param('N_stages', 5))
         T = float(self.get_param('T', (gas_in.T + liquid_in.T)/2))
         P = float(self.get_param('P', gas_in.P))
-        if T < 200: T += 273.15
+        if T < 200:
+            T += 273.15
         
         comps = list(set(list(gas_in.composition.keys()) + list(liquid_in.composition.keys())))
         L, V = liquid_in.F, gas_in.F
@@ -5177,8 +5176,10 @@ class Absorber(UnitOperation):
             x_out[c] = mol_gas * frac_abs + mol_liq
         
         V_out, L_out = sum(y_out.values()), sum(x_out.values())
-        if V_out > 0: y_out = {c: v/V_out for c,v in y_out.items()}
-        if L_out > 0: x_out = {c: v/L_out for c,v in x_out.items()}
+        if V_out > 0:
+            y_out = {c: v/V_out for c,v in y_out.items()}
+        if L_out > 0:
+            x_out = {c: v/L_out for c,v in x_out.items()}
         
         gas_out = self.thermo.calculate_state(T, P, V_out, y_out, phase='vapor')
         liq_out = self.thermo.calculate_state(T, P, L_out, x_out, phase='liquid')
@@ -5200,8 +5201,10 @@ class Stripper(UnitOperation):
             else:
                 gas_in = stream
         
-        if not liquid_in: liquid_in = inlets.get('liquid') or inlets.get('feed')
-        if not gas_in: gas_in = inlets.get('gas') or inlets.get('strip_gas')
+        if not liquid_in:
+            liquid_in = inlets.get('liquid') or inlets.get('feed')
+        if not gas_in:
+            gas_in = inlets.get('gas') or inlets.get('strip_gas')
         
         if not liquid_in:
             raise UnitOperationError(f"Stripper '{self.unit_id}' needs liquid inlet")
@@ -5209,7 +5212,8 @@ class Stripper(UnitOperation):
         N = int(self.get_param('N_stages', 5))
         T = float(self.get_param('T', liquid_in.T))
         P = float(self.get_param('P', liquid_in.P))
-        if T < 200: T += 273.15
+        if T < 200:
+            T += 273.15
         
         comps = list(liquid_in.composition.keys())
         if gas_in:
@@ -5232,8 +5236,10 @@ class Stripper(UnitOperation):
             y_out[c] = mol_liq * frac_strip + mol_gas
         
         L_out, V_out = sum(x_out.values()), sum(y_out.values())
-        if L_out > 0: x_out = {c: v/L_out for c,v in x_out.items()}
-        if V_out > 0: y_out = {c: v/V_out for c,v in y_out.items()}
+        if L_out > 0:
+            x_out = {c: v/L_out for c,v in x_out.items()}
+        if V_out > 0:
+            y_out = {c: v/V_out for c,v in y_out.items()}
         
         liq_out = self.thermo.calculate_state(T, P, L_out, x_out, phase='liquid')
         gas_out = self.thermo.calculate_state(T, P, V_out, y_out, phase='vapor')
