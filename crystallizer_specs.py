@@ -33,6 +33,15 @@ _ALIASES = {
     "coolant_temperature": "t_wall",
     "t_coolant": "t_wall",
     "empirical_solid_density": "layer_solid_density",
+    "sweat_fraction": "sweat_crystal_fraction",
+    "sweating_fraction": "sweat_crystal_fraction",
+    "melt_fraction": "sweat_crystal_fraction",
+    "t_sweat": "sweat_temperature",
+    "sweating_temperature": "sweat_temperature",
+    "t_harvest": "harvest_temperature",
+    "final_melt_temperature": "harvest_temperature",
+    "liquid_release_fraction": "occluded_liquid_release_fraction",
+    "occluded_liquid_release": "occluded_liquid_release_fraction",
 }
 _MODELS = {
     "equilibrium_sle": "equilibrium",
@@ -62,6 +71,20 @@ _EMPIRICAL_LAYER_ONLY = {
     "growth_rate", "empirical_relative_tolerance", "layer_solid_density",
     "effective_distributions", "distribution_coefficients", "keff", "k_eff",
 }
+_LAYER_SWEATING = {
+    "sweat_crystal_fraction", "occluded_liquid_release_fraction",
+    "sweat_temperature", "sweat_heater_temperature", "sweat_thermal_conductance",
+    "sweat_opening_coefficient", "harvest_temperature", "sweat_collection_temperature",
+    "sweat_time", "sweat_host_rate_constant", "solid_diffusion_length",
+    "sweat_drainage_length", "sweat_pore_radius", "sweat_tortuosity",
+    "sweat_connected_fraction", "sweat_residual_saturation",
+    "sweat_capillary_pressure", "sweat_relative_tolerance",
+    "occluded_liquid_host_fraction", "partition_reference_temperature",
+}
+_SWEATING_PREFIXES = (
+    "occluded_fraction_", "solid_partition_", "solid_transfer_enthalpy_",
+    "solid_diffusivity_",
+)
 _DISTRIBUTION_PREFIXES = (
     "keff_", "k_eff_", "distribution_", "effective_distribution_",
 )
@@ -114,7 +137,9 @@ def _reject_obsolete_mode(values):
         )
 
 
-def _validate_pressure_retention_and_ports(values, outlet_ports):
+def _validate_pressure_retention_and_ports(
+    values, outlet_ports, *, layer_sweating=False
+):
     if values.get("p_out") is not None and values.get("p_drop") is not None:
         raise CrystallizerSpecificationError(
             "cannot specify both outlet pressure and P_drop"
@@ -127,6 +152,17 @@ def _validate_pressure_retention_and_ports(values, outlet_ports):
         )
     if outlet_ports:
         ports = set(outlet_ports)
+        if layer_sweating:
+            required = {"product", "mother_liquor", "sweat"}
+            missing = required - ports
+            incompatible = ports - required
+            if missing or incompatible:
+                raise CrystallizerSpecificationError(
+                    "layer sweating requires product, mother_liquor, and sweat "
+                    "outlets and does not use layer/cake/out",
+                    len(missing) if missing else -len(incompatible),
+                )
+            return
         split = {"cake", "mother_liquor"}
         if retention or rate:
             if "out" in ports:
@@ -156,9 +192,11 @@ def validate_crystallizer_specification(
         )
     if model not in {"equilibrium", "msmpr"}:
         raise CrystallizerSpecificationError("model must be equilibrium or MSMPR")
-    layer_parameters = set(values) & (_LAYER_GROWTH_ONLY | _EMPIRICAL_LAYER_ONLY)
+    layer_parameters = set(values) & (
+        _LAYER_GROWTH_ONLY | _EMPIRICAL_LAYER_ONLY | _LAYER_SWEATING
+    )
     layer_parameters |= {
-        key for key in values if key.startswith(_DISTRIBUTION_PREFIXES)
+        key for key in values if key.startswith(_DISTRIBUTION_PREFIXES + _SWEATING_PREFIXES)
     }
     if layer_parameters:
         raise CrystallizerSpecificationError(
@@ -231,6 +269,60 @@ def validate_layer_crystallizer_specification(
         "mother_liquor_retention", "mother_liquor_retention_rate"
     )):
         values["mother_liquor_retention"] = 0.0
+    sweating = any(values.get(key) is not None for key in _LAYER_SWEATING) or any(
+        key.startswith(_SWEATING_PREFIXES) for key in values
+    )
+    if sweating:
+        if model == "equilibrium":
+            raise CrystallizerSpecificationError(
+                "finite-rate sweating requires model=layer_growth or empirical_layer_growth"
+            )
+        obsolete = {"sweat_temperature", "sweat_crystal_fraction", "occluded_liquid_release_fraction"} & set(values)
+        if obsolete:
+            raise CrystallizerSpecificationError(
+                "sweating predicts temperature, melting and liquid release; use sweat_heater_temperature and omit " + ", ".join(sorted(obsolete))
+            )
+        required = (
+            "sweat_heater_temperature", "sweat_thermal_conductance", "sweat_opening_coefficient",
+            "harvest_temperature", "sweat_time",
+            "sweat_host_rate_constant", "sweat_drainage_length", "sweat_pore_radius",
+            "sweat_tortuosity", "sweat_connected_fraction", "sweat_residual_saturation",
+            "sweat_capillary_pressure",
+        )
+        missing = [key for key in required if values.get(key) is None]
+        solutes = {
+            key[len(prefix):] for key in values
+            for prefix in _SWEATING_PREFIXES[1:] if key.startswith(prefix)
+        }
+        solutes |= {
+            key[len("occluded_fraction_"):]
+            for key in values if key.startswith("occluded_fraction_")
+            and finite_crystallizer_number(values[key], key, inclusive=True, maximum=1) < 1
+        }
+        for solute in sorted(solutes):
+            missing.extend(prefix + solute for prefix in _SWEATING_PREFIXES[1:]
+                           if values.get(prefix + solute) is None)
+        if solutes and values.get("solid_diffusion_length") is None:
+            missing.append("solid_diffusion_length")
+        if model == "layer_growth" and (
+            any(key.startswith("occluded_fraction_") for key in values)
+            or values.get("occluded_liquid_host_fraction") is not None
+        ):
+            raise CrystallizerSpecificationError(
+                "occluded allocation parameters require empirical_layer_growth"
+            )
+        if missing:
+            raise CrystallizerSpecificationError(
+                "layer sweating requires " + ", ".join(missing), len(missing)
+            )
+        for key in ("sweat_connected_fraction", "sweat_residual_saturation", "occluded_liquid_host_fraction"):
+            if values.get(key) is not None:
+                values[key] = finite_crystallizer_number(values[key], key, inclusive=True, maximum=1)
+                if key != "sweat_connected_fraction" and values[key] == 1:
+                    raise CrystallizerSpecificationError(key + " must be < 1")
+        for key in values:
+            if key.startswith("occluded_fraction_"):
+                values[key] = finite_crystallizer_number(values[key], key, inclusive=True, maximum=1)
     if model == "layer_growth":
         empirical_parameters = set(values) & _EMPIRICAL_LAYER_ONLY
         empirical_parameters |= {
@@ -325,7 +417,9 @@ def validate_layer_crystallizer_specification(
                 "empirical layer growth does not use nucleation kinetics: "
                 + ", ".join(sorted(forbidden))
             )
-    _validate_pressure_retention_and_ports(values, outlet_ports)
+    _validate_pressure_retention_and_ports(
+        values, outlet_ports, layer_sweating=sweating
+    )
     return values
 
 

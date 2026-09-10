@@ -1222,6 +1222,8 @@ serialization and `.pfr` reporting expose.
 - `Decanter` - Liquid-liquid separator; aliases: `FlashLLE`, `LLSeparator`, `Settler`
 - `Crystallizer` - Pure-solid SLE cooling crystallizer with a retained slurry
   or optional ideal cake/mother-liquor split
+- `LayerCrystallizer` - Equilibrium or finite-rate deposited-layer
+  crystallization with optional sweating and final melt harvest
 - `ShortcutDistillation` - Shortcut distillation column
 - `McCabeThieleDistillation` - Binary McCabe-Thiele column with optional latent-heat-corrected operating curves
 - `CMODistillation` - Multicomponent stage-by-stage constant-molar-overflow column with total, partial, or mixed condenser
@@ -1247,8 +1249,9 @@ serialization and `.pfr` reporting expose.
 ##### Permanent-Solid Unit Capability
 
 The solid routing layer supports `Mixer`, `Splitter`, `Heater`, `Cooler`,
-`HeatExchanger`, ordinary `Flash`, `Crystallizer`, and `Filter`. Feeds and
-product sinks may be dry solids, slurries, or fluid/solid multiphase streams.
+`HeatExchanger`, ordinary `Flash`, `Crystallizer`, `LayerCrystallizer`, and
+`Filter`. Feeds and product sinks may be dry solids, slurries, or fluid/solid
+multiphase streams.
 
 - A proportional `Splitter` preserves phase inventory and particle defaults;
   component-split mode may explicitly route solid components.
@@ -1785,7 +1788,9 @@ inclusion capture. All captured liquid stays with the harvested layer, including
 when drainage retention is zero. Its accumulated composition is preserved;
 it is not reassigned the final free-liquid composition. The stream represents
 trapped material as liquid, not as an additional crystalline impurity phase.
-No solid solution, bulk nucleation, sweating, or remelting stage is predicted.
+No solid solution or bulk nucleation is predicted by the growth submodel.
+Optional sweating and final melting use the coupled transport model described
+below; without those specifications the unit stops at the drained layer.
 Significant reverse growth fails explicitly. The homogeneous-liquid limitation and outlet
 LLE diagnostics still apply. Predictions rely on the stated film and
 quasi-steady assumptions; the solver has not been calibrated to equipment data.
@@ -1924,8 +1929,230 @@ transfer or wall duty.
 The empirical laws are applied instantaneously while integrating changing
 mother liquor. A correlation fitted to an overall layer composition at nearly
 constant bulk composition is therefore a differential extrapolation at high
-freezeout. Nucleation, sweating, remelting, layer failure, and temperature
-ramps are not modeled.
+freezeout. Nucleation, layer failure, and temperature ramps within the growth
+submodel are not modeled.
+
+**Layer sweating and final harvest:**
+
+Finite-rate layer models can append a transient heated sweating stage with concurrent
+melting, impurity exchange, and gravity drainage, then melt the residue into a
+liquid product. This is a lumped porous-layer model, not a spatial simulation
+of temperature gradients, pore-network topology, or layer detachment. It predicts the
+material and heat balances conditional on the supplied transport and
+thermodynamic properties. It does not assume that all inclusions drain.
+The initial layer must contain both crystal and pore liquid. Complete dry-out
+or disappearance of the crystalline phase is outside this model and fails
+explicitly.
+
+Use three outlets: `product` (aliases `harvest`, `melt_product`,
+`purified_melt`), `mother_liquor`, and `sweat` (alias `partial_melt`).
+The former `sweat_temperature`, `sweat_crystal_fraction`, and
+`occluded_liquid_release_fraction` inputs are rejected: layer temperature,
+melting, and drainage are predictions.
+
+Required sweating inputs:
+
+| Parameter | Meaning / units |
+|---|---|
+| `sweat_heater_temperature` | Constant heating-medium temperature; at least initial layer temperature, below host Tm |
+| `sweat_thermal_conductance` | Overall heating conductance UA for the whole batch, W/K; >= 0 |
+| `sweat_opening_coefficient` | Dimensionless melting-driven opening coefficient; >= 0 |
+| `sweat_time` | Hold duration; time units, default h |
+| `sweat_host_rate_constant` | Measured reversible host phase-exchange coefficient, 1/s |
+| `sweat_pore_radius` | Effective connected hydraulic pore radius, m |
+| `sweat_drainage_length` | Vertical drainage path length, m |
+| `sweat_tortuosity` | Hydraulic resistance factor, >= 1 |
+| `sweat_connected_fraction` | Initially connected region fraction, [0,1]; partitions both solid and liquid inventories |
+| `sweat_residual_saturation` | Immobile liquid saturation, [0,1) |
+| `sweat_capillary_pressure` | Resisting capillary entry pressure, Pa, >= 0 |
+| `harvest_temperature` | Final liquid-product temperature |
+
+`sweat_collection_temperature` defaults to `sweat_heater_temperature`; it permits
+warming the collected liquid to prevent precipitation. Both collection and
+harvest temperatures must be at least the initial layer temperature and must yield
+liquids stable against precipitation of the modeled solid solution. Vaporizing
+outlets and detected liquid–liquid splitting are rejected. `cycle_time` must
+cover `growth_time + sweat_time`; any additional heating/harvest time remains
+part of the specified cycle. The sweating duration includes its heating transient;
+final harvest heating is still specified by an outlet temperature.
+
+**Occluded versus co-crystallized impurity.** In `empirical_layer_growth`,
+`keff_COMPONENT` measures total incorporation. For each incorporated impurity,
+specify `occluded_fraction_COMPONENT` in [0,1]. The complementary fraction
+occupies the host crystal as an ideal substitutional solid solution; it is
+not a separate pure impurity crystal. If any impurity is occluded, also supply
+`occluded_liquid_host_fraction`, the host mole fraction of the combined
+occluded liquid. The solver allocates the corresponding host solvent from the
+empirically deposited host inventory. It rejects allocations that exhaust the
+host framework. Separately retained mother liquor always remains liquid.
+
+The mechanistic `layer_growth` model already predicts complete mechanical
+liquid-inclusion inventories and a pure host interface. Its initial occluded
+allocation is therefore fixed by that growth calculation; empirical allocation
+parameters are rejected for this model. Sweating can subsequently allow solid
+solution exchange when solute parameters are supplied.
+
+For every solid-soluble impurity, supply all three:
+
+- `solid_partition_COMPONENT`: equilibrium `y_s / a_liquid` at
+  `partition_reference_temperature` (default 298.15 K), positive.
+- `solid_transfer_enthalpy_COMPONENT`: pure-liquid-to-solid-solution standard
+  transfer enthalpy `h_s^0 - h_l^0`, kJ/mol; either sign is allowed.
+- `solid_diffusivity_COMPONENT`: effective solid diffusion coefficient, m2/s;
+  zero disables diffusive exchange, but melting still releases lattice impurity.
+
+Also supply `solid_diffusion_length` in m when solid-soluble impurities are
+specified. An impurity without solid-solution parameters is insoluble in the
+host and remains exclusively in the liquid. Initially co-crystallized material
+cannot omit these parameters. Partition data apply at the operating pressure;
+no unmeasured impurity pressure dependence is inferred.
+
+The ideal-solid model has `a_s = y_s`, zero excess mixing enthalpy, and
+
+```text
+ln K_i(T) = ln K_i(Tref) - Delta_h_i/R * (1/T - 1/Tref)
+d_i = ln(y_i / (K_i a_i_liquid))
+A = sum_i y_i d_i
+M = k_host S (1 - exp(-A))
+E_i = (pi^2 D_i / diffusion_length^2) S
+      * (y_i K_host a_host_liquid - y_host K_i a_i_liquid)
+J_i = M y_i + E_i                       [impurity]
+J_host = M y_host - sum_i E_i
+```
+
+Use consistent J/mol units for `Delta_h_i` and R in that equation. The host's
+`K` comes from the existing fusion Gibbs-energy calculation, including heat
+capacities and pressure correction. Here `S` is total solid amount and `y`
+is solid composition. `M` is congruent melting: the receding crystal releases
+every constituent in its current lattice proportion. `E_i` exchanges one
+impurity molecule with one host molecule, conserving lattice sites.
+`J_i` is positive for transfer from solid to liquid. Congruent conversion
+satisfies `M*A >= 0`, and each substitutional exchange satisfies
+`E_i*(d_i-d_host) >= 0`; total phase transfer therefore dissipates Gibbs energy.
+The impurity rate coefficient is a first-mode approximation to solid mass
+transfer, not a resolved diffusion profile. The host phase-conversion rate is
+separately calibrated. Solid molar volume is approximated by the host's value for all
+solid-solution constituents. Temperature-dependent partitioning and solid
+enthalpy use the same transfer enthalpy.
+
+**Transient heat transfer and opening sealed inclusions.** The layer begins at
+its drained growth-outlet temperature. Connected and sealed regions initially
+have identical phase compositions; `sweat_connected_fraction` allocates that
+fraction of both solid and liquid to the connected region. Each region then
+has independent solid and liquid inventories. Both use the phase-transfer law
+above at a common, evolving temperature. Sealed liquid can melt its surrounding
+crystal and exchange solute locally, but cannot mix with or drain into the
+connected liquid until opening occurs.
+
+```text
+opening_hazard = sweat_opening_coefficient * max(M_sealed, 0) / S_sealed
+solid_opening_rate_i = opening_hazard * solid_sealed_i
+liquid_opening_rate_i = opening_hazard * liquid_sealed_i
+```
+
+Opening transfers both inventories conservatively into the connected region.
+The coefficient is an explicit morphology closure requiring calibration; it
+is not inferred from diffusivity. Zero disables opening permanently. With
+positive opening coefficient, initially sealed pores can become connected as
+their surrounding crystal melts. Recrystallization does not reseal pores in
+this model. Separate regions resolve accessibility, not spatial pore geometry.
+
+The integrated energy balance is
+
+```text
+H_layer = H_solid_connected + H_solid_sealed + H_liquid_connected + H_liquid_sealed
+dH_layer/dt = UA * (T_heater - T_layer) / 1000 - drain_molar_rate * h_liquid_connected
+```
+
+Here enthalpies are kJ and time is seconds; UA is W/K. At every integration
+step, temperature is obtained by inverting the phase enthalpies at the current
+inventories. This includes sensible heat, latent heat, and liquid heat of
+mixing when inclusions open. Drained enthalpy is integrated at the instantaneous
+connected-liquid composition and temperature. Zero UA gives an adiabatic
+layer, which can cool as it melts. Large UA approaches temperature control;
+there is no separate imposed-temperature calculation path.
+
+UA represents the combined heating-medium film, wall, and effective layer
+thermal resistance. It may be estimated from `UA = 1/R_total` or `U*A` using
+the heated area. Specify the conductance of the physical batch, not a conductance
+per unit stream flow. The model neglects equipment thermal mass, heat losses,
+and internal temperature gradients. A common temperature is suitable only when
+internal thermal equilibration is fast relative to heating and melting.
+Heating-medium and initial layer temperatures must remain below host Tm;
+complete phase disappearance and temperatures outside the supported solid
+branch fail explicitly rather than silently extrapolating to a fully molten layer.
+
+Liquid viscosity and density come from the configured property backend.
+The drainage closure is
+
+```text
+connected_pore_volume = total_pore_volume - sealed_liquid_volume
+permeability = (connected_pore_volume / envelope_volume) * pore_radius^2 / (8*tortuosity)
+Se = max(0, (liquid_saturation - residual_saturation)/(1-residual_saturation))
+Q = permeability * Se^3 * drainage_area / (viscosity*drainage_length)
+    * max(0, rho*g*drainage_length - capillary_pressure)
+```
+
+`Q` is connected-liquid volume per second. Saturation uses connected liquid
+volume divided by connected pore volume. Sealed liquid occupies its own
+unavailable pore volume; opening makes it accessible. `drainage_area` is the layer envelope volume
+divided by the drainage length, not the cooled plate area. Melting increases
+pore volume; the initial layer envelope is retained unless volume expansion
+requires free swelling. This idealized geometry excludes collapse and changing
+pore radius. The entry pressure may be estimated from `2*sigma*cos(theta)/r`
+for a wetting cylindrical pore, or measured directly. Pore geometry,
+connectivity, residual saturation, and the cubic relative-permeability closure
+require calibration for the material and apparatus. Zero initial connectivity
+with zero opening coefficient, or an entry pressure exceeding the gravity head,
+gives zero drainage, a valid result.
+
+All states evolve on the per-batch basis (`stream flow * cycle_time`). Reports
+include connected/sealed solid and liquid inventories, temperature histories,
+heater duty, opening rate, drained enthalpy, porosity, saturation, permeability,
+phase-transfer dissipation, and component/energy balance residuals. In a closed layer with nonzero exchange rates,
+the long-time equilibrium forgets the initial phase allocation. Finite diffusion
+and drainage preserve its influence on purification. No complete impurity
+rejection is imposed.
+
+Heat reporting includes sweating plus collection conditioning, final harvest,
+and the correction to the growth model's original all-impurities-as-liquid
+enthalpy representation. The overall duty remains the sum of actual outlet
+enthalpy flows minus inlet enthalpy flow. Solid-solution latent and sensible
+enthalpies enter the intermediate stage ledger. Sweating duty is the integrated
+finite heat input; collection conditioning is reported separately and includes
+mixing and warming the accumulated sweat. Final harvest duty includes mixing
+any remaining connected/sealed liquids and completely melting the residue.
+
+For example, an empirical layer with impurity `B` could add the following
+**illustrative, uncalibrated** specifications:
+
+```pfd
+    occluded_fraction_B = 0.6
+    occluded_liquid_host_fraction = 0.8
+    solid_partition_B = 0.02
+    solid_transfer_enthalpy_B = -1 [kJ/mol]
+    solid_diffusivity_B = 1e-13 [m2/s]
+    solid_diffusion_length = 0.1 [mm]
+    sweat_heater_temperature = 272 [K]
+    sweat_thermal_conductance = 100 [W/K]
+    sweat_opening_coefficient = 1
+    sweat_collection_temperature = 280 [K]
+    harvest_temperature = 280 [K]
+    sweat_time = 5 [min]
+    sweat_host_rate_constant = 0.002 [1/s]
+    sweat_pore_radius = 10 [um]
+    sweat_drainage_length = 0.5 [m]
+    sweat_tortuosity = 2
+    sweat_connected_fraction = 0.5
+    sweat_residual_saturation = 0.1
+    sweat_capillary_pressure = 1000 [Pa]
+```
+
+Quasiequilibrium melting and porous-media drainage are distinct assumptions
+in experimental sweating models; see [“Facile Model for Predicting Sweat Mass
+and Concentration in Layer Melt Crystallization” (2022)](https://doi.org/10.1021/acs.iecr.2c00177).
+The implementation here uses the explicit lumped closures above and does not
+claim to reproduce that paper's fitted pore-network model.
 
 **Steady kinetic MSMPR mode:**
 

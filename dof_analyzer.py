@@ -737,14 +737,37 @@ UNIT_DOF_RULES = {
             'effective_distribution_*': {
                 'description': 'Empirical impurity distribution definitions',
             },
+            'sweat_heater_temperature': {'unit': 'K'},
+            'sweat_thermal_conductance': {'unit': 'W/K'},
+            'sweat_opening_coefficient': {},
+            'sweat_collection_temperature': {'unit': 'K'},
+            'harvest_temperature': {'unit': 'K'},
+            'sweat_time': {'unit': 'h'},
+            'sweat_host_rate_constant': {'unit': '1/s'},
+            'sweat_drainage_length': {'unit': 'm'},
+            'sweat_pore_radius': {'unit': 'm'},
+            'sweat_tortuosity': {},
+            'sweat_connected_fraction': {},
+            'sweat_residual_saturation': {},
+            'sweat_capillary_pressure': {'unit': 'Pa'},
+            'solid_diffusion_length': {'unit': 'm'},
+            'occluded_liquid_host_fraction': {},
+            'occluded_fraction_*': {},
+            'solid_partition_*': {},
+            'solid_transfer_enthalpy_*': {'unit': 'kJ/mol'},
+            'solid_diffusivity_*': {'unit': 'm2/s'},
         },
         'calculated': [
             'solid_component_flows', 'crystal_yields',
-            'mother_liquor_composition', 'layer_thickness', 'heat_duty',
+            'mother_liquor_composition', 'layer_thickness', 'sweat_composition',
+            'harvest_product_composition', 'impurity_rejection_to_sweat',
+            'heat_duty',
         ],
         'dof_notes': (
             'Layer material exits through cake and mother_liquor outlets. '
-            'Equilibrium mode defaults to complete mother-liquor drainage.'
+            'Equilibrium mode defaults to complete mother-liquor drainage. '
+            'Enabling sweating replaces cake with final melted product and '
+            'requires product, mother_liquor, and sweat outlets.'
         ),
     },
     'Filter': {

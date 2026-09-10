@@ -298,11 +298,16 @@ PORT_FAMILY_SCHEMAS = {
         'outlets': {
             **_names('cake', 'layer', 'crystals', 'crystal_cake', 'wet_cake'),
             **_names('mother_liquor', 'liquor', 'filtrate', 'mother'),
+            **_names('sweat', 'partial_melt', 'sweat_liquid', 'sweating_liquid'),
+            **_names('product', 'harvest', 'harvest_product', 'melt_product',
+                     'purified_melt'),
         },
         'types': {
             'in': 'inlet',
             'cake': 'solid_outlet',
             'mother_liquor': 'liquid_outlet',
+            'sweat': 'liquid_outlet',
+            'product': 'liquid_outlet',
         },
     },
     'batch_reactor': {

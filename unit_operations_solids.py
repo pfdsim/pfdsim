@@ -29,9 +29,17 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     )
     from .particle_size_distributions import propagate_particle_size_distributions
     from .layer_crystallization import solve_layer_growth
+    from .layer_sweating import (
+        LayerSweatingError, SolidSolutionSolute, allocate_layer_inventory,
+        layer_enthalpy, solve_layer_sweating,
+    )
     from .thermodynamics_models.activity import ActivityCoefficientThermodynamics
     from .thermodynamics_models.common import ThermodynamicsError
-    from .thermodynamics_models.sle import solve_pure_solid_sle
+    from .thermodynamics_models.sle import (
+        liquid_solution_activities,
+        pure_solid_log_saturation_activity,
+        solve_pure_solid_sle,
+    )
     from .unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 else:
     from crystallizer_specs import (
@@ -57,9 +65,17 @@ else:
     )
     from particle_size_distributions import propagate_particle_size_distributions
     from layer_crystallization import solve_layer_growth
+    from layer_sweating import (
+        LayerSweatingError, SolidSolutionSolute, allocate_layer_inventory,
+        layer_enthalpy, solve_layer_sweating,
+    )
     from thermodynamics_models.activity import ActivityCoefficientThermodynamics
     from thermodynamics_models.common import ThermodynamicsError
-    from thermodynamics_models.sle import solve_pure_solid_sle
+    from thermodynamics_models.sle import (
+        liquid_solution_activities,
+        pure_solid_log_saturation_activity,
+        solve_pure_solid_sle,
+    )
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 
 
@@ -71,6 +87,229 @@ class _CrystallizerBase(UnitOperation):
     crystallization_mode: ClassVar[str]
     specification_validator: ClassVar = None
     unit_type_name: ClassVar[str]
+
+    def _layer_sweating_enabled(self):
+        return self.crystallization_mode == 'layer' and self.get_param(
+            'sweat_heater_temperature'
+        ) is not None
+
+    def _sweat_and_harvest_layer(self, cake, component, retention_spec):
+        temperature = cake.T
+        heater_temperature = self.get_temperature_param('sweat_heater_temperature')
+        harvest_temperature = self.get_temperature_param('harvest_temperature')
+        collection_temperature = self.get_temperature_param(
+            'sweat_collection_temperature', heater_temperature
+        )
+        melting = float(self.thermo.props[component].Tm)
+        if not all(math.isfinite(t) and t > 0 for t in (
+            temperature, heater_temperature, harvest_temperature, collection_temperature
+        )):
+            raise UnitOperationError('Sweating temperatures must be positive and finite')
+        if heater_temperature < cake.T or max(temperature, heater_temperature) >= melting:
+            raise UnitOperationError(
+                'sweat_heater_temperature must be at least the growth temperature and below host Tm'
+            )
+        if min(harvest_temperature, collection_temperature) < temperature:
+            raise UnitOperationError('Harvest and sweat collection temperatures must be at least the initial layer temperature')
+        cycle = self._one_dimension(('cycle_time',), self._TIME_FACTORS_H, 'cycle time', 'h')
+        duration = 3600 * self._one_dimension(('sweat_time',), self._TIME_FACTORS_H, 'sweat time', 'h')
+        growth_time = self._one_dimension(('growth_time',), self._TIME_FACTORS_H, 'growth time', 'h')
+        if growth_time + duration / 3600 > cycle + 1e-12:
+            raise UnitOperationError('cycle_time must include growth_time plus sweat_time')
+        phases = cake.phase_component_flows()
+        if sum(phases['vapor'].values()) > 1e-12:
+            raise UnitOperationError('Layer sweating requires a vapor-free layer')
+        if any(c != component and n > 0 for c, n in phases['solid'].items()):
+            raise UnitOperationError('Layer sweating does not model separate impurity crystals')
+
+        def fields(prefix):
+            result = {}
+            lookup = {c.casefold(): c for c in self.thermo.components}
+            for key in self.params:
+                if not key.startswith(prefix):
+                    continue
+                name = lookup.get(key[len(prefix):].casefold())
+                if name is None or name == component:
+                    raise UnitOperationError(f'Invalid impurity parameter {key!r}')
+                result[name] = key
+            return result
+
+        occluded_keys = fields('occluded_fraction_')
+        partition_keys = fields('solid_partition_')
+        enthalpy_keys = fields('solid_transfer_enthalpy_')
+        diffusivity_keys = fields('solid_diffusivity_')
+        if set(partition_keys) != set(enthalpy_keys) or set(partition_keys) != set(diffusivity_keys):
+            raise UnitOperationError(
+                'Each solid-solution impurity needs solid_partition_COMPONENT, '
+                'solid_transfer_enthalpy_COMPONENT, and solid_diffusivity_COMPONENT'
+            )
+        reference = self.get_temperature_param('partition_reference_temperature', 298.15)
+        solutes = {}
+        for name, key in partition_keys.items():
+            solutes[name] = SolidSolutionSolute(
+                self._number(key),
+                self._one_dimension((enthalpy_keys[name],), {'kj/mol': 1, 'j/mol': .001,
+                                    'kj/kmol': .001}, 'solid transfer enthalpy', 'kj/mol',
+                                    allow_negative=True),
+                self._one_dimension((diffusivity_keys[name],), {'m2/s': 1, 'm^2/s': 1},
+                                    'solid diffusivity', 'm2/s', allow_zero=True),
+                reference,
+            )
+        captured = retention_spec.get('trapped_component_flows', {})
+        try:
+            initial_solid, initial_liquid = allocate_layer_inventory(
+                host=component, totals=cake.component_flows(),
+                host_solid=phases['solid'].get(component, 0.0), captured=captured,
+                occluded_fractions={c: self._number(k, inclusive=True, maximum=1)
+                                    for c, k in occluded_keys.items()},
+                occluded_host_fraction=self.get_param('occluded_liquid_host_fraction'),
+                empirical=self.get_param('model') == 'empirical_layer_growth',
+            )
+            missing = {c for c, n in initial_solid.items() if c != component and n > 0} - set(solutes)
+            if missing:
+                raise LayerSweatingError('Missing solid-solution parameters for ' + ', '.join(sorted(missing)))
+            initial_solid = {c: n * cycle for c, n in initial_solid.items()}
+            initial_liquid = {c: n * cycle for c, n in initial_liquid.items()}
+            result = solve_layer_sweating(
+                self.thermo, host=component, initial_solid=initial_solid,
+                initial_liquid=initial_liquid, solutes=solutes,
+                temperature=temperature, pressure=cake.P, duration_s=duration,
+                heater_temperature=heater_temperature,
+                thermal_conductance_W_K=self._one_dimension(
+                    ('sweat_thermal_conductance',), {'w/k': 1, 'kw/k': 1000},
+                    'sweating thermal conductance', 'w/k', allow_zero=True),
+                opening_coefficient=self._number('sweat_opening_coefficient', inclusive=True),
+                host_rate_constant=self._one_dimension(
+                    ('sweat_host_rate_constant',), {'1/s': 1, 's^-1': 1, '1/h': 1/3600},
+                    'host phase exchange rate', '1/s'),
+                diffusion_length=self._one_dimension(
+                    ('solid_diffusion_length',), self._DIAMETER_FACTORS_M,
+                    'solid diffusion length', 'm') if solutes else 1.0,
+                drainage_length=self._one_dimension(
+                    ('sweat_drainage_length',), self._DIAMETER_FACTORS_M, 'drainage length', 'm'),
+                pore_radius=self._one_dimension(
+                    ('sweat_pore_radius',), self._DIAMETER_FACTORS_M, 'pore radius', 'm'),
+                tortuosity=self._number('sweat_tortuosity', minimum=1, inclusive=True),
+                connected_fraction=self._number('sweat_connected_fraction', inclusive=True, maximum=1),
+                residual_saturation=self._number('sweat_residual_saturation', inclusive=True, maximum=1),
+                capillary_pressure=self._one_dimension(
+                    ('sweat_capillary_pressure',), {'pa': 1, 'kpa': 1000, 'bar': 1e5},
+                    'capillary entry pressure', 'pa', allow_zero=True),
+                solid_molar_volume=self.thermo._solid_molar_volume(component, temperature),
+                relative_tolerance=self._number('sweat_relative_tolerance', 1e-7),
+            )
+        except (LayerSweatingError, ThermodynamicsError, ValueError) as error:
+            raise UnitOperationError(f"LayerCrystallizer '{self.unit_id}' sweating failed: {error}") from error
+        product_flows = {c: (result.solid_amounts.get(c, 0) + result.liquid_amounts.get(c, 0)) / cycle
+                         for c in cake.composition}
+        sweat_flows = {c: n / cycle for c, n in result.sweat_amounts.items()}
+        product_total, sweat_total = sum(product_flows.values()), sum(sweat_flows.values())
+        if product_total <= 0:
+            raise UnitOperationError('Sweating left no harvest product')
+        product = self.thermo.calculate_state(
+            harvest_temperature, cake.P, product_total,
+            self._composition_from_flows(product_flows, cake.composition), phase='liquid', flash=False)
+        sweat = self.thermo.calculate_state(
+            collection_temperature, cake.P, sweat_total,
+            self._composition_from_flows(sweat_flows, cake.composition), phase='liquid', flash=False)
+
+        def check_fluid_phase(label, T, flows):
+            total = sum(flows.values())
+            if total <= 1e-15:
+                return
+            composition = self._composition_from_flows(flows, cake.composition)
+            fluid = self.thermo.calculate_state(T, cake.P, total, composition, flash=True)
+            if fluid.vapor_fraction > 1e-8:
+                raise UnitOperationError(f'{label} would vaporize; liquid-only sweating is unsupported')
+            if fluid.liquid2_fraction > 1e-8:
+                raise UnitOperationError(f'{label} requires a homogeneous liquid phase')
+            diagnostic, _ = self._lle_diagnostic(fluid)
+            if diagnostic and (not diagnostic.get('checked') or diagnostic.get('lle_detected')):
+                raise UnitOperationError(f'{label} requires a homogeneous liquid phase')
+
+        # Check the evolving pore compositions as well as the collected outlets;
+        # warming a collection vessel cannot repair an invalid liquid-only hold.
+        for point in result.profile:
+            for region in ('connected', 'sealed'):
+                check_fluid_phase(f'Sweating {region} liquid', point['temperature_K'],
+                                  point[f'{region}_liquid_amounts_kmol'])
+        # Ideal-solid tangent-plane minimum: -ln(sum_i K_i a_i^L).
+        # This checks solid-solution precipitation, including the pure-host limit.
+        stability = {}
+        for label, stream in (('harvest', product), ('sweat', sweat)):
+            if stream.F <= 1e-15:
+                continue
+            activities = liquid_solution_activities(self.thermo, stream.T, stream.P, stream.composition)
+            host_log_k = -pure_solid_log_saturation_activity(
+                self.thermo, component, stream.T, stream.P,
+                solid_volume_temperature=min(stream.T, melting))
+            saturation_sum = math.exp(min(host_log_k, 700)) * activities.get(component, 0)
+            saturation_sum += sum(math.exp(min(law.log_partition(stream.T), 700)) * activities.get(c, 0)
+                                  for c, law in solutes.items())
+            stability[label] = saturation_sum
+            if saturation_sum > 1 + 1e-7:
+                raise UnitOperationError(
+                    f'{label} liquid is unstable to solid-solution precipitation; '
+                    f'increase {"harvest_temperature" if label == "harvest" else "sweat_collection_temperature"}'
+                )
+            check_fluid_phase(label, stream.T, stream.component_flows())
+        initial_energy = layer_enthalpy(self.thermo, cake.T, cake.P,
+                                       initial_solid, initial_liquid, component, solutes)
+        remaining_energy = result.remaining_enthalpy_kJ
+        if not all(math.isfinite(h) for h in (initial_energy, remaining_energy)):
+            raise UnitOperationError('Sweating requires finite solid-solution and liquid enthalpies')
+        initial_impurity = sum(n * self.thermo.props[c].MW for c, n in cake.component_flows().items()
+                               if c != component)
+        sweat_impurity = sum(n * self.thermo.props[c].MW for c, n in sweat_flows.items() if c != component)
+        details = {
+            'model': 'finite_rate_solid_solution_and_capillary_darcy_drainage',
+            'component': component, 'initial_layer_temperature_K': temperature,
+            'sweat_heater_temperature_K': heater_temperature,
+            'final_layer_temperature_K': result.temperature,
+            'sweat_collection_temperature_K': collection_temperature,
+            'harvest_temperature_K': harvest_temperature, 'sweat_time_s': duration,
+            'initial_solid_amounts_kmol': initial_solid,
+            'initial_occluded_and_retained_liquid_amounts_kmol': initial_liquid,
+            'remaining_solid_amounts_kmol': result.solid_amounts,
+            'remaining_liquid_amounts_kmol': result.liquid_amounts,
+            'remaining_connected_liquid_amounts_kmol': result.connected_liquid_amounts,
+            'remaining_sealed_liquid_amounts_kmol': result.sealed_liquid_amounts,
+            'supplied_heat_kJ_per_batch': result.supplied_heat_kJ,
+            'drained_enthalpy_kJ_per_batch': result.drained_enthalpy_kJ,
+            'sweating_duty_kW': result.supplied_heat_kJ / cycle / 3600,
+            'collection_conditioning_duty_kW': (sweat.F * sweat.H - result.drained_enthalpy_kJ / cycle) / 3600,
+            'energy_balance_residual': result.energy_balance_residual,
+            'net_host_melted_kmol': initial_solid[component] - result.solid_amounts[component],
+            'sweat_component_flows_kmol_per_h': sweat_flows,
+            'harvest_component_flows_kmol_per_h': product_flows,
+            'sweat_composition': dict(sweat.composition),
+            'harvest_product_composition': dict(product.composition),
+            'sweat_mass_kg_per_h': self._component_mass_flow(sweat_flows),
+            'harvest_product_mass_kg_per_h': self._component_mass_flow(product_flows),
+            'impurity_rejection_to_sweat': sweat_impurity / initial_impurity if initial_impurity > 0 else None,
+            'sweating_and_collection_duty_kW': (remaining_energy / cycle + sweat.F * sweat.H
+                                              - initial_energy / cycle) / 3600,
+            'harvest_duty_kW': (product.F * product.H - remaining_energy / cycle) / 3600,
+            'growth_layer_enthalpy_correction_kW': (initial_energy / cycle - cake.F * cake.H) / 3600,
+            'liquid_solid_saturation_sums': stability,
+            'component_balance_residual': result.component_balance_residual,
+            'evaluations': result.evaluations, 'profile': result.profile,
+            'assumptions': [
+                'common_transient_temperature_with_finite_UA',
+                'separate_well_mixed_connected_and_sealed_regions',
+                'melting_driven_opening_transfers_solid_and_liquid',
+                'ideal_substitutional_solid_solution',
+                'constant_effective_solid_molar_volume_equal_to_host',
+                'reversible_phase_exchange_with_first_mode_solid_diffusion',
+                'capillary_bundle_darcy_drainage_with_cubic_relative_permeability',
+                'fixed_envelope_with_free_swelling_no_collapse_or_detachment',
+                'constant_heating_medium_temperature_no_equipment_thermal_mass',
+            ],
+        }
+        warnings = []
+        if sweat_total <= 1e-15:
+            warnings.append('No sweat drained: connectivity, capillary retention, or residual saturation prevents flow.')
+        return product, sweat, details, warnings
 
     def _number(self, name, default=None, **constraints):
         try:
@@ -161,6 +400,8 @@ class _CrystallizerBase(UnitOperation):
             slurry.solid_particle_size_distributions.update(generated_psds)
         slurry.validate_particle_size_distributions()
         diagnostic_stream = slurry
+        sweating_details = None
+        sweating_warnings = []
         separation = None
         if retention_spec is None:
             outlets = {'out': slurry}
@@ -175,7 +416,19 @@ class _CrystallizerBase(UnitOperation):
                         slurry.T, slurry.P, 1.0,
                         performance['mother_liquor_composition'], phase='liquid',
                     )
-            outlets = {'cake': cake, 'mother_liquor': liquor}
+            if self._layer_sweating_enabled():
+                product, sweat, sweating_details, sweating_warnings = (
+                    self._sweat_and_harvest_layer(cake, performance.get(
+                        'crystallizing_component', candidates[0]), retention_spec)
+                )
+                phase_details['layer_sweating'] = sweating_details
+                outlets = {
+                    'product': product,
+                    'mother_liquor': liquor,
+                    'sweat': sweat,
+                }
+            else:
+                outlets = {'cake': cake, 'mother_liquor': liquor}
             for stream in outlets.values():
                 propagate_particle_size_distributions((slurry,), stream)
                 stream.solid_particle_properties = {
@@ -185,6 +438,7 @@ class _CrystallizerBase(UnitOperation):
                 }
                 stream.validate_particle_size_distributions()
         diagnostic, warnings = self._lle_diagnostic(diagnostic_stream)
+        warnings.extend(sweating_warnings)
         for stream in outlets.values():
             if self.crystallization_mode == 'layer':
                 # A deposited layer has no particle diameter or sphericity.
@@ -209,7 +463,8 @@ class _CrystallizerBase(UnitOperation):
             'T_out_C': slurry.T - 273.15,
             'P_out_bar': slurry.P,
             'outlet_mode': (
-                'layer_drainage' if self.crystallization_mode == 'layer'
+                'layer_sweating_and_harvest' if sweating_details is not None
+                else 'layer_drainage' if self.crystallization_mode == 'layer'
                 else 'slurry' if separation is None else 'cake_split'
             ),
             **{
@@ -223,6 +478,23 @@ class _CrystallizerBase(UnitOperation):
             },
             'duty_kW': duty / 3600.0,
         }
+        if sweating_details is not None:
+            performance['layer_sweating'] = sweating_details
+            performance['sweat_mass_kg_per_h'] = sweating_details[
+                'sweat_mass_kg_per_h'
+            ]
+            performance['harvest_product_mass_kg_per_h'] = sweating_details[
+                'harvest_product_mass_kg_per_h'
+            ]
+            performance['impurity_rejection_to_sweat'] = sweating_details[
+                'impurity_rejection_to_sweat'
+            ]
+            performance['sweat_composition'] = sweating_details[
+                'sweat_composition'
+            ]
+            performance['harvest_product_composition'] = sweating_details[
+                'harvest_product_composition'
+            ]
         if diagnostic is not None:
             performance['outlet_lle_check'] = diagnostic
         if 'wall_duty_kW' in performance:
@@ -273,6 +545,7 @@ class _CrystallizerBase(UnitOperation):
         default_unit,
         *,
         allow_zero=False,
+        allow_negative=False,
     ):
         found = [
             (name, self.get_param(name), self.get_param_unit(name))
@@ -301,7 +574,7 @@ class _CrystallizerBase(UnitOperation):
                 f'unit {raw_unit!r}'
             )
         value *= factor
-        if not math.isfinite(value) or (value < 0.0 if allow_zero else value <= 0.0):
+        if not math.isfinite(value) or (not allow_negative and (value < 0.0 if allow_zero else value <= 0.0)):
             raise UnitOperationError(
                 f"{self.unit_type_name} '{self.unit_id}' {name} must be "
                 f'{"nonnegative" if allow_zero else "positive"} and finite'
@@ -845,7 +1118,8 @@ class _CrystallizerBase(UnitOperation):
                 self.get_param('thermal_mode') + '_bulk', 'constant_wall_temperature',
                 'quasi_steady_thermal_profiles', 'constant_solid_density_at_wall',
                 'instantaneous_surface_nucleation', 'no_bulk_nucleation',
-                'no_soret_effect', 'no_sweating', 'harvest_conditioned_to_bulk_temperature',
+                'no_soret_effect', 'growth_submodel_excludes_sweating',
+                'harvest_conditioned_to_bulk_temperature',
                 'mechanical_inclusions_bypass_selective_film', 'harmonic_porous_conductivity',
                 'no_sensible_heat_redistribution_in_existing_layer',
             ],
@@ -1007,7 +1281,7 @@ class _CrystallizerBase(UnitOperation):
                 'instantaneous_differential_effective_distribution_coefficients',
                 'incorporated_impurities_reported_as_trapped_material',
                 'constant_bulk_and_wall_temperatures',
-                'no_sweating',
+                'growth_submodel_excludes_sweating',
                 'no_remelting',
                 'unspecified_impurities_completely_rejected',
             ],
