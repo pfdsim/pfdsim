@@ -1537,7 +1537,8 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   STREAM Mother : C.mother_liquor -> PRODUCT
   ```
 
-- `model` selects `equilibrium` (the default), `MSMPR`, or `layer_growth`. The equilibrium
+- `model` selects `equilibrium` (the default), `MSMPR`, `layer_growth`, or
+  `empirical_layer_growth`. The equilibrium
   model retains the existing pure-solid SLE behavior. `MSMPR` enables the
   steady kinetic population-balance model described below.
 - One `in`/`solution` inlet is cooled to a specified `T_out`/`Tout`/`T`/`temperature`.
@@ -1794,6 +1795,134 @@ Transport references:
 For flat-plate transfer, see
 [COMSOL external forced convection](https://doc.comsol.com/6.4/doc/com.comsol.help.heat/heat_ug_theory.07.102.html)
 and [COMSOL mass-transfer theory](https://www.comsol.com/multiphysics/what-is-mass-transfer?parent=fluid-flow-heat-transfer-and-mass-transport-0402-372).
+
+**Empirical finite-rate layer growth:**
+
+`model = empirical_layer_growth` is a material-correlation alternative to the
+transport-based `layer_growth` model. It integrates a supplied layer-thickness
+growth law and optional, independent effective distribution coefficients as
+the mother-liquor composition changes. It does not request thermal
+conductivity, diffusivity, or a mechanistic inclusion parameter.
+
+```pfd
+UNIT C : Crystallizer
+    model = empirical_layer_growth
+    crystallizing_component = AA
+    T = 11 [C]
+    T_wall = 0 [C]
+    cooled_area = 10 [m2]
+    growth_time = 10 [min]
+    cycle_time = 60 [min]
+    layer_solid_density = 1050 [kg/m3]
+
+    growth_model = undercooling_power_law
+    growth_coefficient = 4.68e-7
+    growth_exponent = 0.89
+    growth_rate_unit = m/s
+
+    keff_PA_expression = 0.99*(x_impurity/(1-x_impurity))**0.28*exp(59320*G_m_s)
+    keff_H2O = 0
+```
+
+The unit requires `T`/`T_out`, `T_wall` (aliases `coolant_temperature` and
+`T_coolant`), `cooled_area`, `growth_time`, and `cycle_time`. Wall temperature
+is constant and must be below the controlled bulk/product temperature.
+`cycle_time` must be at least `growth_time`; feed flow times cycle duration
+defines the batch charge, and harvested amount divided by cycle duration gives
+the equivalent continuous throughput. If the feed contains more than one
+component declared `conventional_with_solid`, `crystallizing_component` must
+select the one forming this layer; the others may have impurity `k_eff` laws
+but do not form separate solids in this empirical model.
+
+Growth can be supplied in four forms:
+
+- Direct constant `growth_rate` (aliases `growth` and `G`), with a unit
+  attached to that parameter.
+- `growth_model = constant`, with `growth_value` and `growth_rate_unit`.
+- `growth_model = undercooling_power_law` (aliases `power_law` and
+  `delta_T_power_law`), with `growth_coefficient`, `growth_exponent`, and
+  `growth_rate_unit`; it evaluates
+  `G = coefficient*max(deltaT,0)**exponent`.
+- `growth_model = custom`, with `growth_expression`, `growth_rate_unit`, and
+  arbitrary finite constants declared as `growth_param_<name>`.
+
+Growth units use the same explicit conversions as MSMPR growth: `m`, `mm`,
+`um`, or `µm` per `h`, `min`, or `s`. `G` is total layer-thickness growth rate,
+not particle-diameter or radius growth.
+
+Each impurity law is named for its component symbol. Prefixes `keff_`,
+`k_eff_`, `distribution_`, and `effective_distribution_` are equivalent. A
+bare value specifies a constant coefficient:
+
+```pfd
+keff_PA = 0.2
+```
+
+A custom expression uses flattened fields and case-preserving `param_`
+constants:
+
+```pfd
+keff_PA_model = custom
+keff_PA_expression = alpha*(x_impurity/(1-x_impurity))**beta*exp(c*G_m_s)
+keff_PA_param_alpha = 0.99
+keff_PA_param_beta = 0.28
+keff_PA_param_c = 59320
+```
+
+For direct Python construction, `effective_distributions`,
+`distribution_coefficients`, `keff`, or `k_eff` may instead be a
+component-to-definition mapping.
+Each definition is either a number or a mapping containing `model=constant`
+plus `value`, or `model=custom` plus `expression`, optional `parameters`,
+and/or `param_*` values.
+
+At every integration point, the coefficient uses the differential
+complete-layer mole-fraction convention
+`x_impurity,deposit = k_eff*x_impurity,liquid`. Coefficients must be finite and
+nonnegative, and their implied impurity mole fractions must sum to less than
+one. The remainder of each instantaneous deposit is the pure crystalline
+component. Incorporated impurities are retained with the harvested layer and
+reported as trapped material; this does not assert a solid solution or a
+particular microscopic inclusion mechanism. An impurity without a coefficient
+is completely rejected.
+
+Custom growth and distribution expressions support the same arithmetic and
+safe functions as MSMPR. They can use:
+
+- Liquid mole- and mass-fraction mappings `x["component"]` and
+  `w["component"]`; `x0` and `w0` are their initial values.
+- `x_crystal`, `w_crystal`, and, inside an impurity law, `x_impurity` and
+  `w_impurity`.
+- `T`/`T_bulk`, `Twall`/`T_wall`/`Tcool`/`T_coolant`, `P`, and current
+  saturation temperature `Tsat`/`Teq`/`T_eq`.
+- `deltaT`/`dT = Tsat-Twall`, `deltaT_bulk = Tsat-T`, and
+  `deltaT_wall`/`wall_undercooling = T-Twall`.
+- Crystallizing-component `S`, `sigma`, `relative_supersaturation`, `lnS`,
+  `activity`/`a`, and `a_sat`/`asat`, evaluated at bulk `T`.
+- `time`/`t`/`time_h`, `time_s`, `duration`/`duration_h`,
+  `thickness`/`L`, `area`, and crystallizing-component `recovery`.
+- `Tm`, `Hfus` [J/mol], `rho_s`, `Vm_solid`, `pi`, and `R`.
+- Evaluated growth `G`/`G_m_h` and `G_m_s` in distribution expressions.
+
+`layer_solid_density` (`kg/m3`, `kg/m^3`, `g/cm3`, or `g/cm^3`) overrides the
+resolved solid density. Without it, the shared solid-volume resolver is used.
+`empirical_relative_tolerance` defaults to `1e-7`, and
+`layer_profile_points` defaults to 21.
+
+Growth is suppressed once wall temperature reaches the current liquid
+saturation temperature; integration stops early if a required component
+inventory is exhausted. The profile
+reports liquid composition, saturation temperature, undercooling, growth rate,
+layer composition, each `k_eff`, thickness, and recovery. Overall outlet duty
+remains the exact inlet-to-outlet enthalpy difference at specified product
+temperature; an empirical law does not separately predict coolant-side heat
+transfer or wall duty.
+
+The empirical laws are applied instantaneously while integrating changing
+mother liquor. A correlation fitted to an overall layer composition at nearly
+constant bulk composition is therefore a differential extrapolation at high
+freezeout. Nucleation, sweating, remelting, layer failure, and temperature
+ramps are not modeled.
 
 **Steady kinetic MSMPR mode:**
 

@@ -4705,6 +4705,11 @@ class PFDValidator:
                 crystallizer_params = {
                     param.name: param.value for param in unit.params
                 }
+                crystallizer_params.update({
+                    f'__unit__{param.name}': param.unit
+                    for param in unit.params
+                    if param.unit
+                })
                 try:
                     crystallizer_params = normalize_crystallizer_parameters(crystallizer_params)
                     validate_crystallizer_specification(
@@ -4734,6 +4739,41 @@ class PFDValidator:
                             self.errors.append(
                                 f"Unit {unit.id} MSMPR kinetics: {error}"
                             )
+                elif crystallizer_params.get('model') == 'empirical_layer_growth':
+                    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                        from .empirical_layer_crystallization import (
+                            empirical_layer_distribution_definitions_from_parameters,
+                            empirical_layer_distribution_law_from_mapping,
+                            empirical_layer_growth_definition_from_parameters,
+                            empirical_layer_growth_law_from_mapping,
+                        )
+                    else:
+                        from empirical_layer_crystallization import (
+                            empirical_layer_distribution_definitions_from_parameters,
+                            empirical_layer_distribution_law_from_mapping,
+                            empirical_layer_growth_definition_from_parameters,
+                            empirical_layer_growth_law_from_mapping,
+                        )
+                    try:
+                        empirical_layer_growth_law_from_mapping(
+                            empirical_layer_growth_definition_from_parameters(
+                                crystallizer_params
+                            )
+                        )
+                        definitions = (
+                            empirical_layer_distribution_definitions_from_parameters(
+                                crystallizer_params,
+                                (component.symbol for component in self.pfd.components),
+                            )
+                        )
+                        for component, definition in definitions.items():
+                            empirical_layer_distribution_law_from_mapping(
+                                definition, component
+                            )
+                    except ValueError as error:
+                        self.errors.append(
+                            f"Unit {unit.id} empirical layer kinetics: {error}"
+                        )
             
             if not unit.unit_type:
                 self.errors.append(f"Unit {unit.id} has no TYPE specified")

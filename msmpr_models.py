@@ -34,7 +34,7 @@ class MSMPRConvergenceError(ValueError):
     """Raised when the coupled steady MSMPR balance has no solution."""
 
 
-_GROWTH_RATE_FACTORS_M_PER_H = {
+GROWTH_RATE_FACTORS_M_PER_H = {
     'm/h': 1.0,
     'm/hr': 1.0,
     'm/s': 3600.0,
@@ -75,7 +75,7 @@ _EXPRESSION_SCALARS = frozenset({
     'Tm', 'Hfus', 'pi', 'R',
 })
 
-_EXPRESSION_FUNCTIONS = frozenset({
+CRYSTALLIZATION_EXPRESSION_FUNCTIONS = frozenset({
     'abs', 'exp', 'log', 'log10', 'max', 'min', 'sqrt',
 })
 
@@ -248,7 +248,7 @@ def msmpr_rate_law_from_mapping(
         )
     unit = _unit_token(unit_value)
     factors = (
-        _GROWTH_RATE_FACTORS_M_PER_H
+        GROWTH_RATE_FACTORS_M_PER_H
         if rate_kind == 'growth'
         else _NUCLEATION_RATE_FACTORS_PER_M3_H
     )
@@ -358,7 +358,7 @@ def msmpr_rate_law_from_mapping(
         if (
             not name.isidentifier()
             or name in _EXPRESSION_SCALARS
-            or name in _EXPRESSION_FUNCTIONS
+            or name in CRYSTALLIZATION_EXPRESSION_FUNCTIONS
         ):
             raise MSMPRDefinitionError(
                 f"Invalid MSMPR {rate_kind} parameter name {name!r}"
@@ -374,7 +374,7 @@ def msmpr_rate_law_from_mapping(
             parameters,
             scalar_names=scalar_names,
             mapping_names=(),
-            function_names=_EXPRESSION_FUNCTIONS,
+            function_names=CRYSTALLIZATION_EXPRESSION_FUNCTIONS,
         )
     except ReactionDefinitionError as error:
         raise MSMPRDefinitionError(
@@ -532,7 +532,7 @@ def _base_context(
     return context
 
 
-def _saturation_temperature(
+def crystallization_saturation_temperature(
     thermo,
     component: str,
     composition: Mapping[str, float],
@@ -1031,7 +1031,7 @@ def solve_steady_msmpr(
         saturation_ratio = activity / max(saturation_activity, 1.0e-300)
         saturation_temperature = None
         if kinetics_require_undercooling or include_thermal_diagnostics:
-            saturation_temperature = _saturation_temperature(
+            saturation_temperature = crystallization_saturation_temperature(
                 thermo,
                 component,
                 composition,
@@ -1254,10 +1254,13 @@ def solve_steady_msmpr(
 
 
 __all__ = [
+    'CRYSTALLIZATION_EXPRESSION_FUNCTIONS',
+    'GROWTH_RATE_FACTORS_M_PER_H',
     'MSMPRConvergenceError',
     'MSMPRDefinitionError',
     'MSMPRRateLaw',
     'SteadyMSMPRResult',
+    'crystallization_saturation_temperature',
     'msmpr_rate_definition_from_parameters',
     'msmpr_rate_law_from_mapping',
     'solve_steady_msmpr',

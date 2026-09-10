@@ -11,6 +11,14 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
         finite_crystallizer_number,
         validate_crystallizer_specification,
     )
+    from .empirical_layer_crystallization import (
+        EmpiricalLayerDefinitionError,
+        empirical_layer_distribution_definitions_from_parameters,
+        empirical_layer_distribution_law_from_mapping,
+        empirical_layer_growth_definition_from_parameters,
+        empirical_layer_growth_law_from_mapping,
+        solve_empirical_layer_growth,
+    )
     from .msmpr_models import (
         MSMPRConvergenceError,
         MSMPRDefinitionError,
@@ -30,6 +38,14 @@ else:
         finite_crystallizer_number,
         validate_crystallizer_specification,
     )
+    from empirical_layer_crystallization import (
+        EmpiricalLayerDefinitionError,
+        empirical_layer_distribution_definitions_from_parameters,
+        empirical_layer_distribution_law_from_mapping,
+        empirical_layer_growth_definition_from_parameters,
+        empirical_layer_growth_law_from_mapping,
+        solve_empirical_layer_growth,
+    )
     from msmpr_models import (
         MSMPRConvergenceError,
         MSMPRDefinitionError,
@@ -46,7 +62,7 @@ else:
 
 
 class Crystallizer(UnitOperation):
-    """Equilibrium suspension/layer or steady kinetic MSMPR crystallizer."""
+    """Equilibrium, mechanistic/empirical layer, or kinetic MSMPR crystallizer."""
 
     supports_permanent_solids = True
     particle_size_behavior = 'custom'
@@ -842,6 +858,176 @@ class Crystallizer(UnitOperation):
         return self._finalize(inlet, outlet, candidates, None, retention, performance,
                               {'layer_crystallization': details})
 
+    def _solve_empirical_layer_growth(
+        self, inlet, temperature, pressure, candidates, retention
+    ):
+        if inlet.vapor_fraction > 1e-10:
+            raise UnitOperationError(
+                'Empirical layer growth requires a liquid feed; condensation is not modeled'
+            )
+        requested_component = self.get_param('crystallizing_component')
+        if requested_component is None:
+            if len(candidates) != 1:
+                raise UnitOperationError(
+                    f"Crystallizer '{self.unit_id}' empirical_layer_growth "
+                    'requires crystallizing_component when more than one '
+                    'conventional_with_solid component is present'
+                )
+            component = candidates[0]
+        else:
+            component = next(
+                (
+                    name for name in candidates
+                    if name.casefold() == str(requested_component).strip().casefold()
+                ),
+                None,
+            )
+            if component is None:
+                raise UnitOperationError(
+                    f"Crystallizer '{self.unit_id}' empirical_layer_growth "
+                    f"crystallizing_component {requested_component!r} must name "
+                    'a present conventional_with_solid component'
+                )
+        growth_time = self._one_dimension(
+            ('growth_time',), self._TIME_FACTORS_H, 'growth time', 'h'
+        )
+        cycle_time = self._one_dimension(
+            ('cycle_time',), self._TIME_FACTORS_H, 'cycle time', 'h'
+        )
+        if cycle_time < growth_time:
+            raise UnitOperationError('Layer cycle_time must be at least growth_time')
+        area = self._one_dimension(
+            ('cooled_area',), {'m2': 1, 'm^2': 1}, 'cooled area', 'm2'
+        )
+        self._number('t_wall', minimum=-float('inf'))
+        wall = self.get_temperature_param('t_wall')
+        density = self._one_dimension(
+            ('layer_solid_density',),
+            {'kg/m3': 1, 'kg/m^3': 1, 'g/cm3': 1000, 'g/cm^3': 1000},
+            'layer solid density', 'kg/m3',
+        )
+        try:
+            growth_definition = empirical_layer_growth_definition_from_parameters(
+                self.params
+            )
+            growth_law = empirical_layer_growth_law_from_mapping(growth_definition)
+            distribution_definitions = (
+                empirical_layer_distribution_definitions_from_parameters(
+                    self.params, inlet.component_flows()
+                )
+            )
+            if component in distribution_definitions:
+                raise EmpiricalLayerDefinitionError(
+                    'the crystallizing component cannot have a k_eff law'
+                )
+            distribution_laws = {
+                impurity: empirical_layer_distribution_law_from_mapping(
+                    definition, impurity
+                )
+                for impurity, definition in distribution_definitions.items()
+            }
+            growth = solve_empirical_layer_growth(
+                self.thermo,
+                component=component,
+                amounts_kmol={
+                    name: amount * cycle_time
+                    for name, amount in inlet.component_flows().items()
+                },
+                bulk_temperature_K=temperature,
+                pressure_bar=pressure,
+                wall_temperature_K=wall,
+                area_m2=area,
+                growth_time_h=growth_time,
+                growth_law=growth_law,
+                distribution_laws=distribution_laws,
+                solid_density_kg_m3=density,
+                relative_tolerance=self._number(
+                    'empirical_relative_tolerance', 1e-7
+                ),
+                profile_points=self._number(
+                    'layer_profile_points', 21,
+                    minimum=2, inclusive=True, integer=True,
+                ),
+            )
+        except (EmpiricalLayerDefinitionError, ThermodynamicsError, ValueError, TypeError) as error:
+            raise UnitOperationError(
+                f"Crystallizer '{self.unit_id}' empirical layer growth failed: {error}"
+            ) from error
+        solid_flow = growth.solid_amount_kmol / cycle_time
+        outlet = self.thermo.calculate_state_with_solid_flows(
+            temperature, pressure, inlet.F, inlet.composition,
+            {component: solid_flow} if solid_flow > 1e-15 else {},
+            phase='liquid',
+        )
+        trapped_flows = {
+            name: amount / cycle_time
+            for name, amount in growth.trapped_component_amounts_kmol.items()
+            if amount > 0
+        }
+        details = {
+            'model': 'empirical_finite_rate_layer_growth',
+            'component': component,
+            'layer_thickness_m': growth.thickness_m,
+            'cooled_area_m2': area,
+            'growth_time_h': growth_time,
+            'elapsed_growth_time_h': growth.elapsed_growth_time_h,
+            'cycle_time_h': cycle_time,
+            'T_wall_K': wall,
+            'T_bulk_K': temperature,
+            'solid_density_kg_m3': growth.solid_density_kg_m3,
+            'growth_model': growth_law.model,
+            'growth_expression': growth_law.expression.text,
+            'growth_rate_unit': growth_law.declared_unit,
+            'effective_distribution_basis': (
+                'instantaneous_complete_deposited_layer_mole_fraction'
+            ),
+            'effective_distribution_models': {
+                impurity: law.model for impurity, law in distribution_laws.items()
+            },
+            'effective_distribution_expressions': {
+                impurity: law.expression.text
+                for impurity, law in distribution_laws.items()
+            },
+            'unspecified_impurity_behavior': 'complete_rejection',
+            'trapped_component_amounts_kmol_per_batch': dict(
+                growth.trapped_component_amounts_kmol
+            ),
+            'stopped_by_inventory': growth.stopped_by_inventory,
+            'evaluations': growth.evaluations,
+            'assumptions': [
+                'one_crystalline_component',
+                'empirical_planar_growth_rate',
+                'instantaneous_differential_effective_distribution_coefficients',
+                'incorporated_impurities_reported_as_trapped_material',
+                'constant_bulk_and_wall_temperatures',
+                'no_sweating',
+                'no_remelting',
+                'unspecified_impurities_completely_rejected',
+            ],
+            'profile': growth.profile,
+        }
+        performance = {
+            **details,
+            'crystallizing_component': component,
+            'solid_component_flows_kmol_per_h': {component: solid_flow},
+            'crystallized_component_flows_kmol_per_h': {component: solid_flow},
+            'crystal_yields': {
+                component: solid_flow / inlet.component_flows()[component]
+            },
+            'empirically_incorporated_component_flows_kmol_per_h': trapped_flows,
+            'mother_liquor_composition': self._composition_from_flows(
+                growth.liquid_component_amounts_kmol, {}
+            ),
+        }
+        retention = {
+            **retention,
+            'trapped_component_flows': trapped_flows,
+        }
+        return self._finalize(
+            inlet, outlet, [component], None, retention, performance,
+            {'layer_crystallization': details},
+        )
+
     def solve(self, inlets) -> UnitResult:
         if len(inlets) != 1:
             raise UnitOperationError(
@@ -914,6 +1100,11 @@ class Crystallizer(UnitOperation):
 
         if model == 'layer_growth':
             return self._solve_layer_growth(
+                inlet, temperature, pressure, candidates, mother_liquor_retention,
+            )
+
+        if model == 'empirical_layer_growth':
+            return self._solve_empirical_layer_growth(
                 inlet, temperature, pressure, candidates, mother_liquor_retention,
             )
 
