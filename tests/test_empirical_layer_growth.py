@@ -7,7 +7,7 @@ import pytest
 from chemical_properties import ChemicalDatabase
 from crystallizer_specs import (
     CrystallizerSpecificationError,
-    validate_crystallizer_specification,
+    validate_layer_crystallizer_specification,
 )
 from dof_analyzer import SpecificationStatus, analyze_dof
 from empirical_layer_crystallization import (
@@ -21,7 +21,7 @@ from pfd_parser import parse_pfd, validate_pfd
 from simulator import Simulator
 from thermodynamics_models.base import IdealThermodynamics
 from thermodynamics_models.common import ThermodynamicsError
-from unit_operations_solids import Crystallizer
+from unit_operations_solids import LayerCrystallizer
 
 
 @pytest.fixture
@@ -123,7 +123,7 @@ def test_direct_unit_api_accepts_nested_growth_and_impurity_mappings(thermo, map
         270, 1, 10, {'water': 0.8, 'ethanol': 0.1, 'acetone': 0.1},
         phase='liquid',
     )
-    result = Crystallizer('C', thermo, {
+    result = LayerCrystallizer('C', thermo, {
         'model': 'empirical_layer_growth', 'T': 270, 'T_wall': 250,
         'cooled_area': 1, 'growth_time': 0.01, 'cycle_time': 1,
         'layer_solid_density': 1000,
@@ -172,7 +172,7 @@ STREAM Feed : FEED -> C.in
     x = water:0.8, ethanol:0.1, acetone:0.1
 STREAM Layer : C.layer -> PRODUCT
 STREAM Mother : C.mother_liquor -> PRODUCT
-UNIT C : Crystallizer
+UNIT C : LayerCrystallizer
     model = empirical_layer_growth
     T = 270 [K]
     T_wall = 250 [K]
@@ -250,7 +250,7 @@ def test_direct_dimensioned_growth_rate_runs_with_required_growth_time():
 
 @pytest.mark.parametrize('change, message', [
     ({'film_thickness': 1e-3}, 'incompatible parameter'),
-    ({'crystallization_mode': 'suspension'}, 'requires crystallization_mode=layer'),
+    ({'crystallization_mode': 'layer'}, 'no longer supported'),
     ({'nucleation_model': 'custom'}, 'does not use nucleation'),
     ({'residence_time': 1}, 'incompatible parameter'),
     ({'layer_relative_tolerance': 1e-6}, 'incompatible parameter'),
@@ -262,7 +262,7 @@ def test_empirical_spec_rejects_incompatible_inputs(change, message):
         'growth_rate': 1e-6, '__unit__growth_rate': 'm/s', **change,
     }
     with pytest.raises(CrystallizerSpecificationError, match=message):
-        validate_crystallizer_specification(params)
+        validate_layer_crystallizer_specification(params)
 
 
 def test_growth_and_distribution_definition_errors_are_explicit():
@@ -294,7 +294,7 @@ def test_growth_and_distribution_definition_errors_are_explicit():
 
 def test_mechanistic_layer_rejects_empirical_parameters():
     with pytest.raises(CrystallizerSpecificationError, match='empirical layer parameter'):
-        validate_crystallizer_specification({
+        validate_layer_crystallizer_specification({
             'model': 'layer_growth', 'T': 270, 'T_wall': 250,
             'cooled_area': 1, 'growth_time': 0.1, 'cycle_time': 1,
             'film_thickness': 1e-3, 'keff_ethanol': 0.2,
@@ -313,7 +313,7 @@ def test_flattened_growth_rejects_duplicate_unit_aliases():
 
 def test_uppercase_distribution_parameters_do_not_bypass_model_validation():
     with pytest.raises(CrystallizerSpecificationError, match='empirical distribution'):
-        validate_crystallizer_specification({
+        validate_layer_crystallizer_specification({
             'T': 270, 'KEFF_ethanol_PARAM_Alpha': 0.2,
         })
 

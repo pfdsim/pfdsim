@@ -18,11 +18,15 @@ from enum import Enum
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .crystallizer_specs import (
-        CrystallizerSpecificationError, validate_crystallizer_specification,
+        CrystallizerSpecificationError,
+        validate_crystallizer_specification,
+        validate_layer_crystallizer_specification,
     )
 else:
     from crystallizer_specs import (
-        CrystallizerSpecificationError, validate_crystallizer_specification,
+        CrystallizerSpecificationError,
+        validate_crystallizer_specification,
+        validate_layer_crystallizer_specification,
     )
 
 
@@ -57,6 +61,26 @@ class ProcessDOFResult:
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     suggestions: list[str] = field(default_factory=list)
+
+
+_CRYSTALLIZER_COMMON_OPTIONAL_SPECS = {
+    'P_out': {'unit': 'bar'},
+    'P_drop': {'unit': 'bar', 'default': 0.0},
+    'equilibrium_tolerance': {'default': 1e-8},
+    'max_iterations': {'default': 500},
+    'mother_liquor_retention': {
+        'description': (
+            'Fraction of equilibrium mother liquor retained with the cake; '
+            'specifying it enables cake/mother-liquor outlets'
+        ),
+    },
+    'mother_liquor_retention_rate': {
+        'description': (
+            'Mass of equilibrium mother liquor retained per mass of conventional '
+            'crystals; specifying it enables cake/mother-liquor outlets'
+        ),
+    },
+}
 
 
 # Comprehensive DOF rules for each unit type
@@ -643,22 +667,53 @@ UNIT_DOF_RULES = {
     # SOLID HANDLING
     # =========================================================================
     'Crystallizer': {
+        'description': 'Equilibrium or steady MSMPR suspension crystallizer',
+        'category': 'solid',
+        'phase_support': ['SLE'],
+        'required_specs': ['T_out|T'],
+        'optional_specs': {
+            **_CRYSTALLIZER_COMMON_OPTIONAL_SPECS,
+            'model': {'values': ['equilibrium', 'MSMPR'], 'default': 'equilibrium'},
+            'residence_time': {'unit': 'h'},
+            'volume': {'unit': 'm3'},
+            'msmpr_tolerance': {'unit': 'kmol/h', 'default': 1e-8},
+            'msmpr_relative_tolerance': {'default': 0.0},
+            'outlet_sphericity': {
+                'description': 'Assumed outlet-crystal sphericity in (0, 1]',
+            },
+            'growth_*': {
+                'description': 'MSMPR crystal-growth kinetic definition',
+            },
+            'nucleation_*': {
+                'description': 'MSMPR nucleation kinetic definition',
+            },
+        },
+        'calculated': [
+            'solid_component_flows', 'crystal_yields',
+            'mother_liquor_composition', 'supersaturation',
+            'particle_size_distribution', 'particle_sphericity', 'heat_duty',
+        ],
+        'dof_notes': (
+            'Specify outlet temperature. Pressure defaults to inlet pressure; '
+            'without a retention specification, solid and mother liquor remain '
+            'in one slurry outlet.'
+        ),
+    },
+    'LayerCrystallizer': {
         'description': (
-            'Equilibrium suspension/layer, steady MSMPR, or finite-rate layer '
-            'crystallizer with optional bulk cooling and liquid inclusions'
+            'Equilibrium, mechanistic, or empirical layer crystallizer with '
+            'optional bulk cooling and liquid inclusions'
         ),
         'category': 'solid',
         'phase_support': ['SLE'],
         'required_specs': ['T_out|T'],
         'optional_specs': {
-            'P_out': {'unit': 'bar'},
-            'P_drop': {'unit': 'bar', 'default': 0.0},
-            'equilibrium_tolerance': {'default': 1e-8},
-            'max_iterations': {'default': 500},
-            'model': {'values': ['equilibrium', 'MSMPR', 'layer_growth'], 'default': 'equilibrium'},
-            'crystallization_mode': {
-                'values': ['suspension', 'layer'], 'default': 'suspension',
-                'description': 'Layer mode uses equilibrium deposits and mother-liquor drainage',
+            **_CRYSTALLIZER_COMMON_OPTIONAL_SPECS,
+            'model': {
+                'values': [
+                    'equilibrium', 'layer_growth', 'empirical_layer_growth',
+                ],
+                'default': 'equilibrium',
             },
             'cooled_area': {'unit': 'm2'},
             'film_thickness': {'unit': 'm'},
@@ -673,43 +728,23 @@ UNIT_DOF_RULES = {
             'T_wall': {'unit': 'K'},
             'binary_diffusivity': {'unit': 'm2/s'},
             'layer_relative_tolerance': {'default': 1e-6},
+            'empirical_relative_tolerance': {'default': 1e-7},
             'layer_profile_points': {'default': 21},
-            'residence_time': {'unit': 'h'},
-            'volume': {'unit': 'm3'},
-            'msmpr_tolerance': {'unit': 'kmol/h', 'default': 1e-8},
-            'msmpr_relative_tolerance': {'default': 0.0},
-            'outlet_sphericity': {
-                'description': 'Assumed outlet-crystal sphericity in (0, 1]',
-            },
+            'layer_solid_density': {'unit': 'kg/m3'},
             'growth_*': {
-                'description': 'MSMPR crystal-growth kinetic definition',
+                'description': 'Empirical layer-growth kinetic definition',
             },
-            'nucleation_*': {
-                'description': 'MSMPR nucleation kinetic definition',
-            },
-            'mother_liquor_retention': {
-                'description': (
-                    'Fraction of equilibrium mother liquor retained with the '
-                    'cake; specifying it enables cake/mother-liquor outlets'
-                ),
-            },
-            'mother_liquor_retention_rate': {
-                'description': (
-                    'Mass of equilibrium mother liquor retained per mass of '
-                    'conventional crystals; specifying it enables cake/mother-'
-                    'liquor outlets'
-                ),
+            'effective_distribution_*': {
+                'description': 'Empirical impurity distribution definitions',
             },
         },
         'calculated': [
             'solid_component_flows', 'crystal_yields',
-            'mother_liquor_composition', 'supersaturation',
-            'particle_size_distribution', 'particle_sphericity', 'heat_duty',
+            'mother_liquor_composition', 'layer_thickness', 'heat_duty',
         ],
         'dof_notes': (
-            'Specify outlet temperature. Pressure defaults to inlet pressure; '
-            'without a retention specification, solid and mother liquor remain '
-            'in one slurry outlet.'
+            'Layer material exits through cake and mother_liquor outlets. '
+            'Equilibrium mode defaults to complete mother-liquor drainage.'
         ),
     },
     'Filter': {
@@ -1100,9 +1135,14 @@ class DOFAnalyzer:
                 status = SpecificationStatus.UNDER_SPECIFIED
                 message = f"Unit '{unit.id}' requires: {', '.join(missing)}"
 
-        elif unit_type == 'Crystallizer':
+        elif unit_type in {'Crystallizer', 'LayerCrystallizer'}:
             try:
-                validate_crystallizer_specification(
+                validator = (
+                    validate_layer_crystallizer_specification
+                    if unit_type == 'LayerCrystallizer'
+                    else validate_crystallizer_specification
+                )
+                validator(
                     {param.name: param.value for param in unit.params},
                     {port.id for port in unit.ports
                      if port.port_type.value.endswith('outlet')},

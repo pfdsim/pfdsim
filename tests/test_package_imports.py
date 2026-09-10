@@ -58,6 +58,9 @@ assert unit_operations.UNIT_CLASSES['PackedBedReactor'].__module__ == (
 assert unit_operations.UNIT_CLASSES['Crystallizer'].__module__ == (
     'pfdsim.unit_operations_solids'
 )
+assert unit_operations.UNIT_CLASSES['LayerCrystallizer'].__module__ == (
+    'pfdsim.unit_operations_solids'
+)
 assert wsgi.app.import_name == 'pfdsim.app'
 assert not ({
     'simulator', 'unit_operations', 'batch_models', 'pellet_models',
@@ -108,6 +111,9 @@ assert unit_operations.UNIT_CLASSES['PackedBedReactor'].__module__ == (
     'unit_operations_reactors'
 )
 assert unit_operations.UNIT_CLASSES['Crystallizer'].__module__ == (
+    'unit_operations_solids'
+)
+assert unit_operations.UNIT_CLASSES['LayerCrystallizer'].__module__ == (
     'unit_operations_solids'
 )
 assert not ({

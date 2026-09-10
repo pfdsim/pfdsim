@@ -6,7 +6,10 @@ import math
 import pytest
 
 from chemical_properties import ChemicalDatabase
-from crystallizer_specs import CrystallizerSpecificationError, validate_crystallizer_specification
+from crystallizer_specs import (
+    CrystallizerSpecificationError,
+    validate_layer_crystallizer_specification,
+)
 from dof_analyzer import SpecificationStatus, analyze_dof
 from layer_crystallization import _wilke_chang, solve_layer_growth
 from pfd_parser import parse_pfd, validate_pfd
@@ -14,7 +17,7 @@ from simulator import Simulator
 from thermodynamics_models.base import IdealThermodynamics
 from thermodynamics_models.common import ThermodynamicsError
 from unit_operations_base import UnitOperationError
-from unit_operations_solids import Crystallizer
+from unit_operations_solids import LayerCrystallizer
 
 
 @pytest.fixture
@@ -232,7 +235,7 @@ def unit_params():
 
 def test_unit_cycle_conversion_and_total_energy(thermo):
     feed = thermo.calculate_state(280, 1, 10, {'water': 0.9, 'ethanol': 0.1}, phase='liquid')
-    result = Crystallizer('L', thermo, unit_params()).solve({'in': feed})
+    result = LayerCrystallizer('L', thermo, unit_params()).solve({'in': feed})
     layer, mother = result.outlet_streams['cake'], result.outlet_streams['mother_liquor']
     assert not layer.solid_particle_size_distributions
     assert layer.F == pytest.approx(result.performance['solid_amount_kmol_per_batch'])
@@ -248,7 +251,7 @@ def test_inclusion_outlet_split_separates_trapped_and_drainage_liquid(thermo, re
     params = {**unit_params(), 'thermal_mode': 'cooling', 'inclusion_max_fraction': 0.3,
               'mother_liquor_retention': retention}
     params.pop('T')
-    result = Crystallizer('L', thermo, params).solve({'in': feed})
+    result = LayerCrystallizer('L', thermo, params).solve({'in': feed})
     cake, liquor = result.outlet_streams['cake'], result.outlet_streams['mother_liquor']
     details = result.performance
     trapped = details['trapped_component_amounts_kmol_per_batch']
@@ -286,14 +289,16 @@ def test_missing_solid_conductivity_is_not_substituted(monkeypatch):
 def test_invalid_design_inputs(thermo, change, message):
     feed = thermo.calculate_state(280, 1, 10, {'water': 0.9, 'ethanol': 0.1}, phase='liquid')
     with pytest.raises(UnitOperationError, match=message):
-        Crystallizer('L', thermo, {**unit_params(), **change}).solve({'in': feed})
+        LayerCrystallizer('L', thermo, {**unit_params(), **change}).solve({'in': feed})
 
 
 def test_missing_design_variables_and_wrong_mode_are_rejected():
     with pytest.raises(CrystallizerSpecificationError, match='layer_growth requires'):
-        validate_crystallizer_specification({'model': 'layer_growth', 'T': 270})
-    with pytest.raises(CrystallizerSpecificationError, match='requires crystallization_mode=layer'):
-        validate_crystallizer_specification({**unit_params(), 'crystallization_mode': 'suspension'})
+        validate_layer_crystallizer_specification({'model': 'layer_growth', 'T': 270})
+    with pytest.raises(CrystallizerSpecificationError, match='no longer supported'):
+        validate_layer_crystallizer_specification({
+            **unit_params(), 'crystallization_mode': 'layer',
+        })
 
 
 @pytest.mark.parametrize('spec, message', [
@@ -305,7 +310,7 @@ def test_missing_design_variables_and_wrong_mode_are_rejected():
 ])
 def test_incompatible_mode_inputs_are_rejected(spec, message):
     with pytest.raises(CrystallizerSpecificationError, match=message):
-        validate_crystallizer_specification({**unit_params(), **spec})
+        validate_layer_crystallizer_specification({**unit_params(), **spec})
 
 
 @pytest.mark.parametrize('cooling', [False, True])
@@ -325,7 +330,7 @@ STREAM Feed : FEED -> C.in
     x = water:0.9, ethanol:0.1
 STREAM Layer : C.layer -> PRODUCT
 STREAM Mother : C.mother_liquor -> PRODUCT
-UNIT C : Crystallizer
+UNIT C : LayerCrystallizer
     model = layer_growth
     T = -3.15 [C]
     T_wall = -23.15 [C]

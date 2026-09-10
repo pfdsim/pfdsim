@@ -17,11 +17,13 @@ from enum import Enum
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .crystallizer_specs import (
         CrystallizerSpecificationError, normalize_crystallizer_parameters,
+        validate_layer_crystallizer_specification,
         validate_crystallizer_specification,
     )
 else:
     from crystallizer_specs import (
         CrystallizerSpecificationError, normalize_crystallizer_parameters,
+        validate_layer_crystallizer_specification,
         validate_crystallizer_specification,
     )
 
@@ -895,6 +897,7 @@ class UnitType(Enum):
     
     # Solids Handling
     CRYSTALLIZER = "Crystallizer"
+    LAYER_CRYSTALLIZER = "LayerCrystallizer"
     FILTER = "Filter"
     DRYER = "Dryer"
 
@@ -4701,7 +4704,10 @@ class PFDValidator:
                         f"'{scope_name}'"
                     )
 
-            if unit.unit_type == UnitType.CRYSTALLIZER.value:
+            if unit.unit_type in {
+                UnitType.CRYSTALLIZER.value,
+                UnitType.LAYER_CRYSTALLIZER.value,
+            }:
                 crystallizer_params = {
                     param.name: param.value for param in unit.params
                 }
@@ -4712,13 +4718,21 @@ class PFDValidator:
                 })
                 try:
                     crystallizer_params = normalize_crystallizer_parameters(crystallizer_params)
-                    validate_crystallizer_specification(
+                    validator = (
+                        validate_layer_crystallizer_specification
+                        if unit.unit_type == UnitType.LAYER_CRYSTALLIZER.value
+                        else validate_crystallizer_specification
+                    )
+                    validator(
                         crystallizer_params,
                         require_temperature=False,
                     )
                 except CrystallizerSpecificationError as error:
                     self.errors.append(f"Unit {unit.id} {error}")
-                if crystallizer_params.get('model') == 'msmpr':
+                if (
+                    unit.unit_type == UnitType.CRYSTALLIZER.value
+                    and crystallizer_params.get('model') == 'msmpr'
+                ):
                     if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
                         from .msmpr_models import (
                             msmpr_rate_definition_from_parameters,
@@ -4739,7 +4753,10 @@ class PFDValidator:
                             self.errors.append(
                                 f"Unit {unit.id} MSMPR kinetics: {error}"
                             )
-                elif crystallizer_params.get('model') == 'empirical_layer_growth':
+                elif (
+                    unit.unit_type == UnitType.LAYER_CRYSTALLIZER.value
+                    and crystallizer_params.get('model') == 'empirical_layer_growth'
+                ):
                     if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
                         from .empirical_layer_crystallization import (
                             empirical_layer_distribution_definitions_from_parameters,

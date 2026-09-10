@@ -5,14 +5,14 @@ import pytest
 from chemical_properties import ChemicalDatabase
 from crystallizer_specs import (
     CrystallizerSpecificationError,
-    validate_crystallizer_specification,
+    validate_layer_crystallizer_specification,
 )
 from dof_analyzer import SpecificationStatus, analyze_dof
 from pfd_parser import parse_pfd, validate_pfd
 from simulator import Simulator
 from thermodynamics_models.base import IdealThermodynamics
 from unit_operations_base import UnitOperationError
-from unit_operations_solids import Crystallizer
+from unit_operations_solids import Crystallizer, LayerCrystallizer
 
 
 @pytest.fixture
@@ -36,9 +36,7 @@ def test_layer_reuses_equilibrium_and_conserves_components_and_energy(thermo, re
         280, 1, 10, {'water': 0.9, 'ethanol': 0.1}, phase='liquid'
     )
     params = {'T': 250, **retention}
-    layer = Crystallizer('L', thermo, {
-        **params, 'crystallization_mode': 'layer',
-    }).solve({'in': feed})
+    layer = LayerCrystallizer('L', thermo, params).solve({'in': feed})
     suspension = Crystallizer('S', thermo, {
         **params, **({} if retention else {'mother_liquor_retention': 0}),
     }).solve({'in': feed})
@@ -70,8 +68,8 @@ def test_layer_reuses_equilibrium_and_conserves_components_and_energy(thermo, re
 
 
 @pytest.mark.parametrize('spec, ports, message', [
-    ({'crystallization_mode': 'invalid'}, None, 'suspension or layer'),
-    ({'model': 'MSMPR'}, None, 'MSMPR describes suspension'),
+    ({'crystallization_mode': 'layer'}, None, 'no longer supported'),
+    ({'model': 'MSMPR'}, None, 'requires a Crystallizer'),
     ({'outlet_sphericity': 0.8}, None, 'only to suspension'),
     ({}, ['out'], 'cake and mother_liquor'),
     ({}, ['cake'], 'requires cake and mother_liquor'),
@@ -80,8 +78,8 @@ def test_layer_reuses_equilibrium_and_conserves_components_and_energy(thermo, re
 ])
 def test_invalid_layer_specifications(spec, ports, message):
     with pytest.raises(CrystallizerSpecificationError, match=message):
-        validate_crystallizer_specification(
-            {'T': 250, 'crystallization_mode': 'layer', **spec}, ports
+        validate_layer_crystallizer_specification(
+            {'T': 250, **spec}, ports
         )
 
 
@@ -90,21 +88,27 @@ def test_layer_rejects_suspended_solids(thermo):
         250, 1, 10, {'water': 0.9, 'ethanol': 0.1}, {'water': 1}, phase='liquid'
     )
     with pytest.raises(UnitOperationError, match='solid-free'):
-        Crystallizer('L', thermo, {
-            'T': 250, 'crystallization_mode': 'layer',
-        }).solve({'in': feed})
+        LayerCrystallizer('L', thermo, {'T': 250}).solve({'in': feed})
 
 
 def test_layer_without_deposition_has_empty_harvest(thermo):
     feed = thermo.calculate_state(
         280, 1, 10, {'water': 0.9, 'ethanol': 0.1}, phase='liquid'
     )
-    result = Crystallizer('L', thermo, {
-        'T': 280, 'crystallization_mode': 'layer',
-    }).solve({'in': feed})
+    result = LayerCrystallizer('L', thermo, {'T': 280}).solve({'in': feed})
     assert result.outlet_streams['cake'].F == 0
     assert result.outlet_streams['mother_liquor'].F == pytest.approx(feed.F)
     assert result.heat_duty == pytest.approx(0, abs=1e-8)
+
+
+def test_layer_models_are_exclusive_to_layer_crystallizer(thermo):
+    feed = thermo.calculate_state(
+        280, 1, 10, {'water': 0.9, 'ethanol': 0.1}, phase='liquid'
+    )
+    with pytest.raises(UnitOperationError, match='requires a LayerCrystallizer'):
+        Crystallizer('C', thermo, {'model': 'layer_growth', 'T': 250}).solve({
+            'in': feed,
+        })
 
 
 def test_layer_pfd_ports_dof_and_runtime():
@@ -121,8 +125,7 @@ STREAM Feed : FEED -> C.in
     x = water:0.9, ethanol:0.1
 STREAM Layer : C.layer -> PRODUCT
 STREAM Mother : C.mother_liquor -> PRODUCT
-UNIT C : Crystallizer
-    crystallization_mode = LaYeR
+UNIT C : LayerCrystallizer
     T = 250 [K]
 '''
     pfd = parse_pfd(source)
@@ -132,3 +135,18 @@ UNIT C : Crystallizer
     assert result.converged, result.errors
     assert result.streams['Layer'].solid_fraction == pytest.approx(1)
     assert result.streams['Mother'].solid_fraction == 0
+
+
+def test_pfd_rejects_layer_model_on_suspension_crystallizer():
+    source = '''
+PROCESS: Invalid layer unit
+ONLINE_LOOKUP: false
+COMPONENTS:
+    water | Water | type=conventional_with_solid
+    ethanol | Ethanol
+UNIT C : Crystallizer
+    model = layer_growth
+    T = 250 [K]
+'''
+    errors, _warnings = validate_pfd(parse_pfd(source))
+    assert any('requires a LayerCrystallizer' in error for error in errors)

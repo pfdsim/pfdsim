@@ -33,6 +33,7 @@ from unit_operations import (
     KineticsBatch,
     KineticsPFR,
     KineticsPackedBed,
+    LayerCrystallizer,
     LiquidLiquidExtractor,
     McCabeThieleDistillation,
     Mixer,
@@ -182,6 +183,7 @@ class UnitOperationSmokeTests(unittest.TestCase):
             (KineticsPFR('U', self.reactive, {'volume': 5, 'T': 523.15, 'phase': 'vapor', 'profile_points': 6, 'reactions': [{'equation': 'CO + 2 H2 -> CH3OH', 'A': '10', 'Ea': '0', 'Ea_unit': 'J/mol', 'rate_basis': 'concentration', 'concentration_unit': 'kmol/m3', 'pressure_unit': 'bar', 'rate_unit': 'kmol/m3/h'}]}), {'in': self.reactive_feed}, False),
             (KineticsPackedBed('U', self.reactive, {'catalyst_mass': 5, 'bulk_catalyst_density': 500, 'bed_void_fraction': 0.4, 'diameter': 0.5, 'particle_diameter': 0.005, 'T': 523.15, 'phase': 'vapor', 'profile_points': 3, 'reactions': [{'equation': 'CO + 2 H2 -> CH3OH', 'A': '0.01', 'Ea': '0', 'Ea_unit': 'J/mol', 'rate_basis': 'concentration', 'concentration_unit': 'kmol/m3', 'pressure_unit': 'bar', 'rate_unit': 'kmol/kg_cat/h'}]}), {'in': self.reactive_feed}, False),
             (Crystallizer('U', crystal_thermo, {'T': 250.0}), {'in': crystal_feed}, True),
+            (LayerCrystallizer('U', crystal_thermo, {'T': 250.0}), {'in': crystal_feed}, True),
         ]
 
         tested_classes = {type(unit) for unit, _, _ in cases}

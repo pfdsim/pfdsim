@@ -1512,35 +1512,10 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
 
 **Crystallizer:**
 
-- `crystallization_mode` selects `suspension` (the default) or `layer`.
-  Layer mode is an **equilibrium endpoint** calculation using the same rigorous
-  pure-solid SLE and enthalpy model as suspension mode when used with
-  `model=equilibrium`. It requires a feed without solids. All equilibrium crystals are
-  assumed to deposit and are harvested through `layer` (alias of `cake`);
-  drained liquid leaves through `mother_liquor`. Both outlets must be connected.
-  Mother-liquor retention defaults to zero in layer mode; either retention
-  specification below can override it. Retention is specified, not predicted.
-  Deposited crystals carry no particle-size distribution, diameter, or
-  sphericity; `outlet_sphericity` is rejected in layer mode.
-  Flow rates represent equivalent throughput over complete harvest cycles.
-  This mode does not predict wall growth, layer thickness, cycle duration,
-  heat/mass-transfer limitations, impurity trapping, or sweating. Equal endpoint
-  temperature, pressure, feed, and retention give the same phase amounts and
-  duty as equilibrium suspension with a cake split.
-
-  ```pfd
-  UNIT C : Crystallizer
-      model = equilibrium
-      crystallization_mode = layer
-      T = 250 [K]
-  STREAM Layer : C.layer -> PRODUCT
-  STREAM Mother : C.mother_liquor -> PRODUCT
-  ```
-
-- `model` selects `equilibrium` (the default), `MSMPR`, `layer_growth`, or
-  `empirical_layer_growth`. The equilibrium
-  model retains the existing pure-solid SLE behavior. `MSMPR` enables the
-  steady kinetic population-balance model described below.
+- `model` selects `equilibrium` (the default) or `MSMPR`. The equilibrium
+  model uses pure-solid SLE. `MSMPR` enables the steady kinetic
+  population-balance model described below. Layer models belong to the separate
+  `LayerCrystallizer` unit; `crystallization_mode` is no longer accepted.
 - One `in`/`solution` inlet is cooled to a specified `T_out`/`Tout`/`T`/`temperature`.
 - `P_out`/`Pout`/`P`/`pressure` optionally specifies outlet pressure. Otherwise inlet
   pressure minus optional `P_drop` is used. Do not specify both an absolute
@@ -1556,7 +1531,7 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   coefficients (or liquid EOS fugacity ratios), and a solid/liquid molar-volume
   pressure correction. Each crystallizing component forms its own pure solid;
   co-crystallization is not modeled.
-- In suspension mode, by default the sole `out`/`slurry` outlet retains all
+- By default, the sole `out`/`slurry` outlet retains all
   mother liquor and solid.
 - Specifying `mother_liquor_retention` (alias
   `mother_liquor_retention_fraction`) enables `cake` and `mother_liquor`
@@ -1604,9 +1579,37 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
   metadata records `crystallizer_lle_check`. A failed phase check produces an
   explicit warning and `checked=false`, rather than claiming no LLE.
 
+**LayerCrystallizer:**
+
+- This separate unit owns equilibrium, mechanistic, and empirical layer
+  crystallization. Its `model` is `equilibrium` (the default), `layer_growth`,
+  or `empirical_layer_growth`; it does not accept `MSMPR` or
+  `crystallization_mode`.
+- Equilibrium mode uses the same rigorous pure-solid SLE and enthalpy model as
+  `Crystallizer`, but requires a feed without solids. All equilibrium crystals
+  deposit and leave through `layer` (alias of `cake`); drained liquid leaves
+  through `mother_liquor`. Both outlets must be connected.
+- Mother-liquor retention defaults to zero. Either retention specification from
+  the `Crystallizer` section can override it. Retention is specified, not
+  predicted. Deposited crystals carry no particle-size distribution, diameter,
+  or sphericity, and `outlet_sphericity` is rejected.
+- Flow rates represent equivalent throughput over complete harvest cycles.
+  Equilibrium mode does not predict wall growth, layer thickness, cycle
+  duration, heat/mass-transfer limitations, impurity trapping, or sweating.
+  Equal endpoint temperature, pressure, feed, and retention give the same phase
+  amounts and duty as equilibrium suspension with a cake split.
+
+```pfd
+UNIT C : LayerCrystallizer
+    model = equilibrium
+    T = 250 [K]
+STREAM Layer : C.layer -> PRODUCT
+STREAM Mother : C.mother_liquor -> PRODUCT
+```
+
 **Finite-rate layer growth:**
 
-`model = layer_growth` selects `crystallization_mode = layer` automatically.
+`model = layer_growth` selects the mechanistic model on a `LayerCrystallizer`.
 It accepts a multicomponent liquid feed with exactly one present component
 declared `conventional_with_solid` and at least one other liquid component.
 All other components remain liquid, either in the free mother liquor or in
@@ -1616,7 +1619,7 @@ It is not a spatial transient conduction model.
 The layer starts at zero thickness with instantaneous surface nucleation.
 
 ```pfd
-UNIT C : Crystallizer
+UNIT C : LayerCrystallizer
     model = layer_growth
     T = 270 [K]
     T_wall = 250 [K]
@@ -1657,7 +1660,7 @@ Design/operating inputs:
 For example, cooling with correlated films and liquid inclusions:
 
 ```pfd
-UNIT C : Crystallizer
+UNIT C : LayerCrystallizer
     model = layer_growth
     thermal_mode = cooling
     T_wall = 250 [K]
@@ -1805,7 +1808,7 @@ the mother-liquor composition changes. It does not request thermal
 conductivity, diffusivity, or a mechanistic inclusion parameter.
 
 ```pfd
-UNIT C : Crystallizer
+UNIT C : LayerCrystallizer
     model = empirical_layer_growth
     crystallizing_component = AA
     T = 11 [C]

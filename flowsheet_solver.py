@@ -306,7 +306,7 @@ class FlowsheetSolver:
                 
                 # Handle temperature unit conversion
                 param_lower = param.name.lower()
-                if unit.unit_type == 'Crystallizer':
+                if unit.unit_type in {'Crystallizer', 'LayerCrystallizer'}:
                     param_lower = canonical_crystallizer_parameter(param.name)
                 if isinstance(value, (int, float)) and (
                     't_' in param_lower
@@ -325,7 +325,7 @@ class FlowsheetSolver:
                 if param.unit:
                     params[f"__unit__{param.name}"] = param.unit
 
-            if unit.unit_type in {'Crystallizer', 'Filter'}:
+            if unit.unit_type in {'Crystallizer', 'LayerCrystallizer', 'Filter'}:
                 params['__connected_outlet_ports__'] = [
                     self.stream_connections[stream_id][1]
                     for stream_id in self.unit_outlets.get(unit.id, [])

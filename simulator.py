@@ -221,7 +221,10 @@ class Simulator:
             
             # These solid operations implement explicit solid inventory routing.
             if (
-                unit_type not in {'MolecularSieveDryer', 'Crystallizer', 'Filter'}
+                unit_type not in {
+                    'MolecularSieveDryer', 'Crystallizer',
+                    'LayerCrystallizer', 'Filter',
+                }
                 and any(phase in unit_type.lower() for phase in ['solid', 'crystal', 'filter', 'dryer'])
             ):
                 raise SimulationError(

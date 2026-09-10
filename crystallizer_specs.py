@@ -103,45 +103,134 @@ def normalize_crystallizer_parameters(parameters):
         result[name] = value
     model = str(result.get("model", "equilibrium")).strip().lower().replace("-", "_")
     result["model"] = _MODELS.get(model, model)
-    result["crystallization_mode"] = str(
-        result.get(
-            "crystallization_mode",
-            "layer" if result["model"] in {"layer_growth", "empirical_layer_growth"} else "suspension",
-        )
-    ).strip().lower()
     return result
 
 
-def validate_crystallizer_specification(parameters, outlet_ports=None, *, require_temperature=True):
-    """Share rules while allowing the parser to validate incomplete flowsheets."""
+def _reject_obsolete_mode(values):
+    if "crystallization_mode" in values:
+        raise CrystallizerSpecificationError(
+            "crystallization_mode is no longer supported; use Crystallizer for "
+            "suspension crystallization or LayerCrystallizer for layer crystallization"
+        )
+
+
+def _validate_pressure_retention_and_ports(values, outlet_ports):
+    if values.get("p_out") is not None and values.get("p_drop") is not None:
+        raise CrystallizerSpecificationError(
+            "cannot specify both outlet pressure and P_drop"
+        )
+    retention = values.get("mother_liquor_retention") is not None
+    rate = values.get("mother_liquor_retention_rate") is not None
+    if retention and rate:
+        raise CrystallizerSpecificationError(
+            "must specify only one mother-liquor retention basis"
+        )
+    if outlet_ports:
+        ports = set(outlet_ports)
+        split = {"cake", "mother_liquor"}
+        if retention or rate:
+            if "out" in ports:
+                raise CrystallizerSpecificationError(
+                    "uses cake and mother_liquor outlets when mother_liquor_retention is specified"
+                )
+            if not split <= ports:
+                raise CrystallizerSpecificationError(
+                    "cake-split mode requires cake and mother_liquor outlets", 1
+                )
+        elif ports & split:
+            raise CrystallizerSpecificationError(
+                "cake/mother_liquor outlets require mother_liquor_retention", 1
+            )
+
+
+def validate_crystallizer_specification(
+    parameters, outlet_ports=None, *, require_temperature=True
+):
+    """Validate an equilibrium or MSMPR suspension crystallizer."""
     values = normalize_crystallizer_parameters(parameters)
+    _reject_obsolete_mode(values)
     model = values["model"]
-    if model not in {"equilibrium", "msmpr", "layer_growth", "empirical_layer_growth"}:
+    if model in {"layer_growth", "empirical_layer_growth"}:
         raise CrystallizerSpecificationError(
-            "model must be equilibrium, MSMPR, layer_growth, or empirical_layer_growth"
+            f"model={model} requires a LayerCrystallizer unit"
         )
-    mode = values["crystallization_mode"]
-    if mode not in {"suspension", "layer"}:
+    if model not in {"equilibrium", "msmpr"}:
+        raise CrystallizerSpecificationError("model must be equilibrium or MSMPR")
+    layer_parameters = set(values) & (_LAYER_GROWTH_ONLY | _EMPIRICAL_LAYER_ONLY)
+    layer_parameters |= {
+        key for key in values if key.startswith(_DISTRIBUTION_PREFIXES)
+    }
+    if layer_parameters:
         raise CrystallizerSpecificationError(
-            "crystallization_mode must be suspension or layer"
+            "layer parameter(s) require a LayerCrystallizer unit: "
+            + ", ".join(sorted(layer_parameters))
         )
-    if mode == "layer":
-        if model == "msmpr":
+    if require_temperature and values.get("t_out") is None:
+        raise CrystallizerSpecificationError("requires outlet temperature T_out/T", 1)
+    kinetic_keys = [
+        key
+        for key in values
+        if key in _MSMPR_ONLY
+        or key in {"growth", "g", "nucleation", "b0"}
+        or key.startswith(("growth_", "g_", "nucleation_", "b0_"))
+    ]
+    if model != "msmpr" and kinetic_keys:
+        raise CrystallizerSpecificationError(
+            "MSMPR parameter(s) require model=MSMPR: " + ", ".join(sorted(kinetic_keys))
+        )
+    if model == "msmpr":
+        dimensions = sum(
+            values.get(key) is not None for key in ("residence_time", "volume")
+        )
+        if dimensions != 1:
             raise CrystallizerSpecificationError(
-                "layer crystallization requires equilibrium or layer_growth; MSMPR describes suspension"
+                "MSMPR mode requires exactly one of residence_time/tau or volume/V",
+                1 if dimensions == 0 else -1,
             )
-        if values.get("outlet_sphericity") is not None:
+        missing = [
+            kind
+            for kind, aliases in (
+                ("growth", ("growth", "g")),
+                ("nucleation", ("nucleation", "b0")),
+            )
+            if not any(
+                key == alias or key.startswith(alias + "_")
+                for key in values
+                for alias in aliases
+            )
+        ]
+        if missing:
             raise CrystallizerSpecificationError(
-                "outlet_sphericity applies only to suspension crystallization"
+                "MSMPR mode requires " + " and ".join(missing) + " kinetics",
+                len(missing),
             )
-        if all(values.get(key) is None for key in (
-            "mother_liquor_retention", "mother_liquor_retention_rate"
-        )):
-            values["mother_liquor_retention"] = 0.0
-    if model in {"layer_growth", "empirical_layer_growth"} and mode != "layer":
+    _validate_pressure_retention_and_ports(values, outlet_ports)
+    return values
+
+
+def validate_layer_crystallizer_specification(
+    parameters, outlet_ports=None, *, require_temperature=True
+):
+    """Validate an equilibrium, mechanistic, or empirical layer crystallizer."""
+    values = normalize_crystallizer_parameters(parameters)
+    _reject_obsolete_mode(values)
+    model = values["model"]
+    if model == "msmpr":
         raise CrystallizerSpecificationError(
-            f"model={model} requires crystallization_mode=layer"
+            "model=MSMPR requires a Crystallizer unit"
         )
+    if model not in {"equilibrium", "layer_growth", "empirical_layer_growth"}:
+        raise CrystallizerSpecificationError(
+            "model must be equilibrium, layer_growth, or empirical_layer_growth"
+        )
+    if values.get("outlet_sphericity") is not None:
+        raise CrystallizerSpecificationError(
+            "outlet_sphericity applies only to suspension crystallization"
+        )
+    if all(values.get(key) is None for key in (
+        "mother_liquor_retention", "mother_liquor_retention_rate"
+    )):
+        values["mother_liquor_retention"] = 0.0
     if model == "layer_growth":
         empirical_parameters = set(values) & _EMPIRICAL_LAYER_ONLY
         empirical_parameters |= {
@@ -220,36 +309,11 @@ def validate_crystallizer_specification(parameters, outlet_ports=None, *, requir
         or key in {"growth", "g", "nucleation", "b0"}
         or key.startswith(("growth_", "g_", "nucleation_", "b0_")))
     ]
-    if model not in {"msmpr", "empirical_layer_growth"} and kinetic_keys:
+    if model != "empirical_layer_growth" and kinetic_keys:
         raise CrystallizerSpecificationError(
-            "MSMPR parameter(s) require model=MSMPR: " + ", ".join(sorted(kinetic_keys))
+            "finite-rate parameter(s) require model=layer_growth or "
+            "empirical_layer_growth: " + ", ".join(sorted(kinetic_keys))
         )
-    if model == "msmpr":
-        dimensions = sum(
-            values.get(key) is not None for key in ("residence_time", "volume")
-        )
-        if dimensions != 1:
-            raise CrystallizerSpecificationError(
-                "MSMPR mode requires exactly one of residence_time/tau or volume/V",
-                1 if dimensions == 0 else -1,
-            )
-        missing = [
-            kind
-            for kind, aliases in (
-                ("growth", ("growth", "g")),
-                ("nucleation", ("nucleation", "b0")),
-            )
-            if not any(
-                key == alias or key.startswith(alias + "_")
-                for key in values
-                for alias in aliases
-            )
-        ]
-        if missing:
-            raise CrystallizerSpecificationError(
-                "MSMPR mode requires " + " and ".join(missing) + " kinetics",
-                len(missing),
-            )
     if model == "empirical_layer_growth":
         forbidden = [
             key for key in values
@@ -261,32 +325,7 @@ def validate_crystallizer_specification(parameters, outlet_ports=None, *, requir
                 "empirical layer growth does not use nucleation kinetics: "
                 + ", ".join(sorted(forbidden))
             )
-    if values.get("p_out") is not None and values.get("p_drop") is not None:
-        raise CrystallizerSpecificationError(
-            "cannot specify both outlet pressure and P_drop"
-        )
-    retention = values.get("mother_liquor_retention") is not None
-    rate = values.get("mother_liquor_retention_rate") is not None
-    if retention and rate:
-        raise CrystallizerSpecificationError(
-            "must specify only one mother-liquor retention basis"
-        )
-    if outlet_ports:
-        ports = set(outlet_ports)
-        split = {"cake", "mother_liquor"}
-        if retention or rate:
-            if "out" in ports:
-                raise CrystallizerSpecificationError(
-                    "uses cake and mother_liquor outlets when mother_liquor_retention is specified"
-                )
-            if not split <= ports:
-                raise CrystallizerSpecificationError(
-                    "cake-split mode requires cake and mother_liquor outlets", 1
-                )
-        elif ports & split:
-            raise CrystallizerSpecificationError(
-                "cake/mother_liquor outlets require mother_liquor_retention", 1
-            )
+    _validate_pressure_retention_and_ports(values, outlet_ports)
     return values
 
 

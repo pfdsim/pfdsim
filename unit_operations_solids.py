@@ -9,6 +9,7 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .crystallizer_specs import (
         CrystallizerSpecificationError,
         finite_crystallizer_number,
+        validate_layer_crystallizer_specification,
         validate_crystallizer_specification,
     )
     from .empirical_layer_crystallization import (
@@ -36,6 +37,7 @@ else:
     from crystallizer_specs import (
         CrystallizerSpecificationError,
         finite_crystallizer_number,
+        validate_layer_crystallizer_specification,
         validate_crystallizer_specification,
     )
     from empirical_layer_crystallization import (
@@ -61,11 +63,14 @@ else:
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 
 
-class Crystallizer(UnitOperation):
-    """Equilibrium, mechanistic/empirical layer, or kinetic MSMPR crystallizer."""
+class _CrystallizerBase(UnitOperation):
+    """Shared execution for suspension and layer crystallizer units."""
 
     supports_permanent_solids = True
     particle_size_behavior = 'custom'
+    crystallization_mode: ClassVar[str]
+    specification_validator: ClassVar = None
+    unit_type_name: ClassVar[str]
 
     def _number(self, name, default=None, **constraints):
         try:
@@ -74,7 +79,7 @@ class Crystallizer(UnitOperation):
             )
         except CrystallizerSpecificationError as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' {error}"
+                f"{self.unit_type_name} '{self.unit_id}' {error}"
             ) from error
 
     def _lle_diagnostic(self, slurry):
@@ -95,7 +100,7 @@ class Crystallizer(UnitOperation):
         except ThermodynamicsError as error:
             return {'checked': False, 'fluid_phase_model': mode, 'error': str(error)}, [
                 (
-                    f"Crystallizer '{self.unit_id}' outlet LLE check failed: {error}. "
+                    f"{self.unit_type_name} '{self.unit_id}' outlet LLE check failed: {error}. "
                     'The crystallizer assumes one homogeneous liquid mother phase.'
                 )
             ]
@@ -114,7 +119,7 @@ class Crystallizer(UnitOperation):
         warnings = []
         if detected:
             warnings.append(
-                f"Crystallizer '{self.unit_id}' outlet mother liquor exhibits LLE. "
+                f"{self.unit_type_name} '{self.unit_id}' outlet mother liquor exhibits LLE. "
                 'The crystallizer currently does not support crystallization with LLE present; '
                 'results assume one homogeneous liquid mother phase.'
             )
@@ -181,7 +186,7 @@ class Crystallizer(UnitOperation):
                 stream.validate_particle_size_distributions()
         diagnostic, warnings = self._lle_diagnostic(diagnostic_stream)
         for stream in outlets.values():
-            if self.get_param('crystallization_mode') == 'layer':
+            if self.crystallization_mode == 'layer':
                 # A deposited layer has no particle diameter or sphericity.
                 # State construction and split propagation may attach defaults.
                 for component in candidates:
@@ -195,16 +200,16 @@ class Crystallizer(UnitOperation):
             s.H is None or not math.isfinite(s.H) for s in (inlet, *outlets.values())
         ):
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires finite inlet and outlet enthalpy"
+                f"{self.unit_type_name} '{self.unit_id}' requires finite inlet and outlet enthalpy"
             )
         duty = sum(s.F * s.H for s in outlets.values()) - inlet.F * inlet.H
         performance = {
             **performance,
-            'crystallization_mode': self.get_param('crystallization_mode'),
+            'crystallization_mode': self.crystallization_mode,
             'T_out_C': slurry.T - 273.15,
             'P_out_bar': slurry.P,
             'outlet_mode': (
-                'layer_drainage' if self.get_param('crystallization_mode') == 'layer'
+                'layer_drainage' if self.crystallization_mode == 'layer'
                 else 'slurry' if separation is None else 'cake_split'
             ),
             **{
@@ -276,7 +281,7 @@ class Crystallizer(UnitOperation):
         ]
         if len(found) > 1:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' received duplicate aliases for "
+                f"{self.unit_type_name} '{self.unit_id}' received duplicate aliases for "
                 f'{label}: ' + ', '.join(name for name, _value, _unit in found)
             )
         if not found:
@@ -286,19 +291,19 @@ class Crystallizer(UnitOperation):
             value = float(raw_value)
         except (TypeError, ValueError) as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' {name} must be numeric"
+                f"{self.unit_type_name} '{self.unit_id}' {name} must be numeric"
             ) from error
         unit = self._normalized_unit(raw_unit) or default_unit
         factor = factors.get(unit)
         if factor is None:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' does not recognize {label} "
+                f"{self.unit_type_name} '{self.unit_id}' does not recognize {label} "
                 f'unit {raw_unit!r}'
             )
         value *= factor
         if not math.isfinite(value) or (value < 0.0 if allow_zero else value <= 0.0):
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' {name} must be "
+                f"{self.unit_type_name} '{self.unit_id}' {name} must be "
                 f'{"nonnegative" if allow_zero else "positive"} and finite'
             )
         return value
@@ -311,11 +316,11 @@ class Crystallizer(UnitOperation):
             value = float(raw_value)
         except (TypeError, ValueError) as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' outlet_sphericity must be numeric"
+                f"{self.unit_type_name} '{self.unit_id}' outlet_sphericity must be numeric"
             ) from error
         if not math.isfinite(value) or not 0.0 < value <= 1.0:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' outlet_sphericity must be in (0, 1]"
+                f"{self.unit_type_name} '{self.unit_id}' outlet_sphericity must be in (0, 1]"
             )
         return value
 
@@ -342,12 +347,12 @@ class Crystallizer(UnitOperation):
                         sphericity = float(sphericity)
                     except (TypeError, ValueError) as error:
                         raise UnitOperationError(
-                            f"Crystallizer '{self.unit_id}' inlet sphericity for "
+                            f"{self.unit_type_name} '{self.unit_id}' inlet sphericity for "
                             f'{component!r} must be numeric'
                         ) from error
                     if not math.isfinite(sphericity) or not 0.0 < sphericity <= 1.0:
                         raise UnitOperationError(
-                            f"Crystallizer '{self.unit_id}' inlet sphericity for "
+                            f"{self.unit_type_name} '{self.unit_id}' inlet sphericity for "
                             f'{component!r} must be in (0, 1]'
                         )
             if sphericity is None:
@@ -361,7 +366,7 @@ class Crystallizer(UnitOperation):
             return msmpr_rate_definition_from_parameters(self.params, kind)
         except MSMPRDefinitionError as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' {error}"
+                f"{self.unit_type_name} '{self.unit_id}' {error}"
             ) from error
 
     def _msmpr_geometry(self):
@@ -379,7 +384,7 @@ class Crystallizer(UnitOperation):
         )
         if (residence_time is None) == (volume is None):
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR mode requires exactly one "
+                f"{self.unit_type_name} '{self.unit_id}' MSMPR mode requires exactly one "
                 'of residence_time/tau or volume/V'
             )
         return residence_time, volume
@@ -397,7 +402,7 @@ class Crystallizer(UnitOperation):
         rate = self.get_param('mother_liquor_retention_rate')
         if len(fraction_specs) > 1 or (fraction_specs and rate is not None):
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' must specify only one mother-"
+                f"{self.unit_type_name} '{self.unit_id}' must specify only one mother-"
                 'liquor retention basis'
             )
         if fraction_specs:
@@ -405,7 +410,7 @@ class Crystallizer(UnitOperation):
             retention = self._number('mother_liquor_retention', minimum=-float('inf'))
             if not math.isfinite(retention) or not 0.0 <= retention <= 1.0:
                 raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' {name} must be a "
+                    f"{self.unit_type_name} '{self.unit_id}' {name} must be a "
                     'fraction between 0 and 1'
                 )
             return {
@@ -418,7 +423,7 @@ class Crystallizer(UnitOperation):
             )
             if not math.isfinite(retention_rate) or retention_rate < 0.0:
                 raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' mother_liquor_retention_rate "
+                    f"{self.unit_type_name} '{self.unit_id}' mother_liquor_retention_rate "
                     'must be a nonnegative mass ratio'
                 )
             return {
@@ -473,7 +478,7 @@ class Crystallizer(UnitOperation):
             requested_rate = float(retention_spec['value'])
             if requested_rate > 0.0 and crystal_mass <= 1.0e-15:
                 raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' cannot apply a positive "
+                    f"{self.unit_type_name} '{self.unit_id}' cannot apply a positive "
                     'mother_liquor_retention_rate when no conventional '
                     'crystals form'
                 )
@@ -484,7 +489,7 @@ class Crystallizer(UnitOperation):
                     liquid_mass / crystal_mass if crystal_mass > 0.0 else 0.0
                 )
                 raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' mother_liquor_retention_rate "
+                    f"{self.unit_type_name} '{self.unit_id}' mother_liquor_retention_rate "
                     f'requires {retained_liquor_mass:g} kg/h mother liquor but '
                     f'only {liquid_mass:g} kg/h is available (maximum rate '
                     f'{available_rate:g} kg/kg crystals)'
@@ -557,7 +562,7 @@ class Crystallizer(UnitOperation):
     ):
         if len(candidates) != 1:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR mode currently requires "
+                f"{self.unit_type_name} '{self.unit_id}' MSMPR mode currently requires "
                 'exactly one conventional_with_solid component in the feed'
             )
         component = candidates[0]
@@ -569,7 +574,7 @@ class Crystallizer(UnitOperation):
             and str(requested_component).strip() != component
         ):
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR crystallizing_component "
+                f"{self.unit_type_name} '{self.unit_id}' MSMPR crystallizing_component "
                 f'must be {component!r} for this feed'
             )
         active_solids = {
@@ -580,7 +585,7 @@ class Crystallizer(UnitOperation):
         unsupported_solids = sorted(set(active_solids) - {component})
         if unsupported_solids:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR mode only accepts seed "
+                f"{self.unit_type_name} '{self.unit_id}' MSMPR mode only accepts seed "
                 f'solid {component!r}; unsupported solid component(s): '
                 + ', '.join(unsupported_solids)
             )
@@ -597,7 +602,7 @@ class Crystallizer(UnitOperation):
             )
         except MSMPRDefinitionError as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR kinetics are invalid: {error}"
+                f"{self.unit_type_name} '{self.unit_id}' MSMPR kinetics are invalid: {error}"
             ) from error
 
         nucleus_diameter = self._one_dimension(
@@ -661,7 +666,7 @@ class Crystallizer(UnitOperation):
             ThermodynamicsError,
         ) as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' MSMPR calculation failed: {error}"
+                f"{self.unit_type_name} '{self.unit_id}' MSMPR calculation failed: {error}"
             ) from error
 
         population_performance = {
@@ -757,7 +762,7 @@ class Crystallizer(UnitOperation):
             raise UnitOperationError('Layer growth requires a liquid feed; condensation is not modeled')
         if len(candidates) != 1:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' layer_growth requires one crystallizing component"
+                f"{self.unit_type_name} '{self.unit_id}' layer_growth requires one crystallizing component"
             )
         growth_time = self._one_dimension(('growth_time',), self._TIME_FACTORS_H, 'growth time', 'h')
         cycle_time = self._one_dimension(('cycle_time',), self._TIME_FACTORS_H, 'cycle time', 'h')
@@ -802,7 +807,9 @@ class Crystallizer(UnitOperation):
                 {component: solid_flow} if solid_flow > 1e-15 else {}, phase='liquid',
             )
         except (ThermodynamicsError, ValueError, TypeError) as error:
-            raise UnitOperationError(f"Crystallizer '{self.unit_id}' layer growth failed: {error}") from error
+            raise UnitOperationError(
+                f"{self.unit_type_name} '{self.unit_id}' layer growth failed: {error}"
+            ) from error
         details = {
             'model': 'planar_quasi_steady_layer_growth',
             'component': component,
@@ -869,7 +876,7 @@ class Crystallizer(UnitOperation):
         if requested_component is None:
             if len(candidates) != 1:
                 raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' empirical_layer_growth "
+                    f"{self.unit_type_name} '{self.unit_id}' empirical_layer_growth "
                     'requires crystallizing_component when more than one '
                     'conventional_with_solid component is present'
                 )
@@ -884,7 +891,7 @@ class Crystallizer(UnitOperation):
             )
             if component is None:
                 raise UnitOperationError(
-                    f"Crystallizer '{self.unit_id}' empirical_layer_growth "
+                    f"{self.unit_type_name} '{self.unit_id}' empirical_layer_growth "
                     f"crystallizing_component {requested_component!r} must name "
                     'a present conventional_with_solid component'
                 )
@@ -951,7 +958,7 @@ class Crystallizer(UnitOperation):
             )
         except (EmpiricalLayerDefinitionError, ThermodynamicsError, ValueError, TypeError) as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' empirical layer growth failed: {error}"
+                f"{self.unit_type_name} '{self.unit_id}' empirical layer growth failed: {error}"
             ) from error
         solid_flow = growth.solid_amount_kmol / cycle_time
         outlet = self.thermo.calculate_state_with_solid_flows(
@@ -1031,21 +1038,21 @@ class Crystallizer(UnitOperation):
     def solve(self, inlets) -> UnitResult:
         if len(inlets) != 1:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires exactly one inlet stream"
+                f"{self.unit_type_name} '{self.unit_id}' requires exactly one inlet stream"
             )
         inlet = next(iter(inlets.values()))
         if not math.isfinite(inlet.F) or inlet.F <= 0.0:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires positive inlet flow"
+                f"{self.unit_type_name} '{self.unit_id}' requires positive inlet flow"
             )
 
         try:
-            self.params = validate_crystallizer_specification(
+            self.params = self.specification_validator(
                 self.params, self.get_param('__connected_outlet_ports__')
             )
         except CrystallizerSpecificationError as error:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' {error}"
+                f"{self.unit_type_name} '{self.unit_id}' {error}"
             ) from error
         if self.get_param('model') == 'layer_growth' and self.get_param('thermal_mode') == 'cooling':
             temperature = inlet.T
@@ -1054,7 +1061,7 @@ class Crystallizer(UnitOperation):
             temperature = self.get_temperature_param('t_out')
         if temperature <= 0:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' requires positive outlet temperature"
+                f"{self.unit_type_name} '{self.unit_id}' requires positive outlet temperature"
             )
         pressure = (
             self._number('p_out')
@@ -1063,14 +1070,14 @@ class Crystallizer(UnitOperation):
         )
         if not math.isfinite(pressure) or pressure <= 0:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' outlet pressure must be positive"
+                f"{self.unit_type_name} '{self.unit_id}' outlet pressure must be positive"
             )
         model = self.get_param('model')
-        if self.get_param('crystallization_mode') == 'layer' and any(
+        if self.crystallization_mode == 'layer' and any(
             flow > 1e-15 for flow in inlet.solid_component_flows.values()
         ):
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' layer mode requires a solid-free "
+                f"{self.unit_type_name} '{self.unit_id}' requires a solid-free "
                 'liquid feed; suspended-solid capture is not modeled'
             )
         specified_outlet_sphericity = self._specified_outlet_sphericity()
@@ -1081,7 +1088,7 @@ class Crystallizer(UnitOperation):
         ]
         if not candidates:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' feed contains no component "
+                f"{self.unit_type_name} '{self.unit_id}' feed contains no component "
                 'declared phase_behavior=conventional_with_solid'
             )
 
@@ -1140,7 +1147,7 @@ class Crystallizer(UnitOperation):
             )
         except ThermodynamicsError as exc:
             raise UnitOperationError(
-                f"Crystallizer '{self.unit_id}' SLE calculation failed: {exc}"
+                f"{self.unit_type_name} '{self.unit_id}' SLE calculation failed: {exc}"
             ) from exc
 
         crystallized = {
@@ -1193,7 +1200,7 @@ class Crystallizer(UnitOperation):
             ),
         }
         phase_details = {'solid_liquid_equilibrium': sle_details}
-        if self.get_param('crystallization_mode') == 'layer':
+        if self.crystallization_mode == 'layer':
             performance['model'] = 'equilibrium_pure_solid_layer'
             phase_details['layer_crystallization'] = {
                 'model': 'equilibrium_pure_solid_layer',
@@ -1216,4 +1223,20 @@ class Crystallizer(UnitOperation):
         )
 
 
-__all__ = ['Crystallizer']
+class Crystallizer(_CrystallizerBase):
+    """Equilibrium or kinetic MSMPR suspension crystallizer."""
+
+    crystallization_mode = 'suspension'
+    specification_validator = staticmethod(validate_crystallizer_specification)
+    unit_type_name = 'Crystallizer'
+
+
+class LayerCrystallizer(_CrystallizerBase):
+    """Equilibrium, mechanistic, or empirical layer crystallizer."""
+
+    crystallization_mode = 'layer'
+    specification_validator = staticmethod(validate_layer_crystallizer_specification)
+    unit_type_name = 'LayerCrystallizer'
+
+
+__all__ = ['Crystallizer', 'LayerCrystallizer']
