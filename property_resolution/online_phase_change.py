@@ -12,6 +12,8 @@ from typing import Any, Dict, Optional
 from .common import (
     classify_fusion_material_form,
     HvapTemperatureFit,
+    NIST_HVAP_FIT_MINIMUM_QUALITY,
+    NIST_HVAP_FIT_QUALITY,
     OnlineAttemptState,
     REFERENCE_TEMPERATURE_K,
 )
@@ -27,7 +29,7 @@ from .phase_point_candidates import (
 class OnlinePhaseChangeMixin:
     """Merge NIST/PubChem phase records before property-specific resolution."""
 
-    ONLINE_PHASE_CHANGE_CACHE_VERSION = 8
+    ONLINE_PHASE_CHANGE_CACHE_VERSION = 9
 
     def _fetch_phase_change_online(
         self,
@@ -1044,7 +1046,7 @@ class OnlinePhaseChangeMixin:
                         'basis': 'standard_298',
                         'source': 'nist_phase_change',
                         'method': method,
-                        'quality': 0.93 if method.lower() in {'avg', 'average'} else 0.90,
+                        'quality': 0.94 if method.lower() in {'avg', 'average'} else 0.91,
                         'reference': reference,
                         'comment': comment,
                         'raw': '',
@@ -1279,7 +1281,13 @@ class OnlinePhaseChangeMixin:
                     'basis': basis,
                     'source': 'pubchem',
                     'method': description,
-                    'quality': 0.88 if T_ref is not None else 0.76,
+                    'quality': (
+                        0.89
+                        if T_ref is not None
+                        else 0.82
+                        if basis == 'normal_boiling_point'
+                        else 0.76
+                    ),
                     'reference': '; '.join(str(item) for item in references),
                     'comment': '',
                     'raw': text,
@@ -1358,7 +1366,7 @@ class OnlinePhaseChangeMixin:
             if averages:
                 representative['quality'] = max(
                     float(representative.get('quality') or 0.0),
-                    0.93,
+                    0.94,
                 )
             collapsed.append(representative)
         return collapsed
@@ -1367,10 +1375,13 @@ class OnlinePhaseChangeMixin:
     @staticmethod
     def _hvap_fit_quality(fit: HvapTemperatureFit, T: float) -> tuple[float, str]:
         if fit.T_min <= T <= fit.T_max:
-            return 0.92, 'inside fitted temperature range'
+            return NIST_HVAP_FIT_QUALITY, 'inside fitted temperature range'
         distance = fit.T_min - T if T < fit.T_min else T - fit.T_max
         width = max(fit.T_max - fit.T_min, 1.0)
-        quality = max(0.80, 0.92 - 0.08 * min(distance / width, 1.5))
+        quality = max(
+            NIST_HVAP_FIT_MINIMUM_QUALITY,
+            NIST_HVAP_FIT_QUALITY - 0.08 * min(distance / width, 1.5),
+        )
         return quality, f'extrapolated {distance:g} K outside fitted temperature range'
 
 
@@ -1410,7 +1421,11 @@ class OnlinePhaseChangeMixin:
         if fit is not None:
             result['Hvap_fit'] = fit
             result['_sources']['Hvap_fit'] = 'nist_phase_change'
-            fit_quality, fit_note = self._hvap_fit_quality(fit, Tb) if Tb else (0.92, '')
+            fit_quality, fit_note = (
+                self._hvap_fit_quality(fit, Tb)
+                if Tb
+                else (NIST_HVAP_FIT_QUALITY, '')
+            )
             result['_qualities']['Hvap_fit'] = fit_quality
             result['_notes']['Hvap_fit'] = (
                 f'NIST Watson fit from {fit.kept_points}/{fit.total_points} '
@@ -1458,8 +1473,13 @@ class OnlinePhaseChangeMixin:
                 rank = 5
             else:
                 rank = 6
-            base_quality = float(record.get('quality') or 0.80)
-            quality = base_quality if distance <= 1.0 else base_quality * 0.88
+            base_quality = float(record.get('quality') or 0.81)
+            if distance <= 1.0:
+                distance_factor = 1.0
+            else:
+                near_distance = 0.05 * Tc if Tc is not None else 20.0
+                distance_factor = 0.95 if distance < near_distance else 0.90
+            quality = base_quality * distance_factor
             candidates.append((rank, distance, -quality, converted, quality, record, conversion))
 
         if fit is not None:

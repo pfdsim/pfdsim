@@ -1008,6 +1008,7 @@ class PropertyResolverBase:
                 'atom_count_ring_tb_pc',
                 'atom_count_large_ring_vc',
                 'trouton',
+                'trouton_watson',
                 'liquid_gf_plus_standard_vaporization_gibbs',
             }
 
@@ -1038,6 +1039,7 @@ class PropertyResolverBase:
                 'atom_count_ring_tb_pc',
                 'atom_count_large_ring_vc',
                 'trouton',
+                'trouton_watson',
                 'liquid_gf_plus_standard_vaporization_gibbs',
             }
 

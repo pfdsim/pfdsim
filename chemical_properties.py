@@ -47,6 +47,30 @@ _OPSIN_RUNTIME_VERSION = None
 _STP_REFERENCE_TEMPERATURE_K = 298.15
 
 
+def _set_trouton_estimate(props: 'ChemicalProperties') -> None:
+    """Set scalar Hvap(Tb) through the authoritative resolver path."""
+    try:
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .property_resolver import get_property_resolver
+        else:
+            from property_resolver import get_property_resolver
+        result = get_property_resolver()._resolve_trouton_hvap(
+            props.to_dict(),
+            None,
+        )
+    except Exception:
+        return
+    if result is None or result.value is None:
+        return
+    props.Hvap = result.value
+    props.property_sources['Hvap'] = {
+        'source': result.source,
+        'method': result.method,
+        'quality': result.quality,
+        'notes': result.notes,
+    }
+
+
 def _inferred_phase_at_stp(props: 'ChemicalProperties') -> Optional[str]:
     """Infer a safe 1-atm reference phase from resolved phase points."""
     def hard_phase_point(name: str) -> bool:
@@ -385,9 +409,9 @@ class ChemicalProperties:
             if result.value is not None:
                 return result.value
         except Exception:
-            hvap = self.Hvap
+            pass
 
-        return hvap
+        return self.Hvap
     
     def Z_factor(self, T: float, P: float) -> float:
         """
@@ -948,7 +972,6 @@ class OnlinePropertyFetcher:
             'Critical temperature': ('Tc', 'guldberg_rule', 0.55, 'Estimated from Tb'),
             'Critical pressure': ('Pc', 'atom_count_ring_tb_pc', 0.55, 'Estimated from formula, Tb, and structure/name'),
             'Acentric factor': ('omega', 'lee_kesler', 0.70, 'Estimated from Tb, Tc, and Pc'),
-            'Heat of vaporization': ('Hvap', 'trouton', 0.45, 'Estimated from Tb'),
         }
         for warning_prefix, (attr, method, quality, notes) in estimated_fields.items():
             if warning_prefix in warnings_text:
@@ -961,6 +984,8 @@ class OnlinePropertyFetcher:
                 props, 'Tc', 'estimated', 'guldberg_rule', 0.45,
                 'Estimated from molecular-weight boiling-point estimate'
             )
+        if 'Heat of vaporization' in warnings_text:
+            _set_trouton_estimate(props)
 
     def fetch_by_cas(self, cas_number: str) -> Optional[ChemicalProperties]:
         """Fetch properties by CAS registry number"""
@@ -1154,7 +1179,7 @@ class OnlinePropertyFetcher:
                 'notes': notes,
             },
         )
-    
+
     def _estimate_missing_properties(self, props: ChemicalProperties) -> ChemicalProperties:
         """
         Estimate missing properties using PropertyResolver and correlations.
@@ -1364,23 +1389,9 @@ class OnlinePropertyFetcher:
         except ImportError:
             pass
         
-        # Estimate Hvap if missing using Trouton's rule (enhanced)
+        # Use the shared resolver implementation for the final estimate.
         if props.Hvap is None and props.Tb is not None:
-            # Trouton-Hildebrand-Everett rule for polar/nonpolar compounds
-            if props.Tb < 250:  # Low boilers (gases)
-                props.Hvap = 0.075 * props.Tb  # ~75 J/mol-K
-            elif props.Tb > 400:  # High boilers
-                props.Hvap = 0.095 * props.Tb  # ~95 J/mol-K
-            else:
-                props.Hvap = 0.088 * props.Tb  # ~88 J/mol-K (standard Trouton)
-            self._remember_existing_source(
-                props,
-                'Hvap',
-                'estimated',
-                'trouton',
-                0.45,
-                'Estimated from Tb',
-            )
+            _set_trouton_estimate(props)
             props.lookup_warnings.append(
                 f"Heat of vaporization for '{props.symbol}' was estimated from Tb."
             )
@@ -2452,6 +2463,7 @@ class ChemicalDatabase:
             'atom_count_ring_tb_pc',
             'lee_kesler',
             'trouton',
+            'trouton_watson',
         }
         if result_is_estimated:
             stored = props.property_sources.get(attr) or {}
@@ -2539,6 +2551,7 @@ class ChemicalDatabase:
             'atom_count_large_ring_vc',
             'liquid_gf_plus_standard_vaporization_gibbs',
             'trouton',
+            'trouton_watson',
         }
 
     def _set_critical_scalar(self, props: ChemicalProperties, attr: str, result) -> None:
@@ -2577,19 +2590,7 @@ class ChemicalDatabase:
     def _refresh_estimated_dependents(self, props: ChemicalProperties) -> None:
         """Recompute stored estimates whose upstream scalar changed."""
         if self._stored_source_is_estimated(props, 'Hvap') and props.Tb is not None:
-            if props.Tb < 250:
-                hvap = 0.075 * props.Tb
-            elif props.Tb > 400:
-                hvap = 0.095 * props.Tb
-            else:
-                hvap = 0.088 * props.Tb
-            props.Hvap = hvap
-            props.property_sources['Hvap'] = {
-                'source': 'estimated',
-                'method': 'trouton',
-                'quality': 0.55,
-                'notes': 'Estimated from resolved Tb',
-            }
+            _set_trouton_estimate(props)
 
     def _refresh_estimation_warnings(self, props: ChemicalProperties) -> None:
         def method_for(attr: str) -> str:

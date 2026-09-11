@@ -128,12 +128,47 @@ WATER_HVAP_298_KJ_PER_MOL = 43.99
 
 SOFT_PROPERTY_QUALITY_THRESHOLD = 0.90
 
+HVAP_PROVIDED_QUALITY = 0.97
+
+HVAP_PERRY_QUALITY = 0.97
+
+HVAP_SMITH_QUALITY = 0.97
+
+HVAP_WATSON_QUALITY_FACTOR = 0.92
+
+NIST_HVAP_FIT_QUALITY = 0.94
+
+NIST_HVAP_FIT_MINIMUM_QUALITY = 0.82
+
+TROUTON_WATSON_QUALITY_FACTOR = 0.72
+
+TROUTON_UNSCALED_QUALITY_FACTOR = 0.55
+
 NET_COMBUSTION_PRODUCT_HF_KJ_PER_MOL = {
     'CO2': -393.51,
     'H2O': -241.826,
     'SO2': -296.84,
     'SiO2': -909.4,
 }
+
+
+def trouton_hvap_at_tb_kj_mol(tb_K: float) -> float:
+    """Return the shared Trouton estimate at the normal boiling point."""
+    tb_K = float(tb_K)
+    coefficient = 0.075 if tb_K < 250.0 else 0.095 if tb_K > 400.0 else 0.088
+    return coefficient * tb_K
+
+
+def trouton_hvap_quality(
+    tb_quality: float,
+    tc_quality: Optional[float] = None,
+) -> float:
+    """Return the quality of the scaled or unscaled Trouton curve."""
+    tb_quality = max(0.0, min(1.0, float(tb_quality)))
+    if tc_quality is None:
+        return TROUTON_UNSCALED_QUALITY_FACTOR * tb_quality
+    tc_quality = max(0.0, min(1.0, float(tc_quality)))
+    return TROUTON_WATSON_QUALITY_FACTOR * min(tb_quality, tc_quality)
 
 @dataclass
 class PropertyResolutionResult:

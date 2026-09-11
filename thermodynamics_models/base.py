@@ -1798,7 +1798,7 @@ class IdealThermodynamics:
                 self._resolver_known_props.get(comp),
                 T=T,
                 allow_online=False,
-                allow_estimation=False,
+                allow_estimation=True,
             )
             if result.value is not None:
                 return self._set_limited_cache(self._hvap_T_cache, cache_key, float(result.value))

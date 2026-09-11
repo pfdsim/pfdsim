@@ -90,6 +90,27 @@ class EnthalpyResolutionTests(unittest.TestCase):
 
         self.assertAlmostEqual(delta_h, 1.0, places=8)
 
+    def test_runtime_trouton_hvap_uses_watson_curve(self):
+        db = self._custom_db(hvap=None)
+        props = db.chemicals['X']
+        props.property_sources = {
+            'Tb': {'source': 'estimated', 'method': 'test_tb', 'quality': 0.80},
+            'Tc': {'source': 'estimated', 'method': 'test_tc', 'quality': 0.70},
+        }
+        thermo = create_thermodynamics(['X'], 'IDEAL', db)
+        temperature = 300.0
+        reference = 0.088 * props.Tb
+        expected = reference * (
+            (1.0 - temperature / props.Tc)
+            / (1.0 - props.Tb / props.Tc)
+        ) ** 0.38
+
+        self.assertAlmostEqual(
+            thermo.Hvap_at_T('X', temperature),
+            expected,
+            places=10,
+        )
+
     def test_enthalpy_uses_analytic_provided_cp_integrals(self):
         db = self._custom_db()
         props = db.chemicals['X']

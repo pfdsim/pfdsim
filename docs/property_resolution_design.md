@@ -171,7 +171,7 @@ quality and whether one provider covers the complete domain.
 | `Tb` | PFD override -> CoolProp saturation temperature at 1 atm -> ordinary provided value -> Smith textbook -> Perry 2-8 vapor-pressure root at 1 atm -> Perry 2-10 tabulated 760 mmHg point -> hydrated local value -> strict online phase-change result -> formula/HBD estimate -> weak MW estimate -> missing. | Phase-at-STP classification, Watson `Hvap_at_T`, Clausius-Clapeyron fallback, Lee-Kesler omega estimate. |
 | `Tt`, `Pt` | PFD pair or individual override -> CoolProp pure-fluid triple-point pair -> hydrated component values -> missing. If only one member is PFD-overridden, the other provider's member is deliberately not mixed in. | Canonical Psat lower-domain selection and triple-point provenance. |
 | `Tm` | Explicit provided/PFD value -> curated `chemicals.json` `Tm` override -> Perry 2-68 fusion-row melting point -> Perry 2-10 melting point -> hydrated local value -> PubChem -> NIST phase-change data -> missing. | Phase-at-STP classification and metadata. |
-| `Hvap` | Provided portable `Hvap(T)` correlation when target `T` is supplied -> PFD scalar `Hvap(Tb)` as Watson reference -> Perry `Hvap(T)` correlation -> accepted NIST multi-point Watson fit -> fixed-exponent Watson from a source-backed `Hvap(Tb)` reference -> direct source-backed scalar at the requested/reference condition -> Smith textbook -> Trouton estimate when enabled -> missing. Online measurements at temperatures other than `Tb` stay temperature-tagged records and are not silently stored as scalar `Hvap`. | `Hvap_at_T`, frozen-source deep-vacuum Clausius-Clapeyron construction, latent heat. |
+| `Hvap` | Provided portable `Hvap(T)` correlation when target `T` is supplied -> PFD scalar `Hvap(Tb)` as Watson reference -> Perry `Hvap(T)` correlation -> accepted NIST multi-point Watson fit -> fixed-exponent Watson from a source-backed `Hvap(Tb)` reference -> direct source-backed scalar at the requested/reference condition -> Smith textbook -> Trouton estimate when enabled, Watson-scaled when `Tc` is usable -> missing. Online measurements at temperatures other than `Tb` stay temperature-tagged records and are not silently stored as scalar `Hvap`. | `Hvap_at_T`, frozen-source deep-vacuum Clausius-Clapeyron construction, latent heat. |
 | `Hfus` | Provided scalar -> Perry fusion data -> PubChem -> NIST phase-change data/median fusion enthalpy -> missing. | Exposed through resolver/database; not currently used by unit operations. |
 | Liquid Cp `Cp_l(T)` | Provided portable `Cpl` correlation in range -> provided constant `Cp_liquid` -> Perry liquid Cp in range -> up to 20 K bounded extrapolation of provided/Perry liquid Cp when no constant exists, then clamp to that boundary -> online NIST tabulated liquid Cp averaged to a constant -> provided ideal-gas polynomial multiplied by 1.3 -> MW estimate -> error. | Activity-model stream Cp, heaters/coolers, enthalpy. |
 | Ideal-gas/vapor Cp `Cp_ig(T)` | Provided portable `Cpg` -> bundled canonical empirical curve -> native online NIST Shomate -> sparse online/xTB policy: 10+ points use in-range Shomate with boundary-matched affine-xTB tails (`0.94`), 3–9 use affine xTB (`0.93`), 1–2 use constant-residual xTB (`0.91`) -> xTB-unavailable 10+ point in-range Shomate (`0.92`) -> stored adjusted Psi4 (`0.89`) -> plain GFN2-xTB RRHO (`0.89`) -> legacy online linear/constant kernels -> formula atom-increment Shomate -> error. See [the sparse online policy](ideal_gas_cp_sparse_online_policy.md). | Gas/vapor stream Cp, reaction enthalpy sensible corrections, `ChemicalProperties.Cp()`. |
@@ -382,6 +382,24 @@ a Watson curve around a normal-boiling reference chosen from:
 
 If Watson construction fails, scalar `Hvap` is returned only as a scalar
 fallback.
+
+The terminal Trouton estimate is itself a curve when usable `Tb` and `Tc`
+exist: its `Hvap(Tb)` estimate is Watson-scaled with exponent `0.38` and the
+whole curve receives quality `0.72 * min(Tb quality, Tc quality)` without the
+ordinary source-backed Watson penalty.  Without a usable `Tc`, Trouton remains
+constant and receives quality `0.55 * Tb quality` at every temperature.
+
+Direct Perry and non-PFD provided `Hvap(T)` relations and source-backed
+`Hvap(Tb)` values default to quality `0.97`; Smith `Hvap(Tb)` is also `0.97`.
+Generic Watson scaling receives `0.92 * min(reference, Tb, Tc qualities)`.
+NIST multi-point Watson fits carry `0.94` inside their fitted range and taper
+to `0.82`. NIST and temperature-qualified PubChem scalar observations begin
+at `0.91-0.94` and `0.89`, respectively. When converted to `Hvap(Tb)`, points
+within 1 K retain that quality; points farther away receive a `0.95` factor
+when the distance is less than `0.05 Tc` (20 K if `Tc` is unavailable), or a
+`0.90` factor otherwise. A PubChem value explicitly labeled for `Tb` but
+lacking a numerical temperature begins at `0.82` and still receives the
+generic Watson factor when scaled away from `Tb`.
 
 Scalar `ChemicalProperties.Hvap` strictly means `Hvap(Tb)`. PubChem and NIST
 measurements at 25 C or any other explicit temperature stay in

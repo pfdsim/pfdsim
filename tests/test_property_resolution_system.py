@@ -583,6 +583,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         hvap = resolver.resolve_hvap('ethanol', allow_online=False, allow_estimation=False)
         self.assertEqual(hvap.method, 'perry_heat_of_vaporization')
         self.assertClose(hvap.value, 39.18343971979801)
+        self.assertClose(hvap.quality, 0.97)
         self.assertEqual(
             resolver.resolve_hfus('ethanol', {'Hfus': 5.02}, allow_online=False).source,
             'provided',
@@ -612,7 +613,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
 
         self.assertEqual(hvap.method, 'watson_hvap')
         self.assertClose(hvap.value, expected)
-        self.assertClose(hvap.quality, 0.95 * 0.88)
+        self.assertClose(hvap.quality, 0.95 * 0.92)
         self.assertIn('local/test_hvap', hvap.notes)
 
         scalar = resolver.resolve_hvap(
@@ -623,6 +624,129 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         )
         self.assertEqual(scalar.method, 'test_hvap')
         self.assertClose(scalar.value, 40.0)
+
+        default_scalar = resolver.resolve_hvap(
+            'madeupium',
+            {'Hvap': 40.0},
+            allow_online=False,
+            allow_estimation=False,
+        )
+        self.assertClose(default_scalar.quality, 0.97)
+
+    def test_trouton_uses_watson_scaling_and_curve_quality(self):
+        resolver = PropertyResolver()
+        props = {
+            'Tb': 350.0,
+            'Tc': 600.0,
+            'property_sources': {
+                'Tb': {'source': 'estimated', 'method': 'test_tb', 'quality': 0.80},
+                'Tc': {'source': 'estimated', 'method': 'test_tc', 'quality': 0.70},
+            },
+        }
+        reference = 0.088 * 350.0
+        expected = reference * (
+            (1.0 - 300.0 / 600.0) / (1.0 - 350.0 / 600.0)
+        ) ** 0.38
+
+        at_temperature = resolver.resolve_hvap(
+            'madeupium',
+            props,
+            T=300.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+        at_boiling = resolver.resolve_hvap(
+            'madeupium',
+            props,
+            allow_online=False,
+            allow_estimation=True,
+        )
+
+        self.assertEqual(at_temperature.method, 'trouton_watson')
+        self.assertClose(at_temperature.value, expected)
+        self.assertClose(at_temperature.quality, 0.72 * 0.70)
+        self.assertEqual(at_boiling.method, 'trouton_watson')
+        self.assertClose(at_boiling.value, reference)
+        self.assertClose(at_boiling.quality, at_temperature.quality)
+
+    def test_unscaled_trouton_uses_tb_quality_everywhere(self):
+        resolver = PropertyResolver()
+        props = {
+            'Tb': 350.0,
+            'property_sources': {
+                'Tb': {'source': 'estimated', 'method': 'test_tb', 'quality': 0.80},
+            },
+        }
+
+        for temperature in (None, 300.0):
+            with self.subTest(temperature=temperature):
+                result = resolver.resolve_hvap(
+                    'madeupium',
+                    props,
+                    T=temperature,
+                    allow_online=False,
+                    allow_estimation=True,
+                )
+                self.assertEqual(result.method, 'trouton')
+                self.assertClose(result.value, 0.088 * 350.0)
+                self.assertClose(result.quality, 0.55 * 0.80)
+
+    def test_trouton_refresh_reuses_resolver_quality_policy(self):
+        props = ChemicalProperties(
+            symbol='XTR',
+            name='Trouton refresh fixture',
+            formula='C4H10',
+            Tb=350.0,
+            Tc=600.0,
+            Hvap=0.088 * 350.0,
+            property_sources={
+                'Tb': {'source': 'estimated', 'method': 'test_tb', 'quality': 0.80},
+                'Tc': {'source': 'estimated', 'method': 'test_tc', 'quality': 0.70},
+                'Hvap': {'source': 'estimated', 'method': 'trouton', 'quality': 0.45},
+            },
+        )
+
+        ChemicalDatabase(enable_online=False)._refresh_estimated_dependents(props)
+
+        self.assertEqual(props.property_sources['Hvap']['method'], 'trouton_watson')
+        self.assertClose(props.property_sources['Hvap']['quality'], 0.72 * 0.70)
+
+        cached = ChemicalProperties(
+            symbol='XCACHED',
+            name='Cached Trouton fixture',
+            formula='C4H10',
+            Tb=350.0,
+            Tc=600.0,
+            Hvap=0.088 * 350.0,
+            lookup_warnings=['Heat of vaporization was estimated from Tb.'],
+            property_sources={
+                'Tb': {'source': 'estimated', 'method': 'test_tb', 'quality': 0.80},
+                'Tc': {'source': 'estimated', 'method': 'test_tc', 'quality': 0.70},
+                'Hvap': {'source': 'estimated', 'method': 'trouton', 'quality': 0.45},
+            },
+        )
+        OnlinePropertyFetcher()._repair_cached_pubchem_sources(cached)
+        self.assertEqual(cached.property_sources['Hvap']['method'], 'trouton_watson')
+        self.assertClose(cached.property_sources['Hvap']['quality'], 0.72 * 0.70)
+
+    def test_chemical_properties_hvap_at_temperature_falls_back_after_missing_result(self):
+        component = ChemicalProperties(
+            symbol='XHVAP',
+            name='Hvap fallback fixture',
+            formula='C2H6',
+            Hvap=24.5,
+        )
+        missing = PropertyResolutionResult(
+            value=None,
+            source='missing',
+            method='none',
+            quality=0.0,
+            notes='Hvap not available',
+        )
+
+        with patch('property_resolver.get_property_resolver') as get_resolver:
+            get_resolver.return_value.resolve_hvap.return_value = missing
+            self.assertEqual(component.Hvap_at_T(300.0), 24.5)
 
     def test_hvap_watson_reference_prefers_temperature_dependent_tb_value(self):
         resolver = PropertyResolver()
@@ -652,7 +776,18 @@ class PropertyResolutionSystemTests(unittest.TestCase):
 
         self.assertEqual(hvap.method, 'watson_hvap')
         self.assertClose(hvap.value, expected)
+        self.assertClose(hvap.quality, 0.97 * 0.92)
         self.assertIn('provided/provided_hvap_fit', hvap.notes)
+
+        direct = resolver.resolve_hvap(
+            'madeupium',
+            props,
+            T=345.0,
+            allow_online=False,
+            allow_estimation=False,
+        )
+        self.assertEqual(direct.method, 'provided_hvap_fit')
+        self.assertClose(direct.quality, 0.97)
 
     def test_hvap_watson_can_seed_from_smith_textbook_scalar(self):
         resolver = PropertyResolver()
@@ -673,6 +808,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         expected = 40.0 * ((1.0 - 300.0 / 600.0) / (1.0 - 350.0 / 600.0)) ** 0.38
         self.assertEqual(hvap.method, 'watson_hvap')
         self.assertClose(hvap.value, expected)
+        self.assertClose(hvap.quality, 0.97 * 0.92)
         self.assertIn('textbook/Smith8 Appendix B', hvap.notes)
 
     def test_perry_only_temperature_dependent_properties_resolve_without_database_entry(self):
@@ -3528,6 +3664,10 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             </table>
         '''
         parsed = resolver._parse_nist_phase_change(html)
+        self.assertEqual(
+            sorted(record['quality'] for record in parsed['Hvap_records']),
+            [0.91, 0.91, 0.94],
+        )
         resolver._finalize_online_hvap(parsed)
 
         expected_tb = resolver._watson_hvap_value(63.5, 298.15, 487.0, 729.0)
@@ -3579,6 +3719,75 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         expected = resolver._watson_hvap_value(45.86, 487.15, 487.0, 729.0)
         self.assertClose(result['Hvap'], expected)
         self.assertEqual(result['_sources']['Hvap'], 'pubchem_hvap_at_tb')
+
+    def test_online_hvap_distance_quality_bands(self):
+        resolver = PropertyResolver()
+
+        def selected_quality(reference_temperature):
+            result = {
+                'Tb': 400.0,
+                'Tc': 600.0,
+                'Hvap_records': [{
+                    'value': 40.0,
+                    'T_ref': reference_temperature,
+                    'basis': 'saturation',
+                    'source': 'nist_phase_change',
+                    'method': 'reported',
+                    'quality': 0.91,
+                    'reference': 'quality-band fixture',
+                }],
+            }
+            resolver._finalize_online_hvap(result)
+            return result['_qualities']['Hvap']
+
+        self.assertClose(selected_quality(399.0), 0.91)
+        self.assertClose(selected_quality(380.0), 0.91 * 0.95)
+        self.assertClose(selected_quality(350.0), 0.91 * 0.90)
+
+    def test_pubchem_untagged_tb_hvap_gets_watson_penalty(self):
+        resolver = PropertyResolver()
+        parsed = {}
+        resolver._collect_pubchem_hvap_records(
+            {
+                'Information': [{
+                    'Value': {
+                        'StringWithMarkup': [{
+                            'String': '40.0 kJ/mol at the boiling point',
+                        }],
+                    },
+                    'Description': 'Experimental enthalpy of vaporization',
+                }],
+            },
+            parsed,
+        )
+        self.assertEqual(parsed['Hvap_records'][0]['quality'], 0.82)
+        self.assertEqual(
+            parsed['Hvap_records'][0]['basis'],
+            'normal_boiling_point',
+        )
+        online = {
+            'Tb': 400.0,
+            'Tc': 600.0,
+            'Hvap': 40.0,
+            '_sources': {'Hvap': 'pubchem_hvap_at_tb'},
+            '_qualities': {'Hvap': 0.82},
+            '_notes': {'Hvap': 'reported at the normal boiling point'},
+        }
+        with patch.object(
+            resolver,
+            '_fetch_phase_change_online',
+            return_value=online,
+        ):
+            result = resolver.resolve_hvap(
+                'madeupium',
+                {'Tb': 400.0, 'Tc': 600.0},
+                T=350.0,
+                allow_online=True,
+                allow_estimation=False,
+            )
+
+        self.assertEqual(result.method, 'watson_hvap')
+        self.assertClose(result.quality, 0.82 * 0.92)
 
     def test_nist_hvap_fit_can_use_merged_pubchem_critical_temperature(self):
         resolver = PropertyResolver()
@@ -3824,6 +4033,8 @@ class PropertyResolutionSystemTests(unittest.TestCase):
 
         self.assertEqual(hvap.method, 'nist_hvap_watson_fit')
         self.assertClose(hvap.value, fit.value_at(360.0))
+        self.assertClose(hvap.quality, 0.94)
+        self.assertClose(resolver._hvap_fit_quality(fit, 650.0)[0], 0.82)
 
     def test_critical_online_lookup_preserves_per_property_sources_and_quality(self):
         resolver = PropertyResolver()

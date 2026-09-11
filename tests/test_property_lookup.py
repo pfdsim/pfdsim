@@ -1256,6 +1256,15 @@ class PropertyLookupCacheTests(unittest.TestCase):
 
         self.assertGreater(props.Tb, 273.15)
         self.assertGreater(props.Tc, props.Tb)
+        self.assertIsNotNone(props.Hvap)
+        self.assertEqual(props.property_sources['Hvap']['method'], 'trouton_watson')
+        self.assertAlmostEqual(
+            props.property_sources['Hvap']['quality'],
+            0.72 * min(
+                props.property_sources['Tb']['quality'],
+                props.property_sources['Tc']['quality'],
+            ),
+        )
 
     def test_lee_kesler_acentric_factor_estimate_uses_psat_over_pc(self):
         fetcher = OnlinePropertyFetcher()

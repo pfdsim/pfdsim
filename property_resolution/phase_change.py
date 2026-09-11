@@ -995,6 +995,24 @@ class PhaseChangeMixin:
             return self._source_result_for_value(props, key, units=units)
 
 
+        def _provided_hvap_scalar(
+            self,
+            props: Dict[str, Any],
+        ) -> Optional[PropertyResolutionResult]:
+            """Return source-backed Hvap(Tb) with the shared default quality."""
+            if props.get('Hvap') is None or self._provided_scalar_is_estimated(
+                props,
+                'Hvap',
+            ):
+                return None
+            return self._source_result_for_value(
+                props,
+                'Hvap',
+                units='kJ/mol',
+                default_quality=HVAP_PROVIDED_QUALITY,
+            )
+
+
         @staticmethod
         def _provided_scalar_is_estimated(props: Dict[str, Any], key: str) -> bool:
             source = ((props or {}).get('property_sources') or {}).get(key) or {}
@@ -1047,7 +1065,7 @@ class PhaseChangeMixin:
                         value=entry['Hvap'],
                         source='textbook',
                         method='Smith8 Appendix B',
-                        quality=0.95,
+                        quality=HVAP_SMITH_QUALITY,
                         notes='units kJ/mol',
                     )
             return None
@@ -1064,7 +1082,7 @@ class PhaseChangeMixin:
                     value=online['Hvap'],
                     source='online',
                     method=method,
-                    quality=float(online.get('_qualities', {}).get('Hvap', 0.80)),
+                    quality=float(online.get('_qualities', {}).get('Hvap', 0.81)),
                     notes=online.get('_notes', {}).get(
                         'Hvap',
                         'Hvap at the normal boiling point; units kJ/mol',
@@ -1089,6 +1107,7 @@ class PhaseChangeMixin:
                         correlation,
                         'provided_hvap_fit',
                         'heat of vaporization in kJ/mol',
+                        default_quality=HVAP_PROVIDED_QUALITY,
                     )
 
             perry_hvap = self._get_perry_evaluation(
@@ -1102,7 +1121,7 @@ class PhaseChangeMixin:
                     value=perry_hvap.value,
                     source='local',
                     method=perry_hvap.method,
-                    quality=0.96,
+                    quality=HVAP_PERRY_QUALITY,
                     notes=f"{perry_hvap.source}; units {perry_hvap.units}",
                 )
 
@@ -1172,7 +1191,7 @@ class PhaseChangeMixin:
 
             reference = self._hvap_temperature_reference_at_tb(symbol, props, Tb, online)
             if reference is None:
-                reference = self._provided_scalar(props, 'Hvap', 'kJ/mol')
+                reference = self._provided_hvap_scalar(props)
             if reference is None:
                 reference = self._textbook_hvap_result(symbol, props)
             if reference is None and allow_online:
@@ -1189,11 +1208,76 @@ class PhaseChangeMixin:
                 method='watson_hvap',
                 quality=self._combine_quality(
                     [item for item in (reference, Tb_result, Tc_result) if item],
-                    method_factor=0.88,
+                    method_factor=HVAP_WATSON_QUALITY_FACTOR,
                 ),
                 notes=(
                     f"Watson scaling from {reference.source}/{reference.method} "
                     f"at Tb={Tb:g} K using Tc={Tc:g} K"
+                ),
+            )
+
+
+        def _resolve_trouton_hvap(
+            self,
+            props: Dict[str, Any],
+            T: Optional[float],
+        ) -> Optional[PropertyResolutionResult]:
+            """Return the shared Trouton estimate, Watson-scaled when possible."""
+            tb_result = self._source_result_for_value(props, 'Tb', units='K')
+            if tb_result is None or tb_result.value is None:
+                return None
+            try:
+                tb = float(tb_result.value)
+                target_temperature = tb if T is None else float(T)
+                reference_hvap = trouton_hvap_at_tb_kj_mol(tb)
+            except (TypeError, ValueError):
+                return None
+            if not math.isfinite(tb) or tb <= 0.0:
+                return None
+
+            tc_result = self._source_result_for_value(props, 'Tc', units='K')
+            if tc_result is not None and tc_result.value is not None:
+                try:
+                    tc = float(tc_result.value)
+                except (TypeError, ValueError):
+                    tc = None
+                if tc is not None and math.isfinite(tc) and tb < tc:
+                    value = self._watson_hvap_value(
+                        reference_hvap,
+                        tb,
+                        target_temperature,
+                        tc,
+                    )
+                    if value is not None:
+                        quality = trouton_hvap_quality(
+                            self._result_quality(tb_result, 0.0),
+                            self._result_quality(tc_result, 0.0),
+                        )
+                        return PropertyResolutionResult(
+                            value=value,
+                            source='estimated',
+                            method='trouton_watson',
+                            quality=quality,
+                            notes=(
+                                f'Trouton estimate at Tb={tb:g} K, '
+                                f'Watson-scaled to T={target_temperature:g} K '
+                                f'using Tc={tc:g} K; units kJ/mol; '
+                                f'quality=0.72*min(Tb quality, Tc quality)'
+                            ),
+                        )
+
+            quality = trouton_hvap_quality(
+                self._result_quality(tb_result, 0.0),
+            )
+            return PropertyResolutionResult(
+                value=reference_hvap,
+                source='estimated',
+                method='trouton',
+                quality=quality,
+                notes=(
+                    f'Unscaled Trouton estimate at Tb={tb:g} K; '
+                    f'unable to construct Watson curve; units kJ/mol; '
+                    f'quality=0.55*Tb quality'
                 ),
             )
 
@@ -2540,10 +2624,11 @@ class PhaseChangeMixin:
                             correlation,
                             'provided_hvap_fit',
                             'heat of vaporization in kJ/mol',
+                            default_quality=HVAP_PROVIDED_QUALITY,
                         )
 
             pfd_hvap = (
-                self._provided_scalar(props, 'Hvap', 'kJ/mol')
+                self._provided_hvap_scalar(props)
                 if self._is_pfd_component_override(props, 'Hvap')
                 else None
             )
@@ -2562,7 +2647,7 @@ class PhaseChangeMixin:
                         method='watson_hvap',
                         quality=self._combine_quality(
                             [item for item in (pfd_hvap, Tb_result, Tc_result) if item],
-                            method_factor=0.88,
+                            method_factor=HVAP_WATSON_QUALITY_FACTOR,
                         ),
                         notes=(
                             f"Watson scaling from {pfd_hvap.source}/{pfd_hvap.method} "
@@ -2582,7 +2667,7 @@ class PhaseChangeMixin:
                     value=perry_hvap.value,
                     source='local',
                     method=perry_hvap.method,
-                    quality=0.96,
+                    quality=HVAP_PERRY_QUALITY,
                     notes=f"{perry_hvap.source}; units {perry_hvap.units}",
                 )
 
@@ -2620,7 +2705,7 @@ class PhaseChangeMixin:
             if watson:
                 return watson
 
-            provided = self._provided_scalar(props, 'Hvap', 'kJ/mol')
+            provided = self._provided_hvap_scalar(props)
             if provided:
                 return provided
 
@@ -2633,22 +2718,10 @@ class PhaseChangeMixin:
                 if online_scalar:
                     return online_scalar
 
-            Tb = props.get('Tb')
-            if allow_estimation and Tb:
-                if Tb < 250:
-                    hvap = 0.075 * Tb
-                elif Tb > 400:
-                    hvap = 0.095 * Tb
-                else:
-                    hvap = 0.088 * Tb
-                tb_result = self._source_result_for_value(props, 'Tb', units='K')
-                return PropertyResolutionResult(
-                    value=hvap,
-                    source='estimated',
-                    method='trouton',
-                    quality=self._combine_quality([tb_result], method_factor=0.55),
-                    notes='units kJ/mol; estimated from Tb',
-                )
+            if allow_estimation:
+                trouton = self._resolve_trouton_hvap(props, T)
+                if trouton is not None:
+                    return trouton
             return self._missing_scalar('Hvap')
 
 

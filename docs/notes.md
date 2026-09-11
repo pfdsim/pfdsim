@@ -138,11 +138,14 @@ In `PropertyResolver.resolve_hvap(symbol, props, T=None)`:
    returning any scalar. The normal-boiling reference is chosen from, in order:
    `Hvap(Tb)` from provided/Perry/NIST temperature-dependent fits, provided
    scalar `Hvap`, Smith textbook `Hvap`, then online scalar Hvap when online is
-   allowed.
+   allowed. Generic Watson scaling applies a `0.92` quality multiplier.
 5. Provided scalar `Hvap`.
 6. Smith textbook `Hvap`.
 7. Legacy PubChem Hvap lookup hook.
-8. Trouton-style estimate from `Tb` when estimation is allowed.
+8. Trouton-style estimate from `Tb` when estimation is allowed. When `Tc` is
+   usable, Watson-scale the estimate with quality
+   `0.72 * min(Tb quality, Tc quality)`; otherwise retain the constant estimate
+   with quality `0.55 * Tb quality`.
 9. Missing result.
 
 Hfus:
