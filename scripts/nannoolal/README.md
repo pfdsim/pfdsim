@@ -28,6 +28,15 @@ and pull SMILES by CAS/name via `chemicals`.
 - `hvap_benchmark.py` - Hvap slope x dZ decomposition (ref/NN slope x
   {1, PTV, virial+Rackett}) vs Perry 2-150 correlations + CRC experimental
   points.  Writes `outputs/nannoolal_hvap_benchmark.txt`.
+- `compare_hvap_formula.py` - focused comparison of raw, virial/Rackett-, and
+  PTV-corrected Nannoolal Hvap against the corresponding-states `Hvap/(R Tc)`
+  formula and Watson-scaled Perry/CRC `Hvap(Tb)` anchors through `Tr=0.99`,
+  with Trouton baselines and real/Nannoolal-chain property tiers. Writes
+  `outputs/nannoolal_vs_hvap_formula.txt`.
+- `compare_estimated_deltaz.py` - compares virial/Rackett, Peng-Robinson, and
+  PTV delta-Z corrections for Nannoolal Hvap through `Tr=0.8`, with a real Tb
+  but Nannoolal-estimated criticals and Lee-Kesler omega. Writes
+  `outputs/nannoolal_estimated_deltaz_comparison.txt`.
 - `visc_benchmark.py` - Part-4 liquid viscosity (dBv/Tv) vs the Hsu native
   engine: NN with real Tb / fully predictive / anchored at one ~298 K point,
   per-class on Perry 2-313 + a VDI-PPDS-only block.  Writes
