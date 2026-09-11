@@ -669,6 +669,229 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertClose(at_boiling.value, reference)
         self.assertClose(at_boiling.quality, at_temperature.quality)
 
+    def test_nannoolal_hvap_precedes_trouton_with_pr_delta_z(self):
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C4H10',
+            'smiles': 'CCCC',
+            'Tb': 350.0,
+            'Tc': 500.0,
+            'Pc': 50.0,
+            'omega': 0.20,
+            'property_sources': {
+                'smiles': {
+                    'source': 'provided',
+                    'method': 'provided_smiles',
+                    'quality': 0.99,
+                },
+                'Tb': {
+                    'source': 'reference',
+                    'method': 'test_tb',
+                    'quality': 0.95,
+                },
+                'Tc': {
+                    'source': 'reference',
+                    'method': 'test_tc',
+                    'quality': 0.96,
+                },
+                'Pc': {
+                    'source': 'reference',
+                    'method': 'test_pc',
+                    'quality': 0.94,
+                },
+                'omega': {
+                    'source': 'reference',
+                    'method': 'test_omega',
+                    'quality': 0.92,
+                },
+            },
+        }
+
+        result = resolver.resolve_hvap(
+            'Nannoolal Hvap fixture',
+            props,
+            T=0.8 * props['Tc'],
+            allow_online=False,
+            allow_estimation=True,
+        )
+
+        expected_quality = 0.8 * 0.95 * (1.0 - (1.0 - 0.92) / 5.0)
+        self.assertEqual(result.method, 'nannoolal_hvap_pr')
+        self.assertGreater(result.value, 0.0)
+        self.assertClose(result.quality, expected_quality)
+        self.assertIn('Peng-Robinson delta Z', result.notes)
+
+        stored = ChemicalProperties(
+            symbol='XNNHVAP',
+            name='Stored Nannoolal Hvap fixture',
+            formula='X',
+            smiles='CCCC',
+            Tb=props['Tb'],
+            Tc=props['Tc'],
+            Pc=props['Pc'],
+            omega=props['omega'],
+            Hvap=0.088 * props['Tb'],
+            property_sources={
+                **props['property_sources'],
+                'Hvap': {
+                    'source': 'estimated',
+                    'method': 'trouton_watson',
+                    'quality': 0.60,
+                },
+            },
+        )
+        ChemicalDatabase(enable_online=False)._refresh_estimated_dependents(stored)
+        self.assertEqual(
+            stored.property_sources['Hvap']['method'],
+            'nannoolal_hvap_pr',
+        )
+        self.assertClose(stored.property_sources['Hvap']['quality'], expected_quality)
+
+    def test_watson_scaled_hvap_tb_precedes_nannoolal_hvap(self):
+        resolver = PropertyResolver()
+        props = {
+            'smiles': 'CCCC',
+            'Hvap': 30.0,
+            'Tb': 350.0,
+            'Tc': 500.0,
+            'Pc': 50.0,
+            'omega': 0.20,
+        }
+
+        result = resolver.resolve_hvap(
+            'Watson before Nannoolal fixture',
+            props,
+            T=300.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+
+        self.assertEqual(result.method, 'watson_hvap')
+        self.assertClose(result.quality, 0.97 * 0.92)
+
+    def test_nannoolal_hvap_falls_through_above_tr_limit(self):
+        resolver = PropertyResolver()
+        props = {
+            'smiles': 'CCCC',
+            'Tb': 350.0,
+            'Tc': 500.0,
+            'Pc': 50.0,
+            'omega': 0.20,
+        }
+
+        result = resolver.resolve_hvap(
+            'Nannoolal high-Tr fixture',
+            props,
+            T=400.0 + 1.0e-6,
+            allow_online=False,
+            allow_estimation=True,
+        )
+
+        self.assertEqual(result.method, 'trouton_watson')
+
+    def test_nannoolal_hvap_fragmentation_and_pr_failures_fall_through(self):
+        resolver = PropertyResolver()
+        base = {
+            'Tb': 250.0,
+            'Tc': 500.0,
+            'Pc': 50.0,
+            'omega': 0.20,
+        }
+        fragmented = resolver.resolve_hvap(
+            'Nannoolal fragmentation fixture',
+            {**base, 'smiles': 'O=C=O'},
+            T=300.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+        self.assertEqual(fragmented.method, 'trouton_watson')
+
+        with patch(
+            'property_resolution.vapor_pressure_adapter._peng_robinson_delta_z_or_ideal',
+            return_value=1.0,
+        ):
+            no_pr = resolver.resolve_hvap(
+                'Nannoolal PR fixture',
+                {**base, 'smiles': 'CCCC'},
+                T=300.0,
+                allow_online=False,
+                allow_estimation=True,
+            )
+        self.assertEqual(no_pr.method, 'trouton_watson')
+
+    def test_carboxylic_acids_refuse_nannoolal_and_trouton_hvap(self):
+        resolver = PropertyResolver()
+        for smiles in ('CC(=O)O', 'O=C(O)CCC(=O)O'):
+            with self.subTest(smiles=smiles):
+                result = resolver.resolve_hvap(
+                    'carboxylic acid Hvap fixture',
+                    {
+                        'formula': 'X',
+                        'smiles': smiles,
+                        'Tb': 391.0,
+                        'Tc': 592.0,
+                        'Pc': 57.9,
+                        'omega': 0.47,
+                    },
+                    T=350.0,
+                    allow_online=False,
+                    allow_estimation=True,
+                )
+
+                self.assertIsNone(result.value)
+                self.assertEqual(
+                    result.method,
+                    'carboxylic_acid_hvap_estimation_refused',
+                )
+        identity_only = resolver._resolve_trouton_hvap(
+            'acetic acid',
+            {'Tb': 391.0, 'Tc': 592.0},
+            350.0,
+            allow_online=False,
+        )
+        self.assertIsNone(identity_only.value)
+        self.assertEqual(
+            identity_only.method,
+            'carboxylic_acid_hvap_estimation_refused',
+        )
+
+        source_backed = resolver.resolve_hvap(
+            'source-backed acid fixture',
+            {
+                'smiles': 'CC(=O)O',
+                'Hvap': 24.0,
+                'Tb': 391.0,
+                'Tc': 592.0,
+            },
+            T=350.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+        self.assertEqual(source_backed.method, 'watson_hvap')
+        self.assertGreater(source_backed.value, 0.0)
+
+        stored = ChemicalProperties(
+            symbol='XACID',
+            name='Stored acid estimate fixture',
+            formula='X',
+            smiles='CC(=O)O',
+            Tb=391.0,
+            Tc=592.0,
+            Pc=57.9,
+            omega=0.47,
+            Hvap=35.0,
+            property_sources={
+                'Hvap': {
+                    'source': 'estimated',
+                    'method': 'trouton_watson',
+                    'quality': 0.60,
+                },
+            },
+        )
+        ChemicalDatabase(enable_online=False)._refresh_estimated_dependents(stored)
+        self.assertIsNone(stored.Hvap)
+        self.assertNotIn('Hvap', stored.property_sources)
+
     def test_unscaled_trouton_uses_tb_quality_everywhere(self):
         resolver = PropertyResolver()
         props = {
@@ -729,6 +952,32 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertEqual(cached.property_sources['Hvap']['method'], 'trouton_watson')
         self.assertClose(cached.property_sources['Hvap']['quality'], 0.72 * 0.70)
 
+        cached_without_source = ChemicalProperties(
+            symbol='XCACHED-NOSOURCE',
+            name='Cached Trouton fixture without source',
+            formula='C4H10',
+            smiles='C',
+            Tb=350.0,
+            Tc=600.0,
+            Hvap=0.088 * 350.0,
+            lookup_warnings=['Heat of vaporization was estimated from Tb.'],
+            property_sources={
+                'Tb': {'source': 'estimated', 'method': 'test_tb', 'quality': 0.80},
+                'Tc': {'source': 'estimated', 'method': 'test_tc', 'quality': 0.70},
+            },
+        )
+        OnlinePropertyFetcher()._repair_cached_pubchem_sources(
+            cached_without_source
+        )
+        self.assertEqual(
+            cached_without_source.property_sources['Hvap']['method'],
+            'trouton_watson',
+        )
+        self.assertClose(
+            cached_without_source.property_sources['Hvap']['quality'],
+            0.72 * 0.70,
+        )
+
     def test_chemical_properties_hvap_at_temperature_falls_back_after_missing_result(self):
         component = ChemicalProperties(
             symbol='XHVAP',
@@ -747,6 +996,33 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         with patch('property_resolver.get_property_resolver') as get_resolver:
             get_resolver.return_value.resolve_hvap.return_value = missing
             self.assertEqual(component.Hvap_at_T(300.0), 24.5)
+
+    def test_chemical_properties_hvap_at_temperature_honors_acid_refusal(self):
+        component = ChemicalProperties(
+            symbol='XACID',
+            name='Stored acid estimate fixture',
+            formula='X',
+            smiles='CC(=O)O',
+            Tb=391.0,
+            Tc=592.0,
+            Hvap=35.0,
+            property_sources={
+                'Hvap': {
+                    'source': 'estimated',
+                    'method': 'trouton_watson',
+                    'quality': 0.60,
+                },
+            },
+        )
+        resolver = PropertyResolver()
+        resolve_hvap = resolver.resolve_hvap
+
+        def resolve_offline(*args, **kwargs):
+            return resolve_hvap(*args, **kwargs, allow_online=False)
+
+        with patch('property_resolver.get_property_resolver', return_value=resolver):
+            with patch.object(resolver, 'resolve_hvap', side_effect=resolve_offline):
+                self.assertIsNone(component.Hvap_at_T(350.0))
 
     def test_hvap_watson_reference_prefers_temperature_dependent_tb_value(self):
         resolver = PropertyResolver()

@@ -171,7 +171,7 @@ quality and whether one provider covers the complete domain.
 | `Tb` | PFD override -> CoolProp saturation temperature at 1 atm -> ordinary provided value -> Smith textbook -> Perry 2-8 vapor-pressure root at 1 atm -> Perry 2-10 tabulated 760 mmHg point -> hydrated local value -> strict online phase-change result -> formula/HBD estimate -> weak MW estimate -> missing. | Phase-at-STP classification, Watson `Hvap_at_T`, Clausius-Clapeyron fallback, Lee-Kesler omega estimate. |
 | `Tt`, `Pt` | PFD pair or individual override -> CoolProp pure-fluid triple-point pair -> hydrated component values -> missing. If only one member is PFD-overridden, the other provider's member is deliberately not mixed in. | Canonical Psat lower-domain selection and triple-point provenance. |
 | `Tm` | Explicit provided/PFD value -> curated `chemicals.json` `Tm` override -> Perry 2-68 fusion-row melting point -> Perry 2-10 melting point -> hydrated local value -> PubChem -> NIST phase-change data -> missing. | Phase-at-STP classification and metadata. |
-| `Hvap` | Provided portable `Hvap(T)` correlation when target `T` is supplied -> PFD scalar `Hvap(Tb)` as Watson reference -> Perry `Hvap(T)` correlation -> accepted NIST multi-point Watson fit -> fixed-exponent Watson from a source-backed `Hvap(Tb)` reference -> direct source-backed scalar at the requested/reference condition -> Smith textbook -> Trouton estimate when enabled, Watson-scaled when `Tc` is usable -> missing. Online measurements at temperatures other than `Tb` stay temperature-tagged records and are not silently stored as scalar `Hvap`. | `Hvap_at_T`, frozen-source deep-vacuum Clausius-Clapeyron construction, latent heat. |
+| `Hvap` | Provided portable `Hvap(T)` correlation when target `T` is supplied -> PFD scalar `Hvap(Tb)` as Watson reference -> Perry `Hvap(T)` correlation -> accepted NIST multi-point Watson fit -> fixed-exponent Watson from a source-backed `Hvap(Tb)` reference -> direct source-backed scalar at the requested/reference condition -> Smith textbook -> Nannoolal Part-3 slope with Peng-Robinson `delta Z` through `Tr=0.8` -> Trouton estimate when enabled, Watson-scaled when `Tc` is usable -> missing. Online measurements at temperatures other than `Tb` stay temperature-tagged records and are not silently stored as scalar `Hvap`. | `Hvap_at_T`, frozen-source deep-vacuum Clausius-Clapeyron construction, latent heat. |
 | `Hfus` | Provided scalar -> Perry fusion data -> PubChem -> NIST phase-change data/median fusion enthalpy -> missing. | Exposed through resolver/database; not currently used by unit operations. |
 | Liquid Cp `Cp_l(T)` | Provided portable `Cpl` correlation in range -> provided constant `Cp_liquid` -> Perry liquid Cp in range -> up to 20 K bounded extrapolation of provided/Perry liquid Cp when no constant exists, then clamp to that boundary -> online NIST tabulated liquid Cp averaged to a constant -> provided ideal-gas polynomial multiplied by 1.3 -> MW estimate -> error. | Activity-model stream Cp, heaters/coolers, enthalpy. |
 | Ideal-gas/vapor Cp `Cp_ig(T)` | Provided portable `Cpg` -> bundled canonical empirical curve -> native online NIST Shomate -> sparse online/xTB policy: 10+ points use in-range Shomate with boundary-matched affine-xTB tails (`0.94`), 3–9 use affine xTB (`0.93`), 1–2 use constant-residual xTB (`0.91`) -> xTB-unavailable 10+ point in-range Shomate (`0.92`) -> stored adjusted Psi4 (`0.89`) -> plain GFN2-xTB RRHO (`0.89`) -> legacy online linear/constant kernels -> formula atom-increment Shomate -> error. See [the sparse online policy](ideal_gas_cp_sparse_online_policy.md). | Gas/vapor stream Cp, reaction enthalpy sensible corrections, `ChemicalProperties.Cp()`. |
@@ -400,6 +400,16 @@ when the distance is less than `0.05 Tc` (20 K if `Tc` is unavailable), or a
 `0.90` factor otherwise. A PubChem value explicitly labeled for `Tb` but
 lacking a numerical temperature begins at `0.82` and still receives the
 generic Watson factor when scaled away from `Tb`.
+
+Below every source-backed `Hvap(Tb)`/Watson route, neutral non-acid compounds
+with valid Nannoolal fragmentation may use the Part-3 Psat slope with a strict
+Peng-Robinson saturated-state `delta Z`. The estimate is limited to `Tr <=
+0.8`; missing liquid/vapor PR roots, fragmentation refusal, or a higher
+reduced temperature fall through to Trouton. Its quality is
+`0.8 * Tb_quality * (1 - (1 - min(Tc_quality, Pc_quality, omega_quality))/5)`.
+Carboxylic acids are excluded from both Nannoolal and Trouton Hvap estimation
+because vapor association makes the Psat-derived apparent enthalpy
+incompatible with the ordinary calorimetric target.
 
 Scalar `ChemicalProperties.Hvap` strictly means `Hvap(Tb)`. PubChem and NIST
 measurements at 25 C or any other explicit temperature stay in

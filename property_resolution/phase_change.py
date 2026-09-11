@@ -18,6 +18,7 @@ from .coolprop import (
 )
 from .base import PropertyResolverBase
 from .cache_expiration import runtime_cache_row_is_fresh
+from .organic_classification import hydrogen_bond_donor_profile
 
 
 class PhaseChangeMixin:
@@ -1217,12 +1218,243 @@ class PhaseChangeMixin:
             )
 
 
-        def _resolve_trouton_hvap(
+        def _hvap_smiles_result(
             self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+        ) -> Optional[PropertyResolutionResult]:
+            smiles = self._smiles_result_for_boiling_point(props)
+            if smiles is not None and smiles.value:
+                return smiles
+            return self._resolve_smiles_result(
+                symbol,
+                props,
+                allow_online=allow_online,
+            )
+
+
+        def _hvap_is_carboxylic_acid(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+            smiles_result: Optional[PropertyResolutionResult] = None,
+        ) -> bool:
+            smiles_result = (
+                smiles_result
+                or self._smiles_result_for_boiling_point(props)
+            )
+            profile = hydrogen_bond_donor_profile(
+                str(smiles_result.value)
+            ) if smiles_result is not None and smiles_result.value else None
+            if profile and profile.carboxylic_acid_oh:
+                return True
+            try:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from ..vapor_dimerization import is_monocarboxylic_acid
+                else:
+                    from vapor_dimerization import is_monocarboxylic_acid
+            except ImportError:
+                return False
+            explicit_smiles = (
+                str(smiles_result.value)
+                if smiles_result is not None and smiles_result.value
+                else None
+            )
+            for identifier in self._identifier_candidates(symbol, props):
+                try:
+                    if is_monocarboxylic_acid(
+                        str(identifier),
+                        smiles=explicit_smiles,
+                    ):
+                        return True
+                except (ArithmeticError, LookupError, TypeError, ValueError):
+                    continue
+            return False
+
+
+        @staticmethod
+        def _carboxylic_acid_hvap_refusal() -> PropertyResolutionResult:
+            return PropertyResolutionResult(
+                value=None,
+                source='missing',
+                method='carboxylic_acid_hvap_estimation_refused',
+                quality=0.0,
+                notes=(
+                    'Nannoolal and Trouton Hvap estimates are refused for '
+                    'carboxylic acids because vapor association makes their '
+                    'Psat-derived apparent enthalpy incompatible with the '
+                    'ordinary calorimetric Hvap target'
+                ),
+            )
+
+
+        def _resolve_nannoolal_hvap(
+            self,
+            symbol: str,
             props: Dict[str, Any],
             T: Optional[float],
+            *,
+            allow_online: bool,
+        ) -> Optional[PropertyResolutionResult]:
+            tb_result = self._source_result_for_value(props, 'Tb', units='K')
+            if tb_result is None or tb_result.value is None:
+                return None
+            smiles_result = self._hvap_smiles_result(
+                symbol,
+                props,
+                allow_online=allow_online,
+            )
+            if smiles_result is None or not smiles_result.value:
+                return None
+            if self._hvap_is_carboxylic_acid(
+                symbol,
+                props,
+                allow_online=allow_online,
+                smiles_result=smiles_result,
+            ):
+                return self._carboxylic_acid_hvap_refusal()
+            try:
+                tb = float(tb_result.value)
+                target_temperature = tb if T is None else float(T)
+            except (TypeError, ValueError):
+                return None
+            if not (
+                math.isfinite(tb)
+                and tb > 0.0
+                and math.isfinite(target_temperature)
+                and target_temperature > 0.0
+            ):
+                return None
+
+            try:
+                critical = self.resolve_critical_properties(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                    allow_estimation=True,
+                )
+            except Exception:
+                return None
+            critical_results = [
+                critical.get(name) for name in ('Tc', 'Pc', 'omega')
+            ]
+            if any(
+                result is None or result.value is None
+                for result in critical_results
+            ):
+                return None
+            tc_result, pc_result, omega_result = critical_results
+            try:
+                tc = float(tc_result.value)
+                pc_bar = float(pc_result.value)
+                omega = float(omega_result.value)
+            except (TypeError, ValueError):
+                return None
+            reduced_temperature = target_temperature / tc
+            if not (
+                math.isfinite(reduced_temperature)
+                and 0.0 < reduced_temperature
+                <= NANNOOLAL_HVAP_MAXIMUM_REDUCED_TEMPERATURE
+                and math.isfinite(pc_bar)
+                and pc_bar > 0.0
+                and math.isfinite(omega)
+            ):
+                return None
+
+            try:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from ..nannoolal_method import estimate_psat, NannoolalError
+                else:
+                    from nannoolal_method import estimate_psat, NannoolalError
+            except ImportError:
+                return None
+            try:
+                estimate = estimate_psat(str(smiles_result.value), tb=tb)
+            except (ArithmeticError, TypeError, ValueError, NannoolalError):
+                return None
+            if estimate.groups.get(44):
+                return self._carboxylic_acid_hvap_refusal()
+            if estimate.db is None:
+                return None
+            pressure_kPa = estimate.psat_kPa(target_temperature)
+            if (
+                pressure_kPa is None
+                or not math.isfinite(pressure_kPa)
+                or pressure_kPa <= 0.0
+            ):
+                return None
+            try:
+                from .vapor_pressure_adapter import (
+                    _peng_robinson_delta_z_or_ideal,
+                )
+                delta_z = _peng_robinson_delta_z_or_ideal(
+                    target_temperature,
+                    pressure_kPa / 100.0,
+                    tc,
+                    pc_bar,
+                    omega,
+                )
+            except (ImportError, ArithmeticError, TypeError, ValueError):
+                return None
+            if delta_z == 1.0:
+                return None
+            value_J_mol = estimate.dhvap_J_mol(
+                target_temperature,
+                dz_vap=delta_z,
+            )
+            if (
+                value_J_mol is None
+                or not math.isfinite(value_J_mol)
+                or value_J_mol <= 0.0
+            ):
+                return None
+
+            critical_quality = min(
+                self._result_quality(result, 0.0)
+                for result in critical_results
+            )
+            critical_factor = 1.0 - (1.0 - critical_quality) / 5.0
+            quality = self._clamp_quality(
+                NANNOOLAL_HVAP_BASE_QUALITY
+                * self._result_quality(tb_result, 0.0)
+                * critical_factor
+            )
+            return PropertyResolutionResult(
+                value=value_J_mol / 1000.0,
+                source='estimated',
+                method='nannoolal_hvap_pr',
+                quality=quality,
+                notes=(
+                    f'Nannoolal Part-3 Psat slope with Peng-Robinson delta Z '
+                    f'at T={target_temperature:g} K, Tr={reduced_temperature:g}; '
+                    f'Tb from {tb_result.source}/{tb_result.method}; '
+                    f'SMILES from {smiles_result.source}/{smiles_result.method}; '
+                    f'critical quality minimum={critical_quality:g}; '
+                    f'quality=0.8*Tb quality*(1-(1-critical quality)/5); '
+                    f'units kJ/mol'
+                ),
+            )
+
+
+        def _resolve_trouton_hvap(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            T: Optional[float],
+            *,
+            allow_online: bool,
         ) -> Optional[PropertyResolutionResult]:
             """Return the shared Trouton estimate, Watson-scaled when possible."""
+            if self._hvap_is_carboxylic_acid(
+                symbol,
+                props,
+                allow_online=allow_online,
+            ):
+                return self._carboxylic_acid_hvap_refusal()
             tb_result = self._source_result_for_value(props, 'Tb', units='K')
             if tb_result is None or tb_result.value is None:
                 return None
@@ -2719,7 +2951,20 @@ class PhaseChangeMixin:
                     return online_scalar
 
             if allow_estimation:
-                trouton = self._resolve_trouton_hvap(props, T)
+                nannoolal = self._resolve_nannoolal_hvap(
+                    symbol,
+                    props,
+                    T_hvap,
+                    allow_online=allow_online,
+                )
+                if nannoolal is not None:
+                    return nannoolal
+                trouton = self._resolve_trouton_hvap(
+                    symbol,
+                    props,
+                    T,
+                    allow_online=allow_online,
+                )
                 if trouton is not None:
                     return trouton
             return self._missing_scalar('Hvap')

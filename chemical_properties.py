@@ -47,20 +47,36 @@ _OPSIN_RUNTIME_VERSION = None
 _STP_REFERENCE_TEMPERATURE_K = 298.15
 
 
-def _set_trouton_estimate(props: 'ChemicalProperties') -> None:
-    """Set scalar Hvap(Tb) through the authoritative resolver path."""
+def _refresh_hvap_from_resolver(props: 'ChemicalProperties') -> None:
+    """Refresh scalar Hvap(Tb) through the authoritative resolver path."""
     try:
         if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
             from .property_resolver import get_property_resolver
         else:
             from property_resolver import get_property_resolver
-        result = get_property_resolver()._resolve_trouton_hvap(
+        result = get_property_resolver().resolve_hvap(
+            props.symbol,
             props.to_dict(),
-            None,
+            allow_online=False,
+            allow_estimation=True,
         )
     except Exception:
         return
     if result is None or result.value is None:
+        existing_method = str(
+            (props.property_sources.get('Hvap') or {}).get('method') or ''
+        ).lower()
+        if (
+            result is not None
+            and result.method == 'carboxylic_acid_hvap_estimation_refused'
+            and existing_method in {
+                'nannoolal_hvap_pr',
+                'trouton',
+                'trouton_watson',
+            }
+        ):
+            props.Hvap = None
+            props.property_sources.pop('Hvap', None)
         return
     props.Hvap = result.value
     props.property_sources['Hvap'] = {
@@ -408,6 +424,8 @@ class ChemicalProperties:
             )
             if result.value is not None:
                 return result.value
+            if result.method == 'carboxylic_acid_hvap_estimation_refused':
+                return None
         except Exception:
             pass
 
@@ -985,7 +1003,14 @@ class OnlinePropertyFetcher:
                 'Estimated from molecular-weight boiling-point estimate'
             )
         if 'Heat of vaporization' in warnings_text:
-            _set_trouton_estimate(props)
+            if props.Hvap is not None and 'Hvap' not in props.property_sources:
+                props.property_sources['Hvap'] = {
+                    'source': 'estimated',
+                    'method': 'trouton',
+                    'quality': 0.0,
+                    'notes': 'Legacy cached Trouton estimate pending refresh',
+                }
+            _refresh_hvap_from_resolver(props)
 
     def fetch_by_cas(self, cas_number: str) -> Optional[ChemicalProperties]:
         """Fetch properties by CAS registry number"""
@@ -1391,10 +1416,11 @@ class OnlinePropertyFetcher:
         
         # Use the shared resolver implementation for the final estimate.
         if props.Hvap is None and props.Tb is not None:
-            _set_trouton_estimate(props)
-            props.lookup_warnings.append(
-                f"Heat of vaporization for '{props.symbol}' was estimated from Tb."
-            )
+            _refresh_hvap_from_resolver(props)
+            if props.Hvap is not None:
+                props.lookup_warnings.append(
+                    f"Heat of vaporization for '{props.symbol}' was estimated from Tb."
+                )
         
         return props
 
@@ -2462,6 +2488,7 @@ class ChemicalDatabase:
             'lydersen_style',
             'atom_count_ring_tb_pc',
             'lee_kesler',
+            'nannoolal_hvap_pr',
             'trouton',
             'trouton_watson',
         }
@@ -2550,6 +2577,7 @@ class ChemicalDatabase:
             'formula_no_hbd_boiling_point',
             'atom_count_large_ring_vc',
             'liquid_gf_plus_standard_vaporization_gibbs',
+            'nannoolal_hvap_pr',
             'trouton',
             'trouton_watson',
         }
@@ -2590,7 +2618,7 @@ class ChemicalDatabase:
     def _refresh_estimated_dependents(self, props: ChemicalProperties) -> None:
         """Recompute stored estimates whose upstream scalar changed."""
         if self._stored_source_is_estimated(props, 'Hvap') and props.Tb is not None:
-            _set_trouton_estimate(props)
+            _refresh_hvap_from_resolver(props)
 
     def _refresh_estimation_warnings(self, props: ChemicalProperties) -> None:
         def method_for(attr: str) -> str:
@@ -2641,7 +2669,15 @@ class ChemicalDatabase:
         if self._stored_source_is_estimated(props, 'omega'):
             warnings.append(f"Acentric factor for '{props.symbol}' was estimated from Tb, Tc, and Pc.")
         if self._stored_source_is_estimated(props, 'Hvap'):
-            warnings.append(f"Heat of vaporization for '{props.symbol}' was estimated from Tb.")
+            method = method_for('Hvap')
+            detail = (
+                'Nannoolal group contribution with Peng-Robinson delta Z'
+                if method == 'nannoolal_hvap_pr'
+                else 'Tb'
+            )
+            warnings.append(
+                f"Heat of vaporization for '{props.symbol}' was estimated from {detail}."
+            )
         props.lookup_warnings = OnlinePropertyFetcher._dedupe_lookup_warnings(warnings)
 
     def _hydrate_properties(self, props: ChemicalProperties, allow_online: bool = False) -> ChemicalProperties:
