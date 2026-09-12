@@ -144,6 +144,10 @@ NANNOOLAL_HVAP_BASE_QUALITY = 0.80
 
 NANNOOLAL_HVAP_MAXIMUM_REDUCED_TEMPERATURE = 0.80
 
+CORRESPONDING_STATES_HVAP_BASE_QUALITY = 0.75
+
+HVAP_TC_SENSITIVITY_REDUCED_TEMPERATURE = 0.90
+
 TROUTON_WATSON_QUALITY_FACTOR = 0.72
 
 TROUTON_UNSCALED_QUALITY_FACTOR = 0.55
@@ -166,13 +170,56 @@ def trouton_hvap_at_tb_kj_mol(tb_K: float) -> float:
 def trouton_hvap_quality(
     tb_quality: float,
     tc_quality: Optional[float] = None,
+    reduced_temperature: Optional[float] = None,
 ) -> float:
     """Return the quality of the scaled or unscaled Trouton curve."""
     tb_quality = max(0.0, min(1.0, float(tb_quality)))
     if tc_quality is None:
         return TROUTON_UNSCALED_QUALITY_FACTOR * tb_quality
-    tc_quality = max(0.0, min(1.0, float(tc_quality)))
-    return TROUTON_WATSON_QUALITY_FACTOR * min(tb_quality, tc_quality)
+    return temperature_scaled_hvap_quality(
+        TROUTON_WATSON_QUALITY_FACTOR,
+        [tb_quality],
+        tc_quality=tc_quality,
+        reduced_temperature=reduced_temperature,
+    )
+
+
+def hvap_effective_tc_quality(
+    tc_quality: float,
+    reduced_temperature: Optional[float],
+) -> float:
+    """Increase Tc-quality sensitivity for near-critical Hvap scaling."""
+    quality = max(0.0, min(1.0, float(tc_quality)))
+    try:
+        high_reduced_temperature = (
+            reduced_temperature is not None
+            and float(reduced_temperature)
+            > HVAP_TC_SENSITIVITY_REDUCED_TEMPERATURE
+        )
+    except (TypeError, ValueError):
+        high_reduced_temperature = False
+    if high_reduced_temperature:
+        quality = 1.0 - 1.5 * (1.0 - quality)
+    return max(0.0, min(1.0, quality))
+
+
+def temperature_scaled_hvap_quality(
+    method_factor: float,
+    other_input_qualities: List[float],
+    *,
+    tc_quality: float,
+    reduced_temperature: Optional[float],
+) -> float:
+    """Combine Hvap input qualities with near-critical Tc sensitivity."""
+    qualities = [
+        max(0.0, min(1.0, float(quality)))
+        for quality in other_input_qualities
+    ]
+    qualities.append(
+        hvap_effective_tc_quality(tc_quality, reduced_temperature)
+    )
+    factor = max(0.0, min(1.0, float(method_factor)))
+    return factor * min(qualities)
 
 @dataclass
 class PropertyResolutionResult:

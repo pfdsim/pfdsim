@@ -1162,7 +1162,7 @@ class PhaseChangeMixin:
             if T is None:
                 return None
             Tb_result = self._source_result_for_value(props, 'Tb', units='K')
-            Tc_result = self._source_result_for_value(props, 'Tc', units='K')
+            Tc_result = self._hvap_tc_result(props, online)
             Tb = (Tb_result.value if Tb_result else None) or (online or {}).get('Tb')
             Tc = (Tc_result.value if Tc_result else None) or (online or {}).get('Tc')
             if not Tb or not Tc:
@@ -1174,14 +1174,6 @@ class PhaseChangeMixin:
                     method=(online or {}).get('_sources', {}).get('Tb', 'online_phase_change'),
                     quality=0.93,
                     notes='Online phase-change data; units K',
-                )
-            if Tc_result is None and (online or {}).get('Tc') is not None:
-                Tc_result = PropertyResolutionResult(
-                    value=(online or {}).get('Tc'),
-                    source='online',
-                    method=(online or {}).get('_sources', {}).get('Tc', 'online_phase_change'),
-                    quality=0.93,
-                    notes='Online critical data; units K',
                 )
             try:
                 Tb = float(Tb)
@@ -1207,13 +1199,138 @@ class PhaseChangeMixin:
                 value=value,
                 source='calculated',
                 method='watson_hvap',
-                quality=self._combine_quality(
-                    [item for item in (reference, Tb_result, Tc_result) if item],
-                    method_factor=HVAP_WATSON_QUALITY_FACTOR,
+                quality=temperature_scaled_hvap_quality(
+                    HVAP_WATSON_QUALITY_FACTOR,
+                    [
+                        self._result_quality(item, 0.0)
+                        for item in (reference, Tb_result)
+                        if item is not None
+                    ],
+                    tc_quality=self._result_quality(Tc_result, 0.0),
+                    reduced_temperature=T / Tc,
                 ),
                 notes=(
                     f"Watson scaling from {reference.source}/{reference.method} "
                     f"at Tb={Tb:g} K using Tc={Tc:g} K"
+                ),
+            )
+
+
+        def _hvap_tc_result(
+            self,
+            props: Dict[str, Any],
+            online: Optional[Dict[str, Any]] = None,
+            *,
+            prefer_online: bool = False,
+        ) -> Optional[PropertyResolutionResult]:
+            online_tc = (online or {}).get('Tc')
+            if prefer_online and online_tc is not None:
+                result = None
+            else:
+                result = self._source_result_for_value(props, 'Tc', units='K')
+            if result is not None and result.value is not None:
+                return result
+            if online_tc is not None:
+                return PropertyResolutionResult(
+                    value=online_tc,
+                    source='online',
+                    method=(online or {}).get('_sources', {}).get(
+                        'Tc',
+                        'online_phase_change',
+                    ),
+                    quality=self._clamp_quality(
+                        (online or {}).get('_qualities', {}).get('Tc'),
+                        0.93,
+                    ),
+                    notes='Online critical data; units K',
+                )
+            return self._source_result_for_value(props, 'Tc', units='K')
+
+
+        def _resolve_corresponding_states_hvap(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            T: Optional[float],
+            *,
+            allow_online: bool,
+        ) -> Optional[PropertyResolutionResult]:
+            if T is None:
+                return None
+            if self._hvap_is_carboxylic_acid(
+                symbol,
+                props,
+                allow_online=allow_online,
+            ):
+                return self._carboxylic_acid_hvap_refusal()
+            try:
+                target_temperature = float(T)
+            except (TypeError, ValueError):
+                return None
+            if not math.isfinite(target_temperature) or target_temperature <= 0.0:
+                return None
+
+            try:
+                critical = self.resolve_critical_properties(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                    allow_estimation=True,
+                )
+            except Exception:
+                return None
+            tc_result = critical.get('Tc')
+            omega_result = critical.get('omega')
+            if (
+                tc_result is None
+                or tc_result.value is None
+                or omega_result is None
+                or omega_result.value is None
+            ):
+                return None
+            try:
+                tc = float(tc_result.value)
+                omega = float(omega_result.value)
+            except (TypeError, ValueError):
+                return None
+            if not (
+                math.isfinite(tc)
+                and tc > 0.0
+                and math.isfinite(omega)
+            ):
+                return None
+            reduced_temperature = target_temperature / tc
+            if not (
+                NANNOOLAL_HVAP_MAXIMUM_REDUCED_TEMPERATURE
+                < reduced_temperature
+                <= 1.0
+            ):
+                return None
+
+            tau = 1.0 - reduced_temperature
+            value_J_mol = R * tc * (
+                7.08 * tau**0.354
+                + 10.95 * omega * tau**0.456
+            )
+            if not math.isfinite(value_J_mol) or value_J_mol < 0.0:
+                return None
+            quality = temperature_scaled_hvap_quality(
+                CORRESPONDING_STATES_HVAP_BASE_QUALITY,
+                [self._result_quality(omega_result, 0.0)],
+                tc_quality=self._result_quality(tc_result, 0.0),
+                reduced_temperature=reduced_temperature,
+            )
+            return PropertyResolutionResult(
+                value=value_J_mol / 1000.0,
+                source='estimated',
+                method='corresponding_states_hvap',
+                quality=quality,
+                notes=(
+                    'Corresponding-states Hvap/(R*Tc) relation '
+                    f'at T={target_temperature:g} K, '
+                    f'Tr={reduced_temperature:g}; '
+                    'quality=0.75*min(Tc quality, omega quality), with '
+                    'enhanced Tc sensitivity above Tr=0.9; units kJ/mol'
                 ),
             )
 
@@ -1284,7 +1401,8 @@ class PhaseChangeMixin:
                 method='carboxylic_acid_hvap_estimation_refused',
                 quality=0.0,
                 notes=(
-                    'Nannoolal and Trouton Hvap estimates are refused for '
+                    'Nannoolal, corresponding-states, and Trouton Hvap '
+                    'estimates are refused for '
                     'carboxylic acids because vapor association makes their '
                     'Psat-derived apparent enthalpy incompatible with the '
                     'ordinary calorimetric Hvap target'
@@ -1484,6 +1602,7 @@ class PhaseChangeMixin:
                         quality = trouton_hvap_quality(
                             self._result_quality(tb_result, 0.0),
                             self._result_quality(tc_result, 0.0),
+                            reduced_temperature=target_temperature / tc,
                         )
                         return PropertyResolutionResult(
                             value=value,
@@ -1494,7 +1613,8 @@ class PhaseChangeMixin:
                                 f'Trouton estimate at Tb={tb:g} K, '
                                 f'Watson-scaled to T={target_temperature:g} K '
                                 f'using Tc={tc:g} K; units kJ/mol; '
-                                f'quality=0.72*min(Tb quality, Tc quality)'
+                                f'quality=0.72*min(Tb quality, Tc quality), with '
+                                f'enhanced Tc sensitivity above Tr=0.9'
                             ),
                         )
 
@@ -2873,13 +2993,20 @@ class PhaseChangeMixin:
                 Tc = Tc_result.value if Tc_result else props.get('Tc')
                 value = self._watson_hvap_value(float(pfd_hvap.value), float(Tb), float(T), float(Tc)) if Tb and Tc else None
                 if value is not None:
+                    reduced_temperature = float(T) / float(Tc)
                     return PropertyResolutionResult(
                         value=value,
                         source='calculated',
                         method='watson_hvap',
-                        quality=self._combine_quality(
-                            [item for item in (pfd_hvap, Tb_result, Tc_result) if item],
-                            method_factor=HVAP_WATSON_QUALITY_FACTOR,
+                        quality=temperature_scaled_hvap_quality(
+                            HVAP_WATSON_QUALITY_FACTOR,
+                            [
+                                self._result_quality(item, 0.0)
+                                for item in (pfd_hvap, Tb_result)
+                                if item is not None
+                            ],
+                            tc_quality=self._result_quality(Tc_result, 0.0),
+                            reduced_temperature=reduced_temperature,
                         ),
                         notes=(
                             f"Watson scaling from {pfd_hvap.source}/{pfd_hvap.method} "
@@ -2920,6 +3047,24 @@ class PhaseChangeMixin:
                         fit_value = fit.value_at(float(fit_T))
                         if fit_value is not None and fit_value > 0.0:
                             quality, range_note = self._hvap_fit_quality(fit, float(fit_T))
+                            fit_reduced_temperature = float(fit_T) / float(fit.Tc)
+                            if (
+                                fit_reduced_temperature
+                                > HVAP_TC_SENSITIVITY_REDUCED_TEMPERATURE
+                            ):
+                                fit_tc_result = self._hvap_tc_result(
+                                    props,
+                                    online,
+                                    prefer_online=True,
+                                )
+                                if fit_tc_result is not None:
+                                    quality = min(
+                                        quality,
+                                        hvap_effective_tc_quality(
+                                            self._result_quality(fit_tc_result, 0.0),
+                                            fit_reduced_temperature,
+                                        ),
+                                    )
                             return PropertyResolutionResult(
                                 value=fit_value,
                                 source='online',
@@ -2959,6 +3104,14 @@ class PhaseChangeMixin:
                 )
                 if nannoolal is not None:
                     return nannoolal
+                corresponding_states = self._resolve_corresponding_states_hvap(
+                    symbol,
+                    props,
+                    T_hvap,
+                    allow_online=allow_online,
+                )
+                if corresponding_states is not None:
+                    return corresponding_states
                 trouton = self._resolve_trouton_hvap(
                     symbol,
                     props,

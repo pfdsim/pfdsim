@@ -405,11 +405,17 @@ Below every source-backed `Hvap(Tb)`/Watson route, neutral non-acid compounds
 with valid Nannoolal fragmentation may use the Part-3 Psat slope with a strict
 Peng-Robinson saturated-state `delta Z`. The estimate is limited to `Tr <=
 0.8`; missing liquid/vapor PR roots, fragmentation refusal, or a higher
-reduced temperature fall through to Trouton. Its quality is
+reduced temperature fall through to the remaining estimation rungs. Its quality is
 `0.8 * Tb_quality * (1 - (1 - min(Tc_quality, Pc_quality, omega_quality))/5)`.
-Carboxylic acids are excluded from both Nannoolal and Trouton Hvap estimation
-because vapor association makes the Psat-derived apparent enthalpy
-incompatible with the ordinary calorimetric target.
+Above `Tr=0.8`, the corresponding-states relation
+`Hvap/(R Tc) = 7.08(1-Tr)^0.354 + 10.95 omega(1-Tr)^0.456` replaces the
+Nannoolal rung with quality `0.75 * min(Tc_quality, omega_quality)`. Above
+`Tr=0.9`, generic Watson scaling, NIST Watson fits, Trouton-Watson, and the
+corresponding-states relation replace `Tc_quality` by
+`max(0, 1 - 1.5(1 - Tc_quality))` before taking their input-quality minimum.
+Carboxylic acids are excluded from Nannoolal, corresponding-states, and
+Trouton Hvap estimation because vapor association makes the Psat-derived
+apparent enthalpy incompatible with the ordinary calorimetric target.
 
 Scalar `ChemicalProperties.Hvap` strictly means `Hvap(Tb)`. PubChem and NIST
 measurements at 25 C or any other explicit temperature stay in

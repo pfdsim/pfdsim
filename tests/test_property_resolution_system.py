@@ -769,7 +769,7 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertEqual(result.method, 'watson_hvap')
         self.assertClose(result.quality, 0.97 * 0.92)
 
-    def test_nannoolal_hvap_falls_through_above_tr_limit(self):
+    def test_corresponding_states_hvap_replaces_nannoolal_above_tr_limit(self):
         resolver = PropertyResolver()
         props = {
             'smiles': 'CCCC',
@@ -787,7 +787,171 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             allow_estimation=True,
         )
 
-        self.assertEqual(result.method, 'trouton_watson')
+        reduced_temperature = (400.0 + 1.0e-6) / props['Tc']
+        tau = 1.0 - reduced_temperature
+        expected = R_J_MOL_K * props['Tc'] * (
+            7.08 * tau**0.354
+            + 10.95 * props['omega'] * tau**0.456
+        ) / 1000.0
+        self.assertEqual(result.method, 'corresponding_states_hvap')
+        self.assertClose(result.value, expected)
+        self.assertClose(result.quality, 0.75)
+
+    def test_corresponding_states_hvap_quality_has_high_tr_tc_sensitivity(self):
+        resolver = PropertyResolver()
+        props = {'Tb': 350.0, 'Tc': 500.0, 'omega': 0.20}
+        critical = {
+            'Tc': PropertyResolutionResult(
+                500.0,
+                'estimated',
+                'test_tc',
+                0.80,
+                '',
+            ),
+            'omega': PropertyResolutionResult(
+                0.20,
+                'estimated',
+                'test_omega',
+                0.90,
+                '',
+            ),
+        }
+
+        with patch.object(
+            resolver,
+            'resolve_critical_properties',
+            return_value=critical,
+        ):
+            at_threshold = resolver.resolve_hvap(
+                'corresponding-states threshold fixture',
+                props,
+                T=450.0,
+                allow_online=False,
+                allow_estimation=True,
+            )
+            above_threshold = resolver.resolve_hvap(
+                'corresponding-states high-Tr fixture',
+                props,
+                T=475.0,
+                allow_online=False,
+                allow_estimation=True,
+            )
+
+        self.assertEqual(at_threshold.method, 'corresponding_states_hvap')
+        self.assertClose(at_threshold.quality, 0.75 * 0.80)
+        self.assertEqual(above_threshold.method, 'corresponding_states_hvap')
+        self.assertClose(above_threshold.quality, 0.75 * 0.70)
+
+    def test_high_tr_watson_and_trouton_use_sensitive_tc_quality(self):
+        resolver = PropertyResolver()
+        sources = {
+            'Tb': {'source': 'reference', 'method': 'test_tb', 'quality': 0.95},
+            'Tc': {'source': 'reference', 'method': 'test_tc', 'quality': 0.80},
+        }
+        watson = resolver.resolve_hvap(
+            'high-Tr Watson fixture',
+            {
+                'Hvap': 30.0,
+                'Tb': 350.0,
+                'Tc': 500.0,
+                'property_sources': {
+                    **sources,
+                    'Hvap': {
+                        'source': 'reference',
+                        'method': 'test_hvap',
+                        'quality': 0.97,
+                    },
+                },
+            },
+            T=475.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+        trouton = resolver.resolve_hvap(
+            'high-Tr Trouton fixture',
+            {
+                'Tb': 350.0,
+                'Tc': 500.0,
+                'property_sources': sources,
+            },
+            T=475.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+
+        self.assertEqual(watson.method, 'watson_hvap')
+        self.assertClose(watson.quality, 0.92 * 0.70)
+        self.assertEqual(trouton.method, 'trouton_watson')
+        self.assertClose(trouton.quality, 0.72 * 0.70)
+
+    def test_high_tr_pfd_and_nist_watson_use_sensitive_tc_quality(self):
+        resolver = PropertyResolver()
+        common_sources = {
+            'Tb': {'source': 'reference', 'method': 'test_tb', 'quality': 0.95},
+            'Tc': {'source': 'reference', 'method': 'test_tc', 'quality': 0.80},
+        }
+        pfd = resolver.resolve_hvap(
+            'high-Tr PFD Watson fixture',
+            {
+                'Hvap': 30.0,
+                'Tb': 350.0,
+                'Tc': 500.0,
+                'property_sources': {
+                    **common_sources,
+                    'Hvap': {
+                        'source': 'provided',
+                        'method': 'pfd_component_override',
+                        'quality': 1.0,
+                    },
+                },
+            },
+            T=475.0,
+            allow_online=False,
+            allow_estimation=True,
+        )
+        fit = HvapTemperatureFit(
+            A=50.0,
+            n=0.38,
+            Tc=500.0,
+            T_min=300.0,
+            T_max=480.0,
+            mape_percent=1.0,
+            kept_points=5,
+            total_points=5,
+            source='test',
+        )
+        online = {
+            'Tc': 500.0,
+            'Hvap_fit': fit,
+            '_sources': {'Tc': 'test_online_tc'},
+            '_qualities': {'Tc': 0.80},
+        }
+        with patch.object(
+            resolver,
+            '_fetch_phase_change_online',
+            return_value=online,
+        ):
+            nist = resolver.resolve_hvap(
+                'high-Tr NIST Watson fixture',
+                {
+                    'Tc': 500.0,
+                    'property_sources': {
+                        'Tc': {
+                            'source': 'reference',
+                            'method': 'different_local_tc',
+                            'quality': 0.99,
+                        },
+                    },
+                },
+                T=475.0,
+                allow_online=True,
+                allow_estimation=True,
+            )
+
+        self.assertEqual(pfd.method, 'watson_hvap')
+        self.assertClose(pfd.quality, 0.92 * 0.70)
+        self.assertEqual(nist.method, 'nist_hvap_watson_fit')
+        self.assertClose(nist.quality, 0.70)
 
     def test_nannoolal_hvap_fragmentation_and_pr_failures_fall_through(self):
         resolver = PropertyResolver()
@@ -822,27 +986,28 @@ class PropertyResolutionSystemTests(unittest.TestCase):
     def test_carboxylic_acids_refuse_nannoolal_and_trouton_hvap(self):
         resolver = PropertyResolver()
         for smiles in ('CC(=O)O', 'O=C(O)CCC(=O)O'):
-            with self.subTest(smiles=smiles):
-                result = resolver.resolve_hvap(
-                    'carboxylic acid Hvap fixture',
-                    {
-                        'formula': 'X',
-                        'smiles': smiles,
-                        'Tb': 391.0,
-                        'Tc': 592.0,
-                        'Pc': 57.9,
-                        'omega': 0.47,
-                    },
-                    T=350.0,
-                    allow_online=False,
-                    allow_estimation=True,
-                )
+            for temperature in (350.0, 0.95 * 592.0):
+                with self.subTest(smiles=smiles, temperature=temperature):
+                    result = resolver.resolve_hvap(
+                        'carboxylic acid Hvap fixture',
+                        {
+                            'formula': 'X',
+                            'smiles': smiles,
+                            'Tb': 391.0,
+                            'Tc': 592.0,
+                            'Pc': 57.9,
+                            'omega': 0.47,
+                        },
+                        T=temperature,
+                        allow_online=False,
+                        allow_estimation=True,
+                    )
 
-                self.assertIsNone(result.value)
-                self.assertEqual(
-                    result.method,
-                    'carboxylic_acid_hvap_estimation_refused',
-                )
+                    self.assertIsNone(result.value)
+                    self.assertEqual(
+                        result.method,
+                        'carboxylic_acid_hvap_estimation_refused',
+                    )
         identity_only = resolver._resolve_trouton_hvap(
             'acetic acid',
             {'Tb': 391.0, 'Tc': 592.0},

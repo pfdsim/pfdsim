@@ -71,6 +71,7 @@ def _refresh_hvap_from_resolver(props: 'ChemicalProperties') -> None:
             and result.method == 'carboxylic_acid_hvap_estimation_refused'
             and existing_method in {
                 'nannoolal_hvap_pr',
+                'corresponding_states_hvap',
                 'trouton',
                 'trouton_watson',
             }
@@ -2489,6 +2490,7 @@ class ChemicalDatabase:
             'atom_count_ring_tb_pc',
             'lee_kesler',
             'nannoolal_hvap_pr',
+            'corresponding_states_hvap',
             'trouton',
             'trouton_watson',
         }
@@ -2578,6 +2580,7 @@ class ChemicalDatabase:
             'atom_count_large_ring_vc',
             'liquid_gf_plus_standard_vaporization_gibbs',
             'nannoolal_hvap_pr',
+            'corresponding_states_hvap',
             'trouton',
             'trouton_watson',
         }
@@ -2673,7 +2676,11 @@ class ChemicalDatabase:
             detail = (
                 'Nannoolal group contribution with Peng-Robinson delta Z'
                 if method == 'nannoolal_hvap_pr'
-                else 'Tb'
+                else (
+                    'the corresponding-states Tc/omega relation'
+                    if method == 'corresponding_states_hvap'
+                    else 'Tb'
+                )
             )
             warnings.append(
                 f"Heat of vaporization for '{props.symbol}' was estimated from {detail}."

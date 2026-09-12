@@ -145,11 +145,16 @@ In `PropertyResolver.resolve_hvap(symbol, props, T=None)`:
 8. Nannoolal Part-3 slope with a strict Peng-Robinson `delta Z` through
    `Tr=0.8`, after every source-backed `Hvap(Tb)`/Watson route. Fragmentation,
    PR-root, and temperature-domain failures fall through.
-9. Trouton-style estimate from `Tb` when estimation is allowed. When `Tc` is
+9. Above `Tr=0.8`, the corresponding-states `Hvap/(R Tc)` relation using
+   resolved `Tc` and omega, with quality `0.75 * min(Tc quality, omega
+   quality)`.
+10. Trouton-style estimate from `Tb` when estimation is allowed. When `Tc` is
    usable, Watson-scale the estimate with quality
    `0.72 * min(Tb quality, Tc quality)`; otherwise retain the constant estimate
    with quality `0.55 * Tb quality`.
-10. Missing result. Carboxylic acids are refused by both estimation rungs.
+11. Missing result. Carboxylic acids are refused by all three estimation
+    rungs. Above `Tr=0.9`, Watson-based methods and corresponding states use
+    `max(0, 1 - 1.5(1 - Tc quality))` in place of ordinary `Tc` quality.
 
 Hfus:
 

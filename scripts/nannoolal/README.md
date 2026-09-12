@@ -37,6 +37,10 @@ and pull SMILES by CAS/name via `chemicals`.
   PTV delta-Z corrections for Nannoolal Hvap through `Tr=0.8`, with a real Tb
   but Nannoolal-estimated criticals and Lee-Kesler omega. Writes
   `outputs/nannoolal_estimated_deltaz_comparison.txt`.
+- `compare_acid_hvap_dimer_correction.py` - tests the production generic
+  vapor-dimerization correction against the carboxylic-acid Hvap cases excluded
+  from the ordinary Nannoolal, corresponding-states, and Trouton comparisons.
+  Writes `outputs/nannoolal_acid_hvap_dimer_correction.txt`.
 - `visc_benchmark.py` - Part-4 liquid viscosity (dBv/Tv) vs the Hsu native
   engine: NN with real Tb / fully predictive / anchored at one ~298 K point,
   per-class on Perry 2-313 + a VDI-PPDS-only block.  Writes
