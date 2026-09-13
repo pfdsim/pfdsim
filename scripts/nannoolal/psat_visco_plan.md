@@ -120,7 +120,7 @@ estimated-criticals arms track real-criticals arms wherever both exist and
 merely lose coverage (est Tr >= 1 guard).  NN slope beyond its Tr ~0.8
 validity roughly doubles the R2 error (6 % at 0.9, 13 % at 0.95).
 
-### Liquid viscosity (decided 2026-07-13; benchmarks 2026-07-12)
+### Liquid viscosity (revised 2026-09-12; benchmarks 2026-07-12 to 2026-09-12)
 
 Engines: `nannoolal_method.estimate_viscosity` (Part 4 dBv/Tv; anchored
 mode = closed-form Tv from one (T, eta) point) and `hsu_method`
@@ -129,20 +129,33 @@ gates, Sum(d) Pc guard baked in).  Benchmarks:
 `outputs/nannoolal_visc_benchmark.txt`, `outputs/hsu_perry_benchmark.txt`.
 
 Ladder (below any fitted correlation / CoolProp):
-1. NN-ANCHORED whenever >= 1 experimental liquid viscosity point exists
-   (12/7 % mean/median; wins nearly every class).  ONE exception, and it
-   is decisive: phenolic OH goes to Hsu instead (anchoring amplifies the
-   Vogel-form shape miss: 52 % measured vs Hsu 20 %).
-   Quality: 0.72 in Tr 0.40-0.70; taper x0.85 for Tr 0.70-tr_max.
-2. HSU predictive otherwise (14.0/10.8 %; best predictive arm - wins
+1. When online lookup is enabled, collect exact PubChem dynamic-viscosity
+   points and kinematic points converted with resolved liquid density.
+   Two or more unique temperatures spanning at least 10 K after outlier
+   removal use a robust `ln(mu)=A+B/T` fit. Spans below 20 K deduct `0.04`
+   quality. Narrower-than-10 K spans become one density-quality-weighted
+   geometric-mean viscosity anchor at weighted mean temperature. In-range
+   quality is `min(0.93, 0.85 + 0.01*n)`; subtract `0.01`, `0.04`, `0.09`, or
+   `0.18` through 10, 25, 50, or 100 K extrapolation, then refuse.
+2. With exactly one online point, anchor Nannoolal Part 4. Quality is `0.85`,
+   `0.80`, `0.75`, or `0.70` through 25, 50, 75, or 100 K, then refuse.
+3. HSU predictive otherwise (14.0/10.8 %; best predictive arm - wins
    alkanes, unsaturated HC, alcohols, phenols, acids).  Quality: as
    computed by hsu_method (0.45-0.75 method factors calibrated to rank
    measured error, x Sum(d)*(1-pc_quality) guard, tr_min/tr_max windows).
-3. NN-PREDICTIVE when Hsu rejects the molecule (multifunctionals, diols,
-   ring ketones/ethers, chloroethanes, ~40-50 extra compounds): q 0.55
-   with real Tb, flat 0.5 with estimated Tb ("bad but best reasonable").
-Both GC rungs: additional taper below Tr 0.40 (everyone is 24-40 % there
-- near-triple-point viscosity is nobody's territory); recommend x0.7.
+4. NN-PREDICTIVE when Hsu rejects the molecule (multifunctionals, diols,
+   ring ketones/ethers, chloroethanes, ~40-50 extra compounds): flat quality
+   `0.65`.
+
+Both Nannoolal rungs require a valid resolved Tc and gate at `0.8 Tc` for
+hard Tc (the resolver's real/non-soft classification), or `0.75 Tc` otherwise.
+
+Phenolic OH may use the online fit only inside its range or through 10 K of
+extrapolation, with a `0.05` quality deduction, and may not use either
+Nannoolal rung. Kinematic points with density quality below `0.95` are
+discarded if two dynamic temperatures already establish shape. They remain
+eligible when they are the only observations or the only second temperature;
+the curve quality then loses `0.95-density_quality`.
 Gas side (Yoon-Thodos + Jossi-Stiel) and Lucas pressure correction
 unchanged.  Domain refusals live in the ENGINES, not the ladder
 (2026-07-12 gates): ortho-chelating aromatics and dimerizing small /

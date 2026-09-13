@@ -1,13 +1,13 @@
 """Fetch, parse, and normalize PubChem experimental viscosity annotations.
 
-This module deliberately has no resolver integration.  PubChem PUG-View
-publishes viscosity as attributed, free-form text, so acquisition, parsing,
-and anchor-eligibility normalization remain separate and auditable here.
+PubChem PUG-View publishes viscosity as attributed, free-form text, so
+acquisition, parsing, and SI normalization remain separate and auditable even
+when the viscosity resolver consumes the resulting records.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import json
 import math
 import re
@@ -23,8 +23,7 @@ PUBCHEM_USER_AGENT = "PFD-Editor/1.0"
 
 _NUMBER = r"[+-]?(?:\d+(?:[.,]\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
 _TEMPERATURE_UNIT = r"(?:(?:°|deg(?:rees?)?)\s*)?(?P<tunit>K|C|F)\b"
-_DYNAMIC_UNIT = (
-    r"(?P<vunit>"
+_DYNAMIC_UNIT_BODY = (
     r"milli\s*pascal\s*[-·. ]?\s*seconds?|"
     r"micro\s*pascal\s*[-·. ]?\s*seconds?|"
     r"(?:m|u|µ|μ)\s*pa\s*[-·.* ]?\s*s|"
@@ -34,10 +33,15 @@ _DYNAMIC_UNIT = (
     r"cent[ai]?\s*poise|centipoises?|c\s*p(?:s)?\b|"
     r"millipoises?|m\s*p\b|"
     r"poises?|p\b"
-    r")"
 )
+_KINEMATIC_UNIT_BODY = (
+    r"(?:mm|cm|m|ft|in)\s*(?:2|²|\^2)\s*/\s*(?:s|sec(?:ond)?s?)|"
+    r"sq\.?\s*(?:mm|cm|m|ft|in)\s*/\s*(?:s|sec(?:ond)?s?)|"
+    r"centistokes?|cst|stokes?"
+)
+_VISCOSITY_UNIT = rf"(?P<vunit>{_DYNAMIC_UNIT_BODY}|{_KINEMATIC_UNIT_BODY})"
 _VALUE_FIRST = re.compile(
-    rf"(?P<value>{_NUMBER})\s*{_DYNAMIC_UNIT}"
+    rf"(?P<value>{_NUMBER})\s*{_VISCOSITY_UNIT}"
     rf"(?:\s*\([^)]{{0,24}}\))?\s*(?:at|@|,|:|/)?\s*"
     rf"(?P<temperature>{_NUMBER})\s*{_TEMPERATURE_UNIT}",
     re.IGNORECASE,
@@ -45,7 +49,7 @@ _VALUE_FIRST = re.compile(
 _TEMPERATURE_FIRST = re.compile(
     rf"(?P<temperature>{_NUMBER})\s*{_TEMPERATURE_UNIT}"
     rf"\s*(?:at|@|,|:|=|-)?\s*"
-    rf"(?P<value>{_NUMBER})\s*{_DYNAMIC_UNIT}",
+    rf"(?P<value>{_NUMBER})\s*{_VISCOSITY_UNIT}",
     re.IGNORECASE,
 )
 _SHARED_UNIT_PAIR = re.compile(
@@ -53,8 +57,8 @@ _SHARED_UNIT_PAIR = re.compile(
     rf"(?P<temperature>{_NUMBER})\s*{_TEMPERATURE_UNIT}",
     re.IGNORECASE,
 )
-_SHARED_DYNAMIC_UNIT = re.compile(
-    rf"\ball\s+(?:values?\s+)?(?:are\s+)?(?:in|as)\s+{_DYNAMIC_UNIT}",
+_SHARED_VISCOSITY_UNIT = re.compile(
+    rf"\ball\s+(?:values?\s+)?(?:are\s+)?(?:in|as)\s+{_VISCOSITY_UNIT}",
     re.IGNORECASE,
 )
 _PRESSURE = re.compile(
@@ -63,14 +67,12 @@ _PRESSURE = re.compile(
     re.IGNORECASE,
 )
 _KINEMATIC_UNIT = re.compile(
-    r"(?:mm|cm|m|ft|in)\s*(?:2|²|\^2)\s*/\s*s|"
-    r"\bsq\.?\s*(?:mm|cm|m|ft|in)\s*/\s*(?:s|sec(?:ond)?s?)\b|"
-    r"\b(?:centi)?stokes?\b|\bcst\b|"
+    rf"{_KINEMATIC_UNIT_BODY}|"
     r"\b(?:saybolt|redwood|engler|ssu|sus)\b",
     re.IGNORECASE,
 )
 _NON_DYNAMIC_KIND = re.compile(
-    r"\b(?:kinematic|intrinsic|reduced|relative|specific)\s+viscosity\b|"
+    r"\b(?:intrinsic|reduced|relative|specific)\s+viscosity\b|"
     r"\bviscosity\s+(?:index|number)\b",
     re.IGNORECASE,
 )
@@ -101,7 +103,7 @@ _INEQUALITY_OR_APPROXIMATION = re.compile(
     re.IGNORECASE,
 )
 _VALUE_RANGE = re.compile(
-    rf"{_NUMBER}\s*(?:-|–|—|\bto\b)\s*{_NUMBER}\s*{_DYNAMIC_UNIT}",
+    rf"{_NUMBER}\s*(?:-|–|—|\bto\b)\s*{_NUMBER}\s*{_VISCOSITY_UNIT}",
     re.IGNORECASE,
 )
 _TEMPERATURE_RANGE = re.compile(
@@ -128,8 +130,9 @@ class PubChemViscosityAnnotation:
 
 @dataclass(frozen=True)
 class ParsedViscosityObservation:
-    """Syntactically parsed dynamic-viscosity observation before SI checks."""
+    """Syntactically parsed viscosity observation before SI checks."""
 
+    viscosity_kind: str
     value: float
     unit: str
     temperature: float
@@ -144,7 +147,8 @@ class ParsedViscosityObservation:
 class NormalizedViscosityPoint:
     """Normalized dynamic-viscosity point in SI units with phase metadata."""
 
-    viscosity_Pa_s: float
+    viscosity_Pa_s: Optional[float]
+    kinematic_viscosity_m2_s: Optional[float]
     temperature_K: float
     pressure_bar: Optional[float]
     phase_basis: str
@@ -158,6 +162,27 @@ class NormalizedViscosityPoint:
     comment: str
     peer_reviewed: bool
     raw: str
+
+    def __post_init__(self) -> None:
+        populated = sum(
+            value is not None
+            for value in (
+                self.viscosity_Pa_s,
+                self.kinematic_viscosity_m2_s,
+            )
+        )
+        if populated != 1:
+            raise ValueError(
+                "Exactly one normalized viscosity representation is required"
+            )
+
+    @property
+    def viscosity_kind(self) -> str:
+        return (
+            "dynamic"
+            if self.viscosity_Pa_s is not None
+            else "kinematic"
+        )
 
 
 @dataclass(frozen=True)
@@ -173,6 +198,7 @@ class RejectedViscosityObservation:
 @dataclass(frozen=True)
 class ViscosityNormalizationResult:
     points: tuple[NormalizedViscosityPoint, ...]
+    kinematic_points: tuple[NormalizedViscosityPoint, ...]
     rejected: tuple[RejectedViscosityObservation, ...]
 
 
@@ -182,7 +208,37 @@ class PubChemViscosityResult:
     cid: int
     annotations: tuple[PubChemViscosityAnnotation, ...]
     points: tuple[NormalizedViscosityPoint, ...]
+    kinematic_points: tuple[NormalizedViscosityPoint, ...]
     rejected: tuple[RejectedViscosityObservation, ...]
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, payload: Mapping[str, Any]) -> "PubChemViscosityResult":
+        return cls(
+            identifier=str(payload.get("identifier") or ""),
+            cid=int(payload["cid"]),
+            annotations=tuple(
+                PubChemViscosityAnnotation(**{
+                    **dict(item),
+                    "references": tuple(item.get("references", ()) or ()),
+                })
+                for item in payload.get("annotations", ()) or ()
+            ),
+            points=tuple(
+                NormalizedViscosityPoint(**dict(item))
+                for item in payload.get("points", ()) or ()
+            ),
+            kinematic_points=tuple(
+                NormalizedViscosityPoint(**dict(item))
+                for item in payload.get("kinematic_points", ()) or ()
+            ),
+            rejected=tuple(
+                RejectedViscosityObservation(**dict(item))
+                for item in payload.get("rejected", ()) or ()
+            ),
+        )
 
 
 class PubChemViscosityFetchError(LookupError):
@@ -364,6 +420,24 @@ def _dynamic_factor(unit: str) -> Optional[float]:
     return None
 
 
+def _kinematic_factor(unit: str) -> Optional[float]:
+    normalized = re.sub(r"[\s.\-/*()^]", "", _clean_text(unit).lower())
+    normalized = re.sub(r"sec(?:ond)?s?$", "s", normalized)
+    if normalized in {
+        "mm2s", "mm²s", "sqmms", "cst", "centistoke", "centistokes",
+    }:
+        return 1.0e-6
+    if normalized in {"cm2s", "cm²s", "sqcms", "stoke", "stokes"}:
+        return 1.0e-4
+    if normalized in {"m2s", "m²s", "sqmsec", "sqms", "sqmetersecond"}:
+        return 1.0
+    if normalized in {"ft2s", "ft²s", "sqftsec", "sqfts"}:
+        return 0.09290304
+    if normalized in {"in2s", "in²s", "sqinsec", "sqins"}:
+        return 0.00064516
+    return None
+
+
 def _temperature_K(value: float, unit: str) -> Optional[float]:
     unit = unit.upper()
     if unit == "K":
@@ -431,7 +505,7 @@ def parse_pubchem_viscosity_annotation(
     if _VALUE_RANGE.search(text) or _TEMPERATURE_RANGE.search(text):
         return (), (_rejection(annotation, "value or temperature range"),)
 
-    shared_match = _SHARED_DYNAMIC_UNIT.search(text)
+    shared_match = _SHARED_VISCOSITY_UNIT.search(text)
     shared_unit = shared_match.group("vunit") if shared_match else None
     parsed: list[ParsedViscosityObservation] = []
     rejected: list[RejectedViscosityObservation] = []
@@ -441,13 +515,6 @@ def parse_pubchem_viscosity_annotation(
         if clause.strip(" ,")
     ]
     for clause in clauses:
-        if _KINEMATIC_UNIT.search(clause):
-            rejected.append(_rejection(
-                annotation,
-                "kinematic viscosity requires a compatible density",
-                clause,
-            ))
-            continue
         matches = list(_VALUE_FIRST.finditer(clause))
         matches.extend(_TEMPERATURE_FIRST.finditer(clause))
         if not matches and shared_unit:
@@ -460,6 +527,11 @@ def parse_pubchem_viscosity_annotation(
         for index, match in enumerate(accepted_matches):
             unit = match.groupdict().get("vunit") or shared_unit
             if unit is None:
+                continue
+            dynamic_factor = _dynamic_factor(unit)
+            kinematic_factor = _kinematic_factor(unit)
+            if dynamic_factor is None and kinematic_factor is None:
+                rejected.append(_rejection(annotation, "unsupported viscosity unit", clause))
                 continue
             try:
                 value = _number_value(match.group("value"))
@@ -478,6 +550,9 @@ def parse_pubchem_viscosity_annotation(
                 pressure = _number_value(pressure_match.group("pressure"))
                 pressure_unit = pressure_match.group("punit")
             parsed.append(ParsedViscosityObservation(
+                viscosity_kind=(
+                    "dynamic" if dynamic_factor is not None else "kinematic"
+                ),
                 value=value,
                 unit=unit,
                 temperature=temperature,
@@ -489,9 +564,9 @@ def parse_pubchem_viscosity_annotation(
             ))
         if matches:
             continue
-        if _KINEMATIC_UNIT.search(text):
-            reason = "kinematic viscosity requires a compatible density"
-        elif re.search(_DYNAMIC_UNIT, clause, re.IGNORECASE):
+        if _KINEMATIC_UNIT.search(clause):
+            reason = "unsupported or temperature-free kinematic viscosity"
+        elif re.search(_DYNAMIC_UNIT_BODY, clause, re.IGNORECASE):
             reason = "dynamic viscosity lacks an explicit numerical temperature"
         else:
             reason = "no supported dynamic-viscosity point"
@@ -502,8 +577,9 @@ def parse_pubchem_viscosity_annotation(
 def normalize_pubchem_viscosity_annotations(
     annotations: Iterable[PubChemViscosityAnnotation],
 ) -> ViscosityNormalizationResult:
-    """Return exact SI dynamic-viscosity points with unsafe bases rejected."""
+    """Return exact SI dynamic and kinematic points with unsafe bases rejected."""
     points: list[NormalizedViscosityPoint] = []
+    kinematic_points: list[NormalizedViscosityPoint] = []
     rejected: list[RejectedViscosityObservation] = []
     for annotation in annotations:
         annotation_context = _clean_text(
@@ -512,11 +588,13 @@ def normalize_pubchem_viscosity_annotations(
         parsed, parse_rejections = parse_pubchem_viscosity_annotation(annotation)
         rejected.extend(parse_rejections)
         for observation in parsed:
-            factor = _dynamic_factor(observation.unit)
+            dynamic_factor = _dynamic_factor(observation.unit)
+            kinematic_factor = _kinematic_factor(observation.unit)
             temperature = _temperature_K(
                 observation.temperature,
                 observation.temperature_unit,
             )
+            factor = dynamic_factor or kinematic_factor
             if factor is None:
                 rejected.append(_rejection(
                     annotation,
@@ -524,8 +602,8 @@ def normalize_pubchem_viscosity_annotations(
                     observation.raw,
                 ))
                 continue
-            viscosity = observation.value * factor
-            if viscosity <= 0.0 or not math.isfinite(viscosity):
+            normalized_value = observation.value * factor
+            if normalized_value <= 0.0 or not math.isfinite(normalized_value):
                 rejected.append(_rejection(
                     annotation,
                     "nonpositive or nonfinite viscosity",
@@ -552,8 +630,15 @@ def normalize_pubchem_viscosity_annotations(
                         observation.raw,
                     ))
                     continue
-            points.append(NormalizedViscosityPoint(
-                viscosity_Pa_s=viscosity,
+            point = NormalizedViscosityPoint(
+                viscosity_Pa_s=(
+                    normalized_value if observation.viscosity_kind == "dynamic"
+                    else None
+                ),
+                kinematic_viscosity_m2_s=(
+                    normalized_value if observation.viscosity_kind == "kinematic"
+                    else None
+                ),
                 temperature_K=temperature,
                 pressure_bar=pressure,
                 phase_basis=(
@@ -575,7 +660,11 @@ def normalize_pubchem_viscosity_annotations(
                 comment=annotation.comment,
                 peer_reviewed=annotation.peer_reviewed,
                 raw=observation.raw,
-            ))
+            )
+            if observation.viscosity_kind == "dynamic":
+                points.append(point)
+            else:
+                kinematic_points.append(point)
 
     unique: dict[tuple[Any, ...], NormalizedViscosityPoint] = {}
     for point in points:
@@ -587,11 +676,25 @@ def normalize_pubchem_viscosity_annotations(
             point.raw.casefold(),
         )
         unique.setdefault(key, point)
-    return ViscosityNormalizationResult(tuple(unique.values()), tuple(rejected))
+    unique_kinematic: dict[tuple[Any, ...], NormalizedViscosityPoint] = {}
+    for point in kinematic_points:
+        key = (
+            round(float(point.kinematic_viscosity_m2_s), 15),
+            round(point.temperature_K, 10),
+            None if point.pressure_bar is None else round(point.pressure_bar, 10),
+            point.reference.casefold(),
+            point.raw.casefold(),
+        )
+        unique_kinematic.setdefault(key, point)
+    return ViscosityNormalizationResult(
+        tuple(unique.values()),
+        tuple(unique_kinematic.values()),
+        tuple(rejected),
+    )
 
 
 class PubChemViscosityFetcher:
-    """Small unintegrated client for PubChem PUG-View viscosity annotations."""
+    """Client for PubChem PUG-View viscosity annotations."""
 
     def __init__(
         self,
@@ -658,6 +761,7 @@ class PubChemViscosityFetcher:
             cid=cid,
             annotations=annotations,
             points=normalized.points,
+            kinematic_points=normalized.kinematic_points,
             rejected=normalized.rejected,
         )
 

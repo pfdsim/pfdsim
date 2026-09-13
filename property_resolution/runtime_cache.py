@@ -61,6 +61,7 @@ def cache_key_metadata(key: str, payload: Mapping[str, Any]) -> dict[str, Any]:
         'pubchem_component_cas', 'pubchem_component', 'pubchem_structure',
         'pubchem_cid', 'formation_nist', 'cp_nist', 'critical', 'hvap',
         'antoine', 'density_pubchem', 'knotts_parachor_fragmentation',
+        'viscosity_pubchem',
     )
     family = next((item for item in known_families if text.startswith(item + '_')), 'generic')
     if version_match:

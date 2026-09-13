@@ -1,5 +1,11 @@
 from .common import *
 from .coolprop import coolprop_module
+from .online_viscosity import (
+    PubChemViscosityFetchError,
+    PubChemViscosityFetcher,
+    PubChemViscosityResult,
+)
+from .organic_classification import hydrogen_bond_donor_profile
 from collections import Counter
 
 
@@ -19,6 +25,13 @@ JOSSI_UNIFAC_CLASSIFICATION_FACTOR = 0.95
 JOSSI_HBOND_CLASSIFICATION_FACTOR = 0.80
 JOSSI_DEFAULT_POLAR_CLASSIFICATION_FACTOR = 0.75
 JOSSI_MAX_REDUCED_DENSITY = 2.6
+ONLINE_VISCOSITY_CACHE_VERSION = 2
+ONLINE_VISCOSITY_MAXIMUM_EXTRAPOLATION_K = 100.0
+ONLINE_VISCOSITY_MAXIMUM_ANCHOR_PRESSURE_BAR = 5.0
+ONLINE_VISCOSITY_HIGH_QUALITY_DENSITY = 0.95
+ONLINE_VISCOSITY_SAME_TEMPERATURE_TOLERANCE_K = 0.5
+ONLINE_VISCOSITY_MINIMUM_FIT_SPAN_K = 10.0
+ONLINE_VISCOSITY_FULL_QUALITY_FIT_SPAN_K = 20.0
 
 
 class ViscosityMixin:
@@ -31,10 +44,17 @@ class ViscosityMixin:
             *,
             P: Optional[float] = None,
             rho_molar: Optional[float] = None,
+            allow_online: bool = True,
         ) -> PropertyResolutionResult:
             """Resolve viscosity in Pa*s; P is bar and rho_molar is kmol/m^3."""
             P, rho_molar = self._normalize_viscosity_state(P, rho_molar)
-            props = self._coerce_props(symbol, props)
+            props = self._coerce_props(
+                symbol,
+                props,
+                allow_online=allow_online,
+            )
+            allow_online = self._props_allow_online(props, allow_online)
+            props = {**props, '_allow_online_lookup': allow_online}
             phase_key = phase.strip().lower().replace('-', '_')
             correlation_key = 'mug' if phase_key in {'gas', 'vapor', 'vapour', 'ideal_gas', 'ideal'} else 'mul'
 
@@ -170,10 +190,34 @@ class ViscosityMixin:
                     symbol, props, T, phase_key, estimated_vapor_viscosity, P, rho_molar,
                 )
 
+            online_viscosity = self._online_liquid_viscosity(
+                symbol,
+                props,
+                T,
+                phase_key,
+                allow_online=allow_online,
+            )
+            if online_viscosity:
+                return self._apply_viscosity_pressure_correction(
+                    symbol, props, T, phase_key, online_viscosity, P, rho_molar,
+                )
+
             hsu_viscosity = self._hsu_liquid_viscosity(symbol, props, T, phase_key)
             if hsu_viscosity:
                 return self._apply_viscosity_pressure_correction(
                     symbol, props, T, phase_key, hsu_viscosity, P, rho_molar,
+                )
+
+            nannoolal_viscosity = self._nannoolal_predictive_liquid_viscosity(
+                symbol,
+                props,
+                T,
+                phase_key,
+                allow_online=allow_online,
+            )
+            if nannoolal_viscosity:
+                return self._apply_viscosity_pressure_correction(
+                    symbol, props, T, phase_key, nannoolal_viscosity, P, rho_molar,
                 )
 
             raise PropertyResolutionError(
@@ -217,7 +261,7 @@ class ViscosityMixin:
                 critical = self.resolve_critical_properties(
                     symbol,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                     allow_estimation=True,
                 )
             except Exception:
@@ -283,6 +327,778 @@ class ViscosityMixin:
             return str(value).strip() if value else None
 
 
+        def _fetch_pubchem_viscosity(
+            self,
+            identifier: str,
+        ) -> Optional[PubChemViscosityResult]:
+            cache_key = (
+                f'viscosity_pubchem_v{ONLINE_VISCOSITY_CACHE_VERSION}_'
+                f'{identifier}'
+            )
+            cached = self._get_cache(cache_key)
+            if cached:
+                if self._is_missing_cache(cached):
+                    return None
+                try:
+                    return PubChemViscosityResult.from_dict(cached)
+                except (KeyError, TypeError, ValueError):
+                    pass
+            try:
+                cid = self._get_pubchem_cid(identifier)
+                if not cid:
+                    self._set_missing_cache(cache_key)
+                    return None
+                result = PubChemViscosityFetcher().fetch(cid)
+            except PubChemViscosityFetchError as exc:
+                raise LookupError(
+                    f"Transient PubChem viscosity lookup failure for {identifier!r}"
+                ) from exc
+            if result is None:
+                self._set_missing_cache(cache_key)
+                return None
+            self._set_cache(cache_key, result.to_dict())
+            return result
+
+
+        def _fetch_viscosity_online(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+        ) -> Optional[PubChemViscosityResult]:
+            transient_failure = False
+            for identifier in self._identifier_candidates(symbol, props):
+                try:
+                    result = self._fetch_pubchem_viscosity(str(identifier))
+                except LookupError:
+                    transient_failure = True
+                    continue
+                if result is not None:
+                    return result
+            if transient_failure:
+                raise LookupError(
+                    f"Transient online viscosity lookup failure for {symbol!r}"
+                )
+            return None
+
+
+        def _viscosity_phenol_status(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            *,
+            allow_online: bool,
+        ) -> tuple[bool, Optional[PropertyResolutionResult]]:
+            smiles_result = None
+            smiles = self._viscosity_smiles(props)
+            if not smiles:
+                smiles_result = self._resolve_smiles_result(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                )
+                smiles = (
+                    str(smiles_result.value).strip()
+                    if smiles_result and smiles_result.value else None
+                )
+            profile = hydrogen_bond_donor_profile(smiles) if smiles else None
+            if profile is not None:
+                return bool(profile.phenol_oh), smiles_result
+            identity = ' '.join(
+                str(value).lower()
+                for value in (
+                    symbol,
+                    props.get('name'),
+                )
+                if value
+            )
+            return bool(re.search(
+                r'\b(?:phenol|cresol|xylenol|naphthol|hydroxybenzene)\b',
+                identity,
+            )), smiles_result
+
+
+        @staticmethod
+        def _online_viscosity_point_is_phase_compatible(
+            point,
+            props: Dict[str, Any],
+        ) -> bool:
+            temperature = float(point.temperature_K)
+            pressure = point.pressure_bar
+            if (
+                pressure is not None
+                and pressure > ONLINE_VISCOSITY_MAXIMUM_ANCHOR_PRESSURE_BAR
+            ):
+                return False
+
+            def finite_property(name: str) -> Optional[float]:
+                try:
+                    value = float(props.get(name))
+                except (TypeError, ValueError):
+                    return None
+                return value if value > 0.0 and math.isfinite(value) else None
+
+            melting = finite_property('Tm')
+            critical = finite_property('Tc')
+            boiling = finite_property('Tb')
+            if melting is not None and temperature <= melting:
+                return False
+            if critical is not None and temperature >= critical:
+                return False
+            return not (
+                point.phase_basis != 'liquid'
+                and pressure is None
+                and boiling is not None
+                and temperature > boiling + 1.0
+            )
+
+
+        def _kinematic_viscosity_dynamic_point(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            point,
+            *,
+            allow_online: bool,
+        ) -> Optional[Dict[str, Any]]:
+            try:
+                density = self.resolve_liquid_molar_density(
+                    symbol,
+                    float(point.temperature_K),
+                    props,
+                )
+                mw = self.resolve_molecular_weight(
+                    symbol,
+                    props,
+                    allow_online=allow_online,
+                )
+                mass_density = float(density.value) * float(mw.value)
+                viscosity = (
+                    float(point.kinematic_viscosity_m2_s) * mass_density
+                )
+            except Exception:
+                return None
+            if viscosity <= 0.0 or not math.isfinite(viscosity):
+                return None
+            density_quality = self._combine_quality(
+                [density, mw],
+                exact_formula=True,
+            )
+            density_penalty = max(
+                0.0,
+                ONLINE_VISCOSITY_HIGH_QUALITY_DENSITY - density_quality,
+            )
+            return {
+                'T_K': float(point.temperature_K),
+                'mu_Pa_s': viscosity,
+                'density_quality': density_quality,
+                'density_penalty': density_penalty,
+                'kind': 'kinematic_converted',
+                'reference': point.reference,
+                'raw': point.raw,
+                'notes': (
+                    f'kinematic viscosity converted with liquid density '
+                    f'{mass_density:g} kg/m^3 from {density.source}/'
+                    f'{density.method} and MW from {mw.source}/{mw.method}; '
+                    f'density quality {density_quality:.3f}'
+                ),
+            }
+
+
+        @classmethod
+        def _consolidate_online_viscosity_points(
+            cls,
+            points: List[Dict[str, Any]],
+        ) -> List[Dict[str, Any]]:
+            clusters: List[List[Dict[str, Any]]] = []
+            for point in sorted(points, key=lambda item: float(item['T_K'])):
+                if (
+                    not clusters
+                    or abs(
+                        float(point['T_K'])
+                        - sum(float(item['T_K']) for item in clusters[-1])
+                        / len(clusters[-1])
+                    ) > ONLINE_VISCOSITY_SAME_TEMPERATURE_TOLERANCE_K
+                ):
+                    clusters.append([point])
+                else:
+                    clusters[-1].append(point)
+
+            consolidated = []
+            for cluster in clusters:
+                logarithms = sorted(
+                    math.log(float(point['mu_Pa_s'])) for point in cluster
+                )
+                if (
+                    len(logarithms) == 2
+                    and math.exp(logarithms[-1] - logarithms[0]) > 1.25
+                ):
+                    continue
+                median_log = logarithms[len(logarithms) // 2]
+                if len(logarithms) % 2 == 0:
+                    median_log = 0.5 * (
+                        logarithms[len(logarithms) // 2 - 1]
+                        + logarithms[len(logarithms) // 2]
+                    )
+                retained = (
+                    [
+                        point for point in cluster
+                        if abs(math.log(float(point['mu_Pa_s'])) - median_log)
+                        <= math.log(1.25)
+                    ]
+                    if len(cluster) >= 3 else cluster
+                )
+                retained = retained or cluster
+                consolidated.append(cls._average_online_viscosity_points(retained))
+            return consolidated
+
+
+        @staticmethod
+        def _average_online_viscosity_points(
+            retained: List[Dict[str, Any]],
+        ) -> Dict[str, Any]:
+            weights = [
+                max(0.05, 1.0 - float(point['density_penalty'])) ** 2
+                for point in retained
+            ]
+            weight_sum = sum(weights)
+            mean_temperature = sum(
+                weight * float(point['T_K'])
+                for point, weight in zip(retained, weights)
+            ) / weight_sum
+            mean_log = sum(
+                weight * math.log(float(point['mu_Pa_s']))
+                for point, weight in zip(retained, weights)
+            ) / weight_sum
+            return {
+                'T_K': mean_temperature,
+                'mu_Pa_s': math.exp(mean_log),
+                'density_quality': max(
+                    float(point['density_quality']) for point in retained
+                ),
+                'density_penalty': min(
+                    float(point['density_penalty']) for point in retained
+                ),
+                'kind': '+'.join(sorted({
+                    str(point['kind']) for point in retained
+                })),
+                'reference': '; '.join(dict.fromkeys(
+                    str(point.get('reference') or '')
+                    for point in retained
+                    if point.get('reference')
+                )),
+                'raw': ' | '.join(dict.fromkeys(
+                    str(point.get('raw') or '') for point in retained
+                )),
+                'notes': '; '.join(dict.fromkeys(
+                    str(point.get('notes') or '')
+                    for point in retained
+                    if point.get('notes')
+                )),
+            }
+
+
+        def _online_liquid_viscosity_points(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            payload: PubChemViscosityResult,
+            *,
+            allow_online: bool,
+        ) -> List[Dict[str, Any]]:
+            dynamic = [
+                {
+                    'T_K': float(point.temperature_K),
+                    'mu_Pa_s': float(point.viscosity_Pa_s),
+                    'density_quality': 1.0,
+                    'density_penalty': 0.0,
+                    'kind': 'dynamic',
+                    'reference': point.reference,
+                    'raw': point.raw,
+                    'notes': 'direct dynamic-viscosity observation',
+                }
+                for point in payload.points
+                if point.viscosity_Pa_s is not None
+                and self._online_viscosity_point_is_phase_compatible(point, props)
+            ]
+            dynamic = self._consolidate_online_viscosity_points(dynamic)
+            converted = []
+            for point in payload.kinematic_points:
+                if not self._online_viscosity_point_is_phase_compatible(point, props):
+                    continue
+                candidate = self._kinematic_viscosity_dynamic_point(
+                    symbol,
+                    props,
+                    point,
+                    allow_online=allow_online,
+                )
+                if candidate is not None:
+                    converted.append(candidate)
+
+            high_quality = [
+                point for point in converted
+                if float(point['density_quality'])
+                >= ONLINE_VISCOSITY_HIGH_QUALITY_DENSITY
+            ]
+            lower_quality = [
+                point for point in converted
+                if float(point['density_quality'])
+                < ONLINE_VISCOSITY_HIGH_QUALITY_DENSITY
+            ]
+            if len(dynamic) >= 2:
+                selected_converted = high_quality
+            elif len(dynamic) == 1:
+                established_temperatures = [
+                    float(point['T_K'])
+                    for point in dynamic + high_quality
+                ]
+                has_shape = any(
+                    abs(temperature - established_temperatures[0])
+                    > ONLINE_VISCOSITY_SAME_TEMPERATURE_TOLERANCE_K
+                    for temperature in established_temperatures[1:]
+                )
+                second = None
+                if not has_shape:
+                    distinct = [
+                        point for point in lower_quality
+                        if all(
+                            abs(
+                                float(point['T_K']) - established_temperature
+                            ) > ONLINE_VISCOSITY_SAME_TEMPERATURE_TOLERANCE_K
+                            for established_temperature in established_temperatures
+                        )
+                    ]
+                    second = max(
+                        distinct,
+                        key=lambda point: (
+                            float(point['density_quality']),
+                            abs(
+                                float(point['T_K'])
+                                - float(dynamic[0]['T_K'])
+                            ),
+                        ),
+                        default=None,
+                    )
+                selected_converted = high_quality + ([second] if second else [])
+            else:
+                selected_converted = high_quality + lower_quality
+            return self._consolidate_online_viscosity_points(
+                dynamic + selected_converted
+            )
+
+
+        @staticmethod
+        def _online_viscosity_fit_inliers(
+            points: List[Dict[str, Any]],
+        ) -> tuple[List[Dict[str, Any]], int]:
+            retained = list(points)
+            rejected = 0
+            if len(retained) >= 4:
+                slopes = []
+                for index, left in enumerate(retained):
+                    x_left = 1.0 / float(left['T_K'])
+                    y_left = math.log(float(left['mu_Pa_s']))
+                    for right in retained[index + 1:]:
+                        x_right = 1.0 / float(right['T_K'])
+                        if math.isclose(x_left, x_right, abs_tol=1.0e-15):
+                            continue
+                        y_right = math.log(float(right['mu_Pa_s']))
+                        slopes.append((y_right - y_left) / (x_right - x_left))
+                if slopes:
+                    slope = sorted(slopes)[len(slopes) // 2]
+                    intercepts = sorted(
+                        math.log(float(point['mu_Pa_s']))
+                        - slope / float(point['T_K'])
+                        for point in retained
+                    )
+                    intercept = intercepts[len(intercepts) // 2]
+                    residuals = [
+                        math.log(float(point['mu_Pa_s']))
+                        - intercept - slope / float(point['T_K'])
+                        for point in retained
+                    ]
+                    center = sorted(residuals)[len(residuals) // 2]
+                    deviations = sorted(abs(value - center) for value in residuals)
+                    mad = deviations[len(deviations) // 2]
+                    threshold = max(math.log(1.15), 3.5 * 1.4826 * mad)
+                    inliers = [
+                        point for point, residual in zip(retained, residuals)
+                        if abs(residual - center) <= threshold
+                    ]
+                    if len(inliers) >= 2:
+                        rejected = len(retained) - len(inliers)
+                        retained = inliers
+
+            return retained, rejected
+
+
+        @staticmethod
+        def _weighted_online_viscosity_fit(
+            retained: List[Dict[str, Any]],
+        ) -> Optional[tuple[float, float]]:
+            if len(retained) < 2:
+                return None
+            temperatures = [float(point['T_K']) for point in retained]
+            if max(temperatures) - min(temperatures) < ONLINE_VISCOSITY_MINIMUM_FIT_SPAN_K:
+                return None
+            xs = [1.0 / temperature for temperature in temperatures]
+            ys = [math.log(float(point['mu_Pa_s'])) for point in retained]
+            weights = [
+                max(0.05, 1.0 - float(point['density_penalty'])) ** 2
+                for point in retained
+            ]
+            weight_sum = sum(weights)
+            x_mean = sum(x * weight for x, weight in zip(xs, weights)) / weight_sum
+            y_mean = sum(y * weight for y, weight in zip(ys, weights)) / weight_sum
+            denominator = sum(
+                weight * (x - x_mean) ** 2
+                for x, weight in zip(xs, weights)
+            )
+            if denominator <= 0.0:
+                return None
+            slope = sum(
+                weight * (x - x_mean) * (y - y_mean)
+                for x, y, weight in zip(xs, ys, weights)
+            ) / denominator
+            intercept = y_mean - slope * x_mean
+            if slope <= 0.0 or not all(math.isfinite(x) for x in (intercept, slope)):
+                return None
+            return intercept, slope
+
+
+        @staticmethod
+        def _online_viscosity_extrapolation_penalty(
+            distance_K: float,
+        ) -> Optional[float]:
+            if distance_K <= 0.0:
+                return 0.0
+            if distance_K <= 10.0:
+                return 0.01
+            if distance_K <= 25.0:
+                return 0.04
+            if distance_K <= 50.0:
+                return 0.09
+            if distance_K <= ONLINE_VISCOSITY_MAXIMUM_EXTRAPOLATION_K:
+                return 0.18
+            return None
+
+
+        def _online_liquid_viscosity(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            T: float,
+            phase_key: str,
+            *,
+            allow_online: bool,
+        ) -> Optional[PropertyResolutionResult]:
+            if (
+                phase_key not in {'liquid', 'l'}
+                or not self._props_allow_online(props, allow_online)
+            ):
+                return None
+            try:
+                payload = self._fetch_viscosity_online(symbol, props)
+            except LookupError:
+                return None
+            if payload is None:
+                return None
+            points = self._online_liquid_viscosity_points(
+                symbol,
+                props,
+                payload,
+                allow_online=allow_online,
+            )
+            if not points:
+                return None
+            phenol, _ = self._viscosity_phenol_status(
+                symbol,
+                props,
+                allow_online=allow_online,
+            )
+            retained, outlier_count = self._online_viscosity_fit_inliers(points)
+            lower = min(float(point['T_K']) for point in retained)
+            upper = max(float(point['T_K']) for point in retained)
+            span = upper - lower
+            if span >= ONLINE_VISCOSITY_MINIMUM_FIT_SPAN_K:
+                fit = self._weighted_online_viscosity_fit(retained)
+                if fit is None:
+                    return None
+                intercept, slope = fit
+                span_penalty = (
+                    0.04 if span < ONLINE_VISCOSITY_FULL_QUALITY_FIT_SPAN_K else 0.0
+                )
+                distance = max(lower - T, T - upper, 0.0)
+                if phenol and distance > 10.0:
+                    return None
+                extrapolation_penalty = (
+                    self._online_viscosity_extrapolation_penalty(distance)
+                )
+                if extrapolation_penalty is None:
+                    return None
+                try:
+                    value = math.exp(intercept + slope / float(T))
+                except (OverflowError, ValueError, ZeroDivisionError):
+                    return None
+                if value <= 0.0 or not math.isfinite(value):
+                    return None
+                base_quality = min(0.93, 0.85 + 0.01 * len(retained))
+                density_penalty = max(
+                    float(point['density_penalty']) for point in retained
+                )
+                quality = self._clamp_quality(
+                    base_quality
+                    - extrapolation_penalty
+                    - density_penalty
+                    - span_penalty
+                    - (0.05 if phenol else 0.0)
+                )
+                region = (
+                    f'interpolation over {lower:g}-{upper:g} K'
+                    if distance <= 0.0 else
+                    f'extrapolated {distance:g} K beyond {lower:g}-{upper:g} K'
+                )
+                converted_count = sum(
+                    'kinematic_converted' in str(point['kind'])
+                    for point in retained
+                )
+                references = '; '.join(dict.fromkeys(
+                    str(point.get('reference') or '')
+                    for point in retained
+                    if point.get('reference')
+                ))
+                return PropertyResolutionResult(
+                    value=value,
+                    source='online',
+                    method='pubchem_liquid_viscosity_arrhenius_fit',
+                    quality=quality,
+                    notes=(
+                        f'Weighted ln(mu)=A+B/T fit to {len(retained)} PubChem '
+                        f'viscosity temperature point(s), including '
+                        f'{converted_count} density-converted kinematic point(s); '
+                        f'{region}; A={intercept:.8g}, B={slope:.8g} K; '
+                        f'base quality {base_quality:.2f}, extrapolation penalty '
+                        f'{extrapolation_penalty:.2f}, density penalty '
+                        f'{density_penalty:.2f}, span penalty {span_penalty:.2f}'
+                        + ('; phenol penalty 0.05' if phenol else '')
+                        + (
+                            f'; rejected {outlier_count} robust-fit outlier(s)'
+                            if outlier_count else ''
+                        )
+                        + (f'; references: {references}' if references else '')
+                        + '; units Pa*s'
+                    ),
+                )
+
+            if phenol:
+                return None
+            point = self._average_online_viscosity_points(retained)
+            point['density_penalty'] = max(
+                float(item['density_penalty']) for item in retained
+            )
+            if len(retained) > 1:
+                point['notes'] += (
+                    f'; combined {len(retained)} points spanning {span:g} K '
+                    'into a density-quality-weighted geometric-mean anchor'
+                )
+            if outlier_count:
+                point['notes'] += f'; rejected {outlier_count} robust-fit outlier(s)'
+            distance = abs(float(T) - float(point['T_K']))
+            if distance <= 25.0:
+                quality = 0.85
+            elif distance <= 50.0:
+                quality = 0.80
+            elif distance <= 75.0:
+                quality = 0.75
+            elif distance <= 100.0:
+                quality = 0.70
+            else:
+                return None
+            quality = self._clamp_quality(
+                quality - float(point['density_penalty'])
+            )
+            return self._nannoolal_liquid_viscosity(
+                symbol,
+                props,
+                T,
+                phase_key,
+                allow_online=allow_online,
+                anchor=point,
+                quality=quality,
+                method='nannoolal_anchored_liquid_viscosity',
+            )
+
+
+        def _nannoolal_liquid_viscosity(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            T: float,
+            phase_key: str,
+            *,
+            allow_online: bool,
+            anchor: Optional[Dict[str, Any]],
+            quality: float,
+            method: str,
+        ) -> Optional[PropertyResolutionResult]:
+            if phase_key not in {'liquid', 'l'}:
+                return None
+            phenol, resolved_smiles = self._viscosity_phenol_status(
+                symbol,
+                props,
+                allow_online=allow_online,
+            )
+            if phenol:
+                return None
+            smiles = self._viscosity_smiles(props)
+            if not smiles and resolved_smiles and resolved_smiles.value:
+                smiles = str(resolved_smiles.value).strip()
+            if not smiles:
+                return None
+            allow_online = self._props_allow_online(props, allow_online)
+            tc_result = self._source_result_for_value(props, 'Tc', units='K')
+            if tc_result is None:
+                try:
+                    critical = self.resolve_critical_properties(
+                        symbol,
+                        props,
+                        allow_online=allow_online,
+                        allow_estimation=True,
+                    )
+                    tc_result = critical.get('Tc') if critical else None
+                except Exception:
+                    return None
+            try:
+                tc = float(tc_result.value) if tc_result is not None else None
+                temperature = float(T)
+            except (TypeError, ValueError):
+                return None
+            if (
+                tc is None or not math.isfinite(tc) or tc <= 0.0
+                or not math.isfinite(temperature) or temperature <= 0.0
+            ):
+                return None
+            tr_limit = 0.8 if self._result_is_real(tc_result) else 0.75
+            if temperature > tr_limit * tc:
+                return None
+            try:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from .. import nannoolal_method
+                else:
+                    import nannoolal_method
+            except ImportError:
+                return None
+
+            tb_result = None
+            viscosity_point = None
+            if anchor is not None:
+                viscosity_point = (
+                    float(anchor['T_K']),
+                    float(anchor['mu_Pa_s']) * 1000.0,
+                )
+            else:
+                tb_result = self._source_result_for_value(props, 'Tb', units='K')
+                if tb_result is None:
+                    try:
+                        tb_result = self.resolve_boiling_point(
+                            symbol,
+                            props,
+                            allow_online=allow_online,
+                            allow_estimation=True,
+                        )
+                    except Exception:
+                        tb_result = None
+            try:
+                estimate = nannoolal_method.estimate_viscosity(
+                    smiles,
+                    tb=(
+                        float(tb_result.value)
+                        if tb_result is not None and tb_result.value is not None
+                        else None
+                    ),
+                    visc_point=viscosity_point,
+                )
+                value = estimate.viscosity_Pa_s(float(T))
+            except (
+                nannoolal_method.NannoolalError,
+                OverflowError,
+                TypeError,
+                ValueError,
+                ZeroDivisionError,
+            ):
+                return None
+            if (
+                estimate.dbv is None
+                or estimate.tv_K is None
+                or value is None
+                or value <= 0.0
+                or not math.isfinite(value)
+            ):
+                return None
+            if anchor is not None and estimate.tv_source != 'from viscosity point':
+                return None
+            groups = ', '.join(
+                f'{count} {name}'
+                for name, count in sorted(
+                    estimate.groups.items(),
+                    key=lambda item: str(item[0]),
+                )
+            )
+            warnings_note = '; '.join(str(item) for item in estimate.warnings)
+            if anchor is not None:
+                anchor_note = (
+                    f"anchored at T={float(anchor['T_K']):g} K, "
+                    f"mu={float(anchor['mu_Pa_s']):g} Pa*s from "
+                    f"{anchor['kind']}; distance {abs(float(T) - float(anchor['T_K'])):g} K; "
+                    f"{anchor.get('notes') or ''}"
+                )
+                source = 'calculated'
+            else:
+                anchor_note = (
+                    f'Tv {estimate.tv_source}'
+                    + (
+                        f' using Tb from {tb_result.source}/{tb_result.method}'
+                        if tb_result is not None else ''
+                    )
+                )
+                source = 'estimated'
+            return PropertyResolutionResult(
+                value=value,
+                source=source,
+                method=method,
+                quality=self._clamp_quality(quality),
+                notes=(
+                    f'Nannoolal Part-4 saturated-liquid viscosity; {anchor_note}; '
+                    f'dBv={estimate.dbv:g}, Tv={estimate.tv_K:g} K; '
+                    f'T/Tc={temperature / tc:g}, limit {tr_limit:g} '
+                    f'using Tc from {tc_result.source}/{tc_result.method}; '
+                    f'groups: {groups}'
+                    + (f'; {warnings_note}' if warnings_note else '')
+                    + '; units Pa*s'
+                ),
+            )
+
+
+        def _nannoolal_predictive_liquid_viscosity(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            T: float,
+            phase_key: str,
+            *,
+            allow_online: bool,
+        ) -> Optional[PropertyResolutionResult]:
+            return self._nannoolal_liquid_viscosity(
+                symbol,
+                props,
+                T,
+                phase_key,
+                allow_online=allow_online,
+                anchor=None,
+                quality=0.65,
+                method='nannoolal_predictive_liquid_viscosity',
+            )
+
+
         @classmethod
         def _coolprop_module(cls):
             return coolprop_module()
@@ -321,7 +1137,7 @@ class ViscosityMixin:
             smiles = self._viscosity_smiles(props)
             if not smiles:
                 resolved_smiles = self._resolve_smiles_result(
-                    symbol, props, allow_online=True)
+                    symbol, props, allow_online=self._props_allow_online(props))
                 smiles = (str(resolved_smiles.value).strip()
                           if resolved_smiles and resolved_smiles.value else None)
             if not smiles:
@@ -346,7 +1162,7 @@ class ViscosityMixin:
                 critical = self.resolve_critical_properties(
                     symbol,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                     allow_estimation=True,
                 )
             except Exception:
@@ -593,7 +1409,7 @@ class ViscosityMixin:
                 resolved_smiles = self._resolve_smiles_result(
                     symbol,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                 )
                 smiles = (
                     str(resolved_smiles.value).strip()
@@ -700,7 +1516,7 @@ class ViscosityMixin:
                 critical = self.resolve_critical_properties(
                     symbol,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                     allow_estimation=True,
                 )
             except Exception:
@@ -993,7 +1809,7 @@ class ViscosityMixin:
                 critical = self.resolve_critical_properties(
                     symbol,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                     allow_estimation=True,
                 )
             except Exception:
@@ -1271,7 +2087,7 @@ class ViscosityMixin:
                 critical = self.resolve_critical_properties(
                     symbol,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                     allow_estimation=True,
                 )
             except Exception:
@@ -1308,7 +2124,7 @@ class ViscosityMixin:
                     symbol,
                     T,
                     props,
-                    allow_online=True,
+                    allow_online=self._props_allow_online(props),
                 )
                 psat_bar = float(psat_result.value)
             except Exception:
@@ -1427,7 +2243,9 @@ class ViscosityMixin:
                 return None
             smiles = self._viscosity_smiles(props)
             if not smiles:
-                resolved = self._resolve_smiles_result(symbol, props, allow_online=True)
+                resolved = self._resolve_smiles_result(
+                    symbol, props, allow_online=self._props_allow_online(props),
+                )
                 smiles = str(resolved.value).strip() if resolved and resolved.value else None
             try:
                 expected_mw = float((props or {}).get('MW'))

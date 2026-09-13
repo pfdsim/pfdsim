@@ -409,6 +409,7 @@ def resolve_viscosity(
     *,
     P: Optional[float] = None,
     rho_molar: Optional[float] = None,
+    allow_online: bool = True,
 ) -> PropertyResolutionResult:
     """Resolve viscosity; P is bar and rho_molar is kmol/m^3."""
     return get_property_resolver().resolve_viscosity(
@@ -418,6 +419,7 @@ def resolve_viscosity(
         props,
         P=P,
         rho_molar=rho_molar,
+        allow_online=allow_online,
     )
 
 

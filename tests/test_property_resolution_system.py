@@ -2018,6 +2018,45 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertIn('F(P)/F(1 atm)=1.56861', viscosity.notes)
         self.assertIn('pressure-quality multiplier 0.70', viscosity.notes)
 
+    def test_offline_viscosity_pressure_corrections_disable_dependency_lookups(self):
+        critical = {
+            key: PropertyResolutionResult(value, 'provided', 'direct', 1.0, '')
+            for key, value in {'Tc': 572.2, 'Pc': 34.7, 'Zc': 0.25, 'omega': 0.236}.items()
+        }
+        psat = PropertyResolutionResult(0.1, 'provided', 'direct', 1.0, '')
+        for phase in ('liquid', 'vapor'):
+            for opt_out in ('argument', 'props'):
+                with self.subTest(phase=phase, opt_out=opt_out):
+                    resolver = PropertyResolver()
+                    baseline = PropertyResolutionResult(
+                        0.00068 if phase == 'liquid' else 1e-5,
+                        'local', 'perry_viscosity_fixture', 0.97, '',
+                    )
+                    baseline.units = 'Pa*s'
+                    props = {'formula': 'C6H14', 'MW': 86.18}
+                    if opt_out == 'props':
+                        props['_allow_online_lookup'] = False
+                    original = dict(props)
+                    with (
+                        patch.object(resolver, '_coolprop_viscosity', return_value=None),
+                        patch.object(resolver, '_get_perry_evaluation', return_value=baseline),
+                        patch.object(resolver, 'resolve_critical_properties', return_value=critical) as tc,
+                        patch.object(resolver, 'resolve_vapor_pressure', return_value=psat) as vapor_pressure,
+                    ):
+                        result = resolver.resolve_viscosity(
+                            'fixture', 300.0, phase, props,
+                            P=50.0, rho_molar=1.0, allow_online=opt_out != 'argument',
+                        )
+                    self.assertGreater(result.value, 0.0)
+                    self.assertTrue(tc.called)
+                    self.assertTrue(all(
+                        call.kwargs['allow_online'] is False
+                        for call in tc.call_args_list + vapor_pressure.call_args_list
+                    ))
+                    if phase == 'liquid':
+                        vapor_pressure.assert_called_once()
+                    self.assertEqual(props, original)
+
     def test_lucas_pressure_quality_bins_follow_coolprop_benchmark(self):
         resolver = PropertyResolver()
         expected = {
@@ -2897,10 +2936,12 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             'Pc': 42.48,
         }
 
-        with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
-             patch.object(resolver, '_coolprop_viscosity', return_value=None):
-            with self.assertRaises(PropertyResolutionError):
-                resolver.resolve_viscosity('propane', 300.0, phase='liquid', props=props)
+        self.assertIsNone(resolver._yoon_thodos_viscosity(
+            'propane',
+            props,
+            300.0,
+            phase_key='liquid',
+        ))
 
     def test_nist_formation_parser_extracts_gas_thermochemistry(self):
         resolver = PropertyResolver()

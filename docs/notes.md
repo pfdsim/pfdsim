@@ -243,15 +243,39 @@ extrapolation optimization in thermodynamics.
 
 Vapor / liquid viscosity:
 
-In `PropertyResolver.resolve_viscosity(symbol, T, phase)`:
+In `PropertyResolver.resolve_viscosity(symbol, T, phase, allow_online=...)`:
 
-1. Provided portable viscosity correlation: `mug` for vapor/gas, `mul` for
+1. CoolProp unless an explicit PFD correlation overrides it.
+2. Provided portable viscosity correlation: `mug` for vapor/gas, `mul` for
    liquid.
-2. Perry vapor or liquid viscosity correlation, in range only.
-3. Error.
+3. Perry vapor or liquid viscosity correlation, followed by bounded 20 K
+   extrapolation.
+4. Vapor: Reichenberg/Yoon-Thodos low-pressure estimation and optional
+   Jossi-Stiel-Thodos dense-gas correction.
+5. Liquid, when online lookup is enabled: PubChem dynamic-viscosity records
+   and kinematic records converted with the liquid-density resolver. Two or
+   more unique temperatures spanning at least 10 K after outlier removal
+   form a robust `ln(mu)=A+B/T` fit. Narrower spans are combined into one
+   density-quality-weighted geometric-mean viscosity anchor with weighted
+   mean temperature; one point anchors Nannoolal Part 4.
+6. Liquid: Hsu predictive group contribution, then predictive Nannoolal Part
+   4 at quality `0.65`.
+7. Error.
 
-This is still mostly lookup/API support; the simulator does not appear to use
-viscosity in unit operations yet.
+Online fit quality is `min(0.93, 0.85 + 0.01*n)` in range, with deductions of
+`0.01`, `0.04`, `0.09`, and `0.18` through 10, 25, 50, and 100 K of
+extrapolation; farther extrapolation is refused. Fits spanning 10 K to less
+than 20 K lose an additional `0.04` quality. Anchored Nannoolal quality is
+`0.85`, `0.80`, `0.75`, and `0.70` through 25, 50, 75, and 100 K. Phenols lose
+`0.05` on online fits, may extrapolate only 10 K, and cannot use Nannoolal.
+Both Nannoolal modes require a valid resolved `Tc` and refuse temperatures
+above `0.8 Tc` for hard inputs (the resolver's real/non-soft classification)
+or `0.75 Tc` otherwise. `allow_online=False` also disables online dependency
+lookups in estimation and pressure corrections.
+Low-quality density-converted kinematic points are retained only when needed
+for anchor coverage and deduct `max(0, 0.95-density_quality)` from the result.
+Lucas and Jossi supply the existing pressure corrections. Pure viscosities
+feed the simulator's liquid and vapor mixture-viscosity routes.
 
 Formation properties and entropy:
 

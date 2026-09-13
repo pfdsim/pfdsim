@@ -201,6 +201,12 @@ class ResolverIntegrationTests(unittest.TestCase):
         patches = [
             patch.object(resolver, '_get_perry_evaluation', return_value=None),
             patch.object(resolver, '_coolprop_viscosity', return_value=None),
+            patch.object(resolver, '_fetch_viscosity_online', return_value=None),
+            patch.object(
+                resolver,
+                '_nannoolal_predictive_liquid_viscosity',
+                return_value=None,
+            ),
             patch.object(resolver, 'resolve_critical_properties',
                          return_value=critical),
         ]
@@ -272,6 +278,9 @@ class ResolverIntegrationTests(unittest.TestCase):
         }
         with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
              patch.object(resolver, '_coolprop_viscosity', return_value=None), \
+             patch.object(resolver, '_fetch_viscosity_online', return_value=None), \
+             patch.object(resolver, '_nannoolal_predictive_liquid_viscosity',
+                          return_value=None), \
              patch.object(resolver, 'resolve_critical_properties',
                           return_value=critical):
             first = resolver.resolve_viscosity(
