@@ -1,0 +1,51 @@
+Gas geometry_dependent thermal-conductivity benchmark vs Perry 9th Table 2-145
+coverage: 344/345 compounds, 354/355 curves, 35754 sampled states
+inputs: Perry vapor viscosity/MW/Tc; canonical local pfdsim ideal-gas Cp; Cv=Cp-R
+relation: monatomic: 2.5; linear: 1.3 + (R/Cv)*(1.7614 - 0.3523/Tr); otherwise: 1.15 + 2.033*(R/Cv)
+sampling: uniform inclusive points over the common declared source range
+
+OVERALL POINT-WEIGHTED
+  n= 35754 comps=344 MAPE=  12.68% MdAPE=   9.44% P95=  34.68% bias=  -9.36% within20= 81.8%
+  P90=26.56% max=108.06% within10=52.1% within30=92.5%
+
+COMPOUND-EQUAL DISTRIBUTION OF CURVE MAPE
+  n=344 mean=12.02% median=11.10% P90=22.43% P95=27.87% max=95.15%
+
+BY MOLECULAR GEOMETRY
+  linear       n=  1818 comps= 18 MAPE=   8.61% MdAPE=   4.33% P95=  61.13% bias=  -3.26% within20= 94.2%
+  monatomic    n=   303 comps=  3 MAPE=   0.66% MdAPE=   0.66% P95=   1.26% bias=  -0.23% within20=100.0%
+  nonlinear    n= 33633 comps=323 MAPE=  13.01% MdAPE=   9.95% P95=  34.75% bias=  -9.78% within20= 81.0%
+
+BY REDUCED TEMPERATURE Tr
+  0.5-0.75     n=  3281 comps=325 MAPE=  12.82% MdAPE=   7.32% P95=  63.31% bias=  -7.08% within20= 88.1%
+  0.75-1       n=  8966 comps=338 MAPE=  11.57% MdAPE=   7.97% P95=  38.66% bias=  -8.14% within20= 88.8%
+  1-1.25       n=  8202 comps=335 MAPE=  11.33% MdAPE=  10.02% P95=  25.62% bias=  -8.63% within20= 86.0%
+  1.25-1.5     n=  6803 comps=324 MAPE=  13.77% MdAPE=  12.22% P95=  31.73% bias= -12.36% within20= 73.5%
+  1.5-2        n=  6110 comps=262 MAPE=  15.34% MdAPE=  12.97% P95=  37.40% bias= -12.84% within20= 70.5%
+  <0.5         n=    44 comps= 13 MAPE=  14.66% MdAPE=  11.19% P95=  41.34% bias=  +6.54% within20= 75.0%
+  >=2          n=  2348 comps= 86 MAPE=  11.33% MdAPE=   5.26% P95=  42.55% bias=  -2.38% within20= 85.5%
+
+WORST 20 COMPOUNDS BY CURVE MAPE
+   1. Oxalic acid                     144-62-7     C2H2O4         nonlinear MAPE=  95.15% bias= +95.15%
+   2. 1,2-Difluoroethane              624-72-6     C2H4F2         nonlinear MAPE=  65.69% bias= +65.69%
+   3. Hydrogen cyanide                74-90-8      CHN            linear    MAPE=  62.29% bias= -62.29%
+   4. 1,4-Dioxane                     123-91-1     C4H8O2         nonlinear MAPE=  57.73% bias= +57.73%
+   5. Fluoromethane                   593-53-3     CH3F           nonlinear MAPE=  55.15% bias= +55.15%
+   6. Formic acid                     64-18-6      CH2O2          nonlinear MAPE=  50.91% bias= -50.91%
+   7. Acetic acid                     64-19-7      C2H4O2         nonlinear MAPE=  48.41% bias= -48.41%
+   8. Quinone                         106-51-4     C6H4O2         nonlinear MAPE=  41.28% bias= -41.28%
+   9. Difluoromethane                 75-10-5      CH2F2          nonlinear MAPE=  38.92% bias= +38.92%
+  10. Propionic acid                  79-09-4      C3H6O2         nonlinear MAPE=  36.66% bias= -36.66%
+  11. Diisopropyl ketone              565-80-0     C7H14O         nonlinear MAPE=  31.57% bias= -31.57%
+  12. Fluoroethane                    353-36-6     C2H5F          nonlinear MAPE=  31.32% bias= +31.32%
+  13. Decanoic acid                   334-48-5     C10H20O2       nonlinear MAPE=  30.50% bias= -30.50%
+  14. Furan                           110-00-9     C4H4O          nonlinear MAPE=  29.90% bias= -29.90%
+  15. Carbon tetrachloride            56-23-5      CCl4           nonlinear MAPE=  29.48% bias= -29.44%
+  16. Ethyl propionate                105-37-3     C5H10O2        nonlinear MAPE=  27.97% bias= +27.94%
+  17. Ethylisopropyl ketone           565-69-5     C6H12O         nonlinear MAPE=  27.93% bias= -27.93%
+  18. Butyric acid                    107-92-6     C4H8O2         nonlinear MAPE=  27.91% bias= -27.91%
+  19. Nonanoic acid                   112-05-0     C9H18O2        nonlinear MAPE=  27.64% bias= -27.64%
+  20. 2-Pentyne                       627-21-4     C5H8           nonlinear MAPE=  26.27% bias= -26.27%
+
+EXCLUSIONS
+     1 ValueError: molecular formula unavailable or unparseable

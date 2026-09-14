@@ -1,0 +1,52 @@
+Gas acentric_factor thermal-conductivity benchmark vs Perry 9th Table 2-145
+coverage: 345/345 compounds, 355/355 curves, 35855 sampled states
+inputs: Perry vapor viscosity/MW/Tc/omega; canonical local pfdsim ideal-gas Cp; Cv=Cp-R
+relation: 3.75*S*(R/Cv), with A=Cv/R-1.5, B=0.7862-0.7109*omega+1.3168*omega^2, C=2+10.5*Tr^2
+sampling: uniform inclusive points over the common declared source range
+
+OVERALL POINT-WEIGHTED
+  n= 35855 comps=345 MAPE=  12.46% MdAPE=   8.12% P95=  38.17% bias=  -3.32% within20= 81.8%
+  P90=29.52% max=138.33% within10=58.4% within30=90.4%
+
+COMPOUND-EQUAL DISTRIBUTION OF CURVE MAPE
+  n=345 mean=11.64% median=8.08% P90=23.74% P95=37.35% max=113.27%
+
+BY MOLECULAR GEOMETRY
+  linear       n=  1818 comps= 18 MAPE=  10.45% MdAPE=   6.72% P95=  61.27% bias=  -1.81% within20= 88.6%
+  monatomic    n=   303 comps=  3 MAPE=   0.66% MdAPE=   0.66% P95=   1.26% bias=  -0.23% within20=100.0%
+  nonlinear    n= 33633 comps=323 MAPE=  12.71% MdAPE=   8.37% P95=  38.26% bias=  -3.43% within20= 81.3%
+  unclassified n=   101 comps=  1 MAPE=   1.39% MdAPE=   1.06% P95=   3.24% bias=  -1.22% within20=100.0%
+
+BY REDUCED TEMPERATURE Tr
+  0.5-0.75     n=  3283 comps=326 MAPE=  12.56% MdAPE=   5.81% P95=  68.02% bias=  -4.10% within20= 86.2%
+  0.75-1       n=  8968 comps=339 MAPE=  13.31% MdAPE=   7.59% P95=  44.22% bias=  -5.68% within20= 78.4%
+  1-1.25       n=  8205 comps=336 MAPE=  12.04% MdAPE=   8.43% P95=  37.61% bias=  -3.75% within20= 82.4%
+  1.25-1.5     n=  6805 comps=325 MAPE=  12.28% MdAPE=   9.47% P95=  37.40% bias=  -4.35% within20= 82.2%
+  1.5-2        n=  6115 comps=263 MAPE=  12.33% MdAPE=   9.67% P95=  32.32% bias=  -1.20% within20= 82.2%
+  <0.5         n=    44 comps= 13 MAPE=  13.00% MdAPE=  10.02% P95=  27.88% bias=  +6.50% within20= 70.5%
+  >=2          n=  2435 comps= 87 MAPE=  11.46% MdAPE=   5.54% P95=  59.24% bias=  +5.26% within20= 85.2%
+
+WORST 20 COMPOUNDS BY CURVE MAPE
+   1. Oxalic acid                     144-62-7     C2H2O4         nonlinear MAPE= 113.27% bias=+113.27%
+   2. 1,2-Difluoroethane              624-72-6     C2H4F2         nonlinear MAPE=  83.39% bias= +83.39%
+   3. 1,4-Dioxane                     123-91-1     C4H8O2         nonlinear MAPE=  75.55% bias= +75.55%
+   4. Fluoromethane                   593-53-3     CH3F           nonlinear MAPE=  69.13% bias= +69.07%
+   5. Hydrogen cyanide                74-90-8      CHN            linear    MAPE=  62.55% bias= -62.55%
+   6. Difluoromethane                 75-10-5      CH2F2          nonlinear MAPE=  51.71% bias= +51.71%
+   7. 1,2-Propylene glycol            57-55-6      C3H8O2         nonlinear MAPE=  49.39% bias= -49.39%
+   8. Formic acid                     64-18-6      CH2O2          nonlinear MAPE=  48.74% bias= -48.74%
+   9. Acetic acid                     64-19-7      C2H4O2         nonlinear MAPE=  47.47% bias= -47.47%
+  10. Decanoic acid                   334-48-5     C10H20O2       nonlinear MAPE=  46.31% bias= -46.31%
+  11. Fluoroethane                    353-36-6     C2H5F          nonlinear MAPE=  45.60% bias= +45.60%
+  12. Ethyl propionate                105-37-3     C5H10O2        nonlinear MAPE=  44.02% bias= +44.02%
+  13. Nonanoic acid                   112-05-0     C9H18O2        nonlinear MAPE=  41.72% bias= -41.72%
+  14. Propionic acid                  79-09-4      C3H6O2         nonlinear MAPE=  38.97% bias= -38.97%
+  15. Quinone                         106-51-4     C6H4O2         nonlinear MAPE=  38.84% bias= -38.84%
+  16. Eicosane                        112-95-8     C20H42         nonlinear MAPE=  38.52% bias= -38.52%
+  17. Diethanol amine                 111-42-2     C4H11NO2       nonlinear MAPE=  38.49% bias= -38.49%
+  18. Octanoic acid                   124-07-2     C8H16O2        nonlinear MAPE=  37.62% bias= -37.62%
+  19. Heptanoic acid                  111-14-8     C7H14O2        nonlinear MAPE=  36.29% bias= -36.29%
+  20. Terephthalic acid               100-21-0     C8H6O4         nonlinear MAPE=  36.19% bias= -36.19%
+
+EXCLUSIONS
+  none

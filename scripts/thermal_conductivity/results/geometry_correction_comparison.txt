@@ -1,0 +1,39 @@
+Compound-held-out functional-group correction experiment
+baseline: geometry_dependent
+coverage: 343 compounds, 18003 sampled states
+validation: 5-fold outer / 4-fold inner by whole CAS compound
+features: 14 groups with at least 8 compounds
+targeted acid/fluorine features: 14 with at least 3 compounds
+
+HELD-OUT PERFORMANCE
+  uncorrected baseline                       MAPE= 12.46% removed= +0.00 points ( +0.0%) P95= 34.05% bias= -9.66%
+  log_inverse_T_acid_detailed_presence       MAPE=  7.45% removed= +5.01 points (+40.2%) P95= 23.92% bias= -0.09%
+  log_inverse_T_acid_detailed_pruned_presence MAPE=  7.46% removed= +5.00 points (+40.1%) P95= 25.13% bias= -0.72%
+  log_inverse_T_acid_detailed_pruned_hc_split_presence MAPE=  7.52% removed= +4.94 points (+39.7%) P95= 24.70% bias= -1.57%
+  log_inverse_Tr_acid_detailed_presence      MAPE=  7.65% removed= +4.80 points (+38.5%) P95= 24.20% bias= -0.30%
+  log_linear_Tr_acid_detailed_presence       MAPE=  7.82% removed= +4.63 points (+37.2%) P95= 25.20% bias= -0.22%
+  log_inverse_T_presence                     MAPE=  8.38% removed= +4.08 points (+32.7%) P95= 26.03% bias= -1.77%
+  log_inverse_Tr_presence                    MAPE=  8.54% removed= +3.91 points (+31.4%) P95= 26.23% bias= -2.21%
+  log_constant_acid_detailed_presence        MAPE=  8.55% removed= +3.91 points (+31.4%) P95= 27.76% bias= -0.17%
+  log_linear_Tr_presence                     MAPE=  8.56% removed= +3.89 points (+31.2%) P95= 25.52% bias= -2.06%
+  log_constant_presence                      MAPE=  9.03% removed= +3.43 points (+27.5%) P95= 26.83% bias= -2.31%
+
+SELECTED MODEL GROUP EFFECTS: log_inverse_T_acid_detailed_pruned_presence
+  acid_straight_short_C1_C3 n=  3 MAPE  46.43% ->  23.98%  bias -46.43% ->  -1.93%
+  acid_straight_long_C7_plus n=  4 MAPE  24.48% ->   5.50%  bias -24.48% ->  +0.57%
+  acid_straight_medium_C4_C6 n=  3 MAPE  24.53% ->   7.61%  bias -24.53% ->  -1.10%
+  ketone               n= 17 MAPE  20.73% ->  10.39%  bias -19.78% ->  +0.10%
+  hydrocarbon_only     n= 96 MAPE  13.97% ->   4.83%  bias -13.70% ->  -0.17%
+  alkyne               n= 16 MAPE  13.17% ->   4.64%  bias -12.39% ->  -0.03%
+  alkene               n= 35 MAPE  13.07% ->   6.33%  bias -12.84% ->  +0.31%
+  aldehyde             n= 17 MAPE  15.31% ->   9.39%  bias -14.55% ->  +0.06%
+  chlorine             n= 21 MAPE  13.95% ->   8.38%  bias -13.58% ->  +0.56%
+  aromatic_ring        n= 49 MAPE   9.44% ->   4.87%  bias  -9.40% ->  +0.36%
+  aliphatic_ring       n= 30 MAPE  14.03% ->   9.46%  bias -10.09% ->  +1.56%
+  acid_unsaturated_or_aromatic_monocarboxylic n=  3 MAPE   4.60% ->   0.76%  bias  -4.60% ->  +0.02%
+  alcohol              n= 30 MAPE  10.62% ->   8.07%  bias  -9.48% ->  +0.36%
+  thiol                n= 16 MAPE   3.66% ->   1.72%  bias  -3.63% ->  -0.31%
+
+EXCLUSIONS
+     1 ValueError: molecular formula unavailable or unparseable
+     1 explicitly excluded CAS 144-62-7

@@ -1,0 +1,31 @@
+Compound-held-out functional-group correction experiment
+baseline: acentric_factor
+coverage: 344 compounds, 18054 sampled states
+validation: 5-fold outer / 4-fold inner by whole CAS compound
+features: 14 groups with at least 8 compounds
+targeted acid/fluorine features: 14 with at least 3 compounds
+
+HELD-OUT PERFORMANCE
+  uncorrected baseline                       MAPE= 12.19% removed= +0.00 points ( +0.0%) P95= 37.64% bias= -3.66%
+  log_quadratic_Tr_presence                  MAPE= 10.38% removed= +1.81 points (+14.8%) P95= 33.20% bias= +0.20%
+  log_linear_Tr_presence                     MAPE= 10.40% removed= +1.80 points (+14.7%) P95= 33.21% bias= +0.05%
+  log_constant_presence                      MAPE= 10.60% removed= +1.59 points (+13.0%) P95= 32.32% bias= +0.01%
+
+SELECTED MODEL GROUP EFFECTS: log_quadratic_Tr_presence
+  carboxylic_acid      n= 21 MAPE  31.95% ->  21.09%  bias -31.49% -> -10.61%
+  alcohol              n= 30 MAPE  16.00% ->  10.65%  bias -13.58% ->  -2.46%
+  thiol                n= 16 MAPE   8.98% ->   4.90%  bias  +8.08% ->  +1.60%
+  ether                n= 23 MAPE  12.32% ->   9.12%  bias  +9.94% ->  +2.90%
+  ketone               n= 17 MAPE  13.87% ->  10.82%  bias -10.26% ->  -1.54%
+  aldehyde             n= 17 MAPE  13.62% ->  11.38%  bias  -5.92% ->  -2.59%
+  amine                n= 13 MAPE  10.48% ->   8.58%  bias  +3.28% ->  +1.88%
+  alkyne               n= 16 MAPE   5.33% ->   5.13%  bias  -3.19% ->  +0.20%
+  hydrocarbon_only     n= 96 MAPE   7.11% ->   7.36%  bias  -4.86% ->  -0.89%
+  aromatic_ring        n= 49 MAPE   8.56% ->   8.94%  bias  -2.57% ->  +0.89%
+  ester                n= 20 MAPE  11.57% ->  12.18%  bias  -0.33% ->  +1.24%
+  chlorine             n= 21 MAPE   8.15% ->   8.80%  bias  -4.51% ->  -0.11%
+  aliphatic_ring       n= 30 MAPE  10.50% ->  11.48%  bias  -0.31% ->  +2.27%
+  alkene               n= 35 MAPE   6.54% ->   8.58%  bias  -2.97% ->  +1.40%
+
+EXCLUSIONS
+     1 explicitly excluded CAS 144-62-7

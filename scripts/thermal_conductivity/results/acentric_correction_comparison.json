@@ -1,0 +1,492 @@
+{
+  "baseline": {
+    "compound_equal_mean_curve_mape_percent": 11.355814123445757,
+    "compound_equal_median_curve_mape_percent": 7.96778281236013,
+    "compounds": 344,
+    "mape_percent": 12.193431281838135,
+    "maximum_ape_percent": 138.32534433257794,
+    "mean_signed_error_percent": -3.6595914374745955,
+    "median_ape_percent": 8.09913490211115,
+    "p90_ape_percent": 29.22155417702441,
+    "p95_ape_percent": 37.63765924171745,
+    "points": 18054
+  },
+  "baseline_method": "acentric_factor",
+  "coverage": {
+    "compounds": 344,
+    "exclusions": {
+      "explicitly excluded CAS 144-62-7": 1
+    },
+    "explicitly_excluded_cas": [
+      "144-62-7"
+    ],
+    "points_per_curve": 51,
+    "sampled_states": 18054
+  },
+  "cross_validation": {
+    "fold_unit": "CAS compound",
+    "inner_folds": 4,
+    "outer_folds": 5,
+    "ridge_alphas": [
+      0.0,
+      0.1,
+      1.0,
+      10.0,
+      100.0,
+      1000.0,
+      10000.0
+    ],
+    "training_weighting": "equal total weight per compound"
+  },
+  "experiment": "compound_held_out_functional_group_conductivity_corrections",
+  "features": [
+    "alcohol",
+    "aldehyde",
+    "aliphatic_ring",
+    "alkene",
+    "alkyne",
+    "amine",
+    "aromatic_ring",
+    "carboxylic_acid",
+    "chlorine",
+    "ester",
+    "ether",
+    "hydrocarbon_only",
+    "ketone",
+    "thiol"
+  ],
+  "features_by_model": {
+    "log_constant_presence": [
+      "alcohol",
+      "aldehyde",
+      "aliphatic_ring",
+      "alkene",
+      "alkyne",
+      "amine",
+      "aromatic_ring",
+      "carboxylic_acid",
+      "chlorine",
+      "ester",
+      "ether",
+      "hydrocarbon_only",
+      "ketone",
+      "thiol"
+    ],
+    "log_linear_Tr_presence": [
+      "alcohol",
+      "aldehyde",
+      "aliphatic_ring",
+      "alkene",
+      "alkyne",
+      "amine",
+      "aromatic_ring",
+      "carboxylic_acid",
+      "chlorine",
+      "ester",
+      "ether",
+      "hydrocarbon_only",
+      "ketone",
+      "thiol"
+    ],
+    "log_quadratic_Tr_presence": [
+      "alcohol",
+      "aldehyde",
+      "aliphatic_ring",
+      "alkene",
+      "alkyne",
+      "amine",
+      "aromatic_ring",
+      "carboxylic_acid",
+      "chlorine",
+      "ester",
+      "ether",
+      "hydrocarbon_only",
+      "ketone",
+      "thiol"
+    ]
+  },
+  "final_full_data_fit": {
+    "alpha_selection_folds": 5,
+    "basis": "x = 1",
+    "coefficients": {
+      "alcohol": {
+        "basis_coefficients": [
+          0.10618290403746454,
+          0.07270396618173404,
+          0.15785436707389255
+        ]
+      },
+      "aldehyde": {
+        "basis_coefficients": [
+          0.004285588668469458,
+          -0.07275279401591163,
+          0.07728755188129662
+        ]
+      },
+      "aliphatic_ring": {
+        "basis_coefficients": [
+          -0.02798742674228454,
+          0.007034827842575316,
+          0.09971513374242026
+        ]
+      },
+      "alkene": {
+        "basis_coefficients": [
+          -0.017271422340991906,
+          0.004950301352451639,
+          0.017613183728123316
+        ]
+      },
+      "alkyne": {
+        "basis_coefficients": [
+          -0.0066450035925929634,
+          0.017278321785742887,
+          -0.03546364719127971
+        ]
+      },
+      "amine": {
+        "basis_coefficients": [
+          9.595002717872866e-05,
+          -0.05623439810476558,
+          -0.058649299856922806
+        ]
+      },
+      "aromatic_ring": {
+        "basis_coefficients": [
+          0.0008502582993118791,
+          -0.012169406764156605,
+          0.1250901283707855
+        ]
+      },
+      "carboxylic_acid": {
+        "basis_coefficients": [
+          0.2479172174262558,
+          -0.33204653277203855,
+          0.8628112488008224
+        ]
+      },
+      "chlorine": {
+        "basis_coefficients": [
+          0.03351698267991578,
+          0.04955242988182142,
+          -0.020795561518025016
+        ]
+      },
+      "ester": {
+        "basis_coefficients": [
+          -0.009915644220231988,
+          0.0708533619930695,
+          0.1190466616262475
+        ]
+      },
+      "ether": {
+        "basis_coefficients": [
+          -0.06173201525209689,
+          -0.024225074703433425,
+          0.0034029084095798627
+        ]
+      },
+      "hydrocarbon_only": {
+        "basis_coefficients": [
+          0.043269957163238795,
+          0.022535844644357303,
+          -0.00938799984673058
+        ]
+      },
+      "ketone": {
+        "basis_coefficients": [
+          0.061724503147573564,
+          0.21631286476051176,
+          0.09024338220721236
+        ]
+      },
+      "thiol": {
+        "basis_coefficients": [
+          -0.049008883205352655,
+          -0.06882607570136119,
+          -0.006191320676731358
+        ]
+      }
+    },
+    "direct_form": "log correction with constant group terms",
+    "feature_order": [
+      "alcohol",
+      "aldehyde",
+      "aliphatic_ring",
+      "alkene",
+      "alkyne",
+      "amine",
+      "aromatic_ring",
+      "carboxylic_acid",
+      "chlorine",
+      "ester",
+      "ether",
+      "hydrocarbon_only",
+      "ketone",
+      "thiol"
+    ],
+    "model": "log_quadratic_Tr_presence",
+    "resubstitution_metrics_not_for_validation": {
+      "compound_equal_mean_curve_mape_percent": 9.534863875282014,
+      "compound_equal_median_curve_mape_percent": 6.256663219036092,
+      "compounds": 344,
+      "mape_percent": 9.879735721791032,
+      "maximum_ape_percent": 138.32534433257794,
+      "mean_signed_error_percent": 0.3437357820555887,
+      "median_ape_percent": 6.230380318558016,
+      "p90_ape_percent": 22.071671412358747,
+      "p95_ape_percent": 32.32950108159832,
+      "points": 18054
+    },
+    "ridge_alpha": 100.0,
+    "training_weighting": "equal total weight per CAS compound"
+  },
+  "lowest_mape_model": "log_quadratic_Tr_presence",
+  "minimum_group_compounds": 8,
+  "minimum_targeted_group_compounds": 3,
+  "models": {
+    "log_constant_presence": {
+      "compound_equal_mean_curve_mape_percent": 10.19046013215784,
+      "compound_equal_median_curve_mape_percent": 6.998982785607029,
+      "compounds": 344,
+      "mape_percent": 10.604811622811937,
+      "mape_points_removed": 1.5886196590261985,
+      "maximum_ape_percent": 138.32534433257794,
+      "mean_signed_error_percent": 0.013983848027577465,
+      "median_ape_percent": 6.941430804145771,
+      "p90_ape_percent": 22.99228391170163,
+      "p95_ape_percent": 32.322864799952555,
+      "points": 18054,
+      "selected_ridge_alphas": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ]
+    },
+    "log_linear_Tr_presence": {
+      "compound_equal_mean_curve_mape_percent": 9.969353676567408,
+      "compound_equal_median_curve_mape_percent": 6.593762372246291,
+      "compounds": 344,
+      "mape_percent": 10.397121837744452,
+      "mape_points_removed": 1.7963094440936835,
+      "maximum_ape_percent": 138.32534433257794,
+      "mean_signed_error_percent": 0.04779411843522273,
+      "median_ape_percent": 6.621180936853143,
+      "p90_ape_percent": 22.914660261045352,
+      "p95_ape_percent": 33.20962250287873,
+      "points": 18054,
+      "selected_ridge_alphas": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ]
+    },
+    "log_quadratic_Tr_presence": {
+      "compound_equal_mean_curve_mape_percent": 9.996270608086729,
+      "compound_equal_median_curve_mape_percent": 6.665778242675801,
+      "compounds": 344,
+      "mape_percent": 10.384613266490108,
+      "mape_points_removed": 1.8088180153480273,
+      "maximum_ape_percent": 138.32534433257794,
+      "mean_signed_error_percent": 0.20020583123476562,
+      "median_ape_percent": 6.601503714704398,
+      "p90_ape_percent": 22.91417593008535,
+      "p95_ape_percent": 33.20431832788893,
+      "points": 18054,
+      "selected_ridge_alphas": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ]
+    }
+  },
+  "pruning_rule": "fixed zero after less than 15% relative class-MAPE improvement in the preceding compound-held-out experiment",
+  "reproducibility": {
+    "argv": [
+      "scripts/thermal_conductivity/experiment_functional_group_corrections.py",
+      "--baseline",
+      "acentric_factor",
+      "--model",
+      "log_constant_presence",
+      "--model",
+      "log_linear_Tr_presence",
+      "--model",
+      "log_quadratic_Tr_presence",
+      "--output-json",
+      "scripts/thermal_conductivity/results/acentric_correction_comparison.json"
+    ],
+    "inputs": {
+      "ideal_gas_heat_capacity": {
+        "path": "data/ideal_gas_heat_capacity.sqlite",
+        "sha256": "2ccb92c3057c224f85907de80dad02a924a9c439232e45c9b9f6a5a9e4d0c7b6"
+      },
+      "perry_properties": {
+        "path": "data/perry_properties.json",
+        "sha256": "8bdcacd8e4a253a1e7f866cfddfd4ed70e52a5162fe7b7f8297f701b3c12ff17"
+      },
+      "thermal_conductivity": {
+        "path": "data/perry_thermal_conductivity.json",
+        "sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053"
+      },
+      "uv_lock": {
+        "path": "uv.lock",
+        "sha256": "d590e91c5ec55bbbd9ab694f850e8025a6b68009333c0a20b433019cbe8869d4"
+      }
+    },
+    "machine": "x86_64",
+    "packages": {
+      "chemicals": "1.5.2",
+      "numpy": "2.5.2",
+      "rdkit": "2026.3.5"
+    },
+    "platform": "Linux-7.0.0-29-generic-x86_64-with-glibc2.43",
+    "python": "3.14.4",
+    "scripts": {
+      "baseline_benchmark": {
+        "path": "scripts/thermal_conductivity/benchmark_gas_viscosity_cv_relation.py",
+        "sha256": "c011c9c8c48309bde2ae4d0fed75875ee5221711073a106b640749213049d758"
+      },
+      "experiment": {
+        "path": "scripts/thermal_conductivity/experiment_functional_group_corrections.py",
+        "sha256": "9321fe803666575b409a9b585d8f473c91a43886489bcd6197d60dfea8897059"
+      },
+      "reproduce": {
+        "path": "scripts/thermal_conductivity/reproduce.sh",
+        "sha256": "2c52b8a34ef881c30bbc95fc83942b2e4c8aa6229bee3f66766d01189cf3a359"
+      }
+    }
+  },
+  "schema_version": 2,
+  "selected_model": "log_quadratic_Tr_presence",
+  "selected_model_group_diagnostics": {
+    "alcohol": {
+      "baseline_bias_percent": -13.58254918989352,
+      "baseline_mape_percent": 16.00423362563724,
+      "compounds": 30,
+      "corrected_bias_percent": -2.4578237560703706,
+      "corrected_mape_percent": 10.649782972416798
+    },
+    "aldehyde": {
+      "baseline_bias_percent": -5.920138141585766,
+      "baseline_mape_percent": 13.616323904804942,
+      "compounds": 17,
+      "corrected_bias_percent": -2.590266450294999,
+      "corrected_mape_percent": 11.382983256521264
+    },
+    "aliphatic_ring": {
+      "baseline_bias_percent": -0.3059306814071355,
+      "baseline_mape_percent": 10.500771226919746,
+      "compounds": 30,
+      "corrected_bias_percent": 2.2674959734627107,
+      "corrected_mape_percent": 11.481240861606262
+    },
+    "alkene": {
+      "baseline_bias_percent": -2.9749749059149395,
+      "baseline_mape_percent": 6.5392066563865185,
+      "compounds": 35,
+      "corrected_bias_percent": 1.398367049589711,
+      "corrected_mape_percent": 8.578210714210654
+    },
+    "alkyne": {
+      "baseline_bias_percent": -3.1851179870699533,
+      "baseline_mape_percent": 5.331394899681198,
+      "compounds": 16,
+      "corrected_bias_percent": 0.20015202642671093,
+      "corrected_mape_percent": 5.133413507966619
+    },
+    "amine": {
+      "baseline_bias_percent": 3.275646391223464,
+      "baseline_mape_percent": 10.481835172018085,
+      "compounds": 13,
+      "corrected_bias_percent": 1.8817839647346353,
+      "corrected_mape_percent": 8.58269489133317
+    },
+    "aromatic_ring": {
+      "baseline_bias_percent": -2.565991924120657,
+      "baseline_mape_percent": 8.558072679551604,
+      "compounds": 49,
+      "corrected_bias_percent": 0.887077257184958,
+      "corrected_mape_percent": 8.943620839148567
+    },
+    "carboxylic_acid": {
+      "baseline_bias_percent": -31.494163882645733,
+      "baseline_mape_percent": 31.952167374353103,
+      "compounds": 21,
+      "corrected_bias_percent": -10.61109815332276,
+      "corrected_mape_percent": 21.093298121044583
+    },
+    "chlorine": {
+      "baseline_bias_percent": -4.505610569186972,
+      "baseline_mape_percent": 8.153859578614421,
+      "compounds": 21,
+      "corrected_bias_percent": -0.10881543037707153,
+      "corrected_mape_percent": 8.79935933632296
+    },
+    "ester": {
+      "baseline_bias_percent": -0.33479250697921464,
+      "baseline_mape_percent": 11.567916833334925,
+      "compounds": 20,
+      "corrected_bias_percent": 1.2442135869152704,
+      "corrected_mape_percent": 12.18036699302475
+    },
+    "ether": {
+      "baseline_bias_percent": 9.944066395709829,
+      "baseline_mape_percent": 12.32172489058792,
+      "compounds": 23,
+      "corrected_bias_percent": 2.901742403297434,
+      "corrected_mape_percent": 9.12015677193451
+    },
+    "hydrocarbon_only": {
+      "baseline_bias_percent": -4.860373322639618,
+      "baseline_mape_percent": 7.107920385832351,
+      "compounds": 96,
+      "corrected_bias_percent": -0.8913114164519698,
+      "corrected_mape_percent": 7.35981457171323
+    },
+    "ketone": {
+      "baseline_bias_percent": -10.255646465432795,
+      "baseline_mape_percent": 13.870070002790264,
+      "compounds": 17,
+      "corrected_bias_percent": -1.5353870233430702,
+      "corrected_mape_percent": 10.824250727588959
+    },
+    "thiol": {
+      "baseline_bias_percent": 8.077697808231223,
+      "baseline_mape_percent": 8.976371765278966,
+      "compounds": 16,
+      "corrected_bias_percent": 1.602413926923095,
+      "corrected_mape_percent": 4.897633361921954
+    }
+  },
+  "targeted_features": [
+    "acid_branched_saturated_monocarboxylic",
+    "acid_dicarboxylic",
+    "acid_straight_long_C7_plus",
+    "acid_straight_medium_C4_C6",
+    "acid_straight_saturated_monocarboxylic",
+    "acid_straight_short_C1_C3",
+    "acid_unsaturated_or_aromatic_monocarboxylic",
+    "fluoro_organic_monofluoro",
+    "fluoro_organic_polyfluoro",
+    "hc_acyclic_alkane",
+    "hc_alkene",
+    "hc_alkyne",
+    "hc_aromatic",
+    "hc_saturated_cyclic"
+  ],
+  "zeroed_low_improvement_features": [
+    "acid_branched_saturated_monocarboxylic",
+    "acid_dicarboxylic",
+    "amine",
+    "bromine",
+    "ester",
+    "ether",
+    "fluorine"
+  ]
+}
