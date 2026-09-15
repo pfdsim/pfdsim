@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "notes": "Conductivity observations supplied by PFDSim on 2026-09-14. Original reported values are retained; the benchmark performs the unit conversions.",
+  "compounds": [
+    {
+      "cas": "127-19-5",
+      "name": "N,N-Dimethylacetamide",
+      "smiles": "CC(=O)N(C)C",
+      "target_group": 72,
+      "normal_boiling_point_K": 438.2,
+      "normal_boiling_point_source": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C127195&Mask=187&Units=SI",
+      "conductivity_source": "Eastman product catalog; values supplied by PFDSim; exact catalog URL unavailable",
+      "temperature_unit": "degC",
+      "conductivity_unit": "mW/(m K)",
+      "observations": [
+        [20.0, 169.2],
+        [40.0, 161.2],
+        [60.0, 153.3]
+      ]
+    },
+    {
+      "cas": "872-50-4",
+      "name": "N-Methyl-2-pyrrolidone",
+      "smiles": "CN1CCCC1=O",
+      "target_group": 72,
+      "normal_boiling_point_K": 475.15,
+      "normal_boiling_point_source": "https://pubchem.ncbi.nlm.nih.gov/compound/NMP#section=Boiling-Point",
+      "conductivity_source": "Eastman product catalog; value supplied by PFDSim; exact catalog URL unavailable",
+      "temperature_unit": "degC",
+      "conductivity_unit": "mW/(m K)",
+      "observations": [
+        [20.0, 180.0]
+      ]
+    },
+    {
+      "cas": "78-79-5",
+      "name": "Isoprene",
+      "smiles": "CC(=C)C=C",
+      "target_group": 33,
+      "normal_boiling_point_K": 307.3,
+      "normal_boiling_point_source": "https://cameochemicals.noaa.gov/chris/IPR.pdf",
+      "conductivity_source": "https://cameochemicals.noaa.gov/chris/IPR.pdf, section 9.22",
+      "temperature_unit": "degF",
+      "conductivity_unit": "BTU in/(hr ft^2 degF)",
+      "observations": [
+        [-180.0, 1.225],
+        [-170.0, 1.210],
+        [-160.0, 1.195],
+        [-150.0, 1.179],
+        [-140.0, 1.164],
+        [-130.0, 1.148],
+        [-120.0, 1.133],
+        [-110.0, 1.117],
+        [-100.0, 1.102],
+        [-90.0, 1.087],
+        [-80.0, 1.071],
+        [-70.0, 1.056],
+        [-60.0, 1.040],
+        [-50.0, 1.025],
+        [-40.0, 1.010],
+        [-30.0, 0.994],
+        [-20.0, 0.979],
+        [-10.0, 0.963],
+        [0.0, 0.948],
+        [10.0, 0.933],
+        [20.0, 0.917],
+        [30.0, 0.902],
+        [40.0, 0.886],
+        [50.0, 0.871],
+        [60.0, 0.856],
+        [70.0, 0.840]
+      ]
+    },
+    {
+      "cas": "111-49-9",
+      "name": "Azepane",
+      "smiles": "C1CCCNCC1",
+      "target_group": 93,
+      "normal_boiling_point_K": 411.2,
+      "normal_boiling_point_source": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111499&Mask=2FF&Units=SI",
+      "conductivity_source": "Inaccessible literature table; values supplied by PFDSim",
+      "temperature_unit": "K",
+      "conductivity_unit": "mW/(m K)",
+      "observations": [
+        [273.15, 141.0],
+        [293.15, 137.0],
+        [313.15, 131.0],
+        [333.15, 126.0]
+      ]
+    }
+  ]
+}

@@ -7,22 +7,24 @@ This standalone production model implements the final relation developed in:
 
 The complete investigation, fitted coefficients, validation results, and
 reproduction command are documented in
-``scripts/thermal_conductivity/README.md``. The model is intentionally not
-registered with the property resolver yet. Production coefficient literals are
-rounded to five significant figures; the canonical artifact retains full fit
-precision.
+``scripts/thermal_conductivity/README.md``. The property resolver uses it only
+as a dilute-vapor fallback after supplied and Perry correlations. Production
+coefficient literals are rounded to five significant figures; the canonical
+artifact retains full fit precision.
 
 Inputs are resolved elsewhere: temperature [K], dilute-gas viscosity [Pa*s],
 ideal-gas Cv [J/(mol*K)], molecular weight [g/mol], critical temperature [K],
 an explicit molecular geometry class, molecular formula, optional CAS number,
-and one neutral connected SMILES. The result is thermal conductivity in
-W/(m*K). Fitted group corrections are restricted to pfdsim's strict
-molecular-organic domain; inorganics receive the unmodified base result.
+and a neutral connected SMILES for molecules requiring structural group
+classification. The result is thermal conductivity in W/(m*K). Fitted group
+corrections are restricted to pfdsim's strict molecular-organic domain;
+inorganics receive the unmodified base result.
 """
 
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Mapping
@@ -183,6 +185,59 @@ def _validated_molecule(smiles: str) -> Chem.Mol:
     return molecule
 
 
+def _element_counts(molecule: Chem.Mol) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for atom in molecule.GetAtoms():
+        element = atom.GetSymbol()
+        counts[element] = counts.get(element, 0) + 1
+    return counts
+
+
+def _hydrogen_complete_for_formula(
+    molecule: Chem.Mol,
+    formula_counts: Mapping[str, int] | None,
+) -> Chem.Mol:
+    complete = Chem.AddHs(molecule)
+    if _element_counts(complete) != formula_counts:
+        raise PFDSimModifiedStielThodosError(
+            "Molecular formula and structure have different element counts"
+        )
+    return complete
+
+
+def classify_molecular_geometry(formula: str, smiles: str = "") -> tuple[str, str]:
+    """Classify geometry from formula and hydrogen-complete molecular topology."""
+    normalized_formula = re.sub(r"D(?=\d|[A-Z]|$)", "H", str(formula or ""))
+    formula_counts = parse_formula_counts(normalized_formula)
+    if not formula_counts:
+        raise PFDSimModifiedStielThodosError(
+            "Molecular formula is unavailable or invalid"
+        )
+    atom_count = sum(formula_counts.values())
+    if atom_count == 1:
+        return "monatomic", "formula_atom_count"
+    if atom_count == 2:
+        return "linear", "formula_atom_count"
+
+    molecule = _hydrogen_complete_for_formula(
+        _validated_molecule(smiles), formula_counts
+    )
+    degrees = [atom.GetDegree() for atom in molecule.GetAtoms()]
+    linear = (
+        max(degrees) <= 2
+        and sum(degree == 1 for degree in degrees) == 2
+        and all(
+            atom.GetHybridization() == Chem.HybridizationType.SP
+            for atom in molecule.GetAtoms()
+            if atom.GetDegree() == 2
+        )
+    )
+    return (
+        "linear" if linear else "nonlinear",
+        "rdkit_hydrogen_complete_topology",
+    )
+
+
 def _has_match(molecule: Chem.Mol, name: str) -> bool:
     return molecule.HasSubstructMatch(_PATTERNS[name])
 
@@ -240,14 +295,7 @@ def _correction_profile(
     if not formula_identity.is_organic:
         return (), False, formula_identity.reason
     molecule = _validated_molecule(smiles)
-    structure_counts: dict[str, int] = {}
-    for atom in Chem.AddHs(molecule).GetAtoms():
-        element = atom.GetSymbol()
-        structure_counts[element] = structure_counts.get(element, 0) + 1
-    if structure_counts != parse_formula_counts(formula_text):
-        raise PFDSimModifiedStielThodosError(
-            "Organic formula and molecular structure have different element counts"
-        )
+    _hydrogen_complete_for_formula(molecule, parse_formula_counts(formula_text))
     identity = classify_strict_molecular_organic(
         cas=cas,
         formula=formula_text,
@@ -379,6 +427,7 @@ __all__ = [
     "GroupCorrection",
     "PFDSimModifiedStielThodosError",
     "PFDSimModifiedStielThodosEvaluation",
+    "classify_molecular_geometry",
     "correction_groups",
     "evaluate_pfdsim_modified_stiel_thodos",
 ]

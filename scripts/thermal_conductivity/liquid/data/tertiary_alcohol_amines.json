@@ -1,0 +1,386 @@
+[ 
+ {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-propylamine",
+    "temperature_K": 223.15,
+    "k_W_m_K": 0.1376
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-propylamine",
+    "temperature_K": 273.15,
+    "k_W_m_K": 0.1197
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-propylamine",
+    "temperature_K": 273.15,
+    "k_W_m_K": 0.1212
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-propylamine",
+    "temperature_K": 323.15,
+    "k_W_m_K": 0.11209999999999999
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-propylamine",
+    "temperature_K": 373.15,
+    "k_W_m_K": 0.10740000000000001
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-propylamine",
+    "temperature_K": 398.15,
+    "k_W_m_K": 0.1005
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-butylamine",
+    "temperature_K": 223.15,
+    "k_W_m_K": 0.1313
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-butylamine",
+    "temperature_K": 273.15,
+    "k_W_m_K": 0.1232
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-butylamine",
+    "temperature_K": 298.15,
+    "k_W_m_K": 0.1202
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-butylamine",
+    "temperature_K": 323.15,
+    "k_W_m_K": 0.1173
+  },
+  {
+    "source": "Jamieson & Cartwright (1980)",
+    "chemical": "tri-n-butylamine",
+    "temperature_K": 423.15,
+    "k_W_m_K": 0.1028
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 297.8,
+    "k_W_m_K": 0.2399
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 328.1,
+    "k_W_m_K": 0.2357
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 356.3,
+    "k_W_m_K": 0.2329
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 382.0,
+    "k_W_m_K": 0.228
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 297.9,
+    "k_W_m_K": 0.2401
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 352.8,
+    "k_W_m_K": 0.2334
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 383.3,
+    "k_W_m_K": 0.2298
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 411.3,
+    "k_W_m_K": 0.2262
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 430.4,
+    "k_W_m_K": 0.2242
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "monoethanolamine",
+    "temperature_K": 447.1,
+    "k_W_m_K": 0.2204
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 297.6,
+    "k_W_m_K": 0.1357
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 298.2,
+    "k_W_m_K": 0.1346
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 324.5,
+    "k_W_m_K": 0.1302
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 329.5,
+    "k_W_m_K": 0.1305
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 353.6,
+    "k_W_m_K": 0.1263
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 356.1,
+    "k_W_m_K": 0.1266
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 378.9,
+    "k_W_m_K": 0.1226
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 388.9,
+    "k_W_m_K": 0.1219
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 412.1,
+    "k_W_m_K": 0.1165
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 425.1,
+    "k_W_m_K": 0.1156
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-dimethylethanolamine",
+    "temperature_K": 464.5,
+    "k_W_m_K": 0.1074
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-diethylethanolamine",
+    "temperature_K": 297.5,
+    "k_W_m_K": 0.14
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-diethylethanolamine",
+    "temperature_K": 325.8,
+    "k_W_m_K": 0.133
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-diethylethanolamine",
+    "temperature_K": 354.1,
+    "k_W_m_K": 0.1281
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-diethylethanolamine",
+    "temperature_K": 383.5,
+    "k_W_m_K": 0.1214
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-diethylethanolamine",
+    "temperature_K": 412.6,
+    "k_W_m_K": 0.115
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N,N-diethylethanolamine",
+    "temperature_K": 443.0,
+    "k_W_m_K": 0.1088
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "diethanolamine",
+    "temperature_K": 295.8,
+    "k_W_m_K": 0.2171
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "diethanolamine",
+    "temperature_K": 325.4,
+    "k_W_m_K": 0.2159
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "diethanolamine",
+    "temperature_K": 354.8,
+    "k_W_m_K": 0.2137
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "diethanolamine",
+    "temperature_K": 383.3,
+    "k_W_m_K": 0.2126
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "diethanolamine",
+    "temperature_K": 412.5,
+    "k_W_m_K": 0.2115
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "diethanolamine",
+    "temperature_K": 442.1,
+    "k_W_m_K": 0.208
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-methyldiethanolamine",
+    "temperature_K": 297.7,
+    "k_W_m_K": 0.1685
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-methyldiethanolamine",
+    "temperature_K": 325.0,
+    "k_W_m_K": 0.1676
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-methyldiethanolamine",
+    "temperature_K": 353.9,
+    "k_W_m_K": 0.1663
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-methyldiethanolamine",
+    "temperature_K": 381.1,
+    "k_W_m_K": 0.1653
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-methyldiethanolamine",
+    "temperature_K": 410.9,
+    "k_W_m_K": 0.1636
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-methyldiethanolamine",
+    "temperature_K": 440.2,
+    "k_W_m_K": 0.1613
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 297.1,
+    "k_W_m_K": 0.1666
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 300.8,
+    "k_W_m_K": 0.1655
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 333.5,
+    "k_W_m_K": 0.1628
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 365.8,
+    "k_W_m_K": 0.1597
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 394.8,
+    "k_W_m_K": 0.157
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 430.1,
+    "k_W_m_K": 0.1536
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "N-ethyldiethanolamine",
+    "temperature_K": 463.8,
+    "k_W_m_K": 0.1489
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 296.8,
+    "k_W_m_K": 0.1884
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 327.3,
+    "k_W_m_K": 0.1941
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 356.3,
+    "k_W_m_K": 0.1956
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 383.9,
+    "k_W_m_K": 0.1983
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 411.6,
+    "k_W_m_K": 0.2
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 440.2,
+    "k_W_m_K": 0.2005
+  },
+  {
+    "source": "DiGuilio, McGregor & Teja (1992)",
+    "chemical": "triethanolamine",
+    "temperature_K": 466.2,
+    "k_W_m_K": 0.2003
+  }
+]

@@ -1,0 +1,96 @@
+Revised Govender saturated-liquid conductivity benchmark vs Perry 9th Table 2-147
+Tb source: Perry normal point or vapor-pressure inversion
+Corrections: COOH, ordinary ketone, acyclic thioether, tertiary amine,
+             amine/alcohol, and nonaromatic 3-5 member rings
+
+DOMAIN: all
+  coverage: 259/343 compounds, 26159 sampled states
+  published same population: n= 26159 comps=259 MAPE=  13.04% MdAPE=   7.44% P95=  51.80% bias=  +4.86% within20= 82.8%
+  revised point-weighted:    n= 26159 comps=259 MAPE=   7.75% MdAPE=   4.92% P95=  24.93% bias=  -0.93% within20= 92.4%
+  revised compound-equal: n=259 MAPE=7.75% median=5.03% bias=-0.93%
+  WORST 20
+     1. 1,3-Butadiene                    106-99-0     MAPE=  81.51% bias= +81.51%
+     2. 1,2-Difluoroethane               624-72-6     MAPE=  52.65% bias= +52.65%
+     3. Bromomethane                     74-83-9      MAPE=  47.27% bias= +47.27%
+     4. N,N-Dimethyl formamide           68-12-2      MAPE=  40.82% bias= +40.82%
+     5. Acetamide                        60-35-5      MAPE=  33.98% bias= -33.98%
+     6. Methanol                         67-56-1      MAPE=  31.54% bias= +31.54%
+     7. Methyl amine                     74-89-5      MAPE=  27.08% bias= +27.08%
+     8. Ethylene                         74-85-1      MAPE=  26.89% bias= +26.89%
+     9. 1-Methylcyclohexanol             590-67-0     MAPE=  26.41% bias= -26.41%
+    10. 1,2,3,4-Tetrahydronaphthalene    119-64-2     MAPE=  25.89% bias= +25.89%
+    11. Nitromethane                     75-52-5      MAPE=  25.24% bias= -25.24%
+    12. Cyclohexanone                    108-94-1     MAPE=  24.87% bias= +24.87%
+    13. Ethylenediamine                  107-15-3     MAPE=  24.21% bias= +24.21%
+    14. 1-Methylcyclopentene             693-89-0     MAPE=  24.15% bias= -24.15%
+    15. Methyl tert-butyl ether          1634-04-4    MAPE=  21.88% bias= -21.88%
+    16. Methyl formate                   107-31-3     MAPE=  20.91% bias= -20.91%
+    17. Difluoromethane                  75-10-5      MAPE=  20.76% bias= -20.76%
+    18. trans-2-Butene                   624-64-6     MAPE=  20.39% bias= -20.39%
+    19. Chloromethane                    74-87-3      MAPE=  19.99% bias= +19.99%
+    20. Fluoroethane                     353-36-6     MAPE=  18.34% bias= +18.34%
+
+DOMAIN: screened
+  coverage: 219/343 compounds, 22119 sampled states
+  published same population: n= 22119 comps=219 MAPE=  12.03% MdAPE=   6.46% P95=  47.81% bias=  +4.65% within20= 85.4%
+  revised point-weighted:    n= 22119 comps=219 MAPE=   6.65% MdAPE=   4.36% P95=  19.38% bias=  -1.25% within20= 95.4%
+  revised compound-equal: n=219 MAPE=6.65% median=4.43% bias=-1.25%
+  domain exclusions: 40 unique
+     40 fewer than 3 carbon atoms
+  WORST 20
+     1. 1,3-Butadiene                    106-99-0     MAPE=  81.51% bias= +81.51%
+     2. N,N-Dimethyl formamide           68-12-2      MAPE=  40.82% bias= +40.82%
+     3. 1-Methylcyclohexanol             590-67-0     MAPE=  26.41% bias= -26.41%
+     4. 1,2,3,4-Tetrahydronaphthalene    119-64-2     MAPE=  25.89% bias= +25.89%
+     5. Cyclohexanone                    108-94-1     MAPE=  24.87% bias= +24.87%
+     6. 1-Methylcyclopentene             693-89-0     MAPE=  24.15% bias= -24.15%
+     7. Methyl tert-butyl ether          1634-04-4    MAPE=  21.88% bias= -21.88%
+     8. trans-2-Butene                   624-64-6     MAPE=  20.39% bias= -20.39%
+     9. cis-2-Butene                     590-18-1     MAPE=  17.93% bias= -17.93%
+    10. Naphthalene                      91-20-3      MAPE=  17.33% bias= -17.33%
+    11. Tetrahydrofuran                  109-99-9     MAPE=  17.29% bias= +17.29%
+    12. 1,1-Dimethoxyethane              534-15-6     MAPE=  17.13% bias= +17.13%
+    13. Propylene                        115-07-1     MAPE=  16.38% bias= -15.97%
+    14. 1,3,5-Trinitrobenzene            99-35-4      MAPE=  16.33% bias= +16.33%
+    15. 2,2,3,3-Tetramethylbutane        594-82-1     MAPE=  16.21% bias= -16.21%
+    16. 1-Undecanol                      112-42-5     MAPE=  15.98% bias= +15.98%
+    17. Dimethyl terephthalate           120-61-6     MAPE=  15.85% bias= +15.85%
+    18. trans-2-Methylcyclohexanol       7443-52-9    MAPE=  15.53% bias= -15.53%
+    19. Phenanthrene                     85-01-8      MAPE=  15.52% bias= -15.52%
+    20. 1,2-Butadiene                    590-19-2     MAPE=  15.20% bias= -15.20%
+
+METHOD EXCLUSIONS BEFORE DOMAIN SCREENING
+   22 ValueError: not strict organic: formula is outside strict molecular-organic domain
+    5 ValueError: not strict organic: known inorganic carbon compound
+    4 GovenderError: no published Govender group for Si atom 1
+    4 GovenderError: no published carbon group for atom 1
+    4 GovenderError: no published carbon group for atom 2
+    3 GovenderError: no published Govender group for S atom 1
+    3 GovenderError: no published Govender group for S atom 6
+    3 GovenderError: no published carbon group for atom 3
+    2 GovenderError: could not assign 2 atom(s) to any published structural group: C(0), O(1)
+    2 GovenderError: no published Govender group for S atom 2
+    2 GovenderError: no published Govender group for S atom 3
+    2 GovenderError: no published Govender group for S atom 4
+    2 GovenderError: no published Govender group for S atom 5
+    2 GovenderError: no published Govender group for S atom 7
+    2 GovenderError: no published Govender group for Si atom 2
+    2 GovenderError: no published carbon group for atom 0
+    2 GovenderError: no published carbon group for atom 6
+    2 GovenderError: small glycols and polyols are outside the fitted model
+    1 GovenderError: cyclic thioether: do not estimate with the Govender method
+    1 GovenderError: molecule has no published Govender fragmentation
+    1 GovenderError: no published Govender group for N atom 1
+    1 GovenderError: no published Govender group for N atom 6
+    1 GovenderError: no published Govender group for S atom 10
+    1 GovenderError: no published Govender group for S atom 8
+    1 GovenderError: no published Govender group for S atom 9
+    1 GovenderError: no published carbon group for atom 4
+    1 GovenderError: no published carbon group for atom 5
+    1 GovenderError: no published carbon group for atom 7
+    1 GovenderError: no published carbon group for atom 8
+    1 GovenderError: the Nannoolal method needs at least two heavy atoms
+    1 GovenderError: unsaturated cyclic ketone: do not estimate with the Govender method
+    1 ValueError: Perry normal boiling point unavailable
+    1 ValueError: not strict organic: molecular identity is insufficient
+    1 ValueError: not strict organic: structure contains no carbon

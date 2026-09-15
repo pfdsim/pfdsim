@@ -4,9 +4,10 @@ Date: 2026-09-13
 
 ## Executive summary
 
-pfdsim currently resolves pure liquid and dilute-vapor thermal conductivity
-from explicit `kl`/`kg` correlations and Perry data. It has no predictive gas
-fallback. This investigation compared two viscosity/heat-capacity relations
+pfdsim resolves pure liquid and dilute-vapor thermal conductivity from explicit
+`kl`/`kg` correlations and Perry data, followed by the predictive dilute-vapor
+fallback described here when those sources are unavailable. This investigation
+compared two viscosity/heat-capacity relations
 against Perry 9th-edition vapor-conductivity curves, measured their systematic
 chemical-class residuals, and tested regularized functional-group corrections.
 
@@ -86,7 +87,7 @@ output path in `argv` and the script hash metadata are expected provenance
 fields; version control will expose any intentional input, script, or result
 change.
 
-## Existing resolver behavior
+## Resolver behavior
 
 The production resolver in `property_resolution/thermal_conductivity.py` uses
 this order:
@@ -94,11 +95,14 @@ this order:
 1. An explicit supplied/PFD `kg` or `kl` correlation.
 2. An in-range Perry correlation.
 3. For liquids, an in-range Perry saturated-liquid tabulation.
-4. Failure with `PropertyResolutionError`.
+4. For dilute vapor only, the PFDSim-modified Stiel-Thodos fallback when all
+   required inputs resolve.
+5. Failure with `PropertyResolutionError`.
 
-The estimator studied here is intended only as a possible fallback after
-authoritative supplied and Perry data. This investigation did not change the
-production resolver.
+The fallback resolves ideal-gas Cp and uses `Cv = Cp - R`, dilute-vapor
+viscosity, molecular weight, critical temperature, formula, and SMILES-derived
+geometry. Monatomic and diatomic geometry needs only a formula. The result's
+notes preserve input provenance and active correction groups.
 
 ## Reference data and benchmark construction
 
@@ -441,20 +445,19 @@ improvements are not additive.
 
 Zeroed features are intentionally absent from this active-feature table.
 
-## Recommended resolver policy
+## Resolver quality policy
 
-If this model is promoted into production, the recommended resolution order is:
+The dilute-vapor fallback runs only when all required inputs and a supported
+molecular classification are available, after supplied and Perry data.
 
-1. Explicit/PFD conductivity correlation.
-2. In-range Perry conductivity correlation or tabulation.
-3. The predictive dilute-vapor fallback documented here, only when all required
-   inputs and a supported molecular classification are available.
-4. A missing-property error.
-
-The fallback should preserve complete provenance for viscosity, heat capacity,
-critical temperature, molecular weight, geometry class, and every active group.
-Its quality must be limited by the weakest input provider. No liquid or solid
-conductivity behavior should be inferred from this gas-only experiment.
+For each active correction group, the resolver uses its corrected held-out
+class MAPE above as a relative mean absolute error. When groups overlap, it
+uses the largest group error. Organics with no active group use the overall
+7.458% corrected MAPE. Inorganics use their separate 8.88% uncorrected
+class MAPE. The model score is `1.00 - 3 * relative_MAE`, bounded below by zero,
+rounded to two decimals, and capped at 0.88. Final quality cannot exceed the
+weakest resolved input quality; the input limit is conservatively rounded down
+to two decimals. No liquid or solid conductivity behavior is inferred.
 
 ## Limitations and next validation
 
@@ -466,8 +469,9 @@ conductivity behavior should be inferred from this gas-only experiment.
 - The remaining 108% maximum error shows that the estimator is not uniformly
   reliable, particularly for chemically unusual compounds.
 - Functional-group selection and the 15% pruning cutoff were informed by this
-  dataset. A fresh external dataset is necessary before assigning a production
-  quality score.
+  dataset. The resolver quality score is a heuristic based on internal
+  validation, not an externally calibrated probability; a fresh external
+  dataset is needed to validate it.
 - Dense-gas pressure corrections were not studied. The model is a dilute-vapor
   relation.
 - Oxalic acid is excluded from fitting and validation, not declared physically

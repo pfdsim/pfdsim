@@ -1,0 +1,2479 @@
+{
+  "all_compounds": {
+    "group_84_only": {
+      "fitted": {
+        "compound_equal_bias_percent": -0.9294642992196066,
+        "compound_equal_mape_percent": 6.8038636493502365,
+        "compounds": 11,
+        "points": 266
+      },
+      "leave_one_compound_out": {
+        "compound_equal_bias_percent": -0.5390165084622297,
+        "compound_equal_mape_percent": 7.857722933943363,
+        "compounds": 11,
+        "points": 266
+      },
+      "leave_one_compound_out_compounds": [
+        {
+          "cas": "100-37-8",
+          "mape_percent": 1.5837976020784794,
+          "mean_signed_error_percent": 0.7295138323282675,
+          "name": "N,N-diethylethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "102-69-2",
+          "mape_percent": 3.0429504077402103,
+          "mean_signed_error_percent": 1.9374796461896941,
+          "name": "tri-n-propylamine",
+          "points": 6
+        },
+        {
+          "cas": "102-71-6",
+          "mape_percent": 15.669113633092676,
+          "mean_signed_error_percent": -15.669113633092676,
+          "name": "triethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "102-82-9",
+          "mape_percent": 6.139035624388486,
+          "mean_signed_error_percent": 5.726457768750334,
+          "name": "tri-n-butylamine",
+          "points": 5
+        },
+        {
+          "cas": "105-59-9",
+          "mape_percent": 1.8980789799557105,
+          "mean_signed_error_percent": -0.9594335408072103,
+          "name": "N-methyldiethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "108-01-0",
+          "mape_percent": 22.76938407984831,
+          "mean_signed_error_percent": 22.76938407984831,
+          "name": "N,N-dimethylethanolamine",
+          "points": 11
+        },
+        {
+          "cas": "111-42-2",
+          "mape_percent": 9.528317578294887,
+          "mean_signed_error_percent": -9.528317578294887,
+          "name": "diethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "121-44-8",
+          "mape_percent": 7.06523954300502,
+          "mean_signed_error_percent": -7.06523954300502,
+          "name": "Triethyl amine",
+          "points": 101
+        },
+        {
+          "cas": "139-87-7",
+          "mape_percent": 7.15351238544138,
+          "mean_signed_error_percent": -7.15351238544138,
+          "name": "N-ethyldiethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "141-43-5",
+          "mape_percent": 7.364528100972194,
+          "mean_signed_error_percent": 7.364528100972194,
+          "name": "monoethanolamine",
+          "points": 10
+        },
+        {
+          "cas": "75-50-3",
+          "mape_percent": 4.220994338559645,
+          "mean_signed_error_percent": -4.0809283405321555,
+          "name": "Trimethyl amine",
+          "points": 101
+        }
+      ],
+      "parameters": {
+        "group_84_A": -4.334895617452972,
+        "group_84_B": 2.1322759265636875
+      },
+      "rule": "none"
+    },
+    "interaction_once": {
+      "fitted": {
+        "compound_equal_bias_percent": -1.2391318170172798,
+        "compound_equal_mape_percent": 5.321959979083101,
+        "compounds": 11,
+        "points": 266
+      },
+      "leave_one_compound_out": {
+        "compound_equal_bias_percent": -1.0864109948066767,
+        "compound_equal_mape_percent": 6.598927594989852,
+        "compounds": 11,
+        "points": 266
+      },
+      "leave_one_compound_out_compounds": [
+        {
+          "cas": "100-37-8",
+          "mape_percent": 3.5172466357363152,
+          "mean_signed_error_percent": 1.2904691558057806,
+          "name": "N,N-diethylethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "102-69-2",
+          "mape_percent": 2.1729557952627414,
+          "mean_signed_error_percent": 0.2722420874820571,
+          "name": "tri-n-propylamine",
+          "points": 6
+        },
+        {
+          "cas": "102-71-6",
+          "mape_percent": 13.195144020859757,
+          "mean_signed_error_percent": -13.195144020859757,
+          "name": "triethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "102-82-9",
+          "mape_percent": 3.5532862714073694,
+          "mean_signed_error_percent": 3.159683315032244,
+          "name": "tri-n-butylamine",
+          "points": 5
+        },
+        {
+          "cas": "105-59-9",
+          "mape_percent": 4.379915500281629,
+          "mean_signed_error_percent": 2.0608862535124,
+          "name": "N-methyldiethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "108-01-0",
+          "mape_percent": 18.27158837234637,
+          "mean_signed_error_percent": 18.27158837234637,
+          "name": "N,N-dimethylethanolamine",
+          "points": 11
+        },
+        {
+          "cas": "111-42-2",
+          "mape_percent": 10.923277369216846,
+          "mean_signed_error_percent": -10.923277369216846,
+          "name": "diethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "121-44-8",
+          "mape_percent": 5.30475096861966,
+          "mean_signed_error_percent": -4.853031536573575,
+          "name": "Triethyl amine",
+          "points": 101
+        },
+        {
+          "cas": "139-87-7",
+          "mape_percent": 4.367476496997739,
+          "mean_signed_error_percent": -3.617666609012038,
+          "name": "N-ethyldiethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "141-43-5",
+          "mape_percent": 1.5133858937622946,
+          "mean_signed_error_percent": 0.9729056290075822,
+          "name": "monoethanolamine",
+          "points": 10
+        },
+        {
+          "cas": "75-50-3",
+          "mape_percent": 5.389176220397656,
+          "mean_signed_error_percent": -5.389176220397656,
+          "name": "Trimethyl amine",
+          "points": 101
+        }
+      ],
+      "parameters": {
+        "group_84_A": -9.961732663599445,
+        "group_84_B": 2.2161481640250127,
+        "interaction_A": 29.018583249952766,
+        "interaction_B": -0.33071886835257247
+      },
+      "rule": "molecule"
+    },
+    "interaction_per_oh": {
+      "fitted": {
+        "compound_equal_bias_percent": -0.6596706796785861,
+        "compound_equal_mape_percent": 5.564393508424851,
+        "compounds": 11,
+        "points": 266
+      },
+      "leave_one_compound_out": {
+        "compound_equal_bias_percent": -0.4846749933378361,
+        "compound_equal_mape_percent": 7.327461334789256,
+        "compounds": 11,
+        "points": 266
+      },
+      "leave_one_compound_out_compounds": [
+        {
+          "cas": "100-37-8",
+          "mape_percent": 1.2783195107437713,
+          "mean_signed_error_percent": 0.14680242965509804,
+          "name": "N,N-diethylethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "102-69-2",
+          "mape_percent": 2.244546454717422,
+          "mean_signed_error_percent": -1.3148099807490619,
+          "name": "tri-n-propylamine",
+          "points": 6
+        },
+        {
+          "cas": "102-71-6",
+          "mape_percent": 10.261807332376137,
+          "mean_signed_error_percent": -8.962727161218695,
+          "name": "triethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "102-82-9",
+          "mape_percent": 2.938846358922176,
+          "mean_signed_error_percent": 1.9471122480774539,
+          "name": "tri-n-butylamine",
+          "points": 5
+        },
+        {
+          "cas": "105-59-9",
+          "mape_percent": 5.905097921066247,
+          "mean_signed_error_percent": 3.402997898646093,
+          "name": "N-methyldiethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "108-01-0",
+          "mape_percent": 19.5104898568048,
+          "mean_signed_error_percent": 19.5104898568048,
+          "name": "N,N-dimethylethanolamine",
+          "points": 11
+        },
+        {
+          "cas": "111-42-2",
+          "mape_percent": 9.440986775757217,
+          "mean_signed_error_percent": -9.440986775757217,
+          "name": "diethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "121-44-8",
+          "mape_percent": 8.265153509223952,
+          "mean_signed_error_percent": -8.265153509223952,
+          "name": "Triethyl amine",
+          "points": 101
+        },
+        {
+          "cas": "139-87-7",
+          "mape_percent": 5.408574607602019,
+          "mean_signed_error_percent": -1.6444739466866392,
+          "name": "N-ethyldiethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "141-43-5",
+          "mape_percent": 7.318788184601995,
+          "mean_signed_error_percent": 7.318788184601995,
+          "name": "monoethanolamine",
+          "points": 10
+        },
+        {
+          "cas": "75-50-3",
+          "mape_percent": 8.029464170866072,
+          "mean_signed_error_percent": -8.029464170866072,
+          "name": "Trimethyl amine",
+          "points": 101
+        }
+      ],
+      "parameters": {
+        "group_84_A": -9.28531697502224,
+        "group_84_B": 2.1280663823528756,
+        "interaction_A": 19.205351063470705,
+        "interaction_B": -0.1753162966626289
+      },
+      "rule": "pair"
+    },
+    "published": {
+      "compounds": [
+        {
+          "cas": "100-37-8",
+          "mape_percent": 22.00617977716733,
+          "mean_signed_error_percent": -22.00617977716733,
+          "name": "N,N-diethylethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "102-69-2",
+          "mape_percent": 18.911833662032024,
+          "mean_signed_error_percent": -18.911833662032024,
+          "name": "tri-n-propylamine",
+          "points": 6
+        },
+        {
+          "cas": "102-71-6",
+          "mape_percent": 32.179277626113105,
+          "mean_signed_error_percent": -32.179277626113105,
+          "name": "triethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "102-82-9",
+          "mape_percent": 13.8544074049643,
+          "mean_signed_error_percent": -13.8544074049643,
+          "name": "tri-n-butylamine",
+          "points": 5
+        },
+        {
+          "cas": "105-59-9",
+          "mape_percent": 23.361239858524186,
+          "mean_signed_error_percent": -23.361239858524186,
+          "name": "N-methyldiethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "108-01-0",
+          "mape_percent": 12.80005035623541,
+          "mean_signed_error_percent": -12.80005035623541,
+          "name": "N,N-dimethylethanolamine",
+          "points": 11
+        },
+        {
+          "cas": "111-42-2",
+          "mape_percent": 9.528317578294887,
+          "mean_signed_error_percent": -9.528317578294887,
+          "name": "diethanolamine",
+          "points": 6
+        },
+        {
+          "cas": "121-44-8",
+          "mape_percent": 27.8939299417866,
+          "mean_signed_error_percent": -27.8939299417866,
+          "name": "Triethyl amine",
+          "points": 101
+        },
+        {
+          "cas": "139-87-7",
+          "mape_percent": 26.637774080054776,
+          "mean_signed_error_percent": -26.637774080054776,
+          "name": "N-ethyldiethanolamine",
+          "points": 7
+        },
+        {
+          "cas": "141-43-5",
+          "mape_percent": 7.364528100972194,
+          "mean_signed_error_percent": 7.364528100972194,
+          "name": "monoethanolamine",
+          "points": 10
+        },
+        {
+          "cas": "75-50-3",
+          "mape_percent": 29.57340874150409,
+          "mean_signed_error_percent": -29.57340874150409,
+          "name": "Trimethyl amine",
+          "points": 101
+        }
+      ],
+      "parameters": {
+        "group_84_A": -12.576,
+        "group_84_B": 1.1656
+      },
+      "summary": {
+        "compound_equal_bias_percent": -19.03471735688223,
+        "compound_equal_mape_percent": 20.373722466149903,
+        "compounds": 11,
+        "points": 266
+      }
+    }
+  },
+  "boiling_points": {
+    "100-37-8": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "WIKIDATA",
+        "JOBACK"
+      ],
+      "chemical": "N,N-diethylethanolamine",
+      "tb_K": 435.28
+    },
+    "102-69-2": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "tri-n-propylamine",
+      "tb_K": 426.15
+    },
+    "102-71-6": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "triethanolamine",
+      "tb_K": 623.15
+    },
+    "102-82-9": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "tri-n-butylamine",
+      "tb_K": 480.15
+    },
+    "105-59-9": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "N-methyldiethanolamine",
+      "tb_K": 518.15
+    },
+    "108-01-0": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "N,N-dimethylethanolamine",
+      "tb_K": 403.85
+    },
+    "111-42-2": {
+      "available_methods": [
+        "HEOS",
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "diethanolamine",
+      "tb_K": 541.234114195
+    },
+    "139-87-7": {
+      "available_methods": [
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "JOBACK"
+      ],
+      "chemical": "N-ethyldiethanolamine",
+      "tb_K": 521.15
+    },
+    "141-43-5": {
+      "available_methods": [
+        "HEOS",
+        "CRC_ORG",
+        "COMMON_CHEMISTRY",
+        "WEBBOOK",
+        "YAWS",
+        "WIKIDATA",
+        "JOBACK"
+      ],
+      "chemical": "monoethanolamine",
+      "tb_K": 443.564075376
+    }
+  },
+  "complete_benchmark": {
+    "before_amine_refits": {
+      "mape_percent": 8.390088337947326,
+      "mean_signed_error_percent": -0.5870591660734641,
+      "median_ape_percent": 5.0846504355686495,
+      "p95_ape_percent": 27.230009881004193
+    },
+    "group_84_and_interaction": {
+      "mape_percent": 8.192684578312242,
+      "mean_signed_error_percent": -0.4246877092932921,
+      "median_ape_percent": 4.9935147853147015,
+      "p95_ape_percent": 25.496643030626576
+    },
+    "pure_group_84_refit": {
+      "mape_percent": 8.190294410372315,
+      "mean_signed_error_percent": -0.380758731231549,
+      "median_ape_percent": 4.963302556372861,
+      "p95_ape_percent": 25.594040027750474
+    },
+    "worst_compounds_with_interaction": [
+      {
+        "cas": "106-51-4",
+        "mape_percent": 90.4614296579221,
+        "maximum_ape_percent": 113.37862327198027,
+        "mean_signed_error_percent": 90.4614296579221,
+        "name": "Quinone"
+      },
+      {
+        "cas": "106-99-0",
+        "mape_percent": 81.50548168769588,
+        "maximum_ape_percent": 98.10641721660218,
+        "mean_signed_error_percent": 81.50548168769588,
+        "name": "1,3-Butadiene"
+      },
+      {
+        "cas": "624-72-6",
+        "mape_percent": 52.652825559483645,
+        "maximum_ape_percent": 54.483670043980716,
+        "mean_signed_error_percent": 52.652825559483645,
+        "name": "1,2-Difluoroethane"
+      },
+      {
+        "cas": "74-83-9",
+        "mape_percent": 47.274501917475234,
+        "maximum_ape_percent": 53.79711300208636,
+        "mean_signed_error_percent": 47.274501917475234,
+        "name": "Bromomethane"
+      },
+      {
+        "cas": "68-12-2",
+        "mape_percent": 40.821189254682,
+        "maximum_ape_percent": 48.333481703731884,
+        "mean_signed_error_percent": 40.821189254682,
+        "name": "N,N-Dimethyl formamide"
+      },
+      {
+        "cas": "110-01-0",
+        "mape_percent": 40.46183013298084,
+        "maximum_ape_percent": 45.285681286219216,
+        "mean_signed_error_percent": 40.46183013298084,
+        "name": "Tetrahydrothiophene"
+      },
+      {
+        "cas": "60-35-5",
+        "mape_percent": 33.97829089012305,
+        "maximum_ape_percent": 35.921387326158005,
+        "mean_signed_error_percent": -33.97829089012305,
+        "name": "Acetamide"
+      },
+      {
+        "cas": "67-56-1",
+        "mape_percent": 31.54084143002348,
+        "maximum_ape_percent": 38.1275137922195,
+        "mean_signed_error_percent": 31.54084143002348,
+        "name": "Methanol"
+      },
+      {
+        "cas": "74-89-5",
+        "mape_percent": 27.084431657130356,
+        "maximum_ape_percent": 28.865301486643546,
+        "mean_signed_error_percent": 27.084431657130356,
+        "name": "Methyl amine"
+      },
+      {
+        "cas": "74-85-1",
+        "mape_percent": 26.894033524354235,
+        "maximum_ape_percent": 57.49568238591507,
+        "mean_signed_error_percent": 26.894033524354235,
+        "name": "Ethylene"
+      },
+      {
+        "cas": "590-67-0",
+        "mape_percent": 26.408910808534277,
+        "maximum_ape_percent": 29.401382294544977,
+        "mean_signed_error_percent": -26.408910808534277,
+        "name": "1-Methylcyclohexanol"
+      },
+      {
+        "cas": "119-64-2",
+        "mape_percent": 25.890185349655187,
+        "maximum_ape_percent": 28.212663737999332,
+        "mean_signed_error_percent": 25.890185349655187,
+        "name": "1,2,3,4-Tetrahydronaphthalene"
+      },
+      {
+        "cas": "75-52-5",
+        "mape_percent": 25.239721936729836,
+        "maximum_ape_percent": 25.327867596489064,
+        "mean_signed_error_percent": -25.239721936729836,
+        "name": "Nitromethane"
+      },
+      {
+        "cas": "108-94-1",
+        "mape_percent": 24.871316276564194,
+        "maximum_ape_percent": 25.14705213261541,
+        "mean_signed_error_percent": 24.871316276564194,
+        "name": "Cyclohexanone"
+      },
+      {
+        "cas": "107-15-3",
+        "mape_percent": 24.210844229466716,
+        "maximum_ape_percent": 38.482051535959094,
+        "mean_signed_error_percent": 24.210844229466716,
+        "name": "Ethylenediamine"
+      },
+      {
+        "cas": "693-89-0",
+        "mape_percent": 24.14771208145833,
+        "maximum_ape_percent": 47.59542939754059,
+        "mean_signed_error_percent": -24.14771208145833,
+        "name": "1-Methylcyclopentene"
+      },
+      {
+        "cas": "1634-04-4",
+        "mape_percent": 21.87526067132238,
+        "maximum_ape_percent": 26.393432612836875,
+        "mean_signed_error_percent": -21.87526067132238,
+        "name": "Methyl tert-butyl ether"
+      },
+      {
+        "cas": "107-31-3",
+        "mape_percent": 20.909500455230653,
+        "maximum_ape_percent": 22.97942364228225,
+        "mean_signed_error_percent": -20.909500455230653,
+        "name": "Methyl formate"
+      },
+      {
+        "cas": "75-10-5",
+        "mape_percent": 20.76239470520916,
+        "maximum_ape_percent": 26.242383625991682,
+        "mean_signed_error_percent": -20.76239470520916,
+        "name": "Difluoromethane"
+      },
+      {
+        "cas": "624-64-6",
+        "mape_percent": 20.390274110218794,
+        "maximum_ape_percent": 32.68552176918742,
+        "mean_signed_error_percent": -20.390274110218794,
+        "name": "trans-2-Butene"
+      },
+      {
+        "cas": "74-87-3",
+        "mape_percent": 19.99048109582817,
+        "maximum_ape_percent": 20.901314140266038,
+        "mean_signed_error_percent": 19.99048109582817,
+        "name": "Chloromethane"
+      },
+      {
+        "cas": "353-36-6",
+        "mape_percent": 18.343291846946247,
+        "maximum_ape_percent": 22.565659714708318,
+        "mean_signed_error_percent": 18.343291846946247,
+        "name": "Fluoroethane"
+      },
+      {
+        "cas": "590-18-1",
+        "mape_percent": 17.93291489762393,
+        "maximum_ape_percent": 32.81134940502204,
+        "mean_signed_error_percent": -17.93291489762393,
+        "name": "cis-2-Butene"
+      },
+      {
+        "cas": "91-20-3",
+        "mape_percent": 17.33006223103269,
+        "maximum_ape_percent": 26.65866642777923,
+        "mean_signed_error_percent": -17.33006223103269,
+        "name": "Naphthalene"
+      },
+      {
+        "cas": "109-99-9",
+        "mape_percent": 17.289747514511557,
+        "maximum_ape_percent": 20.338805071827903,
+        "mean_signed_error_percent": 17.289747514511557,
+        "name": "Tetrahydrofuran"
+      },
+      {
+        "cas": "534-15-6",
+        "mape_percent": 17.134635822651813,
+        "maximum_ape_percent": 18.43208411187711,
+        "mean_signed_error_percent": 17.134635822651813,
+        "name": "1,1-Dimethoxyethane"
+      },
+      {
+        "cas": "115-07-1",
+        "mape_percent": 16.383846300376284,
+        "maximum_ape_percent": 50.88401906400477,
+        "mean_signed_error_percent": -15.970757489866365,
+        "name": "Propylene"
+      },
+      {
+        "cas": "99-35-4",
+        "mape_percent": 16.331798172311483,
+        "maximum_ape_percent": 17.398955549193083,
+        "mean_signed_error_percent": 16.331798172311483,
+        "name": "1,3,5-Trinitrobenzene"
+      },
+      {
+        "cas": "594-82-1",
+        "mape_percent": 16.206124723306015,
+        "maximum_ape_percent": 16.46851721838809,
+        "mean_signed_error_percent": -16.206124723306015,
+        "name": "2,2,3,3-Tetramethylbutane"
+      },
+      {
+        "cas": "112-42-5",
+        "mape_percent": 15.984419699234524,
+        "maximum_ape_percent": 22.746431593189275,
+        "mean_signed_error_percent": 15.984419699234524,
+        "name": "1-Undecanol"
+      },
+      {
+        "cas": "120-61-6",
+        "mape_percent": 15.849736780908206,
+        "maximum_ape_percent": 22.69867454845411,
+        "mean_signed_error_percent": 15.849736780908206,
+        "name": "Dimethyl terephthalate"
+      },
+      {
+        "cas": "7443-52-9",
+        "mape_percent": 15.531353407979381,
+        "maximum_ape_percent": 19.472860388071666,
+        "mean_signed_error_percent": -15.531353407979381,
+        "name": "trans-2-Methylcyclohexanol"
+      },
+      {
+        "cas": "85-01-8",
+        "mape_percent": 15.522927926380289,
+        "maximum_ape_percent": 23.044992469429026,
+        "mean_signed_error_percent": -15.522927926380289,
+        "name": "Phenanthrene"
+      },
+      {
+        "cas": "590-19-2",
+        "mape_percent": 15.203750458360277,
+        "maximum_ape_percent": 26.20334500738074,
+        "mean_signed_error_percent": -15.203750458360277,
+        "name": "1,2-Butadiene"
+      },
+      {
+        "cas": "13511-13-2",
+        "mape_percent": 15.133695964262396,
+        "maximum_ape_percent": 32.08030976976567,
+        "mean_signed_error_percent": -15.133695964262396,
+        "name": "Propenylcyclohexene"
+      },
+      {
+        "cas": "7443-70-1",
+        "mape_percent": 15.032932176204719,
+        "maximum_ape_percent": 18.96498870572071,
+        "mean_signed_error_percent": -15.032932176204719,
+        "name": "cis-2-Methylcyclohexanol"
+      },
+      {
+        "cas": "106-93-4",
+        "mape_percent": 14.666921471564011,
+        "maximum_ape_percent": 19.139784115616575,
+        "mean_signed_error_percent": -14.666921471564011,
+        "name": "1,2-Dibromoethane"
+      },
+      {
+        "cas": "109-94-4",
+        "mape_percent": 14.285589023655305,
+        "maximum_ape_percent": 18.70440914542042,
+        "mean_signed_error_percent": -14.285589023655305,
+        "name": "Ethyl formate"
+      },
+      {
+        "cas": "75-07-0",
+        "mape_percent": 14.253970558680628,
+        "maximum_ape_percent": 18.499850380719785,
+        "mean_signed_error_percent": -14.253970558680628,
+        "name": "Acetaldehyde"
+      },
+      {
+        "cas": "123-96-6",
+        "mape_percent": 13.890491555079311,
+        "maximum_ape_percent": 17.297544612395164,
+        "mean_signed_error_percent": 13.890491555079311,
+        "name": "2-Octanol"
+      },
+      {
+        "cas": "107-88-0",
+        "mape_percent": 13.843771186231008,
+        "maximum_ape_percent": 19.740107003484265,
+        "mean_signed_error_percent": -11.08717118002895,
+        "name": "1,3-Butanediol"
+      },
+      {
+        "cas": "593-53-3",
+        "mape_percent": 13.729512759282198,
+        "maximum_ape_percent": 16.097273294069492,
+        "mean_signed_error_percent": -13.729512759282198,
+        "name": "Fluoromethane"
+      },
+      {
+        "cas": "75-01-4",
+        "mape_percent": 13.670454914335979,
+        "maximum_ape_percent": 24.70209589855912,
+        "mean_signed_error_percent": 13.30060293995613,
+        "name": "Vinyl chloride"
+      },
+      {
+        "cas": "79-00-5",
+        "mape_percent": 13.460617595733858,
+        "maximum_ape_percent": 16.533548573554512,
+        "mean_signed_error_percent": -13.460617595733858,
+        "name": "1,1,2-Trichloroethane"
+      },
+      {
+        "cas": "55-21-0",
+        "mape_percent": 13.457177419619129,
+        "maximum_ape_percent": 16.714758067681046,
+        "mean_signed_error_percent": -13.457177419619129,
+        "name": "Benzamide"
+      },
+      {
+        "cas": "106-97-8",
+        "mape_percent": 13.012830228605488,
+        "maximum_ape_percent": 38.56043468651381,
+        "mean_signed_error_percent": -13.012830228605488,
+        "name": "Butane"
+      },
+      {
+        "cas": "123-38-6",
+        "mape_percent": 12.992732064861864,
+        "maximum_ape_percent": 18.813407654408863,
+        "mean_signed_error_percent": -12.992732064861864,
+        "name": "Propionaldehyde"
+      },
+      {
+        "cas": "75-05-8",
+        "mape_percent": 12.881668178314815,
+        "maximum_ape_percent": 13.458794521017092,
+        "mean_signed_error_percent": -12.881668178314815,
+        "name": "Acetonitrile"
+      },
+      {
+        "cas": "119-61-9",
+        "mape_percent": 12.784504444270542,
+        "maximum_ape_percent": 19.289571662248896,
+        "mean_signed_error_percent": -12.784504444270542,
+        "name": "Benzophenone"
+      },
+      {
+        "cas": "540-67-0",
+        "mape_percent": 12.730535699409549,
+        "maximum_ape_percent": 15.53094400107774,
+        "mean_signed_error_percent": -12.730535699409549,
+        "name": "Methylethyl ether"
+      },
+      {
+        "cas": "75-28-5",
+        "mape_percent": 12.679531796922092,
+        "maximum_ape_percent": 42.68053078876678,
+        "mean_signed_error_percent": -11.919124651721184,
+        "name": "2-Methylpropane"
+      },
+      {
+        "cas": "115-10-6",
+        "mape_percent": 12.618654647258591,
+        "maximum_ape_percent": 18.851934598626798,
+        "mean_signed_error_percent": -12.618654647258591,
+        "name": "Dimethyl ether"
+      },
+      {
+        "cas": "563-46-2",
+        "mape_percent": 12.455965760123574,
+        "maximum_ape_percent": 17.249746692563605,
+        "mean_signed_error_percent": 12.455965760123574,
+        "name": "2-Methyl-1-butene"
+      },
+      {
+        "cas": "131-11-3",
+        "mape_percent": 12.23982465830221,
+        "maximum_ape_percent": 25.730017629786616,
+        "mean_signed_error_percent": 12.23982465830221,
+        "name": "Dimethyl phthalate"
+      },
+      {
+        "cas": "79-24-3",
+        "mape_percent": 12.091315875014777,
+        "maximum_ape_percent": 13.715655497147461,
+        "mean_signed_error_percent": -12.091315875014777,
+        "name": "Nitroethane"
+      },
+      {
+        "cas": "75-29-6",
+        "mape_percent": 12.090049993591713,
+        "maximum_ape_percent": 14.995429133679217,
+        "mean_signed_error_percent": -12.090049993591713,
+        "name": "2-Chloropropane"
+      },
+      {
+        "cas": "67-64-1",
+        "mape_percent": 11.726919953932061,
+        "maximum_ape_percent": 13.323404351595691,
+        "mean_signed_error_percent": -11.726919953932061,
+        "name": "Acetone"
+      },
+      {
+        "cas": "111-42-2",
+        "mape_percent": 11.458390188253292,
+        "maximum_ape_percent": 34.24173780805451,
+        "mean_signed_error_percent": -6.029696097920455,
+        "name": "Diethanol amine"
+      },
+      {
+        "cas": "100-47-0",
+        "mape_percent": 11.350776298356509,
+        "maximum_ape_percent": 13.424880641004776,
+        "mean_signed_error_percent": 11.350776298356509,
+        "name": "Benzonitrile"
+      },
+      {
+        "cas": "628-99-9",
+        "mape_percent": 11.16639297701076,
+        "maximum_ape_percent": 12.605698531763586,
+        "mean_signed_error_percent": 11.16639297701076,
+        "name": "2-Nonanol"
+      },
+      {
+        "cas": "107-13-1",
+        "mape_percent": 11.151760829876494,
+        "maximum_ape_percent": 14.243847836136926,
+        "mean_signed_error_percent": -11.151760829876494,
+        "name": "Acrylonitrile"
+      },
+      {
+        "cas": "78-78-4",
+        "mape_percent": 11.130958403932693,
+        "maximum_ape_percent": 21.780621934866794,
+        "mean_signed_error_percent": -11.130958403932693,
+        "name": "2-Methylbutane"
+      },
+      {
+        "cas": "96-33-3",
+        "mape_percent": 11.076828243079476,
+        "maximum_ape_percent": 11.161108110696494,
+        "mean_signed_error_percent": -11.076828243079476,
+        "name": "Methyl acrylate"
+      },
+      {
+        "cas": "71-43-2",
+        "mape_percent": 11.051208885305396,
+        "maximum_ape_percent": 12.501545091294686,
+        "mean_signed_error_percent": -11.051208885305396,
+        "name": "Benzene"
+      },
+      {
+        "cas": "598-53-8",
+        "mape_percent": 10.88773243230192,
+        "maximum_ape_percent": 14.105328099382374,
+        "mean_signed_error_percent": -10.88773243230192,
+        "name": "Methylisopropyl ether"
+      },
+      {
+        "cas": "2207-01-4",
+        "mape_percent": 10.391637145929968,
+        "maximum_ape_percent": 11.029861907513617,
+        "mean_signed_error_percent": -10.391637145929968,
+        "name": "cis-1,2-Dimethylcyclohexane"
+      },
+      {
+        "cas": "74-98-6",
+        "mape_percent": 10.327537953436932,
+        "maximum_ape_percent": 39.39632812826213,
+        "mean_signed_error_percent": -10.30261406822955,
+        "name": "Propane"
+      },
+      {
+        "cas": "67-63-0",
+        "mape_percent": 10.052022375773983,
+        "maximum_ape_percent": 13.313503263823478,
+        "mean_signed_error_percent": 10.052022375773983,
+        "name": "2-Propanol"
+      },
+      {
+        "cas": "109-89-7",
+        "mape_percent": 9.984169044161463,
+        "maximum_ape_percent": 22.30230524985164,
+        "mean_signed_error_percent": -9.984169044161463,
+        "name": "Diethyl amine"
+      },
+      {
+        "cas": "5756-43-4",
+        "mape_percent": 9.849268553385171,
+        "maximum_ape_percent": 14.157413194433065,
+        "mean_signed_error_percent": 9.849268553385171,
+        "name": "Ethylhexyl ether"
+      },
+      {
+        "cas": "565-80-0",
+        "mape_percent": 9.848258437705573,
+        "maximum_ape_percent": 11.296371890703671,
+        "mean_signed_error_percent": -9.848258437705573,
+        "name": "Diisopropyl ketone"
+      },
+      {
+        "cas": "557-91-5",
+        "mape_percent": 9.58290817771305,
+        "maximum_ape_percent": 23.717308260506197,
+        "mean_signed_error_percent": 0.38830019499377794,
+        "name": "1,1-Dibromoethane"
+      },
+      {
+        "cas": "79-20-9",
+        "mape_percent": 9.530048528317023,
+        "maximum_ape_percent": 11.61505257156037,
+        "mean_signed_error_percent": -9.530048528317023,
+        "name": "Methyl acetate"
+      },
+      {
+        "cas": "107-06-2",
+        "mape_percent": 9.46952848394859,
+        "maximum_ape_percent": 10.856442685827183,
+        "mean_signed_error_percent": -9.46952848394859,
+        "name": "1,2-Dichloroethane"
+      },
+      {
+        "cas": "107-12-0",
+        "mape_percent": 9.23266775101148,
+        "maximum_ape_percent": 10.340683297615726,
+        "mean_signed_error_percent": -9.23266775101148,
+        "name": "Propionitrile"
+      },
+      {
+        "cas": "108-95-2",
+        "mape_percent": 9.089494895560343,
+        "maximum_ape_percent": 9.98588662672455,
+        "mean_signed_error_percent": -9.089494895560343,
+        "name": "Phenol"
+      },
+      {
+        "cas": "64-17-5",
+        "mape_percent": 9.069148722703707,
+        "maximum_ape_percent": 14.712706624487693,
+        "mean_signed_error_percent": 9.069148722703707,
+        "name": "Ethanol"
+      },
+      {
+        "cas": "107-02-8",
+        "mape_percent": 8.974946762717012,
+        "maximum_ape_percent": 10.87626373560141,
+        "mean_signed_error_percent": -8.974946762717012,
+        "name": "Acrolein"
+      },
+      {
+        "cas": "109-66-0",
+        "mape_percent": 8.763341747151248,
+        "maximum_ape_percent": 29.232665892682917,
+        "mean_signed_error_percent": -8.763341747151248,
+        "name": "Pentane"
+      },
+      {
+        "cas": "75-65-0",
+        "mape_percent": 8.561728353374038,
+        "maximum_ape_percent": 11.115699042271288,
+        "mean_signed_error_percent": -8.561728353374038,
+        "name": "2-Methyl-2-propanol"
+      },
+      {
+        "cas": "79-41-4",
+        "mape_percent": 8.545208836663747,
+        "maximum_ape_percent": 16.935295414628527,
+        "mean_signed_error_percent": 8.545208836663747,
+        "name": "Methacrylic acid"
+      },
+      {
+        "cas": "111-70-6",
+        "mape_percent": 8.436395900704845,
+        "maximum_ape_percent": 8.67488124049559,
+        "mean_signed_error_percent": -8.436395900704845,
+        "name": "1-Heptanol"
+      },
+      {
+        "cas": "75-09-2",
+        "mape_percent": 8.399111159081626,
+        "maximum_ape_percent": 13.664186145543466,
+        "mean_signed_error_percent": -8.399111159081626,
+        "name": "Dichloromethane"
+      },
+      {
+        "cas": "108-93-0",
+        "mape_percent": 8.225815136368352,
+        "maximum_ape_percent": 13.284988836866695,
+        "mean_signed_error_percent": -8.225815136368352,
+        "name": "Cyclohexanol"
+      },
+      {
+        "cas": "539-30-0",
+        "mape_percent": 8.156621326959131,
+        "maximum_ape_percent": 17.81526446925026,
+        "mean_signed_error_percent": 8.156621326959131,
+        "name": "Benzyl ethyl ether"
+      },
+      {
+        "cas": "563-80-4",
+        "mape_percent": 8.010544179989953,
+        "maximum_ape_percent": 8.637742041629314,
+        "mean_signed_error_percent": -8.010544179989953,
+        "name": "Methylisopropyl ketone"
+      },
+      {
+        "cas": "100-51-6",
+        "mape_percent": 7.949227848349699,
+        "maximum_ape_percent": 15.862394891283438,
+        "mean_signed_error_percent": -7.949227848349699,
+        "name": "Benzyl alcohol"
+      },
+      {
+        "cas": "78-87-5",
+        "mape_percent": 7.905787614413198,
+        "maximum_ape_percent": 12.304811010495364,
+        "mean_signed_error_percent": -7.905787614413198,
+        "name": "1,2-Dichloropropane"
+      },
+      {
+        "cas": "141-78-6",
+        "mape_percent": 7.902950525498455,
+        "maximum_ape_percent": 9.9509138766107,
+        "mean_signed_error_percent": -7.902950525498455,
+        "name": "Ethyl acetate"
+      },
+      {
+        "cas": "6876-23-9",
+        "mape_percent": 7.887999772163752,
+        "maximum_ape_percent": 8.865956464485492,
+        "mean_signed_error_percent": -7.887999772163752,
+        "name": "trans-1,2-Dimethylcyclohexane"
+      },
+      {
+        "cas": "141-82-2",
+        "mape_percent": 7.84699713234415,
+        "maximum_ape_percent": 12.937519535617238,
+        "mean_signed_error_percent": -7.84699713234415,
+        "name": "Malonic acid"
+      },
+      {
+        "cas": "95-48-7",
+        "mape_percent": 7.802265293528978,
+        "maximum_ape_percent": 10.523367567909613,
+        "mean_signed_error_percent": -7.802265293528978,
+        "name": "o-Cresol"
+      },
+      {
+        "cas": "625-54-7",
+        "mape_percent": 7.651543223081325,
+        "maximum_ape_percent": 7.9040516665855325,
+        "mean_signed_error_percent": -7.651543223081325,
+        "name": "Ethylisopropyl ether"
+      },
+      {
+        "cas": "108-10-1",
+        "mape_percent": 7.5726317017431795,
+        "maximum_ape_percent": 8.363191141822302,
+        "mean_signed_error_percent": -7.5726317017431795,
+        "name": "Methylisobutyl ketone"
+      },
+      {
+        "cas": "74-95-3",
+        "mape_percent": 7.410690109321134,
+        "maximum_ape_percent": 15.785113712044641,
+        "mean_signed_error_percent": -6.431622743429661,
+        "name": "Dibromomethane"
+      },
+      {
+        "cas": "75-31-0",
+        "mape_percent": 7.39126861977296,
+        "maximum_ape_percent": 15.125301043638672,
+        "mean_signed_error_percent": 7.39126861977296,
+        "name": "Isopropyl amine"
+      },
+      {
+        "cas": "513-35-9",
+        "mape_percent": 7.34850025445239,
+        "maximum_ape_percent": 19.667816738753928,
+        "mean_signed_error_percent": -6.5038904829767725,
+        "name": "2-Methyl-2-butene"
+      },
+      {
+        "cas": "557-17-5",
+        "mape_percent": 7.285050605589387,
+        "maximum_ape_percent": 9.763332332971553,
+        "mean_signed_error_percent": -7.285050605589387,
+        "name": "Methylpropyl ether"
+      },
+      {
+        "cas": "560-21-4",
+        "mape_percent": 7.282214974451025,
+        "maximum_ape_percent": 9.911013254581636,
+        "mean_signed_error_percent": -7.282214974451025,
+        "name": "2,3,3-Trimethylpentane"
+      },
+      {
+        "cas": "111-13-7",
+        "mape_percent": 7.2057227009614495,
+        "maximum_ape_percent": 10.310959109924989,
+        "mean_signed_error_percent": 7.2057227009614495,
+        "name": "2-Octanone"
+      },
+      {
+        "cas": "98-83-9",
+        "mape_percent": 7.19373335392042,
+        "maximum_ape_percent": 9.208634431049244,
+        "mean_signed_error_percent": 7.19373335392042,
+        "name": "alpha-Methyl styrene"
+      },
+      {
+        "cas": "107-25-5",
+        "mape_percent": 7.015280522367278,
+        "maximum_ape_percent": 12.960679426306697,
+        "mean_signed_error_percent": -7.015280522367278,
+        "name": "Methyl vinyl ether"
+      },
+      {
+        "cas": "463-49-0",
+        "mape_percent": 6.982925720456302,
+        "maximum_ape_percent": 10.554441598305786,
+        "mean_signed_error_percent": 6.982925720456302,
+        "name": "Propadiene"
+      },
+      {
+        "cas": "60-29-7",
+        "mape_percent": 6.956797810484748,
+        "maximum_ape_percent": 10.477030898126971,
+        "mean_signed_error_percent": -6.956797810484748,
+        "name": "Diethyl ether"
+      },
+      {
+        "cas": "104-51-8",
+        "mape_percent": 6.827946444417165,
+        "maximum_ape_percent": 7.9364144886628685,
+        "mean_signed_error_percent": 6.827946444417165,
+        "name": "Butylbenzene"
+      },
+      {
+        "cas": "80-62-6",
+        "mape_percent": 6.605765248052907,
+        "maximum_ape_percent": 9.96164995788047,
+        "mean_signed_error_percent": 6.605765248052907,
+        "name": "Methyl methacrylate"
+      },
+      {
+        "cas": "110-00-9",
+        "mape_percent": 6.559100619947865,
+        "maximum_ape_percent": 9.193695358249233,
+        "mean_signed_error_percent": 6.559100619947865,
+        "name": "Furan"
+      },
+      {
+        "cas": "78-92-2",
+        "mape_percent": 6.502013399905574,
+        "maximum_ape_percent": 8.954661861629631,
+        "mean_signed_error_percent": 6.502013399905574,
+        "name": "2-Butanol"
+      },
+      {
+        "cas": "106-98-9",
+        "mape_percent": 6.448495451364035,
+        "maximum_ape_percent": 17.488063732892666,
+        "mean_signed_error_percent": -5.517669545940541,
+        "name": "1-Butene"
+      },
+      {
+        "cas": "124-40-3",
+        "mape_percent": 6.448425707037852,
+        "maximum_ape_percent": 17.935923389103536,
+        "mean_signed_error_percent": -2.741413597319607,
+        "name": "Dimethyl amine"
+      },
+      {
+        "cas": "590-66-9",
+        "mape_percent": 6.370449747839925,
+        "maximum_ape_percent": 13.052721569022708,
+        "mean_signed_error_percent": -6.039735834994731,
+        "name": "1,1-Dimethylcyclohexane"
+      },
+      {
+        "cas": "565-69-5",
+        "mape_percent": 6.358913133206452,
+        "maximum_ape_percent": 7.320106141976169,
+        "mean_signed_error_percent": -6.358913133206452,
+        "name": "Ethylisopropyl ketone"
+      },
+      {
+        "cas": "108-39-4",
+        "mape_percent": 6.196978531778225,
+        "maximum_ape_percent": 8.644597659100528,
+        "mean_signed_error_percent": -6.196978531778225,
+        "name": "m-Cresol"
+      },
+      {
+        "cas": "109-67-1",
+        "mape_percent": 6.166099017287443,
+        "maximum_ape_percent": 16.000294536610227,
+        "mean_signed_error_percent": -5.855414013043404,
+        "name": "1-Pentene"
+      },
+      {
+        "cas": "118-96-7",
+        "mape_percent": 6.149393709945137,
+        "maximum_ape_percent": 6.822589222217013,
+        "mean_signed_error_percent": 6.149393709945137,
+        "name": "2,4,6-Trinitrotoluene"
+      },
+      {
+        "cas": "111-14-8",
+        "mape_percent": 6.016538095208273,
+        "maximum_ape_percent": 8.579880063424007,
+        "mean_signed_error_percent": 6.016538095208273,
+        "name": "Heptanoic acid"
+      },
+      {
+        "cas": "110-43-0",
+        "mape_percent": 5.998742981312105,
+        "maximum_ape_percent": 6.40724735341871,
+        "mean_signed_error_percent": 5.998742981312105,
+        "name": "2-Heptanone"
+      },
+      {
+        "cas": "1551-21-9",
+        "mape_percent": 5.98916265682075,
+        "maximum_ape_percent": 6.013314379009149,
+        "mean_signed_error_percent": -5.98916265682075,
+        "name": "Methylisopropyl sulfide"
+      },
+      {
+        "cas": "75-34-3",
+        "mape_percent": 5.940614454822233,
+        "maximum_ape_percent": 16.828609629269554,
+        "mean_signed_error_percent": -2.46085843522884,
+        "name": "1,1-Dichloroethane"
+      },
+      {
+        "cas": "625-44-5",
+        "mape_percent": 5.906284641944979,
+        "maximum_ape_percent": 6.556659305014345,
+        "mean_signed_error_percent": -5.906284641944979,
+        "name": "Methylisobutyl ether"
+      },
+      {
+        "cas": "123-72-8",
+        "mape_percent": 5.891316774228213,
+        "maximum_ape_percent": 7.238942538601334,
+        "mean_signed_error_percent": -5.891316774228213,
+        "name": "Butyraldehyde"
+      },
+      {
+        "cas": "124-07-2",
+        "mape_percent": 5.872574895980359,
+        "maximum_ape_percent": 8.715234548027095,
+        "mean_signed_error_percent": 5.872574895980359,
+        "name": "Octanoic acid"
+      },
+      {
+        "cas": "93-89-0",
+        "mape_percent": 5.79700176489014,
+        "maximum_ape_percent": 15.280721934030117,
+        "mean_signed_error_percent": 5.684266497863789,
+        "name": "Ethyl benzoate"
+      },
+      {
+        "cas": "1678-91-7",
+        "mape_percent": 5.660583729461808,
+        "maximum_ape_percent": 7.691850214440343,
+        "mean_signed_error_percent": 5.660583729461808,
+        "name": "Ethylcyclohexane"
+      },
+      {
+        "cas": "554-12-1",
+        "mape_percent": 5.592402040761251,
+        "maximum_ape_percent": 14.09217385076934,
+        "mean_signed_error_percent": -5.585365041068893,
+        "name": "Methyl propionate"
+      },
+      {
+        "cas": "111-87-5",
+        "mape_percent": 5.522811796025759,
+        "maximum_ape_percent": 10.20747656801706,
+        "mean_signed_error_percent": 5.522811796025759,
+        "name": "1-Octanol"
+      },
+      {
+        "cas": "110-74-7",
+        "mape_percent": 5.501700133226412,
+        "maximum_ape_percent": 12.669850024606689,
+        "mean_signed_error_percent": -5.501700133226412,
+        "name": "Propyl formate"
+      },
+      {
+        "cas": "112-05-0",
+        "mape_percent": 5.4975816233160435,
+        "maximum_ape_percent": 8.85625014621263,
+        "mean_signed_error_percent": 5.4975816233160435,
+        "name": "Nonanoic acid"
+      },
+      {
+        "cas": "65-85-0",
+        "mape_percent": 5.485161803646112,
+        "maximum_ape_percent": 15.017632302402895,
+        "mean_signed_error_percent": 3.959910033934435,
+        "name": "Benzoic acid"
+      },
+      {
+        "cas": "96-37-7",
+        "mape_percent": 5.292096887986667,
+        "maximum_ape_percent": 7.743600785249482,
+        "mean_signed_error_percent": -5.292096887986667,
+        "name": "Methylcyclopentane"
+      },
+      {
+        "cas": "78-99-9",
+        "mape_percent": 5.162828616238616,
+        "maximum_ape_percent": 11.473089742979592,
+        "mean_signed_error_percent": 0.6982014883492466,
+        "name": "1,1-Dichloropropane"
+      },
+      {
+        "cas": "1640-89-7",
+        "mape_percent": 5.026319976902022,
+        "maximum_ape_percent": 5.93550544452619,
+        "mean_signed_error_percent": 5.026319976902022,
+        "name": "Ethylcyclopentane"
+      },
+      {
+        "cas": "142-29-0",
+        "mape_percent": 4.895669779414577,
+        "maximum_ape_percent": 12.953696149966365,
+        "mean_signed_error_percent": -2.3209170311593077,
+        "name": "Cyclopentene"
+      },
+      {
+        "cas": "71-23-8",
+        "mape_percent": 4.744472087087216,
+        "maximum_ape_percent": 7.932056613247318,
+        "mean_signed_error_percent": 4.744472087087216,
+        "name": "1-Propanol"
+      },
+      {
+        "cas": "110-15-6",
+        "mape_percent": 4.740548283749623,
+        "maximum_ape_percent": 8.90331690684122,
+        "mean_signed_error_percent": -4.740249421313647,
+        "name": "Succinic acid"
+      },
+      {
+        "cas": "151-56-4",
+        "mape_percent": 4.720012039881307,
+        "maximum_ape_percent": 7.202950686866805,
+        "mean_signed_error_percent": -4.720012039881307,
+        "name": "Ethyleneimine"
+      },
+      {
+        "cas": "115-11-7",
+        "mape_percent": 4.662818402870791,
+        "maximum_ape_percent": 24.03961620205782,
+        "mean_signed_error_percent": -2.9144635258851936,
+        "name": "2-Methyl propene"
+      },
+      {
+        "cas": "75-37-6",
+        "mape_percent": 4.597083120274052,
+        "maximum_ape_percent": 17.816803403114267,
+        "mean_signed_error_percent": -4.597083120274052,
+        "name": "1,1-Difluoroethane"
+      },
+      {
+        "cas": "111-27-3",
+        "mape_percent": 4.526152310267808,
+        "maximum_ape_percent": 5.86674349200047,
+        "mean_signed_error_percent": -4.526152310267808,
+        "name": "1-Hexanol"
+      },
+      {
+        "cas": "628-32-0",
+        "mape_percent": 4.521462371157919,
+        "maximum_ape_percent": 5.526568401252662,
+        "mean_signed_error_percent": -4.521462371157919,
+        "name": "Ethylpropyl ether"
+      },
+      {
+        "cas": "106-35-4",
+        "mape_percent": 4.433014517991975,
+        "maximum_ape_percent": 7.634845969703852,
+        "mean_signed_error_percent": 4.409701531370753,
+        "name": "3-Heptanone"
+      },
+      {
+        "cas": "121-44-8",
+        "mape_percent": 4.4313805983942895,
+        "maximum_ape_percent": 7.940114957344779,
+        "mean_signed_error_percent": -4.2562911926732,
+        "name": "Triethyl amine"
+      },
+      {
+        "cas": "334-48-5",
+        "mape_percent": 4.424554280373539,
+        "maximum_ape_percent": 7.68786109687194,
+        "mean_signed_error_percent": 4.424554280373539,
+        "name": "Decanoic acid"
+      },
+      {
+        "cas": "592-41-6",
+        "mape_percent": 4.350335656575115,
+        "maximum_ape_percent": 6.530380132667291,
+        "mean_signed_error_percent": -4.266243780090239,
+        "name": "1-Hexene"
+      },
+      {
+        "cas": "100-66-3",
+        "mape_percent": 4.299515439676471,
+        "maximum_ape_percent": 6.926176229592606,
+        "mean_signed_error_percent": -4.299515439676471,
+        "name": "Anisole"
+      },
+      {
+        "cas": "79-29-8",
+        "mape_percent": 4.278799719023308,
+        "maximum_ape_percent": 9.788271148696914,
+        "mean_signed_error_percent": -4.278799719023308,
+        "name": "2,3-Dimethylbutane"
+      },
+      {
+        "cas": "598-25-4",
+        "mape_percent": 4.233646721436094,
+        "maximum_ape_percent": 11.261626845940764,
+        "mean_signed_error_percent": -2.358417876323526,
+        "name": "3-Methyl-1,2-butadiene"
+      },
+      {
+        "cas": "108-05-4",
+        "mape_percent": 4.212762534326018,
+        "maximum_ape_percent": 4.421179581764467,
+        "mean_signed_error_percent": -4.212762534326018,
+        "name": "Vinyl acetate"
+      },
+      {
+        "cas": "64-19-7",
+        "mape_percent": 4.16505426440376,
+        "maximum_ape_percent": 5.90581191061339,
+        "mean_signed_error_percent": -4.16505426440376,
+        "name": "Acetic acid"
+      },
+      {
+        "cas": "1120-62-3",
+        "mape_percent": 4.141292607255308,
+        "maximum_ape_percent": 11.108115306949317,
+        "mean_signed_error_percent": -2.583965136231773,
+        "name": "3-Methylcyclopentene"
+      },
+      {
+        "cas": "75-00-3",
+        "mape_percent": 4.104353045353536,
+        "maximum_ape_percent": 5.515095168719164,
+        "mean_signed_error_percent": -4.104353045353536,
+        "name": "Chloroethane"
+      },
+      {
+        "cas": "75-73-0",
+        "mape_percent": 4.030489453839879,
+        "maximum_ape_percent": 8.477120492634649,
+        "mean_signed_error_percent": 3.3423676539942972,
+        "name": "Carbon tetrafluoride"
+      },
+      {
+        "cas": "93-58-3",
+        "mape_percent": 3.995244355300188,
+        "maximum_ape_percent": 10.95004862137019,
+        "mean_signed_error_percent": 3.728230171240265,
+        "name": "Methyl benzoate"
+      },
+      {
+        "cas": "75-50-3",
+        "mape_percent": 3.923007420543287,
+        "maximum_ape_percent": 6.830434396465268,
+        "mean_signed_error_percent": -3.923007420543287,
+        "name": "Trimethyl amine"
+      },
+      {
+        "cas": "103-65-1",
+        "mape_percent": 3.9159545841427703,
+        "maximum_ape_percent": 5.632079400658063,
+        "mean_signed_error_percent": 3.9159545841427703,
+        "name": "Propylbenzene"
+      },
+      {
+        "cas": "105-37-3",
+        "mape_percent": 3.7781748043160492,
+        "maximum_ape_percent": 7.704821576408872,
+        "mean_signed_error_percent": -3.7781748043160492,
+        "name": "Ethyl propionate"
+      },
+      {
+        "cas": "110-62-3",
+        "mape_percent": 3.7660542909102444,
+        "maximum_ape_percent": 5.424217109404694,
+        "mean_signed_error_percent": -3.7660542909102444,
+        "name": "Pentanal"
+      },
+      {
+        "cas": "107-83-5",
+        "mape_percent": 3.7450633809364278,
+        "maximum_ape_percent": 11.31064667021513,
+        "mean_signed_error_percent": -2.752490815316529,
+        "name": "2-Methylpentane"
+      },
+      {
+        "cas": "112-31-2",
+        "mape_percent": 3.7263131902044067,
+        "maximum_ape_percent": 6.746446446164933,
+        "mean_signed_error_percent": 3.7263131902044067,
+        "name": "Decanal"
+      },
+      {
+        "cas": "79-31-2",
+        "mape_percent": 3.6692860300584345,
+        "maximum_ape_percent": 10.085768056556056,
+        "mean_signed_error_percent": 1.3492376739193384,
+        "name": "Isobutyric acid"
+      },
+      {
+        "cas": "74-84-0",
+        "mape_percent": 3.53881823772535,
+        "maximum_ape_percent": 18.433722319214475,
+        "mean_signed_error_percent": -3.53881823772535,
+        "name": "Ethane"
+      },
+      {
+        "cas": "123-51-3",
+        "mape_percent": 3.527759499325218,
+        "maximum_ape_percent": 7.624808881858991,
+        "mean_signed_error_percent": 1.5766715675053125,
+        "name": "3-Methyl-1-butanol"
+      },
+      {
+        "cas": "56-23-5",
+        "mape_percent": 3.4449982887575827,
+        "maximum_ape_percent": 5.399302388696913,
+        "mean_signed_error_percent": -3.4449982887575827,
+        "name": "Carbon tetrachloride"
+      },
+      {
+        "cas": "110-54-3",
+        "mape_percent": 3.437828330500721,
+        "maximum_ape_percent": 4.8359763024832585,
+        "mean_signed_error_percent": -3.437828330500721,
+        "name": "Hexane"
+      },
+      {
+        "cas": "109-74-0",
+        "mape_percent": 3.4270550734858776,
+        "maximum_ape_percent": 5.650386691428267,
+        "mean_signed_error_percent": -3.4270550734858776,
+        "name": "Butyronitrile"
+      },
+      {
+        "cas": "462-06-6",
+        "mape_percent": 3.4249123675374378,
+        "maximum_ape_percent": 7.324576055270127,
+        "mean_signed_error_percent": 3.087373286376701,
+        "name": "Fluorobenzene"
+      },
+      {
+        "cas": "584-03-2",
+        "mape_percent": 3.366099615191027,
+        "maximum_ape_percent": 14.867780219256543,
+        "mean_signed_error_percent": 2.658679054318399,
+        "name": "1,2-Butanediol"
+      },
+      {
+        "cas": "3004-93-1",
+        "mape_percent": 3.3649075945183715,
+        "maximum_ape_percent": 8.802401204211762,
+        "mean_signed_error_percent": 0.4152956134078701,
+        "name": "2-Methyloctanoic acid"
+      },
+      {
+        "cas": "109-60-4",
+        "mape_percent": 3.3597085848827235,
+        "maximum_ape_percent": 6.007835614507318,
+        "mean_signed_error_percent": -3.3157301042024487,
+        "name": "Propyl acetate"
+      },
+      {
+        "cas": "100-42-5",
+        "mape_percent": 3.3274776585167514,
+        "maximum_ape_percent": 3.6412262303282095,
+        "mean_signed_error_percent": -3.3274776585167514,
+        "name": "Styrene"
+      },
+      {
+        "cas": "88-09-5",
+        "mape_percent": 3.32379866533256,
+        "maximum_ape_percent": 6.4470989774771725,
+        "mean_signed_error_percent": -1.185923016950843,
+        "name": "2-Ethyl butanoic acid"
+      },
+      {
+        "cas": "74-96-4",
+        "mape_percent": 3.2463152807028908,
+        "maximum_ape_percent": 5.832544165055964,
+        "mean_signed_error_percent": 3.2463152807028908,
+        "name": "Bromoethane"
+      },
+      {
+        "cas": "591-78-6",
+        "mape_percent": 3.236414390895282,
+        "maximum_ape_percent": 4.7255155825775,
+        "mean_signed_error_percent": 3.236414390895282,
+        "name": "2-Hexanone"
+      },
+      {
+        "cas": "108-87-2",
+        "mape_percent": 3.2207196434623793,
+        "maximum_ape_percent": 4.874610898175136,
+        "mean_signed_error_percent": 3.2207196434623793,
+        "name": "Methylcyclohexane"
+      },
+      {
+        "cas": "149-57-5",
+        "mape_percent": 3.1986895494046754,
+        "maximum_ape_percent": 6.198968875985578,
+        "mean_signed_error_percent": -1.3714873265722864,
+        "name": "2-Ethyl hexanoic acid"
+      },
+      {
+        "cas": "142-62-1",
+        "mape_percent": 3.1683474771730684,
+        "maximum_ape_percent": 7.16685927368097,
+        "mean_signed_error_percent": 0.04598866631437418,
+        "name": "Hexanoic acid"
+      },
+      {
+        "cas": "109-52-4",
+        "mape_percent": 3.1619293757370235,
+        "maximum_ape_percent": 6.69816080319916,
+        "mean_signed_error_percent": 2.941818314918646,
+        "name": "Pentanoic acid"
+      },
+      {
+        "cas": "592-76-7",
+        "mape_percent": 3.038403282232289,
+        "maximum_ape_percent": 4.7487330617820405,
+        "mean_signed_error_percent": -2.999814352794507,
+        "name": "1-Heptene"
+      },
+      {
+        "cas": "79-10-7",
+        "mape_percent": 2.999472847791451,
+        "maximum_ape_percent": 5.927300179583939,
+        "mean_signed_error_percent": -0.7587389576211759,
+        "name": "Acrylic acid"
+      },
+      {
+        "cas": "79-09-4",
+        "mape_percent": 2.996887944249147,
+        "maximum_ape_percent": 7.645181606712315,
+        "mean_signed_error_percent": -0.9397120256286888,
+        "name": "Propionic acid"
+      },
+      {
+        "cas": "589-38-8",
+        "mape_percent": 2.8899632269494724,
+        "maximum_ape_percent": 3.2900253748437303,
+        "mean_signed_error_percent": -2.8899632269494724,
+        "name": "3-Hexanone"
+      },
+      {
+        "cas": "628-80-8",
+        "mape_percent": 2.8854410998148854,
+        "maximum_ape_percent": 3.006910235710847,
+        "mean_signed_error_percent": 2.8854410998148854,
+        "name": "Methyl pentyl ether"
+      },
+      {
+        "cas": "100-41-4",
+        "mape_percent": 2.8290360388681863,
+        "maximum_ape_percent": 4.556920157512834,
+        "mean_signed_error_percent": 2.8290360388681863,
+        "name": "Ethylbenzene"
+      },
+      {
+        "cas": "142-96-1",
+        "mape_percent": 2.8071682916667258,
+        "maximum_ape_percent": 4.316783799214763,
+        "mean_signed_error_percent": 2.8071682916667258,
+        "name": "Dibutyl ether"
+      },
+      {
+        "cas": "108-90-7",
+        "mape_percent": 2.7811224343766483,
+        "maximum_ape_percent": 6.75080282760595,
+        "mean_signed_error_percent": -2.6926744642651257,
+        "name": "Chlorobenzene"
+      },
+      {
+        "cas": "107-92-6",
+        "mape_percent": 2.74770835835795,
+        "maximum_ape_percent": 7.600696715647159,
+        "mean_signed_error_percent": -1.8242676955123993,
+        "name": "Butyric acid"
+      },
+      {
+        "cas": "540-54-5",
+        "mape_percent": 2.700091628021468,
+        "maximum_ape_percent": 4.408810210539182,
+        "mean_signed_error_percent": -2.700091628021468,
+        "name": "1-Chloropropane"
+      },
+      {
+        "cas": "6032-29-7",
+        "mape_percent": 2.6921443892585404,
+        "maximum_ape_percent": 7.2126323305825135,
+        "mean_signed_error_percent": 2.400389775996487,
+        "name": "2-Pentanol"
+      },
+      {
+        "cas": "108-88-3",
+        "mape_percent": 2.6659398335993134,
+        "maximum_ape_percent": 5.17154295820208,
+        "mean_signed_error_percent": -2.6659398335993134,
+        "name": "Toluene"
+      },
+      {
+        "cas": "123-91-1",
+        "mape_percent": 2.6294407980445462,
+        "maximum_ape_percent": 6.697309812277985,
+        "mean_signed_error_percent": 1.0391264568740015,
+        "name": "1,4-Dioxane"
+      },
+      {
+        "cas": "142-84-7",
+        "mape_percent": 2.610258689736102,
+        "maximum_ape_percent": 6.762653944962915,
+        "mean_signed_error_percent": 2.5016151669915865,
+        "name": "Dipropyl amine"
+      },
+      {
+        "cas": "106-68-3",
+        "mape_percent": 2.5945378643009067,
+        "maximum_ape_percent": 3.170970284465713,
+        "mean_signed_error_percent": 2.5945378643009067,
+        "name": "3-Octanone"
+      },
+      {
+        "cas": "75-19-4",
+        "mape_percent": 2.5044828899018468,
+        "maximum_ape_percent": 4.147115534626367,
+        "mean_signed_error_percent": 2.5044828899018468,
+        "name": "Cyclopropane"
+      },
+      {
+        "cas": "142-82-5",
+        "mape_percent": 2.426295472607848,
+        "maximum_ape_percent": 4.377234797585727,
+        "mean_signed_error_percent": -2.426295472607848,
+        "name": "Heptane"
+      },
+      {
+        "cas": "623-42-7",
+        "mape_percent": 2.2700391620972584,
+        "maximum_ape_percent": 5.949665217744737,
+        "mean_signed_error_percent": -0.2690587729046768,
+        "name": "Methyl butyrate"
+      },
+      {
+        "cas": "66-25-1",
+        "mape_percent": 2.2537540418201694,
+        "maximum_ape_percent": 3.478428322083804,
+        "mean_signed_error_percent": -2.2537540418201694,
+        "name": "Hexanal"
+      },
+      {
+        "cas": "67-66-3",
+        "mape_percent": 2.228661834223964,
+        "maximum_ape_percent": 5.452425970343344,
+        "mean_signed_error_percent": -0.5021403277654617,
+        "name": "Chloroform"
+      },
+      {
+        "cas": "92-52-4",
+        "mape_percent": 2.201639537258807,
+        "maximum_ape_percent": 3.0610444020508942,
+        "mean_signed_error_percent": -2.201639537258807,
+        "name": "Biphenyl"
+      },
+      {
+        "cas": "628-28-4",
+        "mape_percent": 2.125761471105898,
+        "maximum_ape_percent": 6.699718084474737,
+        "mean_signed_error_percent": -1.7181894812821004,
+        "name": "Methylbutyl ether"
+      },
+      {
+        "cas": "112-95-8",
+        "mape_percent": 2.036903731069175,
+        "maximum_ape_percent": 3.9162014773497122,
+        "mean_signed_error_percent": -0.9051401247577375,
+        "name": "Eicosane"
+      },
+      {
+        "cas": "116-53-0",
+        "mape_percent": 2.007827663654964,
+        "maximum_ape_percent": 4.358087221961549,
+        "mean_signed_error_percent": -1.0835073414839138,
+        "name": "2-Methylbutanoic acid"
+      },
+      {
+        "cas": "78-93-3",
+        "mape_percent": 1.99572104410122,
+        "maximum_ape_percent": 5.227115361012624,
+        "mean_signed_error_percent": -1.201884174779582,
+        "name": "Methylethyl ketone"
+      },
+      {
+        "cas": "106-44-5",
+        "mape_percent": 1.987370340056041,
+        "maximum_ape_percent": 4.535162506349188,
+        "mean_signed_error_percent": -1.3947600302266339,
+        "name": "p-Cresol"
+      },
+      {
+        "cas": "110-82-7",
+        "mape_percent": 1.9697252759907617,
+        "maximum_ape_percent": 3.016745042855762,
+        "mean_signed_error_percent": 1.9697252759907617,
+        "name": "Cyclohexane"
+      },
+      {
+        "cas": "565-59-3",
+        "mape_percent": 1.957566414497452,
+        "maximum_ape_percent": 4.201646934578229,
+        "mean_signed_error_percent": -1.957566414497452,
+        "name": "2,3-Dimethylpentane"
+      },
+      {
+        "cas": "101-84-8",
+        "mape_percent": 1.9452433303993315,
+        "maximum_ape_percent": 2.547047269857572,
+        "mean_signed_error_percent": 1.9452433303993315,
+        "name": "Diphenyl ether"
+      },
+      {
+        "cas": "629-78-7",
+        "mape_percent": 1.8830773974400428,
+        "maximum_ape_percent": 5.238569187108921,
+        "mean_signed_error_percent": 1.7670448514605994,
+        "name": "Heptadecane"
+      },
+      {
+        "cas": "287-92-3",
+        "mape_percent": 1.8509130090045982,
+        "maximum_ape_percent": 3.557390114964454,
+        "mean_signed_error_percent": -1.8509130090045982,
+        "name": "Cyclopentane"
+      },
+      {
+        "cas": "628-29-5",
+        "mape_percent": 1.8401268077297452,
+        "maximum_ape_percent": 1.979303601480975,
+        "mean_signed_error_percent": 1.8401268077297452,
+        "name": "Methylbutyl sulfide"
+      },
+      {
+        "cas": "629-92-5",
+        "mape_percent": 1.832400783286613,
+        "maximum_ape_percent": 5.444312475646007,
+        "mean_signed_error_percent": 1.2314693508340335,
+        "name": "Nonadecane"
+      },
+      {
+        "cas": "541-73-1",
+        "mape_percent": 1.8220119790718938,
+        "maximum_ape_percent": 3.7211607403584424,
+        "mean_signed_error_percent": 0.23936649286304107,
+        "name": "m-Dichlorobenzene"
+      },
+      {
+        "cas": "111-71-7",
+        "mape_percent": 1.8134039328076377,
+        "maximum_ape_percent": 3.7825331689275488,
+        "mean_signed_error_percent": -1.5965351016556797,
+        "name": "Heptanal"
+      },
+      {
+        "cas": "96-22-0",
+        "mape_percent": 1.75830755264783,
+        "maximum_ape_percent": 4.530340930881838,
+        "mean_signed_error_percent": -1.4553347857218764,
+        "name": "3-Pentanone"
+      },
+      {
+        "cas": "75-21-8",
+        "mape_percent": 1.7520901460250748,
+        "maximum_ape_percent": 2.4664184836481473,
+        "mean_signed_error_percent": 1.7520901460250748,
+        "name": "Ethylene oxide"
+      },
+      {
+        "cas": "593-45-3",
+        "mape_percent": 1.7488340588909363,
+        "maximum_ape_percent": 4.968414865421922,
+        "mean_signed_error_percent": 0.7150375623765329,
+        "name": "Octadecane"
+      },
+      {
+        "cas": "124-19-6",
+        "mape_percent": 1.7482657926831588,
+        "maximum_ape_percent": 4.621614053788958,
+        "mean_signed_error_percent": 1.5673258788450863,
+        "name": "Nonanal"
+      },
+      {
+        "cas": "110-83-8",
+        "mape_percent": 1.730857314186996,
+        "maximum_ape_percent": 3.461763845649668,
+        "mean_signed_error_percent": 0.514425867726895,
+        "name": "Cyclohexene"
+      },
+      {
+        "cas": "352-93-2",
+        "mape_percent": 1.7306166541623151,
+        "maximum_ape_percent": 2.19512828326216,
+        "mean_signed_error_percent": 1.7306166541623151,
+        "name": "Diethyl sulfide"
+      },
+      {
+        "cas": "106-46-7",
+        "mape_percent": 1.5797359446434316,
+        "maximum_ape_percent": 3.810361506079296,
+        "mean_signed_error_percent": -0.1412124322149675,
+        "name": "p-Dichlorobenzene"
+      },
+      {
+        "cas": "71-41-0",
+        "mape_percent": 1.5117823585702486,
+        "maximum_ape_percent": 2.4467598875068886,
+        "mean_signed_error_percent": 1.5117823585702486,
+        "name": "1-Pentanol"
+      },
+      {
+        "cas": "626-93-7",
+        "mape_percent": 1.5047872745039355,
+        "maximum_ape_percent": 4.0290416785356165,
+        "mean_signed_error_percent": 1.317947651593899,
+        "name": "2-Hexanol"
+      },
+      {
+        "cas": "75-04-7",
+        "mape_percent": 1.479168336815316,
+        "maximum_ape_percent": 2.357833346970928,
+        "mean_signed_error_percent": 1.431703865747198,
+        "name": "Ethyl amine"
+      },
+      {
+        "cas": "111-65-9",
+        "mape_percent": 1.45620355368683,
+        "maximum_ape_percent": 1.5014399681109736,
+        "mean_signed_error_percent": -1.45620355368683,
+        "name": "Octane"
+      },
+      {
+        "cas": "107-87-9",
+        "mape_percent": 1.4561473602854837,
+        "maximum_ape_percent": 3.0040265123606913,
+        "mean_signed_error_percent": 0.5292742148345828,
+        "name": "2-Pentanone"
+      },
+      {
+        "cas": "108-86-1",
+        "mape_percent": 1.3273304515002944,
+        "maximum_ape_percent": 2.9536273761040954,
+        "mean_signed_error_percent": -0.020955051844765173,
+        "name": "Bromobenzene"
+      },
+      {
+        "cas": "3877-15-4",
+        "mape_percent": 1.3007143515512725,
+        "maximum_ape_percent": 1.6928021117583514,
+        "mean_signed_error_percent": 1.3007143515512725,
+        "name": "Methylpropyl sulfide"
+      },
+      {
+        "cas": "111-66-0",
+        "mape_percent": 1.2989828536223582,
+        "maximum_ape_percent": 3.4945181524289715,
+        "mean_signed_error_percent": -0.4818132425119972,
+        "name": "1-Octene"
+      },
+      {
+        "cas": "124-13-0",
+        "mape_percent": 1.2780242304753568,
+        "maximum_ape_percent": 3.241558772846509,
+        "mean_signed_error_percent": 0.3903226484094993,
+        "name": "Octanal"
+      },
+      {
+        "cas": "98-82-8",
+        "mape_percent": 1.270521663483575,
+        "maximum_ape_percent": 2.6985123186067383,
+        "mean_signed_error_percent": 1.270521663483575,
+        "name": "Cumene"
+      },
+      {
+        "cas": "540-84-1",
+        "mape_percent": 1.2081864762285128,
+        "maximum_ape_percent": 2.1150818701269003,
+        "mean_signed_error_percent": -1.2081864762285128,
+        "name": "2,2,4-Trimethylpentane"
+      },
+      {
+        "cas": "71-36-3",
+        "mape_percent": 1.2054122573194201,
+        "maximum_ape_percent": 3.068271154507518,
+        "mean_signed_error_percent": 0.42552702154725275,
+        "name": "1-Butanol"
+      },
+      {
+        "cas": "95-50-1",
+        "mape_percent": 1.159739984003928,
+        "maximum_ape_percent": 2.5992853570061425,
+        "mean_signed_error_percent": -1.1411036597030682,
+        "name": "o-Dichlorobenzene"
+      },
+      {
+        "cas": "629-59-4",
+        "mape_percent": 1.0478633391640848,
+        "maximum_ape_percent": 1.4234940781110206,
+        "mean_signed_error_percent": 1.0478633391640848,
+        "name": "Tetradecane"
+      },
+      {
+        "cas": "108-20-3",
+        "mape_percent": 1.0441975485597776,
+        "maximum_ape_percent": 1.377078245668928,
+        "mean_signed_error_percent": -1.0441975485597776,
+        "name": "Diisopropyl ether"
+      },
+      {
+        "cas": "111-84-2",
+        "mape_percent": 0.9895682982942283,
+        "maximum_ape_percent": 1.901231075791221,
+        "mean_signed_error_percent": -0.9895682982942283,
+        "name": "Nonane"
+      },
+      {
+        "cas": "108-18-9",
+        "mape_percent": 0.978493547070148,
+        "maximum_ape_percent": 2.009455530638793,
+        "mean_signed_error_percent": 0.15117886041331596,
+        "name": "Diisopropyl amine"
+      },
+      {
+        "cas": "544-76-3",
+        "mape_percent": 0.9752829242474361,
+        "maximum_ape_percent": 2.795282572053881,
+        "mean_signed_error_percent": 0.8043442202274113,
+        "name": "Hexadecane"
+      },
+      {
+        "cas": "7778-85-0",
+        "mape_percent": 0.95067533988296,
+        "maximum_ape_percent": 2.149580082285496,
+        "mean_signed_error_percent": 0.05458035892842285,
+        "name": "1,2-Dimethoxypropane"
+      },
+      {
+        "cas": "143-08-8",
+        "mape_percent": 0.9339307789387549,
+        "maximum_ape_percent": 1.7732787201300115,
+        "mean_signed_error_percent": -0.8758370212982464,
+        "name": "1-Nonanol"
+      },
+      {
+        "cas": "123-86-4",
+        "mape_percent": 0.8762785955941872,
+        "maximum_ape_percent": 2.2165458885444744,
+        "mean_signed_error_percent": 0.1114375279550387,
+        "name": "Butyl acetate"
+      },
+      {
+        "cas": "95-63-6",
+        "mape_percent": 0.818039599741629,
+        "maximum_ape_percent": 1.9844708016026003,
+        "mean_signed_error_percent": 0.1349867401745722,
+        "name": "1,2,4-Trimethylbenzene"
+      },
+      {
+        "cas": "124-11-8",
+        "mape_percent": 0.806090836664873,
+        "maximum_ape_percent": 2.1845429746819245,
+        "mean_signed_error_percent": -0.31719399171817014,
+        "name": "1-Nonene"
+      },
+      {
+        "cas": "95-47-6",
+        "mape_percent": 0.8035745346103971,
+        "maximum_ape_percent": 1.5955815074292334,
+        "mean_signed_error_percent": -0.7808979043567321,
+        "name": "o-Xylene"
+      },
+      {
+        "cas": "872-05-9",
+        "mape_percent": 0.7531845511848475,
+        "maximum_ape_percent": 1.8297711286605955,
+        "mean_signed_error_percent": -0.06280893643229353,
+        "name": "1-Decene"
+      },
+      {
+        "cas": "112-30-1",
+        "mape_percent": 0.7310307472940075,
+        "maximum_ape_percent": 1.5164150257793496,
+        "mean_signed_error_percent": 0.7310307472940075,
+        "name": "1-Decanol"
+      },
+      {
+        "cas": "629-50-5",
+        "mape_percent": 0.7179890968000617,
+        "maximum_ape_percent": 1.161010545714447,
+        "mean_signed_error_percent": 0.7179890968000617,
+        "name": "Tridecane"
+      },
+      {
+        "cas": "112-40-3",
+        "mape_percent": 0.7040233308866837,
+        "maximum_ape_percent": 0.9480208213838104,
+        "mean_signed_error_percent": 0.7040233308866837,
+        "name": "Dodecane"
+      },
+      {
+        "cas": "108-38-3",
+        "mape_percent": 0.6386078334825664,
+        "maximum_ape_percent": 1.3672272925871476,
+        "mean_signed_error_percent": -0.42860782874218495,
+        "name": "m-Xylene"
+      },
+      {
+        "cas": "75-18-3",
+        "mape_percent": 0.6214570719377472,
+        "maximum_ape_percent": 0.7147817397478828,
+        "mean_signed_error_percent": 0.6214570719377472,
+        "name": "Dimethyl sulfide"
+      },
+      {
+        "cas": "84-15-1",
+        "mape_percent": 0.607556264113581,
+        "maximum_ape_percent": 1.2899700916527923,
+        "mean_signed_error_percent": 0.4177838847996279,
+        "name": "o-Terphenyl"
+      },
+      {
+        "cas": "543-49-7",
+        "mape_percent": 0.5967173512040594,
+        "maximum_ape_percent": 1.3449037682622622,
+        "mean_signed_error_percent": -0.014708592628449195,
+        "name": "2-Heptanol"
+      },
+      {
+        "cas": "107-10-8",
+        "mape_percent": 0.4408890100328639,
+        "maximum_ape_percent": 1.7968022318572086,
+        "mean_signed_error_percent": -0.29954733424706986,
+        "name": "Propyl amine"
+      },
+      {
+        "cas": "526-73-8",
+        "mape_percent": 0.43800439970854943,
+        "maximum_ape_percent": 0.9365705401094493,
+        "mean_signed_error_percent": -0.25186464074217846,
+        "name": "1,2,3-Trimethylbenzene"
+      },
+      {
+        "cas": "106-42-3",
+        "mape_percent": 0.43432669874227214,
+        "maximum_ape_percent": 1.1215403682694136,
+        "mean_signed_error_percent": 0.23775600335156574,
+        "name": "p-Xylene"
+      },
+      {
+        "cas": "105-54-4",
+        "mape_percent": 0.4336402629538741,
+        "maximum_ape_percent": 0.7986086943155168,
+        "mean_signed_error_percent": 0.42487724000464994,
+        "name": "Ethyl butyrate"
+      },
+      {
+        "cas": "629-62-9",
+        "mape_percent": 0.4216498599733801,
+        "maximum_ape_percent": 1.0179918696675117,
+        "mean_signed_error_percent": 0.018788168646981254,
+        "name": "Pentadecane"
+      },
+      {
+        "cas": "287-23-0",
+        "mape_percent": 0.32036698334517094,
+        "maximum_ape_percent": 0.7851976934817317,
+        "mean_signed_error_percent": 0.10468805760531566,
+        "name": "Cyclobutane"
+      },
+      {
+        "cas": "624-89-5",
+        "mape_percent": 0.26778882299981566,
+        "maximum_ape_percent": 0.5726674542763988,
+        "mean_signed_error_percent": 0.21684059692412957,
+        "name": "Methylethyl sulfide"
+      },
+      {
+        "cas": "1120-21-4",
+        "mape_percent": 0.2390306806546625,
+        "maximum_ape_percent": 0.424996474374284,
+        "mean_signed_error_percent": 0.2386756754474968,
+        "name": "Undecane"
+      },
+      {
+        "cas": "124-18-5",
+        "mape_percent": 0.1973099454717721,
+        "maximum_ape_percent": 0.39759706177523446,
+        "mean_signed_error_percent": 0.043465376275660855,
+        "name": "Decane"
+      },
+      {
+        "cas": "75-12-7",
+        "mape_percent": 0.06948176615328895,
+        "maximum_ape_percent": 0.15785961041743235,
+        "mean_signed_error_percent": 0.0624763964176782,
+        "name": "Formamide"
+      }
+    ]
+  },
+  "inputs": {
+    "benchmark": {
+      "path": "scripts/thermal_conductivity/liquid/results/govender_perry_tb_benchmark.json",
+      "sha256": "5dac3a99e2abd4dd9ba277a56516fab82451e9c2b89582c629898dc6b83e1ff3"
+    },
+    "conductivity_database": {
+      "path": "data/perry_thermal_conductivity.json",
+      "sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053"
+    },
+    "govender_method": {
+      "path": "govender_method.py",
+      "sha256": "2db2a71cef80560557193333cddfeb961c69e9c3c6d84c9f3c10ab83de296552"
+    },
+    "literature_data": {
+      "path": "scripts/thermal_conductivity/liquid/data/tertiary_alcohol_amines.json",
+      "sha256": "12f6d563b10bb529913a770f1e3b528229f1021ccb7d9a1ab1e28314a2f6b529"
+    },
+    "ring_probe": {
+      "path": "scripts/thermal_conductivity/liquid/results/govender_ring_correction_probe.json",
+      "sha256": "0ebe05ef293a628ba0f92aa2da29f51c026751773256150a885d8f9e71f3b917"
+    },
+    "script": {
+      "path": "scripts/thermal_conductivity/liquid/probe_govender_amine_refits.py",
+      "sha256": "1c8bd0fa1de9a9660098b4db84b52aa6bbcf75683b0f0e2ac3ea1f4d06aff05d"
+    },
+    "uv_lock": {
+      "path": "uv.lock",
+      "sha256": "2eb3ee9dea61cf662862d406b82f74dbd7cec08850032ad8b1df21c908bc4942"
+    }
+  },
+  "packages": {
+    "chemicals": "1.5.2",
+    "numpy": "2.4.4",
+    "rdkit": "2026.3.2",
+    "scipy": "1.17.1"
+  },
+  "probe": "govender_tertiary_amine_and_amine_alcohol_refits",
+  "pure_tertiary_amines": {
+    "published": {
+      "compounds": [
+        {
+          "cas": "102-69-2",
+          "mape_percent": 18.911833662032024,
+          "mean_signed_error_percent": -18.911833662032024,
+          "name": "tri-n-propylamine",
+          "points": 6
+        },
+        {
+          "cas": "102-82-9",
+          "mape_percent": 13.8544074049643,
+          "mean_signed_error_percent": -13.8544074049643,
+          "name": "tri-n-butylamine",
+          "points": 5
+        },
+        {
+          "cas": "121-44-8",
+          "mape_percent": 27.8939299417866,
+          "mean_signed_error_percent": -27.8939299417866,
+          "name": "Triethyl amine",
+          "points": 101
+        },
+        {
+          "cas": "75-50-3",
+          "mape_percent": 29.57340874150409,
+          "mean_signed_error_percent": -29.57340874150409,
+          "name": "Trimethyl amine",
+          "points": 101
+        }
+      ],
+      "parameters": {
+        "group_84_A": -12.576,
+        "group_84_B": 1.1656
+      },
+      "summary": {
+        "compound_equal_bias_percent": -22.558394937571755,
+        "compound_equal_mape_percent": 22.558394937571755,
+        "compounds": 4,
+        "points": 213
+      }
+    },
+    "refit": {
+      "fitted": {
+        "compound_equal_bias_percent": 0.3061918390131228,
+        "compound_equal_mape_percent": 2.798712161492903,
+        "compounds": 4,
+        "points": 213
+      },
+      "leave_one_compound_out": {
+        "compound_equal_bias_percent": 1.0122474706735112,
+        "compound_equal_mape_percent": 4.251762543070694,
+        "compounds": 4,
+        "points": 213
+      },
+      "leave_one_compound_out_compounds": [
+        {
+          "cas": "102-69-2",
+          "mape_percent": 2.8047784851888857,
+          "mean_signed_error_percent": 2.107434204561383,
+          "name": "tri-n-propylamine",
+          "points": 6
+        },
+        {
+          "cas": "102-82-9",
+          "mape_percent": 4.559374757998907,
+          "mean_signed_error_percent": 4.559374757998907,
+          "name": "tri-n-butylamine",
+          "points": 5
+        },
+        {
+          "cas": "121-44-8",
+          "mape_percent": 6.936430134936387,
+          "mean_signed_error_percent": 0.08864771429234573,
+          "name": "Triethyl amine",
+          "points": 101
+        },
+        {
+          "cas": "75-50-3",
+          "mape_percent": 2.7064667941585925,
+          "mean_signed_error_percent": -2.7064667941585925,
+          "name": "Trimethyl amine",
+          "points": 101
+        }
+      ],
+      "parameters": {
+        "group_84_A": -10.641079441784761,
+        "group_84_B": 2.30851428264844
+      },
+      "rule": "none"
+    }
+  },
+  "schema_version": 1,
+  "weighting": "equal least-squares weight per compound"
+}

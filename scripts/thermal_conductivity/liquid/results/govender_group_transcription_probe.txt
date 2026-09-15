@@ -1,0 +1,108 @@
+Govender nonacid group transcription probe
+Population excludes every compound containing COOH group 48 or 53.
+Simple candidates change one digit, flip a sign, or move a decimal place.
+
+GROUP 10 ring CH2 (n=24; refit support=useful)
+  support: Perry=24 curves/2424 sampled states; paper cyclic alkanes=6 compounds (broader class)
+  published A=4.67 B=-1.218: MAPE=19.25%
+  candidate A=4.67 B=-1.288: MAPE=17.99% (B: digit 1->8 in -1.218)
+  free fit  A=5.18561 B=-1.3526: MAPE=18.62%
+  leave-one-compound-out: candidate=19.38%, full refit=19.85%
+  worst: Cyclopropane 70.33%; published without worst=17.02930795118586
+
+GROUP 21 ring C=C carbon (n=6; refit support=limited)
+  support: Perry=6 curves/606 sampled states; paper cyclic alkenes=5 compounds (broader class)
+  published A=10.37 B=-1.217: MAPE=24.43%
+  candidate A=10.37 B=-1.417: MAPE=18.77% (B: digit 2->4 in -1.217)
+  free fit  A=23.8227 B=-1.70357: MAPE=12.87%
+  leave-one-compound-out: candidate=27.34%, full refit=24.98%
+  worst: Quinone 90.46%; published without worst=11.219712827556027
+
+GROUP 24 ring CH2 attached to electronegative atom (n=4; refit support=weak)
+  support: Perry=4 curves/404 sampled states; paper not disclosed=not reported compounds (broader class)
+  published A=7.65 B=-1.86: MAPE=41.38%
+  candidate A=7.65 B=-2.86: MAPE=29.31% (B: digit 1->2 in -1.860)
+  free fit  A=19.1643 B=-2.5254: MAPE=18.07%
+  leave-one-compound-out: candidate=47.74%, full refit=26.89%
+  worst: Ethylene oxide 68.40%; published without worst=32.37835390574511
+
+GROUP 33 conjugated chain diene (n=1; refit support=underdetermined)
+  support: Perry=1 curves/101 sampled states; paper noncyclic alkenes=12 compounds (broader class)
+  published A=-8.434 B=0.2742: MAPE=81.51%
+  candidate A=-84.34 B=0.2742: MAPE=44.71% (A: decimal x10 from -8.434)
+  free fit  A=-0.228958 B=-1.69748: MAPE=0.00%
+  leave-one-compound-out: insufficient compounds
+  worst: 1,3-Butadiene 81.51%; published without worst=n/a
+
+GROUP 35 F on nonaromatic carbon (n=3; refit support=weak)
+  support: Perry=3 curves/303 sampled states; paper fluorinated compounds=20 compounds (broader class)
+  published A=28.679 B=-1.4986: MAPE=28.24%
+  candidate A=28.679 B=-1.9986: MAPE=13.39% (B: digit 4->9 in -1.4986)
+  free fit  A=25.1098 B=-1.98936: MAPE=12.61%
+  leave-one-compound-out: candidate=27.94%, full refit=35.50%
+  worst: 1,2-Difluoroethane 52.65%; published without worst=16.036402303114222
+
+GROUP 45 Br on nonaromatic carbon (n=5; refit support=limited)
+  support: Perry=5 curves/505 sampled states; paper brominated compounds=11 compounds (broader class)
+  published A=6.135 B=-2.7263: MAPE=16.44%
+  candidate A=9.135 B=-2.7263: MAPE=14.89% (A: digit 6->9 in 6.135)
+  free fit  A=19.3582 B=-2.9123: MAPE=13.57%
+  leave-one-compound-out: candidate=14.89%, full refit=19.09%
+  worst: Bromomethane 47.27%; published without worst=8.726708759825271
+
+GROUP 58 ketone (n=17; refit support=useful)
+  support: Perry=17 curves/1717 sampled states; paper ketones=7 compounds (exact class)
+  published A=0.546 B=-0.2229: MAPE=15.41%
+  candidate A=0.546 B=-0.6229: MAPE=9.74% (B: digit 2->6 in -0.2229)
+  free fit  A=17.2467 B=-0.997012: MAPE=9.98%
+  leave-one-compound-out: candidate=11.09%, full refit=11.97%
+  worst: Quinone 90.46%; published without worst=10.71944946155931
+
+GROUP 70 primary amide (n=3; refit support=weak)
+  support: Perry=3 curves/303 sampled states; paper amides=3 compounds (broader class)
+  published A=26.62 B=-3.0101: MAPE=15.83%
+  candidate A=96.62 B=-3.0101: MAPE=12.83% (A: digit 2->9 in 26.620)
+  free fit  A=100.58 B=-2.88969: MAPE=13.25%
+  leave-one-compound-out: candidate=27.72%, full refit=26.03%
+  worst: Acetamide 33.98%; published without worst=6.763329592886208
+
+GROUP 72 tertiary amide (n=1; refit support=underdetermined)
+  support: Perry=1 curves/101 sampled states; paper amides=3 compounds (broader class)
+  published A=11.442 B=0.8726: MAPE=40.82%
+  candidate A=11.442 B=0.0726: MAPE=11.30% (B: digit 8->0 in 0.8726)
+  free fit  A=17.2024 B=-0.35185: MAPE=0.00%
+  leave-one-compound-out: insufficient compounds
+  worst: N,N-Dimethyl formamide 40.82%; published without worst=n/a
+
+GROUP 84 tertiary amine (n=2; refit support=very weak)
+  support: Perry=2 curves/202 sampled states; paper tertiary amines=4 compounds (exact class)
+  published A=-12.576 B=1.1656: MAPE=28.73%
+  candidate A=-12.576 B=2.1656: MAPE=6.44% (B: digit 1->2 in 1.1656)
+  free fit  A=-6.65913 B=2.32607: MAPE=1.64%
+  leave-one-compound-out: candidate=6.44%, full refit=4.23%
+  worst: Trimethyl amine 29.57%; published without worst=27.8939299417866
+
+GROUP 93 cyclic secondary amine (n=1; refit support=underdetermined)
+  support: Perry=1 curves/101 sampled states; paper secondary amines=5 compounds (broader class)
+  published A=9.092 B=0.5287: MAPE=60.16%
+  candidate A=9.092 B=-0.5287: MAPE=11.02% (B: sign flip of 0.5287)
+  free fit  A=28.2883 B=-1.00424: MAPE=0.00%
+  leave-one-compound-out: insufficient compounds
+  worst: Ethyleneimine 60.16%; published without worst=n/a
+
+GROUP 100 thioether (n=7; refit support=limited)
+  support: Perry=7 curves/707 sampled states; paper sulfur compounds=2 compounds (exact class)
+  published A=11.579 B=0.0759: MAPE=21.84%
+  candidate A=-11.579 B=0.0759: MAPE=11.86% (A: sign flip of 11.579)
+  free fit  A=14.0735 B=-0.798472: MAPE=10.56%
+  leave-one-compound-out: candidate=11.86%, full refit=13.65%
+  worst: Tetrahydrothiophene 64.16%; published without worst=14.79075552401126
+
+TARGETED SUBCLASS REFITS
+  ordinary_ketones_excluding_quinone: n=16 A=4.38711 B=-0.657227; training MAPE=7.05%, LOOCV MAPE=7.55%
+  acyclic_thioethers_excluding_tetrahydrothiophene: n=6 A=-0.389072 B=-0.238368; training MAPE=1.96%, LOOCV MAPE=2.33%
+
+COMBINED EFFECT ON COMPLETE BENCHMARK
+  published                          MAPE=13.53% P95=54.18% bias=+5.42%
+  fixed_subclass_refits              MAPE=9.53% P95=32.66% bias=+0.73%
+  subclass_refits_LOOCV              MAPE=9.59% P95=32.66% bias=+0.73%

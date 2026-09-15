@@ -1,0 +1,56 @@
+Govender tertiary-amine and amine/alcohol refit probe
+All fits and validation metrics weight each compound equally.
+Primary and secondary acyclic amine coefficients remain published.
+
+PURE TERTIARY AMINES
+  published: n=4 MAPE=22.56%
+  refit A=-10.641079 B=2.308514: fit MAPE=2.80%, LOOCV=4.25%
+
+ALL 11 COMPOUNDS
+  published MAPE=20.37%
+  group_84_only        A84=-4.334896 B84=2.132276; fit=6.80%, LOOCV=7.86%
+  interaction_once     A84=-9.961733 B84=2.216148; interaction A=29.018583 B=-0.330719; fit=5.32%, LOOCV=6.60%
+  interaction_per_oh   A84=-9.285317 B84=2.128066; interaction A=19.205351 B=-0.175316; fit=5.56%, LOOCV=7.33%
+
+SELECTED INTERACTION-ONCE LOOCV BY COMPOUND
+  N,N-dimethylethanolamine       n= 11 MAPE= 18.27%
+  triethanolamine                n=  7 MAPE= 13.20%
+  diethanolamine                 n=  6 MAPE= 10.92%
+  Trimethyl amine                n=101 MAPE=  5.39%
+  Triethyl amine                 n=101 MAPE=  5.30%
+  N-methyldiethanolamine         n=  6 MAPE=  4.38%
+  N-ethyldiethanolamine          n=  7 MAPE=  4.37%
+  tri-n-butylamine               n=  5 MAPE=  3.55%
+  N,N-diethylethanolamine        n=  6 MAPE=  3.52%
+  tri-n-propylamine              n=  6 MAPE=  2.17%
+  monoethanolamine               n= 10 MAPE=  1.51%
+
+AMINE-AMINE INTERACTION
+  unavailable: ethylenediamine is the only independent compound
+
+EFFECT ON COMPLETE REVISED PERRY BENCHMARK
+  before_amine_refits      MAPE=8.39% P95=27.23% bias=-0.59%
+  pure_group_84_refit      MAPE=8.19% P95=25.59% bias=-0.38%
+  group_84_and_interaction MAPE=8.19% P95=25.50% bias=-0.42%
+
+WORST 20 WITH GROUP 84 AND INTERACTION REFIT
+   1. Quinone                            MAPE=  90.46%
+   2. 1,3-Butadiene                      MAPE=  81.51%
+   3. 1,2-Difluoroethane                 MAPE=  52.65%
+   4. Bromomethane                       MAPE=  47.27%
+   5. N,N-Dimethyl formamide             MAPE=  40.82%
+   6. Tetrahydrothiophene                MAPE=  40.46%
+   7. Acetamide                          MAPE=  33.98%
+   8. Methanol                           MAPE=  31.54%
+   9. Methyl amine                       MAPE=  27.08%
+  10. Ethylene                           MAPE=  26.89%
+  11. 1-Methylcyclohexanol               MAPE=  26.41%
+  12. 1,2,3,4-Tetrahydronaphthalene      MAPE=  25.89%
+  13. Nitromethane                       MAPE=  25.24%
+  14. Cyclohexanone                      MAPE=  24.87%
+  15. Ethylenediamine                    MAPE=  24.21%
+  16. 1-Methylcyclopentene               MAPE=  24.15%
+  17. Methyl tert-butyl ether            MAPE=  21.88%
+  18. Methyl formate                     MAPE=  20.91%
+  19. Difluoromethane                    MAPE=  20.76%
+  20. trans-2-Butene                     MAPE=  20.39%

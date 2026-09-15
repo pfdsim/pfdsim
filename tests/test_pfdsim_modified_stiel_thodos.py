@@ -6,6 +6,7 @@ from pfdsim_modified_stiel_thodos import (
     GROUP_CORRECTIONS,
     ZEROED_CORRECTION_GROUPS,
     PFDSimModifiedStielThodosError,
+    classify_molecular_geometry,
     correction_groups,
     evaluate_pfdsim_modified_stiel_thodos,
 )
@@ -54,6 +55,26 @@ def test_linear_base_relation_and_geometry_alias():
     assert result.base_value_W_per_m_K == pytest.approx(expected)
     assert result.value_W_per_m_K == pytest.approx(expected)
     assert result.reduced_temperature == 2.0
+
+
+@pytest.mark.parametrize(
+    ("formula", "smiles", "expected"),
+    (
+        ("He", "", "monatomic"),
+        ("D2", "", "linear"),
+        ("CO2", "O=C=O", "linear"),
+        ("H2O", "O", "nonlinear"),
+        ("C2H6O", "CCO", "nonlinear"),
+    ),
+)
+def test_geometry_matches_benchmark_topology(formula, smiles, expected):
+    geometry, _source = classify_molecular_geometry(formula, smiles)
+    assert geometry == expected
+
+
+def test_geometry_rejects_formula_structure_mismatch():
+    with pytest.raises(PFDSimModifiedStielThodosError, match="different element counts"):
+        classify_molecular_geometry("C2H6", "CCO")
 
 
 def test_overlapping_binary_groups_apply_once_each():

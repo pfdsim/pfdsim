@@ -1,0 +1,120 @@
+{
+  "acid_compounds": 18,
+  "acid_points": 1818,
+  "acid_scenarios": {
+    "alpha_carbon_as_e": {
+      "mape_percent": 42.94607037343447,
+      "mean_signed_error_percent": 42.94607037343447,
+      "median_ape_percent": 39.39672273458157,
+      "p95_ape_percent": 86.58277623616297,
+      "points": 1818
+    },
+    "aromatic_COOH_coefficients": {
+      "mape_percent": 4.232470349960671,
+      "mean_signed_error_percent": 1.2049028167625986,
+      "median_ape_percent": 3.424926878957507,
+      "p95_ape_percent": 10.14062634700501,
+      "points": 1818
+    },
+    "candidate_B_minus_3.1203": {
+      "mape_percent": 4.861823701696693,
+      "mean_signed_error_percent": 0.02568400358545061,
+      "median_ape_percent": 3.615172894285057,
+      "p95_ape_percent": 13.205879808499514,
+      "points": 1818
+    },
+    "carbon_atoms_for_n": {
+      "mape_percent": 22.659274743623044,
+      "mean_signed_error_percent": 22.22327551349757,
+      "median_ape_percent": 17.288840684506887,
+      "p95_ape_percent": 57.233570671953956,
+      "points": 1818
+    },
+    "double_count_group_53": {
+      "mape_percent": 4.775066992225411,
+      "mean_signed_error_percent": -2.108280796604232,
+      "median_ape_percent": 3.304010681770664,
+      "p95_ape_percent": 12.564139681103281,
+      "points": 1818
+    },
+    "least_squares_refit": {
+      "mape_percent": 4.319328495462063,
+      "mean_signed_error_percent": 0.6218256010150737,
+      "median_ape_percent": 4.071283626015615,
+      "p95_ape_percent": 8.942379217959905,
+      "points": 1818
+    },
+    "published": {
+      "mape_percent": 54.82007455085334,
+      "mean_signed_error_percent": 54.82007455085334,
+      "median_ape_percent": 49.84339998719746,
+      "p95_ape_percent": 110.91471778280737,
+      "points": 1818
+    }
+  },
+  "inputs": {
+    "benchmark": {
+      "path": "scripts/thermal_conductivity/liquid/results/govender_perry_tb_benchmark.json",
+      "sha256": "5dac3a99e2abd4dd9ba277a56516fab82451e9c2b89582c629898dc6b83e1ff3"
+    },
+    "govender_method": {
+      "path": "govender_method.py",
+      "sha256": "2db2a71cef80560557193333cddfeb961c69e9c3c6d84c9f3c10ab83de296552"
+    },
+    "script": {
+      "path": "scripts/thermal_conductivity/liquid/probe_govender_acid_group.py",
+      "sha256": "1de399b2e830be3ae05ba3615d4ff0710337a5af4390331037d9fbba5111203b"
+    },
+    "thermal_conductivity": {
+      "path": "data/perry_thermal_conductivity.json",
+      "sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053"
+    }
+  },
+  "least_squares_coefficients": {
+    "A": 18.37799753143911,
+    "B": -3.213531770026615
+  },
+  "least_squares_leave_one_compound_out": {
+    "mape_percent": 4.695556905104186,
+    "mean_signed_error_percent": 0.544612863072151,
+    "median_ape_percent": 4.418866241960884,
+    "p95_ape_percent": 10.02431985035779,
+    "points": 1818
+  },
+  "overall_scenarios": {
+    "aromatic_COOH_coefficients": {
+      "mape_percent": 10.040447645515107,
+      "mean_signed_error_percent": 1.7199175907827964,
+      "median_ape_percent": 6.115145252625453,
+      "p95_ape_percent": 34.0565899480311,
+      "points": 26361
+    },
+    "candidate_B_minus_3.1203": {
+      "mape_percent": 10.083851324945178,
+      "mean_signed_error_percent": 1.6385921553912683,
+      "median_ape_percent": 6.2073897877546695,
+      "p95_ape_percent": 34.0565899480311,
+      "points": 26361
+    },
+    "double_count_group_53": {
+      "mape_percent": 10.077868103602329,
+      "mean_signed_error_percent": 1.4914221691712901,
+      "median_ape_percent": 6.262480611977583,
+      "p95_ape_percent": 34.0565899480311,
+      "points": 26361
+    },
+    "published": {
+      "mape_percent": 13.529247935231842,
+      "mean_signed_error_percent": 5.417515641409744,
+      "median_ape_percent": 7.554686165684399,
+      "p95_ape_percent": 54.18030090883068,
+      "points": 26361
+    }
+  },
+  "probe": "govender_aliphatic_cooh_group_53",
+  "published": {
+    "A": 4.982,
+    "B": -1.6203
+  },
+  "schema_version": 1
+}

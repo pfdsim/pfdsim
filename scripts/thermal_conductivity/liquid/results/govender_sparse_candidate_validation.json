@@ -1,0 +1,475 @@
+{
+  "conversion": {
+    "BTU_in_per_hr_ft2_F_to_W_per_m_K": 0.14422788886428256
+  },
+  "groups": {
+    "33": {
+      "candidate": {
+        "A": -8.434,
+        "B": -0.2742,
+        "change": "B sign flip"
+      },
+      "compound_equal_candidate_mape_percent": 13.568951890563426,
+      "compound_equal_published_mape_percent": 0.9592229017025513,
+      "compound_results": [
+        {
+          "candidate_bias_percent": -13.568951890563426,
+          "candidate_mape_percent": 13.568951890563426,
+          "cas": "78-79-5",
+          "name": "Isoprene",
+          "points": 26,
+          "published_bias_percent": -0.6001485986969688,
+          "published_mape_percent": 0.9592229017025513
+        }
+      ],
+      "compounds": 1,
+      "points": 26
+    },
+    "72": {
+      "candidate": {
+        "A": 11.442,
+        "B": 0.0726,
+        "change": "B digit 8->0"
+      },
+      "compound_equal_candidate_mape_percent": 10.831765070792253,
+      "compound_equal_published_mape_percent": 12.20188231687365,
+      "compound_results": [
+        {
+          "candidate_bias_percent": -20.720272908225144,
+          "candidate_mape_percent": 20.720272908225144,
+          "cas": "127-19-5",
+          "name": "N,N-Dimethylacetamide",
+          "points": 3,
+          "published_bias_percent": -5.455933344110971,
+          "published_mape_percent": 5.455933344110971
+        },
+        {
+          "candidate_bias_percent": -0.9432572333593625,
+          "candidate_mape_percent": 0.9432572333593625,
+          "cas": "872-50-4",
+          "name": "N-Methyl-2-pyrrolidone",
+          "points": 1,
+          "published_bias_percent": 18.94783128963633,
+          "published_mape_percent": 18.94783128963633
+        }
+      ],
+      "compounds": 2,
+      "points": 4
+    },
+    "93": {
+      "candidate": {
+        "A": 9.092,
+        "B": -0.5287,
+        "change": "B sign flip"
+      },
+      "compound_equal_candidate_mape_percent": 20.221790172493805,
+      "compound_equal_published_mape_percent": 0.2861369397681862,
+      "compound_results": [
+        {
+          "candidate_bias_percent": -20.221790172493805,
+          "candidate_mape_percent": 20.221790172493805,
+          "cas": "111-49-9",
+          "name": "Azepane",
+          "points": 4,
+          "published_bias_percent": 0.05659887470421954,
+          "published_mape_percent": 0.2861369397681862
+        }
+      ],
+      "compounds": 1,
+      "points": 4
+    }
+  },
+  "inputs": {
+    "govender_method": {
+      "path": "govender_method.py",
+      "sha256": "2db2a71cef80560557193333cddfeb961c69e9c3c6d84c9f3c10ab83de296552"
+    },
+    "literature_data": {
+      "path": "scripts/thermal_conductivity/liquid/data/govender_sparse_group_literature.json",
+      "sha256": "94616da3a3d901c61f283a7682cc99c64468e5279d8c4cf6c67cc2806b45eb64"
+    },
+    "script": {
+      "path": "scripts/thermal_conductivity/liquid/validate_govender_sparse_candidates.py",
+      "sha256": "f12e10dac3434060484970c39937eea99e507ce01ac7ba36267e5d98b5a43300"
+    }
+  },
+  "method": "no fitting; candidates fixed before literature evaluation",
+  "observations": [
+    {
+      "candidate_W_per_m_K": 0.1336902068239162,
+      "candidate_signed_error_percent": -20.98687539957671,
+      "cas": "127-19-5",
+      "group": 72,
+      "name": "N,N-Dimethylacetamide",
+      "published_W_per_m_K": 0.15826149961714656,
+      "published_signed_error_percent": -6.464834741639147,
+      "reference_W_per_m_K": 0.1692,
+      "temperature_K": 293.15
+    },
+    {
+      "candidate_W_per_m_K": 0.12781142092725295,
+      "candidate_signed_error_percent": -20.712518035202876,
+      "cas": "127-19-5",
+      "group": 72,
+      "name": "N,N-Dimethylacetamide",
+      "published_W_per_m_K": 0.1523827137204833,
+      "published_signed_error_percent": -5.4697805704197915,
+      "reference_W_per_m_K": 0.16119999999999998,
+      "temperature_K": 313.15
+    },
+    {
+      "candidate_W_per_m_K": 0.12193263503058968,
+      "candidate_signed_error_percent": -20.46142528989585,
+      "cas": "127-19-5",
+      "group": 72,
+      "name": "N,N-Dimethylacetamide",
+      "published_W_per_m_K": 0.14650392782382002,
+      "published_signed_error_percent": -4.4331847202739745,
+      "reference_W_per_m_K": 0.15330000000000002,
+      "temperature_K": 333.15
+    },
+    {
+      "candidate_W_per_m_K": 0.17830213697995315,
+      "candidate_signed_error_percent": -0.9432572333593625,
+      "cas": "872-50-4",
+      "group": 72,
+      "name": "N-Methyl-2-pyrrolidone",
+      "published_W_per_m_K": 0.2141060963213454,
+      "published_signed_error_percent": 18.94783128963633,
+      "reference_W_per_m_K": 0.18,
+      "temperature_K": 293.15
+    },
+    {
+      "candidate_W_per_m_K": 0.15411156152860814,
+      "candidate_signed_error_percent": -12.773210964582482,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.1731841784338856,
+      "published_signed_error_percent": -1.978153704448582,
+      "reference_W_per_m_K": 0.17667916385874616,
+      "temperature_K": 155.3722222222222
+    },
+    {
+      "candidate_W_per_m_K": 0.15208861672457416,
+      "candidate_signed_error_percent": -12.85106322850077,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.1711612336298516,
+      "published_signed_error_percent": -1.9221829444809102,
+      "reference_W_per_m_K": 0.1745157455257819,
+      "temperature_K": 160.92777777777775
+    },
+    {
+      "candidate_W_per_m_K": 0.15006567192054018,
+      "candidate_signed_error_percent": -12.930869942559287,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.16913828882581763,
+      "published_signed_error_percent": -1.8648070608320633,
+      "reference_W_per_m_K": 0.17235232719281768,
+      "temperature_K": 166.4833333333333
+    },
+    {
+      "candidate_W_per_m_K": 0.14804272711650623,
+      "candidate_signed_error_percent": -12.938925068897989,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.16711534402178368,
+      "published_signed_error_percent": -1.7226866094713245,
+      "reference_W_per_m_K": 0.17004468097098915,
+      "temperature_K": 172.03888888888886
+    },
+    {
+      "candidate_W_per_m_K": 0.14601978231247226,
+      "candidate_signed_error_percent": -13.02198945971057,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.1650923992177497,
+      "published_signed_error_percent": -1.6612118448789293,
+      "reference_W_per_m_K": 0.1678812626380249,
+      "temperature_K": 177.59444444444443
+    },
+    {
+      "candidate_W_per_m_K": 0.14399683750843828,
+      "candidate_signed_error_percent": -13.031532060954277,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.16306945441371573,
+      "published_signed_error_percent": -1.5124160821528565,
+      "reference_W_per_m_K": 0.16557361641619636,
+      "temperature_K": 183.14999999999998
+    },
+    {
+      "candidate_W_per_m_K": 0.1419738927044043,
+      "candidate_signed_error_percent": -13.118095216988458,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.16104650960968175,
+      "published_signed_error_percent": -1.4464754961905468,
+      "reference_W_per_m_K": 0.16341019808323215,
+      "temperature_K": 188.70555555555552
+    },
+    {
+      "candidate_W_per_m_K": 0.13995094790037033,
+      "candidate_signed_error_percent": -13.129279279964479,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.15902356480564778,
+      "published_signed_error_percent": -1.2904743169707245,
+      "reference_W_per_m_K": 0.16110255186140363,
+      "temperature_K": 194.2611111111111
+    },
+    {
+      "candidate_W_per_m_K": 0.13792800309633635,
+      "candidate_signed_error_percent": -13.219608013242034,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.1570006200016138,
+      "published_signed_error_percent": -1.2196577921313012,
+      "reference_W_per_m_K": 0.15893913352843939,
+      "temperature_K": 199.81666666666666
+    },
+    {
+      "candidate_W_per_m_K": 0.13590505829230237,
+      "candidate_signed_error_percent": -13.312429719839125,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.15497767519757982,
+      "published_signed_error_percent": -1.1468868093846285,
+      "reference_W_per_m_K": 0.15677571519547515,
+      "temperature_K": 205.3722222222222
+    },
+    {
+      "candidate_W_per_m_K": 0.1338821134882684,
+      "candidate_signed_error_percent": -13.326997367261928,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.15295473039354585,
+      "published_signed_error_percent": -0.9797096514225001,
+      "reference_W_per_m_K": 0.15446806897364662,
+      "temperature_K": 210.92777777777775
+    },
+    {
+      "candidate_W_per_m_K": 0.13185916868423442,
+      "candidate_signed_error_percent": -13.424069370463943,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.15093178558951187,
+      "published_signed_error_percent": -0.9013940450245173,
+      "reference_W_per_m_K": 0.15230465064068238,
+      "temperature_K": 216.48333333333332
+    },
+    {
+      "candidate_W_per_m_K": 0.12983622388020047,
+      "candidate_signed_error_percent": -13.440788778925295,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.14890884078547792,
+      "published_signed_error_percent": -0.7254569100175745,
+      "reference_W_per_m_K": 0.14999700441885386,
+      "temperature_K": 222.03888888888886
+    },
+    {
+      "candidate_W_per_m_K": 0.1278132790761665,
+      "candidate_signed_error_percent": -13.542461858492395,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.14688589598144394,
+      "published_signed_error_percent": -0.6410519622348065,
+      "reference_W_per_m_K": 0.14783358608588962,
+      "temperature_K": 227.59444444444443
+    },
+    {
+      "candidate_W_per_m_K": 0.12579033427213251,
+      "candidate_signed_error_percent": -13.647154930521888,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.14486295117740997,
+      "published_signed_error_percent": -0.5541399367951283,
+      "reference_W_per_m_K": 0.14567016775292538,
+      "temperature_K": 233.14999999999998
+    },
+    {
+      "candidate_W_per_m_K": 0.12376738946809855,
+      "candidate_signed_error_percent": -13.668238988631288,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.14284000637337602,
+      "published_signed_error_percent": -0.3644712384662574,
+      "reference_W_per_m_K": 0.14336252153109685,
+      "temperature_K": 238.70555555555552
+    },
+    {
+      "candidate_W_per_m_K": 0.12174444466406456,
+      "candidate_signed_error_percent": -13.778174289654654,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.140817061569342,
+      "published_signed_error_percent": -0.2705694442368456,
+      "reference_W_per_m_K": 0.14119910319813261,
+      "temperature_K": 244.2611111111111
+    },
+    {
+      "candidate_W_per_m_K": 0.1197214998600306,
+      "candidate_signed_error_percent": -13.802113919464487,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.13879411676530806,
+      "published_signed_error_percent": -0.07008365605426503,
+      "reference_W_per_m_K": 0.1388914569763041,
+      "temperature_K": 249.81666666666663
+    },
+    {
+      "candidate_W_per_m_K": 0.1176985550559966,
+      "candidate_signed_error_percent": -13.917762425439562,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.13677117196127406,
+      "published_signed_error_percent": 0.03154679783472503,
+      "reference_W_per_m_K": 0.13672803864333985,
+      "temperature_K": 255.3722222222222
+    },
+    {
+      "candidate_W_per_m_K": 0.11567561025196266,
+      "candidate_signed_error_percent": -14.037129532892934,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.1347482271572401,
+      "published_signed_error_percent": 0.13644511197741238,
+      "reference_W_per_m_K": 0.13456462031037564,
+      "temperature_K": 260.92777777777775
+    },
+    {
+      "candidate_W_per_m_K": 0.11365266544792868,
+      "candidate_signed_error_percent": -14.066788363207749,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.13272528235320613,
+      "published_signed_error_percent": 0.354089656055101,
+      "reference_W_per_m_K": 0.1322569740885471,
+      "temperature_K": 266.4833333333333
+    },
+    {
+      "candidate_W_per_m_K": 0.11162972064389469,
+      "candidate_signed_error_percent": -14.192736146268203,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.13070233754917215,
+      "published_signed_error_percent": 0.4679569176608833,
+      "reference_W_per_m_K": 0.13009355575558287,
+      "temperature_K": 272.0388888888889
+    },
+    {
+      "candidate_W_per_m_K": 0.10960677583986073,
+      "candidate_signed_error_percent": -14.226242752603058,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.12867939274513818,
+      "published_signed_error_percent": 0.6992032334737219,
+      "reference_W_per_m_K": 0.12778590953375435,
+      "temperature_K": 277.59444444444443
+    },
+    {
+      "candidate_W_per_m_K": 0.10758383103582675,
+      "candidate_signed_error_percent": -14.359419234992776,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.1266564479411042,
+      "published_signed_error_percent": 0.8230665786283842,
+      "reference_W_per_m_K": 0.1256224912007901,
+      "temperature_K": 283.15
+    },
+    {
+      "candidate_W_per_m_K": 0.1055608862317928,
+      "candidate_signed_error_percent": -14.497263117466218,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.12463350313707025,
+      "published_signed_error_percent": 0.9512709288702625,
+      "reference_W_per_m_K": 0.12345907286782587,
+      "temperature_K": 288.7055555555555
+    },
+    {
+      "candidate_W_per_m_K": 0.10353794142775882,
+      "candidate_signed_error_percent": -14.5384051231232,
+      "cas": "78-79-5",
+      "group": 33,
+      "name": "Isoprene",
+      "published_W_per_m_K": 0.12261055833303627,
+      "published_signed_error_percent": 1.204386714572081,
+      "reference_W_per_m_K": 0.12115142664599735,
+      "temperature_K": 294.26111111111106
+    },
+    {
+      "candidate_W_per_m_K": 0.11439323106271934,
+      "candidate_signed_error_percent": -18.870048891688405,
+      "cas": "111-49-9",
+      "group": 93,
+      "name": "Azepane",
+      "published_W_per_m_K": 0.1414657681196266,
+      "published_signed_error_percent": 0.33033199973520055,
+      "reference_W_per_m_K": 0.141,
+      "temperature_K": 273.15
+    },
+    {
+      "candidate_W_per_m_K": 0.10929852864481748,
+      "candidate_signed_error_percent": -20.220052084074837,
+      "cas": "111-49-9",
+      "group": 93,
+      "name": "Azepane",
+      "published_W_per_m_K": 0.13637106570172475,
+      "published_signed_error_percent": -0.45907613012793336,
+      "reference_W_per_m_K": 0.137,
+      "temperature_K": 293.15
+    },
+    {
+      "candidate_W_per_m_K": 0.10420382622691562,
+      "candidate_signed_error_percent": -20.45509448327052,
+      "cas": "111-49-9",
+      "group": 93,
+      "name": "Azepane",
+      "published_W_per_m_K": 0.1312763632838229,
+      "published_signed_error_percent": 0.21096433879610466,
+      "reference_W_per_m_K": 0.131,
+      "temperature_K": 313.15
+    },
+    {
+      "candidate_W_per_m_K": 0.09910912380901377,
+      "candidate_signed_error_percent": -21.34196523094145,
+      "cas": "111-49-9",
+      "group": 93,
+      "name": "Azepane",
+      "published_W_per_m_K": 0.12618166086592103,
+      "published_signed_error_percent": 0.1441752904135063,
+      "reference_W_per_m_K": 0.126,
+      "temperature_K": 333.15
+    }
+  ],
+  "schema_version": 1,
+  "validation": "govender_perry_derived_sparse_candidates_external_literature"
+}

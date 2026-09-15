@@ -1,0 +1,754 @@
+{
+  "combined_benchmark": {
+    "fixed_subclass_refits": {
+      "mape_percent": 9.52626851992916,
+      "mean_signed_error_percent": 0.7291943880596998,
+      "median_ape_percent": 5.542746245158292,
+      "p95_ape_percent": 32.65641853616541
+    },
+    "published": {
+      "mape_percent": 13.529247935231842,
+      "mean_signed_error_percent": 5.417515641409744,
+      "median_ape_percent": 7.554686165684399,
+      "p95_ape_percent": 54.18030090883068
+    },
+    "subclass_refits_LOOCV": {
+      "mape_percent": 9.591740314407533,
+      "mean_signed_error_percent": 0.7288115399090748,
+      "median_ape_percent": 5.625975160701735,
+      "p95_ape_percent": 32.65641853616541
+    }
+  },
+  "groups": [
+    {
+      "best_simple_candidate": {
+        "A": 4.67,
+        "B": -1.288,
+        "description": "B: digit 1->8 in -1.218",
+        "mape_percent": 17.987575066252955,
+        "mean_signed_error_percent": 1.2013732085959725,
+        "median_ape_percent": 15.705742298797148,
+        "p95_ape_percent": 51.64322614927603
+      },
+      "compounds": 24,
+      "group": 10,
+      "least_squares_fit": {
+        "A": 5.185607240811607,
+        "B": -1.3526011677358845,
+        "mape_percent": 18.61751855260887,
+        "mean_signed_error_percent": -4.497819373218039,
+        "median_ape_percent": 17.09460264867083,
+        "p95_ape_percent": 42.54742164234976
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 19.852570994468145,
+          "mean_signed_error_percent": -4.474845933633784,
+          "median_ape_percent": 18.660211125630177,
+          "p95_ape_percent": 47.27337237071542
+        },
+        "simple_candidate": {
+          "mape_percent": 19.383445081166958,
+          "mean_signed_error_percent": 1.6989316118706836,
+          "median_ape_percent": 16.466723395948236,
+          "p95_ape_percent": 55.037011825703196
+        }
+      },
+      "name": "ring CH2",
+      "paper_support": {
+        "class": "cyclic alkanes",
+        "class_specific_data_points": null,
+        "compounds": 6,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 2424,
+      "published": {
+        "A": 4.67,
+        "B": -1.218,
+        "mape_percent": 19.25037537979334,
+        "mean_signed_error_percent": 8.832410911578911,
+        "median_ape_percent": 11.915335517184822,
+        "p95_ape_percent": 63.83519616278476
+      },
+      "published_without_worst_mape_percent": 17.02930795118586,
+      "refit_support": "useful",
+      "worst_compound": {
+        "cas": "75-19-4",
+        "mape_percent": 70.33492623776543,
+        "name": "Cyclopropane"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 10.37,
+        "B": -1.417,
+        "description": "B: digit 2->4 in -1.217",
+        "mape_percent": 18.765238983869178,
+        "mean_signed_error_percent": -0.3175520187514729,
+        "median_ape_percent": 11.188552744002433,
+        "p95_ape_percent": 59.237315022673734
+      },
+      "compounds": 6,
+      "group": 21,
+      "least_squares_fit": {
+        "A": 23.822666776513543,
+        "B": -1.7035670119410944,
+        "mape_percent": 12.871701384173534,
+        "mean_signed_error_percent": -4.586656286284443,
+        "median_ape_percent": 10.425972735950696,
+        "p95_ape_percent": 37.190250921163994
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 24.979234905190086,
+          "mean_signed_error_percent": 6.867600602229605,
+          "median_ape_percent": 14.107370947378843,
+          "p95_ape_percent": 86.04127250452885
+        },
+        "simple_candidate": {
+          "mape_percent": 27.341057687743916,
+          "mean_signed_error_percent": -3.5477766090348193,
+          "median_ape_percent": 18.246540297939525,
+          "p95_ape_percent": 77.4925328167881
+        }
+      },
+      "name": "ring C=C carbon",
+      "paper_support": {
+        "class": "cyclic alkenes",
+        "class_specific_data_points": null,
+        "compounds": 5,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 606,
+      "published": {
+        "A": 10.37,
+        "B": -1.217,
+        "mape_percent": 24.42666563261704,
+        "mean_signed_error_percent": 12.649388172625239,
+        "median_ape_percent": 10.652132381141543,
+        "p95_ape_percent": 97.7479651870871
+      },
+      "published_without_worst_mape_percent": 11.219712827556027,
+      "refit_support": "limited",
+      "worst_compound": {
+        "cas": "106-51-4",
+        "mape_percent": 90.4614296579221,
+        "name": "Quinone"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 7.65,
+        "B": -2.86,
+        "description": "B: digit 1->2 in -1.860",
+        "mape_percent": 29.314611920587208,
+        "mean_signed_error_percent": -29.314611920587208,
+        "median_ape_percent": 19.937965975533544,
+        "p95_ape_percent": 65.34125900371392
+      },
+      "compounds": 4,
+      "group": 24,
+      "least_squares_fit": {
+        "A": 19.164300562985858,
+        "B": -2.525404448005012,
+        "mape_percent": 18.071416437282398,
+        "mean_signed_error_percent": -2.1995417137637765,
+        "median_ape_percent": 14.310303838696925,
+        "p95_ape_percent": 45.978032056856534
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 26.886823088987043,
+          "mean_signed_error_percent": 1.4406101640962943,
+          "median_ape_percent": 26.170325536579774,
+          "p95_ape_percent": 52.849711857398134
+        },
+        "simple_candidate": {
+          "mape_percent": 47.7435039125774,
+          "mean_signed_error_percent": 5.901898064981129,
+          "median_ape_percent": 52.487765525306855,
+          "p95_ape_percent": 73.08629584291593
+        }
+      },
+      "name": "ring CH2 attached to electronegative atom",
+      "paper_support": {
+        "class": "not disclosed",
+        "class_specific_data_points": null,
+        "compounds": null,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 404,
+      "published": {
+        "A": 7.65,
+        "B": -1.86,
+        "mape_percent": 41.383044052174235,
+        "mean_signed_error_percent": 40.98546546688161,
+        "median_ape_percent": 42.97418843172981,
+        "p95_ape_percent": 76.28993358929011
+      },
+      "published_without_worst_mape_percent": 32.37835390574511,
+      "refit_support": "weak",
+      "worst_compound": {
+        "cas": "75-21-8",
+        "mape_percent": 68.39711449146166,
+        "name": "Ethylene oxide"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": -84.33999999999999,
+        "B": 0.2742,
+        "description": "A: decimal x10 from -8.434",
+        "mape_percent": 44.70854898650372,
+        "mean_signed_error_percent": 44.70646150978776,
+        "median_ape_percent": 42.48391310437065,
+        "p95_ape_percent": 91.89997635198608
+      },
+      "compounds": 1,
+      "group": 33,
+      "least_squares_fit": {
+        "A": -0.22895796835160598,
+        "B": -1.6974808249556894,
+        "mape_percent": 2.4073152712169236e-14,
+        "mean_signed_error_percent": -2.4073152712169236e-14,
+        "median_ape_percent": 2.220446049250313e-14,
+        "p95_ape_percent": 4.440892098500626e-14
+      },
+      "leave_one_compound_out": {
+        "full_refit": null,
+        "simple_candidate": null
+      },
+      "name": "conjugated chain diene",
+      "paper_support": {
+        "class": "noncyclic alkenes",
+        "class_specific_data_points": null,
+        "compounds": 12,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 101,
+      "published": {
+        "A": -8.434,
+        "B": 0.2742,
+        "mape_percent": 81.50548168769588,
+        "mean_signed_error_percent": 81.50548168769588,
+        "median_ape_percent": 80.81625331410953,
+        "p95_ape_percent": 96.14053278454992
+      },
+      "published_without_worst_mape_percent": null,
+      "refit_support": "underdetermined",
+      "worst_compound": {
+        "cas": "106-99-0",
+        "mape_percent": 81.50548168769588,
+        "name": "1,3-Butadiene"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 28.679,
+        "B": -1.9986,
+        "description": "B: digit 4->9 in -1.4986",
+        "mape_percent": 13.391564826175935,
+        "mean_signed_error_percent": -5.28478635138713,
+        "median_ape_percent": 10.323681376522064,
+        "p95_ape_percent": 28.16085736998637
+      },
+      "compounds": 3,
+      "group": 35,
+      "least_squares_fit": {
+        "A": 25.109834244808752,
+        "B": -1.9893581043203439,
+        "mape_percent": 12.606895182472021,
+        "mean_signed_error_percent": -5.786452344450479,
+        "median_ape_percent": 9.309252076303377,
+        "p95_ape_percent": 28.260869227403507
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 35.495468132112045,
+          "mean_signed_error_percent": 15.239112418470501,
+          "median_ape_percent": 29.296417760073922,
+          "p95_ape_percent": 113.56887419449495
+        },
+        "simple_candidate": {
+          "mape_percent": 27.943554180128977,
+          "mean_signed_error_percent": 10.229425466000816,
+          "median_ape_percent": 24.244332803667245,
+          "p95_ape_percent": 89.90597407957898
+        }
+      },
+      "name": "F on nonaromatic carbon",
+      "paper_support": {
+        "class": "fluorinated compounds",
+        "class_specific_data_points": null,
+        "compounds": 20,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 303,
+      "published": {
+        "A": 28.679,
+        "B": -1.4986,
+        "mape_percent": 28.241876721904028,
+        "mean_signed_error_percent": 19.088868215715898,
+        "median_ape_percent": 18.591872109646545,
+        "p95_ape_percent": 54.08126361770865
+      },
+      "published_without_worst_mape_percent": 16.036402303114222,
+      "refit_support": "weak",
+      "worst_compound": {
+        "cas": "624-72-6",
+        "mape_percent": 52.65282555948366,
+        "name": "1,2-Difluoroethane"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 9.135,
+        "B": -2.7263,
+        "description": "A: digit 6->9 in 6.135",
+        "mape_percent": 14.885757209371661,
+        "mean_signed_error_percent": 7.243714807076714,
+        "median_ape_percent": 8.029640859761178,
+        "p95_ape_percent": 46.23311465103231
+      },
+      "compounds": 5,
+      "group": 45,
+      "least_squares_fit": {
+        "A": 19.35816500544661,
+        "B": -2.912301489847873,
+        "mape_percent": 13.565221024582483,
+        "mean_signed_error_percent": 1.7429978274268718,
+        "median_ape_percent": 10.149759459939144,
+        "p95_ape_percent": 42.04548730090642
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 19.085802940439503,
+          "mean_signed_error_percent": 1.670040821717647,
+          "median_ape_percent": 13.561973216786761,
+          "p95_ape_percent": 48.49155593435708
+        },
+        "simple_candidate": {
+          "mape_percent": 14.885757209371661,
+          "mean_signed_error_percent": 7.243714807076714,
+          "median_ape_percent": 8.029640859761178,
+          "p95_ape_percent": 46.23311465103231
+        }
+      },
+      "name": "Br on nonaromatic carbon",
+      "paper_support": {
+        "class": "brominated compounds",
+        "class_specific_data_points": null,
+        "compounds": 11,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 505,
+      "published": {
+        "A": 6.135,
+        "B": -2.7263,
+        "mape_percent": 16.436267391355262,
+        "mean_signed_error_percent": 5.962114635635645,
+        "median_ape_percent": 11.341292509067946,
+        "p95_ape_percent": 49.76891878790249
+      },
+      "published_without_worst_mape_percent": 8.726708759825271,
+      "refit_support": "limited",
+      "worst_compound": {
+        "cas": "74-83-9",
+        "mape_percent": 47.274501917475234,
+        "name": "Bromomethane"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 0.546,
+        "B": -0.6229,
+        "description": "B: digit 2->6 in -0.2229",
+        "mape_percent": 9.740439477807888,
+        "mean_signed_error_percent": 2.1363387509287795,
+        "median_ape_percent": 5.478361249944252,
+        "p95_ape_percent": 44.515746103898145
+      },
+      "compounds": 17,
+      "group": 58,
+      "least_squares_fit": {
+        "A": 17.246659474568595,
+        "B": -0.997011538588524,
+        "mape_percent": 9.983407578269412,
+        "mean_signed_error_percent": -3.0900214761266422,
+        "median_ape_percent": 8.211087386827076,
+        "p95_ape_percent": 23.853285545129044
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 11.968733602914481,
+          "mean_signed_error_percent": -1.6408941922957188,
+          "median_ape_percent": 8.60657797194434,
+          "p95_ape_percent": 43.15396681864992
+        },
+        "simple_candidate": {
+          "mape_percent": 11.088316958233507,
+          "mean_signed_error_percent": 0.7646781809431563,
+          "median_ape_percent": 6.80212875717825,
+          "p95_ape_percent": 44.515746103898145
+        }
+      },
+      "name": "ketone",
+      "paper_support": {
+        "class": "ketones",
+        "class_specific_data_points": null,
+        "compounds": 7,
+        "is_exact_group_class": true
+      },
+      "perry_sampled_states": 1717,
+      "published": {
+        "A": 0.546,
+        "B": -0.2229,
+        "mape_percent": 15.410154178992414,
+        "mean_signed_error_percent": 13.912800664032483,
+        "median_ape_percent": 9.883281415702472,
+        "p95_ape_percent": 76.52653687376568
+      },
+      "published_without_worst_mape_percent": 10.71944946155931,
+      "refit_support": "useful",
+      "worst_compound": {
+        "cas": "106-51-4",
+        "mape_percent": 90.4614296579221,
+        "name": "Quinone"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 96.62,
+        "B": -3.0101,
+        "description": "A: digit 2->9 in 26.620",
+        "mape_percent": 12.832338456756139,
+        "mean_signed_error_percent": -6.572504678027035,
+        "median_ape_percent": 9.508756763388027,
+        "p95_ape_percent": 29.654949274835804
+      },
+      "compounds": 3,
+      "group": 70,
+      "least_squares_fit": {
+        "A": 100.58037250808151,
+        "B": -2.8896901099772485,
+        "mape_percent": 13.24884569619148,
+        "mean_signed_error_percent": -2.940704026718116,
+        "median_ape_percent": 14.022463620878266,
+        "p95_ape_percent": 26.69153061205585
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 26.03483861917809,
+          "mean_signed_error_percent": 5.281147063531927,
+          "median_ape_percent": 29.130100749108266,
+          "p95_ape_percent": 44.01353189679609
+        },
+        "simple_candidate": {
+          "mape_percent": 27.718958985866283,
+          "mean_signed_error_percent": 0.8166082332942327,
+          "median_ape_percent": 26.714218217913032,
+          "p95_ape_percent": 43.746299862895235
+        }
+      },
+      "name": "primary amide",
+      "paper_support": {
+        "class": "amides",
+        "class_specific_data_points": null,
+        "compounds": 3,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 303,
+      "published": {
+        "A": 26.62,
+        "B": -3.0101,
+        "mape_percent": 15.834983358631824,
+        "mean_signed_error_percent": -15.790997304441502,
+        "median_ape_percent": 13.605803109458392,
+        "p95_ape_percent": 35.39849984242864
+      },
+      "published_without_worst_mape_percent": 6.763329592886208,
+      "refit_support": "weak",
+      "worst_compound": {
+        "cas": "60-35-5",
+        "mape_percent": 33.97829089012305,
+        "name": "Acetamide"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 11.442,
+        "B": 0.0726,
+        "description": "B: digit 8->0 in 0.8726",
+        "mape_percent": 11.296743537943039,
+        "mean_signed_error_percent": 11.296743537943039,
+        "median_ape_percent": 11.162681203966418,
+        "p95_ape_percent": 14.255938426935755
+      },
+      "compounds": 1,
+      "group": 72,
+      "least_squares_fit": {
+        "A": 17.20235860183379,
+        "B": -0.3518497713346834,
+        "mape_percent": 2.8195707594896153e-10,
+        "mean_signed_error_percent": 2.8195707594896153e-10,
+        "median_ape_percent": 2.803091092573595e-10,
+        "p95_ape_percent": 3.1818991885756986e-10
+      },
+      "leave_one_compound_out": {
+        "full_refit": null,
+        "simple_candidate": null
+      },
+      "name": "tertiary amide",
+      "paper_support": {
+        "class": "amides",
+        "class_specific_data_points": null,
+        "compounds": 3,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 101,
+      "published": {
+        "A": 11.442,
+        "B": 0.8726,
+        "mape_percent": 40.821189254682,
+        "mean_signed_error_percent": 40.821189254682,
+        "median_ape_percent": 40.520873600031535,
+        "p95_ape_percent": 47.45013956432753
+      },
+      "published_without_worst_mape_percent": null,
+      "refit_support": "underdetermined",
+      "worst_compound": {
+        "cas": "68-12-2",
+        "mape_percent": 40.821189254682,
+        "name": "N,N-Dimethyl formamide"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": -12.576,
+        "B": 2.1656,
+        "description": "B: digit 1->2 in 1.1656",
+        "mape_percent": 6.4417067782588875,
+        "mean_signed_error_percent": -6.2518225605230295,
+        "median_ape_percent": 6.5464473433343215,
+        "p95_ape_percent": 10.757156503788996
+      },
+      "compounds": 2,
+      "group": 84,
+      "least_squares_fit": {
+        "A": -6.659126751790451,
+        "B": 2.3260735177624707,
+        "mape_percent": 1.6390577816412488,
+        "mean_signed_error_percent": -0.06813624718726519,
+        "median_ape_percent": 1.5853492601289432,
+        "p95_ape_percent": 3.5065425344593564
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 4.230188973180375,
+          "mean_signed_error_percent": 1.501610985371311,
+          "median_ape_percent": 3.8498682373149853,
+          "p95_ape_percent": 10.389868931389273
+        },
+        "simple_candidate": {
+          "mape_percent": 6.4417067782588875,
+          "mean_signed_error_percent": -6.2518225605230295,
+          "median_ape_percent": 6.5464473433343215,
+          "p95_ape_percent": 10.757156503788996
+        }
+      },
+      "name": "tertiary amine",
+      "paper_support": {
+        "class": "tertiary amines",
+        "class_specific_data_points": null,
+        "compounds": 4,
+        "is_exact_group_class": true
+      },
+      "perry_sampled_states": 202,
+      "published": {
+        "A": -12.576,
+        "B": 1.1656,
+        "mape_percent": 28.733669341645346,
+        "mean_signed_error_percent": -28.733669341645346,
+        "median_ape_percent": 28.048733522662687,
+        "p95_ape_percent": 33.89479625447447
+      },
+      "published_without_worst_mape_percent": 27.8939299417866,
+      "refit_support": "very weak",
+      "worst_compound": {
+        "cas": "75-50-3",
+        "mape_percent": 29.57340874150409,
+        "name": "Trimethyl amine"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": 9.092,
+        "B": -0.5287,
+        "description": "B: sign flip of 0.5287",
+        "mape_percent": 11.019738524815637,
+        "mean_signed_error_percent": 11.019738524815637,
+        "median_ape_percent": 10.693169001750613,
+        "p95_ape_percent": 18.05716148143066
+      },
+      "compounds": 1,
+      "group": 93,
+      "least_squares_fit": {
+        "A": 28.288303885431485,
+        "B": -1.0042396561260654,
+        "mape_percent": 3.286699845177444e-14,
+        "mean_signed_error_percent": -3.286699845177444e-14,
+        "median_ape_percent": 3.3306690738754696e-14,
+        "p95_ape_percent": 4.440892098500626e-14
+      },
+      "leave_one_compound_out": {
+        "full_refit": null,
+        "simple_candidate": null
+      },
+      "name": "cyclic secondary amine",
+      "paper_support": {
+        "class": "secondary amines",
+        "class_specific_data_points": null,
+        "compounds": 5,
+        "is_exact_group_class": false
+      },
+      "perry_sampled_states": 101,
+      "published": {
+        "A": 9.092,
+        "B": 0.5287,
+        "mape_percent": 60.1612268803003,
+        "mean_signed_error_percent": 60.1612268803003,
+        "median_ape_percent": 59.54319025419175,
+        "p95_ape_percent": 73.47963179385151
+      },
+      "published_without_worst_mape_percent": null,
+      "refit_support": "underdetermined",
+      "worst_compound": {
+        "cas": "151-56-4",
+        "mape_percent": 60.1612268803003,
+        "name": "Ethyleneimine"
+      }
+    },
+    {
+      "best_simple_candidate": {
+        "A": -11.579,
+        "B": 0.0759,
+        "description": "A: sign flip of 11.579",
+        "mape_percent": 11.858845274200307,
+        "mean_signed_error_percent": 10.750111329390087,
+        "median_ape_percent": 5.52200247534349,
+        "p95_ape_percent": 58.722486546142285
+      },
+      "compounds": 7,
+      "group": 100,
+      "least_squares_fit": {
+        "A": 14.073543968008115,
+        "B": -0.7984716138985847,
+        "mape_percent": 10.559398507590583,
+        "mean_signed_error_percent": -2.0057552790359665,
+        "median_ape_percent": 8.363360468220293,
+        "p95_ape_percent": 29.671595956633848
+      },
+      "leave_one_compound_out": {
+        "full_refit": {
+          "mape_percent": 13.645433467199801,
+          "mean_signed_error_percent": -0.5506490752247021,
+          "median_ape_percent": 9.445005086772529,
+          "p95_ape_percent": 47.73619653147394
+        },
+        "simple_candidate": {
+          "mape_percent": 11.858845274200307,
+          "mean_signed_error_percent": 10.750111329390087,
+          "median_ape_percent": 5.52200247534349,
+          "p95_ape_percent": 58.722486546142285
+        }
+      },
+      "name": "thioether",
+      "paper_support": {
+        "class": "sulfur compounds",
+        "class_specific_data_points": null,
+        "compounds": 2,
+        "is_exact_group_class": true
+      },
+      "perry_sampled_states": 707,
+      "published": {
+        "A": 11.579,
+        "B": 0.0759,
+        "mape_percent": 21.843686988584835,
+        "mean_signed_error_percent": 21.843686988584835,
+        "median_ape_percent": 16.30524641523352,
+        "p95_ape_percent": 67.07918346321627
+      },
+      "published_without_worst_mape_percent": 14.79075552401126,
+      "refit_support": "limited",
+      "worst_compound": {
+        "cas": "110-01-0",
+        "mape_percent": 64.16127577602632,
+        "name": "Tetrahydrothiophene"
+      }
+    }
+  ],
+  "inputs": {
+    "benchmark": {
+      "path": "scripts/thermal_conductivity/liquid/results/govender_perry_tb_benchmark.json",
+      "sha256": "5dac3a99e2abd4dd9ba277a56516fab82451e9c2b89582c629898dc6b83e1ff3"
+    },
+    "govender_method": {
+      "path": "govender_method.py",
+      "sha256": "2db2a71cef80560557193333cddfeb961c69e9c3c6d84c9f3c10ab83de296552"
+    },
+    "script": {
+      "path": "scripts/thermal_conductivity/liquid/probe_govender_group_transcriptions.py",
+      "sha256": "2db85669c43b8f5245324ef279e257c9108d2eee7ba46598d262217fe0973b03"
+    },
+    "thermal_conductivity": {
+      "path": "data/perry_thermal_conductivity.json",
+      "sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053"
+    }
+  },
+  "probe": "govender_nonacid_group_simple_transcriptions",
+  "schema_version": 1,
+  "subclass_refits": {
+    "acyclic_thioethers_excluding_tetrahydrothiophene": {
+      "A": -0.3890721545966472,
+      "B": -0.2383675483760334,
+      "compounds": 6,
+      "excluded_compounds": [
+        "Tetrahydrothiophene"
+      ],
+      "group": 100,
+      "leave_one_compound_out": {
+        "mape_percent": 2.3346832144493836,
+        "mean_signed_error_percent": -0.029708188087159623,
+        "median_ape_percent": 1.8317142394701502,
+        "p95_ape_percent": 7.242392311015969
+      },
+      "training": {
+        "mape_percent": 1.9583110608669405,
+        "mean_signed_error_percent": -0.04656786241925659,
+        "median_ape_percent": 1.5093552810820698,
+        "p95_ape_percent": 5.9967750347394215
+      }
+    },
+    "ordinary_ketones_excluding_quinone": {
+      "A": 4.387107970474667,
+      "B": -0.6572271913882608,
+      "compounds": 16,
+      "excluded_compounds": [
+        "Quinone"
+      ],
+      "group": 58,
+      "leave_one_compound_out": {
+        "mape_percent": 7.549965864416239,
+        "mean_signed_error_percent": -0.7384060130245336,
+        "median_ape_percent": 6.435972211940177,
+        "p95_ape_percent": 27.654517083196176
+      },
+      "training": {
+        "mape_percent": 7.046353735428605,
+        "mean_signed_error_percent": -0.8127027548787139,
+        "median_ape_percent": 6.042533070131972,
+        "p95_ape_percent": 24.712474353856113
+      }
+    }
+  }
+}

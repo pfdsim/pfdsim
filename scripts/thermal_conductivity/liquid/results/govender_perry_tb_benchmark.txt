@@ -1,0 +1,78 @@
+Govender saturated-liquid thermal-conductivity benchmark vs Perry 9th Table 2-147
+Tb source: perry; coverage: 261/343 compounds, 261/343 curves, 26361 sampled states
+Tb methods: perry_vapor_pressure_normal_boiling_point=261
+sampling: uniform inclusive points over every Perry curve's declared range
+
+OVERALL POINT-WEIGHTED
+  n= 26361 comps=261 MAPE=  13.53% MdAPE=   7.55% P95=  54.18% bias=  +5.42% within20= 82.2%
+  P90=35.75% max=138.04% within10=59.6% within30=87.9%
+
+COMPOUND-EQUAL DISTRIBUTION OF CURVE MAPE
+  n=261 mean=13.53% median=7.60% P90=34.47% P95=53.76% max=111.13%
+
+BY USE OF A PAPER CAUTION GROUP
+  no           n= 25149 comps=249 MAPE=  13.14% MdAPE=   7.14% P95=  52.50% bias=  +4.84% within20= 82.1%
+  yes          n=  1212 comps= 12 MAPE=  21.62% MdAPE=  13.91% P95=  77.74% bias= +17.49% within20= 83.0%
+
+BY T/Tb
+  0.5-0.75     n=  9069 comps=251 MAPE=  10.25% MdAPE=   5.91% P95=  37.36% bias=  +3.77% within20= 86.9%
+  0.75-1       n= 12811 comps=261 MAPE=  14.84% MdAPE=   7.68% P95=  58.92% bias=  +6.96% within20= 80.5%
+  1-1.25       n=  3171 comps=194 MAPE=  17.46% MdAPE=  10.02% P95=  73.11% bias=  +5.71% within20= 77.8%
+  <0.5         n=   718 comps= 81 MAPE=   6.98% MdAPE=   4.57% P95=  19.72% bias=  +3.85% within20= 95.7%
+  >=1.25       n=   592 comps= 40 MAPE=  22.26% MdAPE=  18.53% P95=  53.15% bias=  -2.37% within20= 53.9%
+
+WORST 20 COMPOUNDS BY CURVE MAPE
+   1. Malonic acid                       141-82-2     C3H4O4          MAPE= 111.13% bias=+111.13%
+   2. Succinic acid                      110-15-6     C4H6O4          MAPE= 108.44% bias=+108.44%
+   3. Quinone                            106-51-4     C6H4O2          MAPE=  90.46% bias= +90.46%
+   4. 1,3-Butadiene                      106-99-0     C4H6            MAPE=  81.51% bias= +81.51%
+   5. Methacrylic acid                   79-41-4      C4H6O2          MAPE=  72.31% bias= +72.31%
+   6. Cyclopropane                       75-19-4      C3H6            MAPE=  70.33% bias= +70.33%
+   7. Ethylene oxide                     75-21-8      C2H4O           MAPE=  68.40% bias= +68.40%
+   8. Propionic acid                     79-09-4      C3H6O2          MAPE=  64.16% bias= +64.16%
+   9. Tetrahydrothiophene                110-01-0     C4H8S           MAPE=  64.16% bias= +64.16%
+  10. Acrylic acid                       79-10-7      C3H4O2          MAPE=  62.08% bias= +62.08%
+  11. Ethyleneimine                      151-56-4     C2H5N           MAPE=  60.16% bias= +60.16%
+  12. Acetic acid                        64-19-7      C2H4O2          MAPE=  58.13% bias= +58.13%
+  13. Butyric acid                       107-92-6     C4H8O2          MAPE=  57.17% bias= +57.17%
+  14. Isobutyric acid                    79-31-2      C4H8O2          MAPE=  53.76% bias= +53.76%
+  15. 1,2-Difluoroethane                 624-72-6     C2H4F2          MAPE=  52.65% bias= +52.65%
+  16. 2-Methylbutanoic acid              116-53-0     C5H10O2         MAPE=  49.92% bias= +49.92%
+  17. Hexanoic acid                      142-62-1     C6H12O2         MAPE=  47.31% bias= +47.31%
+  18. Bromomethane                       74-83-9      CH3Br           MAPE=  47.27% bias= +47.27%
+  19. Pentanoic acid                     109-52-4     C5H10O2         MAPE=  46.64% bias= +46.64%
+  20. Heptanoic acid                     111-14-8     C7H14O2         MAPE=  43.96% bias= +43.96%
+
+EXCLUSIONS
+    22 ValueError: not strict organic: formula is outside strict molecular-organic domain
+     5 ValueError: not strict organic: known inorganic carbon compound
+     4 GovenderError: no published Govender group for Si atom 1
+     4 GovenderError: no published carbon group for atom 1
+     4 GovenderError: no published carbon group for atom 2
+     3 GovenderError: no published Govender group for S atom 1
+     3 GovenderError: no published Govender group for S atom 6
+     3 GovenderError: no published carbon group for atom 3
+     2 GovenderError: could not assign 2 atom(s) to any published structural group: C(0), O(1)
+     2 GovenderError: no published Govender group for S atom 2
+     2 GovenderError: no published Govender group for S atom 3
+     2 GovenderError: no published Govender group for S atom 4
+     2 GovenderError: no published Govender group for S atom 5
+     2 GovenderError: no published Govender group for S atom 7
+     2 GovenderError: no published Govender group for Si atom 2
+     2 GovenderError: no published carbon group for atom 0
+     2 GovenderError: no published carbon group for atom 6
+     2 GovenderError: small glycols and polyols are outside the fitted model
+     1 GovenderError: molecule has no published Govender fragmentation
+     1 GovenderError: no published Govender group for N atom 1
+     1 GovenderError: no published Govender group for N atom 6
+     1 GovenderError: no published Govender group for S atom 10
+     1 GovenderError: no published Govender group for S atom 8
+     1 GovenderError: no published Govender group for S atom 9
+     1 GovenderError: no published carbon group for atom 4
+     1 GovenderError: no published carbon group for atom 5
+     1 GovenderError: no published carbon group for atom 7
+     1 GovenderError: no published carbon group for atom 8
+     1 GovenderError: the Nannoolal method needs at least two heavy atoms
+     1 ValueError: Perry normal boiling point unavailable
+     1 ValueError: not strict organic: molecular identity is insufficient
+     1 ValueError: not strict organic: structure contains no carbon

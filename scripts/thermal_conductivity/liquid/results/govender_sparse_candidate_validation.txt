@@ -1,0 +1,10 @@
+Govender sparse-group external validation
+Candidates selected from Perry and held fixed; literature data were not fitted.
+
+GROUP 33: n=1 compounds/26 points; published MAPE=0.96%, candidate MAPE=13.57% (B sign flip, A=-8.434, B=-0.2742)
+  Isoprene: 26 points, 0.96% -> 13.57%
+GROUP 72: n=2 compounds/4 points; published MAPE=12.20%, candidate MAPE=10.83% (B digit 8->0, A=11.442, B=0.0726)
+  N,N-Dimethylacetamide: 3 points, 5.46% -> 20.72%
+  N-Methyl-2-pyrrolidone: 1 points, 18.95% -> 0.94%
+GROUP 93: n=1 compounds/4 points; published MAPE=0.29%, candidate MAPE=20.22% (B sign flip, A=9.092, B=-0.5287)
+  Azepane: 4 points, 0.29% -> 20.22%

@@ -1,0 +1,21 @@
+Govender group 53 (aliphatic COOH) discrepancy probe
+population: 18 compounds, 1818 points
+published coefficients: A=4.982, B=-1.6203
+
+ACID-ONLY RESULTS
+  published                      MAPE=  54.82% MdAPE=  49.84% P95= 110.91% bias= +54.82%
+  alpha_carbon_as_e              MAPE=  42.95% MdAPE=  39.40% P95=  86.58% bias= +42.95%
+  carbon_atoms_for_n             MAPE=  22.66% MdAPE=  17.29% P95=  57.23% bias= +22.22%
+  double_count_group_53          MAPE=   4.78% MdAPE=   3.30% P95=  12.56% bias=  -2.11%
+  candidate_B_minus_3.1203       MAPE=   4.86% MdAPE=   3.62% P95=  13.21% bias=  +0.03%
+  aromatic_COOH_coefficients     MAPE=   4.23% MdAPE=   3.42% P95=  10.14% bias=  +1.20%
+  least_squares_refit            MAPE=   4.32% MdAPE=   4.07% P95=   8.94% bias=  +0.62%
+
+diagnostic least-squares coefficients: A=18.377998, B=-3.213532
+least-squares leave-one-compound-out MAPE: 4.70%
+
+EFFECT ON COMPLETE 261-COMPOUND BENCHMARK
+  published                      MAPE=  13.53% P95=  54.18% bias=  +5.42%
+  double_count_group_53          MAPE=  10.08% P95=  34.06% bias=  +1.49%
+  candidate_B_minus_3.1203       MAPE=  10.08% P95=  34.06% bias=  +1.64%
+  aromatic_COOH_coefficients     MAPE=  10.04% P95=  34.06% bias=  +1.72%
