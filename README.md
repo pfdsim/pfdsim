@@ -1,4 +1,6 @@
-# pfdsim
+# PFDSim
+
+**IMPORTANT: This README is outdated. Please refer to the program itself for the complete features of the library.**
 
 `pfdsim` is a command-line chemical process simulator. Its primary workflow is
 to run human-editable `.pfd` flowsheet files with the `pfdsim` CLI, solve them
