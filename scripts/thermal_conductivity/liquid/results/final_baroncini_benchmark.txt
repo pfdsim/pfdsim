@@ -1,0 +1,62 @@
+Final selected-domain Baroncini benchmark
+coverage: 140 compounds
+overall: MAPE=  3.71% MdAPE=  1.80% P95= 13.07% bias= -1.67%
+
+PER CATEGORY
+  alcohols                     n= 25 MAPE=  4.90% MdAPE=  2.74% P95= 13.82% bias= -2.64%
+  aldehydes                    n= 10 MAPE=  2.21% MdAPE=  1.62% P95=  5.91% bias= +0.04%
+  esters                       n= 16 MAPE=  2.69% MdAPE=  1.91% P95=  8.08% bias= +0.54%
+  ethers                       n= 17 MAPE=  1.76% MdAPE=  0.43% P95=  9.77% bias= -0.89%
+  halogenated_hydrocarbons     n= 37 MAPE=  5.83% MdAPE=  4.77% P95= 17.99% bias= -3.96%
+  ketones                      n= 15 MAPE=  2.29% MdAPE=  1.77% P95=  5.79% bias= +0.03%
+  organic_acids                n= 20 MAPE=  2.57% MdAPE=  0.57% P95= 10.45% bias= -0.81%
+
+LOCAL-ADJUSTMENT HELD-OUT VALIDATION
+  acyclic_aliphatic_ketones    n= 14 MAPE=  3.01% MdAPE=  2.34% P95=  6.61% bias= -0.05%
+  aldehydes                    n= 10 MAPE=  2.87% MdAPE=  1.88% P95=  7.73% bias= -0.16%
+
+INPUT SENSITIVITY — EXACT COMMON POPULATION
+  coverage: 139/140 compounds
+  nannoolal_Tb_vs_reference                MAPE=  1.81% MdAPE=  1.24% P95=  5.37% bias= -0.07%
+  nannoolal_Tc_anchored_vs_reference       MAPE=  1.01% MdAPE=  0.57% P95=  3.57% bias= +0.15%
+  nannoolal_Tc_structure_vs_reference      MAPE=  1.87% MdAPE=  1.42% P95=  4.73% bias= +0.07%
+
+  CONDUCTIVITY OVERALL
+    reference                          MAPE=  3.73% MdAPE=  1.83% P95= 13.07% bias= -1.68%
+    nannoolal_Tb                       MAPE=  4.32% MdAPE=  2.73% P95= 13.96% bias= -1.82%
+    nannoolal_Tc_anchored              MAPE=  3.93% MdAPE=  2.29% P95= 12.61% bias= -1.58%
+    nannoolal_structure_Tb_Tc          MAPE=  5.03% MdAPE=  3.35% P95= 14.62% bias= -1.81%
+
+  CONDUCTIVITY BY CATEGORY (MAPE)
+    alcohols                     n= 25 reference=4.90% nannoolal_Tb=5.84% nannoolal_Tc_anchored=5.21% nannoolal_structure_Tb_Tc=6.43%
+    aldehydes                    n= 10 reference=2.21% nannoolal_Tb=2.99% nannoolal_Tc_anchored=2.39% nannoolal_structure_Tb_Tc=3.48%
+    esters                       n= 16 reference=2.69% nannoolal_Tb=2.74% nannoolal_Tc_anchored=2.97% nannoolal_structure_Tb_Tc=3.43%
+    ethers                       n= 17 reference=1.76% nannoolal_Tb=2.89% nannoolal_Tc_anchored=1.96% nannoolal_structure_Tb_Tc=3.46%
+    halogenated_hydrocarbons     n= 37 reference=5.81% nannoolal_Tb=5.81% nannoolal_Tc_anchored=5.86% nannoolal_structure_Tb_Tc=6.83%
+    ketones                      n= 15 reference=2.29% nannoolal_Tb=2.94% nannoolal_Tc_anchored=2.31% nannoolal_structure_Tb_Tc=3.54%
+    organic_acids                n= 19 reference=2.69% nannoolal_Tb=3.82% nannoolal_Tc_anchored=3.16% nannoolal_structure_Tb_Tc=4.41%
+
+NANNOOLAL SENSITIVITY EXCLUSIONS
+  organic_acids                Oxalic acid                  Nannoolal Tb or Tc unavailable
+
+WORST 20 IN SELECTED DOMAIN
+   1. 1,1,2-Trichloroethane        halogenated_hydrocarbons     MAPE= 18.42%
+   2. R245fa                       halogenated_hydrocarbons     MAPE= 17.46%
+   3. RC318                        halogenated_hydrocarbons     MAPE= 14.87%
+   4. R236EA                       halogenated_hydrocarbons     MAPE= 13.67%
+   5. 1-Nonanol                    alcohols                     MAPE= 13.59%
+   6. 1-Heptanol                   alcohols                     MAPE= 12.18%
+   7. R134a                        halogenated_hydrocarbons     MAPE= 12.02%
+   8. 1-Hexanol                    alcohols                     MAPE= 11.71%
+   9. 1,2-Dichloroethane           halogenated_hydrocarbons     MAPE= 11.56%
+  10. 1-Octanol                    alcohols                     MAPE= 11.37%
+  11. R236FA                       halogenated_hydrocarbons     MAPE= 11.11%
+  12. Butyric acid                 organic_acids                MAPE= 10.41%
+  13. 1,2-Dimethoxypropane         ethers                       MAPE=  9.82%
+  14. Hexanoic acid                organic_acids                MAPE=  9.01%
+  15. Propionic acid               organic_acids                MAPE=  8.98%
+  16. 1-Decanol                    alcohols                     MAPE=  8.91%
+  17. R125                         halogenated_hydrocarbons     MAPE=  8.59%
+  18. 1,1-Difluoroethane           halogenated_hydrocarbons     MAPE=  8.58%
+  19. Dibutyl ether                ethers                       MAPE=  8.18%
+  20. 3-Methyl-1-butanol           alcohols                     MAPE=  7.86%

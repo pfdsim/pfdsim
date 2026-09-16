@@ -1,0 +1,30 @@
+Hydrocarbon V20 structure-model probe
+All model comparisons use leave-one-compound-out volume predictions.
+
+CANDIDATE MODELS ON ALL 86 COMPOUNDS
+  carbon_affine                  p=2 V20 MAPE=10.50% MdAPE=10.53% P95=20.40% bias=-1.42%; k MAPE=10.57% MdAPE=9.15% P95=23.10% bias=+1.94%
+  carbon_hydrogen_affine         p=3 V20 MAPE=4.11% MdAPE=3.10% P95=12.32% bias=-0.36%; k MAPE=4.79% MdAPE=4.02% P95=12.88% bias=-0.31%
+  carbon_hydrogen_branch         p=4 V20 MAPE=4.08% MdAPE=3.10% P95=12.54% bias=-0.37%; k MAPE=4.70% MdAPE=3.72% P95=13.01% bias=-0.31%
+  carbon_hydrogen_ring           p=4 V20 MAPE=2.48% MdAPE=1.60% P95=7.71% bias=-0.20%; k MAPE=3.54% MdAPE=2.43% P95=10.51% bias=-0.63%
+  carbon_hydrogen_branch_ring    p=5 V20 MAPE=2.52% MdAPE=1.57% P95=7.62% bias=-0.19%; k MAPE=3.60% MdAPE=2.52% P95=10.67% bias=-0.64%
+  carbon_hydrogen_ring_carbons   p=4 V20 MAPE=2.46% MdAPE=1.41% P95=7.47% bias=-0.20%; k MAPE=3.50% MdAPE=2.32% P95=10.21% bias=-0.63%
+
+SELECTED C/H/RING MODEL, C >= 3
+  compounds=84
+  V20 LOOCV: MAPE=1.72% MdAPE=1.10% P95=5.90% bias=-0.08%
+  k LOOCV:   MAPE=2.70% MdAPE=1.82% P95=7.56% bias=-0.80%
+  coefficients: {'intercept': 28.08212031899058, 'carbon': 8.263762641940371, 'hydrogen': 3.8098180968093285, 'ring': -10.37762344628454}
+
+COMPOUNDS WITH NO IN-RANGE PERRY V20
+  Eicosane                       V20= 353.37 cm3/mol k MAPE=  1.64%
+  Octadecane                     V20= 321.60 cm3/mol k MAPE=  2.17%
+  2,2,3,3-Tetramethylbutane      V20= 162.77 cm3/mol k MAPE=  2.80%
+  Heptadecane                    V20= 305.72 cm3/mol k MAPE=  2.71%
+  Nonadecane                     V20= 337.49 cm3/mol k MAPE=  2.44%
+  Phenanthrene                   V20= 150.74 cm3/mol k MAPE=  7.40%
+  Naphthalene                    V20= 120.44 cm3/mol k MAPE= 10.30%
+  Biphenyl                       V20= 144.59 cm3/mol k MAPE=  9.51%
+  combined missing-V20 conductivity: MAPE=4.87% MdAPE=2.89% P95=18.47% bias=-1.69%
+
+HYBRID OBSERVED/ESTIMATED V20
+  MAPE=2.32% MdAPE=0.82% P95=9.89% bias=-1.05%

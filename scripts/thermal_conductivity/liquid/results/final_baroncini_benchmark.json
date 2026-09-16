@@ -1,0 +1,4806 @@
+{
+  "base_benchmark": {
+    "categories": {
+      "alcohols": {
+        "compounds": 25,
+        "mape_percent": 4.904043652284185,
+        "maximum_ape_percent": 33.98620943970126,
+        "mean_signed_error_percent": -2.6381424122042327,
+        "median_ape_percent": 2.7413665441202606,
+        "p95_ape_percent": 13.81551576662704,
+        "points": 2525,
+        "within_20_percent": 99.12871287128712
+      },
+      "aldehydes": {
+        "compounds": 10,
+        "mape_percent": 2.2080556273307246,
+        "maximum_ape_percent": 7.037106982382202,
+        "mean_signed_error_percent": 0.04254054879207134,
+        "median_ape_percent": 1.6240278743382075,
+        "p95_ape_percent": 5.91008668455799,
+        "points": 1010,
+        "within_20_percent": 100.0
+      },
+      "esters": {
+        "compounds": 16,
+        "mape_percent": 2.6872244613552283,
+        "maximum_ape_percent": 20.101261970230368,
+        "mean_signed_error_percent": 0.5446351501721857,
+        "median_ape_percent": 1.9063435610179091,
+        "p95_ape_percent": 8.082622860037418,
+        "points": 1616,
+        "within_20_percent": 99.9381188118812
+      },
+      "ethers": {
+        "compounds": 17,
+        "mape_percent": 1.7586172068799364,
+        "maximum_ape_percent": 21.80534156018653,
+        "mean_signed_error_percent": -0.8932393415235012,
+        "median_ape_percent": 0.4338905666278703,
+        "p95_ape_percent": 9.770038040429966,
+        "points": 1717,
+        "within_20_percent": 99.88351776354106
+      },
+      "halogenated_hydrocarbons": {
+        "compounds": 37,
+        "mape_percent": 5.832068129882575,
+        "maximum_ape_percent": 36.74013562883156,
+        "mean_signed_error_percent": -3.9637591301029427,
+        "median_ape_percent": 4.768254472362643,
+        "p95_ape_percent": 17.994047814918016,
+        "points": 3737,
+        "within_20_percent": 98.04656141289804
+      },
+      "ketones": {
+        "compounds": 15,
+        "mape_percent": 2.2934642772908838,
+        "maximum_ape_percent": 15.711077866624434,
+        "mean_signed_error_percent": 0.031210825204603866,
+        "median_ape_percent": 1.7686728175278499,
+        "p95_ape_percent": 5.787888427951203,
+        "points": 1515,
+        "within_20_percent": 100.0
+      },
+      "organic_acids": {
+        "compounds": 20,
+        "mape_percent": 2.5653548966961255,
+        "maximum_ape_percent": 37.51471481207322,
+        "mean_signed_error_percent": -0.8110504079873371,
+        "median_ape_percent": 0.5719701238395214,
+        "p95_ape_percent": 10.450410181735453,
+        "points": 2020,
+        "within_20_percent": 97.72277227722772
+      }
+    },
+    "overall": {
+      "compounds": 140,
+      "mape_percent": 3.707637959842825,
+      "maximum_ape_percent": 37.51471481207322,
+      "mean_signed_error_percent": -1.6743642486844015,
+      "median_ape_percent": 1.8037871867461586,
+      "p95_ape_percent": 13.072909632841657,
+      "points": 14140,
+      "within_20_percent": 98.98161244695898
+    },
+    "subtypes": {
+      "C2_plus_general_refrigerant": {
+        "compounds": 37,
+        "mape_percent": 5.832068129882575,
+        "maximum_ape_percent": 36.74013562883156,
+        "mean_signed_error_percent": -3.9637591301029427,
+        "median_ape_percent": 4.768254472362643,
+        "p95_ape_percent": 17.994047814918016,
+        "points": 3737,
+        "within_20_percent": 98.04656141289804
+      },
+      "acyclic": {
+        "compounds": 17,
+        "mape_percent": 1.7586172068799364,
+        "maximum_ape_percent": 21.80534156018653,
+        "mean_signed_error_percent": -0.8932393415235012,
+        "median_ape_percent": 0.4338905666278703,
+        "p95_ape_percent": 9.770038040429966,
+        "points": 1717,
+        "within_20_percent": 99.88351776354106
+      },
+      "acyclic_aliphatic_local_refit": {
+        "compounds": 14,
+        "mape_percent": 2.432246752749304,
+        "maximum_ape_percent": 15.711077866624434,
+        "mean_signed_error_percent": 0.04807783311749739,
+        "median_ape_percent": 1.8402778814770204,
+        "p95_ape_percent": 5.844702502004922,
+        "points": 1414,
+        "within_20_percent": 100.0
+      },
+      "aromatic_published": {
+        "compounds": 1,
+        "mape_percent": 0.3505096208730094,
+        "maximum_ape_percent": 1.5741777791548173,
+        "mean_signed_error_percent": -0.20492728557590809,
+        "median_ape_percent": 0.2982220269134528,
+        "p95_ape_percent": 0.8873475870770031,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "local_A_b_refit": {
+        "compounds": 10,
+        "mape_percent": 2.2080556273307246,
+        "maximum_ape_percent": 7.037106982382202,
+        "mean_signed_error_percent": 0.04254054879207134,
+        "median_ape_percent": 1.6240278743382075,
+        "p95_ape_percent": 5.91008668455799,
+        "points": 1010,
+        "within_20_percent": 100.0
+      },
+      "monoester": {
+        "compounds": 16,
+        "mape_percent": 2.6872244613552283,
+        "maximum_ape_percent": 20.101261970230368,
+        "mean_signed_error_percent": 0.5446351501721857,
+        "median_ape_percent": 1.9063435610179091,
+        "p95_ape_percent": 8.082622860037418,
+        "points": 1616,
+        "within_20_percent": 99.9381188118812
+      },
+      "published": {
+        "compounds": 25,
+        "mape_percent": 4.904043652284185,
+        "maximum_ape_percent": 33.98620943970126,
+        "mean_signed_error_percent": -2.6381424122042327,
+        "median_ape_percent": 2.7413665441202606,
+        "p95_ape_percent": 13.81551576662704,
+        "points": 2525,
+        "within_20_percent": 99.12871287128712
+      },
+      "published_without_formic_acid": {
+        "compounds": 20,
+        "mape_percent": 2.5653548966961255,
+        "maximum_ape_percent": 37.51471481207322,
+        "mean_signed_error_percent": -0.8110504079873371,
+        "median_ape_percent": 0.5719701238395214,
+        "p95_ape_percent": 10.450410181735453,
+        "points": 2020,
+        "within_20_percent": 97.72277227722772
+      }
+    }
+  },
+  "compounds": [
+    {
+      "base": {
+        "mape_percent": 18.423139190153165,
+        "maximum_ape_percent": 19.345896092796654,
+        "mean_signed_error_percent": -18.423139190153165,
+        "median_ape_percent": 18.42583003402045,
+        "p95_ape_percent": 18.81358622467747,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "79-00-5",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H3Cl3",
+      "molecular_weight_g_mol": 133.40422,
+      "multiplier": 1.0,
+      "name": "1,1,2-Trichloroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 387.3246173979866,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 602.0,
+      "smiles": "C(C(Cl)Cl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 17.464760611385252,
+        "maximum_ape_percent": 36.74013562883156,
+        "mean_signed_error_percent": -17.464760611385252,
+        "median_ape_percent": 15.585654178086061,
+        "p95_ape_percent": 29.380452334991645,
+        "points": 101,
+        "within_20_percent": 82.17821782178217
+      },
+      "carbon_atoms": 3,
+      "cas": "460-73-1",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{5}H_{3}",
+      "molecular_weight_g_mol": 134.04794,
+      "multiplier": 1.0,
+      "name": "R245fa",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 288.1983205854809,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 427.00998969559254,
+      "smiles": "C(C(F)F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 14.865918367965579,
+        "maximum_ape_percent": 31.869066760466968,
+        "mean_signed_error_percent": -14.865918367965579,
+        "median_ape_percent": 13.216394719330992,
+        "p95_ape_percent": 26.704834528838884,
+        "points": 101,
+        "within_20_percent": 83.16831683168317
+      },
+      "carbon_atoms": 4,
+      "cas": "115-25-3",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{4}F_{8}",
+      "molecular_weight_g_mol": 200.03119999999998,
+      "multiplier": 1.0,
+      "name": "RC318",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 267.1753253354866,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 388.3710224426984,
+      "smiles": "FC1(F)C(F)(F)C(F)(F)C1(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 13.67213348702181,
+        "maximum_ape_percent": 28.50625168577009,
+        "mean_signed_error_percent": -13.67213348702181,
+        "median_ape_percent": 12.394501905613387,
+        "p95_ape_percent": 22.7755472770118,
+        "points": 101,
+        "within_20_percent": 91.0891089108911
+      },
+      "carbon_atoms": 3,
+      "cas": "431-63-0",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{6}H_{2}",
+      "molecular_weight_g_mol": 152.0384,
+      "multiplier": 1.0,
+      "name": "R236EA",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 279.3221543718143,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 412.4089900338652,
+      "smiles": "C(C(F)F)(C(F)(F)F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 13.594519669375773,
+        "maximum_ape_percent": 19.969266151800248,
+        "mean_signed_error_percent": -13.594519669375773,
+        "median_ape_percent": 12.679192654676685,
+        "p95_ape_percent": 18.028986697037407,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 9,
+      "cas": "143-08-8",
+      "category": "alcohols",
+      "formula": "C9H20O",
+      "molecular_weight_g_mol": 144.2545,
+      "multiplier": 1.0,
+      "name": "1-Nonanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 485.211260198902,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 670.9,
+      "smiles": "CCCCCCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 12.182051432420014,
+        "maximum_ape_percent": 25.823920335075602,
+        "mean_signed_error_percent": -12.182051432420014,
+        "median_ape_percent": 10.424079122936226,
+        "p95_ape_percent": 21.67219684347115,
+        "points": 101,
+        "within_20_percent": 92.07920792079209
+      },
+      "carbon_atoms": 7,
+      "cas": "111-70-6",
+      "category": "alcohols",
+      "formula": "C7H16O",
+      "molecular_weight_g_mol": 116.20134,
+      "multiplier": 1.0,
+      "name": "1-Heptanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 448.65190930643007,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 632.3,
+      "smiles": "CCCCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 12.022883031662712,
+        "maximum_ape_percent": 24.217318532428166,
+        "mean_signed_error_percent": -12.022883031662712,
+        "median_ape_percent": 11.052013405270744,
+        "p95_ape_percent": 17.905175596105515,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "carbon_atoms": 2,
+      "cas": "811-97-2",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}F_{4}H_{2}",
+      "molecular_weight_g_mol": 102.032,
+      "multiplier": 1.0,
+      "name": "R134a",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 247.07616894214726,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 374.2119665849513,
+      "smiles": "C(C(F)(F)F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 11.707011347710939,
+        "maximum_ape_percent": 33.98620943970126,
+        "mean_signed_error_percent": -11.707011347710939,
+        "median_ape_percent": 8.94890287140624,
+        "p95_ape_percent": 26.69785127899773,
+        "points": 101,
+        "within_20_percent": 87.12871287128714
+      },
+      "carbon_atoms": 6,
+      "cas": "111-27-3",
+      "category": "alcohols",
+      "formula": "C6H14O",
+      "molecular_weight_g_mol": 102.17476,
+      "multiplier": 1.0,
+      "name": "1-Hexanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 429.9009553358676,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 611.3,
+      "smiles": "CCCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 11.559923001743606,
+        "maximum_ape_percent": 11.765488253182399,
+        "mean_signed_error_percent": -11.559923001743606,
+        "median_ape_percent": 11.559562966033077,
+        "p95_ape_percent": 11.728223322645059,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "107-06-2",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H4Cl2",
+      "molecular_weight_g_mol": 98.95916,
+      "multiplier": 1.0,
+      "name": "1,2-Dichloroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 356.82299421368566,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 561.6,
+      "smiles": "C(CCl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 11.370175490912274,
+        "maximum_ape_percent": 19.34242655016706,
+        "mean_signed_error_percent": -11.370175490912274,
+        "median_ape_percent": 10.256864991849335,
+        "p95_ape_percent": 16.92412400098774,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "111-87-5",
+      "category": "alcohols",
+      "formula": "C8H18O",
+      "molecular_weight_g_mol": 130.22792,
+      "multiplier": 1.0,
+      "name": "1-Octanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 467.0981586141967,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 652.3,
+      "smiles": "CCCCCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 11.11126209111219,
+        "maximum_ape_percent": 30.201356584983042,
+        "mean_signed_error_percent": -11.11126209111219,
+        "median_ape_percent": 9.416906655314117,
+        "p95_ape_percent": 22.6060177002098,
+        "points": 101,
+        "within_20_percent": 92.07920792079209
+      },
+      "carbon_atoms": 3,
+      "cas": "690-39-1",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{6}H_{2}",
+      "molecular_weight_g_mol": 152.0384,
+      "multiplier": 1.0,
+      "name": "R236FA",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 271.66162710542284,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 398.070051605231,
+      "smiles": "C(C(F)(F)F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 10.414883289813355,
+        "maximum_ape_percent": 37.51471481207322,
+        "mean_signed_error_percent": -9.409614009992097,
+        "median_ape_percent": 6.5045960133586656,
+        "p95_ape_percent": 31.235996058640037,
+        "points": 101,
+        "within_20_percent": 81.1881188118812
+      },
+      "carbon_atoms": 4,
+      "cas": "107-92-6",
+      "category": "organic_acids",
+      "formula": "C4H8O2",
+      "molecular_weight_g_mol": 88.1051,
+      "multiplier": 1.0,
+      "name": "Butyric acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 436.4217310648165,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 615.7,
+      "smiles": "CCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 9.815960608705527,
+        "maximum_ape_percent": 10.021217086672507,
+        "mean_signed_error_percent": -9.815960608705527,
+        "median_ape_percent": 9.836910752571848,
+        "p95_ape_percent": 10.020009173537082,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "7778-85-0",
+      "category": "ethers",
+      "formula": "C5H12O2",
+      "molecular_weight_g_mol": 104.14758,
+      "multiplier": 1.0,
+      "name": "1,2-Dimethoxypropane",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 366.1416219194832,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 543.0,
+      "smiles": "CC(COC)OC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 9.013709984818215,
+        "maximum_ape_percent": 32.3419311544143,
+        "mean_signed_error_percent": -6.468045818109621,
+        "median_ape_percent": 5.937489448199207,
+        "p95_ape_percent": 26.889061623577646,
+        "points": 101,
+        "within_20_percent": 86.13861386138613
+      },
+      "carbon_atoms": 6,
+      "cas": "142-62-1",
+      "category": "organic_acids",
+      "formula": "C6H12O2",
+      "molecular_weight_g_mol": 116.158,
+      "multiplier": 1.0,
+      "name": "Hexanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 478.8458407398556,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 660.2,
+      "smiles": "CCCCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 8.979841879967944,
+        "maximum_ape_percent": 30.888137151313167,
+        "mean_signed_error_percent": -6.358029442464753,
+        "median_ape_percent": 6.118628042184948,
+        "p95_ape_percent": 26.04166726507294,
+        "points": 101,
+        "within_20_percent": 87.12871287128714
+      },
+      "carbon_atoms": 3,
+      "cas": "79-09-4",
+      "category": "organic_acids",
+      "formula": "C3H6O2",
+      "molecular_weight_g_mol": 74.0785,
+      "multiplier": 1.0,
+      "name": "Propionic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 414.29436151864263,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 600.81,
+      "smiles": "CCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 8.90585364914043,
+        "maximum_ape_percent": 9.484726115804133,
+        "mean_signed_error_percent": -8.90585364914043,
+        "median_ape_percent": 8.887689040897717,
+        "p95_ape_percent": 9.480958490145975,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 10,
+      "cas": "112-30-1",
+      "category": "alcohols",
+      "formula": "C10H22O",
+      "molecular_weight_g_mol": 158.28108,
+      "multiplier": 1.0,
+      "name": "1-Decanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 503.00082879245167,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 688.0,
+      "smiles": "CCCCCCCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 8.5946263001791,
+        "maximum_ape_percent": 22.336171644955527,
+        "mean_signed_error_percent": -8.5946263001791,
+        "median_ape_percent": 7.792891650172351,
+        "p95_ape_percent": 15.576375904480377,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "carbon_atoms": 2,
+      "cas": "354-33-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}F_{5}H_{1}",
+      "molecular_weight_g_mol": 120.0214,
+      "multiplier": 1.0,
+      "name": "R125",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 225.0613923699292,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 339.1772824561048,
+      "smiles": "C(C(F)(F)F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 8.581013518214657,
+        "maximum_ape_percent": 24.401743857916657,
+        "mean_signed_error_percent": -8.581013518214657,
+        "median_ape_percent": 7.567456706519737,
+        "p95_ape_percent": 17.296222424918884,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "carbon_atoms": 2,
+      "cas": "75-37-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H4F2",
+      "molecular_weight_g_mol": 66.04997,
+      "multiplier": 1.0,
+      "name": "1,1-Difluoroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 249.12186791144813,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 386.44,
+      "smiles": "CC(F)F",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 8.175130477853727,
+        "maximum_ape_percent": 21.80534156018653,
+        "mean_signed_error_percent": -8.175130477853727,
+        "median_ape_percent": 6.729450528041214,
+        "p95_ape_percent": 17.59091972126455,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "carbon_atoms": 8,
+      "cas": "142-96-1",
+      "category": "ethers",
+      "formula": "C8H18O",
+      "molecular_weight_g_mol": 130.22792,
+      "multiplier": 1.0,
+      "name": "Dibutyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 414.0012682061108,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 584.1,
+      "smiles": "CCCCOCCCC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 7.864287039449705,
+        "maximum_ape_percent": 19.218213653770057,
+        "mean_signed_error_percent": 5.179594456266524,
+        "median_ape_percent": 7.062485662292461,
+        "p95_ape_percent": 17.557786284944644,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "123-51-3",
+      "category": "alcohols",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.1482,
+      "multiplier": 1.0,
+      "name": "3-Methyl-1-butanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 404.12726027262386,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 577.2,
+      "smiles": "CC(C)CCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 7.857094752757445,
+        "maximum_ape_percent": 20.59019541822156,
+        "mean_signed_error_percent": -0.20287066904760573,
+        "median_ape_percent": 7.459562481534865,
+        "p95_ape_percent": 17.20633332679239,
+        "points": 101,
+        "within_20_percent": 99.00990099009901
+      },
+      "carbon_atoms": 6,
+      "cas": "108-93-0",
+      "category": "alcohols",
+      "formula": "C6H12O",
+      "molecular_weight_g_mol": 100.15888,
+      "multiplier": 1.0,
+      "name": "Cyclohexanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 433.98612846580795,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 650.1,
+      "smiles": "C1CCC(CC1)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 7.220918565214801,
+        "maximum_ape_percent": 10.212554710944588,
+        "mean_signed_error_percent": -7.220918565214801,
+        "median_ape_percent": 7.168645661580275,
+        "p95_ape_percent": 9.874999761142789,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "106-93-4",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H4Br2",
+      "molecular_weight_g_mol": 187.86116,
+      "multiplier": 1.0,
+      "name": "1,2-Dibromoethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 404.3701506027411,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 650.15,
+      "smiles": "C(CBr)Br",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 7.177089021189569,
+        "maximum_ape_percent": 17.524374893955518,
+        "mean_signed_error_percent": 4.411557248235192,
+        "median_ape_percent": 7.660456805838312,
+        "p95_ape_percent": 10.682120861824519,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "754-12-1",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{4}H_{2}",
+      "molecular_weight_g_mol": 114.04159279999999,
+      "multiplier": 1.0,
+      "name": "R1234yf",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 243.6648737793608,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 367.84998882341455,
+      "smiles": "C=C(F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 7.106275584385,
+        "maximum_ape_percent": 7.948264968958418,
+        "mean_signed_error_percent": -7.106275584385,
+        "median_ape_percent": 7.150952005557965,
+        "p95_ape_percent": 7.603200998245086,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "78-87-5",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C3H6Cl2",
+      "molecular_weight_g_mol": 112.98574,
+      "multiplier": 1.0,
+      "name": "1,2-Dichloropropane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 369.22745614253176,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 572.0,
+      "smiles": "CC(CCl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 6.989715469580954,
+        "maximum_ape_percent": 13.777968552530806,
+        "mean_signed_error_percent": -6.989715469580954,
+        "median_ape_percent": 6.896847607670898,
+        "p95_ape_percent": 12.971731530640952,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 1,
+      "cas": "67-56-1",
+      "category": "alcohols",
+      "formula": "CH4O",
+      "molecular_weight_g_mol": 32.04186,
+      "multiplier": 1.0,
+      "name": "Methanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 337.6847602320032,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 512.5,
+      "smiles": "CO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 6.971631098068744,
+        "maximum_ape_percent": 13.362395372871582,
+        "mean_signed_error_percent": 6.971631098068744,
+        "median_ape_percent": 6.615738284115036,
+        "p95_ape_percent": 12.923386659119807,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 11,
+      "cas": "112-42-5",
+      "category": "alcohols",
+      "formula": "C11H24O",
+      "molecular_weight_g_mol": 172.30766,
+      "multiplier": 1.0,
+      "name": "1-Undecanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 520.285276841928,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 703.9,
+      "smiles": "CCCCCCCCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 6.275164087359638,
+        "maximum_ape_percent": 19.063967359796763,
+        "mean_signed_error_percent": 4.2118816995287975,
+        "median_ape_percent": 5.764294919624113,
+        "p95_ape_percent": 11.223434064527883,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "76-19-7",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{8}",
+      "molecular_weight_g_mol": 188.01933000000002,
+      "multiplier": 1.0,
+      "name": "R218",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 236.36108741138224,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 345.01996901445966,
+      "smiles": "FC(F)(F)C(F)(F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 6.269335547029979,
+        "maximum_ape_percent": 14.079420039564837,
+        "mean_signed_error_percent": -1.4097119637781192,
+        "median_ape_percent": 6.1497791661838,
+        "p95_ape_percent": 12.699352889500648,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "100-51-6",
+      "category": "alcohols",
+      "formula": "C7H8O",
+      "molecular_weight_g_mol": 108.13782,
+      "multiplier": 1.0,
+      "name": "Benzyl alcohol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 478.6032955098415,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 720.15,
+      "smiles": "C1=CC=C(C=C1)CO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 5.884286927589831,
+        "maximum_ape_percent": 6.374587571409029,
+        "mean_signed_error_percent": -5.884286927589831,
+        "median_ape_percent": 5.923966093299915,
+        "p95_ape_percent": 6.3356417863853824,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "95-50-1",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C6H4Cl2",
+      "molecular_weight_g_mol": 147.00196,
+      "multiplier": 1.0,
+      "name": "o-Dichlorobenzene",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 453.51610610290106,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 705.0,
+      "smiles": "C1=CC=C(C(=C1)Cl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 5.865000276106045,
+        "maximum_ape_percent": 6.415183450848594,
+        "mean_signed_error_percent": 5.865000276106045,
+        "median_ape_percent": 5.775744754273737,
+        "p95_ape_percent": 6.27264995086787,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "107-02-8",
+      "category": "aldehydes",
+      "formula": "C3H4O",
+      "molecular_weight_g_mol": 56.06326,
+      "multiplier": 1.0,
+      "name": "Acrolein",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 325.88659405999533,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 506.0,
+      "smiles": "C=CC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 5.790043848128071,
+        "maximum_ape_percent": 8.91563082976341,
+        "mean_signed_error_percent": 5.790043848128071,
+        "median_ape_percent": 5.652893387880487,
+        "p95_ape_percent": 8.434597636799012,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "74-96-4",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H5Br",
+      "molecular_weight_g_mol": 108.965,
+      "multiplier": 1.0,
+      "name": "Bromoethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 311.48885204763246,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 503.8,
+      "smiles": "CCBr",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 5.766086471469909,
+        "maximum_ape_percent": 16.40606169131239,
+        "mean_signed_error_percent": -0.7791328107390839,
+        "median_ape_percent": 5.284919986640069,
+        "p95_ape_percent": 13.6281426534275,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "67-63-0",
+      "category": "alcohols",
+      "formula": "C3H8O",
+      "molecular_weight_g_mol": 60.095,
+      "multiplier": 1.0,
+      "name": "2-Propanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 355.2734647534079,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 508.3,
+      "smiles": "CC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 5.6451552733071555,
+        "maximum_ape_percent": 16.90681869160422,
+        "mean_signed_error_percent": 1.6747245254389678,
+        "median_ape_percent": 5.433966219899111,
+        "p95_ape_percent": 11.977641310572407,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "110-74-7",
+      "category": "esters",
+      "formula": "C4H8O2",
+      "molecular_weight_g_mol": 88.10512,
+      "multiplier": 1.0,
+      "name": "Propyl formate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 354.1478231911972,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 538.0,
+      "smiles": "CCCOC=O",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 5.616198808216991,
+        "maximum_ape_percent": 8.335120026433263,
+        "mean_signed_error_percent": 5.616198808216991,
+        "median_ape_percent": 5.38152677262782,
+        "p95_ape_percent": 8.28322502921961,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "79-20-9",
+      "category": "esters",
+      "formula": "C3H6O2",
+      "molecular_weight_g_mol": 74.07854,
+      "multiplier": 1.0,
+      "name": "Methyl acetate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 330.20357288220634,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 506.55,
+      "smiles": "CC(=O)OC",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 5.612285499794813,
+        "maximum_ape_percent": 13.540693279234816,
+        "mean_signed_error_percent": 3.689007901070458,
+        "median_ape_percent": 5.08239323179287,
+        "p95_ape_percent": 12.393357822113526,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "78-92-2",
+      "category": "alcohols",
+      "formula": "C4H10O",
+      "molecular_weight_g_mol": 74.1216,
+      "multiplier": 1.0,
+      "name": "2-Butanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 372.88356662483557,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 535.9,
+      "smiles": "CCC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 5.488245746311894,
+        "maximum_ape_percent": 6.4102271160833,
+        "mean_signed_error_percent": -5.488245746311894,
+        "median_ape_percent": 5.499732799860235,
+        "p95_ape_percent": 5.844276471800558,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "108-10-1",
+      "category": "ketones",
+      "formula": "C6H12O",
+      "molecular_weight_g_mol": 100.15888,
+      "multiplier": 0.9462275060744955,
+      "name": "Methylisobutyl ketone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 389.2946334375258,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 574.6,
+      "smiles": "CC(C)CC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 5.469545903417766,
+        "maximum_ape_percent": 25.056707789767607,
+        "mean_signed_error_percent": -5.469545903417766,
+        "median_ape_percent": 4.236344955348603,
+        "p95_ape_percent": 16.3481080855452,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "carbon_atoms": 3,
+      "cas": "29118-24-9",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{4}H_{2}",
+      "molecular_weight_g_mol": 114.04159279999999,
+      "multiplier": 1.0,
+      "name": "R1234ze(E)",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 254.177474975723,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 382.51300260465183,
+      "smiles": "F/C=C/C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 5.239194888643096,
+        "maximum_ape_percent": 16.876574426352075,
+        "mean_signed_error_percent": 0.945832563224011,
+        "median_ape_percent": 4.897998352460364,
+        "p95_ape_percent": 12.250816953668785,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "554-12-1",
+      "category": "esters",
+      "formula": "C4H8O2",
+      "molecular_weight_g_mol": 88.10512,
+      "multiplier": 1.0,
+      "name": "Methyl propionate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 352.6110314547918,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 530.6,
+      "smiles": "CCC(=O)OC",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 4.8950041748546615,
+        "maximum_ape_percent": 15.711077866624434,
+        "mean_signed_error_percent": 1.726396925941964,
+        "median_ape_percent": 4.90202994485387,
+        "p95_ape_percent": 10.49826794440467,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "106-35-4",
+      "category": "ketones",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 0.9548605287036463,
+      "name": "3-Heptanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 420.21002151506366,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 606.6,
+      "smiles": "CCCCC(=O)CC",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 4.890801764671389,
+        "maximum_ape_percent": 5.891586861006792,
+        "mean_signed_error_percent": -4.890801764671389,
+        "median_ape_percent": 4.943925943751215,
+        "p95_ape_percent": 5.7438339830263585,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "541-73-1",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C6H4Cl2",
+      "molecular_weight_g_mol": 147.00196,
+      "multiplier": 1.0,
+      "name": "m-Dichlorobenzene",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 446.1090657508995,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 683.95,
+      "smiles": "C1=CC(=CC(=C1)Cl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 4.806791940882975,
+        "maximum_ape_percent": 26.539690109070403,
+        "mean_signed_error_percent": 0.9381948578741192,
+        "median_ape_percent": 4.001416599738783,
+        "p95_ape_percent": 14.927927916026517,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "carbon_atoms": 2,
+      "cas": "1717-00-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}Cl_{2}F_{1}H_{3}",
+      "molecular_weight_g_mol": 116.94962000000001,
+      "multiplier": 1.0,
+      "name": "R141b",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 305.1953507006364,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 477.5000277059733,
+      "smiles": "CC(F)(Cl)Cl",
+      "source": "coolprop_mixed",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 4.5334213829794825,
+        "maximum_ape_percent": 9.912880863762918,
+        "mean_signed_error_percent": 1.7062574120368847,
+        "median_ape_percent": 4.400447326499379,
+        "p95_ape_percent": 9.08746129234357,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "109-52-4",
+      "category": "organic_acids",
+      "formula": "C5H10O2",
+      "molecular_weight_g_mol": 102.132,
+      "multiplier": 1.0,
+      "name": "Pentanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 458.9489977489312,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 639.16,
+      "smiles": "CCCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 4.5085981113017795,
+        "maximum_ape_percent": 20.101261970230368,
+        "mean_signed_error_percent": -1.8070778245383738,
+        "median_ape_percent": 3.1261886605388645,
+        "p95_ape_percent": 15.079106722085712,
+        "points": 101,
+        "within_20_percent": 99.00990099009901
+      },
+      "carbon_atoms": 5,
+      "cas": "105-37-3",
+      "category": "esters",
+      "formula": "C5H10O2",
+      "molecular_weight_g_mol": 102.1317,
+      "multiplier": 1.0,
+      "name": "Ethyl propionate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 372.480002597537,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 546.0,
+      "smiles": "CCC(=O)OCC",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 4.481016683230623,
+        "maximum_ape_percent": 6.231972175990563,
+        "mean_signed_error_percent": -4.481016683230623,
+        "median_ape_percent": 4.515280848230907,
+        "p95_ape_percent": 6.008588819724836,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "108-90-7",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C6H5Cl",
+      "molecular_weight_g_mol": 112.5569,
+      "multiplier": 1.0,
+      "name": "Chlorobenzene",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 405.11203476605306,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 632.35,
+      "smiles": "C1=CC=C(C=C1)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 4.480093045798647,
+        "maximum_ape_percent": 8.609171390327786,
+        "mean_signed_error_percent": -4.480093045798647,
+        "median_ape_percent": 4.375147569416226,
+        "p95_ape_percent": 8.139691608587752,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "64-19-7",
+      "category": "organic_acids",
+      "formula": "C2H4O2",
+      "molecular_weight_g_mol": 60.052,
+      "multiplier": 1.0,
+      "name": "Acetic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 391.157980877604,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 591.95,
+      "smiles": "CC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 4.452572976711346,
+        "maximum_ape_percent": 26.664193399140434,
+        "mean_signed_error_percent": -2.024376240836245,
+        "median_ape_percent": 2.4801951505127984,
+        "p95_ape_percent": 17.210202517170593,
+        "points": 101,
+        "within_20_percent": 96.03960396039604
+      },
+      "carbon_atoms": 3,
+      "cas": "431-89-0",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{3}F_{7}H_{1}",
+      "molecular_weight_g_mol": 170.02886,
+      "multiplier": 1.0,
+      "name": "R227EA",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 256.80907279175676,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 374.9001034452502,
+      "smiles": "FC(C(F)(F)F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 4.342859879518512,
+        "maximum_ape_percent": 10.88349187323442,
+        "mean_signed_error_percent": -3.68804375461848,
+        "median_ape_percent": 3.5911288377017736,
+        "p95_ape_percent": 9.955393427616988,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "64-17-5",
+      "category": "alcohols",
+      "formula": "C2H6O",
+      "molecular_weight_g_mol": 46.06844,
+      "multiplier": 1.0,
+      "name": "Ethanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 351.46033248849017,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 514.0,
+      "smiles": "CCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 4.332184533883778,
+        "maximum_ape_percent": 8.942461886854591,
+        "mean_signed_error_percent": -4.332184533883778,
+        "median_ape_percent": 4.262459752588176,
+        "p95_ape_percent": 8.291076206886705,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "71-36-3",
+      "category": "alcohols",
+      "formula": "C4H10O",
+      "molecular_weight_g_mol": 74.1216,
+      "multiplier": 1.0,
+      "name": "1-Butanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 390.8129618473183,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 563.1,
+      "smiles": "CCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 4.249284321194821,
+        "maximum_ape_percent": 5.172302817739083,
+        "mean_signed_error_percent": -4.249284321194821,
+        "median_ape_percent": 4.323111398016266,
+        "p95_ape_percent": 5.122670756906889,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "462-06-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C6H5F",
+      "molecular_weight_g_mol": 96.1023032,
+      "multiplier": 1.0,
+      "name": "Fluorobenzene",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 358.34296718163284,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 560.09,
+      "smiles": "C1=CC=C(C=C1)F",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 4.216448821789014,
+        "maximum_ape_percent": 23.66583894389962,
+        "mean_signed_error_percent": -3.8921212756766947,
+        "median_ape_percent": 3.7077572737071907,
+        "p95_ape_percent": 12.377400585952659,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "carbon_atoms": 2,
+      "cas": "2837-89-0",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}Cl_{1}F_{4}H_{1}",
+      "molecular_weight_g_mol": 136.4762,
+      "multiplier": 1.0,
+      "name": "R124",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 261.1871291452406,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 395.4279607732047,
+      "smiles": "FC(Cl)C(F)(F)F",
+      "source": "coolprop_mixed",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 4.1569505259814035,
+        "maximum_ape_percent": 5.326184204520324,
+        "mean_signed_error_percent": -4.1569505259814035,
+        "median_ape_percent": 4.4822118030666385,
+        "p95_ape_percent": 5.322017991796468,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "75-07-0",
+      "category": "aldehydes",
+      "formula": "C2H4O",
+      "molecular_weight_g_mol": 44.05256,
+      "multiplier": 1.0,
+      "name": "Acetaldehyde",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 294.15168609704256,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 466.0,
+      "smiles": "CC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 4.100733217623986,
+        "maximum_ape_percent": 8.011301451455743,
+        "mean_signed_error_percent": 4.100733217623986,
+        "median_ape_percent": 4.133197370518449,
+        "p95_ape_percent": 7.545742846088199,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "78-93-3",
+      "category": "ketones",
+      "formula": "C4H8O",
+      "molecular_weight_g_mol": 72.10572,
+      "multiplier": 1.0249015882363604,
+      "name": "Methylethyl ketone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 352.49243437380017,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 535.5,
+      "smiles": "CCC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 4.055944316170173,
+        "maximum_ape_percent": 19.588370145125523,
+        "mean_signed_error_percent": -0.019023680296049277,
+        "median_ape_percent": 3.2982362219687533,
+        "p95_ape_percent": 10.120416543872713,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "306-83-2",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}Cl_{2}F_{3}H_{1}",
+      "molecular_weight_g_mol": 152.931,
+      "multiplier": 1.0,
+      "name": "R123",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 300.9730476098315,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 456.8300258131298,
+      "smiles": "FC(F)(F)C(Cl)Cl",
+      "source": "coolprop_mixed",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 3.951931335904172,
+        "maximum_ape_percent": 9.153626831023898,
+        "mean_signed_error_percent": -3.895055851604809,
+        "median_ape_percent": 3.7368795229733354,
+        "p95_ape_percent": 8.458482503577326,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "71-23-8",
+      "category": "alcohols",
+      "formula": "C3H8O",
+      "molecular_weight_g_mol": 60.09502,
+      "multiplier": 1.0,
+      "name": "1-Propanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 370.34923742596663,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 536.8,
+      "smiles": "CCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 3.866249951572866,
+        "maximum_ape_percent": 18.30175248026763,
+        "mean_signed_error_percent": 1.0117822891903663,
+        "median_ape_percent": 2.7621933701367896,
+        "p95_ape_percent": 7.267023239881998,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "75-68-3",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}Cl_{1}F_{2}H_{3}",
+      "molecular_weight_g_mol": 100.49503,
+      "multiplier": 1.0,
+      "name": "R142b",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 264.02673089386633,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 410.2602326520994,
+      "smiles": "CC(F)(F)Cl",
+      "source": "coolprop_mixed",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 3.795709169200602,
+        "maximum_ape_percent": 6.362995730849197,
+        "mean_signed_error_percent": 3.795709169200602,
+        "median_ape_percent": 3.891386011107123,
+        "p95_ape_percent": 6.095700149767169,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "96-22-0",
+      "category": "ketones",
+      "formula": "C5H10O",
+      "molecular_weight_g_mol": 86.1323,
+      "multiplier": 1.0225838012864785,
+      "name": "3-Pentanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 374.9041041446726,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 560.95,
+      "smiles": "CCC(=O)CC",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 3.7756579958872254,
+        "maximum_ape_percent": 7.037106982382202,
+        "mean_signed_error_percent": -3.3062515560248205,
+        "median_ape_percent": 3.862373446775924,
+        "p95_ape_percent": 6.895720077270395,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "123-38-6",
+      "category": "aldehydes",
+      "formula": "C3H6O",
+      "molecular_weight_g_mol": 58.07914,
+      "multiplier": 1.0,
+      "name": "Propionaldehyde",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 322.14982262069384,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 503.6,
+      "smiles": "CCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 3.7713210629871985,
+        "maximum_ape_percent": 5.505632599542032,
+        "mean_signed_error_percent": -3.7713210629871985,
+        "median_ape_percent": 3.6333090411507007,
+        "p95_ape_percent": 4.96446178514528,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "107-31-3",
+      "category": "esters",
+      "formula": "C2H4O2",
+      "molecular_weight_g_mol": 60.05196,
+      "multiplier": 1.0,
+      "name": "Methyl formate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 304.93746348066657,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 487.2,
+      "smiles": "COC=O",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 3.665773920459744,
+        "maximum_ape_percent": 14.289518961286518,
+        "mean_signed_error_percent": 0.08112920654243225,
+        "median_ape_percent": 3.090099499529053,
+        "p95_ape_percent": 10.20260567867519,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "623-42-7",
+      "category": "esters",
+      "formula": "C5H10O2",
+      "molecular_weight_g_mol": 102.1317,
+      "multiplier": 1.0,
+      "name": "Methyl butyrate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 375.8000093925515,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 554.5,
+      "smiles": "CCCC(=O)OC",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 3.5186755683808983,
+        "maximum_ape_percent": 3.895206556083064,
+        "mean_signed_error_percent": 3.5186755683808983,
+        "median_ape_percent": 3.6653342992370774,
+        "p95_ape_percent": 3.8909250465155143,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "79-31-2",
+      "category": "organic_acids",
+      "formula": "C4H8O2",
+      "molecular_weight_g_mol": 88.10512,
+      "multiplier": 1.0,
+      "name": "Isobutyric acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 427.3811294785627,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 605.0,
+      "smiles": "CC(C)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 3.5034913320299856,
+        "maximum_ape_percent": 20.03958457689152,
+        "mean_signed_error_percent": -2.053280152572863,
+        "median_ape_percent": 2.280609565303515,
+        "p95_ape_percent": 12.111046263706815,
+        "points": 101,
+        "within_20_percent": 99.00990099009901
+      },
+      "carbon_atoms": 2,
+      "cas": "420-46-2",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}F_{3}H_{3}",
+      "molecular_weight_g_mol": 84.041,
+      "multiplier": 1.0,
+      "name": "R143a",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 225.90943385012324,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 345.85700086786187,
+      "smiles": "CC(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 3.308758385571629,
+        "maximum_ape_percent": 4.927803303948752,
+        "mean_signed_error_percent": 3.308758385571629,
+        "median_ape_percent": 3.117675376624951,
+        "p95_ape_percent": 4.773114116606525,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "141-78-6",
+      "category": "esters",
+      "formula": "C4H8O2",
+      "molecular_weight_g_mol": 88.10512,
+      "multiplier": 1.0,
+      "name": "Ethyl acetate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 350.35337447666257,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 523.3,
+      "smiles": "CCOC(=O)C",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 3.172763399182916,
+        "maximum_ape_percent": 3.6681369092835814,
+        "mean_signed_error_percent": 3.172763399182916,
+        "median_ape_percent": 3.1599299899987887,
+        "p95_ape_percent": 3.659316204604046,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "108-20-3",
+      "category": "ethers",
+      "formula": "C6H14O",
+      "molecular_weight_g_mol": 102.17476,
+      "multiplier": 1.0,
+      "name": "Diisopropyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 341.6091247669642,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 500.05,
+      "smiles": "CC(C)OC(C)C",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 3.171778156315202,
+        "maximum_ape_percent": 6.034662432880822,
+        "mean_signed_error_percent": 3.171778156315202,
+        "median_ape_percent": 3.0925100531416394,
+        "p95_ape_percent": 5.7220230135550665,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "80-62-6",
+      "category": "esters",
+      "formula": "C5H8O2",
+      "molecular_weight_g_mol": 100.11582,
+      "multiplier": 1.0,
+      "name": "Methyl methacrylate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 373.19636455545015,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 566.0,
+      "smiles": "CC(=C)C(=O)OC",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 3.1040060014004927,
+        "maximum_ape_percent": 5.017069158792631,
+        "mean_signed_error_percent": 3.1040060014004927,
+        "median_ape_percent": 3.2851761499188115,
+        "p95_ape_percent": 4.7800940998449,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "111-14-8",
+      "category": "organic_acids",
+      "formula": "C7H14O2",
+      "molecular_weight_g_mol": 130.185,
+      "multiplier": 1.0,
+      "name": "Heptanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 496.15838159847476,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 677.3,
+      "smiles": "CCCCCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 3.0451757752545,
+        "maximum_ape_percent": 7.3852465062798744,
+        "mean_signed_error_percent": 3.0451757752545,
+        "median_ape_percent": 2.512268075905544,
+        "p95_ape_percent": 7.206156463103652,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "540-54-5",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C3H7Cl",
+      "molecular_weight_g_mol": 78.54068,
+      "multiplier": 1.0,
+      "name": "1-Chloropropane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 319.6692874919446,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 503.15,
+      "smiles": "CCCCl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 2.9597672421411714,
+        "maximum_ape_percent": 4.173102693215858,
+        "mean_signed_error_percent": -2.9597672421411714,
+        "median_ape_percent": 2.8825481529818897,
+        "p95_ape_percent": 3.6543996034813397,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "106-46-7",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C6H4Cl2",
+      "molecular_weight_g_mol": 147.00196,
+      "multiplier": 1.0,
+      "name": "p-Dichlorobenzene",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 447.26538404016446,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 684.75,
+      "smiles": "C1=CC(=CC=C1Cl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 2.936300369922062,
+        "maximum_ape_percent": 11.376257505520726,
+        "mean_signed_error_percent": -1.0145094945345001,
+        "median_ape_percent": 2.2058350670689064,
+        "p95_ape_percent": 8.92973322347893,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "109-94-4",
+      "category": "esters",
+      "formula": "C3H6O2",
+      "molecular_weight_g_mol": 74.07854,
+      "multiplier": 1.0,
+      "name": "Ethyl formate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 327.5808584917793,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 508.4,
+      "smiles": "CCOC=O",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 2.7660148651917598,
+        "maximum_ape_percent": 3.9375829846732824,
+        "mean_signed_error_percent": -2.7660148651917598,
+        "median_ape_percent": 2.9984185171273214,
+        "p95_ape_percent": 3.9329670819038376,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "67-64-1",
+      "category": "ketones",
+      "formula": "C3H6O",
+      "molecular_weight_g_mol": 58.07914,
+      "multiplier": 1.0802285641590534,
+      "name": "Acetone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 329.2865642167235,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 508.2,
+      "smiles": "CC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 2.383058942757467,
+        "maximum_ape_percent": 16.355884269488396,
+        "mean_signed_error_percent": -1.2943859206586308,
+        "median_ape_percent": 1.1800226120616042,
+        "p95_ape_percent": 10.859195688321499,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "76-16-4",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C_{2}F_{6}",
+      "molecular_weight_g_mol": 138.01182,
+      "multiplier": 1.0,
+      "name": "R116",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 195.05837337845992,
+      "reference_Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "reference_Tc_K": 293.029792782695,
+      "smiles": "C(C(F)(F)F)(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 2.3576986743967407,
+        "maximum_ape_percent": 12.572052873580763,
+        "mean_signed_error_percent": 0.015943172341203245,
+        "median_ape_percent": 1.5721883695912098,
+        "p95_ape_percent": 7.8983508789076895,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "628-28-4",
+      "category": "ethers",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.14818,
+      "multiplier": 1.0,
+      "name": "Methylbutyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 343.13193725836163,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 512.74,
+      "smiles": "CCCCOC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 2.330261793572891,
+        "maximum_ape_percent": 4.15575349663394,
+        "mean_signed_error_percent": -2.266072253522778,
+        "median_ape_percent": 2.529415118810885,
+        "p95_ape_percent": 4.0966422478533,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "108-86-1",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C6H5Br",
+      "molecular_weight_g_mol": 157.0079,
+      "multiplier": 1.0,
+      "name": "Bromobenzene",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 429.01683233744234,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 670.15,
+      "smiles": "C1=CC=C(C=C1)Br",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 2.1519179987913204,
+        "maximum_ape_percent": 3.3589616061829863,
+        "mean_signed_error_percent": 2.1519179987913204,
+        "median_ape_percent": 2.3423561497676992,
+        "p95_ape_percent": 3.2118703201082788,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "124-07-2",
+      "category": "organic_acids",
+      "formula": "C8H16O2",
+      "molecular_weight_g_mol": 144.211,
+      "multiplier": 1.0,
+      "name": "Octanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 512.8596040794373,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 694.26,
+      "smiles": "CCCCCCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 2.147775186072268,
+        "maximum_ape_percent": 8.452760826805106,
+        "mean_signed_error_percent": 1.2883952422362512,
+        "median_ape_percent": 1.9265814552209548,
+        "p95_ape_percent": 4.192279157555356,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "60-29-7",
+      "category": "ethers",
+      "formula": "C4H10O",
+      "molecular_weight_g_mol": 74.1216,
+      "multiplier": 1.0,
+      "name": "Diethyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 307.54367371879766,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 466.7,
+      "smiles": "CCOCC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 2.056551793816463,
+        "maximum_ape_percent": 3.0176751136213764,
+        "mean_signed_error_percent": -2.056551793816463,
+        "median_ape_percent": 2.0781227100533206,
+        "p95_ape_percent": 2.4123057861522135,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "563-80-4",
+      "category": "ketones",
+      "formula": "C5H10O",
+      "molecular_weight_g_mol": 86.1323,
+      "multiplier": 0.9815679635975458,
+      "name": "Methylisopropyl ketone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 367.2309974078588,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 553.4,
+      "smiles": "CC(C)C(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 2.026858069666148,
+        "maximum_ape_percent": 2.8176120378363367,
+        "mean_signed_error_percent": -2.026858069666148,
+        "median_ape_percent": 2.018147433840134,
+        "p95_ape_percent": 2.728158314970075,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "71-41-0",
+      "category": "alcohols",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.1482,
+      "multiplier": 1.0,
+      "name": "1-Pentanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 410.94596566569624,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 588.1,
+      "smiles": "CCCCCO",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 1.9492015395623756,
+        "maximum_ape_percent": 2.110541943482458,
+        "mean_signed_error_percent": 1.9492015395623756,
+        "median_ape_percent": 1.948380543202477,
+        "p95_ape_percent": 2.107556467973648,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "110-43-0",
+      "category": "ketones",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 0.91656107157201,
+      "name": "2-Heptanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 424.2069173862868,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 611.4,
+      "smiles": "CCCCCC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.892040319930588,
+        "maximum_ape_percent": 3.006991548702964,
+        "mean_signed_error_percent": 1.892040319930588,
+        "median_ape_percent": 1.731351664490477,
+        "p95_ape_percent": 2.756944097860825,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "123-72-8",
+      "category": "aldehydes",
+      "formula": "C4H8O",
+      "molecular_weight_g_mol": 72.10572,
+      "multiplier": 1.0,
+      "name": "Butyraldehyde",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 347.9380017433433,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 537.2,
+      "smiles": "CCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.8868148207452546,
+        "maximum_ape_percent": 4.480541188351039,
+        "mean_signed_error_percent": 1.7070048902449575,
+        "median_ape_percent": 1.7128817181555345,
+        "p95_ape_percent": 4.117451563034158,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "107-87-9",
+      "category": "ketones",
+      "formula": "C5H10O",
+      "molecular_weight_g_mol": 86.1323,
+      "multiplier": 0.9815679635975458,
+      "name": "2-Pentanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 375.18156256117334,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 561.08,
+      "smiles": "CCCC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.8023031746326663,
+        "maximum_ape_percent": 2.6491492713253795,
+        "mean_signed_error_percent": 1.8023031746326663,
+        "median_ape_percent": 1.662484255002994,
+        "p95_ape_percent": 2.4313822633949433,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "110-62-3",
+      "category": "aldehydes",
+      "formula": "C5H10O",
+      "molecular_weight_g_mol": 86.1323,
+      "multiplier": 1.0,
+      "name": "Pentanal",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 375.1510741638243,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 566.1,
+      "smiles": "CCCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.77493733581846,
+        "maximum_ape_percent": 3.5768701244455636,
+        "mean_signed_error_percent": 1.7689974373472883,
+        "median_ape_percent": 1.7882503343634282,
+        "p95_ape_percent": 3.3239935813563104,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "591-78-6",
+      "category": "ketones",
+      "formula": "C6H12O",
+      "molecular_weight_g_mol": 100.15888,
+      "multiplier": 0.9462275060744955,
+      "name": "2-Hexanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 400.6947190049832,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 587.61,
+      "smiles": "CCCCC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.7426360966697816,
+        "maximum_ape_percent": 4.717781746950145,
+        "mean_signed_error_percent": 1.4835871890890842,
+        "median_ape_percent": 1.0204231420887444,
+        "p95_ape_percent": 4.561279354825931,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "75-00-3",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H5Cl",
+      "molecular_weight_g_mol": 64.5141,
+      "multiplier": 1.0,
+      "name": "Chloroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 285.4688593633739,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 460.35,
+      "smiles": "CCCl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 1.5733148268701405,
+        "maximum_ape_percent": 2.908313690821396,
+        "mean_signed_error_percent": -1.5733148268701405,
+        "median_ape_percent": 1.5906761193824837,
+        "p95_ape_percent": 2.2165276158311653,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "589-38-8",
+      "category": "ketones",
+      "formula": "C6H12O",
+      "molecular_weight_g_mol": 100.15888,
+      "multiplier": 0.985766606009778,
+      "name": "3-Hexanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 396.6582384140336,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 582.82,
+      "smiles": "CCCC(=O)CC",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.551952223062382,
+        "maximum_ape_percent": 2.3346306979169285,
+        "mean_signed_error_percent": 1.551952223062382,
+        "median_ape_percent": 1.7076030466969705,
+        "p95_ape_percent": 2.203486330983506,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 9,
+      "cas": "112-05-0",
+      "category": "organic_acids",
+      "formula": "C9H18O2",
+      "molecular_weight_g_mol": 158.238,
+      "multiplier": 1.0,
+      "name": "Nonanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 528.7548735945691,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 710.7,
+      "smiles": "CCCCCCCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 1.492739473857815,
+        "maximum_ape_percent": 5.619965189463382,
+        "mean_signed_error_percent": -0.7213596637627976,
+        "median_ape_percent": 1.1092605727676008,
+        "p95_ape_percent": 4.4135280742955025,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "105-54-4",
+      "category": "esters",
+      "formula": "C6H12O2",
+      "molecular_weight_g_mol": 116.15828,
+      "multiplier": 1.0,
+      "name": "Ethyl butyrate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 394.52885411420846,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 571.0,
+      "smiles": "CCCC(=O)OCC",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 1.4787749789753986,
+        "maximum_ape_percent": 2.222851734699338,
+        "mean_signed_error_percent": 1.4787749789753986,
+        "median_ape_percent": 1.3862499478955348,
+        "p95_ape_percent": 2.210811283443581,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "109-60-4",
+      "category": "esters",
+      "formula": "C5H10O2",
+      "molecular_weight_g_mol": 102.1317,
+      "multiplier": 1.0,
+      "name": "Propyl acetate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 374.58747807437476,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 549.73,
+      "smiles": "CCCOC(=O)C",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 1.4524528210261398,
+        "maximum_ape_percent": 2.61902774566537,
+        "mean_signed_error_percent": -1.4524528210261398,
+        "median_ape_percent": 1.4877589720425743,
+        "p95_ape_percent": 1.975594413288595,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "565-69-5",
+      "category": "ketones",
+      "formula": "C6H12O",
+      "molecular_weight_g_mol": 100.15888,
+      "multiplier": 0.985766606009778,
+      "name": "Ethylisopropyl ketone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 386.882176905487,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 567.0,
+      "smiles": "CCC(=O)C(C)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.417247448181458,
+        "maximum_ape_percent": 1.9571366962886416,
+        "mean_signed_error_percent": -1.417247448181458,
+        "median_ape_percent": 1.4001589510177714,
+        "p95_ape_percent": 1.9543002168908141,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 10,
+      "cas": "112-31-2",
+      "category": "aldehydes",
+      "formula": "C10H20O",
+      "molecular_weight_g_mol": 156.2652,
+      "multiplier": 1.0,
+      "name": "Decanal",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 481.6484702308718,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 674.0,
+      "smiles": "CCCCCCCCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.2468529506060653,
+        "maximum_ape_percent": 2.4017224468140697,
+        "mean_signed_error_percent": 1.2468529506060653,
+        "median_ape_percent": 1.202639707061226,
+        "p95_ape_percent": 2.1942227839070627,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "66-25-1",
+      "category": "aldehydes",
+      "formula": "C6H12O",
+      "molecular_weight_g_mol": 100.15888,
+      "multiplier": 1.0,
+      "name": "Hexanal",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 401.14812989192376,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 594.0,
+      "smiles": "CCCCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 1.2093833831846712,
+        "maximum_ape_percent": 1.717522841579533,
+        "mean_signed_error_percent": 1.20788788437992,
+        "median_ape_percent": 1.1985407106126722,
+        "p95_ape_percent": 1.7087564961745905,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "75-34-3",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H4Cl2",
+      "molecular_weight_g_mol": 98.95916,
+      "multiplier": 1.0,
+      "name": "1,1-Dichloroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 330.1741240767717,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 523.0,
+      "smiles": "CC(Cl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 1.1885146832948852,
+        "maximum_ape_percent": 1.5647581675541367,
+        "mean_signed_error_percent": -1.1885146832948852,
+        "median_ape_percent": 1.195731913989584,
+        "p95_ape_percent": 1.5619258886211518,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 9,
+      "cas": "124-19-6",
+      "category": "aldehydes",
+      "formula": "C9H18O",
+      "molecular_weight_g_mol": 142.23862,
+      "multiplier": 1.0,
+      "name": "Nonanal",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 465.517729879425,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 658.5,
+      "smiles": "CCCCCCCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 0.8140188338727321,
+        "maximum_ape_percent": 1.484085653014433,
+        "mean_signed_error_percent": 0.46008193053596774,
+        "median_ape_percent": 0.7667025806757155,
+        "p95_ape_percent": 1.4728318996019674,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "111-13-7",
+      "category": "ketones",
+      "formula": "C8H16O",
+      "molecular_weight_g_mol": 128.21204,
+      "multiplier": 0.8911116530297641,
+      "name": "2-Octanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 446.2860436895779,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 632.7,
+      "smiles": "CCCCCCC(=O)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 0.8137428523120611,
+        "maximum_ape_percent": 1.5457667400749053,
+        "mean_signed_error_percent": 0.49433898073582105,
+        "median_ape_percent": 0.9506956716987869,
+        "p95_ape_percent": 1.1055303578184072,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "75-65-0",
+      "category": "alcohols",
+      "formula": "C4H10O",
+      "molecular_weight_g_mol": 74.1216,
+      "multiplier": 1.0,
+      "name": "2-Methyl-2-propanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 355.6203399308945,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 506.2,
+      "smiles": "CC(C)(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.78066927929012,
+        "maximum_ape_percent": 1.1345527752534834,
+        "mean_signed_error_percent": -0.78066927929012,
+        "median_ape_percent": 0.7919306498559764,
+        "p95_ape_percent": 1.1324310815792882,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "106-68-3",
+      "category": "ketones",
+      "formula": "C8H16O",
+      "molecular_weight_g_mol": 128.21204,
+      "multiplier": 0.9283476797531985,
+      "name": "3-Octanone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 440.640138378653,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 627.7,
+      "smiles": "CCCCCC(=O)CC",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 0.7177861143056594,
+        "maximum_ape_percent": 2.164786400736707,
+        "mean_signed_error_percent": -0.7177861143056594,
+        "median_ape_percent": 0.7125390100334972,
+        "p95_ape_percent": 1.4368197241961478,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "565-80-0",
+      "category": "ketones",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 0.9947603684634279,
+      "name": "Diisopropyl ketone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 397.5379840606852,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 576.0,
+      "smiles": "CC(C)C(=O)C(C)C",
+      "source": "perry",
+      "subtype": "acyclic_aliphatic_local_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 0.7058033632982279,
+        "maximum_ape_percent": 1.5029446519876366,
+        "mean_signed_error_percent": 0.09377133823810116,
+        "median_ape_percent": 0.7681033681113503,
+        "p95_ape_percent": 1.1403954292377838,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "624-72-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H4F2",
+      "molecular_weight_g_mol": 66.04997,
+      "multiplier": 1.0,
+      "name": "1,2-Difluoroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 283.4837007148932,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 445.0,
+      "smiles": "C(CF)F",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 0.5706999269399589,
+        "maximum_ape_percent": 1.92564798973065,
+        "mean_signed_error_percent": -0.5706999269399589,
+        "median_ape_percent": 0.5433156537695605,
+        "p95_ape_percent": 1.2668778569245864,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "108-05-4",
+      "category": "esters",
+      "formula": "C4H6O2",
+      "molecular_weight_g_mol": 86.08924,
+      "multiplier": 1.0,
+      "name": "Vinyl acetate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 345.8497518315478,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 519.13,
+      "smiles": "CC(=O)OC=C",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 0.5239079592794974,
+        "maximum_ape_percent": 0.7816972797096589,
+        "mean_signed_error_percent": -0.5239079592794974,
+        "median_ape_percent": 0.5542334639303093,
+        "p95_ape_percent": 0.7795639142624045,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "124-13-0",
+      "category": "aldehydes",
+      "formula": "C8H16O",
+      "molecular_weight_g_mol": 128.212,
+      "multiplier": 1.0,
+      "name": "Octanal",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 445.15132721469354,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 638.9,
+      "smiles": "CCCCCCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 0.5119487669887757,
+        "maximum_ape_percent": 1.183406644329199,
+        "mean_signed_error_percent": 0.3937075307242279,
+        "median_ape_percent": 0.5028092480594437,
+        "p95_ape_percent": 0.8521034065333888,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 9,
+      "cas": "93-89-0",
+      "category": "esters",
+      "formula": "C9H10O2",
+      "molecular_weight_g_mol": 150.1745,
+      "multiplier": 1.0,
+      "name": "Ethyl benzoate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 486.7252928992767,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 698.0,
+      "smiles": "CCOC(=O)C1=CC=CC=C1",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 0.5094827099525757,
+        "maximum_ape_percent": 1.1854580247283586,
+        "mean_signed_error_percent": 0.42804435752623904,
+        "median_ape_percent": 0.32384332873158783,
+        "p95_ape_percent": 1.1712564792776714,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "628-80-8",
+      "category": "ethers",
+      "formula": "C6H14O",
+      "molecular_weight_g_mol": 102.17476,
+      "multiplier": 1.0,
+      "name": "Methyl pentyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 371.9282124053716,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 546.49,
+      "smiles": "CCCCCOC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.47271977899444767,
+        "maximum_ape_percent": 2.529414004289332,
+        "mean_signed_error_percent": -0.080704535031329,
+        "median_ape_percent": 0.21555836700859476,
+        "p95_ape_percent": 1.7298319103547843,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "123-86-4",
+      "category": "esters",
+      "formula": "C6H12O2",
+      "molecular_weight_g_mol": 116.15828,
+      "multiplier": 1.0,
+      "name": "Butyl acetate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 399.16484402879826,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 575.4,
+      "smiles": "CCCCOC(=O)C",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 0.44181707452151475,
+        "maximum_ape_percent": 2.667275522516821,
+        "mean_signed_error_percent": 0.09895050677909442,
+        "median_ape_percent": 0.3029238021258762,
+        "p95_ape_percent": 1.8247684190568991,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "149-57-5",
+      "category": "organic_acids",
+      "formula": "C8H16O2",
+      "molecular_weight_g_mol": 144.211,
+      "multiplier": 1.0,
+      "name": "2-Ethyl hexanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 500.6312070757034,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 674.6,
+      "smiles": "CCCCC(CC)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.40793617981879254,
+        "maximum_ape_percent": 1.1616552038112848,
+        "mean_signed_error_percent": 0.26343223033640967,
+        "median_ape_percent": 0.31027378220567225,
+        "p95_ape_percent": 0.8367027151761519,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "75-01-4",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H3Cl",
+      "molecular_weight_g_mol": 62.49822,
+      "multiplier": 1.0,
+      "name": "Vinyl chloride",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 259.1266769222116,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 432.0,
+      "smiles": "C=CCl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 0.4051263296457217,
+        "maximum_ape_percent": 1.086625653180684,
+        "mean_signed_error_percent": -0.25128194248195546,
+        "median_ape_percent": 0.29034515850425713,
+        "p95_ape_percent": 1.013882000774713,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "79-10-7",
+      "category": "organic_acids",
+      "formula": "C3H4O2",
+      "molecular_weight_g_mol": 72.06266,
+      "multiplier": 1.0,
+      "name": "Acrylic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 414.3383328703493,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 615.0,
+      "smiles": "C=CC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3993935070510365,
+        "maximum_ape_percent": 1.348032705610358,
+        "mean_signed_error_percent": -0.26669551012673387,
+        "median_ape_percent": 0.3304118055783123,
+        "p95_ape_percent": 0.7206055459725302,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "5756-43-4",
+      "category": "ethers",
+      "formula": "C8H18O",
+      "molecular_weight_g_mol": 130.22792,
+      "multiplier": 1.0,
+      "name": "Ethylhexyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 416.8309761734878,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 583.0,
+      "smiles": "CCCCCCOCC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.38924300203787665,
+        "maximum_ape_percent": 1.2836016840815367,
+        "mean_signed_error_percent": -0.2164717170859685,
+        "median_ape_percent": 0.3552750804123095,
+        "p95_ape_percent": 0.6984258727451564,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "628-32-0",
+      "category": "ethers",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.14818,
+      "multiplier": 1.0,
+      "name": "Ethylpropyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 336.84191002647435,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 500.23,
+      "smiles": "CCCOCC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.38261983601752364,
+        "maximum_ape_percent": 1.7879567113339823,
+        "mean_signed_error_percent": -0.3671740670877217,
+        "median_ape_percent": 0.1764895997215743,
+        "p95_ape_percent": 1.392927674154243,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 10,
+      "cas": "334-48-5",
+      "category": "organic_acids",
+      "formula": "C10H20O2",
+      "molecular_weight_g_mol": 172.265,
+      "multiplier": 1.0,
+      "name": "Decanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 543.1456133050372,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 722.1,
+      "smiles": "CCCCCCCCCC(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.376001272039092,
+        "maximum_ape_percent": 0.8723459067604855,
+        "mean_signed_error_percent": -0.28192933483795424,
+        "median_ape_percent": 0.3281844436135106,
+        "p95_ape_percent": 0.7079846077234997,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "540-67-0",
+      "category": "ethers",
+      "formula": "C3H8O",
+      "molecular_weight_g_mol": 60.09502,
+      "multiplier": 1.0,
+      "name": "Methylethyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 280.3188209787643,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 437.8,
+      "smiles": "CCOC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3712694783127122,
+        "maximum_ape_percent": 1.3663948126819037,
+        "mean_signed_error_percent": -0.21165116621557775,
+        "median_ape_percent": 0.3346410485851381,
+        "p95_ape_percent": 0.6476916876448358,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 9,
+      "cas": "3004-93-1",
+      "category": "organic_acids",
+      "formula": "C9H18O2",
+      "molecular_weight_g_mol": 158.23802,
+      "multiplier": 1.0,
+      "name": "2-Methyloctanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 518.0910022102755,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 694.0,
+      "smiles": "CCCCCCC(C)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.37018955571542156,
+        "maximum_ape_percent": 1.1844363734124674,
+        "mean_signed_error_percent": -0.10646329803779507,
+        "median_ape_percent": 0.39169851648136467,
+        "p95_ape_percent": 0.5974944531241033,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "625-54-7",
+      "category": "ethers",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.14818,
+      "multiplier": 1.0,
+      "name": "Ethylisopropyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 326.30096772224056,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 489.0,
+      "smiles": "CCOC(C)C",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.36996929051940997,
+        "maximum_ape_percent": 1.1361944534037938,
+        "mean_signed_error_percent": -0.1066813667189285,
+        "median_ape_percent": 0.3799628547805245,
+        "p95_ape_percent": 0.6502146365854555,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "598-53-8",
+      "category": "ethers",
+      "formula": "C4H10O",
+      "molecular_weight_g_mol": 74.1216,
+      "multiplier": 1.0,
+      "name": "Methylisopropyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 303.99807955830477,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 464.48,
+      "smiles": "CC(C)OC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3660036388899759,
+        "maximum_ape_percent": 0.9900437706441556,
+        "mean_signed_error_percent": -0.24350342517559906,
+        "median_ape_percent": 0.31748582600051867,
+        "p95_ape_percent": 0.7065584269051794,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "557-17-5",
+      "category": "ethers",
+      "formula": "C4H10O",
+      "molecular_weight_g_mol": 74.1216,
+      "multiplier": 1.0,
+      "name": "Methylpropyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 311.9944368135274,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 476.25,
+      "smiles": "CCCOC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.35467564431745935,
+        "maximum_ape_percent": 0.9986830384413725,
+        "mean_signed_error_percent": -0.17643564337980505,
+        "median_ape_percent": 0.32726803373090974,
+        "p95_ape_percent": 0.628471103989181,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "88-09-5",
+      "category": "organic_acids",
+      "formula": "C6H12O2",
+      "molecular_weight_g_mol": 116.15828,
+      "multiplier": 1.0,
+      "name": "2-Ethyl butanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 467.04347584111304,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 655.0,
+      "smiles": "CCC(CC)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3505096208730094,
+        "maximum_ape_percent": 1.5741777791548173,
+        "mean_signed_error_percent": -0.20492728557590809,
+        "median_ape_percent": 0.2982220269134528,
+        "p95_ape_percent": 0.8873475870770031,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 13,
+      "cas": "119-61-9",
+      "category": "ketones",
+      "formula": "C13H10O",
+      "molecular_weight_g_mol": 182.2179,
+      "multiplier": 1.0,
+      "name": "Benzophenone",
+      "parameters": {
+        "A": 0.00383,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 579.0144207155772,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 830.0,
+      "smiles": "C1=CC=C(C=C1)C(=O)C2=CC=CC=C2",
+      "source": "perry",
+      "subtype": "aromatic_published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3471918843612171,
+        "maximum_ape_percent": 0.8973485119132096,
+        "mean_signed_error_percent": 0.2708018110525806,
+        "median_ape_percent": 0.31057861867671566,
+        "p95_ape_percent": 0.7551150470181289,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "557-91-5",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H4Br2",
+      "molecular_weight_g_mol": 187.86116,
+      "multiplier": 1.0,
+      "name": "1,1-Dibromoethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 381.1580750861025,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 628.0,
+      "smiles": "CC(Br)Br",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3450453707773448,
+        "maximum_ape_percent": 1.756019221925953,
+        "mean_signed_error_percent": 0.07020508227106101,
+        "median_ape_percent": 0.2794476994366413,
+        "p95_ape_percent": 1.0604320626592,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "93-58-3",
+      "category": "esters",
+      "formula": "C8H8O2",
+      "molecular_weight_g_mol": 136.14792,
+      "multiplier": 1.0,
+      "name": "Methyl benzoate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 472.4642432070515,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 693.0,
+      "smiles": "COC(=O)C1=CC=CC=C1",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 0.342309211654715,
+        "maximum_ape_percent": 0.8265125848850419,
+        "mean_signed_error_percent": -0.20074562103062932,
+        "median_ape_percent": 0.31194377920304994,
+        "p95_ape_percent": 0.6112484876825142,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "107-25-5",
+      "category": "ethers",
+      "formula": "C3H6O",
+      "molecular_weight_g_mol": 58.07914,
+      "multiplier": 1.0,
+      "name": "Methyl vinyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 278.7128746542721,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 437.0,
+      "smiles": "COC=C",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3414973297724018,
+        "maximum_ape_percent": 0.7664615681604703,
+        "mean_signed_error_percent": 0.20107978333699347,
+        "median_ape_percent": 0.24175922035541975,
+        "p95_ape_percent": 0.7550164504659174,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "75-29-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C3H7Cl",
+      "molecular_weight_g_mol": 78.54068,
+      "multiplier": 1.0,
+      "name": "2-Chloropropane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 308.7958791235627,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 489.0,
+      "smiles": "CC(C)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3349658786621896,
+        "maximum_ape_percent": 1.4306887976890614,
+        "mean_signed_error_percent": -0.07487190963836893,
+        "median_ape_percent": 0.32263324950694283,
+        "p95_ape_percent": 0.8144316384214867,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "79-41-4",
+      "category": "organic_acids",
+      "formula": "C4H6O2",
+      "molecular_weight_g_mol": 86.08924,
+      "multiplier": 1.0,
+      "name": "Methacrylic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 434.3824707660724,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 662.0,
+      "smiles": "CC(=C)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3313193998179585,
+        "maximum_ape_percent": 0.7183076531805721,
+        "mean_signed_error_percent": 0.279909391631192,
+        "median_ape_percent": 0.31290478685721546,
+        "p95_ape_percent": 0.6762989231803074,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "78-99-9",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C3H6Cl2",
+      "molecular_weight_g_mol": 112.98574,
+      "multiplier": 1.0,
+      "name": "1,1-Dichloropropane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 361.23236134788806,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 560.0,
+      "smiles": "CCC(Cl)Cl",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 0.33060497199927086,
+        "maximum_ape_percent": 1.4002632555301542,
+        "mean_signed_error_percent": -0.047535418200539525,
+        "median_ape_percent": 0.32436231847833286,
+        "p95_ape_percent": 0.789679865725379,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "590-67-0",
+      "category": "alcohols",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 1.0,
+      "name": "1-Methylcyclohexanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 441.5055573873706,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 686.0,
+      "smiles": "CC1(CCCCC1)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.32360593536208543,
+        "maximum_ape_percent": 1.377895874656887,
+        "mean_signed_error_percent": -0.10595564685875472,
+        "median_ape_percent": 0.3259896279404928,
+        "p95_ape_percent": 0.6261124552554342,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "115-10-6",
+      "category": "ethers",
+      "formula": "C2H6O",
+      "molecular_weight_g_mol": 46.06844,
+      "multiplier": 1.0,
+      "name": "Dimethyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 248.36567534092433,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 400.1,
+      "smiles": "COC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3081272344357208,
+        "maximum_ape_percent": 1.0487956794443032,
+        "mean_signed_error_percent": -0.1319197178449203,
+        "median_ape_percent": 0.27508418599326845,
+        "p95_ape_percent": 0.6327078809604259,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "7443-70-1",
+      "category": "alcohols",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 1.0,
+      "name": "cis-2-Methylcyclohexanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 438.29098988066266,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 614.0,
+      "smiles": "C[C@@H]1CCCC[C@@H]1O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.3075508394391136,
+        "maximum_ape_percent": 0.49410354146299795,
+        "mean_signed_error_percent": 0.3022070207817053,
+        "median_ape_percent": 0.3436193977368607,
+        "p95_ape_percent": 0.4921609089817869,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "116-53-0",
+      "category": "organic_acids",
+      "formula": "C5H10O2",
+      "molecular_weight_g_mol": 102.1317,
+      "multiplier": 1.0,
+      "name": "2-Methylbutanoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 450.5185572438136,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 643.0,
+      "smiles": "CCC(C)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2981263383441038,
+        "maximum_ape_percent": 0.8619830923038196,
+        "mean_signed_error_percent": 0.07616253928813888,
+        "median_ape_percent": 0.3026387463159308,
+        "p95_ape_percent": 0.5054493724011566,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "7443-52-9",
+      "category": "alcohols",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 1.0,
+      "name": "trans-2-Methylcyclohexanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 440.0467030025012,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 617.0,
+      "smiles": "C[C@@H]1CCCC[C@H]1O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.29455790250110025,
+        "maximum_ape_percent": 1.0384022887884092,
+        "mean_signed_error_percent": -0.191764270318541,
+        "median_ape_percent": 0.19566431669486573,
+        "p95_ape_percent": 0.7418571965921328,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "65-85-0",
+      "category": "organic_acids",
+      "formula": "C7H6O2",
+      "molecular_weight_g_mol": 122.12134,
+      "multiplier": 1.0,
+      "name": "Benzoic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 522.0797307541134,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 751.0,
+      "smiles": "C1=CC=C(C=C1)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.28651589345524986,
+        "maximum_ape_percent": 0.5422044759070377,
+        "mean_signed_error_percent": -0.24839214772290094,
+        "median_ape_percent": 0.2916089221979834,
+        "p95_ape_percent": 0.5388447179024758,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "534-15-6",
+      "category": "ethers",
+      "formula": "C4H10O2",
+      "molecular_weight_g_mol": 90.121,
+      "multiplier": 1.0,
+      "name": "1,1-Dimethoxyethane",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 337.4465636461331,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 507.8,
+      "smiles": "CC(OC)OC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.28272877634052745,
+        "maximum_ape_percent": 1.0812665458378667,
+        "mean_signed_error_percent": -0.11056444530183931,
+        "median_ape_percent": 0.2906847674089663,
+        "p95_ape_percent": 0.5420744505547304,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "625-44-5",
+      "category": "ethers",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.14818,
+      "multiplier": 1.0,
+      "name": "Methylisobutyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 331.8257123762546,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 497.0,
+      "smiles": "CC(C)COC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2605841084250566,
+        "maximum_ape_percent": 1.1090241692043534,
+        "mean_signed_error_percent": -0.061274326730788684,
+        "median_ape_percent": 0.2604399816688585,
+        "p95_ape_percent": 0.5408640837303413,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "96-33-3",
+      "category": "esters",
+      "formula": "C4H6O2",
+      "molecular_weight_g_mol": 86.08924,
+      "multiplier": 1.0,
+      "name": "Methyl acrylate",
+      "parameters": {
+        "A": 0.0415,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 353.6430333497998,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 536.0,
+      "smiles": "COC(=O)C=C",
+      "source": "perry",
+      "subtype": "monoester"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2576366644213797,
+        "maximum_ape_percent": 0.4009069529970266,
+        "mean_signed_error_percent": -0.2576366644213797,
+        "median_ape_percent": 0.2585695501593932,
+        "p95_ape_percent": 0.385683124689451,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 6,
+      "cas": "626-93-7",
+      "category": "alcohols",
+      "formula": "C6H14O",
+      "molecular_weight_g_mol": 102.175,
+      "multiplier": 1.0,
+      "name": "2-Hexanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 412.2402106440095,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 585.3,
+      "smiles": "CCCCC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2409037700302763,
+        "maximum_ape_percent": 0.7248914880044088,
+        "mean_signed_error_percent": 0.23862295476254236,
+        "median_ape_percent": 0.17868786548838056,
+        "p95_ape_percent": 0.6683048062541941,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "353-36-6",
+      "category": "halogenated_hydrocarbons",
+      "formula": "C2H5F",
+      "molecular_weight_g_mol": 48.0595,
+      "multiplier": 1.0,
+      "name": "Fluoroethane",
+      "parameters": {
+        "A": 0.494,
+        "a": 0.0,
+        "b": 0.5,
+        "c": -0.167
+      },
+      "reference_Tb_K": 235.62081977848982,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 375.31,
+      "smiles": "CCF",
+      "source": "perry",
+      "subtype": "C2_plus_general_refrigerant"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2293623491481908,
+        "maximum_ape_percent": 0.24266410978555086,
+        "mean_signed_error_percent": -0.2293623491481908,
+        "median_ape_percent": 0.2280272129102423,
+        "p95_ape_percent": 0.238707138092642,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 2,
+      "cas": "144-62-7",
+      "category": "organic_acids",
+      "formula": "C2H2O4",
+      "molecular_weight_g_mol": 90.03488,
+      "multiplier": 1.0,
+      "name": "Oxalic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 515.9822616518256,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 828.0,
+      "smiles": "C(=O)(C(=O)O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2220936552945742,
+        "maximum_ape_percent": 0.40062321562179815,
+        "mean_signed_error_percent": -0.2220936552945742,
+        "median_ape_percent": 0.20578175837926427,
+        "p95_ape_percent": 0.33822179612150727,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 4,
+      "cas": "110-15-6",
+      "category": "organic_acids",
+      "formula": "C4H6O4",
+      "molecular_weight_g_mol": 118.08804,
+      "multiplier": 1.0,
+      "name": "Succinic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 590.9870697833514,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 838.0,
+      "smiles": "C(CC(=O)O)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.21808296352286344,
+        "maximum_ape_percent": 0.3959772611693224,
+        "mean_signed_error_percent": -0.21580730424556985,
+        "median_ape_percent": 0.214891078549162,
+        "p95_ape_percent": 0.3936596130047043,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "6032-29-7",
+      "category": "alcohols",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.1482,
+      "multiplier": 1.0,
+      "name": "2-Pentanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 392.2059470047984,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 561.0,
+      "smiles": "CCCC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2145575710496675,
+        "maximum_ape_percent": 0.4152574974966905,
+        "mean_signed_error_percent": -0.2145575710496675,
+        "median_ape_percent": 0.20399471370888822,
+        "p95_ape_percent": 0.3359128265744804,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 3,
+      "cas": "141-82-2",
+      "category": "organic_acids",
+      "formula": "C3H4O4",
+      "molecular_weight_g_mol": 104.06146,
+      "multiplier": 1.0,
+      "name": "Malonic acid",
+      "parameters": {
+        "A": 0.00319,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 580.0225459919413,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 834.0,
+      "smiles": "C(C(=O)O)C(=O)O",
+      "source": "perry",
+      "subtype": "published_without_formic_acid"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2131586716733714,
+        "maximum_ape_percent": 0.39128874772723643,
+        "mean_signed_error_percent": -0.21091328318319172,
+        "median_ape_percent": 0.21661902972200942,
+        "p95_ape_percent": 0.3643063488684928,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "543-49-7",
+      "category": "alcohols",
+      "formula": "C7H16O",
+      "molecular_weight_g_mol": 116.20134,
+      "multiplier": 1.0,
+      "name": "2-Heptanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 432.90929960348717,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 608.3,
+      "smiles": "CCCCCC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2120809394074128,
+        "maximum_ape_percent": 0.4209705269319741,
+        "mean_signed_error_percent": 0.2120809394074128,
+        "median_ape_percent": 0.21631643296793346,
+        "p95_ape_percent": 0.3517573934320284,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 7,
+      "cas": "111-71-7",
+      "category": "aldehydes",
+      "formula": "C7H14O",
+      "molecular_weight_g_mol": 114.18546,
+      "multiplier": 1.0,
+      "name": "Heptanal",
+      "parameters": {
+        "A": 0.011004414117711718,
+        "a": 1.2,
+        "b": 0.7284702063174113,
+        "c": 0.167
+      },
+      "reference_Tb_K": 426.1486239202742,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 620.0,
+      "smiles": "CCCCCCC=O",
+      "source": "perry",
+      "subtype": "local_A_b_refit"
+    },
+    {
+      "base": {
+        "mape_percent": 0.21172137772977156,
+        "maximum_ape_percent": 0.4463053340885814,
+        "mean_signed_error_percent": -0.21172137772977156,
+        "median_ape_percent": 0.2146541859647355,
+        "p95_ape_percent": 0.32642670579826616,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 5,
+      "cas": "1634-04-4",
+      "category": "ethers",
+      "formula": "C5H12O",
+      "molecular_weight_g_mol": 88.1482,
+      "multiplier": 1.0,
+      "name": "Methyl tert-butyl ether",
+      "parameters": {
+        "A": 0.0385,
+        "a": 1.2,
+        "b": 1.0,
+        "c": 0.167
+      },
+      "reference_Tb_K": 328.18576549483817,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 497.1,
+      "smiles": "CC(C)(C)OC",
+      "source": "perry",
+      "subtype": "acyclic"
+    },
+    {
+      "base": {
+        "mape_percent": 0.21051031970773934,
+        "maximum_ape_percent": 0.525446374975147,
+        "mean_signed_error_percent": -0.2100781761569699,
+        "median_ape_percent": 0.21251413728592405,
+        "p95_ape_percent": 0.359483410385264,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 9,
+      "cas": "628-99-9",
+      "category": "alcohols",
+      "formula": "C9H20O",
+      "molecular_weight_g_mol": 144.255,
+      "multiplier": 1.0,
+      "name": "2-Nonanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 471.7159474159381,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 649.5,
+      "smiles": "CCCCCCCC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    },
+    {
+      "base": {
+        "mape_percent": 0.2072200040045163,
+        "maximum_ape_percent": 0.4551089015462306,
+        "mean_signed_error_percent": -0.2072200040045163,
+        "median_ape_percent": 0.21083148171274768,
+        "p95_ape_percent": 0.3424687996222642,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "carbon_atoms": 8,
+      "cas": "123-96-6",
+      "category": "alcohols",
+      "formula": "C8H18O",
+      "molecular_weight_g_mol": 130.228,
+      "multiplier": 1.0,
+      "name": "2-Octanol",
+      "parameters": {
+        "A": 0.00339,
+        "a": 1.2,
+        "b": 0.5,
+        "c": 0.167
+      },
+      "reference_Tb_K": 452.8987796861743,
+      "reference_Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "reference_Tc_K": 629.8,
+      "smiles": "CCCCCCC(C)O",
+      "source": "perry",
+      "subtype": "published"
+    }
+  ],
+  "coverage": {
+    "compounds": 140,
+    "duplicates_removed": [],
+    "halocarbon_exclusions": {
+      "one-carbon halocarbon": 9
+    },
+    "oxygenated_exclusions": {
+      "excluded alcohols structure": 4,
+      "excluded esters structure": 2,
+      "excluded ethers structure": 6,
+      "excluded ketones structure": 2,
+      "excluded organic_acids structure": 1
+    }
+  },
+  "domain": {
+    "alcohols": "one nonphenolic alcohol group",
+    "aldehydes": "single aliphatic aldehyde oxygen; aromatic aldehydes excluded",
+    "esters": "monoesters; diesters excluded",
+    "ethers": "acyclic; cyclic ethers excluded",
+    "halogenated_hydrocarbons": "at least two carbon atoms",
+    "ketones": "acyclic aliphatic monoketone local size/position correction; aromatic monoketone published parameters; cyclic carbonyl excluded",
+    "ordinary_hydrocarbons": "excluded; use Modified Pachaiyappan",
+    "organic_acids": "mono- or dicarboxylic; formic acid excluded"
+  },
+  "input_sensitivity": {
+    "categories": {
+      "alcohols": {
+        "compounds": 25,
+        "nannoolal_Tb": {
+          "mape_percent": 5.838788740916323,
+          "maximum_ape_percent": 33.327656414283645,
+          "mean_signed_error_percent": -3.703202297279333,
+          "median_ape_percent": 5.188001492978078,
+          "p95_ape_percent": 16.21390609677499,
+          "points": 2525,
+          "within_20_percent": 98.25742574257426
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 5.210410285785374,
+          "maximum_ape_percent": 29.13575285547767,
+          "mean_signed_error_percent": -2.343266720623098,
+          "median_ape_percent": 3.583428353494389,
+          "p95_ape_percent": 13.743298245059915,
+          "points": 2525,
+          "within_20_percent": 99.20792079207921
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 6.432827935511343,
+          "maximum_ape_percent": 30.937934951673896,
+          "mean_signed_error_percent": -3.8582457788611406,
+          "median_ape_percent": 5.5622673765366,
+          "p95_ape_percent": 17.55215527251941,
+          "points": 2525,
+          "within_20_percent": 97.18811881188118
+        },
+        "reference": {
+          "mape_percent": 4.904043652284185,
+          "maximum_ape_percent": 33.98620943970126,
+          "mean_signed_error_percent": -2.6381424122042327,
+          "median_ape_percent": 2.7413665441202606,
+          "p95_ape_percent": 13.81551576662704,
+          "points": 2525,
+          "within_20_percent": 99.12871287128712
+        }
+      },
+      "aldehydes": {
+        "compounds": 10,
+        "nannoolal_Tb": {
+          "mape_percent": 2.9890939671617818,
+          "maximum_ape_percent": 10.988793267986608,
+          "mean_signed_error_percent": -0.0764796328469621,
+          "median_ape_percent": 2.019946971249109,
+          "p95_ape_percent": 10.178214663438448,
+          "points": 1010,
+          "within_20_percent": 100.0
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 2.3887704583691654,
+          "maximum_ape_percent": 9.17507735823353,
+          "mean_signed_error_percent": 0.11483623350852364,
+          "median_ape_percent": 1.5415784500375396,
+          "p95_ape_percent": 7.756483840755099,
+          "points": 1010,
+          "within_20_percent": 100.0
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 3.4790279708691454,
+          "maximum_ape_percent": 11.844536101112514,
+          "mean_signed_error_percent": 0.018467257759780722,
+          "median_ape_percent": 1.9569858678787022,
+          "p95_ape_percent": 11.517949494967407,
+          "points": 1010,
+          "within_20_percent": 100.0
+        },
+        "reference": {
+          "mape_percent": 2.2080556273307246,
+          "maximum_ape_percent": 7.037106982382202,
+          "mean_signed_error_percent": 0.04254054879207134,
+          "median_ape_percent": 1.6240278743382075,
+          "p95_ape_percent": 5.91008668455799,
+          "points": 1010,
+          "within_20_percent": 100.0
+        }
+      },
+      "esters": {
+        "compounds": 16,
+        "nannoolal_Tb": {
+          "mape_percent": 2.741868798156501,
+          "maximum_ape_percent": 21.3779115225438,
+          "mean_signed_error_percent": -1.088249212704094,
+          "median_ape_percent": 1.5628067684318292,
+          "p95_ape_percent": 7.785104216908651,
+          "points": 1616,
+          "within_20_percent": 99.87623762376238
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 2.9697147916438356,
+          "maximum_ape_percent": 18.994534724679745,
+          "mean_signed_error_percent": 0.9650461530195664,
+          "median_ape_percent": 2.2899640846627545,
+          "p95_ape_percent": 8.291284765096302,
+          "points": 1616,
+          "within_20_percent": 100.0
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 3.426426387937963,
+          "maximum_ape_percent": 24.26571183134758,
+          "mean_signed_error_percent": -1.497371011053093,
+          "median_ape_percent": 2.176127225789143,
+          "p95_ape_percent": 9.212295831063628,
+          "points": 1616,
+          "within_20_percent": 99.75247524752476
+        },
+        "reference": {
+          "mape_percent": 2.6872244613552283,
+          "maximum_ape_percent": 20.101261970230368,
+          "mean_signed_error_percent": 0.5446351501721857,
+          "median_ape_percent": 1.9063435610179091,
+          "p95_ape_percent": 8.082622860037418,
+          "points": 1616,
+          "within_20_percent": 99.9381188118812
+        }
+      },
+      "ethers": {
+        "compounds": 17,
+        "nannoolal_Tb": {
+          "mape_percent": 2.8868696367797035,
+          "maximum_ape_percent": 20.420516735558714,
+          "mean_signed_error_percent": 1.0189226932105635,
+          "median_ape_percent": 2.343244922291632,
+          "p95_ape_percent": 7.341799559627343,
+          "points": 1717,
+          "within_20_percent": 99.94175888177053
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 1.95779749857783,
+          "maximum_ape_percent": 21.935189172740653,
+          "mean_signed_error_percent": -1.1800770290702718,
+          "median_ape_percent": 0.7894399812433228,
+          "p95_ape_percent": 10.720183722423377,
+          "points": 1717,
+          "within_20_percent": 99.82527664531159
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 3.4592348686130117,
+          "maximum_ape_percent": 16.909074613437568,
+          "mean_signed_error_percent": 1.7197712683432742,
+          "median_ape_percent": 3.032815780208753,
+          "p95_ape_percent": 7.473483230149985,
+          "points": 1717,
+          "within_20_percent": 100.0
+        },
+        "reference": {
+          "mape_percent": 1.7586172068799364,
+          "maximum_ape_percent": 21.80534156018653,
+          "mean_signed_error_percent": -0.8932393415235012,
+          "median_ape_percent": 0.4338905666278703,
+          "p95_ape_percent": 9.770038040429966,
+          "points": 1717,
+          "within_20_percent": 99.88351776354106
+        }
+      },
+      "halogenated_hydrocarbons": {
+        "compounds": 37,
+        "nannoolal_Tb": {
+          "mape_percent": 5.810929172166571,
+          "maximum_ape_percent": 36.74013562883156,
+          "mean_signed_error_percent": -3.9401170788716913,
+          "median_ape_percent": 4.758661320745983,
+          "p95_ape_percent": 17.969327765633793,
+          "points": 3732,
+          "within_20_percent": 98.15112540192926
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 5.85673904291032,
+          "maximum_ape_percent": 36.93307024871708,
+          "mean_signed_error_percent": -3.988105622475336,
+          "median_ape_percent": 4.76043274728975,
+          "p95_ape_percent": 16.63100949300929,
+          "points": 3732,
+          "within_20_percent": 98.63344051446946
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 6.828680210982182,
+          "maximum_ape_percent": 79.42443957147565,
+          "mean_signed_error_percent": -4.1433172232494595,
+          "median_ape_percent": 5.014029237390504,
+          "p95_ape_percent": 18.30258396383248,
+          "points": 3732,
+          "within_20_percent": 96.4898177920686
+        },
+        "reference": {
+          "mape_percent": 5.810929172166571,
+          "maximum_ape_percent": 36.74013562883156,
+          "mean_signed_error_percent": -3.9401170788716913,
+          "median_ape_percent": 4.758661320745983,
+          "p95_ape_percent": 17.969327765633793,
+          "points": 3732,
+          "within_20_percent": 98.15112540192926
+        }
+      },
+      "ketones": {
+        "compounds": 15,
+        "nannoolal_Tb": {
+          "mape_percent": 2.935531734563046,
+          "maximum_ape_percent": 13.798795594761849,
+          "mean_signed_error_percent": 0.846720763334197,
+          "median_ape_percent": 2.4075496092696658,
+          "p95_ape_percent": 7.5939129510047385,
+          "points": 1515,
+          "within_20_percent": 100.0
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 2.3084858610153955,
+          "maximum_ape_percent": 15.825802894903706,
+          "mean_signed_error_percent": 0.010215667130677257,
+          "median_ape_percent": 1.8396034145935047,
+          "p95_ape_percent": 5.869514644186447,
+          "points": 1515,
+          "within_20_percent": 100.0
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 3.54192283887295,
+          "maximum_ape_percent": 9.85903807000792,
+          "mean_signed_error_percent": 1.2859572895553522,
+          "median_ape_percent": 3.203847097748147,
+          "p95_ape_percent": 8.478276567198673,
+          "points": 1515,
+          "within_20_percent": 100.0
+        },
+        "reference": {
+          "mape_percent": 2.2934642772908838,
+          "maximum_ape_percent": 15.711077866624434,
+          "mean_signed_error_percent": 0.031210825204603866,
+          "median_ape_percent": 1.7686728175278499,
+          "p95_ape_percent": 5.787888427951203,
+          "points": 1515,
+          "within_20_percent": 100.0
+        }
+      },
+      "organic_acids": {
+        "compounds": 19,
+        "nannoolal_Tb": {
+          "mape_percent": 3.8170231993684833,
+          "maximum_ape_percent": 37.605752292170806,
+          "mean_signed_error_percent": -1.4090341039666723,
+          "median_ape_percent": 2.2717197383039123,
+          "p95_ape_percent": 11.36661589371029,
+          "points": 1919,
+          "within_20_percent": 97.55080771235018
+        },
+        "nannoolal_Tc_anchored": {
+          "mape_percent": 3.158274506551704,
+          "maximum_ape_percent": 33.2199380746279,
+          "mean_signed_error_percent": -0.5088795244598003,
+          "median_ape_percent": 1.8682268370566746,
+          "p95_ape_percent": 10.32808204118251,
+          "points": 1919,
+          "within_20_percent": 97.9155810317874
+        },
+        "nannoolal_structure_Tb_Tc": {
+          "mape_percent": 4.4116938149176175,
+          "maximum_ape_percent": 33.66207728036639,
+          "mean_signed_error_percent": -1.388236172342432,
+          "median_ape_percent": 3.035249488819114,
+          "p95_ape_percent": 12.0188639616763,
+          "points": 1919,
+          "within_20_percent": 97.75924960917143
+        },
+        "reference": {
+          "mape_percent": 2.6883018728828585,
+          "maximum_ape_percent": 37.51471481207322,
+          "mean_signed_error_percent": -0.8416655689788713,
+          "median_ape_percent": 0.6439834254862276,
+          "p95_ape_percent": 11.200112450516032,
+          "points": 1919,
+          "within_20_percent": 97.6029181865555
+        }
+      }
+    },
+    "coverage": {
+      "common_compounds": 139,
+      "excluded_compounds": 1,
+      "selected_compounds": 140
+    },
+    "exclusions": [
+      {
+        "cas": "144-62-7",
+        "category": "organic_acids",
+        "name": "Oxalic acid",
+        "reason": "Nannoolal Tb or Tc unavailable",
+        "source": "perry"
+      }
+    ],
+    "input_errors": {
+      "nannoolal_Tb_vs_reference": {
+        "mape_percent": 1.8078744821272914,
+        "maximum_ape_percent": 8.33004815088978,
+        "mean_signed_error_percent": -0.06904871998686145,
+        "median_ape_percent": 1.2420548650326713,
+        "p95_ape_percent": 5.372030472140402,
+        "points": 139,
+        "within_20_percent": 100.0
+      },
+      "nannoolal_Tc_anchored_vs_reference": {
+        "mape_percent": 1.0109563061683045,
+        "maximum_ape_percent": 6.602893605449345,
+        "mean_signed_error_percent": 0.1497129731190053,
+        "median_ape_percent": 0.5721335337798283,
+        "p95_ape_percent": 3.574205479873511,
+        "points": 139,
+        "within_20_percent": 100.0
+      },
+      "nannoolal_Tc_structure_vs_reference": {
+        "mape_percent": 1.8687456671754725,
+        "maximum_ape_percent": 8.108079717102889,
+        "mean_signed_error_percent": 0.06716717932682877,
+        "median_ape_percent": 1.4220959600549588,
+        "p95_ape_percent": 4.727088178471513,
+        "points": 139,
+        "within_20_percent": 100.0
+      }
+    },
+    "overall": {
+      "nannoolal_Tb": {
+        "mape_percent": 4.318663772965338,
+        "maximum_ape_percent": 37.605752292170806,
+        "mean_signed_error_percent": -1.8214779906443574,
+        "median_ape_percent": 2.7308343554970027,
+        "p95_ape_percent": 13.961588847271637,
+        "points": 14034,
+        "within_20_percent": 98.83853498646144
+      },
+      "nannoolal_Tc_anchored": {
+        "mape_percent": 3.929384103503482,
+        "maximum_ape_percent": 36.93307024871708,
+        "mean_signed_error_percent": -1.575610289595061,
+        "median_ape_percent": 2.2887506540673064,
+        "p95_ape_percent": 12.614321177924245,
+        "points": 14034,
+        "within_20_percent": 99.18768704574605
+      },
+      "nannoolal_structure_Tb_Tc": {
+        "mape_percent": 5.027077681285819,
+        "maximum_ape_percent": 79.42443957147565,
+        "mean_signed_error_percent": -1.8076801158343414,
+        "median_ape_percent": 3.3532603891662904,
+        "p95_ape_percent": 14.624792488231298,
+        "points": 14034,
+        "within_20_percent": 98.22573749465585
+      },
+      "reference": {
+        "mape_percent": 3.726292163607527,
+        "maximum_ape_percent": 37.51471481207322,
+        "mean_signed_error_percent": -1.6776609625401115,
+        "median_ape_percent": 1.8262400098398968,
+        "p95_ape_percent": 13.072950319199018,
+        "points": 14034,
+        "within_20_percent": 99.0024226877583
+      }
+    }
+  },
+  "local_adjustment_validation": {
+    "acyclic_aliphatic_ketones": {
+      "compounds": 14,
+      "method": "whole-compound leave-one-out",
+      "metrics": {
+        "mape_percent": 3.0141707785563616,
+        "maximum_ape_percent": 15.505985426902946,
+        "mean_signed_error_percent": -0.05382712205909653,
+        "median_ape_percent": 2.335350232877398,
+        "p95_ape_percent": 6.605417396571947,
+        "points": 1414
+      }
+    },
+    "aldehydes": {
+      "compounds": 10,
+      "method": "whole-compound leave-one-out",
+      "metrics": {
+        "mape_percent": 2.86862204839167,
+        "maximum_ape_percent": 8.171674543151042,
+        "mean_signed_error_percent": -0.16210002390152123,
+        "median_ape_percent": 1.8752736416933091,
+        "p95_ape_percent": 7.727467055773663,
+        "points": 1010
+      }
+    }
+  },
+  "local_adjustments": {
+    "acyclic_aliphatic_ketone_log_multiplier": {
+      "intercept": 1.0234172949294005,
+      "log_molecular_weight": -0.24303994126694795,
+      "smaller_carbonyl_side_carbons": 0.04093658586474451
+    },
+    "aldehyde": {
+      "A": 0.011004414117711718,
+      "b": 0.7284702063174113
+    }
+  },
+  "reproducibility": {
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "coolprop_version": "7.2.0",
+    "dependency_sha256": {
+      "baroncini_method.py": "69e8611aad7571c71b6130aab6cf32f9260525241063f255b3b91fbdd7a56e4d",
+      "nannoolal_method.py": "1a542d39c232b2be166f09aa786a87b25e07170c520f7078736a37aec955eb42",
+      "scripts/thermal_conductivity/liquid/results/baroncini_ketone_refit_probe.json": "6c3b593266e1c97d35e180d6ccba2e409d48b444f4ef403dc75b050b66f6d133",
+      "scripts/thermal_conductivity/liquid/results/baroncini_mixed_halogen_coolprop_probe.json": "116d0b8d370c8698a319b83625f478124c2a1a9a4141a6fb26ccb4b1c128e37b",
+      "scripts/thermal_conductivity/liquid/results/baroncini_nonmixed_halogen_coolprop_probe.json": "61c4a1e4bb8a693c98611a04e360642df92c60b1c987fccad032e439fa7be2db",
+      "scripts/thermal_conductivity/liquid/results/baroncini_perry_benchmark.json": "f48b1f8322ce4b7f29698d34a47bcc9ad04ab5cdabbf9bd3c275583a84ca3d72",
+      "scripts/thermal_conductivity/liquid/results/baroncini_refrigerant_probe.json": "07128a29a77f4ed2ea9dc020e240cc2b68e715f18b678f654a2e493c07c3b72d"
+    },
+    "python": "3.14.4",
+    "sample_points_per_curve": 101,
+    "script": "scripts/thermal_conductivity/liquid/benchmark_final_baroncini.py",
+    "script_sha256": "dfa9bbfd0e49aed0d0f375a6a1f61600c9325cb66a9b100074fec3979b5853f6"
+  }
+}

@@ -1,0 +1,61 @@
+Baroncini refrigerant-parameter probe vs Perry 9th Table 2-147
+coverage: 30 compounds, 3030 states
+baseline A=0.494: MAPE=  7.12% MdAPE=  4.76% P95= 29.23% bias= -5.87%
+authors' corrected A: MAPE=  6.57% MdAPE=  4.41% P95= 21.36% bias= -2.25%
+
+BY TOPOLOGY
+  aromatic               n=  6 MAPE=  4.13% MdAPE=  4.21% P95=  6.14% bias= -4.12%
+  saturated_acyclic      n= 23 MAPE=  7.47% MdAPE=  5.22% P95= 24.78% bias= -1.87%
+  unsaturated_acyclic    n=  1 MAPE=  0.41% MdAPE=  0.31% P95=  0.84% bias= +0.26%
+
+BY HALOGEN FAMILY
+  Br       n=  6 MAPE=  5.72% MdAPE=  3.81% P95= 22.76% bias= +2.39%
+  Cl       n= 17 MAPE=  5.27% MdAPE=  3.83% P95= 17.99% bias= -1.71%
+  F        n=  7 MAPE= 10.46% MdAPE=  6.09% P95= 30.22% bias= -7.53%
+
+BY CARBON COUNT
+  C1       n=  9 MAPE= 11.69% MdAPE=  8.51% P95= 30.22% bias= -0.30%
+  C2       n= 11 MAPE=  5.11% MdAPE=  1.70% P95= 18.42% bias= -3.31%
+  C3_plus  n= 10 MAPE=  3.56% MdAPE=  3.82% P95=  7.22% bias= -2.83%
+
+BY HALOGEN COUNT
+  X1       n= 12 MAPE=  7.00% MdAPE=  3.80% P95= 30.21% bias= +0.06%
+  X2       n= 14 MAPE=  5.30% MdAPE=  3.84% P95= 18.83% bias= -4.88%
+  X3       n=  2 MAPE= 10.47% MdAPE= 11.65% P95= 18.80% bias= -8.88%
+  X4_plus  n=  2 MAPE=  8.96% MdAPE=  8.33% P95= 14.83% bias= +8.96%
+
+COMPOUNDS, WORST FIRST
+   1. Fluoromethane                  593-53-3     saturated_acyclic    {'F': 1}           MAPE= 38.65% ->  30.20% A=0.562
+   2. Difluoromethane                75-10-5      saturated_acyclic    {'F': 2}           MAPE= 29.37% ->  19.65% A=0.562
+   3. 1,1,2-Trichloroethane          79-00-5      saturated_acyclic    {'Cl': 3}          MAPE= 18.42% ->  18.42% A=0.494
+   4. Bromomethane                   74-83-9      saturated_acyclic    {'Br': 1}          MAPE=  6.67% ->  17.53% A=0.562
+   5. Chloromethane                  74-87-3      saturated_acyclic    {'Cl': 1}          MAPE=  0.42% ->  13.59% A=0.562
+   6. 1,2-Dichloroethane             107-06-2     saturated_acyclic    {'Cl': 2}          MAPE= 11.56% ->  11.56% A=0.494
+   7. Carbon tetrafluoride           75-73-0      saturated_acyclic    {'F': 4}           MAPE=  4.06% ->   9.62% A=0.562
+   8. 1,1-Difluoroethane             75-37-6      saturated_acyclic    {'F': 2}           MAPE=  8.58% ->   8.58% A=0.494
+   9. Carbon tetrachloride           56-23-5      saturated_acyclic    {'Cl': 4}          MAPE=  4.80% ->   8.30% A=0.562
+  10. 1,2-Dibromoethane              106-93-4     saturated_acyclic    {'Br': 2}          MAPE=  7.22% ->   7.22% A=0.494
+  11. 1,2-Dichloropropane            78-87-5      saturated_acyclic    {'Cl': 2}          MAPE=  7.11% ->   7.11% A=0.494
+  12. o-Dichlorobenzene              95-50-1      aromatic             {'Cl': 2}          MAPE=  5.88% ->   5.88% A=0.494
+  13. Bromoethane                    74-96-4      saturated_acyclic    {'Br': 1}          MAPE=  5.79% ->   5.79% A=0.494
+  14. m-Dichlorobenzene              541-73-1     aromatic             {'Cl': 2}          MAPE=  4.89% ->   4.89% A=0.494
+  15. Chlorobenzene                  108-90-7     aromatic             {'Cl': 1}          MAPE=  4.48% ->   4.48% A=0.494
+  16. Fluorobenzene                  462-06-6     aromatic             {'F': 1}           MAPE=  4.25% ->   4.25% A=0.494
+  17. 1-Chloropropane                540-54-5     saturated_acyclic    {'Cl': 1}          MAPE=  3.05% ->   3.05% A=0.494
+  18. p-Dichlorobenzene              106-46-7     aromatic             {'Cl': 2}          MAPE=  2.96% ->   2.96% A=0.494
+  19. Dichloromethane                75-09-2      saturated_acyclic    {'Cl': 2}          MAPE= 14.51% ->   2.74% A=0.562
+  20. Chloroform                     67-66-3      saturated_acyclic    {'Cl': 3}          MAPE= 11.51% ->   2.52% A=0.562
+  21. Bromobenzene                   108-86-1     aromatic             {'Br': 1}          MAPE=  2.33% ->   2.33% A=0.494
+  22. Chloroethane                   75-00-3      saturated_acyclic    {'Cl': 1}          MAPE=  1.74% ->   1.74% A=0.494
+  23. 1,1-Dichloroethane             75-34-3      saturated_acyclic    {'Cl': 2}          MAPE=  1.21% ->   1.21% A=0.494
+  24. Dibromomethane                 74-95-3      saturated_acyclic    {'Br': 2}          MAPE= 11.77% ->   1.08% A=0.562
+  25. 1,2-Difluoroethane             624-72-6     saturated_acyclic    {'F': 2}           MAPE=  0.71% ->   0.71% A=0.494
+  26. Vinyl chloride                 75-01-4      unsaturated_acyclic  {'Cl': 1}          MAPE=  0.41% ->   0.41% A=0.494
+  27. 1,1-Dibromoethane              557-91-5     saturated_acyclic    {'Br': 2}          MAPE=  0.35% ->   0.35% A=0.494
+  28. 2-Chloropropane                75-29-6      saturated_acyclic    {'Cl': 1}          MAPE=  0.34% ->   0.34% A=0.494
+  29. 1,1-Dichloropropane            78-99-9      saturated_acyclic    {'Cl': 2}          MAPE=  0.33% ->   0.33% A=0.494
+  30. Fluoroethane                   353-36-6     saturated_acyclic    {'F': 1}           MAPE=  0.24% ->   0.24% A=0.494
+
+EXCLUSIONS
+    1 identity: Perry molecular formula unavailable or unparseable
+    1 identity: local SMILES unavailable or invalid

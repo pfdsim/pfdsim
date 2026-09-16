@@ -1,0 +1,48 @@
+Corrected Baroncini vs revised Govender for refrigerants
+coverage: 50/51 common compounds; Govender exclusions=1
+Baroncini: MAPE=  6.85% MdAPE=  5.01% P95= 20.73% bias= -3.28%
+Govender:  MAPE= 10.83% MdAPE=  7.76% P95= 32.30% bias= -1.51%
+compound wins: Baroncini=30, Govender=20
+
+BY SOURCE
+  perry: n=30
+    Baroncini: MAPE=  6.57% MdAPE=  4.41% P95= 21.36% bias= -2.25%
+    Govender:  MAPE= 10.57% MdAPE=  6.16% P95= 46.76% bias= +1.13%
+  coolprop_mixed: n=8
+    Baroncini: MAPE=  4.31% MdAPE=  3.74% P95=  9.80% bias= -0.09%
+    Govender:  MAPE=  7.70% MdAPE=  5.64% P95= 22.63% bias= -5.61%
+  coolprop_nonmixed_perry_absent: n=12
+    Baroncini: MAPE=  9.26% MdAPE=  8.38% P95= 22.30% bias= -7.97%
+    Govender:  MAPE= 13.57% MdAPE= 11.49% P95= 29.47% bias= -5.37%
+
+GOVENDER EXCLUSIONS
+  coolprop_nonmixed_perry_absent   R1234yf                  754-12-1     non-positive prediction; outside the method range
+
+LARGEST METHOD DIFFERENCES
+  1,2-Difluoroethane           perry                          Baroncini=  0.71% Govender= 52.65%
+  Bromomethane                 perry                          Baroncini= 17.53% Govender= 47.27%
+  R1234ze(E)                   coolprop_nonmixed_perry_absent Baroncini=  5.47% Govender= 24.19%
+  R143a                        coolprop_nonmixed_perry_absent Baroncini=  3.50% Govender= 21.90%
+  Fluoroethane                 perry                          Baroncini=  0.24% Govender= 18.34%
+  Vinyl chloride               perry                          Baroncini=  0.41% Govender= 13.67%
+  R227EA                       coolprop_nonmixed_perry_absent Baroncini=  4.45% Govender= 16.35%
+  2-Chloropropane              perry                          Baroncini=  0.34% Govender= 12.09%
+  R142b                        coolprop_mixed                 Baroncini=  3.87% Govender= 14.76%
+  R23                          coolprop_nonmixed_perry_absent Baroncini= 11.26% Govender= 21.14%
+  1,1-Dibromoethane            perry                          Baroncini=  0.35% Govender=  9.58%
+  1,2-Dibromoethane            perry                          Baroncini=  7.22% Govender= 14.67%
+  R141b                        coolprop_mixed                 Baroncini=  4.81% Govender= 11.93%
+  R116                         coolprop_nonmixed_perry_absent Baroncini=  2.38% Govender=  9.04%
+  R236EA                       coolprop_nonmixed_perry_absent Baroncini= 13.67% Govender= 20.31%
+
+LARGEST GOVENDER ADVANTAGES
+  Fluoromethane                perry                          Baroncini= 30.20% Govender= 13.73%
+  R245fa                       coolprop_nonmixed_perry_absent Baroncini= 17.46% Govender=  4.70%
+  R134a                        coolprop_nonmixed_perry_absent Baroncini= 12.02% Govender=  3.52%
+  R125                         coolprop_nonmixed_perry_absent Baroncini=  8.59% Govender=  2.68%
+  Carbon tetrafluoride         perry                          Baroncini=  9.62% Govender=  4.03%
+  1,1,2-Trichloroethane        perry                          Baroncini= 18.42% Govender= 13.46%
+  Carbon tetrachloride         perry                          Baroncini=  8.30% Govender=  3.44%
+  o-Dichlorobenzene            perry                          Baroncini=  5.88% Govender=  1.16%
+  1,1-Difluoroethane           perry                          Baroncini=  8.58% Govender=  4.60%
+  m-Dichlorobenzene            perry                          Baroncini=  4.89% Govender=  1.82%

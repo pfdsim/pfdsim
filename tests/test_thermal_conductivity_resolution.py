@@ -3,7 +3,10 @@ import math
 import unittest
 from unittest.mock import patch
 
+import baroncini_method
 import govender_method
+import modified_pachaiyappan
+from rdkit import Chem
 from pfd_parser import ParseError, parse_pfd
 from perry_properties import PerryPropertyLibrary, THERMAL_CONDUCTIVITY_DATA_PATH
 from pfdsim_modified_stiel_thodos import (
@@ -218,6 +221,11 @@ class ThermalConductivityResolutionTests(unittest.TestCase):
         with (
             patch.object(self.resolver, "_get_perry_library", return_value=None),
             patch.object(
+                self.resolver,
+                "_estimated_baroncini_liquid_thermal_conductivity",
+                return_value=None,
+            ),
+            patch.object(
                 self.resolver, "_resolve_smiles_result", return_value=smiles_result
             ),
             patch.object(
@@ -231,6 +239,301 @@ class ThermalConductivityResolutionTests(unittest.TestCase):
                 {"smiles": smiles, "Tb": tb},
                 allow_online=False,
             )
+
+    def _baroncini_fallback(
+        self,
+        smiles,
+        *,
+        temperature=300.0,
+        tb=400.0,
+        tb_quality=0.95,
+        tc=600.0,
+        tc_quality=0.95,
+        smiles_quality=1.0,
+    ):
+        smiles_result = PropertyResolutionResult(
+            smiles, "local", "test_smiles", smiles_quality
+        )
+        tb_result = PropertyResolutionResult(
+            tb, "local", "test_tb", tb_quality, "units K"
+        )
+        tc_result = PropertyResolutionResult(
+            tc, "local", "test_tc", tc_quality, "units K"
+        )
+        with (
+            patch.object(self.resolver, "_get_perry_library", return_value=None),
+            patch.object(
+                self.resolver, "_resolve_smiles_result", return_value=smiles_result
+            ),
+            patch.object(
+                self.resolver, "resolve_boiling_point", return_value=tb_result
+            ),
+            patch.object(
+                self.resolver,
+                "resolve_critical_properties",
+                return_value={"Tc": tc_result},
+            ),
+        ):
+            return self.resolver.resolve_thermal_conductivity(
+                "test Baroncini compound",
+                temperature,
+                "liquid",
+                {"smiles": smiles},
+                allow_online=False,
+            )
+
+    def _modified_pachaiyappan_fallback(
+        self,
+        smiles="CCCCCC",
+        *,
+        temperature=300.0,
+        tc=510.0,
+        tc_quality=0.95,
+        volume=0.130,
+        volume_quality=0.95,
+        smiles_quality=1.0,
+    ):
+        smiles_result = PropertyResolutionResult(
+            smiles, "local", "test_smiles", smiles_quality
+        )
+        tc_result = PropertyResolutionResult(
+            tc, "local", "test_tc", tc_quality, "units K"
+        )
+        volume_result = PropertyResolutionResult(
+            volume, "local", "test_v20", volume_quality, "units m3/kmol"
+        )
+        tb_result = PropertyResolutionResult(
+            400.0, "local", "test_tb", 0.95, "units K"
+        )
+        with (
+            patch.object(self.resolver, "_get_perry_library", return_value=None),
+            patch.object(
+                self.resolver, "_resolve_smiles_result", return_value=smiles_result
+            ),
+            patch.object(
+                self.resolver,
+                "resolve_critical_properties",
+                return_value={"Tc": tc_result},
+            ),
+            patch.object(
+                self.resolver,
+                "resolve_liquid_molar_volume",
+                return_value=volume_result,
+            ),
+            patch.object(
+                self.resolver, "resolve_boiling_point", return_value=tb_result
+            ),
+        ):
+            return self.resolver.resolve_thermal_conductivity(
+                "test hydrocarbon",
+                temperature,
+                "liquid",
+                {"smiles": smiles},
+                allow_online=False,
+            )
+
+    def test_modified_pachaiyappan_precedes_govender_for_hydrocarbons(self):
+        result = self._modified_pachaiyappan_fallback()
+        molecule = Chem.MolFromSmiles("CCCCCC")
+        expected = modified_pachaiyappan.evaluate_from_mol(
+            molecule,
+            300.0,
+            critical_temperature_K=510.0,
+            molar_volume_20C_cm3_mol=130.0,
+        )
+
+        self.assertClose(result.value, expected.value_W_per_m_K)
+        self.assertEqual(
+            result.method, "modified_pachaiyappan_liquid_thermal_conductivity"
+        )
+        self.assertEqual(result.source, "calculated")
+        self.assertEqual(result.quality, 0.90)
+        self.assertIn("Pachaiyappan, Ibrahim, and Kuloor", result.notes)
+        self.assertIn("test_v20", result.notes)
+        self.assertIn("test_tc", result.notes)
+
+    def test_modified_pachaiyappan_volume_quality_policy(self):
+        marginal = self._modified_pachaiyappan_fallback(volume_quality=0.86)
+        self.assertEqual(marginal.quality, 0.88)
+        self.assertIn("V20 quality 0.86", marginal.notes)
+        self.assertIn("V20=130", marginal.notes)
+
+        estimated = self._modified_pachaiyappan_fallback(volume_quality=0.85)
+        descriptors = modified_pachaiyappan.describe_hydrocarbon(
+            Chem.MolFromSmiles("CCCCCC")
+        )
+        expected_volume = modified_pachaiyappan.estimate_molar_volume_20C_cm3_mol(
+            descriptors
+        )
+        self.assertEqual(estimated.quality, 0.85)
+        self.assertIn("locally estimated V20", estimated.notes)
+        self.assertIn(f"V20={expected_volume:g}", estimated.notes)
+        self.assertNotIn("V20=130", estimated.notes)
+
+    def test_modified_pachaiyappan_tc_quality_policy(self):
+        moderate = self._modified_pachaiyappan_fallback(tc_quality=0.89)
+        self.assertEqual(moderate.quality, 0.89)
+        self.assertIn("Tc quality 0.89 in [0.80, 0.90)", moderate.notes)
+
+        weak = self._modified_pachaiyappan_fallback(tc_quality=0.79)
+        self.assertEqual(weak.quality, 0.88)
+        self.assertIn("Tc quality 0.79 in [0.70, 0.80)", weak.notes)
+
+        combined = self._modified_pachaiyappan_fallback(
+            tc_quality=0.79, volume_quality=0.87
+        )
+        self.assertEqual(combined.quality, 0.86)
+
+    def test_modified_pachaiyappan_rejects_low_quality_tc_and_small_hydrocarbon(self):
+        low_tc = self._modified_pachaiyappan_fallback(tc_quality=0.69)
+        self.assertEqual(
+            low_tc.method, "govender_saturated_liquid_thermal_conductivity"
+        )
+
+        small = self._modified_pachaiyappan_fallback(smiles="CC")
+        self.assertEqual(
+            small.method, "govender_saturated_liquid_thermal_conductivity"
+        )
+
+    def test_baroncini_precedes_govender_for_selected_oxygenated_class(self):
+        result = self._baroncini_fallback("CCOCC", tb=307.6, tc=466.7)
+        expected = baroncini_method.estimate(
+            "CCOCC",
+            300.0,
+            normal_boiling_temperature_K=307.6,
+            critical_temperature_K=466.7,
+        )
+
+        self.assertClose(result.value, expected.value_W_per_m_K)
+        self.assertEqual(result.method, "baroncini_liquid_thermal_conductivity")
+        self.assertEqual(result.source, "calculated")
+        self.assertEqual(result.quality, 0.90)
+        self.assertIn("category ethers", result.notes)
+        self.assertIn("test_tb", result.notes)
+        self.assertIn("test_tc", result.notes)
+        self.assertIn("scripts/thermal_conductivity/liquid/", result.notes)
+
+    def test_baroncini_passes_resolved_tb_to_critical_resolver(self):
+        smiles_result = PropertyResolutionResult(
+            "CCOCC", "local", "test_smiles", 1.0
+        )
+        tb_result = PropertyResolutionResult(
+            307.6, "local", "test_tb", 0.95, "units K"
+        )
+        tc_result = PropertyResolutionResult(
+            466.7, "estimated", "test_anchored_tc", 0.85, "units K"
+        )
+        with (
+            patch.object(self.resolver, "_get_perry_library", return_value=None),
+            patch.object(
+                self.resolver, "_resolve_smiles_result", return_value=smiles_result
+            ),
+            patch.object(
+                self.resolver, "resolve_boiling_point", return_value=tb_result
+            ),
+            patch.object(
+                self.resolver,
+                "resolve_critical_properties",
+                return_value={"Tc": tc_result},
+            ) as resolve_critical,
+        ):
+            result = self.resolver.resolve_thermal_conductivity(
+                "test ether",
+                300.0,
+                "liquid",
+                {"smiles": "CCOCC"},
+                allow_online=False,
+            )
+
+        critical_props = resolve_critical.call_args.args[1]
+        self.assertEqual(critical_props["Tb"], 307.6)
+        self.assertEqual(critical_props["property_sources"]["Tb"]["method"], "test_tb")
+        self.assertEqual(result.quality, 0.89)
+
+    def test_baroncini_category_base_qualities(self):
+        examples = {
+            "CCOCC": ("ethers", 0.90),
+            "CCCC=O": ("aldehydes", 0.90),
+            "CC(=O)CC": ("ketones", 0.90),
+            "CC(=O)O": ("organic_acids", 0.88),
+            "CC(=O)OCC": ("esters", 0.88),
+            "CCCO": ("alcohols", 0.84),
+            "CCCl": ("halogenated_hydrocarbons", 0.80),
+        }
+
+        for smiles, (category, quality) in examples.items():
+            with self.subTest(smiles=smiles):
+                result = self._baroncini_fallback(smiles)
+                self.assertEqual(result.quality, quality)
+                self.assertIn(f"category {category}", result.notes)
+
+    def test_baroncini_tb_quality_policy(self):
+        penalized = self._baroncini_fallback("CCOCC", tb_quality=0.84)
+        self.assertEqual(penalized.quality, 0.87)
+        self.assertIn("Tb quality 0.84 in [0.75, 0.85)", penalized.notes)
+
+        rejected = self._baroncini_fallback("CCOCC", tb_quality=0.74)
+        self.assertEqual(
+            rejected.method, "govender_saturated_liquid_thermal_conductivity"
+        )
+
+    def test_baroncini_tc_quality_policy(self):
+        moderate = self._baroncini_fallback("CCOCC", tc_quality=0.89)
+        self.assertEqual(moderate.quality, 0.89)
+        self.assertIn("Tc quality 0.89 in [0.80, 0.90)", moderate.notes)
+
+        weak = self._baroncini_fallback("CCOCC", tc_quality=0.79)
+        self.assertEqual(weak.quality, 0.87)
+        self.assertIn("Tc quality 0.79 in [0.70, 0.80)", weak.notes)
+
+        combined = self._baroncini_fallback(
+            "CCOCC", tb_quality=0.84, tc_quality=0.79
+        )
+        self.assertEqual(combined.quality, 0.84)
+
+        rejected = self._baroncini_fallback("CCOCC", tc_quality=0.69)
+        self.assertEqual(
+            rejected.method, "govender_saturated_liquid_thermal_conductivity"
+        )
+
+    def test_baroncini_quality_is_capped_by_smiles_quality(self):
+        result = self._baroncini_fallback("CCOCC", smiles_quality=0.82)
+
+        self.assertEqual(result.quality, 0.82)
+
+    def test_baroncini_halocarbon_is_exempt_from_tb_requirement(self):
+        smiles_result = PropertyResolutionResult(
+            "CCCl", "local", "test_smiles", 1.0
+        )
+        tc_result = PropertyResolutionResult(
+            460.0, "local", "test_tc", 0.89, "units K"
+        )
+        with (
+            patch.object(self.resolver, "_get_perry_library", return_value=None),
+            patch.object(
+                self.resolver, "_resolve_smiles_result", return_value=smiles_result
+            ),
+            patch.object(
+                self.resolver, "resolve_boiling_point"
+            ) as resolve_boiling_point,
+            patch.object(
+                self.resolver,
+                "resolve_critical_properties",
+                return_value={"Tc": tc_result},
+            ),
+        ):
+            result = self.resolver.resolve_thermal_conductivity(
+                "test halocarbon",
+                300.0,
+                "liquid",
+                {"smiles": "CCCl"},
+                allow_online=False,
+            )
+
+        self.assertEqual(result.method, "baroncini_liquid_thermal_conductivity")
+        self.assertEqual(result.quality, 0.79)
+        self.assertIn("Tb not required", result.notes)
+        resolve_boiling_point.assert_not_called()
 
     def test_liquid_fallback_uses_govender_with_base_quality(self):
         result = self._govender_fallback("CCCO", tb=370.0)

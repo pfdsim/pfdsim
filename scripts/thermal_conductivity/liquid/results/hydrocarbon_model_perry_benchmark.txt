@@ -1,0 +1,37 @@
+Hydrocarbon-specific liquid thermal-conductivity model vs Perry 9th Table 2-147
+coverage: 86 compounds (42 straight-chain, 44 other), 8686 sampled states
+overall:        MAPE=2.09% MdAPE=0.65% P95=9.17% bias=-0.99% within10=96.0% within20=99.3%
+straight-chain: MAPE=1.99% MdAPE=0.75% P95=7.57% bias=-0.85% within10=96.7% within20=99.6%
+other HC:       MAPE=2.18% MdAPE=0.58% P95=9.82% bias=-1.11% within10=95.3% within20=99.1%
+
+COMMON SET WITH REVISED GOVENDER (70 compounds)
+  hydrocarbon model: MAPE=2.50% MdAPE=1.09% P95=9.97% bias=-1.21% within10=95.1% within20=99.2%
+  revised Govender:  MAPE=6.71% MdAPE=3.08% P95=25.36% bias=-1.53% within10=81.5% within20=92.5%
+
+WORST 20 COMPOUNDS
+   1. 2-Methylbutane                     78-78-4      MAPE=  10.55% bias= -10.55%
+   2. Propane                            74-98-6      MAPE=   9.55% bias=  -9.55%
+   3. o-Terphenyl                        84-15-1      MAPE=   9.28% bias=  -9.28%
+   4. Butane                             106-97-8     MAPE=   8.47% bias=  -8.47%
+   5. Propylene                          115-07-1     MAPE=   8.40% bias=  -8.40%
+   6. Ethane                             74-84-0      MAPE=   7.58% bias=  -7.58%
+   7. 2-Methylpentane                    107-83-5     MAPE=   7.41% bias=  -7.41%
+   8. 2-Methyl propene                   115-11-7     MAPE=   7.16% bias=  -7.16%
+   9. trans-1,2-Dimethylcyclohexane      6876-23-9    MAPE=   7.05% bias=  -6.84%
+  10. 1,2,3,4-Tetrahydronaphthalene      119-64-2     MAPE=   6.77% bias=  +0.69%
+  11. Methylcyclohexane                  108-87-2     MAPE=   6.58% bias=  +6.58%
+  12. Propylbenzene                      103-65-1     MAPE=   5.25% bias=  -5.25%
+  13. Pentane                            109-66-0     MAPE=   5.23% bias=  -5.21%
+  14. 1-Butene                           106-98-9     MAPE=   5.18% bias=  -5.18%
+  15. 2-Methylpropane                    75-28-5      MAPE=   4.32% bias=  -3.67%
+  16. 1-Pentene                          109-67-1     MAPE=   3.96% bias=  -3.96%
+  17. Butylbenzene                       104-51-8     MAPE=   3.78% bias=  -3.78%
+  18. Cyclopentene                       142-29-0     MAPE=   3.73% bias=  -3.73%
+  19. 2,2,4-Trimethylpentane             540-84-1     MAPE=   3.61% bias=  +3.61%
+  20. cis-2-Butene                       590-18-1     MAPE=   3.18% bias=  +3.18%
+
+HYDROCARBON EXCLUSIONS
+    8 Perry V20 unavailable within stated range
+    3 Tc does not exceed 20 degrees C
+    1 identity: Perry molecular formula unavailable or unparseable
+    1 identity: local SMILES unavailable or invalid

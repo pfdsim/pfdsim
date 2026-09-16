@@ -1,0 +1,262 @@
+{
+  "C_at_least_3": {
+    "boiling_temperature": {
+      "structure_vs_perry": {
+        "mape_percent": 2.1984083504471457,
+        "mean_signed_error_percent": 1.7306729019278728,
+        "median_ape_percent": 1.5639073165485629,
+        "p95_ape_percent": 6.080192698286354,
+        "points": 83
+      }
+    },
+    "compounds": 83,
+    "conductivity": {
+      "anchored": {
+        "mape_percent": 2.1528164847319458,
+        "mean_signed_error_percent": -0.813137344994033,
+        "median_ape_percent": 0.8675469393517155,
+        "p95_ape_percent": 8.528935199465788,
+        "points": 8383
+      },
+      "perry": {
+        "mape_percent": 2.0643710562181936,
+        "mean_signed_error_percent": -0.9287680556435961,
+        "median_ape_percent": 0.6696634839561288,
+        "p95_ape_percent": 8.786936844539278,
+        "points": 8383
+      },
+      "structure": {
+        "mape_percent": 2.318667668606945,
+        "mean_signed_error_percent": -1.0754482767994331,
+        "median_ape_percent": 0.9474345748948565,
+        "p95_ape_percent": 9.575673128916394,
+        "points": 8383
+      }
+    },
+    "conductivity_by_reduced_temperature": {
+      "Tr_0.6_to_0.8": {
+        "anchored": {
+          "mape_percent": 2.3750699115120617,
+          "mean_signed_error_percent": -0.7746112695105181,
+          "median_ape_percent": 1.2726464517431868,
+          "p95_ape_percent": 8.997536792773888,
+          "points": 1989
+        },
+        "perry": {
+          "mape_percent": 2.2885823505849237,
+          "mean_signed_error_percent": -0.8964491145398147,
+          "median_ape_percent": 1.1512533135334624,
+          "p95_ape_percent": 8.799119725206845,
+          "points": 1989
+        },
+        "structure": {
+          "mape_percent": 2.314921842503215,
+          "mean_signed_error_percent": -0.4750818983537551,
+          "median_ape_percent": 1.1692178415078636,
+          "p95_ape_percent": 9.211752278316066,
+          "points": 1989
+        }
+      },
+      "Tr_at_least_0.8": {
+        "anchored": {
+          "mape_percent": 17.272191844172085,
+          "mean_signed_error_percent": -17.272191844172085,
+          "median_ape_percent": 15.473134161244417,
+          "p95_ape_percent": 32.65564578467883,
+          "points": 195
+        },
+        "perry": {
+          "mape_percent": 15.518781555206134,
+          "mean_signed_error_percent": -15.518781555206134,
+          "median_ape_percent": 13.819520114684225,
+          "p95_ape_percent": 29.165093259191543,
+          "points": 195
+        },
+        "structure": {
+          "mape_percent": 11.997798490749297,
+          "mean_signed_error_percent": -11.997798490749297,
+          "median_ape_percent": 10.961916588148712,
+          "p95_ape_percent": 24.466946010970123,
+          "points": 195
+        }
+      },
+      "Tr_below_0.6": {
+        "anchored": {
+          "mape_percent": 1.6058991979185113,
+          "mean_signed_error_percent": -0.30775143384658843,
+          "median_ape_percent": 0.6646167110594958,
+          "p95_ape_percent": 6.363428802973377,
+          "points": 6199
+        },
+        "perry": {
+          "mape_percent": 1.5691998492819008,
+          "mean_signed_error_percent": -0.4801843714107723,
+          "median_ape_percent": 0.4722937967623908,
+          "p95_ape_percent": 6.626795703659779,
+          "points": 6199
+        },
+        "structure": {
+          "mape_percent": 2.0153961631709976,
+          "mean_signed_error_percent": -0.9244998068862588,
+          "median_ape_percent": 0.7999533408820314,
+          "p95_ape_percent": 8.279569515695659,
+          "points": 6199
+        }
+      }
+    },
+    "critical_temperature": {
+      "anchored_vs_perry": {
+        "mape_percent": 0.7844021147975254,
+        "mean_signed_error_percent": -0.08186738957976816,
+        "median_ape_percent": 0.6148236223221359,
+        "p95_ape_percent": 1.7670855021714356,
+        "points": 83
+      },
+      "structure_vs_perry": {
+        "mape_percent": 2.0671215302408132,
+        "mean_signed_error_percent": 1.6348982616407706,
+        "median_ape_percent": 1.8864008273439592,
+        "p95_ape_percent": 4.96257669256611,
+        "points": 83
+      }
+    },
+    "minimum_carbons": 3
+  },
+  "all_supported": {
+    "boiling_temperature": {
+      "structure_vs_perry": {
+        "mape_percent": 2.352478155390515,
+        "mean_signed_error_percent": 1.8957482468364018,
+        "median_ape_percent": 1.5725624928622173,
+        "p95_ape_percent": 6.448049508105219,
+        "points": 85
+      }
+    },
+    "compounds": 85,
+    "conductivity": {
+      "anchored": {
+        "mape_percent": 2.4462265252037043,
+        "mean_signed_error_percent": -0.6148803524191483,
+        "median_ape_percent": 0.9079928614974087,
+        "p95_ape_percent": 9.537352062635524,
+        "points": 8582
+      },
+      "perry": {
+        "mape_percent": 2.100832256099196,
+        "mean_signed_error_percent": -0.9914653258699393,
+        "median_ape_percent": 0.6751935509072993,
+        "p95_ape_percent": 9.199175930151965,
+        "points": 8582
+      },
+      "structure": {
+        "mape_percent": 2.743080589142454,
+        "mean_signed_error_percent": -1.5286890531925155,
+        "median_ape_percent": 0.9983427700556047,
+        "p95_ape_percent": 11.013903287965537,
+        "points": 8582
+      }
+    },
+    "conductivity_by_reduced_temperature": {
+      "Tr_0.6_to_0.8": {
+        "anchored": {
+          "mape_percent": 2.94040810309748,
+          "mean_signed_error_percent": -0.613003760372859,
+          "median_ape_percent": 1.4042981932008702,
+          "p95_ape_percent": 9.760932618133102,
+          "points": 2113
+        },
+        "perry": {
+          "mape_percent": 2.1980484359626318,
+          "mean_signed_error_percent": -0.8872202069496865,
+          "median_ape_percent": 1.0968324360914439,
+          "p95_ape_percent": 8.469476503457,
+          "points": 2113
+        },
+        "structure": {
+          "mape_percent": 3.5794907170721277,
+          "mean_signed_error_percent": -1.847620556677771,
+          "median_ape_percent": 1.316535662455065,
+          "p95_ape_percent": 12.610237307149355,
+          "points": 2113
+        }
+      },
+      "Tr_at_least_0.8": {
+        "anchored": {
+          "mape_percent": 17.052100795545808,
+          "mean_signed_error_percent": -13.61163115971927,
+          "median_ape_percent": 15.473134161244417,
+          "p95_ape_percent": 31.09990996235804,
+          "points": 225
+        },
+        "perry": {
+          "mape_percent": 14.123898584078237,
+          "mean_signed_error_percent": -14.123898584078237,
+          "median_ape_percent": 12.668966131313697,
+          "p95_ape_percent": 27.77604105555894,
+          "points": 225
+        },
+        "structure": {
+          "mape_percent": 12.07990721035894,
+          "mean_signed_error_percent": -12.07990721035894,
+          "median_ape_percent": 10.873013319942594,
+          "p95_ape_percent": 24.892089934666565,
+          "points": 225
+        }
+      },
+      "Tr_below_0.6": {
+        "anchored": {
+          "mape_percent": 1.752676335434883,
+          "mean_signed_error_percent": -0.14718277191807233,
+          "median_ape_percent": 0.6787648831073245,
+          "p95_ape_percent": 6.583067862343661,
+          "points": 6244
+        },
+        "perry": {
+          "mape_percent": 1.6346875232601945,
+          "mean_signed_error_percent": -0.5535204913378488,
+          "median_ape_percent": 0.47968129778316326,
+          "p95_ape_percent": 6.761087460543713,
+          "points": 6244
+        },
+        "structure": {
+          "mape_percent": 2.12358658047988,
+          "mean_signed_error_percent": -1.0405522254816264,
+          "median_ape_percent": 0.8064444609279797,
+          "p95_ape_percent": 8.878719009504106,
+          "points": 6244
+        }
+      }
+    },
+    "critical_temperature": {
+      "anchored_vs_perry": {
+        "mape_percent": 0.8208745887714854,
+        "mean_signed_error_percent": -0.09893008829944053,
+        "median_ape_percent": 0.6292639222373442,
+        "p95_ape_percent": 2.119316274545547,
+        "points": 85
+      },
+      "structure_vs_perry": {
+        "mape_percent": 2.2059436687253267,
+        "mean_signed_error_percent": 1.783890359386461,
+        "median_ape_percent": 1.8864008273439592,
+        "p95_ape_percent": 5.262415522159362,
+        "points": 85
+      }
+    },
+    "minimum_carbons": 1
+  },
+  "exclusions": [
+    {
+      "cas": "106-99-0",
+      "name": "1,3-Butadiene",
+      "reason": "Nannoolal Tb or Tc unavailable"
+    }
+  ],
+  "reproducibility": {
+    "benchmark_sha256": "761cc9a9458df013ca85415c641d8eed5ef4049dc3b44069b89a8d9497501dae",
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "python": "3.14.4",
+    "script": "scripts/thermal_conductivity/liquid/probe_hydrocarbon_tc_sensitivity.py",
+    "script_sha256": "b7a3c44eabb6ce68bc606645c897bd74242534e04f8603d7f86bcf81f0ff9f4a"
+  }
+}

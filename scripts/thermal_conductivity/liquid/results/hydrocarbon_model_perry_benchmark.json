@@ -1,0 +1,2366 @@
+{
+  "common_set_comparison": {
+    "compounds": 70,
+    "hydrocarbon_model": {
+      "mape_percent": 2.49686932335948,
+      "mean_signed_error_percent": -1.2121004497283396,
+      "median_ape_percent": 1.0883279754284714,
+      "p95_ape_percent": 9.96791048264426,
+      "points": 7070,
+      "within_10_percent": 95.06364922206507,
+      "within_20_percent": 99.16548797736915
+    },
+    "revised_govender": {
+      "mape_percent": 6.710803518371869,
+      "mean_signed_error_percent": -1.5306937992327188,
+      "median_ape_percent": 3.083823642785055,
+      "p95_ape_percent": 25.364037543664715,
+      "points": 7070,
+      "within_10_percent": 81.45685997171145,
+      "within_20_percent": 92.48939179632248
+    }
+  },
+  "compounds": [
+    {
+      "Tc_K": 460.4,
+      "V20_cm3_mol": 116.09832941974975,
+      "cas": "78-78-4",
+      "formula": "C5H12",
+      "govender_common_set": {
+        "mape_percent": 11.130958403932691,
+        "mean_signed_error_percent": -11.130958403932691,
+        "median_ape_percent": 10.20702204299112,
+        "p95_ape_percent": 20.14454640419587,
+        "points": 101,
+        "within_10_percent": 48.51485148514851,
+        "within_20_percent": 94.05940594059405
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 10.546183780070573,
+        "mean_signed_error_percent": -10.546183780070573,
+        "median_ape_percent": 10.314038515155898,
+        "p95_ape_percent": 12.248139827437354,
+        "points": 101,
+        "within_10_percent": 40.5940594059406,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 72.14878,
+      "name": "2-Methylbutane",
+      "smiles": "CCC(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 369.83,
+      "V20_cm3_mol": 88.37760072655732,
+      "cas": "74-98-6",
+      "formula": "C3H8",
+      "govender_common_set": {
+        "mape_percent": 10.327537953436932,
+        "mean_signed_error_percent": -10.302614068229548,
+        "median_ape_percent": 6.175344306524333,
+        "p95_ape_percent": 33.03643424370309,
+        "points": 101,
+        "within_10_percent": 61.386138613861384,
+        "within_20_percent": 80.19801980198021
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 9.554431148445492,
+        "mean_signed_error_percent": -9.554431148445492,
+        "median_ape_percent": 8.65608104211848,
+        "p95_ape_percent": 15.709795211948974,
+        "points": 101,
+        "within_10_percent": 59.4059405940594,
+        "within_20_percent": 98.01980198019803
+      },
+      "molecular_weight_g_mol": 44.09562,
+      "name": "Propane",
+      "smiles": "CCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 857.0,
+      "V20_cm3_mol": 212.98361310470284,
+      "cas": "84-15-1",
+      "formula": "C18H14",
+      "govender_common_set": {
+        "mape_percent": 0.607556264113581,
+        "mean_signed_error_percent": 0.417783884799628,
+        "median_ape_percent": 0.576122473469054,
+        "p95_ape_percent": 1.220988035460957,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 9.277911721619764,
+        "mean_signed_error_percent": -9.277911721619764,
+        "median_ape_percent": 7.463803144966197,
+        "p95_ape_percent": 23.148224147669705,
+        "points": 101,
+        "within_10_percent": 60.396039603960396,
+        "within_20_percent": 88.11881188118812
+      },
+      "molecular_weight_g_mol": 230.30376,
+      "name": "o-Terphenyl",
+      "smiles": "C1=CC=C(C=C1)C2=CC=CC=C2C3=CC=CC=C3",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 425.12,
+      "V20_cm3_mol": 100.35885925459601,
+      "cas": "106-97-8",
+      "formula": "C4H10",
+      "govender_common_set": {
+        "mape_percent": 13.012830228605488,
+        "mean_signed_error_percent": -13.012830228605488,
+        "median_ape_percent": 8.550967179650193,
+        "p95_ape_percent": 33.09861218581426,
+        "points": 101,
+        "within_10_percent": 55.44554455445545,
+        "within_20_percent": 78.21782178217822
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 8.474662589583652,
+        "mean_signed_error_percent": -8.474662589583652,
+        "median_ape_percent": 7.159162713862333,
+        "p95_ape_percent": 18.926133205612828,
+        "points": 101,
+        "within_10_percent": 68.31683168316832,
+        "within_20_percent": 95.04950495049505
+      },
+      "molecular_weight_g_mol": 58.1222,
+      "name": "Butane",
+      "smiles": "CCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 364.85,
+      "V20_cm3_mol": 81.84239853612439,
+      "cas": "115-07-1",
+      "formula": "C3H6",
+      "govender_common_set": {
+        "mape_percent": 16.383846300376284,
+        "mean_signed_error_percent": -15.970757489866365,
+        "median_ape_percent": 12.326235143316211,
+        "p95_ape_percent": 44.571862765565804,
+        "points": 101,
+        "within_10_percent": 44.554455445544555,
+        "within_20_percent": 65.34653465346535
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 8.400450426439287,
+        "mean_signed_error_percent": -8.400450426439287,
+        "median_ape_percent": 6.6263461029378075,
+        "p95_ape_percent": 19.224707792465857,
+        "points": 101,
+        "within_10_percent": 80.19801980198021,
+        "within_20_percent": 95.04950495049505
+      },
+      "molecular_weight_g_mol": 42.07974,
+      "name": "Propylene",
+      "smiles": "CC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 305.32,
+      "V20_cm3_mol": 88.8016178259701,
+      "cas": "74-84-0",
+      "formula": "C2H6",
+      "govender_common_set": {
+        "mape_percent": 3.5388182377253505,
+        "mean_signed_error_percent": -3.5388182377253505,
+        "median_ape_percent": 1.188765655112023,
+        "p95_ape_percent": 14.230899381069694,
+        "points": 101,
+        "within_10_percent": 88.11881188118812,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 7.579255061106638,
+        "mean_signed_error_percent": -7.579255061106638,
+        "median_ape_percent": 6.564493224390033,
+        "p95_ape_percent": 16.16929490839928,
+        "points": 101,
+        "within_10_percent": 67.32673267326733,
+        "within_20_percent": 97.02970297029702
+      },
+      "molecular_weight_g_mol": 30.069,
+      "name": "Ethane",
+      "smiles": "CC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 497.7,
+      "V20_cm3_mol": 131.97813997919147,
+      "cas": "107-83-5",
+      "formula": "C6H14",
+      "govender_common_set": {
+        "mape_percent": 3.7450633809364278,
+        "mean_signed_error_percent": -2.752490815316529,
+        "median_ape_percent": 2.560547856856743,
+        "p95_ape_percent": 10.024399799756045,
+        "points": 101,
+        "within_10_percent": 94.05940594059405,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 7.411084555278634,
+        "mean_signed_error_percent": -7.411084555278634,
+        "median_ape_percent": 7.1688353966112945,
+        "p95_ape_percent": 8.982949105271832,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 86.17536,
+      "name": "2-Methylpentane",
+      "smiles": "CCCC(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 417.9,
+      "V20_cm3_mol": 94.35905567535805,
+      "cas": "115-11-7",
+      "formula": "C4H8",
+      "govender_common_set": {
+        "mape_percent": 4.66281840287079,
+        "mean_signed_error_percent": -2.9144635258851928,
+        "median_ape_percent": 2.1936997081924092,
+        "p95_ape_percent": 18.970004735363833,
+        "points": 101,
+        "within_10_percent": 83.16831683168317,
+        "within_20_percent": 96.03960396039604
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 7.155062224666609,
+        "mean_signed_error_percent": -7.155062224666609,
+        "median_ape_percent": 5.534962963004963,
+        "p95_ape_percent": 19.59276717485424,
+        "points": 101,
+        "within_10_percent": 74.25742574257426,
+        "within_20_percent": 95.04950495049505
+      },
+      "molecular_weight_g_mol": 56.10632,
+      "name": "2-Methyl propene",
+      "smiles": "CC(=C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 596.15,
+      "V20_cm3_mol": 144.60654764220786,
+      "cas": "6876-23-9",
+      "formula": "C8H16",
+      "govender_common_set": {
+        "mape_percent": 7.8879997721637505,
+        "mean_signed_error_percent": -7.8879997721637505,
+        "median_ape_percent": 8.084227960691347,
+        "p95_ape_percent": 8.810192698639396,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 7.048874438137692,
+        "mean_signed_error_percent": -6.8416041231643705,
+        "median_ape_percent": 0.7236105735286436,
+        "p95_ape_percent": 33.80596667936771,
+        "points": 101,
+        "within_10_percent": 77.22772277227723,
+        "within_20_percent": 87.12871287128714
+      },
+      "molecular_weight_g_mol": 112.21264,
+      "name": "trans-1,2-Dimethylcyclohexane",
+      "smiles": "C[C@@H]1CCCC[C@H]1C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 720.0,
+      "V20_cm3_mol": 136.22015310214803,
+      "cas": "119-64-2",
+      "formula": "C10H12",
+      "govender_common_set": {
+        "mape_percent": 25.890185349655187,
+        "mean_signed_error_percent": 25.890185349655187,
+        "median_ape_percent": 25.93233436324627,
+        "p95_ape_percent": 27.99475284678452,
+        "points": 101,
+        "within_10_percent": 0.0,
+        "within_20_percent": 0.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 6.774009701756489,
+        "mean_signed_error_percent": 0.6863109907495646,
+        "median_ape_percent": 6.758853414734278,
+        "p95_ape_percent": 12.73176963653675,
+        "points": 101,
+        "within_10_percent": 74.25742574257426,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 132.20228,
+      "name": "1,2,3,4-Tetrahydronaphthalene",
+      "smiles": "C1CCC2=CC=CC=C2C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 572.1,
+      "V20_cm3_mol": 127.48226778724059,
+      "cas": "108-87-2",
+      "formula": "C7H14",
+      "govender_common_set": {
+        "mape_percent": 3.2207196434623793,
+        "mean_signed_error_percent": 3.2207196434623793,
+        "median_ape_percent": 3.1632593966812728,
+        "p95_ape_percent": 4.684642933131422,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 6.581694225047456,
+        "mean_signed_error_percent": 6.581694225047456,
+        "median_ape_percent": 6.647737237772788,
+        "p95_ape_percent": 6.762498259576066,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 98.18606,
+      "name": "Methylcyclohexane",
+      "smiles": "CC1CCCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 638.35,
+      "V20_cm3_mol": 139.27649075809478,
+      "cas": "103-65-1",
+      "formula": "C9H12",
+      "govender_common_set": {
+        "mape_percent": 3.9159545841427703,
+        "mean_signed_error_percent": 3.9159545841427703,
+        "median_ape_percent": 4.1816782337860126,
+        "p95_ape_percent": 5.522752050537627,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 5.247794506224766,
+        "mean_signed_error_percent": -5.247794506224766,
+        "median_ape_percent": 2.17997211400075,
+        "p95_ape_percent": 18.722609357976538,
+        "points": 101,
+        "within_10_percent": 82.17821782178217,
+        "within_20_percent": 96.03960396039604
+      },
+      "molecular_weight_g_mol": 120.19158,
+      "name": "Propylbenzene",
+      "smiles": "CCCC1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 469.7,
+      "V20_cm3_mol": 115.1211076258406,
+      "cas": "109-66-0",
+      "formula": "C5H12",
+      "govender_common_set": {
+        "mape_percent": 8.763341747151248,
+        "mean_signed_error_percent": -8.763341747151248,
+        "median_ape_percent": 4.961372048939571,
+        "p95_ape_percent": 24.54424563911465,
+        "points": 101,
+        "within_10_percent": 70.29702970297029,
+        "within_20_percent": 89.10891089108911
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 5.225761535514659,
+        "mean_signed_error_percent": -5.205001113545466,
+        "median_ape_percent": 3.818658835026123,
+        "p95_ape_percent": 16.355923846662,
+        "points": 101,
+        "within_10_percent": 85.14851485148515,
+        "within_20_percent": 97.02970297029702
+      },
+      "molecular_weight_g_mol": 72.14878,
+      "name": "Pentane",
+      "smiles": "CCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 419.5,
+      "V20_cm3_mol": 94.49441602108222,
+      "cas": "106-98-9",
+      "formula": "C4H8",
+      "govender_common_set": {
+        "mape_percent": 6.448495451364035,
+        "mean_signed_error_percent": -5.5176695459405405,
+        "median_ape_percent": 4.820400893620514,
+        "p95_ape_percent": 15.948718240499582,
+        "points": 101,
+        "within_10_percent": 73.26732673267327,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 5.182888320859521,
+        "mean_signed_error_percent": -5.182888320859521,
+        "median_ape_percent": 4.90352470357438,
+        "p95_ape_percent": 6.7203554877560805,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 56.10632,
+      "name": "1-Butene",
+      "smiles": "CCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 407.8,
+      "V20_cm3_mol": 104.18590475355504,
+      "cas": "75-28-5",
+      "formula": "C4H10",
+      "govender_common_set": {
+        "mape_percent": 12.679531796922094,
+        "mean_signed_error_percent": -11.919124651721186,
+        "median_ape_percent": 8.54913392936295,
+        "p95_ape_percent": 36.72960737962233,
+        "points": 101,
+        "within_10_percent": 53.46534653465347,
+        "within_20_percent": 74.25742574257426
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 4.315455782322722,
+        "mean_signed_error_percent": -3.66864936653068,
+        "median_ape_percent": 1.074016827453228,
+        "p95_ape_percent": 22.36209570928127,
+        "points": 101,
+        "within_10_percent": 85.14851485148515,
+        "within_20_percent": 93.06930693069307
+      },
+      "molecular_weight_g_mol": 58.1222,
+      "name": "2-Methylpropane",
+      "smiles": "CC(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 464.8,
+      "V20_cm3_mol": 109.4185170126496,
+      "cas": "109-67-1",
+      "formula": "C5H10",
+      "govender_common_set": {
+        "mape_percent": 6.166099017287442,
+        "mean_signed_error_percent": -5.855414013043404,
+        "median_ape_percent": 5.256653464496752,
+        "p95_ape_percent": 14.690351820086834,
+        "points": 101,
+        "within_10_percent": 74.25742574257426,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 3.9619673833802915,
+        "mean_signed_error_percent": -3.9619673833802915,
+        "median_ape_percent": 3.6795120456289854,
+        "p95_ape_percent": 5.538271829286745,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 70.1329,
+      "name": "1-Pentene",
+      "smiles": "CCCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 660.5,
+      "V20_cm3_mol": 155.88183742161317,
+      "cas": "104-51-8",
+      "formula": "C10H14",
+      "govender_common_set": {
+        "mape_percent": 6.827946444417165,
+        "mean_signed_error_percent": 6.827946444417165,
+        "median_ape_percent": 6.75225863623905,
+        "p95_ape_percent": 7.785697813267767,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 3.7785879340511794,
+        "mean_signed_error_percent": -3.7785879340511794,
+        "median_ape_percent": 3.6214877626361663,
+        "p95_ape_percent": 4.819872851601891,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 134.21816,
+      "name": "Butylbenzene",
+      "smiles": "CCCCC1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 507.0,
+      "V20_cm3_mol": 88.2545136472837,
+      "cas": "142-29-0",
+      "formula": "C5H8",
+      "govender_common_set": {
+        "mape_percent": 4.895669795504496,
+        "mean_signed_error_percent": -2.32091708884808,
+        "median_ape_percent": 4.268516966884461,
+        "p95_ape_percent": 11.62011282778047,
+        "points": 101,
+        "within_10_percent": 88.11881188118812,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 3.7336228208993916,
+        "mean_signed_error_percent": -3.7336228208993916,
+        "median_ape_percent": 3.2228126371425914,
+        "p95_ape_percent": 6.298603278883952,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 68.11702,
+      "name": "Cyclopentene",
+      "smiles": "C1CC=CC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 543.8,
+      "V20_cm3_mol": 164.49877221756515,
+      "cas": "540-84-1",
+      "formula": "C8H18",
+      "govender_common_set": {
+        "mape_percent": 1.2081864762285128,
+        "mean_signed_error_percent": -1.2081864762285128,
+        "median_ape_percent": 1.1493961035034528,
+        "p95_ape_percent": 1.9941966042928416,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 3.6072932494976286,
+        "mean_signed_error_percent": 3.6072932494976286,
+        "median_ape_percent": 3.92353713230722,
+        "p95_ape_percent": 4.834226987581003,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 114.22852,
+      "name": "2,2,4-Trimethylpentane",
+      "smiles": "CC(C)CC(C)(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 435.5,
+      "V20_cm3_mol": 90.02624349989073,
+      "cas": "590-18-1",
+      "formula": "C4H8",
+      "govender_common_set": {
+        "mape_percent": 17.93291489762393,
+        "mean_signed_error_percent": -17.93291489762393,
+        "median_ape_percent": 17.132478127704097,
+        "p95_ape_percent": 30.94166037871734,
+        "points": 101,
+        "within_10_percent": 19.801980198019802,
+        "within_20_percent": 60.396039603960396
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 3.182586699910336,
+        "mean_signed_error_percent": 3.182586699910336,
+        "median_ape_percent": 3.4319558260347494,
+        "p95_ape_percent": 3.811712957952018,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 56.10632,
+      "name": "cis-2-Butene",
+      "smiles": "C/C=C\\C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 566.9,
+      "V20_cm3_mol": 156.47921488795612,
+      "cas": "111-66-0",
+      "formula": "C8H16",
+      "govender_common_set": {
+        "mape_percent": 1.2989828536223582,
+        "mean_signed_error_percent": -0.48181324251199725,
+        "median_ape_percent": 1.1707526901840737,
+        "p95_ape_percent": 3.0887326314696373,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.810149444885016,
+        "mean_signed_error_percent": 2.810149444885016,
+        "median_ape_percent": 3.172362620653968,
+        "p95_ape_percent": 3.918577112514998,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 112.21264,
+      "name": "1-Octene",
+      "smiles": "CCCCCCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 616.6,
+      "V20_cm3_mol": 189.03892215856382,
+      "cas": "872-05-9",
+      "formula": "C10H20",
+      "govender_common_set": {
+        "mape_percent": 0.7531845511848476,
+        "mean_signed_error_percent": -0.06280893643229356,
+        "median_ape_percent": 0.7273361513560506,
+        "p95_ape_percent": 1.5916473188889335,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.752945844746832,
+        "mean_signed_error_percent": 2.752945844746832,
+        "median_ape_percent": 3.003878883197486,
+        "p95_ape_percent": 3.5561873104105413,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 140.2658,
+      "name": "1-Decene",
+      "smiles": "CCCCCCCCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 593.1,
+      "V20_cm3_mol": 172.90048503747786,
+      "cas": "124-11-8",
+      "formula": "C9H18",
+      "govender_common_set": {
+        "mape_percent": 0.806090836664873,
+        "mean_signed_error_percent": -0.31719399171817014,
+        "median_ape_percent": 0.7203107425057254,
+        "p95_ape_percent": 1.93237230202441,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.6913221801089966,
+        "mean_signed_error_percent": 2.6913221801089966,
+        "median_ape_percent": 3.0597701368043406,
+        "p95_ape_percent": 3.8177286513624287,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 126.23922,
+      "name": "1-Nonene",
+      "smiles": "CCCCCCCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 507.6,
+      "V20_cm3_mol": 130.47216604267123,
+      "cas": "110-54-3",
+      "formula": "C6H14",
+      "govender_common_set": {
+        "mape_percent": 3.4378283305007207,
+        "mean_signed_error_percent": -3.4378283305007207,
+        "median_ape_percent": 3.333874097187972,
+        "p95_ape_percent": 4.638742087544534,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.572136957754321,
+        "mean_signed_error_percent": -2.0082326771898558,
+        "median_ape_percent": 1.8772748213126023,
+        "p95_ape_percent": 5.9822193357827675,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 86.17536,
+      "name": "Hexane",
+      "smiles": "CCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 428.6,
+      "V20_cm3_mol": 92.68293367535838,
+      "cas": "624-64-6",
+      "formula": "C4H8",
+      "govender_common_set": {
+        "mape_percent": 20.390274110218794,
+        "mean_signed_error_percent": -20.390274110218794,
+        "median_ape_percent": 19.861991489915642,
+        "p95_ape_percent": 31.219704505997527,
+        "points": 101,
+        "within_10_percent": 0.0,
+        "within_20_percent": 50.495049504950494
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.3406502135657665,
+        "mean_signed_error_percent": 2.3406502135657665,
+        "median_ape_percent": 2.39147044961292,
+        "p95_ape_percent": 2.55450295511066,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 56.10632,
+      "name": "trans-2-Butene",
+      "smiles": "C/C=C/C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 631.0,
+      "V20_cm3_mol": 139.23082226611024,
+      "cas": "98-82-8",
+      "formula": "C9H12",
+      "govender_common_set": {
+        "mape_percent": 1.2705216634835748,
+        "mean_signed_error_percent": 1.2705216634835748,
+        "median_ape_percent": 1.1864905519451519,
+        "p95_ape_percent": 2.514296979191877,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.263184993007698,
+        "mean_signed_error_percent": 2.263184993007698,
+        "median_ape_percent": 2.4093577655832865,
+        "p95_ape_percent": 2.7796030036876695,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 120.19158,
+      "name": "Cumene",
+      "smiles": "CC(C)c1ccccc1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 504.0,
+      "V20_cm3_mol": 124.88246348799534,
+      "cas": "592-41-6",
+      "formula": "C6H12",
+      "govender_common_set": {
+        "mape_percent": 4.350335656575115,
+        "mean_signed_error_percent": -4.266243780090239,
+        "median_ape_percent": 5.19357162979357,
+        "p95_ape_percent": 6.515724064924666,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.1940955294084086,
+        "mean_signed_error_percent": -1.3848848760802521,
+        "median_ape_percent": 2.567879409510676,
+        "p95_ape_percent": 3.010149512588367,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 84.15948,
+      "name": "1-Hexene",
+      "smiles": "CCCCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 560.4,
+      "V20_cm3_mol": 101.29245371346647,
+      "cas": "110-83-8",
+      "formula": "C6H10",
+      "govender_common_set": {
+        "mape_percent": 1.7308573141869963,
+        "mean_signed_error_percent": 0.514425867726895,
+        "median_ape_percent": 1.7444155853333365,
+        "p95_ape_percent": 3.223304415639827,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 2.0081149681648296,
+        "mean_signed_error_percent": -2.0081149681648296,
+        "median_ape_percent": 1.9373970359059411,
+        "p95_ape_percent": 2.5153207548884726,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 82.1436,
+      "name": "Cyclohexene",
+      "smiles": "C1CCC=CC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 511.7,
+      "V20_cm3_mol": 94.05518447351564,
+      "cas": "287-92-3",
+      "formula": "C5H10",
+      "govender_common_set": {
+        "mape_percent": 1.8509130719842588,
+        "mean_signed_error_percent": -1.8509130719842588,
+        "median_ape_percent": 1.777708891026919,
+        "p95_ape_percent": 3.3540120447282717,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.8010707872364788,
+        "mean_signed_error_percent": -1.8010707872364788,
+        "median_ape_percent": 1.522895349607034,
+        "p95_ape_percent": 3.156808043614334,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 70.1329,
+      "name": "Cyclopentane",
+      "smiles": "C1CCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 540.2,
+      "V20_cm3_mol": 146.12039858758757,
+      "cas": "142-82-5",
+      "formula": "C7H16",
+      "govender_common_set": {
+        "mape_percent": 2.426295472607848,
+        "mean_signed_error_percent": -2.426295472607848,
+        "median_ape_percent": 2.3021706217949522,
+        "p95_ape_percent": 4.118930312494751,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.7541540559845727,
+        "mean_signed_error_percent": -1.7541540559845727,
+        "median_ape_percent": 1.5329544053998112,
+        "p95_ape_percent": 4.117036126103812,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 100.20194,
+      "name": "Heptane",
+      "smiles": "CCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 591.75,
+      "V20_cm3_mol": 106.09277719557696,
+      "cas": "108-88-3",
+      "formula": "C7H8",
+      "govender_common_set": {
+        "mape_percent": 2.665939833599313,
+        "mean_signed_error_percent": -2.665939833599313,
+        "median_ape_percent": 2.4678509455064668,
+        "p95_ape_percent": 4.807115668345752,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.685359153524302,
+        "mean_signed_error_percent": 0.7403007416177539,
+        "median_ape_percent": 1.7117732617726311,
+        "p95_ape_percent": 3.35960596556083,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 92.13842,
+      "name": "Toluene",
+      "smiles": "CC1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 568.7,
+      "V20_cm3_mol": 161.62622541678152,
+      "cas": "111-65-9",
+      "formula": "C8H18",
+      "govender_common_set": {
+        "mape_percent": 1.4562035536868303,
+        "mean_signed_error_percent": -1.4562035536868303,
+        "median_ape_percent": 1.4533604569735514,
+        "p95_ape_percent": 1.4954763101618584,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.4059327914584963,
+        "mean_signed_error_percent": -0.14196303266195795,
+        "median_ape_percent": 1.4310621963901538,
+        "p95_ape_percent": 2.8243253258421364,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 114.22852,
+      "name": "Octane",
+      "smiles": "CCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 617.15,
+      "V20_cm3_mol": 122.3326963659458,
+      "cas": "100-41-4",
+      "formula": "C8H10",
+      "govender_common_set": {
+        "mape_percent": 2.8290360388681863,
+        "mean_signed_error_percent": 2.8290360388681863,
+        "median_ape_percent": 2.720105594789879,
+        "p95_ape_percent": 4.328884514183384,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.2944075609147587,
+        "mean_signed_error_percent": 1.1016343503610369,
+        "median_ape_percent": 1.4071354714201068,
+        "p95_ape_percent": 2.1393556056316987,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 106.165,
+      "name": "Ethylbenzene",
+      "smiles": "CCC1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 537.4,
+      "V20_cm3_mol": 140.53972093769949,
+      "cas": "592-76-7",
+      "formula": "C7H14",
+      "govender_common_set": {
+        "mape_percent": 3.038403282232289,
+        "mean_signed_error_percent": -2.999814352794507,
+        "median_ape_percent": 3.478510840391491,
+        "p95_ape_percent": 4.740576716068922,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.2935951558557477,
+        "mean_signed_error_percent": 0.2658009914231995,
+        "median_ape_percent": 1.1828385253041862,
+        "p95_ape_percent": 3.22553851236822,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 98.18606,
+      "name": "1-Heptene",
+      "smiles": "CCCCCC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 537.3,
+      "V20_cm3_mol": 144.13696228213894,
+      "cas": "565-59-3",
+      "formula": "C7H16",
+      "govender_common_set": {
+        "mape_percent": 1.9575664144974518,
+        "mean_signed_error_percent": -1.9575664144974518,
+        "median_ape_percent": 1.815914663397944,
+        "p95_ape_percent": 3.90535599958991,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.237859286983807,
+        "mean_signed_error_percent": -1.237859286983807,
+        "median_ape_percent": 0.9290536337379751,
+        "p95_ape_percent": 2.9676945792412757,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 100.20194,
+      "name": "2,3-Dimethylpentane",
+      "smiles": "CCC(C)C(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 562.05,
+      "V20_cm3_mol": 88.96800741194619,
+      "cas": "71-43-2",
+      "formula": "C6H6",
+      "govender_common_set": {
+        "mape_percent": 11.051208885305398,
+        "mean_signed_error_percent": -11.051208885305398,
+        "median_ape_percent": 10.980730456223986,
+        "p95_ape_percent": 12.323943208640076,
+        "points": 101,
+        "within_10_percent": 6.9306930693069315,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.2341855754444608,
+        "mean_signed_error_percent": -1.2341855754444608,
+        "median_ape_percent": 1.1183440263500377,
+        "p95_ape_percent": 2.0204653712168508,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 78.11184,
+      "name": "Benzene",
+      "smiles": "C1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 723.0,
+      "V20_cm3_mol": 293.2672630869095,
+      "cas": "544-76-3",
+      "formula": "C16H34",
+      "govender_common_set": {
+        "mape_percent": 0.9752829242474361,
+        "mean_signed_error_percent": 0.8043442202274113,
+        "median_ape_percent": 0.6594375132783048,
+        "p95_ape_percent": 2.5171556058485978,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.0708561784415995,
+        "mean_signed_error_percent": 0.4972932400064734,
+        "median_ape_percent": 1.176112461272183,
+        "p95_ape_percent": 1.6233901059606648,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 226.44116,
+      "name": "Hexadecane",
+      "smiles": "CCCCCCCCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 630.3,
+      "V20_cm3_mol": 120.65154364506373,
+      "cas": "95-47-6",
+      "formula": "C8H10",
+      "govender_common_set": {
+        "mape_percent": 0.8035745346103972,
+        "mean_signed_error_percent": -0.7808979043567322,
+        "median_ape_percent": 0.8293101288162075,
+        "p95_ape_percent": 1.5284945581582776,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.0560794951723416,
+        "mean_signed_error_percent": 1.0560794951723416,
+        "median_ape_percent": 1.1713193351482687,
+        "p95_ape_percent": 1.3958072065997973,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 106.165,
+      "name": "o-Xylene",
+      "smiles": "CC1=CC=CC=C1C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 658.0,
+      "V20_cm3_mol": 227.1848804492684,
+      "cas": "112-40-3",
+      "formula": "C12H26",
+      "govender_common_set": {
+        "mape_percent": 0.7040233308866836,
+        "mean_signed_error_percent": 0.7040233308866836,
+        "median_ape_percent": 0.6881586310401033,
+        "p95_ape_percent": 0.9154613677869294,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.0542824144996317,
+        "mean_signed_error_percent": 0.9590729121246686,
+        "median_ape_percent": 1.1863318473695594,
+        "p95_ape_percent": 1.6759706244295014,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 170.33484,
+      "name": "Dodecane",
+      "smiles": "CCCCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 693.0,
+      "V20_cm3_mol": 260.28009223015647,
+      "cas": "629-59-4",
+      "formula": "C14H30",
+      "govender_common_set": {
+        "mape_percent": 1.0478633391640848,
+        "mean_signed_error_percent": 1.0478633391640848,
+        "median_ape_percent": 1.0225294787607142,
+        "p95_ape_percent": 1.3726689248504398,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 1.0000654453583082,
+        "mean_signed_error_percent": 0.9509524912586161,
+        "median_ape_percent": 1.1214570103377453,
+        "p95_ape_percent": 1.6277947123465974,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 198.388,
+      "name": "Tetradecane",
+      "smiles": "CCCCCCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 649.1,
+      "V20_cm3_mol": 137.1903841753093,
+      "cas": "95-63-6",
+      "formula": "C9H12",
+      "govender_common_set": {
+        "mape_percent": 0.8180395997416289,
+        "mean_signed_error_percent": 0.1349867401745722,
+        "median_ape_percent": 0.7948798664270784,
+        "p95_ape_percent": 1.7503879672640998,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.9474552233539246,
+        "mean_signed_error_percent": -0.9474552233539246,
+        "median_ape_percent": 0.8587972795513266,
+        "p95_ape_percent": 1.5453485654632337,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 120.19158,
+      "name": "1,2,4-Trimethylbenzene",
+      "smiles": "CC1=CC(=C(C=C1)C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 617.7,
+      "V20_cm3_mol": 194.48148462311462,
+      "cas": "124-18-5",
+      "formula": "C10H22",
+      "govender_common_set": {
+        "mape_percent": 0.19730994547177208,
+        "mean_signed_error_percent": 0.043465376275660855,
+        "median_ape_percent": 0.20060898036533548,
+        "p95_ape_percent": 0.36509868964225145,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.9212146847343924,
+        "mean_signed_error_percent": 0.6911801964140885,
+        "median_ape_percent": 1.012241769111566,
+        "p95_ape_percent": 1.459360077227001,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 142.28168,
+      "name": "Decane",
+      "smiles": "CCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 639.0,
+      "V20_cm3_mol": 210.89395622749254,
+      "cas": "1120-21-4",
+      "formula": "C11H24",
+      "govender_common_set": {
+        "mape_percent": 0.2390306806546625,
+        "mean_signed_error_percent": 0.23867567544749685,
+        "median_ape_percent": 0.25486082688719325,
+        "p95_ape_percent": 0.4108163143484278,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.8403131699150312,
+        "mean_signed_error_percent": 0.6075777869327738,
+        "median_ape_percent": 0.9024587217669078,
+        "p95_ape_percent": 1.3345632608241509,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 156.30826,
+      "name": "Undecane",
+      "smiles": "CCCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 594.6,
+      "V20_cm3_mol": 177.93097985611942,
+      "cas": "111-84-2",
+      "formula": "C9H20",
+      "govender_common_set": {
+        "mape_percent": 0.9895682982942283,
+        "mean_signed_error_percent": -0.9895682982942283,
+        "median_ape_percent": 0.931806380989042,
+        "p95_ape_percent": 1.780704178608139,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.8191356529962172,
+        "mean_signed_error_percent": -0.08255086680865505,
+        "median_ape_percent": 0.7917717799570845,
+        "p95_ape_percent": 1.8627807677577768,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 128.2551,
+      "name": "Nonane",
+      "smiles": "CCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 675.0,
+      "V20_cm3_mol": 244.52673253532447,
+      "cas": "629-50-5",
+      "formula": "C13H28",
+      "govender_common_set": {
+        "mape_percent": 0.7179890968000615,
+        "mean_signed_error_percent": 0.7179890968000615,
+        "median_ape_percent": 0.688233180808373,
+        "p95_ape_percent": 1.1011633307613344,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.6870061096996324,
+        "mean_signed_error_percent": 0.3833619403422204,
+        "median_ape_percent": 0.7506627635862184,
+        "p95_ape_percent": 1.1061750658443836,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 184.36142,
+      "name": "Tridecane",
+      "smiles": "CCCCCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 664.5,
+      "V20_cm3_mol": 134.4025189194782,
+      "cas": "526-73-8",
+      "formula": "C9H12",
+      "govender_common_set": {
+        "mape_percent": 0.4380043997085495,
+        "mean_signed_error_percent": -0.25186464074217846,
+        "median_ape_percent": 0.42517070031068416,
+        "p95_ape_percent": 0.8806429902230795,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.6365710981777791,
+        "mean_signed_error_percent": 0.38814262499698937,
+        "median_ape_percent": 0.7082523631460447,
+        "p95_ape_percent": 0.8856796299149483,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 120.19158,
+      "name": "1,2,3-Trimethylbenzene",
+      "smiles": "CC1=C(C(=CC=C1)C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 708.0,
+      "V20_cm3_mol": 276.8873182079606,
+      "cas": "629-62-9",
+      "formula": "C15H32",
+      "govender_common_set": {
+        "mape_percent": 0.4216498599733801,
+        "mean_signed_error_percent": 0.018788168646981254,
+        "median_ape_percent": 0.4100467039414579,
+        "p95_ape_percent": 0.8805684435694516,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.6144529560333685,
+        "mean_signed_error_percent": -0.26879742612257085,
+        "median_ape_percent": 0.4862304704908782,
+        "p95_ape_percent": 1.7510051532006132,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 212.41458,
+      "name": "Pentadecane",
+      "smiles": "CCCCCCCCCCCCCCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 547.0,
+      "V20_cm3_mol": 131.16639718430713,
+      "cas": "628-71-7",
+      "formula": "C7H12",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.509057204280668,
+        "mean_signed_error_percent": 0.07712546140784426,
+        "median_ape_percent": 0.47575572386575615,
+        "p95_ape_percent": 1.303297303749562,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 96.17018,
+      "name": "1-Heptyne",
+      "smiles": "CCCCCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 619.85,
+      "V20_cm3_mol": 180.22318058551605,
+      "cas": "764-93-2",
+      "formula": "C10H18",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.488216700802094,
+        "mean_signed_error_percent": -0.19865176891218736,
+        "median_ape_percent": 0.31376706531225373,
+        "p95_ape_percent": 1.8421799009553208,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 138.24992,
+      "name": "1-Decyne",
+      "smiles": "CCCCCCCCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 574.0,
+      "V20_cm3_mol": 147.57414536363763,
+      "cas": "629-05-0",
+      "formula": "C8H14",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.48089609449147197,
+        "mean_signed_error_percent": -0.025014241709566103,
+        "median_ape_percent": 0.4083252309195151,
+        "p95_ape_percent": 1.5055145244569856,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 110.19676,
+      "name": "1-Octyne",
+      "smiles": "CCCCCCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 470.0,
+      "V20_cm3_mol": 106.39049176779399,
+      "cas": "513-35-9",
+      "formula": "C5H10",
+      "govender_common_set": {
+        "mape_percent": 7.348500254452389,
+        "mean_signed_error_percent": -6.503890482976772,
+        "median_ape_percent": 5.753643222331095,
+        "p95_ape_percent": 17.986132802588163,
+        "points": 101,
+        "within_10_percent": 67.32673267326733,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.4342608653745653,
+        "mean_signed_error_percent": -0.4342608653745653,
+        "median_ape_percent": 0.3218590075192762,
+        "p95_ape_percent": 1.208405838989135,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 70.1329,
+      "name": "2-Methyl-2-butene",
+      "smiles": "CC=C(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 440.0,
+      "V20_cm3_mol": 82.72236958772073,
+      "cas": "107-00-6",
+      "formula": "C4H6",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.4332081403789109,
+        "mean_signed_error_percent": 0.35235529867431853,
+        "median_ape_percent": 0.4785322203738618,
+        "p95_ape_percent": 0.6441952359903302,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 54.09044,
+      "name": "1-Butyne",
+      "smiles": "CCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 598.05,
+      "V20_cm3_mol": 163.8984757115826,
+      "cas": "3452-09-3",
+      "formula": "C9H16",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.43061269341844355,
+        "mean_signed_error_percent": -0.1650503410492692,
+        "median_ape_percent": 0.2862273504031121,
+        "p95_ape_percent": 1.599749784917881,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 124.22334,
+      "name": "1-Nonyne",
+      "smiles": "CCCCCCCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 569.5,
+      "V20_cm3_mol": 128.05089585555297,
+      "cas": "1640-89-7",
+      "formula": "C7H14",
+      "govender_common_set": {
+        "mape_percent": 5.026319923142975,
+        "mean_signed_error_percent": 5.026319923142975,
+        "median_ape_percent": 5.101767617462771,
+        "p95_ape_percent": 5.865556012131767,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.385228525377998,
+        "mean_signed_error_percent": 0.04029292443832036,
+        "median_ape_percent": 0.3984412345754862,
+        "p95_ape_percent": 0.7550024481011386,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 98.18606,
+      "name": "Ethylcyclopentane",
+      "smiles": "CCC1CCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 609.15,
+      "V20_cm3_mol": 142.33229425542268,
+      "cas": "1678-91-7",
+      "formula": "C8H16",
+      "govender_common_set": {
+        "mape_percent": 5.660583729461808,
+        "mean_signed_error_percent": 5.660583729461808,
+        "median_ape_percent": 5.538185708778487,
+        "p95_ape_percent": 7.427823773152098,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.3838183423531531,
+        "mean_signed_error_percent": 0.12704498332969316,
+        "median_ape_percent": 0.40718510721196033,
+        "p95_ape_percent": 0.6808611411166288,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 112.21264,
+      "name": "Ethylcyclohexane",
+      "smiles": "CCC1CCCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 500.0,
+      "V20_cm3_mol": 130.25982318974434,
+      "cas": "79-29-8",
+      "formula": "C6H14",
+      "govender_common_set": {
+        "mape_percent": 4.278799719023308,
+        "mean_signed_error_percent": -4.278799719023308,
+        "median_ape_percent": 3.967684890774259,
+        "p95_ape_percent": 9.086357931230438,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.3727159991621991,
+        "mean_signed_error_percent": -0.30784414390419584,
+        "median_ape_percent": 0.1364884020431223,
+        "p95_ape_percent": 1.4711436187944238,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 86.17536,
+      "name": "2,3-Dimethylbutane",
+      "smiles": "CC(C)C(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 553.8,
+      "V20_cm3_mol": 108.23051173247705,
+      "cas": "110-82-7",
+      "formula": "C6H12",
+      "govender_common_set": {
+        "mape_percent": 1.969725275990762,
+        "mean_signed_error_percent": 1.969725275990762,
+        "median_ape_percent": 1.943310659499864,
+        "p95_ape_percent": 2.9012722549646153,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.37128693629676385,
+        "mean_signed_error_percent": -0.37128693629676385,
+        "median_ape_percent": 0.286053773690198,
+        "p95_ape_percent": 0.9012696403890796,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 84.15948,
+      "name": "Cyclohexane",
+      "smiles": "C1CCCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 516.2,
+      "V20_cm3_mol": 114.69175013717353,
+      "cas": "693-02-7",
+      "formula": "C6H10",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.3644747009645014,
+        "mean_signed_error_percent": 0.07317848361342785,
+        "median_ape_percent": 0.37739614148415424,
+        "p95_ape_percent": 0.7174383692160169,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 82.1436,
+      "name": "1-Hexyne",
+      "smiles": "CCCCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 573.5,
+      "V20_cm3_mol": 157.32986367943585,
+      "cas": "560-21-4",
+      "formula": "C8H18",
+      "govender_common_set": {
+        "mape_percent": 7.282214974451027,
+        "mean_signed_error_percent": -7.282214974451027,
+        "median_ape_percent": 7.126834382762281,
+        "p95_ape_percent": 9.571417796708515,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.3500320060886779,
+        "mean_signed_error_percent": 0.046939438080028185,
+        "median_ape_percent": 0.3540119223773841,
+        "p95_ape_percent": 0.7630172689947146,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 114.22852,
+      "name": "2,3,3-Trimethylpentane",
+      "smiles": "CCC(C)(C)C(C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 636.0,
+      "V20_cm3_mol": 144.79468372226344,
+      "cas": "13511-13-2",
+      "formula": "C9H14",
+      "govender_common_set": {
+        "mape_percent": 15.133695964262396,
+        "mean_signed_error_percent": -15.133695964262396,
+        "median_ape_percent": 14.141603587036544,
+        "p95_ape_percent": 29.897661750188888,
+        "points": 101,
+        "within_10_percent": 34.65346534653465,
+        "within_20_percent": 68.31683168316832
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.3443512812831631,
+        "mean_signed_error_percent": 0.07565982531008812,
+        "median_ape_percent": 0.358145677748567,
+        "p95_ape_percent": 0.6299054464643294,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 122.20746,
+      "name": "Propenylcyclohexene",
+      "smiles": "C=CCC1=CCCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 526.0,
+      "V20_cm3_mol": 107.61567516913249,
+      "cas": "1120-62-3",
+      "formula": "C6H10",
+      "govender_common_set": {
+        "mape_percent": 4.141292627384912,
+        "mean_signed_error_percent": -2.583965188393303,
+        "median_ape_percent": 3.381174436323642,
+        "p95_ape_percent": 10.054993982186167,
+        "points": 101,
+        "within_10_percent": 94.05940594059405,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.3418165372385046,
+        "mean_signed_error_percent": 0.16115306815385613,
+        "median_ape_percent": 0.3607134195603656,
+        "p95_ape_percent": 0.6553077887138437,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 82.1436,
+      "name": "3-Methylcyclopentene",
+      "smiles": "CC1CCC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 636.0,
+      "V20_cm3_mol": 115.09782896255368,
+      "cas": "100-42-5",
+      "formula": "C8H8",
+      "govender_common_set": {
+        "mape_percent": 3.3274776585167523,
+        "mean_signed_error_percent": -3.3274776585167523,
+        "median_ape_percent": 3.3130985462777707,
+        "p95_ape_percent": 3.603313738258973,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.339204686546082,
+        "mean_signed_error_percent": -0.02910037192475222,
+        "median_ape_percent": 0.28128357261469894,
+        "p95_ape_percent": 1.0109680820282185,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 104.14912,
+      "name": "Styrene",
+      "smiles": "C=CC1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 617.0,
+      "V20_cm3_mol": 122.83312386299131,
+      "cas": "108-38-3",
+      "formula": "C8H10",
+      "govender_common_set": {
+        "mape_percent": 0.6386078334825664,
+        "mean_signed_error_percent": -0.428607828742185,
+        "median_ape_percent": 0.6105246352466676,
+        "p95_ape_percent": 1.2916660238793454,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.33639262514681884,
+        "mean_signed_error_percent": -0.10140692955862593,
+        "median_ape_percent": 0.27939892981354575,
+        "p95_ape_percent": 0.9626945831809675,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 106.165,
+      "name": "m-Xylene",
+      "smiles": "CC1=CC(=CC=C1)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 532.7,
+      "V20_cm3_mol": 112.34839983750996,
+      "cas": "96-37-7",
+      "formula": "C6H12",
+      "govender_common_set": {
+        "mape_percent": 5.292096940046042,
+        "mean_signed_error_percent": -5.292096940046042,
+        "median_ape_percent": 5.147454253180728,
+        "p95_ape_percent": 7.4270866253938745,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.33503234122105097,
+        "mean_signed_error_percent": -0.002907939891158145,
+        "median_ape_percent": 0.3254672629261046,
+        "p95_ape_percent": 0.7996255162461829,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 84.15948,
+      "name": "Methylcyclopentane",
+      "smiles": "CC1CCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 452.0,
+      "V20_cm3_mol": 83.0239403085359,
+      "cas": "590-19-2",
+      "formula": "C4H6",
+      "govender_common_set": {
+        "mape_percent": 15.203750458360279,
+        "mean_signed_error_percent": -15.203750458360279,
+        "median_ape_percent": 14.634699365758374,
+        "p95_ape_percent": 24.83538370909548,
+        "points": 101,
+        "within_10_percent": 23.762376237623762,
+        "within_20_percent": 75.24752475247524
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.31397867558707515,
+        "mean_signed_error_percent": 0.046430109343630246,
+        "median_ape_percent": 0.32176655451234826,
+        "p95_ape_percent": 0.7008160370340577,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 54.09044,
+      "name": "1,2-Butadiene",
+      "smiles": "CC=C=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 542.0,
+      "V20_cm3_mol": 105.34383639833561,
+      "cas": "693-89-0",
+      "formula": "C6H10",
+      "govender_common_set": {
+        "mape_percent": 24.1477121112127,
+        "mean_signed_error_percent": -24.1477121112127,
+        "median_ape_percent": 22.829377014530305,
+        "p95_ape_percent": 44.61195659378184,
+        "points": 101,
+        "within_10_percent": 13.861386138613863,
+        "within_20_percent": 42.57425742574257
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.310314012066318,
+        "mean_signed_error_percent": 0.07287865925909559,
+        "median_ape_percent": 0.3279050498514069,
+        "p95_ape_percent": 0.5505554568319138,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 82.1436,
+      "name": "1-Methylcyclopentene",
+      "smiles": "CC1=CCCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 308.3,
+      "V20_cm3_mol": 65.03036165347781,
+      "cas": "74-86-2",
+      "formula": "C2H2",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.31027558884331213,
+        "mean_signed_error_percent": -0.3020870600251759,
+        "median_ape_percent": 0.18674959605922137,
+        "p95_ape_percent": 1.1058227609913818,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 26.03728,
+      "name": "Acetylene",
+      "smiles": "C#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 465.0,
+      "V20_cm3_mol": 107.82682237011339,
+      "cas": "563-46-2",
+      "formula": "C5H10",
+      "govender_common_set": {
+        "mape_percent": 12.455965760123574,
+        "mean_signed_error_percent": 12.455965760123574,
+        "median_ape_percent": 12.79982208771453,
+        "p95_ape_percent": 16.868944049594536,
+        "points": 101,
+        "within_10_percent": 25.742574257425744,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.29266796091653063,
+        "mean_signed_error_percent": -0.0699623207412651,
+        "median_ape_percent": 0.25912961765315323,
+        "p95_ape_percent": 0.8346714621336626,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 70.1329,
+      "name": "2-Methyl-1-butene",
+      "smiles": "CCC(=C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 544.0,
+      "V20_cm3_mol": 113.66697217733771,
+      "cas": "928-49-4",
+      "formula": "C6H10",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.27822925102692203,
+        "mean_signed_error_percent": 0.05465169309925858,
+        "median_ape_percent": 0.28363187944460133,
+        "p95_ape_percent": 0.5670730873365337,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 82.1436,
+      "name": "3-Hexyne",
+      "smiles": "CCC#CCC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 549.0,
+      "V20_cm3_mol": 112.2648731550159,
+      "cas": "764-35-2",
+      "formula": "C6H10",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.26466033915805176,
+        "mean_signed_error_percent": 0.09343320597722357,
+        "median_ape_percent": 0.2777006948329275,
+        "p95_ape_percent": 0.45437392269289667,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 82.1436,
+      "name": "2-Hexyne",
+      "smiles": "CCCC#CC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 654.0,
+      "V20_cm3_mol": 130.01673119887914,
+      "cas": "98-83-9",
+      "formula": "C9H10",
+      "govender_common_set": {
+        "mape_percent": 7.19373335392042,
+        "mean_signed_error_percent": 7.19373335392042,
+        "median_ape_percent": 7.0947634535759585,
+        "p95_ape_percent": 8.961266688832614,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.2644019817566999,
+        "mean_signed_error_percent": 0.040277600726146716,
+        "median_ape_percent": 0.25306419393504864,
+        "p95_ape_percent": 0.692891368121118,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 118.1757,
+      "name": "alpha-Methyl styrene",
+      "smiles": "CC(=C)C1=CC=CC=C1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 425.0,
+      "V20_cm3_mol": 86.977687916302,
+      "cas": "106-99-0",
+      "formula": "C4H6",
+      "govender_common_set": {
+        "mape_percent": 81.50548168769588,
+        "mean_signed_error_percent": 81.50548168769588,
+        "median_ape_percent": 80.81625331410953,
+        "p95_ape_percent": 96.14053278454992,
+        "points": 101,
+        "within_10_percent": 0.0,
+        "within_20_percent": 0.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.23906144897810283,
+        "mean_signed_error_percent": 0.1701207180735424,
+        "median_ape_percent": 0.26398011163608626,
+        "p95_ape_percent": 0.37310622558557327,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 54.09044,
+      "name": "1,3-Butadiene",
+      "smiles": "C=CC=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 519.0,
+      "V20_cm3_mol": 95.85043244406988,
+      "cas": "627-21-4",
+      "formula": "C5H8",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.23871038338345746,
+        "mean_signed_error_percent": 0.05533004066525308,
+        "median_ape_percent": 0.25349863485808477,
+        "p95_ape_percent": 0.4170853429491972,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 68.11702,
+      "name": "2-Pentyne",
+      "smiles": "CCC#CC",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 606.15,
+      "V20_cm3_mol": 140.92498326953222,
+      "cas": "2207-01-4",
+      "formula": "C8H16",
+      "govender_common_set": {
+        "mape_percent": 10.391637145929968,
+        "mean_signed_error_percent": -10.391637145929968,
+        "median_ape_percent": 10.431380893404418,
+        "p95_ape_percent": 10.97774696454824,
+        "points": 101,
+        "within_10_percent": 21.782178217821784,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.23751546013732605,
+        "mean_signed_error_percent": 0.021235930024865443,
+        "median_ape_percent": 0.23642969780168777,
+        "p95_ape_percent": 0.5532283878858291,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 112.21264,
+      "name": "cis-1,2-Dimethylcyclohexane",
+      "smiles": "C[C@@H]1CCCC[C@@H]1C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 481.2,
+      "V20_cm3_mol": 98.02658536724397,
+      "cas": "627-19-0",
+      "formula": "C5H8",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.23256289696136442,
+        "mean_signed_error_percent": 0.021104590475843087,
+        "median_ape_percent": 0.23210666525808055,
+        "p95_ape_percent": 0.5404906776181218,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 68.11702,
+      "name": "1-Pentyne",
+      "smiles": "CCCC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 490.0,
+      "V20_cm3_mol": 99.28299460192487,
+      "cas": "598-25-4",
+      "formula": "C5H8",
+      "govender_common_set": {
+        "mape_percent": 4.233646721436094,
+        "mean_signed_error_percent": -2.358417876323526,
+        "median_ape_percent": 3.5984360201452237,
+        "p95_ape_percent": 10.162629492564646,
+        "points": 101,
+        "within_10_percent": 94.05940594059405,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.2308582345604495,
+        "mean_signed_error_percent": 0.0037667122356738357,
+        "median_ape_percent": 0.23191722722202268,
+        "p95_ape_percent": 0.5290046167929496,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 68.11702,
+      "name": "3-Methyl-1,2-butadiene",
+      "smiles": "CC(=C=C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 394.0,
+      "V20_cm3_mol": 68.26182302592701,
+      "cas": "463-49-0",
+      "formula": "C3H4",
+      "govender_common_set": {
+        "mape_percent": 6.9829257204563016,
+        "mean_signed_error_percent": 6.9829257204563016,
+        "median_ape_percent": 7.1610264328889395,
+        "p95_ape_percent": 10.251753641747573,
+        "points": 101,
+        "within_10_percent": 90.0990099009901,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.21485729814577315,
+        "mean_signed_error_percent": -0.21485729814577315,
+        "median_ape_percent": 0.17023688038591,
+        "p95_ape_percent": 0.5275578745661424,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 40.06386,
+      "name": "Propadiene",
+      "smiles": "C=C=C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 616.2,
+      "V20_cm3_mol": 123.32285472334938,
+      "cas": "106-42-3",
+      "formula": "C8H10",
+      "govender_common_set": {
+        "mape_percent": 0.4343266987422722,
+        "mean_signed_error_percent": 0.23775600335156577,
+        "median_ape_percent": 0.379711836016583,
+        "p95_ape_percent": 1.0178079780408078,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.2017155740059847,
+        "mean_signed_error_percent": 0.16592545701824502,
+        "median_ape_percent": 0.2078537936069491,
+        "p95_ape_percent": 0.3427075215208797,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 106.165,
+      "name": "p-Xylene",
+      "smiles": "CC1=CC=C(C=C1)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 591.15,
+      "V20_cm3_mol": 143.69836813054707,
+      "cas": "590-66-9",
+      "formula": "C8H16",
+      "govender_common_set": {
+        "mape_percent": 6.370449747839925,
+        "mean_signed_error_percent": -6.039735834994731,
+        "median_ape_percent": 6.430272828234374,
+        "p95_ape_percent": 12.468741983399557,
+        "points": 101,
+        "within_10_percent": 75.24752475247524,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.20031449748674443,
+        "mean_signed_error_percent": 0.05232775501807302,
+        "median_ape_percent": 0.20803726016308532,
+        "p95_ape_percent": 0.3870540384538934,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 112.21264,
+      "name": "1,1-Dimethylcyclohexane",
+      "smiles": "CC1(CCCCC1)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 492.0,
+      "V20_cm3_mol": 93.85083713741486,
+      "cas": "78-80-8",
+      "formula": "C5H6",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.1965360040755999,
+        "mean_signed_error_percent": 0.01508654328729812,
+        "median_ape_percent": 0.1997534132226919,
+        "p95_ape_percent": 0.43428108480925154,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 66.10114,
+      "name": "2-Methyl -1-butene-3-yne",
+      "smiles": "C#CC(=C)C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 463.2,
+      "V20_cm3_mol": 102.27921170404021,
+      "cas": "598-23-2",
+      "formula": "C5H8",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.17559841861117131,
+        "mean_signed_error_percent": -0.035434290498879494,
+        "median_ape_percent": 0.15549168014581394,
+        "p95_ape_percent": 0.4982791492230687,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 68.11702,
+      "name": "3-Methyl-1-butyne",
+      "smiles": "CC(C)C#C",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 398.0,
+      "V20_cm3_mol": 69.04451412943791,
+      "cas": "75-19-4",
+      "formula": "C3H6",
+      "govender_common_set": {
+        "mape_percent": 2.5044829427070034,
+        "mean_signed_error_percent": 2.5044829427070034,
+        "median_ape_percent": 2.4403820104877516,
+        "p95_ape_percent": 3.9547997985198258,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.13043041849644893,
+        "mean_signed_error_percent": -0.0019088988190965688,
+        "median_ape_percent": 0.1275680856971828,
+        "p95_ape_percent": 0.3099548238231775,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 42.07974,
+      "name": "Cyclopropane",
+      "smiles": "C1CC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 454.0,
+      "V20_cm3_mol": 76.27534817114453,
+      "cas": "689-97-4",
+      "formula": "C4H4",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.13032336865215066,
+        "mean_signed_error_percent": 0.0030545646880116664,
+        "median_ape_percent": 0.12847115929675024,
+        "p95_ape_percent": 0.3087141978277086,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 52.07456,
+      "name": "Vinyl acetylene",
+      "smiles": "C=CC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 459.93,
+      "V20_cm3_mol": 80.83921442033679,
+      "cas": "287-23-0",
+      "formula": "C4H8",
+      "govender_common_set": {
+        "mape_percent": 0.32036701069928736,
+        "mean_signed_error_percent": 0.10468819753643263,
+        "median_ape_percent": 0.29976165887979356,
+        "p95_ape_percent": 0.7057248596596288,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "hydrocarbon_model": {
+        "mape_percent": 0.12442189469765093,
+        "mean_signed_error_percent": -0.0066577176106123095,
+        "median_ape_percent": 0.12177970556692674,
+        "p95_ape_percent": 0.27664574366452754,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 56.10632,
+      "name": "Cyclobutane",
+      "smiles": "C1CCC1",
+      "straight_chain": false
+    },
+    {
+      "Tc_K": 402.4,
+      "V20_cm3_mol": 65.25645164890956,
+      "cas": "74-99-7",
+      "formula": "C3H4",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.10649075806763046,
+        "mean_signed_error_percent": 0.023153934755502006,
+        "median_ape_percent": 0.11445694887237678,
+        "p95_ape_percent": 0.19753504329137472,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 40.06386,
+      "name": "Methyl acetylene",
+      "smiles": "CC#C",
+      "straight_chain": true
+    },
+    {
+      "Tc_K": 473.2,
+      "V20_cm3_mol": 78.27529588518955,
+      "cas": "503-17-3",
+      "formula": "C4H6",
+      "govender_common_set": null,
+      "hydrocarbon_model": {
+        "mape_percent": 0.0506845867587808,
+        "mean_signed_error_percent": 0.005825345058124434,
+        "median_ape_percent": 0.05305989369939201,
+        "p95_ape_percent": 0.10262841521704313,
+        "points": 101,
+        "within_10_percent": 100.0,
+        "within_20_percent": 100.0
+      },
+      "molecular_weight_g_mol": 54.09044,
+      "name": "Dimethyl acetylene",
+      "smiles": "CC#CC",
+      "straight_chain": true
+    }
+  ],
+  "coverage": {
+    "compounds": 86,
+    "exclusions": {
+      "Perry V20 unavailable within stated range": 8,
+      "Tc does not exceed 20 degrees C": 3,
+      "identity: Perry molecular formula unavailable or unparseable": 1,
+      "identity: local SMILES unavailable or invalid": 1
+    },
+    "other_hydrocarbon_compounds": 44,
+    "sampled_states": 8686,
+    "straight_chain_compounds": 42
+  },
+  "model": {
+    "other_hydrocarbon": {
+      "A": 0.4407,
+      "B": 0.7717
+    },
+    "reference_temperature_K": 293.15,
+    "straight_chain": {
+      "A": 0.1811,
+      "B": 1.001
+    },
+    "straight_chain_definition": "acyclic unbranched carbon skeleton"
+  },
+  "other_hydrocarbon": {
+    "mape_percent": 2.181835856464845,
+    "mean_signed_error_percent": -1.1136983572949437,
+    "median_ape_percent": 0.5814085596391905,
+    "p95_ape_percent": 9.820187954805911,
+    "points": 4444,
+    "within_10_percent": 95.31953195319532,
+    "within_20_percent": 99.07740774077408
+  },
+  "overall": {
+    "mape_percent": 2.0868766251748614,
+    "mean_signed_error_percent": -0.9860345351334503,
+    "median_ape_percent": 0.6472951828935813,
+    "p95_ape_percent": 9.165095567676529,
+    "points": 8686,
+    "within_10_percent": 95.98204006447156,
+    "within_20_percent": 99.32074602809118
+  },
+  "reproducibility": {
+    "conductivity_database": "/home/PFDSim/pfdsim/data/perry_thermal_conductivity.json",
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "production_module": "modified_pachaiyappan.py",
+    "production_module_sha256": "811b2f95245aa61a446b93042b78c41ce00652d106c70e248e0f47e66c417afd",
+    "python": "3.14.4",
+    "sample_points_per_curve": 101,
+    "script": "scripts/thermal_conductivity/liquid/benchmark_hydrocarbon_model_perry.py",
+    "script_sha256": "0742cb0a4496f86aa86e2bd51d0e864bf6567eea80eaf62010fce8d608a0989c"
+  },
+  "straight_chain": {
+    "mape_percent": 1.9873955257282123,
+    "mean_signed_error_percent": -0.8522914833452193,
+    "median_ape_percent": 0.7494251034553812,
+    "p95_ape_percent": 7.573228668877305,
+    "points": 4242,
+    "within_10_percent": 96.67609618104667,
+    "within_20_percent": 99.57567185289957
+  }
+}

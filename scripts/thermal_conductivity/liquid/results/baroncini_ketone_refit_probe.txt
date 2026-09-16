@@ -1,0 +1,39 @@
+Baroncini acyclic-ketone refit probe
+compounds: 14
+published: MAPE=  4.68% MdAPE=  3.03% P95= 12.02% bias= +2.92%
+
+WHOLE-COMPOUND LEAVE-ONE-OUT
+  A_only                 MAPE=  4.89% MdAPE=  3.31% P95= 12.73% bias= +0.19% A=0.0037273008 b=0.5
+  A_and_b                MAPE=  4.02% MdAPE=  3.85% P95=  7.02% bias= +0.00% A=0.0091883594 b=0.697197
+  A_b_branch             MAPE=  3.39% MdAPE=  3.69% P95=  8.05% bias= -0.13%
+  A_b_position           MAPE=  3.01% MdAPE=  2.34% P95=  6.61% bias= -0.05%
+  A_b_position_branch    MAPE=  2.79% MdAPE=  2.26% P95=  7.33% bias= -0.11%
+
+A+b LOOCV BY COMPOUND
+  Diisopropyl ketone           factor=0.93518 MAPE=  6.66%
+  Methylethyl ketone           factor=1.04494 MAPE=  6.14%
+  Acetone                      factor=1.04536 MAPE=  5.90%
+  2-Heptanone                  factor=0.94820 MAPE=  5.47%
+  2-Octanone                   factor=0.92962 MAPE=  4.80%
+  2-Hexanone                   factor=0.97019 MAPE=  4.35%
+  3-Heptanone                  factor=0.94282 MAPE=  4.28%
+  3-Hexanone                   factor=0.96453 MAPE=  3.69%
+  Methylisobutyl ketone        factor=0.96456 MAPE=  3.66%
+  2-Pentanone                  factor=0.99969 MAPE=  3.58%
+  Ethylisopropyl ketone        factor=0.96462 MAPE=  3.57%
+  3-Octanone                   factor=0.91778 MAPE=  1.91%
+  3-Pentanone                  factor=0.99755 MAPE=  1.64%
+  Methylisopropyl ketone       factor=0.99579 MAPE=  0.64%
+
+OPTIONAL ALDEHYDE HYPOTHESIS, n=10
+  published ketone parameters: MAPE=  7.53% MdAPE=  6.28% P95= 21.04% bias= -2.65%
+  transferred ketone A,b refit: MAPE=  3.94% MdAPE=  3.10% P95= 10.88% bias= -3.89%
+  transferred ketone position refit (side=0): MAPE=  9.23% MdAPE=  9.52% P95= 13.21% bias= -9.23%
+  aldehyde-only A LOOCV: MAPE=  8.89% MdAPE=  7.66% P95= 20.32% bias= +0.58%
+  aldehyde-only A,b LOOCV: MAPE=  2.87% MdAPE=  1.88% P95=  7.73% bias= -0.16%
+
+EXTERNAL BENZALDEHYDE VALIDATION — FIXED ALDEHYDE PARAMETERS
+  points=20 T=285.93–338.71 K
+  published_ketone_parameters        MAPE= 21.34% MdAPE= 21.21% P95= 24.04% bias=+21.34% slope ratio=0.7646
+  ketone_A_b_refit_transferred       MAPE= 16.03% MdAPE= 15.90% P95= 18.61% bias=+16.03% slope ratio=0.7312
+  aldehyde_A_b_refit                 MAPE= 20.10% MdAPE= 19.97% P95= 22.77% bias=+20.10% slope ratio=0.7568

@@ -1,0 +1,1386 @@
+{
+  "baseline_overall": {
+    "mape_percent": 7.120466156075036,
+    "maximum_ape_percent": 38.673479796124,
+    "mean_signed_error_percent": -5.866649811431512,
+    "median_ape_percent": 4.760623547710724,
+    "p95_ape_percent": 29.228804955988934,
+    "points": 3030,
+    "within_20_percent": 93.23432343234323
+  },
+  "by_carbon_count": {
+    "C1": {
+      "compounds": 9,
+      "mape_percent": 11.692194782361012,
+      "maximum_ape_percent": 30.23177256158236,
+      "mean_signed_error_percent": -0.29762366472473084,
+      "median_ape_percent": 8.50710318810357,
+      "p95_ape_percent": 30.21507228217924,
+      "points": 909,
+      "within_20_percent": 79.09790979097909
+    },
+    "C2": {
+      "compounds": 11,
+      "mape_percent": 5.111717527347024,
+      "maximum_ape_percent": 24.401743857916657,
+      "mean_signed_error_percent": -3.3124406381217746,
+      "median_ape_percent": 1.69583487022551,
+      "p95_ape_percent": 18.415640771682423,
+      "points": 1111,
+      "within_20_percent": 99.72997299729973
+    },
+    "C3_plus": {
+      "compounds": 10,
+      "mape_percent": 3.561968682163059,
+      "maximum_ape_percent": 7.948264968958418,
+      "mean_signed_error_percent": -2.8311339826512927,
+      "median_ape_percent": 3.8154714208300913,
+      "p95_ape_percent": 7.219420288007083,
+      "points": 1010,
+      "within_20_percent": 100.0
+    }
+  },
+  "by_halogen_count": {
+    "X1": {
+      "compounds": 12,
+      "mape_percent": 6.995875986708711,
+      "maximum_ape_percent": 30.23177256158236,
+      "mean_signed_error_percent": 0.06452887257492582,
+      "median_ape_percent": 3.796303650389171,
+      "p95_ape_percent": 30.210201580386656,
+      "points": 1212,
+      "within_20_percent": 87.62376237623762
+    },
+    "X2": {
+      "compounds": 14,
+      "mape_percent": 5.304646991754822,
+      "maximum_ape_percent": 24.401743857916657,
+      "mean_signed_error_percent": -4.883158067175785,
+      "median_ape_percent": 3.835148386393045,
+      "p95_ape_percent": 18.83231280871333,
+      "points": 1414,
+      "within_20_percent": 96.95898161244696
+    },
+    "X3": {
+      "compounds": 2,
+      "mape_percent": 10.470869732796288,
+      "maximum_ape_percent": 19.345896092796654,
+      "mean_signed_error_percent": -8.87897841592274,
+      "median_ape_percent": 11.648193441349175,
+      "p95_ape_percent": 18.802537661176842,
+      "points": 202,
+      "within_20_percent": 100.0
+    },
+    "X4_plus": {
+      "compounds": 2,
+      "mape_percent": 8.96051173651616,
+      "maximum_ape_percent": 16.524898265206556,
+      "mean_signed_error_percent": 8.96051173651616,
+      "median_ape_percent": 8.328468909703258,
+      "p95_ape_percent": 14.825135132587862,
+      "points": 202,
+      "within_20_percent": 100.0
+    }
+  },
+  "by_halogen_family": {
+    "Br": {
+      "compounds": 6,
+      "mape_percent": 5.716985218095361,
+      "maximum_ape_percent": 26.96196559242592,
+      "mean_signed_error_percent": 2.385411776259659,
+      "median_ape_percent": 3.8068009168269414,
+      "p95_ape_percent": 22.761126765719304,
+      "points": 606,
+      "within_20_percent": 91.91419141914191
+    },
+    "Cl": {
+      "compounds": 17,
+      "mape_percent": 5.266305422969429,
+      "maximum_ape_percent": 19.345896092796654,
+      "mean_signed_error_percent": -1.7065587170680596,
+      "median_ape_percent": 3.829645747134025,
+      "p95_ape_percent": 17.994047814918016,
+      "points": 1717,
+      "within_20_percent": 100.0
+    },
+    "F": {
+      "compounds": 7,
+      "mape_percent": 10.464175594949216,
+      "maximum_ape_percent": 30.23177256158236,
+      "mean_signed_error_percent": -7.532538899396569,
+      "median_ape_percent": 6.087654102385143,
+      "p95_ape_percent": 30.220324552465538,
+      "points": 707,
+      "within_20_percent": 79.63224893917963
+    }
+  },
+  "by_topology": {
+    "aromatic": {
+      "compounds": 6,
+      "mape_percent": 4.132569788733455,
+      "maximum_ape_percent": 6.374587571409029,
+      "mean_signed_error_percent": -4.121871532058435,
+      "median_ape_percent": 4.207440611629254,
+      "p95_ape_percent": 6.141423281152666,
+      "points": 606,
+      "within_20_percent": 100.0
+    },
+    "saturated_acyclic": {
+      "compounds": 23,
+      "mape_percent": 7.472825119629455,
+      "maximum_ape_percent": 30.23177256158236,
+      "mean_signed_error_percent": -1.867782733320036,
+      "median_ape_percent": 5.215075194548701,
+      "p95_ape_percent": 24.779226429505993,
+      "points": 2323,
+      "within_20_percent": 91.69177787343952
+    },
+    "unsaturated_acyclic": {
+      "compounds": 1,
+      "mape_percent": 0.40793617981879254,
+      "maximum_ape_percent": 1.1616552038112848,
+      "mean_signed_error_percent": 0.26343223033640967,
+      "median_ape_percent": 0.31027378220567225,
+      "p95_ape_percent": 0.8367027151761519,
+      "points": 101,
+      "within_20_percent": 100.0
+    }
+  },
+  "compounds": [
+    {
+      "A_used": 0.562,
+      "Tc_K": 317.42,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 38.64811802099759,
+        "maximum_ape_percent": 38.673479796124,
+        "mean_signed_error_percent": -38.64811802099759,
+        "median_ape_percent": 38.65735211624541,
+        "p95_ape_percent": 38.67325015756863,
+        "points": 101,
+        "within_20_percent": 0.0
+      },
+      "cas": "593-53-3",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 1
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 30.202919691904142,
+        "maximum_ape_percent": 30.23177256158236,
+        "mean_signed_error_percent": -30.202919691904142,
+        "median_ape_percent": 30.21342487718608,
+        "p95_ape_percent": 30.23151131286147,
+        "points": 101,
+        "within_20_percent": 0.0
+      },
+      "formula": "CH3F",
+      "molecular_weight_g_mol": 34.03292,
+      "name": "Fluoromethane",
+      "smiles": "CF"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 351.255,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 29.370417488779285,
+        "maximum_ape_percent": 31.17710619817974,
+        "mean_signed_error_percent": -29.370417488779285,
+        "median_ape_percent": 29.232490876081407,
+        "p95_ape_percent": 30.934651300528515,
+        "points": 101,
+        "within_20_percent": 0.0
+      },
+      "cas": "75-10-5",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 2
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 2,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 19.648126778732696,
+        "maximum_ape_percent": 21.703509480520257,
+        "mean_signed_error_percent": -19.648126778732696,
+        "median_ape_percent": 19.491214316513663,
+        "p95_ape_percent": 21.4276802244879,
+        "points": 101,
+        "within_20_percent": 60.396039603960396
+      },
+      "formula": "CH2F2",
+      "molecular_weight_g_mol": 52.02339,
+      "name": "Difluoromethane",
+      "smiles": "C(F)F"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 602.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 18.423139190153165,
+        "maximum_ape_percent": 19.345896092796654,
+        "mean_signed_error_percent": -18.423139190153165,
+        "median_ape_percent": 18.42583003402045,
+        "p95_ape_percent": 18.81358622467747,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "79-00-5",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 3
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 3
+      },
+      "errors": {
+        "mape_percent": 18.423139190153165,
+        "maximum_ape_percent": 19.345896092796654,
+        "mean_signed_error_percent": -18.423139190153165,
+        "median_ape_percent": 18.42583003402045,
+        "p95_ape_percent": 18.81358622467747,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H3Cl3",
+      "molecular_weight_g_mol": 133.40422,
+      "name": "1,1,2-Trichloroethane",
+      "smiles": "C(C(Cl)Cl)Cl"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 464.0,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 6.665707353115462,
+        "maximum_ape_percent": 15.346639877037093,
+        "mean_signed_error_percent": 3.164338738950558,
+        "median_ape_percent": 6.941886236199313,
+        "p95_ape_percent": 11.600019577684018,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-83-9",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Br": 1
+        },
+        "halogen_family": "Br",
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 17.53223662867589,
+        "maximum_ape_percent": 26.96196559242592,
+        "mean_signed_error_percent": 17.365097917591523,
+        "median_ape_percent": 19.682750053776665,
+        "p95_ape_percent": 26.19524798971058,
+        "points": 101,
+        "within_20_percent": 51.48514851485149
+      },
+      "formula": "CH3Br",
+      "molecular_weight_g_mol": 94.93852,
+      "name": "Bromomethane",
+      "smiles": "CBr"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 416.25,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 0.4235487590753119,
+        "maximum_ape_percent": 2.581783005204963,
+        "mean_signed_error_percent": -0.15697462136538823,
+        "median_ape_percent": 0.21587237786144797,
+        "p95_ape_percent": 1.809311523333068,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-87-3",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 1
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 13.586599722252355,
+        "maximum_ape_percent": 14.088898408045903,
+        "mean_signed_error_percent": 13.586599722252355,
+        "median_ape_percent": 13.948366871619001,
+        "p95_ape_percent": 14.046741241371063,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "CH3Cl",
+      "molecular_weight_g_mol": 50.4875,
+      "name": "Chloromethane",
+      "smiles": "CCl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 561.6,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 11.559923001743606,
+        "maximum_ape_percent": 11.765488253182399,
+        "mean_signed_error_percent": -11.559923001743606,
+        "median_ape_percent": 11.559562966033077,
+        "p95_ape_percent": 11.728223322645059,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "107-06-2",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 4,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 11.559923001743606,
+        "maximum_ape_percent": 11.765488253182399,
+        "mean_signed_error_percent": -11.559923001743606,
+        "median_ape_percent": 11.559562966033077,
+        "p95_ape_percent": 11.728223322645059,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H4Cl2",
+      "molecular_weight_g_mol": 98.95916,
+      "name": "1,2-Dichloroethane",
+      "smiles": "C(CCl)Cl"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 227.51,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 4.060072004985624,
+        "maximum_ape_percent": 8.147511218546665,
+        "mean_signed_error_percent": -3.642594672051201,
+        "median_ape_percent": 4.043122018037959,
+        "p95_ape_percent": 7.844406395762837,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-73-0",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 4
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 0,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 4
+      },
+      "errors": {
+        "mape_percent": 9.621177721269696,
+        "maximum_ape_percent": 16.524898265206556,
+        "mean_signed_error_percent": 9.621177721269696,
+        "median_ape_percent": 9.165517056402162,
+        "p95_ape_percent": 15.665222367831477,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "CF4",
+      "molecular_weight_g_mol": 88.0043,
+      "name": "Carbon tetrafluoride",
+      "smiles": "C(F)(F)(F)F"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 386.44,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 8.581013518214657,
+        "maximum_ape_percent": 24.401743857916657,
+        "mean_signed_error_percent": -8.581013518214657,
+        "median_ape_percent": 7.567456706519737,
+        "p95_ape_percent": 17.296222424918884,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "cas": "75-37-6",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 2
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 4,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 8.581013518214657,
+        "maximum_ape_percent": 24.401743857916657,
+        "mean_signed_error_percent": -8.581013518214657,
+        "median_ape_percent": 7.567456706519737,
+        "p95_ape_percent": 17.296222424918884,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "formula": "C2H4F2",
+      "molecular_weight_g_mol": 66.04997,
+      "name": "1,1-Difluoroethane",
+      "smiles": "CC(F)F"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 556.35,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 4.8040501754969185,
+        "maximum_ape_percent": 5.061218342277085,
+        "mean_signed_error_percent": -4.8040501754969185,
+        "median_ape_percent": 4.805412003276355,
+        "p95_ape_percent": 5.020003359273339,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "56-23-5",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 4
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 0,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 4
+      },
+      "errors": {
+        "mape_percent": 8.299845751762627,
+        "maximum_ape_percent": 8.591665778360568,
+        "mean_signed_error_percent": 8.299845751762627,
+        "median_ape_percent": 8.298296465908294,
+        "p95_ape_percent": 8.547042912199077,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "CCl4",
+      "molecular_weight_g_mol": 153.8227,
+      "name": "Carbon tetrachloride",
+      "smiles": "C(Cl)(Cl)(Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 650.15,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 7.220918565214801,
+        "maximum_ape_percent": 10.212554710944588,
+        "mean_signed_error_percent": -7.220918565214801,
+        "median_ape_percent": 7.168645661580275,
+        "p95_ape_percent": 9.874999761142789,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "106-93-4",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Br": 2
+        },
+        "halogen_family": "Br",
+        "hydrogen_atoms": 4,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 7.220918565214801,
+        "maximum_ape_percent": 10.212554710944588,
+        "mean_signed_error_percent": -7.220918565214801,
+        "median_ape_percent": 7.168645661580275,
+        "p95_ape_percent": 9.874999761142789,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H4Br2",
+      "molecular_weight_g_mol": 187.86116,
+      "name": "1,2-Dibromoethane",
+      "smiles": "C(CBr)Br"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 572.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 7.106275584385,
+        "maximum_ape_percent": 7.948264968958418,
+        "mean_signed_error_percent": -7.106275584385,
+        "median_ape_percent": 7.150952005557965,
+        "p95_ape_percent": 7.603200998245086,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "78-87-5",
+      "classification": {
+        "carbon_atoms": 3,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 6,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 7.106275584385,
+        "maximum_ape_percent": 7.948264968958418,
+        "mean_signed_error_percent": -7.106275584385,
+        "median_ape_percent": 7.150952005557965,
+        "p95_ape_percent": 7.603200998245086,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C3H6Cl2",
+      "molecular_weight_g_mol": 112.98574,
+      "name": "1,2-Dichloropropane",
+      "smiles": "CC(CCl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 705.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 5.884286927589831,
+        "maximum_ape_percent": 6.374587571409029,
+        "mean_signed_error_percent": -5.884286927589831,
+        "median_ape_percent": 5.923966093299915,
+        "p95_ape_percent": 6.3356417863853824,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "95-50-1",
+      "classification": {
+        "carbon_atoms": 6,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 4,
+        "rings": 1,
+        "topology": "aromatic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 5.884286927589831,
+        "maximum_ape_percent": 6.374587571409029,
+        "mean_signed_error_percent": -5.884286927589831,
+        "median_ape_percent": 5.923966093299915,
+        "p95_ape_percent": 6.3356417863853824,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C6H4Cl2",
+      "molecular_weight_g_mol": 147.00196,
+      "name": "o-Dichlorobenzene",
+      "smiles": "C1=CC=C(C(=C1)Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 503.8,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 5.790043848128071,
+        "maximum_ape_percent": 8.91563082976341,
+        "mean_signed_error_percent": 5.790043848128071,
+        "median_ape_percent": 5.652893387880487,
+        "p95_ape_percent": 8.434597636799012,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-96-4",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Br": 1
+        },
+        "halogen_family": "Br",
+        "hydrogen_atoms": 5,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 5.790043848128071,
+        "maximum_ape_percent": 8.91563082976341,
+        "mean_signed_error_percent": 5.790043848128071,
+        "median_ape_percent": 5.652893387880487,
+        "p95_ape_percent": 8.434597636799012,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H5Br",
+      "molecular_weight_g_mol": 108.965,
+      "name": "Bromoethane",
+      "smiles": "CCBr"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 683.95,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.890801764671389,
+        "maximum_ape_percent": 5.891586861006792,
+        "mean_signed_error_percent": -4.890801764671389,
+        "median_ape_percent": 4.943925943751215,
+        "p95_ape_percent": 5.7438339830263585,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "541-73-1",
+      "classification": {
+        "carbon_atoms": 6,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 4,
+        "rings": 1,
+        "topology": "aromatic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 4.890801764671389,
+        "maximum_ape_percent": 5.891586861006792,
+        "mean_signed_error_percent": -4.890801764671389,
+        "median_ape_percent": 4.943925943751215,
+        "p95_ape_percent": 5.7438339830263585,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C6H4Cl2",
+      "molecular_weight_g_mol": 147.00196,
+      "name": "m-Dichlorobenzene",
+      "smiles": "C1=CC(=CC(=C1)Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 632.35,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.481016683230623,
+        "maximum_ape_percent": 6.231972175990563,
+        "mean_signed_error_percent": -4.481016683230623,
+        "median_ape_percent": 4.515280848230907,
+        "p95_ape_percent": 6.008588819724836,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "108-90-7",
+      "classification": {
+        "carbon_atoms": 6,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 1
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 5,
+        "rings": 1,
+        "topology": "aromatic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 4.481016683230623,
+        "maximum_ape_percent": 6.231972175990563,
+        "mean_signed_error_percent": -4.481016683230623,
+        "median_ape_percent": 4.515280848230907,
+        "p95_ape_percent": 6.008588819724836,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C6H5Cl",
+      "molecular_weight_g_mol": 112.5569,
+      "name": "Chlorobenzene",
+      "smiles": "C1=CC=C(C=C1)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 560.09,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.249284321194821,
+        "maximum_ape_percent": 5.172302817739083,
+        "mean_signed_error_percent": -4.249284321194821,
+        "median_ape_percent": 4.323111398016266,
+        "p95_ape_percent": 5.122670756906889,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "462-06-6",
+      "classification": {
+        "carbon_atoms": 6,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 1
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 5,
+        "rings": 1,
+        "topology": "aromatic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 4.249284321194821,
+        "maximum_ape_percent": 5.172302817739083,
+        "mean_signed_error_percent": -4.249284321194821,
+        "median_ape_percent": 4.323111398016266,
+        "p95_ape_percent": 5.122670756906889,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C6H5F",
+      "molecular_weight_g_mol": 96.1023032,
+      "name": "Fluorobenzene",
+      "smiles": "C1=CC=C(C=C1)F"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 503.15,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 3.0451757752545,
+        "maximum_ape_percent": 7.3852465062798744,
+        "mean_signed_error_percent": 3.0451757752545,
+        "median_ape_percent": 2.512268075905544,
+        "p95_ape_percent": 7.206156463103652,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "540-54-5",
+      "classification": {
+        "carbon_atoms": 3,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 1
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 7,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 3.0451757752545,
+        "maximum_ape_percent": 7.3852465062798744,
+        "mean_signed_error_percent": 3.0451757752545,
+        "median_ape_percent": 2.512268075905544,
+        "p95_ape_percent": 7.206156463103652,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C3H7Cl",
+      "molecular_weight_g_mol": 78.54068,
+      "name": "1-Chloropropane",
+      "smiles": "CCCCl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 684.75,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 2.9597672421411714,
+        "maximum_ape_percent": 4.173102693215858,
+        "mean_signed_error_percent": -2.9597672421411714,
+        "median_ape_percent": 2.8825481529818897,
+        "p95_ape_percent": 3.6543996034813397,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "106-46-7",
+      "classification": {
+        "carbon_atoms": 6,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 4,
+        "rings": 1,
+        "topology": "aromatic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 2.9597672421411714,
+        "maximum_ape_percent": 4.173102693215858,
+        "mean_signed_error_percent": -2.9597672421411714,
+        "median_ape_percent": 2.8825481529818897,
+        "p95_ape_percent": 3.6543996034813397,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C6H4Cl2",
+      "molecular_weight_g_mol": 147.00196,
+      "name": "p-Dichlorobenzene",
+      "smiles": "C1=CC(=CC=C1Cl)Cl"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 510.0,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 14.507224224200966,
+        "maximum_ape_percent": 14.646543136276902,
+        "mean_signed_error_percent": -14.507224224200966,
+        "median_ape_percent": 14.528847853185866,
+        "p95_ape_percent": 14.64503774072391,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-09-2",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 2,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 2.738987882592994,
+        "maximum_ape_percent": 2.8974842967360637,
+        "mean_signed_error_percent": -2.738987882592994,
+        "median_ape_percent": 2.763588043502918,
+        "p95_ape_percent": 2.895771680742576,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "CH2Cl2",
+      "molecular_weight_g_mol": 84.93258,
+      "name": "Dichloromethane",
+      "smiles": "C(Cl)Cl"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 536.4,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 11.514946467964425,
+        "maximum_ape_percent": 16.801057385695195,
+        "mean_signed_error_percent": -11.514946467964425,
+        "median_ape_percent": 11.199285045281504,
+        "p95_ape_percent": 15.9677214948593,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "67-66-3",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 3
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 1,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 3
+      },
+      "errors": {
+        "mape_percent": 2.5186002754394106,
+        "maximum_ape_percent": 5.348571357815168,
+        "mean_signed_error_percent": 0.6651823583076859,
+        "median_ape_percent": 2.483021763707449,
+        "p95_ape_percent": 4.944530722366647,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "CHCl3",
+      "molecular_weight_g_mol": 119.37764,
+      "name": "Chloroform",
+      "smiles": "C(Cl)(Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 670.15,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 2.330261793572891,
+        "maximum_ape_percent": 4.15575349663394,
+        "mean_signed_error_percent": -2.266072253522778,
+        "median_ape_percent": 2.529415118810885,
+        "p95_ape_percent": 4.0966422478533,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "108-86-1",
+      "classification": {
+        "carbon_atoms": 6,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Br": 1
+        },
+        "halogen_family": "Br",
+        "hydrogen_atoms": 5,
+        "rings": 1,
+        "topology": "aromatic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 2.330261793572891,
+        "maximum_ape_percent": 4.15575349663394,
+        "mean_signed_error_percent": -2.266072253522778,
+        "median_ape_percent": 2.529415118810885,
+        "p95_ape_percent": 4.0966422478533,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C6H5Br",
+      "molecular_weight_g_mol": 157.0079,
+      "name": "Bromobenzene",
+      "smiles": "C1=CC=C(C=C1)Br"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 460.35,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 1.7426360966697816,
+        "maximum_ape_percent": 4.717781746950145,
+        "mean_signed_error_percent": 1.4835871890890842,
+        "median_ape_percent": 1.0204231420887444,
+        "p95_ape_percent": 4.561279354825931,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-00-3",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 1
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 5,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 1.7426360966697816,
+        "maximum_ape_percent": 4.717781746950145,
+        "mean_signed_error_percent": 1.4835871890890842,
+        "median_ape_percent": 1.0204231420887444,
+        "p95_ape_percent": 4.561279354825931,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H5Cl",
+      "molecular_weight_g_mol": 64.5141,
+      "name": "Chloroethane",
+      "smiles": "CCCl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 523.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 1.2093833831846712,
+        "maximum_ape_percent": 1.717522841579533,
+        "mean_signed_error_percent": 1.20788788437992,
+        "median_ape_percent": 1.1985407106126722,
+        "p95_ape_percent": 1.7087564961745905,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-34-3",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 4,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 1.2093833831846712,
+        "maximum_ape_percent": 1.717522841579533,
+        "mean_signed_error_percent": 1.20788788437992,
+        "median_ape_percent": 1.1985407106126722,
+        "p95_ape_percent": 1.7087564961745905,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H4Cl2",
+      "molecular_weight_g_mol": 98.95916,
+      "name": "1,1-Dichloroethane",
+      "smiles": "CC(Cl)Cl"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 611.0,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 11.771320565187663,
+        "maximum_ape_percent": 13.192638050233985,
+        "mean_signed_error_percent": -11.771320565187663,
+        "median_ape_percent": 11.974870331783716,
+        "p95_ape_percent": 13.145502689469158,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-95-3",
+      "classification": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Br": 2
+        },
+        "halogen_family": "Br",
+        "hydrogen_atoms": 2,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 1.0812585886192965,
+        "maximum_ape_percent": 2.889736502530238,
+        "mean_signed_error_percent": 0.37351789952336206,
+        "median_ape_percent": 0.9754177415622789,
+        "p95_ape_percent": 2.5772000154503205,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "CH2Br2",
+      "molecular_weight_g_mol": 173.83458,
+      "name": "Dibromomethane",
+      "smiles": "C(Br)Br"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 445.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 0.7058033632982279,
+        "maximum_ape_percent": 1.5029446519876366,
+        "mean_signed_error_percent": 0.09377133823810116,
+        "median_ape_percent": 0.7681033681113503,
+        "p95_ape_percent": 1.1403954292377838,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "624-72-6",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 2
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 4,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 0.7058033632982279,
+        "maximum_ape_percent": 1.5029446519876366,
+        "mean_signed_error_percent": 0.09377133823810116,
+        "median_ape_percent": 0.7681033681113503,
+        "p95_ape_percent": 1.1403954292377838,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H4F2",
+      "molecular_weight_g_mol": 66.04997,
+      "name": "1,2-Difluoroethane",
+      "smiles": "C(CF)F"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 432.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 0.40793617981879254,
+        "maximum_ape_percent": 1.1616552038112848,
+        "mean_signed_error_percent": 0.26343223033640967,
+        "median_ape_percent": 0.31027378220567225,
+        "p95_ape_percent": 0.8367027151761519,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-01-4",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 1,
+        "halogen_counts": {
+          "Cl": 1
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "unsaturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 0.40793617981879254,
+        "maximum_ape_percent": 1.1616552038112848,
+        "mean_signed_error_percent": 0.26343223033640967,
+        "median_ape_percent": 0.31027378220567225,
+        "p95_ape_percent": 0.8367027151761519,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H3Cl",
+      "molecular_weight_g_mol": 62.49822,
+      "name": "Vinyl chloride",
+      "smiles": "C=CCl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 628.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 0.3471918843612171,
+        "maximum_ape_percent": 0.8973485119132096,
+        "mean_signed_error_percent": 0.2708018110525806,
+        "median_ape_percent": 0.31057861867671566,
+        "p95_ape_percent": 0.7551150470181289,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "557-91-5",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Br": 2
+        },
+        "halogen_family": "Br",
+        "hydrogen_atoms": 4,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 0.3471918843612171,
+        "maximum_ape_percent": 0.8973485119132096,
+        "mean_signed_error_percent": 0.2708018110525806,
+        "median_ape_percent": 0.31057861867671566,
+        "p95_ape_percent": 0.7551150470181289,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H4Br2",
+      "molecular_weight_g_mol": 187.86116,
+      "name": "1,1-Dibromoethane",
+      "smiles": "CC(Br)Br"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 489.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 0.3414973297724018,
+        "maximum_ape_percent": 0.7664615681604703,
+        "mean_signed_error_percent": 0.20107978333699347,
+        "median_ape_percent": 0.24175922035541975,
+        "p95_ape_percent": 0.7550164504659174,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-29-6",
+      "classification": {
+        "carbon_atoms": 3,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 1
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 7,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 0.3414973297724018,
+        "maximum_ape_percent": 0.7664615681604703,
+        "mean_signed_error_percent": 0.20107978333699347,
+        "median_ape_percent": 0.24175922035541975,
+        "p95_ape_percent": 0.7550164504659174,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C3H7Cl",
+      "molecular_weight_g_mol": 78.54068,
+      "name": "2-Chloropropane",
+      "smiles": "CC(C)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 560.0,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 0.3313193998179585,
+        "maximum_ape_percent": 0.7183076531805721,
+        "mean_signed_error_percent": 0.279909391631192,
+        "median_ape_percent": 0.31290478685721546,
+        "p95_ape_percent": 0.6762989231803074,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "78-99-9",
+      "classification": {
+        "carbon_atoms": 3,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "Cl": 2
+        },
+        "halogen_family": "Cl",
+        "hydrogen_atoms": 6,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 2
+      },
+      "errors": {
+        "mape_percent": 0.3313193998179585,
+        "maximum_ape_percent": 0.7183076531805721,
+        "mean_signed_error_percent": 0.279909391631192,
+        "median_ape_percent": 0.31290478685721546,
+        "p95_ape_percent": 0.6762989231803074,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C3H6Cl2",
+      "molecular_weight_g_mol": 112.98574,
+      "name": "1,1-Dichloropropane",
+      "smiles": "CCC(Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 375.31,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 0.2409037700302763,
+        "maximum_ape_percent": 0.7248914880044088,
+        "mean_signed_error_percent": 0.23862295476254236,
+        "median_ape_percent": 0.17868786548838056,
+        "p95_ape_percent": 0.6683048062541941,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "353-36-6",
+      "classification": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_counts": {
+          "F": 1
+        },
+        "halogen_family": "F",
+        "hydrogen_atoms": 5,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 1
+      },
+      "errors": {
+        "mape_percent": 0.2409037700302763,
+        "maximum_ape_percent": 0.7248914880044088,
+        "mean_signed_error_percent": 0.23862295476254236,
+        "median_ape_percent": 0.17868786548838056,
+        "p95_ape_percent": 0.6683048062541941,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "formula": "C2H5F",
+      "molecular_weight_g_mol": 48.0595,
+      "name": "Fluoroethane",
+      "smiles": "CCF"
+    }
+  ],
+  "coverage": {
+    "compounds": 30,
+    "exclusions": {
+      "identity: Perry molecular formula unavailable or unparseable": 1,
+      "identity: local SMILES unavailable or invalid": 1
+    },
+    "sampled_states": 3030
+  },
+  "overall": {
+    "mape_percent": 6.569277755456565,
+    "maximum_ape_percent": 30.23177256158236,
+    "mean_signed_error_percent": -2.2475599942791677,
+    "median_ape_percent": 4.414828394834136,
+    "p95_ape_percent": 21.360402510827218,
+    "points": 3030,
+    "within_20_percent": 93.63036303630363
+  },
+  "parameters": {
+    "corrected_A": 0.562,
+    "correction_domain": "C1H1X3 (R2x) or non-mixed C1 with one halogen element type",
+    "general": {
+      "A": 0.494,
+      "a": 0.0,
+      "b": 0.5,
+      "c": -0.167
+    }
+  },
+  "reproducibility": {
+    "base_script_sha256": "24ec698aad93ccd65b887b56acfb386bc7df5447bc3945efd0a1722814d77fbf",
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "python": "3.14.4",
+    "sample_points_per_curve": 101,
+    "script": "scripts/thermal_conductivity/liquid/probe_baroncini_refrigerants.py",
+    "script_sha256": "614e72c0636e1b095243bb5c8824c5723b48110aeabc7c0040082d2677f20914"
+  }
+}

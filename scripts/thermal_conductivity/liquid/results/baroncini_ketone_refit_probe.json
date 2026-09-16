@@ -1,0 +1,2436 @@
+{
+  "aldehyde_hypothesis": {
+    "aldehyde_only_models": {
+      "A_and_b": {
+        "LOOCV": {
+          "mape_percent": 2.86862204839167,
+          "maximum_ape_percent": 8.171674543151042,
+          "mean_signed_error_percent": -0.16210002390152123,
+          "median_ape_percent": 1.8752736416933091,
+          "p95_ape_percent": 7.727467055773663,
+          "points": 1010
+        },
+        "LOOCV_A_range": [
+          0.00960577303856782,
+          0.012117091567137592
+        ],
+        "LOOCV_b_range": [
+          0.6996894099822553,
+          0.7483260647173013
+        ],
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": 1.1517521789431568,
+            "minimum": 0.9194994727220084
+          },
+          {
+            "maximum": -0.19968940998225532,
+            "minimum": -0.24832606471730134
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "107-02-8",
+            "errors": {
+              "mape_percent": 7.612410034201927,
+              "maximum_ape_percent": 8.171674543151042,
+              "mean_signed_error_percent": 7.612410034201927,
+              "median_ape_percent": 7.521681258986468,
+              "p95_ape_percent": 8.026788382441353,
+              "points": 101
+            },
+            "factor": 1.1640113184763041,
+            "name": "Acrolein"
+          },
+          {
+            "cas": "110-62-3",
+            "errors": {
+              "mape_percent": 2.0053917269297528,
+              "maximum_ape_percent": 2.853927223001773,
+              "mean_signed_error_percent": 2.0053917269297528,
+              "median_ape_percent": 1.8652938782278916,
+              "p95_ape_percent": 2.635725784955323,
+              "points": 101
+            },
+            "factor": 1.0401737517899097,
+            "name": "Pentanal"
+          },
+          {
+            "cas": "111-71-7",
+            "errors": {
+              "mape_percent": 0.24637495344132496,
+              "maximum_ape_percent": 0.45533602598424316,
+              "mean_signed_error_percent": 0.24637495344132496,
+              "median_ape_percent": 0.2506118964486159,
+              "p95_ape_percent": 0.3860992067555191,
+              "points": 101
+            },
+            "factor": 0.9736749175757814,
+            "name": "Heptanal"
+          },
+          {
+            "cas": "112-31-2",
+            "errors": {
+              "mape_percent": 1.999792487750499,
+              "maximum_ape_percent": 2.5364914231989277,
+              "mean_signed_error_percent": -1.999792487750499,
+              "median_ape_percent": 1.9828049699062045,
+              "p95_ape_percent": 2.5336717051204993,
+              "points": 101
+            },
+            "factor": 0.9006624168622986,
+            "name": "Decanal"
+          },
+          {
+            "cas": "123-38-6",
+            "errors": {
+              "mape_percent": 4.357655629711208,
+              "maximum_ape_percent": 7.848926925894395,
+              "mean_signed_error_percent": -4.150652056608362,
+              "median_ape_percent": 4.701917484449569,
+              "p95_ape_percent": 7.708774714600675,
+              "points": 101
+            },
+            "factor": 1.1259856711645015,
+            "name": "Propionaldehyde"
+          },
+          {
+            "cas": "123-72-8",
+            "errors": {
+              "mape_percent": 2.1641278971195774,
+              "maximum_ape_percent": 3.2820564377366024,
+              "mean_signed_error_percent": 2.1641278971195774,
+              "median_ape_percent": 2.0030101464645345,
+              "p95_ape_percent": 3.0313412722735134,
+              "points": 101
+            },
+            "factor": 1.084015769258094,
+            "name": "Butyraldehyde"
+          },
+          {
+            "cas": "124-13-0",
+            "errors": {
+              "mape_percent": 0.6404543408058204,
+              "maximum_ape_percent": 0.8979416347703606,
+              "mean_signed_error_percent": -0.6404543408058204,
+              "median_ape_percent": 0.6707443160368198,
+              "p95_ape_percent": 0.8958107687781824,
+              "points": 101
+            },
+            "factor": 0.9468041080562237,
+            "name": "Octanal"
+          },
+          {
+            "cas": "124-19-6",
+            "errors": {
+              "mape_percent": 1.5504394515389606,
+              "maximum_ape_percent": 1.9253048385516447,
+              "mean_signed_error_percent": -1.5504394515389606,
+              "median_ape_percent": 1.5576302471027814,
+              "p95_ape_percent": 1.9224829336342952,
+              "points": 101
+            },
+            "factor": 0.9223041152412886,
+            "name": "Nonanal"
+          },
+          {
+            "cas": "66-25-1",
+            "errors": {
+              "mape_percent": 1.4008037242067384,
+              "maximum_ape_percent": 2.5574292557597245,
+              "mean_signed_error_percent": 1.4008037242067384,
+              "median_ape_percent": 1.3565232522706028,
+              "p95_ape_percent": 2.3496140795039366,
+              "points": 101
+            },
+            "factor": 1.004454068487511,
+            "name": "Hexanal"
+          },
+          {
+            "cas": "75-07-0",
+            "errors": {
+              "mape_percent": 6.708770238210888,
+              "maximum_ape_percent": 7.846873088114103,
+              "mean_signed_error_percent": -6.708770238210888,
+              "median_ape_percent": 7.025371438816452,
+              "p95_ape_percent": 7.842817800739699,
+              "points": 101
+            },
+            "factor": 1.1777413354991992,
+            "name": "Acetaldehyde"
+          }
+        ],
+        "full_fit_A": 0.011004414117711718,
+        "full_fit_b": 0.7284702063174113,
+        "full_fit_log_coefficients": [
+          1.0554316725414918,
+          -0.22847020631741133
+        ],
+        "parameters": 2
+      },
+      "A_only": {
+        "LOOCV": {
+          "mape_percent": 8.894039041341976,
+          "maximum_ape_percent": 21.03545716011216,
+          "mean_signed_error_percent": 0.5771295548018088,
+          "median_ape_percent": 7.6553548543610015,
+          "p95_ape_percent": 20.31636828025183,
+          "points": 1010
+        },
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": 0.04442639638136131,
+            "minimum": 0.00914579226178574
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "107-02-8",
+            "errors": {
+              "mape_percent": 5.084446575869155,
+              "maximum_ape_percent": 5.25321960349876,
+              "mean_signed_error_percent": -5.084446575869155,
+              "median_ape_percent": 5.164470542513255,
+              "p95_ape_percent": 5.21356972670638,
+              "points": 101
+            },
+            "factor": 1.0266732103668752,
+            "name": "Acrolein"
+          },
+          {
+            "cas": "110-62-3",
+            "errors": {
+              "mape_percent": 1.3433248282610495,
+              "maximum_ape_percent": 2.186352897178656,
+              "mean_signed_error_percent": 1.3433248282610495,
+              "median_ape_percent": 1.204136285887314,
+              "p95_ape_percent": 1.9695676974988752,
+              "points": 101
+            },
+            "factor": 1.0334224948390252,
+            "name": "Pentanal"
+          },
+          {
+            "cas": "111-71-7",
+            "errors": {
+              "mape_percent": 6.97476838533016,
+              "maximum_ape_percent": 7.197754626450692,
+              "mean_signed_error_percent": 6.97476838533016,
+              "median_ape_percent": 6.979289705897385,
+              "p95_ape_percent": 7.123870730856785,
+              "points": 101
+            },
+            "factor": 1.0390265866336847,
+            "name": "Heptanal"
+          },
+          {
+            "cas": "112-31-2",
+            "errors": {
+              "mape_percent": 13.752013659164373,
+              "maximum_ape_percent": 14.315298310042524,
+              "mean_signed_error_percent": 13.752013659164373,
+              "median_ape_percent": 13.771731621104566,
+              "p95_ape_percent": 14.310320163968493,
+              "points": 101
+            },
+            "factor": 1.045428026592803,
+            "name": "Decanal"
+          },
+          {
+            "cas": "123-38-6",
+            "errors": {
+              "mape_percent": 13.406738562284312,
+              "maximum_ape_percent": 16.74787430807735,
+              "mean_signed_error_percent": -13.406738562284312,
+              "median_ape_percent": 13.904768776770716,
+              "p95_ape_percent": 16.62125647150323,
+              "points": 101
+            },
+            "factor": 1.0172502337298561,
+            "name": "Propionaldehyde"
+          },
+          {
+            "cas": "123-72-8",
+            "errors": {
+              "mape_percent": 3.0331272919352075,
+              "maximum_ape_percent": 3.5160726630432126,
+              "mean_signed_error_percent": -3.0331272919352075,
+              "median_ape_percent": 3.186048720819823,
+              "p95_ape_percent": 3.4397519847851554,
+              "points": 101
+            },
+            "factor": 1.0288701256965178,
+            "name": "Butyraldehyde"
+          },
+          {
+            "cas": "124-13-0",
+            "errors": {
+              "mape_percent": 9.269181019812919,
+              "maximum_ape_percent": 9.588432863844876,
+              "mean_signed_error_percent": 9.269181019812919,
+              "median_ape_percent": 9.23587007052622,
+              "p95_ape_percent": 9.58475000193031,
+              "points": 101
+            },
+            "factor": 1.0412337213009863,
+            "name": "Octanal"
+          },
+          {
+            "cas": "124-19-6",
+            "errors": {
+              "mape_percent": 11.35478512840932,
+              "maximum_ape_percent": 11.795063538898564,
+              "mean_signed_error_percent": 11.35478512840932,
+              "median_ape_percent": 11.346651730043167,
+              "p95_ape_percent": 11.789968886385683,
+              "points": 101
+            },
+            "factor": 1.0432040123245305,
+            "name": "Nonanal"
+          },
+          {
+            "cas": "66-25-1",
+            "errors": {
+              "mape_percent": 4.661769959741103,
+              "maximum_ape_percent": 5.855591614668132,
+              "mean_signed_error_percent": 4.661769959741103,
+              "median_ape_percent": 4.616065464339925,
+              "p95_ape_percent": 5.64109327370248,
+              "points": 101
+            },
+            "factor": 1.0367564830856406,
+            "name": "Hexanal"
+          },
+          {
+            "cas": "75-07-0",
+            "errors": {
+              "mape_percent": 20.06023500261216,
+              "maximum_ape_percent": 21.03545716011216,
+              "mean_signed_error_percent": -20.06023500261216,
+              "median_ape_percent": 20.331525515545945,
+              "p95_ape_percent": 21.031982249120684,
+              "points": 101
+            },
+            "factor": 1.009187742812644,
+            "name": "Acetaldehyde"
+          }
+        ],
+        "full_fit_A": 0.0039527315803059085,
+        "full_fit_b": 0.5,
+        "full_fit_log_coefficients": [
+          0.0315420760352936
+        ],
+        "parameters": 1
+      }
+    },
+    "compound_descriptors": [
+      {
+        "carbon_atoms": 3,
+        "cas": "107-02-8",
+        "name": "Acrolein",
+        "unsaturated": true
+      },
+      {
+        "carbon_atoms": 5,
+        "cas": "110-62-3",
+        "name": "Pentanal",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 7,
+        "cas": "111-71-7",
+        "name": "Heptanal",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 10,
+        "cas": "112-31-2",
+        "name": "Decanal",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 3,
+        "cas": "123-38-6",
+        "name": "Propionaldehyde",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 4,
+        "cas": "123-72-8",
+        "name": "Butyraldehyde",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 8,
+        "cas": "124-13-0",
+        "name": "Octanal",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 9,
+        "cas": "124-19-6",
+        "name": "Nonanal",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 6,
+        "cas": "66-25-1",
+        "name": "Hexanal",
+        "unsaturated": false
+      },
+      {
+        "carbon_atoms": 2,
+        "cas": "75-07-0",
+        "name": "Acetaldehyde",
+        "unsaturated": false
+      }
+    ],
+    "compounds": 10,
+    "ketone_A_b_refit_transferred": {
+      "compounds": [
+        {
+          "cas": "107-02-8",
+          "errors": {
+            "mape_percent": 0.25598630516973225,
+            "maximum_ape_percent": 0.7770192876328963,
+            "mean_signed_error_percent": 0.25598630516973225,
+            "median_ape_percent": 0.1714597822288111,
+            "p95_ape_percent": 0.6420375978881898,
+            "points": 101
+          },
+          "factor": 1.0844390787933567,
+          "name": "Acrolein"
+        },
+        {
+          "cas": "110-62-3",
+          "errors": {
+            "mape_percent": 2.288069975430604,
+            "maximum_ape_percent": 2.6090217012717076,
+            "mean_signed_error_percent": -2.288069975430604,
+            "median_ape_percent": 2.422271030464984,
+            "p95_ape_percent": 2.5325269088832703,
+            "points": 101
+          },
+          "factor": 0.9963922801294127,
+          "name": "Pentanal"
+        },
+        {
+          "cas": "111-71-7",
+          "errors": {
+            "mape_percent": 2.9625635588762402,
+            "maximum_ape_percent": 3.1096549536325013,
+            "mean_signed_error_percent": -2.9625635588762402,
+            "median_ape_percent": 2.9584622426145346,
+            "p95_ape_percent": 3.107560923836239,
+            "points": 101
+          },
+          "factor": 0.9425070779113777,
+          "name": "Heptanal"
+        },
+        {
+          "cas": "112-31-2",
+          "errors": {
+            "mape_percent": 3.599075031769837,
+            "maximum_ape_percent": 4.12701548332679,
+            "mean_signed_error_percent": -3.599075031769837,
+            "median_ape_percent": 3.5823647362033806,
+            "p95_ape_percent": 4.124241780721349,
+            "points": 101
+          },
+          "factor": 0.8859643491958389,
+          "name": "Decanal"
+        },
+        {
+          "cas": "123-38-6",
+          "errors": {
+            "mape_percent": 8.32812878512856,
+            "maximum_ape_percent": 11.865218862513483,
+            "mean_signed_error_percent": -8.32812878512856,
+            "median_ape_percent": 8.85536798279234,
+            "p95_ape_percent": 11.731175014121465,
+            "points": 101
+          },
+          "factor": 1.0769109613322037,
+          "name": "Propionaldehyde"
+        },
+        {
+          "cas": "123-72-8",
+          "errors": {
+            "mape_percent": 2.744075514283649,
+            "maximum_ape_percent": 3.22846051331952,
+            "mean_signed_error_percent": -2.744075514283649,
+            "median_ape_percent": 2.897452791744437,
+            "p95_ape_percent": 3.151912328211881,
+            "points": 101
+          },
+          "factor": 1.0319371188922304,
+          "name": "Butyraldehyde"
+        },
+        {
+          "cas": "124-13-0",
+          "errors": {
+            "mape_percent": 3.3255848923111615,
+            "maximum_ape_percent": 3.5761137506763796,
+            "mean_signed_error_percent": -3.3255848923111615,
+            "median_ape_percent": 3.355056299609338,
+            "p95_ape_percent": 3.5740404700257744,
+            "points": 101
+          },
+          "factor": 0.921217309928617,
+          "name": "Octanal"
+        },
+        {
+          "cas": "124-19-6",
+          "errors": {
+            "mape_percent": 3.6591795410885655,
+            "maximum_ape_percent": 4.026015499982183,
+            "mean_signed_error_percent": -3.6591795410885655,
+            "median_ape_percent": 3.666216313426718,
+            "p95_ape_percent": 4.0232540388494,
+            "points": 101
+          },
+          "factor": 0.902548824798844,
+          "name": "Nonanal"
+        },
+        {
+          "cas": "66-25-1",
+          "errors": {
+            "mape_percent": 2.3616005848427144,
+            "maximum_ape_percent": 3.3518349942577075,
+            "mean_signed_error_percent": -2.3616005848427144,
+            "median_ape_percent": 2.404238061533237,
+            "p95_ape_percent": 3.1741808805244798,
+            "points": 101
+          },
+          "factor": 0.9671845185754772,
+          "name": "Hexanal"
+        },
+        {
+          "cas": "75-07-0",
+          "errors": {
+            "mape_percent": 9.91675967907261,
+            "maximum_ape_percent": 11.015726782406432,
+            "mean_signed_error_percent": -9.91675967907261,
+            "median_ape_percent": 10.222473968753098,
+            "p95_ape_percent": 11.011810943500123,
+            "points": 101
+          },
+          "factor": 1.1372425471565537,
+          "name": "Acetaldehyde"
+        }
+      ],
+      "errors": {
+        "mape_percent": 3.9441023867973675,
+        "maximum_ape_percent": 11.865218862513483,
+        "mean_signed_error_percent": -3.892905125763421,
+        "median_ape_percent": 3.104057448555242,
+        "p95_ape_percent": 10.881908316998079,
+        "points": 1010
+      }
+    },
+    "ketone_position_refit_transferred_with_side_min_zero": {
+      "compounds": [
+        {
+          "cas": "107-02-8",
+          "errors": {
+            "mape_percent": 3.3123609971064396,
+            "maximum_ape_percent": 3.484285038848667,
+            "mean_signed_error_percent": -3.3123609971064396,
+            "median_ape_percent": 3.393879021490598,
+            "p95_ape_percent": 3.44389489376169,
+            "points": 101
+          },
+          "factor": 1.0458413311285313,
+          "name": "Acrolein"
+        },
+        {
+          "cas": "110-62-3",
+          "errors": {
+            "mape_percent": 7.60274274468792,
+            "maximum_ape_percent": 7.906237509059267,
+            "mean_signed_error_percent": -7.60274274468792,
+            "median_ape_percent": 7.729644438297156,
+            "p95_ape_percent": 7.833903363072925,
+            "points": 101
+          },
+          "factor": 0.9421972712152458,
+          "name": "Pentanal"
+        },
+        {
+          "cas": "111-71-7",
+          "errors": {
+            "mape_percent": 9.41890447900365,
+            "maximum_ape_percent": 9.556209215890599,
+            "mean_signed_error_percent": -9.41890447900365,
+            "median_ape_percent": 9.415076041921132,
+            "p95_ape_percent": 9.55425451139762,
+            "points": 101
+          },
+          "factor": 0.8797978057190828,
+          "name": "Heptanal"
+        },
+        {
+          "cas": "112-31-2",
+          "errors": {
+            "mape_percent": 11.298026856168605,
+            "maximum_ape_percent": 11.783803935288761,
+            "mean_signed_error_percent": -11.298026856168605,
+            "median_ape_percent": 11.282651109628306,
+            "p95_ape_percent": 11.781251751333077,
+            "points": 101
+          },
+          "factor": 0.8152077994548328,
+          "name": "Decanal"
+        },
+        {
+          "cas": "123-38-6",
+          "errors": {
+            "mape_percent": 11.734004745006859,
+            "maximum_ape_percent": 15.139681664758587,
+            "mean_signed_error_percent": -11.734004745006859,
+            "median_ape_percent": 12.241655476932678,
+            "p95_ape_percent": 15.010617934201598,
+            "points": 101
+          },
+          "factor": 1.0369005949512917,
+          "name": "Propionaldehyde"
+        },
+        {
+          "cas": "123-72-8",
+          "errors": {
+            "mape_percent": 7.281485500132393,
+            "maximum_ape_percent": 7.743271841623822,
+            "mean_signed_error_percent": -7.281485500132393,
+            "median_ape_percent": 7.427707063491107,
+            "p95_ape_percent": 7.670294960797575,
+            "points": 101
+          },
+          "factor": 0.983792784109651,
+          "name": "Butyraldehyde"
+        },
+        {
+          "cas": "124-13-0",
+          "errors": {
+            "mape_percent": 10.235816293581735,
+            "maximum_ape_percent": 10.46843749373073,
+            "mean_signed_error_percent": -10.235816293581735,
+            "median_ape_percent": 10.26318110169413,
+            "p95_ape_percent": 10.466512409984574,
+            "points": 101
+          },
+          "factor": 0.8553692282477334,
+          "name": "Octanal"
+        },
+        {
+          "cas": "124-19-6",
+          "errors": {
+            "mape_percent": 10.970309156418557,
+            "maximum_ape_percent": 11.309306601686709,
+            "mean_signed_error_percent": -10.970309156418557,
+            "median_ape_percent": 10.97681192090425,
+            "p95_ape_percent": 11.306754702816024,
+            "points": 101
+          },
+          "factor": 0.8340560362712398,
+          "name": "Nonanal"
+        },
+        {
+          "cas": "66-25-1",
+          "errors": {
+            "mape_percent": 8.308653538256568,
+            "maximum_ape_percent": 9.23857380380646,
+            "mean_signed_error_percent": -8.308653538256568,
+            "median_ape_percent": 8.348694010764335,
+            "p95_ape_percent": 9.07174041663258,
+            "points": 101
+          },
+          "factor": 0.908274319492497,
+          "name": "Hexanal"
+        },
+        {
+          "cas": "75-07-0",
+          "errors": {
+            "mape_percent": 12.157490982887088,
+            "maximum_ape_percent": 13.229122368927326,
+            "mean_signed_error_percent": -12.157490982887088,
+            "median_ape_percent": 12.455600932665167,
+            "p95_ape_percent": 13.225303932632059,
+            "points": 101
+          },
+          "factor": 1.108954766140184,
+          "name": "Acetaldehyde"
+        }
+      ],
+      "errors": {
+        "mape_percent": 9.231979529324981,
+        "maximum_ape_percent": 15.139681664758587,
+        "mean_signed_error_percent": -9.231979529324981,
+        "median_ape_percent": 9.517094795716064,
+        "p95_ape_percent": 13.206968949188209,
+        "points": 1010
+      }
+    },
+    "published_ketone_parameters": {
+      "mape_percent": 7.530594293973872,
+      "maximum_ape_percent": 21.75435799506372,
+      "mean_signed_error_percent": -2.6499847277890747,
+      "median_ape_percent": 6.280013406977714,
+      "p95_ape_percent": 21.04181576991124,
+      "points": 1010
+    }
+  },
+  "benzaldehyde_external_validation": {
+    "Tb_K": 452.15,
+    "Tb_source": "Perry 9th Table 2-10",
+    "Tc_K": 693.0,
+    "Tc_source": "ACS JCED 2015/IUPAC critical-property review Table 1",
+    "Tmax_K": 338.71,
+    "Tmin_K": 285.92999999999995,
+    "cas": "100-52-7",
+    "molecular_weight_g_mol": 106.122,
+    "name": "Benzaldehyde",
+    "points": 20,
+    "reference_slope_W_m_K2": -0.00034941511001070134,
+    "smiles": "O=Cc1ccccc1",
+    "variants": {
+      "aldehyde_A_b_refit": {
+        "errors": {
+          "mape_percent": 20.09972467621464,
+          "maximum_ape_percent": 23.13911166139171,
+          "mean_signed_error_percent": 20.09972467621464,
+          "median_ape_percent": 19.96598311604737,
+          "p95_ape_percent": 22.772131176328134,
+          "points": 20
+        },
+        "predicted_slope_W_m_K2": -0.000264442826951553,
+        "predictions": [
+          {
+            "predicted_W_m_K": 0.17948954919683593,
+            "reference_W_m_K": 0.15288,
+            "signed_error_percent": 17.405513603372547,
+            "temperature_C": 12.779999999999973
+          },
+          {
+            "predicted_W_m_K": 0.17873429811621447,
+            "reference_W_m_K": 0.15187,
+            "signed_error_percent": 17.689009097395434,
+            "temperature_C": 15.560000000000002
+          },
+          {
+            "predicted_W_m_K": 0.17798447963151975,
+            "reference_W_m_K": 0.15101,
+            "signed_error_percent": 17.862710834726016,
+            "temperature_C": 18.329999999999984
+          },
+          {
+            "predicted_W_m_K": 0.17723457623043706,
+            "reference_W_m_K": 0.15,
+            "signed_error_percent": 18.156384153624707,
+            "temperature_C": 21.110000000000014
+          },
+          {
+            "predicted_W_m_K": 0.1764871978825384,
+            "reference_W_m_K": 0.14899,
+            "signed_error_percent": 18.455733863036695,
+            "temperature_C": 23.889999999999986
+          },
+          {
+            "predicted_W_m_K": 0.1757422448489589,
+            "reference_W_m_K": 0.14798,
+            "signed_error_percent": 18.760808791025063,
+            "temperature_C": 26.670000000000016
+          },
+          {
+            "predicted_W_m_K": 0.17500228661406597,
+            "reference_W_m_K": 0.14711,
+            "signed_error_percent": 18.960156763011348,
+            "temperature_C": 29.439999999999998
+          },
+          {
+            "predicted_W_m_K": 0.17426188489675842,
+            "reference_W_m_K": 0.1461,
+            "signed_error_percent": 19.275759682928406,
+            "temperature_C": 32.22000000000003
+          },
+          {
+            "predicted_W_m_K": 0.17352362101676042,
+            "reference_W_m_K": 0.14509,
+            "signed_error_percent": 19.597230006727152,
+            "temperature_C": 35.0
+          },
+          {
+            "predicted_W_m_K": 0.1727874025207955,
+            "reference_W_m_K": 0.14423,
+            "signed_error_percent": 19.799904680576507,
+            "temperature_C": 37.77999999999997
+          },
+          {
+            "predicted_W_m_K": 0.17205313855408438,
+            "reference_W_m_K": 0.14322,
+            "signed_error_percent": 20.132061551518234,
+            "temperature_C": 40.56
+          },
+          {
+            "predicted_W_m_K": 0.171323371067614,
+            "reference_W_m_K": 0.14221,
+            "signed_error_percent": 20.472098352868294,
+            "temperature_C": 43.329999999999984
+          },
+          {
+            "predicted_W_m_K": 0.17059274333792018,
+            "reference_W_m_K": 0.1412,
+            "signed_error_percent": 20.81639046594914,
+            "temperature_C": 46.110000000000014
+          },
+          {
+            "predicted_W_m_K": 0.16986380665376574,
+            "reference_W_m_K": 0.14033,
+            "signed_error_percent": 21.04596782852257,
+            "temperature_C": 48.889999999999986
+          },
+          {
+            "predicted_W_m_K": 0.1691364757442825,
+            "reference_W_m_K": 0.13932,
+            "signed_error_percent": 21.4014324894362,
+            "temperature_C": 51.670000000000016
+          },
+          {
+            "predicted_W_m_K": 0.16841327474429296,
+            "reference_W_m_K": 0.13831,
+            "signed_error_percent": 21.76507464701971,
+            "temperature_C": 54.44
+          },
+          {
+            "predicted_W_m_K": 0.16768889930895856,
+            "reference_W_m_K": 0.1373,
+            "signed_error_percent": 22.133211441339085,
+            "temperature_C": 57.22000000000003
+          },
+          {
+            "predicted_W_m_K": 0.16696588110204186,
+            "reference_W_m_K": 0.13644,
+            "signed_error_percent": 22.373117195867675,
+            "temperature_C": 60.0
+          },
+          {
+            "predicted_W_m_K": 0.1662441392694211,
+            "reference_W_m_K": 0.13543,
+            "signed_error_percent": 22.752816413956367,
+            "temperature_C": 62.77999999999997
+          },
+          {
+            "predicted_W_m_K": 0.16552359389524274,
+            "reference_W_m_K": 0.13442,
+            "signed_error_percent": 23.13911166139171,
+            "temperature_C": 65.56
+          }
+        ],
+        "slope_ratio_predicted_over_reference": 0.7568156595845384
+      },
+      "ketone_A_b_refit_transferred": {
+        "errors": {
+          "mape_percent": 16.02901042151999,
+          "maximum_ape_percent": 18.965379052912713,
+          "mean_signed_error_percent": 16.02901042151999,
+          "median_ape_percent": 15.899801958134452,
+          "p95_ape_percent": 18.610837169983945,
+          "points": 20
+        },
+        "predicted_slope_W_m_K2": -0.0002554796824637073,
+        "predictions": [
+          {
+            "predicted_W_m_K": 0.17340584943437526,
+            "reference_W_m_K": 0.15288,
+            "signed_error_percent": 13.426118154353262,
+            "temperature_C": 12.779999999999973
+          },
+          {
+            "predicted_W_m_K": 0.17267619717463412,
+            "reference_W_m_K": 0.15187,
+            "signed_error_percent": 13.700004724194459,
+            "temperature_C": 15.560000000000002
+          },
+          {
+            "predicted_W_m_K": 0.17195179337596228,
+            "reference_W_m_K": 0.15101,
+            "signed_error_percent": 13.86781893646929,
+            "temperature_C": 18.329999999999984
+          },
+          {
+            "predicted_W_m_K": 0.17122730753909682,
+            "reference_W_m_K": 0.15,
+            "signed_error_percent": 14.151538359397886,
+            "temperature_C": 21.110000000000014
+          },
+          {
+            "predicted_W_m_K": 0.17050526117012352,
+            "reference_W_m_K": 0.14899,
+            "signed_error_percent": 14.440741774698651,
+            "temperature_C": 23.889999999999986
+          },
+          {
+            "predicted_W_m_K": 0.1697855579107716,
+            "reference_W_m_K": 0.14798,
+            "signed_error_percent": 14.73547635543424,
+            "temperature_C": 26.670000000000016
+          },
+          {
+            "predicted_W_m_K": 0.16907068015414606,
+            "reference_W_m_K": 0.14711,
+            "signed_error_percent": 14.928067537316348,
+            "temperature_C": 29.439999999999998
+          },
+          {
+            "predicted_W_m_K": 0.16835537394669892,
+            "reference_W_m_K": 0.1461,
+            "signed_error_percent": 15.232973269472216,
+            "temperature_C": 32.22000000000003
+          },
+          {
+            "predicted_W_m_K": 0.167642133115739,
+            "reference_W_m_K": 0.14509,
+            "signed_error_percent": 15.54354753307534,
+            "temperature_C": 35.0
+          },
+          {
+            "predicted_W_m_K": 0.16693086834164292,
+            "reference_W_m_K": 0.14423,
+            "signed_error_percent": 15.739352660086613,
+            "temperature_C": 37.77999999999997
+          },
+          {
+            "predicted_W_m_K": 0.16622149184910426,
+            "reference_W_m_K": 0.14322,
+            "signed_error_percent": 16.06025125618229,
+            "temperature_C": 40.56
+          },
+          {
+            "predicted_W_m_K": 0.16551645943107635,
+            "reference_W_m_K": 0.14221,
+            "signed_error_percent": 16.38876269676981,
+            "temperature_C": 43.329999999999984
+          },
+          {
+            "predicted_W_m_K": 0.16481059592729694,
+            "reference_W_m_K": 0.1412,
+            "signed_error_percent": 16.721385217632402,
+            "temperature_C": 46.110000000000014
+          },
+          {
+            "predicted_W_m_K": 0.16410636615199642,
+            "reference_W_m_K": 0.14033,
+            "signed_error_percent": 16.94318118149818,
+            "temperature_C": 48.889999999999986
+          },
+          {
+            "predicted_W_m_K": 0.1634036877245159,
+            "reference_W_m_K": 0.13932,
+            "signed_error_percent": 17.286597562816475,
+            "temperature_C": 51.670000000000016
+          },
+          {
+            "predicted_W_m_K": 0.1627049992255134,
+            "reference_W_m_K": 0.13831,
+            "signed_error_percent": 17.63791426904302,
+            "temperature_C": 54.44
+          },
+          {
+            "predicted_W_m_K": 0.1620051760980075,
+            "reference_W_m_K": 0.1373,
+            "signed_error_percent": 17.99357326876001,
+            "temperature_C": 57.22000000000003
+          },
+          {
+            "predicted_W_m_K": 0.16130666419640693,
+            "reference_W_m_K": 0.13644,
+            "signed_error_percent": 18.22534754940408,
+            "temperature_C": 60.0
+          },
+          {
+            "predicted_W_m_K": 0.16060938540709607,
+            "reference_W_m_K": 0.13543,
+            "signed_error_percent": 18.592177070882432,
+            "temperature_C": 62.77999999999997
+          },
+          {
+            "predicted_W_m_K": 0.1599132625229253,
+            "reference_W_m_K": 0.13442,
+            "signed_error_percent": 18.965379052912713,
+            "temperature_C": 65.56
+          }
+        ],
+        "slope_ratio_predicted_over_reference": 0.7311638081589628
+      },
+      "published_ketone_parameters": {
+        "errors": {
+          "mape_percent": 21.341691324052736,
+          "maximum_ape_percent": 24.412508999646775,
+          "mean_signed_error_percent": 21.341691324052736,
+          "median_ape_percent": 21.20656672526814,
+          "p95_ape_percent": 24.041733522345847,
+          "points": 20
+        },
+        "predicted_slope_W_m_K2": -0.00026717746412261486,
+        "predictions": [
+          {
+            "predicted_W_m_K": 0.18134567363291562,
+            "reference_W_m_K": 0.15288,
+            "signed_error_percent": 18.61961906914942,
+            "temperature_C": 12.779999999999973
+          },
+          {
+            "predicted_W_m_K": 0.18058261240405774,
+            "reference_W_m_K": 0.15187,
+            "signed_error_percent": 18.906046226415828,
+            "temperature_C": 15.560000000000002
+          },
+          {
+            "predicted_W_m_K": 0.17982503995029744,
+            "reference_W_m_K": 0.15101,
+            "signed_error_percent": 19.08154423567805,
+            "temperature_C": 18.329999999999984
+          },
+          {
+            "predicted_W_m_K": 0.1790673817020179,
+            "reference_W_m_K": 0.15,
+            "signed_error_percent": 19.378254468011956,
+            "temperature_C": 21.110000000000014
+          },
+          {
+            "predicted_W_m_K": 0.17831227461882107,
+            "reference_W_m_K": 0.14899,
+            "signed_error_percent": 19.680699791141066,
+            "temperature_C": 23.889999999999986
+          },
+          {
+            "predicted_W_m_K": 0.17755961793042965,
+            "reference_W_m_K": 0.14798,
+            "signed_error_percent": 19.988929538065726,
+            "temperature_C": 26.670000000000016
+          },
+          {
+            "predicted_W_m_K": 0.1768120076925783,
+            "reference_W_m_K": 0.14711,
+            "signed_error_percent": 20.19033899298368,
+            "temperature_C": 29.439999999999998
+          },
+          {
+            "predicted_W_m_K": 0.17606394938620382,
+            "reference_W_m_K": 0.1461,
+            "signed_error_percent": 20.509205603151127,
+            "temperature_C": 32.22000000000003
+          },
+          {
+            "predicted_W_m_K": 0.17531805102478853,
+            "reference_W_m_K": 0.14509,
+            "signed_error_percent": 20.83400029277589,
+            "temperature_C": 35.0
+          },
+          {
+            "predicted_W_m_K": 0.1745742191989848,
+            "reference_W_m_K": 0.14423,
+            "signed_error_percent": 21.03877085140735,
+            "temperature_C": 37.77999999999997
+          },
+          {
+            "predicted_W_m_K": 0.17383236211447242,
+            "reference_W_m_K": 0.14322,
+            "signed_error_percent": 21.374362599128926,
+            "temperature_C": 40.56
+          },
+          {
+            "predicted_W_m_K": 0.17309504800887934,
+            "reference_W_m_K": 0.14221,
+            "signed_error_percent": 21.717915764629314,
+            "temperature_C": 43.329999999999984
+          },
+          {
+            "predicted_W_m_K": 0.1723568647641774,
+            "reference_W_m_K": 0.1412,
+            "signed_error_percent": 22.06576824658455,
+            "temperature_C": 46.110000000000014
+          },
+          {
+            "predicted_W_m_K": 0.17162039005233348,
+            "reference_W_m_K": 0.14033,
+            "signed_error_percent": 22.29771969809269,
+            "temperature_C": 48.889999999999986
+          },
+          {
+            "predicted_W_m_K": 0.1708855377206825,
+            "reference_W_m_K": 0.13932,
+            "signed_error_percent": 22.656860264629984,
+            "temperature_C": 51.670000000000016
+          },
+          {
+            "predicted_W_m_K": 0.17015485800644867,
+            "reference_W_m_K": 0.13831,
+            "signed_error_percent": 23.024262892378488,
+            "temperature_C": 54.44
+          },
+          {
+            "predicted_W_m_K": 0.16942299171188355,
+            "reference_W_m_K": 0.1373,
+            "signed_error_percent": 23.39620663647746,
+            "temperature_C": 57.22000000000003
+          },
+          {
+            "predicted_W_m_K": 0.16869249668100916,
+            "reference_W_m_K": 0.13644,
+            "signed_error_percent": 23.63859328716591,
+            "temperature_C": 60.0
+          },
+          {
+            "predicted_W_m_K": 0.16796329122358095,
+            "reference_W_m_K": 0.13543,
+            "signed_error_percent": 24.022219023540536,
+            "temperature_C": 62.77999999999997
+          },
+          {
+            "predicted_W_m_K": 0.1672352945973252,
+            "reference_W_m_K": 0.13442,
+            "signed_error_percent": 24.412508999646775,
+            "temperature_C": 65.56
+          }
+        ],
+        "slope_ratio_predicted_over_reference": 0.7646419873325804
+      }
+    }
+  },
+  "ketones": {
+    "compound_descriptors": [
+      {
+        "branched": false,
+        "cas": "111-13-7",
+        "molecular_weight_g_mol": 128.21204,
+        "name": "2-Octanone",
+        "published_errors": {
+          "mape_percent": 12.735684231009005,
+          "maximum_ape_percent": 13.884814891568631,
+          "mean_signed_error_percent": 12.735684231009005,
+          "median_ape_percent": 12.891822394383535,
+          "p95_ape_percent": 13.872185998910558,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 6.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": false,
+        "cas": "110-43-0",
+        "molecular_weight_g_mol": 114.18546,
+        "name": "2-Heptanone",
+        "published_errors": {
+          "mape_percent": 11.23012388547935,
+          "maximum_ape_percent": 11.40615187632925,
+          "mean_signed_error_percent": 11.23012388547935,
+          "median_ape_percent": 11.229228149902792,
+          "p95_ape_percent": 11.402894618737403,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 5.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": false,
+        "cas": "67-64-1",
+        "molecular_weight_g_mol": 58.07914,
+        "name": "Acetone",
+        "published_errors": {
+          "mape_percent": 9.98758192392008,
+          "maximum_ape_percent": 11.072137691424311,
+          "mean_signed_error_percent": -9.98758192392008,
+          "median_ape_percent": 10.20272495905774,
+          "p95_ape_percent": 11.06786461170527,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 1.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": false,
+        "cas": "106-35-4",
+        "molecular_weight_g_mol": 114.18546,
+        "name": "3-Heptanone",
+        "published_errors": {
+          "mape_percent": 8.026823402333207,
+          "maximum_ape_percent": 12.015982198459806,
+          "mean_signed_error_percent": 6.535346124370066,
+          "median_ape_percent": 9.132943070784183,
+          "p95_ape_percent": 11.686997920886233,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 4.0,
+        "side_min_carbons": 2.0
+      },
+      {
+        "branched": false,
+        "cas": "591-78-6",
+        "molecular_weight_g_mol": 100.15888,
+        "name": "2-Hexanone",
+        "published_errors": {
+          "mape_percent": 7.552355838338027,
+          "maximum_ape_percent": 9.462966844139764,
+          "mean_signed_error_percent": 7.552355838338027,
+          "median_ape_percent": 7.572702844626189,
+          "p95_ape_percent": 9.1957197587762,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 4.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": false,
+        "cas": "106-68-3",
+        "molecular_weight_g_mol": 128.21204,
+        "name": "3-Octanone",
+        "published_errors": {
+          "mape_percent": 6.877340122277642,
+          "maximum_ape_percent": 7.27950364888843,
+          "mean_signed_error_percent": 6.877340122277642,
+          "median_ape_percent": 6.865209569456265,
+          "p95_ape_percent": 7.275877289998411,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 5.0,
+        "side_min_carbons": 2.0
+      },
+      {
+        "branched": false,
+        "cas": "107-87-9",
+        "molecular_weight_g_mol": 86.1323,
+        "name": "2-Pentanone",
+        "published_errors": {
+          "mape_percent": 3.6168749003161107,
+          "maximum_ape_percent": 6.442493095861912,
+          "mean_signed_error_percent": 3.6168749003161107,
+          "median_ape_percent": 3.6228620842183146,
+          "p95_ape_percent": 6.072585316897605,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 3.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": false,
+        "cas": "78-93-3",
+        "molecular_weight_g_mol": 72.10572,
+        "name": "Methylethyl ketone",
+        "published_errors": {
+          "mape_percent": 2.204878820594627,
+          "maximum_ape_percent": 5.386997826123419,
+          "mean_signed_error_percent": 1.5714429682555198,
+          "median_ape_percent": 1.9417070746783782,
+          "p95_ape_percent": 4.932750695753874,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 2.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": false,
+        "cas": "96-22-0",
+        "molecular_weight_g_mol": 86.1323,
+        "name": "3-Pentanone",
+        "published_errors": {
+          "mape_percent": 1.7841270724771239,
+          "maximum_ape_percent": 4.0139650139552785,
+          "mean_signed_error_percent": 1.5033770715110928,
+          "median_ape_percent": 1.5969408868054202,
+          "p95_ape_percent": 3.7525726657235303,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 2.0,
+        "side_min_carbons": 2.0
+      },
+      {
+        "branched": false,
+        "cas": "589-38-8",
+        "molecular_weight_g_mol": 100.15888,
+        "name": "3-Hexanone",
+        "published_errors": {
+          "mape_percent": 0.33441425612805553,
+          "maximum_ape_percent": 1.5064156999699208,
+          "mean_signed_error_percent": -0.15214090935278293,
+          "median_ape_percent": 0.31956887185409233,
+          "p95_ape_percent": 0.8046409890264616,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 3.0,
+        "side_min_carbons": 2.0
+      },
+      {
+        "branched": true,
+        "cas": "565-80-0",
+        "molecular_weight_g_mol": 114.18546,
+        "name": "Diisopropyl ketone",
+        "published_errors": {
+          "mape_percent": 0.3162751419651375,
+          "maximum_ape_percent": 1.6494658403148788,
+          "mean_signed_error_percent": -0.19484387073825338,
+          "median_ape_percent": 0.26302591414208987,
+          "p95_ape_percent": 0.9176647959437401,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 3.0,
+        "side_min_carbons": 3.0
+      },
+      {
+        "branched": true,
+        "cas": "563-80-4",
+        "molecular_weight_g_mol": 86.1323,
+        "name": "Methylisopropyl ketone",
+        "published_errors": {
+          "mape_percent": 0.3162226977146549,
+          "maximum_ape_percent": 1.1965258819892854,
+          "mean_signed_error_percent": -0.21735443849361175,
+          "median_ape_percent": 0.24993833306221624,
+          "p95_ape_percent": 0.5797888348158753,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 3.0,
+        "side_min_carbons": 1.0
+      },
+      {
+        "branched": true,
+        "cas": "565-69-5",
+        "molecular_weight_g_mol": 100.15888,
+        "name": "Ethylisopropyl ketone",
+        "published_errors": {
+          "mape_percent": 0.29312956751055935,
+          "maximum_ape_percent": 1.2129527814733976,
+          "mean_signed_error_percent": -0.029533788045207926,
+          "median_ape_percent": 0.2804924728606051,
+          "p95_ape_percent": 0.5602289739777611,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 3.0,
+        "side_min_carbons": 2.0
+      },
+      {
+        "branched": true,
+        "cas": "108-10-1",
+        "molecular_weight_g_mol": 100.15888,
+        "name": "Methylisobutyl ketone",
+        "published_errors": {
+          "mape_percent": 0.275279957705655,
+          "maximum_ape_percent": 1.0916800842307395,
+          "mean_signed_error_percent": -0.11730408707089486,
+          "median_ape_percent": 0.27241244969778977,
+          "p95_ape_percent": 0.4935674309316962,
+          "points": 101,
+          "within_20_percent": 100.0
+        },
+        "side_max_carbons": 4.0,
+        "side_min_carbons": 1.0
+      }
+    ],
+    "compounds": 14,
+    "models": {
+      "A_and_b": {
+        "LOOCV": {
+          "mape_percent": 4.0211940951507215,
+          "maximum_ape_percent": 16.77395218294202,
+          "mean_signed_error_percent": 0.00010339134672443501,
+          "median_ape_percent": 3.853763129986365,
+          "p95_ape_percent": 7.018731243603054,
+          "points": 1414
+        },
+        "LOOCV_A_range": [
+          0.0072967234361953695,
+          0.010481870247375263
+        ],
+        "LOOCV_b_range": [
+          0.647767155205391,
+          0.725057366597796
+        ],
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": 1.0067823184974922,
+            "minimum": 0.644560599844212
+          },
+          {
+            "maximum": -0.147767155205391,
+            "minimum": -0.22505736659779602
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "111-13-7",
+            "errors": {
+              "mape_percent": 4.801560606330772,
+              "maximum_ape_percent": 5.869817630614715,
+              "mean_signed_error_percent": 4.801560606330772,
+              "median_ape_percent": 4.946710061922199,
+              "p95_ape_percent": 5.858077535468054,
+              "points": 101
+            },
+            "factor": 0.9296218967508082,
+            "name": "2-Octanone"
+          },
+          {
+            "cas": "110-43-0",
+            "errors": {
+              "mape_percent": 5.468425997998915,
+              "maximum_ape_percent": 5.635335774577466,
+              "mean_signed_error_percent": 5.468425997998915,
+              "median_ape_percent": 5.467576661343787,
+              "p95_ape_percent": 5.632247242269095,
+              "points": 101
+            },
+            "factor": 0.948200202551131,
+            "name": "2-Heptanone"
+          },
+          {
+            "cas": "67-64-1",
+            "errors": {
+              "mape_percent": 5.9048373832443275,
+              "maximum_ape_percent": 7.038585964734445,
+              "mean_signed_error_percent": -5.9048373832443275,
+              "median_ape_percent": 6.129738783626992,
+              "p95_ape_percent": 7.034119068503553,
+              "points": 101
+            },
+            "factor": 1.0453575698546944,
+            "name": "Acetone"
+          },
+          {
+            "cas": "106-35-4",
+            "errors": {
+              "mape_percent": 4.282487712618431,
+              "maximum_ape_percent": 16.77395218294202,
+              "mean_signed_error_percent": 0.4436379126872575,
+              "median_ape_percent": 3.7829803086220304,
+              "p95_ape_percent": 11.626875237748669,
+              "points": 101
+            },
+            "factor": 0.9428198392994255,
+            "name": "3-Heptanone"
+          },
+          {
+            "cas": "591-78-6",
+            "errors": {
+              "mape_percent": 4.3461086266367985,
+              "maximum_ape_percent": 6.19976233789814,
+              "mean_signed_error_percent": 4.3461086266367985,
+              "median_ape_percent": 4.365849067576666,
+              "p95_ape_percent": 5.940482165166139,
+              "points": 101
+            },
+            "factor": 0.9701889634428785,
+            "name": "2-Hexanone"
+          },
+          {
+            "cas": "106-68-3",
+            "errors": {
+              "mape_percent": 1.9101062352813345,
+              "maximum_ape_percent": 2.259961392255172,
+              "mean_signed_error_percent": -1.9101062352813345,
+              "median_ape_percent": 1.9212394150198486,
+              "p95_ape_percent": 2.257863850318642,
+              "points": 101
+            },
+            "factor": 0.9177800799729361,
+            "name": "3-Octanone"
+          },
+          {
+            "cas": "107-87-9",
+            "errors": {
+              "mape_percent": 3.5842737346118825,
+              "maximum_ape_percent": 6.4090029007684235,
+              "mean_signed_error_percent": 3.5842737346118825,
+              "median_ape_percent": 3.5902590347555163,
+              "p95_ape_percent": 6.0392115065610374,
+              "points": 101
+            },
+            "factor": 0.999685368182204,
+            "name": "2-Pentanone"
+          },
+          {
+            "cas": "78-93-3",
+            "errors": {
+              "mape_percent": 6.135789739440197,
+              "maximum_ape_percent": 10.122805344412278,
+              "mean_signed_error_percent": 6.135789739440197,
+              "median_ape_percent": 6.168888531342787,
+              "p95_ape_percent": 9.648145572829492,
+              "points": 101
+            },
+            "factor": 1.0449373036140797,
+            "name": "Methylethyl ketone"
+          },
+          {
+            "cas": "96-22-0",
+            "errors": {
+              "mape_percent": 1.64499935588998,
+              "maximum_ape_percent": 3.7591601296552923,
+              "mean_signed_error_percent": 1.2547224197314593,
+              "median_ape_percent": 1.48244799094841,
+              "p95_ape_percent": 3.4984081189689764,
+              "points": 101
+            },
+            "factor": 0.9975502819812148,
+            "name": "3-Pentanone"
+          },
+          {
+            "cas": "589-38-8",
+            "errors": {
+              "mape_percent": 3.6936460859790956,
+              "maximum_ape_percent": 4.999886084210836,
+              "mean_signed_error_percent": -3.6936460859790956,
+              "median_ape_percent": 3.7106333773641365,
+              "p95_ape_percent": 4.323002630769213,
+              "points": 101
+            },
+            "factor": 0.9645309853523134,
+            "name": "3-Hexanone"
+          },
+          {
+            "cas": "565-80-0",
+            "errors": {
+              "mape_percent": 6.66394364510312,
+              "maximum_ape_percent": 8.024280960257812,
+              "mean_signed_error_percent": -6.66394364510312,
+              "median_ape_percent": 6.659010797608289,
+              "p95_ape_percent": 7.3399132765929025,
+              "points": 101
+            },
+            "factor": 0.9351827097390993,
+            "name": "Diisopropyl ketone"
+          },
+          {
+            "cas": "563-80-4",
+            "errors": {
+              "mape_percent": 0.6370995551116472,
+              "maximum_ape_percent": 1.6121520215104046,
+              "mean_signed_error_percent": -0.6370995551116472,
+              "median_ape_percent": 0.6589830893531268,
+              "p95_ape_percent": 0.9980093369371223,
+              "points": 101
+            },
+            "factor": 0.9957934056142127,
+            "name": "Methylisopropyl ketone"
+          },
+          {
+            "cas": "565-69-5",
+            "errors": {
+              "mape_percent": 3.566060932273561,
+              "maximum_ape_percent": 4.707615627656159,
+              "mean_signed_error_percent": -3.566060932273561,
+              "median_ape_percent": 3.600609851179204,
+              "p95_ape_percent": 4.077982394310675,
+              "points": 101
+            },
+            "factor": 0.964624280767779,
+            "name": "Ethylisopropyl ketone"
+          },
+          {
+            "cas": "108-10-1",
+            "errors": {
+              "mape_percent": 3.6573777215900525,
+              "maximum_ape_percent": 4.597219581018363,
+              "mean_signed_error_percent": -3.6573777215900525,
+              "median_ape_percent": 3.6690873006772096,
+              "p95_ape_percent": 4.020305422764581,
+              "points": 101
+            },
+            "factor": 0.9645576883747196,
+            "name": "Methylisobutyl ketone"
+          }
+        ],
+        "full_fit_A": 0.009188359389310691,
+        "full_fit_b": 0.6971969520394397,
+        "full_fit_log_coefficients": [
+          0.8750725959444957,
+          -0.19719695203943963
+        ],
+        "parameters": 2
+      },
+      "A_b_branch": {
+        "LOOCV": {
+          "mape_percent": 3.386100074359676,
+          "maximum_ape_percent": 18.205650710859466,
+          "mean_signed_error_percent": -0.1253466239739734,
+          "median_ape_percent": 3.694326028857897,
+          "p95_ape_percent": 8.050513783282396,
+          "points": 1414
+        },
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": 0.9986295804073755,
+            "minimum": 0.5911797505447256
+          },
+          {
+            "maximum": -0.139758097848281,
+            "minimum": -0.22621269823362322
+          },
+          {
+            "maximum": 0.05813397599468258,
+            "minimum": 0.03804904899260745
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "111-13-7",
+            "errors": {
+              "mape_percent": 2.90790202548243,
+              "maximum_ape_percent": 3.956856721930002,
+              "mean_signed_error_percent": 2.90790202548243,
+              "median_ape_percent": 3.050428776693348,
+              "p95_ape_percent": 3.945328758470934,
+              "points": 101
+            },
+            "factor": 0.9128245659520878,
+            "name": "2-Octanone"
+          },
+          {
+            "cas": "110-43-0",
+            "errors": {
+              "mape_percent": 3.865150173954996,
+              "maximum_ape_percent": 4.029522675448116,
+              "mean_signed_error_percent": 3.865150173954996,
+              "median_ape_percent": 3.864313748471271,
+              "p95_ape_percent": 4.026481093391787,
+              "points": 101
+            },
+            "factor": 0.9337861592323029,
+            "name": "2-Heptanone"
+          },
+          {
+            "cas": "67-64-1",
+            "errors": {
+              "mape_percent": 7.846374124973214,
+              "maximum_ape_percent": 8.956729213475679,
+              "mean_signed_error_percent": -7.846374124973214,
+              "median_ape_percent": 8.066634964460228,
+              "p95_ape_percent": 8.95235448609718,
+              "points": 101
+            },
+            "factor": 1.0237879155422431,
+            "name": "Acetone"
+          },
+          {
+            "cas": "106-35-4",
+            "errors": {
+              "mape_percent": 3.715491866394533,
+              "maximum_ape_percent": 18.205650710859466,
+              "mean_signed_error_percent": -1.2842467137024351,
+              "median_ape_percent": 2.468082910341174,
+              "p95_ape_percent": 13.14711650773781,
+              "points": 101
+            },
+            "factor": 0.9266009533686232,
+            "name": "3-Heptanone"
+          },
+          {
+            "cas": "591-78-6",
+            "errors": {
+              "mape_percent": 2.8927894721854486,
+              "maximum_ape_percent": 4.7206257334263535,
+              "mean_signed_error_percent": 2.8927894721854486,
+              "median_ape_percent": 2.9122549708077594,
+              "p95_ape_percent": 4.464956781528162,
+              "points": 101
+            },
+            "factor": 0.9566762965828812,
+            "name": "2-Hexanone"
+          },
+          {
+            "cas": "106-68-3",
+            "errors": {
+              "mape_percent": 4.004621152010434,
+              "maximum_ape_percent": 4.347005846769958,
+              "mean_signed_error_percent": -4.004621152010434,
+              "median_ape_percent": 4.015516604801384,
+              "p95_ape_percent": 4.344953093676651,
+              "points": 101
+            },
+            "factor": 0.8981827086841973,
+            "name": "3-Octanone"
+          },
+          {
+            "cas": "107-87-9",
+            "errors": {
+              "mape_percent": 2.2667463219525703,
+              "maximum_ape_percent": 4.996024154171685,
+              "mean_signed_error_percent": 2.2088038657215883,
+              "median_ape_percent": 2.214709688549732,
+              "p95_ape_percent": 4.63114312813282,
+              "points": 101
+            },
+            "factor": 0.9864107942268173,
+            "name": "2-Pentanone"
+          },
+          {
+            "cas": "78-93-3",
+            "errors": {
+              "mape_percent": 4.754960013264944,
+              "maximum_ape_percent": 8.690104428701574,
+              "mean_signed_error_percent": 4.754960013264944,
+              "median_ape_percent": 4.787628188917625,
+              "p95_ape_percent": 8.221619994618322,
+              "points": 101
+            },
+            "factor": 1.0313426387572773,
+            "name": "Methylethyl ketone"
+          },
+          {
+            "cas": "96-22-0",
+            "errors": {
+              "mape_percent": 1.273761132986589,
+              "maximum_ape_percent": 3.0062413006836652,
+              "mean_signed_error_percent": -0.15395066079346545,
+              "median_ape_percent": 1.2364906266925324,
+              "p95_ape_percent": 2.6311726784567613,
+              "points": 101
+            },
+            "factor": 0.9836721912105748,
+            "name": "3-Pentanone"
+          },
+          {
+            "cas": "589-38-8",
+            "errors": {
+              "mape_percent": 5.287535580807598,
+              "maximum_ape_percent": 6.572157044785976,
+              "mean_signed_error_percent": -5.287535580807598,
+              "median_ape_percent": 5.304241729109293,
+              "p95_ape_percent": 5.9064761484116435,
+              "points": 101
+            },
+            "factor": 0.9485678038745665,
+            "name": "3-Hexanone"
+          },
+          {
+            "cas": "565-80-0",
+            "errors": {
+              "mape_percent": 3.871356459048708,
+              "maximum_ape_percent": 5.272394664120683,
+              "mean_signed_error_percent": -3.871356459048708,
+              "median_ape_percent": 3.866276022216575,
+              "p95_ape_percent": 4.567550901879169,
+              "points": 101
+            },
+            "factor": 0.9631630996744411,
+            "name": "Diisopropyl ketone"
+          },
+          {
+            "cas": "563-80-4",
+            "errors": {
+              "mape_percent": 4.156125502275069,
+              "maximum_ape_percent": 4.6440003074212255,
+              "mean_signed_error_percent": 4.156125502275069,
+              "median_ape_percent": 4.133186315428827,
+              "p95_ape_percent": 4.635505157798203,
+              "points": 101
+            },
+            "factor": 1.0438300660015358,
+            "name": "Methylisopropyl ketone"
+          },
+          {
+            "cas": "565-69-5",
+            "errors": {
+              "mape_percent": 0.28988437528481964,
+              "maximum_ape_percent": 1.171655005901362,
+              "mean_signed_error_percent": 0.012258714045887286,
+              "median_ape_percent": 0.267169050317162,
+              "p95_ape_percent": 0.5186583282059343,
+              "points": 101
+            },
+            "factor": 1.0004180484864649,
+            "name": "Ethylisopropyl ketone"
+          },
+          {
+            "cas": "108-10-1",
+            "errors": {
+              "mape_percent": 0.2727028404141185,
+              "maximum_ape_percent": 1.0792561998605121,
+              "mean_signed_error_percent": -0.10475781123013904,
+              "median_ape_percent": 0.2763552852730333,
+              "p95_ape_percent": 0.48106841756877516,
+              "points": 101
+            },
+            "factor": 1.0001256101041935,
+            "name": "Methylisobutyl ketone"
+          }
+        ],
+        "full_fit_log_coefficients": [
+          0.8978313939345997,
+          -0.20514391330699358,
+          0.04760578607053423
+        ],
+        "parameters": 3
+      },
+      "A_b_position": {
+        "LOOCV": {
+          "mape_percent": 3.0141707785563616,
+          "maximum_ape_percent": 15.505985426902946,
+          "mean_signed_error_percent": -0.05382712205909653,
+          "median_ape_percent": 2.335350232877398,
+          "p95_ape_percent": 6.605417396571947,
+          "points": 1414
+        },
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": 1.1301609234070202,
+            "minimum": 0.8119719152710367
+          },
+          {
+            "maximum": -0.19739746533998093,
+            "minimum": -0.2649789785330563
+          },
+          {
+            "maximum": 0.04834714747251011,
+            "minimum": 0.03703560701513503
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "111-13-7",
+            "errors": {
+              "mape_percent": 0.8978762214233172,
+              "maximum_ape_percent": 1.716079779613744,
+              "mean_signed_error_percent": 0.6897351694216894,
+              "median_ape_percent": 0.8291897744765242,
+              "p95_ape_percent": 1.7048002999539014,
+              "points": 101
+            },
+            "factor": 0.8931487474994722,
+            "name": "2-Octanone"
+          },
+          {
+            "cas": "110-43-0",
+            "errors": {
+              "mape_percent": 2.4797787058802756,
+              "maximum_ape_percent": 2.641958778312037,
+              "mean_signed_error_percent": 2.4797787058802756,
+              "median_ape_percent": 2.4789534367853694,
+              "p95_ape_percent": 2.6389577654070573,
+              "points": 101
+            },
+            "factor": 0.9213311567592222,
+            "name": "2-Heptanone"
+          },
+          {
+            "cas": "67-64-1",
+            "errors": {
+              "mape_percent": 5.349886353286046,
+              "maximum_ape_percent": 6.490321515951159,
+              "mean_signed_error_percent": -5.349886353286046,
+              "median_ape_percent": 5.576114168973289,
+              "p95_ape_percent": 6.485828275022043,
+              "points": 101
+            },
+            "factor": 1.0515228417340614,
+            "name": "Acetone"
+          },
+          {
+            "cas": "106-35-4",
+            "errors": {
+              "mape_percent": 5.027207855665786,
+              "maximum_ape_percent": 15.505985426902946,
+              "mean_signed_error_percent": 1.9739183605689807,
+              "median_ape_percent": 5.102903080844512,
+              "p95_ape_percent": 10.280491656347102,
+              "points": 101
+            },
+            "factor": 0.9571839025286871,
+            "name": "3-Heptanone"
+          },
+          {
+            "cas": "591-78-6",
+            "errors": {
+              "mape_percent": 2.0443732533167607,
+              "maximum_ape_percent": 3.857137846878844,
+              "mean_signed_error_percent": 2.0443732533167607,
+              "median_ape_percent": 2.0636782465739856,
+              "p95_ape_percent": 3.6035770474232454,
+              "points": 101
+            },
+            "factor": 0.948787894583171,
+            "name": "2-Hexanone"
+          },
+          {
+            "cas": "106-68-3",
+            "errors": {
+              "mape_percent": 0.9765890786156998,
+              "maximum_ape_percent": 1.329773791559563,
+              "mean_signed_error_percent": -0.9765890786156998,
+              "median_ape_percent": 0.9878282123306659,
+              "p95_ape_percent": 1.3276562874097175,
+              "points": 101
+            },
+            "factor": 0.9265145521781538,
+            "name": "3-Octanone"
+          },
+          {
+            "cas": "107-87-9",
+            "errors": {
+              "mape_percent": 2.058585934113771,
+              "maximum_ape_percent": 4.726051200730486,
+              "mean_signed_error_percent": 1.945997603583504,
+              "median_ape_percent": 1.9518882409563565,
+              "p95_ape_percent": 4.362108381724239,
+              "points": 101
+            },
+            "factor": 0.9838744673747393,
+            "name": "2-Pentanone"
+          },
+          {
+            "cas": "78-93-3",
+            "errors": {
+              "mape_percent": 5.259867050604313,
+              "maximum_ape_percent": 9.213978416226865,
+              "mean_signed_error_percent": 5.259867050604313,
+              "median_ape_percent": 5.292692683161948,
+              "p95_ape_percent": 8.743235940255945,
+              "points": 101
+            },
+            "factor": 1.0363135934132741,
+            "name": "Methylethyl ketone"
+          },
+          {
+            "cas": "96-22-0",
+            "errors": {
+              "mape_percent": 4.641726013290983,
+              "maximum_ape_percent": 7.229937984016166,
+              "mean_signed_error_percent": 4.641726013290983,
+              "median_ape_percent": 4.738182696873938,
+              "p95_ape_percent": 6.960463733259292,
+              "points": 101
+            },
+            "factor": 1.0309186652929672,
+            "name": "3-Pentanone"
+          },
+          {
+            "cas": "589-38-8",
+            "errors": {
+              "mape_percent": 1.783827202295492,
+              "maximum_ape_percent": 3.115970806196622,
+              "mean_signed_error_percent": -1.783827202295492,
+              "median_ape_percent": 1.8011513629373366,
+              "p95_ape_percent": 2.4256643048573667,
+              "points": 101
+            },
+            "factor": 0.9836582746209773,
+            "name": "3-Hexanone"
+          },
+          {
+            "cas": "565-80-0",
+            "errors": {
+              "mape_percent": 1.3824641237864554,
+              "maximum_ape_percent": 2.8197769825055174,
+              "mean_signed_error_percent": -1.3824641237864554,
+              "median_ape_percent": 1.3772521480099886,
+              "p95_ape_percent": 2.0966839225231904,
+              "points": 101
+            },
+            "factor": 0.9881006122418158,
+            "name": "Diisopropyl ketone"
+          },
+          {
+            "cas": "563-80-4",
+            "errors": {
+              "mape_percent": 2.340287614806485,
+              "maximum_ape_percent": 3.298626622651679,
+              "mean_signed_error_percent": -2.340287614806485,
+              "median_ape_percent": 2.3617960414971773,
+              "p95_ape_percent": 2.695011010885573,
+              "points": 101
+            },
+            "factor": 0.9787244248299241,
+            "name": "Methylisopropyl ketone"
+          },
+          {
+            "cas": "565-69-5",
+            "errors": {
+              "mape_percent": 1.646919175814959,
+              "maximum_ape_percent": 2.811192068798629,
+              "mean_signed_error_percent": -1.646919175814959,
+              "median_ape_percent": 1.6821556563151319,
+              "p95_ape_percent": 2.1690284396086,
+              "points": 101
+            },
+            "factor": 0.983821367959407,
+            "name": "Ethylisopropyl ketone"
+          },
+          {
+            "cas": "108-10-1",
+            "errors": {
+              "mape_percent": 6.30900231688872,
+              "maximum_ape_percent": 7.222977039516987,
+              "mean_signed_error_percent": -6.30900231688872,
+              "median_ape_percent": 6.320389614859023,
+              "p95_ape_percent": 6.661941209413536,
+              "points": 101
+            },
+            "factor": 0.938010301251627,
+            "name": "Methylisobutyl ketone"
+          }
+        ],
+        "full_fit_log_coefficients": [
+          1.0234172949294005,
+          -0.24303994126694795,
+          0.04093658586474451
+        ],
+        "parameters": 3
+      },
+      "A_b_position_branch": {
+        "LOOCV": {
+          "mape_percent": 2.789875721423488,
+          "maximum_ape_percent": 16.83135013865901,
+          "mean_signed_error_percent": -0.10974996282479946,
+          "median_ape_percent": 2.259136805065487,
+          "p95_ape_percent": 7.332983563291555,
+          "points": 1414
+        },
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": 1.104871044586318,
+            "minimum": 0.7342801131835955
+          },
+          {
+            "maximum": -0.18064776171737112,
+            "minimum": -0.2597273962676509
+          },
+          {
+            "maximum": 0.041254668190032553,
+            "minimum": 0.029474554125632893
+          },
+          {
+            "maximum": 0.04289466338831496,
+            "minimum": 0.024158334149595784
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "111-13-7",
+            "errors": {
+              "mape_percent": 0.7289073410616151,
+              "maximum_ape_percent": 1.5510913807628923,
+              "mean_signed_error_percent": -0.3196483402236725,
+              "median_ape_percent": 0.6509659509098986,
+              "p95_ape_percent": 1.5295610888667488,
+              "points": 101
+            },
+            "factor": 0.8841952070430448,
+            "name": "2-Octanone"
+          },
+          {
+            "cas": "110-43-0",
+            "errors": {
+              "mape_percent": 1.6184646987078668,
+              "maximum_ape_percent": 1.7792816927856725,
+              "mean_signed_error_percent": 1.6184646987078668,
+              "median_ape_percent": 1.6176463657699314,
+              "p95_ape_percent": 1.776305902558617,
+              "points": 101
+            },
+            "factor": 0.9135876249075522,
+            "name": "2-Heptanone"
+          },
+          {
+            "cas": "67-64-1",
+            "errors": {
+              "mape_percent": 7.036562621475068,
+              "maximum_ape_percent": 8.156675094075005,
+              "mean_signed_error_percent": -7.036562621475068,
+              "median_ape_percent": 7.258759030614314,
+              "p95_ape_percent": 8.152261923232974,
+              "points": 101
+            },
+            "factor": 1.0327845797893216,
+            "name": "Acetone"
+          },
+          {
+            "cas": "106-35-4",
+            "errors": {
+              "mape_percent": 4.252903672398202,
+              "maximum_ape_percent": 16.83135013865901,
+              "mean_signed_error_percent": 0.3743656159462492,
+              "median_ape_percent": 3.760330082896024,
+              "p95_ape_percent": 11.687822943842141,
+              "points": 101
+            },
+            "factor": 0.9421696110018599,
+            "name": "3-Heptanone"
+          },
+          {
+            "cas": "591-78-6",
+            "errors": {
+              "mape_percent": 1.322157974846744,
+              "maximum_ape_percent": 3.0331894801050474,
+              "mean_signed_error_percent": 1.2348064154121055,
+              "median_ape_percent": 1.2539582529210058,
+              "p95_ape_percent": 2.7816402997920653,
+              "points": 101
+            },
+            "factor": 0.9412607062515503,
+            "name": "2-Hexanone"
+          },
+          {
+            "cas": "106-68-3",
+            "errors": {
+              "mape_percent": 2.8265664970256044,
+              "maximum_ape_percent": 3.173152934497092,
+              "mean_signed_error_percent": -2.8265664970256044,
+              "median_ape_percent": 2.83759565874121,
+              "p95_ape_percent": 3.1710749900313973,
+              "points": 101
+            },
+            "factor": 0.9092052009509118,
+            "name": "3-Octanone"
+          },
+          {
+            "cas": "107-87-9",
+            "errors": {
+              "mape_percent": 1.543801763192408,
+              "maximum_ape_percent": 3.8768271409235444,
+              "mean_signed_error_percent": 1.119317011950719,
+              "median_ape_percent": 1.3513846255796436,
+              "p95_ape_percent": 3.5158355360110916,
+              "points": 101
+            },
+            "factor": 0.975896224521651,
+            "name": "2-Pentanone"
+          },
+          {
+            "cas": "78-93-3",
+            "errors": {
+              "mape_percent": 4.332989487832278,
+              "maximum_ape_percent": 8.2522824824252,
+              "mean_signed_error_percent": 4.332989487832278,
+              "median_ape_percent": 4.365526070601478,
+              "p95_ape_percent": 7.785685182113777,
+              "points": 101
+            },
+            "factor": 1.0271882178580434,
+            "name": "Methylethyl ketone"
+          },
+          {
+            "cas": "96-22-0",
+            "errors": {
+              "mape_percent": 3.0483355788122575,
+              "maximum_ape_percent": 5.597136576939055,
+              "mean_signed_error_percent": 3.0483355788122575,
+              "median_ape_percent": 3.1433235064522558,
+              "p95_ape_percent": 5.331765638597341,
+              "points": 101
+            },
+            "factor": 1.0152207596621412,
+            "name": "3-Pentanone"
+          },
+          {
+            "cas": "589-38-8",
+            "errors": {
+              "mape_percent": 3.544163156249189,
+              "maximum_ape_percent": 4.852430648762784,
+              "mean_signed_error_percent": -3.544163156249189,
+              "median_ape_percent": 3.5611768146389,
+              "p95_ape_percent": 4.1744965634822995,
+              "points": 101
+            },
+            "factor": 0.9660280923618307,
+            "name": "3-Hexanone"
+          },
+          {
+            "cas": "565-80-0",
+            "errors": {
+              "mape_percent": 2.0655063689565796,
+              "maximum_ape_percent": 2.5473138078643265,
+              "mean_signed_error_percent": 2.0655063689565796,
+              "median_ape_percent": 2.070900571337342,
+              "p95_ape_percent": 2.5399945201016294,
+              "points": 101
+            },
+            "factor": 1.0226476299157066,
+            "name": "Diisopropyl ketone"
+          },
+          {
+            "cas": "563-80-4",
+            "errors": {
+              "mape_percent": 1.4181575369842483,
+              "maximum_ape_percent": 1.893207502677896,
+              "mean_signed_error_percent": 1.4181575369842483,
+              "median_ape_percent": 1.3958213560431698,
+              "p95_ape_percent": 1.8849356663493522,
+              "points": 101
+            },
+            "factor": 1.016390745768208,
+            "name": "Methylisopropyl ketone"
+          },
+          {
+            "cas": "565-69-5",
+            "errors": {
+              "mape_percent": 1.1496033607557905,
+              "maximum_ape_percent": 1.6433856079639542,
+              "mean_signed_error_percent": 1.1486384624550172,
+              "median_ape_percent": 1.1124004310996582,
+              "p95_ape_percent": 1.6342233873760215,
+              "points": 101
+            },
+            "factor": 1.011785203121913,
+            "name": "Ethylisopropyl ketone"
+          },
+          {
+            "cas": "108-10-1",
+            "errors": {
+              "mape_percent": 4.170140041630978,
+              "maximum_ape_percent": 5.10497980042185,
+              "mean_signed_error_percent": -4.170140041630978,
+              "median_ape_percent": 4.1817872990706935,
+              "p95_ape_percent": 4.531136140305381,
+              "points": 101
+            },
+            "factor": 0.9594240431987031,
+            "name": "Methylisobutyl ketone"
+          }
+        ],
+        "full_fit_log_coefficients": [
+          1.0159770070847816,
+          -0.24145185385724025,
+          0.033995540657611845,
+          0.037050074581267425
+        ],
+        "parameters": 4
+      },
+      "A_only": {
+        "LOOCV": {
+          "mape_percent": 4.891028533977224,
+          "maximum_ape_percent": 14.33400901280455,
+          "mean_signed_error_percent": 0.18688171886887642,
+          "median_ape_percent": 3.311939378885059,
+          "p95_ape_percent": 12.732834014980394,
+          "points": 1414
+        },
+        "LOOCV_log_coefficient_ranges": [
+          {
+            "maximum": -0.020052543572912196,
+            "minimum": -0.0373695963246412
+          }
+        ],
+        "compounds": [
+          {
+            "cas": "111-13-7",
+            "errors": {
+              "mape_percent": 10.497562028322271,
+              "maximum_ape_percent": 11.623879194975938,
+              "mean_signed_error_percent": 10.497562028322271,
+              "median_ape_percent": 10.650600407520038,
+              "p95_ape_percent": 11.611501021557725,
+              "points": 101
+            },
+            "factor": 0.9801471715193518,
+            "name": "2-Octanone"
+          },
+          {
+            "cas": "110-43-0",
+            "errors": {
+              "mape_percent": 8.90946400716586,
+              "maximum_ape_percent": 9.081819421904601,
+              "mean_signed_error_percent": 8.90946400716586,
+              "median_ape_percent": 8.90858695985055,
+              "p95_ape_percent": 9.078630122404864,
+              "points": 101
+            },
+            "factor": 0.9791364084004546,
+            "name": "2-Heptanone"
+          },
+          {
+            "cas": "67-64-1",
+            "errors": {
+              "mape_percent": 13.289234718312496,
+              "maximum_ape_percent": 14.33400901280455,
+              "mean_signed_error_percent": -13.289234718312496,
+              "median_ape_percent": 13.496486313376233,
+              "p95_ape_percent": 14.329892669521394,
+              "points": 101
+            },
+            "factor": 0.9633200300029513,
+            "name": "Acetone"
+          },
+          {
+            "cas": "106-35-4",
+            "errors": {
+              "mape_percent": 6.214049879842653,
+              "maximum_ape_percent": 13.864293541183203,
+              "mean_signed_error_percent": 3.955239228957421,
+              "median_ape_percent": 6.844414052397463,
+              "p95_ape_percent": 9.303143515519107,
+              "points": 101
+            },
+            "factor": 0.9757816819555774,
+            "name": "3-Heptanone"
+          },
+          {
+            "cas": "591-78-6",
+            "errors": {
+              "mape_percent": 5.036039980995802,
+              "maximum_ape_percent": 6.901949959715092,
+              "mean_signed_error_percent": 5.036039980995802,
+              "median_ape_percent": 5.055910944763342,
+              "p95_ape_percent": 6.640955439192964,
+              "points": 101
+            },
+            "factor": 0.9766038053027448,
+            "name": "2-Hexanone"
+          },
+          {
+            "cas": "106-68-3",
+            "errors": {
+              "mape_percent": 4.32661756486388,
+              "maximum_ape_percent": 4.719183102060609,
+              "mean_signed_error_percent": 4.32661756486388,
+              "median_ape_percent": 4.314776518449381,
+              "p95_ape_percent": 4.715643289443294,
+              "points": 101
+            },
+            "factor": 0.976134112670698,
+            "name": "3-Octanone"
+          },
+          {
+            "cas": "107-87-9",
+            "errors": {
+              "mape_percent": 1.4485385267763713,
+              "maximum_ape_percent": 3.653972986687948,
+              "mean_signed_error_percent": 0.902378735245301,
+              "median_ape_percent": 1.304814829859735,
+              "p95_ape_percent": 3.2937558420763624,
+              "points": 101
+            },
+            "factor": 0.9738025667374907,
+            "name": "2-Pentanone"
+          },
+          {
+            "cas": "78-93-3",
+            "errors": {
+              "mape_percent": 2.006080976058129,
+              "maximum_ape_percent": 5.095000686452844,
+              "mean_signed_error_percent": -1.2419168310183424,
+              "median_ape_percent": 1.7734645028565144,
+              "p95_ape_percent": 4.604884402194531,
+              "points": 101
+            },
+            "factor": 0.9723016655365118,
+            "name": "Methylethyl ketone"
+          },
+          {
+            "cas": "96-22-0",
+            "errors": {
+              "mape_percent": 1.579331553225263,
+              "maximum_ape_percent": 4.13152516516938,
+              "mean_signed_error_percent": -1.3123256919370385,
+              "median_ape_percent": 1.2213573360341456,
+              "p95_ape_percent": 3.760807943221467,
+              "points": 101
+            },
+            "factor": 0.9722600090294098,
+            "name": "3-Pentanone"
+          },
+          {
+            "cas": "589-38-8",
+            "errors": {
+              "mape_percent": 3.043866755334947,
+              "maximum_ape_percent": 4.358919959728236,
+              "mean_signed_error_percent": -3.043866755334947,
+              "median_ape_percent": 3.0609686600385877,
+              "p95_ape_percent": 3.677469571090475,
+              "points": 101
+            },
+            "factor": 0.9710386795238454,
+            "name": "3-Hexanone"
+          },
+          {
+            "cas": "565-80-0",
+            "errors": {
+              "mape_percent": 3.088519066644433,
+              "maximum_ape_percent": 4.500966827231978,
+              "mean_signed_error_percent": -3.088519066644433,
+              "median_ape_percent": 3.083397256546472,
+              "p95_ape_percent": 3.7903830687462725,
+              "points": 101
+            },
+            "factor": 0.9710067564830172,
+            "name": "Diisopropyl ketone"
+          },
+          {
+            "cas": "563-80-4",
+            "errors": {
+              "mape_percent": 3.1120429725213787,
+              "maximum_ape_percent": 4.062808711454069,
+              "mean_signed_error_percent": -3.1120429725213787,
+              "median_ape_percent": 3.1333814289845496,
+              "p95_ape_percent": 3.46396316884956,
+              "points": 101
+            },
+            "factor": 0.9709900602681107,
+            "name": "Methylisopropyl ketone"
+          },
+          {
+            "cas": "565-69-5",
+            "errors": {
+              "mape_percent": 2.915636166809592,
+              "maximum_ape_percent": 4.064890386365794,
+              "mean_signed_error_percent": -2.915636166809592,
+              "median_ape_percent": 2.950418110236408,
+              "p95_ape_percent": 3.431010421505598,
+              "points": 101
+            },
+            "factor": 0.971130449940632,
+            "name": "Ethylisopropyl ketone"
+          },
+          {
+            "cas": "108-10-1",
+            "errors": {
+              "mape_percent": 3.007415278808044,
+              "maximum_ape_percent": 3.9535976539534667,
+              "mean_signed_error_percent": -3.007415278808044,
+              "median_ape_percent": 3.0192038549833655,
+              "p95_ape_percent": 3.3727914225267885,
+              "points": 101
+            },
+            "factor": 0.9710649460817863,
+            "name": "Methylisobutyl ketone"
+          }
+        ],
+        "full_fit_A": 0.003727300840747524,
+        "full_fit_b": 0.5,
+        "full_fit_log_coefficients": [
+          -0.02718046667548325
+        ],
+        "parameters": 1
+      }
+    },
+    "published": {
+      "A": 0.00383,
+      "b": 0.5,
+      "errors": {
+        "mape_percent": 4.682222272697803,
+        "maximum_ape_percent": 13.884814891568631,
+        "mean_signed_error_percent": 2.9231275802811423,
+        "median_ape_percent": 3.03034885991208,
+        "p95_ape_percent": 12.015199076043935,
+        "points": 1414
+      }
+    }
+  },
+  "reproducibility": {
+    "baroncini_artifact_sha256": "f48b1f8322ce4b7f29698d34a47bcc9ad04ab5cdabbf9bd3c275583a84ca3d72",
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "python": "3.14.4",
+    "script": "scripts/thermal_conductivity/liquid/probe_baroncini_ketone_refit.py",
+    "script_sha256": "fe056dba2e459519213f21e408b8ffac8e2d5d0015597aa9f7cb7b7aaae44db6"
+  }
+}

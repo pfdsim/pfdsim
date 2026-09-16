@@ -1,0 +1,66 @@
+Baroncini class-selection analysis
+
+OXYGENATED SIZE TRENDS
+  alcohols: n=25 r(C,bias)=-0.04846556874353868 r(C,MAPE)=0.1407624331126205
+    C1_C2    n= 2 MAPE=  5.67% bias= -5.34%
+    C3_C4    n= 5 MAPE=  4.10% bias= -0.96%
+    C5_C6    n= 6 MAPE=  4.99% bias= -1.54%
+    C7_plus  n=12 MAPE=  5.07% bias= -3.44%
+  organic_acids: n=21 r(C,bias)=0.4583343219300186 r(C,MAPE)=-0.4312316460438345
+    C1_C2    n= 3 MAPE= 14.88% bias=-14.88%
+    C3_C4    n= 7 MAPE=  3.44% bias= -1.86%
+    C5_C6    n= 4 MAPE=  3.55% bias= -1.16%
+    C7_plus  n= 7 MAPE=  1.19% bias= +0.88%
+  ketones: n=14 r(C,bias)=0.7556563268771366 r(C,MAPE)=0.27356884791322156
+    C3_C4    n= 2 MAPE=  6.10% bias= -4.21%
+    C5_C6    n= 7 MAPE=  2.02% bias= +1.74%
+    C7_plus  n= 5 MAPE=  7.84% bias= +7.44%
+  esters: n=16 r(C,bias)=-0.009561692217780403 r(C,MAPE)=-0.5705631002054966
+    C1_C2    n= 1 MAPE=  3.77% bias= -3.77%
+    C3_C4    n= 7 MAPE=  3.37% bias= +1.41%
+    C5_C6    n= 6 MAPE=  2.47% bias= +0.35%
+    C7_plus  n= 2 MAPE=  0.43% bias= +0.23%
+  ethers: n=17 r(C,bias)=-0.2940863715115736 r(C,MAPE)=0.39759864178991267
+    C1_C2    n= 1 MAPE=  0.32% bias= -0.11%
+    C3_C4    n= 6 MAPE=  0.65% bias= +0.03%
+    C5_C6    n= 8 MAPE=  2.14% bias= -0.86%
+    C7_plus  n= 2 MAPE=  4.29% bias= -4.22%
+
+ALCOHOL CORRECTION, 25 MONOHYDRIC COMPOUNDS
+  baseline: MAPE=  4.90% MdAPE=  2.74% P95= 13.82% bias= -2.64%
+  constant        LOOCV MAPE=  5.48% MdAPE=  3.44% P95= 14.57% bias= +0.25%
+  linear_carbon   LOOCV MAPE=  5.75% MdAPE=  3.64% P95= 15.29% bias= +0.26%
+  C6_hinge        LOOCV MAPE=  5.80% MdAPE=  3.73% P95= 15.98% bias= +0.40%
+  OH_substitution LOOCV MAPE=  4.35% MdAPE=  2.90% P95= 15.39% bias= +0.22%
+  primary_C6_plus LOOCV MAPE=  4.30% MdAPE=  1.85% P95= 15.90% bias= +0.22%
+
+OXYGENATED BARONCINI VS GOVENDER
+  alcohols: n=25
+    Baroncini: MAPE=  4.90% MdAPE=  2.74% P95= 13.82% bias= -2.64%
+    Govender:  MAPE=  8.63% MdAPE=  7.05% P95= 27.32% bias= +0.83%
+    wins 17:8
+  ketones: n=14
+    Baroncini: MAPE=  4.68% MdAPE=  3.03% P95= 12.02% bias= +2.92%
+    Govender:  MAPE=  5.36% MdAPE=  5.65% P95= 11.22% bias= -1.79%
+    wins 6:8
+  organic_acids: n=19
+    Baroncini: MAPE=  2.69% MdAPE=  0.64% P95= 11.20% bias= -0.84%
+    Govender:  MAPE=  4.38% MdAPE=  4.07% P95=  9.71% bias= +0.80%
+    wins 14:5
+  ethers: n=17
+    Baroncini: MAPE=  1.76% MdAPE=  0.43% P95=  9.77% bias= -0.89%
+    Govender:  MAPE=  7.90% MdAPE=  7.05% P95= 19.43% bias= -3.97%
+    wins 13:4
+  esters: n=16
+    Baroncini: MAPE=  2.69% MdAPE=  1.91% P95=  8.08% bias= +0.54%
+    Govender:  MAPE=  6.63% MdAPE=  5.21% P95= 19.86% bias= -4.36%
+    wins 12:4
+
+HYDROCARBONS, EXACT COMMON SET n=69
+  Baroncini:             MAPE=  8.98% MdAPE=  5.69% P95= 26.06% bias= +3.68%
+  Modified Pachaiyappan: MAPE=  2.42% MdAPE=  1.06% P95=  9.68% bias= -1.12%
+  wins 8:61
+    saturated_hydrocarbons   n=21 Baroncini=  7.62% Pachaiyappan=  3.04%
+    olefins                  n=22 Baroncini= 15.03% Pachaiyappan=  2.29%
+    cycloparaffins           n=11 Baroncini=  4.68% Pachaiyappan=  1.60%
+    aromatics                n=15 Baroncini=  5.19% Pachaiyappan=  2.36%

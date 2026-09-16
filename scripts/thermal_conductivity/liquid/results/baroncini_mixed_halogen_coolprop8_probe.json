@@ -1,0 +1,482 @@
+{
+  "baseline_overall": {
+    "mape_percent": 5.0542953097293895,
+    "maximum_ape_percent": 26.539690109070403,
+    "mean_signed_error_percent": -1.6387030711646782,
+    "median_ape_percent": 4.298878918521676,
+    "p95_ape_percent": 13.202043140828279,
+    "points": 808,
+    "within_20_percent": 99.13366336633663
+  },
+  "by_carbon_count": {
+    "C1": {
+      "compounds": 4,
+      "mape_percent": 4.386655630416885,
+      "maximum_ape_percent": 15.910237857302455,
+      "mean_signed_error_percent": 0.30880174926404935,
+      "median_ape_percent": 3.8517265077041394,
+      "p95_ape_percent": 9.185321774755167,
+      "points": 404,
+      "within_20_percent": 100.0
+    },
+    "C2_plus": {
+      "compounds": 4,
+      "mape_percent": 4.236358757603751,
+      "maximum_ape_percent": 26.539690109070403,
+      "mean_signed_error_percent": -0.4902919522270546,
+      "median_ape_percent": 3.443477119466376,
+      "p95_ape_percent": 11.634034043394726,
+      "points": 404,
+      "within_20_percent": 98.76237623762376
+    }
+  },
+  "by_halogen_combination": {
+    "Cl+F": {
+      "compounds": 8,
+      "mape_percent": 4.311507194010318,
+      "maximum_ape_percent": 26.539690109070403,
+      "mean_signed_error_percent": -0.09074510148150267,
+      "median_ape_percent": 3.7392753723097085,
+      "p95_ape_percent": 9.804007185044238,
+      "points": 808,
+      "within_20_percent": 99.38118811881188
+    }
+  },
+  "compounds": [
+    {
+      "A_used": 0.494,
+      "Tc_K": 385.1199997681344,
+      "Tmax_K": 365.86399977972764,
+      "Tmin_K": 116.099001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 5.422971062952078,
+        "maximum_ape_percent": 12.548827665578056,
+        "mean_signed_error_percent": -0.18230437182192064,
+        "median_ape_percent": 5.552989731236668,
+        "p95_ape_percent": 11.05738542249709,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-71-8",
+      "details": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 2,
+          "F": 2
+        },
+        "hydrogen_atoms": 0,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 4
+      },
+      "errors": {
+        "mape_percent": 5.422971062952078,
+        "maximum_ape_percent": 12.548827665578056,
+        "mean_signed_error_percent": -0.18230437182192064,
+        "median_ape_percent": 5.552989731236668,
+        "p95_ape_percent": 11.05738542249709,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "fluid": "R12",
+      "formula": "C_{1}Cl_{2}F_{2}",
+      "molecular_weight_g_mol": 120.91300000000001,
+      "smiles": "C(F)(F)(Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 477.5000277059733,
+      "Tmax_K": 453.62502632067464,
+      "Tmin_K": 169.680001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.806791940882966,
+        "maximum_ape_percent": 26.539690109070403,
+        "mean_signed_error_percent": 0.9381948578741106,
+        "median_ape_percent": 4.00141659973865,
+        "p95_ape_percent": 14.927927916026517,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "cas": "1717-00-6",
+      "details": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 2,
+          "F": 1
+        },
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 3
+      },
+      "errors": {
+        "mape_percent": 4.806791940882966,
+        "maximum_ape_percent": 26.539690109070403,
+        "mean_signed_error_percent": 0.9381948578741106,
+        "median_ape_percent": 4.00141659973865,
+        "p95_ape_percent": 14.927927916026517,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "fluid": "R141b",
+      "formula": "C_{2}Cl_{2}F_{1}H_{3}",
+      "molecular_weight_g_mol": 116.94962000000001,
+      "smiles": "CC(F)(Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 303.04990563421336,
+      "Tmax_K": 287.8974103525027,
+      "Tmin_K": 98.150001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.431099609605395,
+        "maximum_ape_percent": 9.329843378463709,
+        "mean_signed_error_percent": 1.6908458755908897,
+        "median_ape_percent": 3.8177405956875243,
+        "p95_ape_percent": 8.928355568448954,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-72-9",
+      "details": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 1,
+          "F": 3
+        },
+        "hydrogen_atoms": 0,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 4
+      },
+      "errors": {
+        "mape_percent": 4.431099609605395,
+        "maximum_ape_percent": 9.329843378463709,
+        "mean_signed_error_percent": 1.6908458755908897,
+        "median_ape_percent": 3.8177405956875243,
+        "p95_ape_percent": 8.928355568448954,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "fluid": "R13",
+      "formula": "C_{1}Cl_{1}F_{3}",
+      "molecular_weight_g_mol": 104.459,
+      "smiles": "C(F)(F)(F)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 395.4279607732047,
+      "Tmax_K": 375.6565627345444,
+      "Tmin_K": 120.000001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.216448821789001,
+        "maximum_ape_percent": 23.66583894389962,
+        "mean_signed_error_percent": -3.892121275676691,
+        "median_ape_percent": 3.7077572737071907,
+        "p95_ape_percent": 12.377400585952659,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "cas": "2837-89-0",
+      "details": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 1,
+          "F": 4
+        },
+        "hydrogen_atoms": 1,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 5
+      },
+      "errors": {
+        "mape_percent": 4.216448821789001,
+        "maximum_ape_percent": 23.66583894389962,
+        "mean_signed_error_percent": -3.892121275676691,
+        "median_ape_percent": 3.7077572737071907,
+        "p95_ape_percent": 12.377400585952659,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "fluid": "R124",
+      "formula": "C_{2}Cl_{1}F_{4}H_{1}",
+      "molecular_weight_g_mol": 136.4762,
+      "smiles": "FC(Cl)C(F)(F)F"
+    },
+    {
+      "A_used": 0.562,
+      "Tc_K": 369.2950000080274,
+      "Tmax_K": 350.830250007626,
+      "Tmin_K": 115.730001,
+      "authors_A_correction": true,
+      "baseline_errors": {
+        "mape_percent": 10.036325056060168,
+        "maximum_ape_percent": 22.785541229984375,
+        "mean_signed_error_percent": -10.036325056060168,
+        "median_ape_percent": 9.202557642401688,
+        "p95_ape_percent": 15.393530403261668,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "cas": "75-45-6",
+      "details": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 1,
+          "F": 2
+        },
+        "hydrogen_atoms": 1,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 3
+      },
+      "errors": {
+        "mape_percent": 4.094020130307589,
+        "maximum_ape_percent": 12.156830306176559,
+        "mean_signed_error_percent": 2.347338701405234,
+        "median_ape_percent": 3.9273418237377067,
+        "p95_ape_percent": 6.996889891473312,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "fluid": "R22",
+      "formula": "C_{1}Cl_{1}F_{2}H_{1}",
+      "molecular_weight_g_mol": 86.468,
+      "smiles": "C(F)(F)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 456.8300258131298,
+      "Tmax_K": 433.98852452247326,
+      "Tmin_K": 166.000001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 4.05594431617018,
+        "maximum_ape_percent": 19.588370145125523,
+        "mean_signed_error_percent": -0.019023680296022263,
+        "median_ape_percent": 3.2982362219675987,
+        "p95_ape_percent": 10.120416543872713,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "306-83-2",
+      "details": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 2,
+          "F": 3
+        },
+        "hydrogen_atoms": 1,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 5
+      },
+      "errors": {
+        "mape_percent": 4.05594431617018,
+        "maximum_ape_percent": 19.588370145125523,
+        "mean_signed_error_percent": -0.019023680296022263,
+        "median_ape_percent": 3.2982362219675987,
+        "p95_ape_percent": 10.120416543872713,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "fluid": "R123",
+      "formula": "C_{2}Cl_{2}F_{3}H_{1}",
+      "molecular_weight_g_mol": 152.931,
+      "smiles": "FC(F)(F)C(Cl)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 410.2602326520994,
+      "Tmax_K": 389.74722101949436,
+      "Tmin_K": 142.720001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 3.866249951572858,
+        "maximum_ape_percent": 18.30175248026763,
+        "mean_signed_error_percent": 1.011782289190385,
+        "median_ape_percent": 2.7621933701367896,
+        "p95_ape_percent": 7.267023239881998,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-68-3",
+      "details": {
+        "carbon_atoms": 2,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 1,
+          "F": 2
+        },
+        "hydrogen_atoms": 3,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 3
+      },
+      "errors": {
+        "mape_percent": 3.866249951572858,
+        "maximum_ape_percent": 18.30175248026763,
+        "mean_signed_error_percent": 1.011782289190385,
+        "median_ape_percent": 2.7621933701367896,
+        "p95_ape_percent": 7.267023239881998,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "fluid": "R142b",
+      "formula": "C_{2}Cl_{1}F_{2}H_{3}",
+      "molecular_weight_g_mol": 100.49503,
+      "smiles": "CC(F)(F)Cl"
+    },
+    {
+      "A_used": 0.494,
+      "Tc_K": 471.1099999985589,
+      "Tmax_K": 447.55449999863094,
+      "Tmin_K": 162.680001,
+      "authors_A_correction": false,
+      "baseline_errors": {
+        "mape_percent": 3.598531718802475,
+        "maximum_ape_percent": 15.910237857302455,
+        "mean_signed_error_percent": -2.620673208118007,
+        "median_ape_percent": 2.014185860683515,
+        "p95_ape_percent": 9.190486768629091,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-69-4",
+      "details": {
+        "carbon_atoms": 1,
+        "carbon_multiple_bonds": 0,
+        "halogen_combination": "Cl+F",
+        "halogen_counts": {
+          "Cl": 3,
+          "F": 1
+        },
+        "hydrogen_atoms": 0,
+        "rings": 0,
+        "topology": "saturated_acyclic",
+        "total_halogens": 4
+      },
+      "errors": {
+        "mape_percent": 3.598531718802475,
+        "maximum_ape_percent": 15.910237857302455,
+        "mean_signed_error_percent": -2.620673208118007,
+        "median_ape_percent": 2.014185860683515,
+        "p95_ape_percent": 9.190486768629091,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "fluid": "R11",
+      "formula": "C_{1}Cl_{3}F_{1}",
+      "molecular_weight_g_mol": 137.368,
+      "smiles": "FC(Cl)(Cl)Cl"
+    }
+  ],
+  "coverage": {
+    "compounds": 8,
+    "exclusions": {
+      "insufficient valid CoolProp conductivity states": 7
+    },
+    "sampled_states": 808
+  },
+  "excluded_records": [
+    {
+      "cas": "76-13-1",
+      "fluid": "R113",
+      "formula": "C_{2}Cl_{3}F_{3}",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    },
+    {
+      "cas": "76-14-2",
+      "fluid": "R114",
+      "formula": "C_{2}Cl_{2}F_{4}",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    },
+    {
+      "cas": "76-15-3",
+      "fluid": "R115",
+      "formula": "C_{2}F_{5}Cl_{1}",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    },
+    {
+      "cas": "111512-60-8",
+      "fluid": "R1224YDZ",
+      "formula": "CF3CF=CHCl (cis)",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    },
+    {
+      "cas": "102687-65-0",
+      "fluid": "R1233zd(E)",
+      "formula": "CF3CH=CHCl",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    },
+    {
+      "cas": "2314-97-8",
+      "fluid": "R13I1",
+      "formula": "C_{1}F_{3}I_{1}",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    },
+    {
+      "cas": "75-43-4",
+      "fluid": "R21",
+      "formula": "C_{1}Cl_{2}F_{1}H_{1}",
+      "reason": "insufficient valid CoolProp conductivity states",
+      "valid_states": 0
+    }
+  ],
+  "overall": {
+    "mape_percent": 4.311507194010318,
+    "maximum_ape_percent": 26.539690109070403,
+    "mean_signed_error_percent": -0.09074510148150267,
+    "median_ape_percent": 3.7392753723097085,
+    "p95_ape_percent": 9.804007185044238,
+    "points": 808,
+    "within_20_percent": 99.38118811881188
+  },
+  "parameters": {
+    "corrected_A": 0.562,
+    "correction_domain": "C1H1X3 (R2x)",
+    "general": {
+      "A": 0.494,
+      "a": 0.0,
+      "b": 0.5,
+      "c": -0.167
+    }
+  },
+  "reproducibility": {
+    "base_script_sha256": "24ec698aad93ccd65b887b56acfb386bc7df5447bc3945efd0a1722814d77fbf",
+    "python": "3.14.4",
+    "refrigerant_script_sha256": "614e72c0636e1b095243bb5c8824c5723b48110aeabc7c0040082d2677f20914",
+    "script": "scripts/thermal_conductivity/liquid/probe_baroncini_mixed_halogen_coolprop.py",
+    "script_sha256": "70f4c7bb0bbec620a8c324edec9b00ddc5935ad1059409579465753a22f5ca3c"
+  },
+  "source": {
+    "backend": "HEOS",
+    "library": "CoolProp",
+    "maximum_reduced_temperature": 0.95,
+    "property": "saturated-liquid CONDUCTIVITY at Q=0",
+    "version": "8.0.0"
+  }
+}

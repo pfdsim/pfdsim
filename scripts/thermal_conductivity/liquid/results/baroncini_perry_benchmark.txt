@@ -1,0 +1,47 @@
+Baroncini liquid thermal-conductivity benchmark vs Perry 9th Table 2-147
+coverage: 188 compounds, 18988 states
+overall: MAPE=  7.16% MdAPE=  3.68% P95= 26.71% bias= +0.37%
+
+BY BROAD STRUCTURAL CLASS
+  saturated_hydrocarbons   n= 28 MAPE= 10.34% MdAPE=  5.67% P95= 43.29% bias= -2.79%
+  olefins                  n= 23 MAPE= 14.67% MdAPE= 12.46% P95= 29.42% bias=+12.46%
+  cycloparaffins           n= 11 MAPE=  4.68% MdAPE=  4.57% P95=  8.52% bias= -2.16%
+  aromatics                n= 18 MAPE=  6.69% MdAPE=  3.64% P95= 25.85% bias= -2.43%
+  alcohols                 n= 29 MAPE=  6.43% MdAPE=  4.24% P95= 21.81% bias= -3.93%
+  organic_acids            n= 21 MAPE=  4.34% MdAPE=  0.64% P95= 32.34% bias= -2.67%
+  ketones                  n= 17 MAPE=  5.04% MdAPE=  2.21% P95= 13.88% bias= +3.53%
+  esters                   n= 18 MAPE=  3.72% MdAPE=  2.39% P95= 12.38% bias= -0.85%
+  ethers                   n= 23 MAPE=  5.05% MdAPE=  0.54% P95= 35.40% bias= +2.33%
+
+WORST 25 COMPOUNDS
+   1. Methane                          74-82-8      saturated_hydrocarbons MAPE= 55.83% bias=-55.83%
+   2. Ethane                           74-84-0      saturated_hydrocarbons MAPE= 42.06% bias=-42.06%
+   3. Formic acid                      64-18-6      organic_acids          MAPE= 39.93% bias=-39.93%
+   4. Tetrahydrofuran                  109-99-9     ethers                 MAPE= 38.35% bias=+38.35%
+   5. Propadiene                       463-49-0     olefins                MAPE= 35.96% bias=+35.96%
+   6. Ethylene oxide                   75-21-8      ethers                 MAPE= 34.71% bias=+34.71%
+   7. 1,2-Butadiene                    590-19-2     olefins                MAPE= 28.71% bias=+28.71%
+   8. o-Terphenyl                      84-15-1      aromatics              MAPE= 28.62% bias=-28.62%
+   9. cis-2-Butene                     590-18-1     olefins                MAPE= 25.74% bias=+25.74%
+  10. 3-Methyl-1,2-butadiene           598-25-4     olefins                MAPE= 24.98% bias=+24.98%
+  11. trans-2-Butene                   624-64-6     olefins                MAPE= 24.60% bias=+24.60%
+  12. Propane                          74-98-6      saturated_hydrocarbons MAPE= 24.16% bias=-24.16%
+  13. 2-Methyl-2-butene                513-35-9     olefins                MAPE= 22.36% bias=+22.36%
+  14. Ethylene glycol                  107-21-1     alcohols               MAPE= 22.18% bias=-22.18%
+  15. 2-Methyl-1-butene                563-46-2     olefins                MAPE= 20.08% bias=+20.08%
+  16. Cyclohexanone                    108-94-1     ketones                MAPE= 19.46% bias=+19.46%
+  17. 1,3-Butadiene                    106-99-0     olefins                MAPE= 19.29% bias=+19.29%
+  18. 1,3-Butanediol                   107-88-0     alcohols               MAPE= 18.78% bias=-11.36%
+  19. Biphenyl                         92-52-4      aromatics              MAPE= 17.72% bias=-17.72%
+  20. Butane                           106-97-8     saturated_hydrocarbons MAPE= 16.80% bias=-16.80%
+  21. 2,2,4-Trimethylpentane           540-84-1     saturated_hydrocarbons MAPE= 15.48% bias=+15.48%
+  22. Propylene                        115-07-1     olefins                MAPE= 15.20% bias=+15.05%
+  23. 2,3,3-Trimethylpentane           560-21-4     saturated_hydrocarbons MAPE= 14.63% bias=+14.63%
+  24. 2-Methyl propene                 115-11-7     olefins                MAPE= 14.40% bias=+13.87%
+  25. 1-Methylcyclopentene             693-89-0     olefins                MAPE= 14.28% bias=+14.28%
+
+EXCLUSIONS
+    1 Perry normal boiling point unavailable
+    1 identity: Perry molecular formula unavailable or unparseable
+    1 identity: local SMILES unavailable or invalid
+  152 outside broad structural class definitions

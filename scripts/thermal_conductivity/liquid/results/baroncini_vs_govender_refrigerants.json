@@ -1,0 +1,1525 @@
+{
+  "by_source": {
+    "coolprop_mixed": {
+      "baroncini": {
+        "mape_percent": 4.311507194010318,
+        "maximum_ape_percent": 26.539690109070403,
+        "mean_signed_error_percent": -0.09074510148150271,
+        "median_ape_percent": 3.7392753723097085,
+        "p95_ape_percent": 9.804007185044238,
+        "points": 808,
+        "within_20_percent": 99.38118811881188
+      },
+      "baroncini_better_compounds": 6,
+      "compounds": 8,
+      "govender": {
+        "mape_percent": 7.701380014414213,
+        "maximum_ape_percent": 39.725913455796146,
+        "mean_signed_error_percent": -5.607889874362042,
+        "median_ape_percent": 5.6418474286922145,
+        "p95_ape_percent": 22.631001414189253,
+        "points": 808,
+        "within_20_percent": 92.82178217821783
+      },
+      "govender_better_compounds": 2
+    },
+    "coolprop_nonmixed_perry_absent": {
+      "baroncini": {
+        "mape_percent": 9.25632809485057,
+        "maximum_ape_percent": 37.457703684736366,
+        "mean_signed_error_percent": -7.968484201157276,
+        "median_ape_percent": 8.378360740295214,
+        "p95_ape_percent": 22.296727972676962,
+        "points": 1212,
+        "within_20_percent": 93.06930693069307
+      },
+      "baroncini_better_compounds": 9,
+      "compounds": 12,
+      "govender": {
+        "mape_percent": 13.569983255941152,
+        "maximum_ape_percent": 82.7929808586562,
+        "mean_signed_error_percent": -5.36669926181739,
+        "median_ape_percent": 11.494250114364569,
+        "p95_ape_percent": 29.4697661280705,
+        "points": 1212,
+        "within_20_percent": 77.39273927392739
+      },
+      "govender_better_compounds": 3
+    },
+    "perry": {
+      "baroncini": {
+        "mape_percent": 6.569277755456565,
+        "maximum_ape_percent": 30.23177256158236,
+        "mean_signed_error_percent": -2.2475599942791677,
+        "median_ape_percent": 4.414828394834136,
+        "p95_ape_percent": 21.360402510827218,
+        "points": 3030,
+        "within_20_percent": 93.63036303630363
+      },
+      "baroncini_better_compounds": 15,
+      "compounds": 30,
+      "govender": {
+        "mape_percent": 10.565312209576522,
+        "maximum_ape_percent": 54.483670043980716,
+        "mean_signed_error_percent": 1.1280870259095501,
+        "median_ape_percent": 6.160690521343282,
+        "p95_ape_percent": 46.76025234762177,
+        "points": 3030,
+        "within_20_percent": 87.85478547854785
+      },
+      "govender_better_compounds": 15
+    }
+  },
+  "compounds": [
+    {
+      "Tb_K": 283.4837007148932,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 0.7058033632982279,
+        "maximum_ape_percent": 1.5029446519876366,
+        "mean_signed_error_percent": 0.09377133823810116,
+        "median_ape_percent": 0.7681033681113503,
+        "p95_ape_percent": 1.1403954292377838,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "624-72-6",
+      "formula": "C2H4F2",
+      "govender": {
+        "mape_percent": 52.65282555948366,
+        "maximum_ape_percent": 54.483670043980716,
+        "mean_signed_error_percent": 52.65282555948366,
+        "median_ape_percent": 52.87531236269458,
+        "p95_ape_percent": 54.356729545323354,
+        "points": 101,
+        "within_20_percent": 0.0
+      },
+      "mape_difference_govender_minus_baroncini": 51.94702219618543,
+      "name": "1,2-Difluoroethane",
+      "smiles": "C(CF)F",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 276.6589519010864,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 17.53223662867589,
+        "maximum_ape_percent": 26.96196559242592,
+        "mean_signed_error_percent": 17.365097917591523,
+        "median_ape_percent": 19.682750053776665,
+        "p95_ape_percent": 26.19524798971058,
+        "points": 101,
+        "within_20_percent": 51.48514851485149
+      },
+      "cas": "74-83-9",
+      "formula": "CH3Br",
+      "govender": {
+        "mape_percent": 47.274501917475234,
+        "maximum_ape_percent": 53.79711300208636,
+        "mean_signed_error_percent": 47.274501917475234,
+        "median_ape_percent": 46.807016353642084,
+        "p95_ape_percent": 52.89211440635402,
+        "points": 101,
+        "within_20_percent": 0.0
+      },
+      "mape_difference_govender_minus_baroncini": 29.742265288799345,
+      "name": "Bromomethane",
+      "smiles": "CBr",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 254.177474975723,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 5.46954590341775,
+        "maximum_ape_percent": 25.056707789767607,
+        "mean_signed_error_percent": -5.46954590341775,
+        "median_ape_percent": 4.236344955348603,
+        "p95_ape_percent": 16.3481080855452,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "cas": "29118-24-9",
+      "formula": "C_{3}F_{4}H_{2}",
+      "govender": {
+        "mape_percent": 24.191496791478198,
+        "maximum_ape_percent": 82.7929808586562,
+        "mean_signed_error_percent": -16.755271978793584,
+        "median_ape_percent": 15.144410421985565,
+        "p95_ape_percent": 71.49336492392855,
+        "points": 101,
+        "within_20_percent": 61.386138613861384
+      },
+      "mape_difference_govender_minus_baroncini": 18.721950888060448,
+      "name": "R1234ze(E)",
+      "smiles": "F/C=C/C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 225.9094338501233,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 3.5034913320299848,
+        "maximum_ape_percent": 20.03958457689152,
+        "mean_signed_error_percent": -2.053280152572858,
+        "median_ape_percent": 2.280609565303515,
+        "p95_ape_percent": 12.111046263706815,
+        "points": 101,
+        "within_20_percent": 99.00990099009901
+      },
+      "cas": "420-46-2",
+      "formula": "C_{2}F_{3}H_{3}",
+      "govender": {
+        "mape_percent": 21.895138995713538,
+        "maximum_ape_percent": 36.87187852052964,
+        "mean_signed_error_percent": -21.895138995713538,
+        "median_ape_percent": 19.19514013723942,
+        "p95_ape_percent": 34.24901533936174,
+        "points": 101,
+        "within_20_percent": 54.45544554455446
+      },
+      "mape_difference_govender_minus_baroncini": 18.391647663683553,
+      "name": "R143a",
+      "smiles": "CC(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 235.62081977848982,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 0.2409037700302763,
+        "maximum_ape_percent": 0.7248914880044088,
+        "mean_signed_error_percent": 0.23862295476254236,
+        "median_ape_percent": 0.17868786548838056,
+        "p95_ape_percent": 0.6683048062541941,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "353-36-6",
+      "formula": "C2H5F",
+      "govender": {
+        "mape_percent": 18.34329184694625,
+        "maximum_ape_percent": 22.565659714708318,
+        "mean_signed_error_percent": 18.34329184694625,
+        "median_ape_percent": 18.591872109646545,
+        "p95_ape_percent": 22.21738793665835,
+        "points": 101,
+        "within_20_percent": 66.33663366336634
+      },
+      "mape_difference_govender_minus_baroncini": 18.102388076915975,
+      "name": "Fluoroethane",
+      "smiles": "CCF",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 259.1266769222116,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 0.40793617981879254,
+        "maximum_ape_percent": 1.1616552038112848,
+        "mean_signed_error_percent": 0.26343223033640967,
+        "median_ape_percent": 0.31027378220567225,
+        "p95_ape_percent": 0.8367027151761519,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-01-4",
+      "formula": "C2H3Cl",
+      "govender": {
+        "mape_percent": 13.670454914335979,
+        "maximum_ape_percent": 24.70209589855912,
+        "mean_signed_error_percent": 13.300602939956125,
+        "median_ape_percent": 14.772546574440026,
+        "p95_ape_percent": 23.926946979784326,
+        "points": 101,
+        "within_20_percent": 72.27722772277228
+      },
+      "mape_difference_govender_minus_baroncini": 13.262518734517187,
+      "name": "Vinyl chloride",
+      "smiles": "C=CCl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 256.8090727917567,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.4525729767113384,
+        "maximum_ape_percent": 26.664193399140434,
+        "mean_signed_error_percent": -2.0243762408362187,
+        "median_ape_percent": 2.4801951505127984,
+        "p95_ape_percent": 17.210202517170593,
+        "points": 101,
+        "within_20_percent": 96.03960396039604
+      },
+      "cas": "431-89-0",
+      "formula": "C_{3}F_{7}H_{1}",
+      "govender": {
+        "mape_percent": 16.351063515934396,
+        "maximum_ape_percent": 29.92039944838252,
+        "mean_signed_error_percent": 16.351063515934396,
+        "median_ape_percent": 15.872275521869629,
+        "p95_ape_percent": 27.843872241362423,
+        "points": 101,
+        "within_20_percent": 69.3069306930693
+      },
+      "mape_difference_govender_minus_baroncini": 11.898490539223058,
+      "name": "R227EA",
+      "smiles": "FC(C(F)(F)F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 308.7958791235627,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 0.3414973297724018,
+        "maximum_ape_percent": 0.7664615681604703,
+        "mean_signed_error_percent": 0.20107978333699347,
+        "median_ape_percent": 0.24175922035541975,
+        "p95_ape_percent": 0.7550164504659174,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-29-6",
+      "formula": "C3H7Cl",
+      "govender": {
+        "mape_percent": 12.090049993591713,
+        "maximum_ape_percent": 14.995429133679217,
+        "mean_signed_error_percent": -12.090049993591713,
+        "median_ape_percent": 11.8606284496374,
+        "p95_ape_percent": 14.573122277067807,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 11.74855266381931,
+      "name": "2-Chloropropane",
+      "smiles": "CC(C)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 264.02673089386633,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 3.866249951572858,
+        "maximum_ape_percent": 18.30175248026763,
+        "mean_signed_error_percent": 1.011782289190385,
+        "median_ape_percent": 2.7621933701367896,
+        "p95_ape_percent": 7.267023239881998,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-68-3",
+      "formula": "C_{2}Cl_{1}F_{2}H_{3}",
+      "govender": {
+        "mape_percent": 14.763356643233585,
+        "maximum_ape_percent": 29.65796765471237,
+        "mean_signed_error_percent": -14.763356643233585,
+        "median_ape_percent": 12.570774270041063,
+        "p95_ape_percent": 25.76963035085569,
+        "points": 101,
+        "within_20_percent": 84.15841584158416
+      },
+      "mape_difference_govender_minus_baroncini": 10.897106691660728,
+      "name": "R142b",
+      "smiles": "CC(F)(F)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 191.1321361932305,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 11.260520006603958,
+        "maximum_ape_percent": 37.457703684736366,
+        "mean_signed_error_percent": -11.260520006603958,
+        "median_ape_percent": 7.746213937805457,
+        "p95_ape_percent": 32.02216514757733,
+        "points": 101,
+        "within_20_percent": 81.1881188118812
+      },
+      "cas": "75-46-7",
+      "formula": "C_{1}F_{3}H_{1}",
+      "govender": {
+        "mape_percent": 21.14361414057389,
+        "maximum_ape_percent": 39.524114737861474,
+        "mean_signed_error_percent": -21.14361414057389,
+        "median_ape_percent": 19.407767486028604,
+        "p95_ape_percent": 34.61017983065297,
+        "points": 101,
+        "within_20_percent": 53.46534653465347
+      },
+      "mape_difference_govender_minus_baroncini": 9.883094133969934,
+      "name": "R23",
+      "smiles": "C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 381.1580750861025,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 0.3471918843612171,
+        "maximum_ape_percent": 0.8973485119132096,
+        "mean_signed_error_percent": 0.2708018110525806,
+        "median_ape_percent": 0.31057861867671566,
+        "p95_ape_percent": 0.7551150470181289,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "557-91-5",
+      "formula": "C2H4Br2",
+      "govender": {
+        "mape_percent": 9.58290817771305,
+        "maximum_ape_percent": 23.717308260506197,
+        "mean_signed_error_percent": 0.3883001949937777,
+        "median_ape_percent": 9.363236234612703,
+        "p95_ape_percent": 20.357379981638935,
+        "points": 101,
+        "within_20_percent": 94.05940594059405
+      },
+      "mape_difference_govender_minus_baroncini": 9.235716293351832,
+      "name": "1,1-Dibromoethane",
+      "smiles": "CC(Br)Br",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 404.3701506027411,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 7.220918565214801,
+        "maximum_ape_percent": 10.212554710944588,
+        "mean_signed_error_percent": -7.220918565214801,
+        "median_ape_percent": 7.168645661580275,
+        "p95_ape_percent": 9.874999761142789,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "106-93-4",
+      "formula": "C2H4Br2",
+      "govender": {
+        "mape_percent": 14.666921471564011,
+        "maximum_ape_percent": 19.139784115616575,
+        "mean_signed_error_percent": -14.666921471564011,
+        "median_ape_percent": 14.786564999744389,
+        "p95_ape_percent": 18.73196810554587,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 7.44600290634921,
+      "name": "1,2-Dibromoethane",
+      "smiles": "C(CBr)Br",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 305.1953507006364,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.806791940882966,
+        "maximum_ape_percent": 26.539690109070403,
+        "mean_signed_error_percent": 0.9381948578741106,
+        "median_ape_percent": 4.00141659973865,
+        "p95_ape_percent": 14.927927916026517,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "cas": "1717-00-6",
+      "formula": "C_{2}Cl_{2}F_{1}H_{3}",
+      "govender": {
+        "mape_percent": 11.933028439471702,
+        "maximum_ape_percent": 30.587499743337844,
+        "mean_signed_error_percent": -11.933028439471702,
+        "median_ape_percent": 8.993867767114372,
+        "p95_ape_percent": 26.13972392362667,
+        "points": 101,
+        "within_20_percent": 86.13861386138613
+      },
+      "mape_difference_govender_minus_baroncini": 7.126236498588736,
+      "name": "R141b",
+      "smiles": "CC(F)(Cl)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 195.05837337845983,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 2.383058942757465,
+        "maximum_ape_percent": 16.355884269488396,
+        "mean_signed_error_percent": -1.2943859206586334,
+        "median_ape_percent": 1.1800226120616042,
+        "p95_ape_percent": 10.859195688321499,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "76-16-4",
+      "formula": "C_{2}F_{6}",
+      "govender": {
+        "mape_percent": 9.044157480202315,
+        "maximum_ape_percent": 10.319881680579602,
+        "mean_signed_error_percent": -9.044157480202315,
+        "median_ape_percent": 9.029293781712578,
+        "p95_ape_percent": 10.304175665676151,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 6.66109853744485,
+      "name": "R116",
+      "smiles": "C(C(F)(F)F)(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 279.3221543718143,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 13.672133487021814,
+        "maximum_ape_percent": 28.50625168577009,
+        "mean_signed_error_percent": -13.672133487021814,
+        "median_ape_percent": 12.394501905613387,
+        "p95_ape_percent": 22.7755472770118,
+        "points": 101,
+        "within_20_percent": 91.0891089108911
+      },
+      "cas": "431-63-0",
+      "formula": "C_{3}F_{6}H_{2}",
+      "govender": {
+        "mape_percent": 20.312815135231965,
+        "maximum_ape_percent": 22.07198788668969,
+        "mean_signed_error_percent": 20.312815135231965,
+        "median_ape_percent": 20.849746818180968,
+        "p95_ape_percent": 22.056487620523015,
+        "points": 101,
+        "within_20_percent": 35.64356435643564
+      },
+      "mape_difference_govender_minus_baroncini": 6.640681648210151,
+      "name": "R236EA",
+      "smiles": "C(C(F)F)(C(F)(F)F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 249.02599831641157,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 13.586599722252355,
+        "maximum_ape_percent": 14.088898408045903,
+        "mean_signed_error_percent": 13.586599722252355,
+        "median_ape_percent": 13.948366871619001,
+        "p95_ape_percent": 14.046741241371063,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-87-3",
+      "formula": "CH3Cl",
+      "govender": {
+        "mape_percent": 19.99048109582817,
+        "maximum_ape_percent": 20.901314140266038,
+        "mean_signed_error_percent": 19.99048109582817,
+        "median_ape_percent": 19.928701860514497,
+        "p95_ape_percent": 20.777797681953004,
+        "points": 101,
+        "within_20_percent": 54.45544554455446
+      },
+      "mape_difference_govender_minus_baroncini": 6.403881373575814,
+      "name": "Chloromethane",
+      "smiles": "CCl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 370.09302137222187,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 1.0812585886192965,
+        "maximum_ape_percent": 2.889736502530238,
+        "mean_signed_error_percent": 0.37351789952336206,
+        "median_ape_percent": 0.9754177415622789,
+        "p95_ape_percent": 2.5772000154503205,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-95-3",
+      "formula": "CH2Br2",
+      "govender": {
+        "mape_percent": 7.410690109321135,
+        "maximum_ape_percent": 15.785113712044641,
+        "mean_signed_error_percent": -6.431622743429659,
+        "median_ape_percent": 6.9724317763572685,
+        "p95_ape_percent": 15.011188777316454,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 6.329431520701839,
+      "name": "Dibromomethane",
+      "smiles": "C(Br)Br",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 312.81408942467465,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 2.738987882592994,
+        "maximum_ape_percent": 2.8974842967360637,
+        "mean_signed_error_percent": -2.738987882592994,
+        "median_ape_percent": 2.763588043502918,
+        "p95_ape_percent": 2.895771680742576,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-09-2",
+      "formula": "CH2Cl2",
+      "govender": {
+        "mape_percent": 8.399111159081626,
+        "maximum_ape_percent": 13.664186145543466,
+        "mean_signed_error_percent": -8.399111159081626,
+        "median_ape_percent": 8.144664871834518,
+        "p95_ape_percent": 13.020285109669071,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 5.660123276488632,
+      "name": "Dichloromethane",
+      "smiles": "C(Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 191.73815855630818,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.431099609605395,
+        "maximum_ape_percent": 9.329843378463709,
+        "mean_signed_error_percent": 1.6908458755908897,
+        "median_ape_percent": 3.8177405956875243,
+        "p95_ape_percent": 8.928355568448954,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-72-9",
+      "formula": "C_{1}Cl_{1}F_{3}",
+      "govender": {
+        "mape_percent": 9.999635489983396,
+        "maximum_ape_percent": 39.725913455796146,
+        "mean_signed_error_percent": -5.731655739741216,
+        "median_ape_percent": 6.843059827624776,
+        "p95_ape_percent": 32.08205920100821,
+        "points": 101,
+        "within_20_percent": 84.15841584158416
+      },
+      "mape_difference_govender_minus_baroncini": 5.5685358803780005,
+      "name": "R13",
+      "smiles": "C(F)(F)(F)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 361.23236134788806,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 0.3313193998179585,
+        "maximum_ape_percent": 0.7183076531805721,
+        "mean_signed_error_percent": 0.279909391631192,
+        "median_ape_percent": 0.31290478685721546,
+        "p95_ape_percent": 0.6762989231803074,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "78-99-9",
+      "formula": "C3H6Cl2",
+      "govender": {
+        "mape_percent": 5.162828616238616,
+        "maximum_ape_percent": 11.473089742979592,
+        "mean_signed_error_percent": 0.6982014883492463,
+        "median_ape_percent": 5.234636314012575,
+        "p95_ape_percent": 9.754907543423009,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 4.831509216420657,
+      "name": "1,1-Dichloropropane",
+      "smiles": "CCC(Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 330.1741240767717,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 1.2093833831846712,
+        "maximum_ape_percent": 1.717522841579533,
+        "mean_signed_error_percent": 1.20788788437992,
+        "median_ape_percent": 1.1985407106126722,
+        "p95_ape_percent": 1.7087564961745905,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-34-3",
+      "formula": "C2H4Cl2",
+      "govender": {
+        "mape_percent": 5.940614454822233,
+        "maximum_ape_percent": 16.828609629269554,
+        "mean_signed_error_percent": -2.46085843522884,
+        "median_ape_percent": 5.16506902154974,
+        "p95_ape_percent": 14.753920877609772,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 4.731231071637562,
+      "name": "1,1-Dichloroethane",
+      "smiles": "CC(Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 267.1753253354865,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 14.86591836796559,
+        "maximum_ape_percent": 31.869066760467025,
+        "mean_signed_error_percent": -14.86591836796559,
+        "median_ape_percent": 13.216394719330992,
+        "p95_ape_percent": 26.704834528838894,
+        "points": 101,
+        "within_20_percent": 83.16831683168317
+      },
+      "cas": "115-25-3",
+      "formula": "C_{4}F_{8}",
+      "govender": {
+        "mape_percent": 18.911215101542858,
+        "maximum_ape_percent": 29.62275223629276,
+        "mean_signed_error_percent": -18.911215101542858,
+        "median_ape_percent": 19.049652650667493,
+        "p95_ape_percent": 28.241483265667576,
+        "points": 101,
+        "within_20_percent": 54.45544554455446
+      },
+      "mape_difference_govender_minus_baroncini": 4.045296733577269,
+      "name": "RC318",
+      "smiles": "FC1(F)C(F)(F)C(F)(F)C1(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 300.9730476098315,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.05594431617018,
+        "maximum_ape_percent": 19.588370145125523,
+        "mean_signed_error_percent": -0.019023680296022263,
+        "median_ape_percent": 3.2982362219675987,
+        "p95_ape_percent": 10.120416543872713,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "306-83-2",
+      "formula": "C_{2}Cl_{2}F_{3}H_{1}",
+      "govender": {
+        "mape_percent": 7.182612965143655,
+        "maximum_ape_percent": 28.16226410878665,
+        "mean_signed_error_percent": -3.099523529658265,
+        "median_ape_percent": 4.327791705187911,
+        "p95_ape_percent": 23.551395804979403,
+        "points": 101,
+        "within_20_percent": 90.0990099009901
+      },
+      "mape_difference_govender_minus_baroncini": 3.1266686489734754,
+      "name": "R123",
+      "smiles": "FC(F)(F)C(Cl)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 261.1871291452406,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.216448821789001,
+        "maximum_ape_percent": 23.66583894389962,
+        "mean_signed_error_percent": -3.892121275676691,
+        "median_ape_percent": 3.7077572737071907,
+        "p95_ape_percent": 12.377400585952659,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "cas": "2837-89-0",
+      "formula": "C_{2}Cl_{1}F_{4}H_{1}",
+      "govender": {
+        "mape_percent": 6.6398941876360755,
+        "maximum_ape_percent": 21.893361525300925,
+        "mean_signed_error_percent": 1.1468017007430307,
+        "median_ape_percent": 5.500469688035681,
+        "p95_ape_percent": 16.127606989849287,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "mape_difference_govender_minus_baroncini": 2.4234453658470745,
+      "name": "R124",
+      "smiles": "FC(Cl)C(F)(F)F",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 285.4688593633739,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 1.7426360966697816,
+        "maximum_ape_percent": 4.717781746950145,
+        "mean_signed_error_percent": 1.4835871890890842,
+        "median_ape_percent": 1.0204231420887444,
+        "p95_ape_percent": 4.561279354825931,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-00-3",
+      "formula": "C2H5Cl",
+      "govender": {
+        "mape_percent": 4.104353045353536,
+        "maximum_ape_percent": 5.515095168719164,
+        "mean_signed_error_percent": -4.104353045353536,
+        "median_ape_percent": 4.274120153431693,
+        "p95_ape_percent": 5.416980043853981,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 2.361716948683754,
+      "name": "Chloroethane",
+      "smiles": "CCCl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 271.6616271054228,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 11.111262091112192,
+        "maximum_ape_percent": 30.201356584983042,
+        "mean_signed_error_percent": -11.111262091112192,
+        "median_ape_percent": 9.416906655314117,
+        "p95_ape_percent": 22.606017700209602,
+        "points": 101,
+        "within_20_percent": 92.07920792079209
+      },
+      "cas": "690-39-1",
+      "formula": "C_{3}F_{6}H_{2}",
+      "govender": {
+        "mape_percent": 13.241782681601375,
+        "maximum_ape_percent": 19.248156055252153,
+        "mean_signed_error_percent": -13.241782681601375,
+        "median_ape_percent": 12.654078852914486,
+        "p95_ape_percent": 18.34704610164849,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 2.1305205904891835,
+      "name": "R236FA",
+      "smiles": "C(C(F)(F)F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 221.46063183974735,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 19.648126778732696,
+        "maximum_ape_percent": 21.703509480520257,
+        "mean_signed_error_percent": -19.648126778732696,
+        "median_ape_percent": 19.491214316513663,
+        "p95_ape_percent": 21.4276802244879,
+        "points": 101,
+        "within_20_percent": 60.396039603960396
+      },
+      "cas": "75-10-5",
+      "formula": "CH2F2",
+      "govender": {
+        "mape_percent": 20.76239470520916,
+        "maximum_ape_percent": 26.242383625991682,
+        "mean_signed_error_percent": -20.76239470520916,
+        "median_ape_percent": 20.079406949942836,
+        "p95_ape_percent": 25.280497694476733,
+        "points": 101,
+        "within_20_percent": 48.51485148514851
+      },
+      "mape_difference_govender_minus_baroncini": 1.1142679264764652,
+      "name": "Difluoromethane",
+      "smiles": "C(F)F",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 369.22745614253176,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 7.106275584385,
+        "maximum_ape_percent": 7.948264968958418,
+        "mean_signed_error_percent": -7.106275584385,
+        "median_ape_percent": 7.150952005557965,
+        "p95_ape_percent": 7.603200998245086,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "78-87-5",
+      "formula": "C3H6Cl2",
+      "govender": {
+        "mape_percent": 7.905787614413199,
+        "maximum_ape_percent": 12.304811010495364,
+        "mean_signed_error_percent": -7.905787614413199,
+        "median_ape_percent": 8.453204898866174,
+        "p95_ape_percent": 12.002113231938893,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 0.7995120300281986,
+      "name": "1,2-Dichloropropane",
+      "smiles": "CC(CCl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 236.36108741138204,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 6.275164087359653,
+        "maximum_ape_percent": 19.063967359796763,
+        "mean_signed_error_percent": 4.2118816995288135,
+        "median_ape_percent": 5.764294919624113,
+        "p95_ape_percent": 11.223434064527883,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "76-19-7",
+      "formula": "C_{3}F_{8}",
+      "govender": {
+        "mape_percent": 6.849594118560154,
+        "maximum_ape_percent": 13.072532511090685,
+        "mean_signed_error_percent": 6.849594118560154,
+        "median_ape_percent": 6.149681177507982,
+        "p95_ape_percent": 11.39375041828754,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 0.5744300312005013,
+      "name": "R218",
+      "smiles": "FC(F)(F)C(F)(F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 296.85807236462676,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 3.598531718802475,
+        "maximum_ape_percent": 15.910237857302455,
+        "mean_signed_error_percent": -2.620673208118007,
+        "median_ape_percent": 2.014185860683515,
+        "p95_ape_percent": 9.190486768629091,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-69-4",
+      "formula": "C_{1}Cl_{3}F_{1}",
+      "govender": {
+        "mape_percent": 3.729499036838709,
+        "maximum_ape_percent": 10.289867730327963,
+        "mean_signed_error_percent": -3.729499036838709,
+        "median_ape_percent": 2.7808368745871226,
+        "p95_ape_percent": 9.330429529146777,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": 0.1309673180362343,
+      "name": "R11",
+      "smiles": "FC(Cl)(Cl)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 334.2489611056359,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 2.5186002754394106,
+        "maximum_ape_percent": 5.348571357815168,
+        "mean_signed_error_percent": 0.6651823583076859,
+        "median_ape_percent": 2.483021763707449,
+        "p95_ape_percent": 4.944530722366647,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "67-66-3",
+      "formula": "CHCl3",
+      "govender": {
+        "mape_percent": 2.2286618342239635,
+        "maximum_ape_percent": 5.452425970343344,
+        "mean_signed_error_percent": -0.5021403277654618,
+        "median_ape_percent": 2.113272445682024,
+        "p95_ape_percent": 4.841339544401169,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -0.2899384412154471,
+      "name": "Chloroform",
+      "smiles": "C(Cl)(Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 319.6692874919446,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 3.0451757752545,
+        "maximum_ape_percent": 7.3852465062798744,
+        "mean_signed_error_percent": 3.0451757752545,
+        "median_ape_percent": 2.512268075905544,
+        "p95_ape_percent": 7.206156463103652,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "540-54-5",
+      "formula": "C3H7Cl",
+      "govender": {
+        "mape_percent": 2.700091628021469,
+        "maximum_ape_percent": 4.408810210539182,
+        "mean_signed_error_percent": -2.700091628021469,
+        "median_ape_percent": 2.930119941376641,
+        "p95_ape_percent": 4.29427232855899,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -0.34508414723303105,
+      "name": "1-Chloropropane",
+      "smiles": "CCCCl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 232.33952525912358,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.094020130307589,
+        "maximum_ape_percent": 12.156830306176559,
+        "mean_signed_error_percent": 2.347338701405234,
+        "median_ape_percent": 3.9273418237377067,
+        "p95_ape_percent": 6.996889891473312,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-45-6",
+      "formula": "C_{1}Cl_{1}F_{2}H_{1}",
+      "govender": {
+        "mape_percent": 3.344727352035961,
+        "maximum_ape_percent": 6.15894458787285,
+        "mean_signed_error_percent": -3.344727352035961,
+        "median_ape_percent": 3.005169340884317,
+        "p95_ape_percent": 6.08963737855256,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -0.7492927782716281,
+      "name": "R22",
+      "smiles": "C(F)(F)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 358.34296718163284,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.249284321194821,
+        "maximum_ape_percent": 5.172302817739083,
+        "mean_signed_error_percent": -4.249284321194821,
+        "median_ape_percent": 4.323111398016266,
+        "p95_ape_percent": 5.122670756906889,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "462-06-6",
+      "formula": "C6H5F",
+      "govender": {
+        "mape_percent": 3.424912367537438,
+        "maximum_ape_percent": 7.324576055270127,
+        "mean_signed_error_percent": 3.0873732863767005,
+        "median_ape_percent": 3.2861930543583107,
+        "p95_ape_percent": 6.962216883174666,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -0.824371953657383,
+      "name": "Fluorobenzene",
+      "smiles": "C1=CC=C(C=C1)F",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 429.01683233744234,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 2.330261793572891,
+        "maximum_ape_percent": 4.15575349663394,
+        "mean_signed_error_percent": -2.266072253522778,
+        "median_ape_percent": 2.529415118810885,
+        "p95_ape_percent": 4.0966422478533,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "108-86-1",
+      "formula": "C6H5Br",
+      "govender": {
+        "mape_percent": 1.3273304515002942,
+        "maximum_ape_percent": 2.9536273761040954,
+        "mean_signed_error_percent": -0.020955051844765156,
+        "median_ape_percent": 1.3180574228022546,
+        "p95_ape_percent": 2.5799424328160514,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -1.002931342072597,
+      "name": "Bromobenzene",
+      "smiles": "C1=CC=C(C=C1)Br",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 447.26538404016446,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 2.9597672421411714,
+        "maximum_ape_percent": 4.173102693215858,
+        "mean_signed_error_percent": -2.9597672421411714,
+        "median_ape_percent": 2.8825481529818897,
+        "p95_ape_percent": 3.6543996034813397,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "106-46-7",
+      "formula": "C6H4Cl2",
+      "govender": {
+        "mape_percent": 1.5797359446434314,
+        "maximum_ape_percent": 3.810361506079296,
+        "mean_signed_error_percent": -0.1412124322149674,
+        "median_ape_percent": 1.5424458451813616,
+        "p95_ape_percent": 3.3242712831205057,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -1.38003129749774,
+      "name": "p-Dichlorobenzene",
+      "smiles": "C1=CC(=CC=C1Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 243.39771266721493,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 5.422971062952078,
+        "maximum_ape_percent": 12.548827665578056,
+        "mean_signed_error_percent": -0.18230437182192064,
+        "median_ape_percent": 5.552989731236668,
+        "p95_ape_percent": 11.05738542249709,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-71-8",
+      "formula": "C_{1}Cl_{2}F_{2}",
+      "govender": {
+        "mape_percent": 4.018286000970629,
+        "maximum_ape_percent": 18.345952388260066,
+        "mean_signed_error_percent": -3.4081299546599277,
+        "median_ape_percent": 1.4811879086673252,
+        "p95_ape_percent": 15.024067271177277,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -1.404685061981449,
+      "name": "R12",
+      "smiles": "C(F)(F)(Cl)Cl",
+      "source": "coolprop_mixed"
+    },
+    {
+      "Tb_K": 405.11203476605306,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.481016683230623,
+        "maximum_ape_percent": 6.231972175990563,
+        "mean_signed_error_percent": -4.481016683230623,
+        "median_ape_percent": 4.515280848230907,
+        "p95_ape_percent": 6.008588819724836,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "108-90-7",
+      "formula": "C6H5Cl",
+      "govender": {
+        "mape_percent": 2.7811224343766483,
+        "maximum_ape_percent": 6.75080282760595,
+        "mean_signed_error_percent": -2.6926744642651257,
+        "median_ape_percent": 2.520227429142474,
+        "p95_ape_percent": 6.268061663018187,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -1.6998942488539743,
+      "name": "Chlorobenzene",
+      "smiles": "C1=CC=C(C=C1)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 356.82299421368566,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 11.559923001743606,
+        "maximum_ape_percent": 11.765488253182399,
+        "mean_signed_error_percent": -11.559923001743606,
+        "median_ape_percent": 11.559562966033077,
+        "p95_ape_percent": 11.728223322645059,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "107-06-2",
+      "formula": "C2H4Cl2",
+      "govender": {
+        "mape_percent": 9.46952848394859,
+        "maximum_ape_percent": 10.856442685827183,
+        "mean_signed_error_percent": -9.46952848394859,
+        "median_ape_percent": 9.521709451202366,
+        "p95_ape_percent": 10.734344386570704,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -2.0903945177950156,
+      "name": "1,2-Dichloroethane",
+      "smiles": "C(CCl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 311.48885204763246,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 5.790043848128071,
+        "maximum_ape_percent": 8.91563082976341,
+        "mean_signed_error_percent": 5.790043848128071,
+        "median_ape_percent": 5.652893387880487,
+        "p95_ape_percent": 8.434597636799012,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "74-96-4",
+      "formula": "C2H5Br",
+      "govender": {
+        "mape_percent": 3.2463152807028917,
+        "maximum_ape_percent": 5.832544165055964,
+        "mean_signed_error_percent": 3.2463152807028917,
+        "median_ape_percent": 3.1178843671930245,
+        "p95_ape_percent": 5.514193504490961,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -2.543728567425179,
+      "name": "Bromoethane",
+      "smiles": "CCBr",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 446.1090657508995,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 4.890801764671389,
+        "maximum_ape_percent": 5.891586861006792,
+        "mean_signed_error_percent": -4.890801764671389,
+        "median_ape_percent": 4.943925943751215,
+        "p95_ape_percent": 5.7438339830263585,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "541-73-1",
+      "formula": "C6H4Cl2",
+      "govender": {
+        "mape_percent": 1.8220119790718938,
+        "maximum_ape_percent": 3.7211607403584424,
+        "mean_signed_error_percent": 0.23936649286304107,
+        "median_ape_percent": 1.8133716541016143,
+        "p95_ape_percent": 3.424821980265169,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -3.0687897855994954,
+      "name": "m-Dichlorobenzene",
+      "smiles": "C1=CC(=CC(=C1)Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 249.12186791144813,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 8.581013518214657,
+        "maximum_ape_percent": 24.401743857916657,
+        "mean_signed_error_percent": -8.581013518214657,
+        "median_ape_percent": 7.567456706519737,
+        "p95_ape_percent": 17.296222424918884,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "cas": "75-37-6",
+      "formula": "C2H4F2",
+      "govender": {
+        "mape_percent": 4.597083120274051,
+        "maximum_ape_percent": 17.816803403114267,
+        "mean_signed_error_percent": -4.597083120274051,
+        "median_ape_percent": 2.5148968620295475,
+        "p95_ape_percent": 15.129861515183073,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -3.9839303979406067,
+      "name": "1,1-Difluoroethane",
+      "smiles": "CC(F)F",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 453.51610610290106,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 5.884286927589831,
+        "maximum_ape_percent": 6.374587571409029,
+        "mean_signed_error_percent": -5.884286927589831,
+        "median_ape_percent": 5.923966093299915,
+        "p95_ape_percent": 6.3356417863853824,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "95-50-1",
+      "formula": "C6H4Cl2",
+      "govender": {
+        "mape_percent": 1.159739984003928,
+        "maximum_ape_percent": 2.5992853570061425,
+        "mean_signed_error_percent": -1.141103659703068,
+        "median_ape_percent": 1.1121745007527717,
+        "p95_ape_percent": 2.441968687828888,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -4.724546943585903,
+      "name": "o-Dichlorobenzene",
+      "smiles": "C1=CC=C(C(=C1)Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 349.88124886481876,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 8.299845751762627,
+        "maximum_ape_percent": 8.591665778360568,
+        "mean_signed_error_percent": 8.299845751762627,
+        "median_ape_percent": 8.298296465908294,
+        "p95_ape_percent": 8.547042912199077,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "56-23-5",
+      "formula": "CCl4",
+      "govender": {
+        "mape_percent": 3.4449982887575827,
+        "maximum_ape_percent": 5.399302388696913,
+        "mean_signed_error_percent": -3.4449982887575827,
+        "median_ape_percent": 3.3831867750753863,
+        "p95_ape_percent": 5.177853709686142,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -4.8548474630050436,
+      "name": "Carbon tetrachloride",
+      "smiles": "C(Cl)(Cl)(Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 387.3246173979866,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 18.423139190153165,
+        "maximum_ape_percent": 19.345896092796654,
+        "mean_signed_error_percent": -18.423139190153165,
+        "median_ape_percent": 18.42583003402045,
+        "p95_ape_percent": 18.81358622467747,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "79-00-5",
+      "formula": "C2H3Cl3",
+      "govender": {
+        "mape_percent": 13.46061759573386,
+        "maximum_ape_percent": 16.533548573554512,
+        "mean_signed_error_percent": -13.46061759573386,
+        "median_ape_percent": 13.234716451244989,
+        "p95_ape_percent": 16.1023239366337,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -4.9625215944193055,
+      "name": "1,1,2-Trichloroethane",
+      "smiles": "C(C(Cl)Cl)Cl",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 145.12057300908583,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 9.621177721269696,
+        "maximum_ape_percent": 16.524898265206556,
+        "mean_signed_error_percent": 9.621177721269696,
+        "median_ape_percent": 9.165517056402162,
+        "p95_ape_percent": 15.665222367831477,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "cas": "75-73-0",
+      "formula": "CF4",
+      "govender": {
+        "mape_percent": 4.030489453839879,
+        "maximum_ape_percent": 8.477120492634649,
+        "mean_signed_error_percent": 3.3423676539942972,
+        "median_ape_percent": 3.7171268252270906,
+        "p95_ape_percent": 8.070701541036907,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -5.590688267429817,
+      "name": "Carbon tetrafluoride",
+      "smiles": "C(F)(F)(F)F",
+      "source": "perry"
+    },
+    {
+      "Tb_K": 225.0613923699292,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 8.594626300179106,
+        "maximum_ape_percent": 22.336171644955527,
+        "mean_signed_error_percent": -8.594626300179106,
+        "median_ape_percent": 7.792891650172351,
+        "p95_ape_percent": 15.576375904480344,
+        "points": 101,
+        "within_20_percent": 98.01980198019803
+      },
+      "cas": "354-33-6",
+      "formula": "C_{2}F_{5}H_{1}",
+      "govender": {
+        "mape_percent": 2.679636190937487,
+        "maximum_ape_percent": 9.381721702679723,
+        "mean_signed_error_percent": -0.3492538566646848,
+        "median_ape_percent": 2.3008488840902785,
+        "p95_ape_percent": 7.564289391382262,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -5.91499010924162,
+      "name": "R125",
+      "smiles": "C(C(F)(F)F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 247.07616894214726,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 12.022883031662726,
+        "maximum_ape_percent": 24.217318532428166,
+        "mean_signed_error_percent": -12.022883031662726,
+        "median_ape_percent": 11.052013405270767,
+        "p95_ape_percent": 17.905175596105593,
+        "points": 101,
+        "within_20_percent": 97.02970297029702
+      },
+      "cas": "811-97-2",
+      "formula": "C_{2}F_{4}H_{2}",
+      "govender": {
+        "mape_percent": 3.5167497199642734,
+        "maximum_ape_percent": 13.545472969488381,
+        "mean_signed_error_percent": -1.8708944768895623,
+        "median_ape_percent": 2.0323583908707032,
+        "p95_ape_percent": 11.501685201700163,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -8.506133311698452,
+      "name": "R134a",
+      "smiles": "C(C(F)(F)F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 288.1983205854808,
+      "Tb_method": "coolprop_HEOS_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 17.46476061138526,
+        "maximum_ape_percent": 36.740135628831496,
+        "mean_signed_error_percent": -17.46476061138526,
+        "median_ape_percent": 15.585654178086017,
+        "p95_ape_percent": 29.380452334991645,
+        "points": 101,
+        "within_20_percent": 82.17821782178217
+      },
+      "cas": "460-73-1",
+      "formula": "C_{3}F_{5}H_{3}",
+      "govender": {
+        "mape_percent": 4.702535199553382,
+        "maximum_ape_percent": 11.047024784374571,
+        "mean_signed_error_percent": -4.702535199553382,
+        "median_ape_percent": 3.5194547163909906,
+        "p95_ape_percent": 10.24898374918557,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -12.762225411831878,
+      "name": "R245fa",
+      "smiles": "C(C(F)F)C(F)(F)F",
+      "source": "coolprop_nonmixed_perry_absent"
+    },
+    {
+      "Tb_K": 194.81932070490143,
+      "Tb_method": "perry_vapor_pressure_normal_boiling_point",
+      "baroncini": {
+        "mape_percent": 30.202919691904142,
+        "maximum_ape_percent": 30.23177256158236,
+        "mean_signed_error_percent": -30.202919691904142,
+        "median_ape_percent": 30.21342487718608,
+        "p95_ape_percent": 30.23151131286147,
+        "points": 101,
+        "within_20_percent": 0.0
+      },
+      "cas": "593-53-3",
+      "formula": "CH3F",
+      "govender": {
+        "mape_percent": 13.729512759282198,
+        "maximum_ape_percent": 16.097273294069492,
+        "mean_signed_error_percent": -13.729512759282198,
+        "median_ape_percent": 13.646866562918392,
+        "p95_ape_percent": 15.825114946733443,
+        "points": 101,
+        "within_20_percent": 100.0
+      },
+      "mape_difference_govender_minus_baroncini": -16.473406932621945,
+      "name": "Fluoromethane",
+      "smiles": "CF",
+      "source": "perry"
+    }
+  ],
+  "coverage": {
+    "candidate_compounds": 51,
+    "common_compounds": 50,
+    "duplicate_cas": 0,
+    "govender_exclusions": 1
+  },
+  "exclusions": [
+    {
+      "cas": "754-12-1",
+      "name": "R1234yf",
+      "reason": "non-positive prediction; outside the method range",
+      "source": "coolprop_nonmixed_perry_absent"
+    }
+  ],
+  "overall_common_set": {
+    "baroncini": {
+      "mape_percent": 6.8529265470797265,
+      "maximum_ape_percent": 37.457703684736366,
+      "mean_signed_error_percent": -3.2754914210822865,
+      "median_ape_percent": 5.012261489351988,
+      "p95_ape_percent": 20.72710601604218,
+      "points": 5050,
+      "within_20_percent": 94.41584158415841
+    },
+    "baroncini_better_compounds": 30,
+    "compounds": 50,
+    "govender": {
+      "mape_percent": 10.828204109478063,
+      "maximum_ape_percent": 82.7929808586562,
+      "mean_signed_error_percent": -1.50841798718837,
+      "median_ape_percent": 7.756239896372047,
+      "p95_ape_percent": 32.30094507937958,
+      "points": 5050,
+      "within_20_percent": 86.13861386138613
+    },
+    "govender_better_compounds": 20
+  },
+  "reproducibility": {
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "coolprop_version": "8.0.0",
+    "dependency_sha256": {
+      "govender_method.py": "17a0aa5df77e9cf98cc160fd51c0d49aab0859b442a5a95898497b6276b1e1a0",
+      "scripts/thermal_conductivity/liquid/results/baroncini_mixed_halogen_coolprop8_probe.json": "0d0a2b0f094f0a472f90814630fe7c05c0eb1b52c6f58a9e9d8d73614651a6ba",
+      "scripts/thermal_conductivity/liquid/results/baroncini_nonmixed_halogen_coolprop8_probe.json": "dc20010bcc3e912eee22d183b6c1755f4d0973ea352b126835f8f5155bc20a87",
+      "scripts/thermal_conductivity/liquid/results/baroncini_refrigerant_probe.json": "07128a29a77f4ed2ea9dc020e240cc2b68e715f18b678f654a2e493c07c3b72d"
+    },
+    "python": "3.14.4",
+    "script": "scripts/thermal_conductivity/liquid/compare_baroncini_govender_refrigerants.py",
+    "script_sha256": "2d106c7687c197e166136d6503054b7caf8d7c53a3dc8717767ec8d258f726ef"
+  }
+}

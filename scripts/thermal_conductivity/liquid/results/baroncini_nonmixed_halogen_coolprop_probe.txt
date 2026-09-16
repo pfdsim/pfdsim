@@ -1,0 +1,32 @@
+CoolProp non-mixed halocarbons absent from the Perry Baroncini probe
+coverage: 13 compounds, 1313 states
+baseline A=0.494: MAPE=  9.92% MdAPE=  8.77% P95= 23.87% bias= -7.84%
+authors' corrected A: MAPE=  9.10% MdAPE=  8.26% P95= 21.55% bias= -7.02%
+
+BY HALOGEN FAMILY
+  F        n= 13 MAPE=  9.10% MdAPE=  8.26% P95= 21.55% bias= -7.02%
+
+BY CARBON COUNT
+  C1       n=  1 MAPE= 11.26% MdAPE=  7.75% P95= 32.02% bias=-11.26%
+  C2_plus  n= 12 MAPE=  8.92% MdAPE=  8.27% P95= 20.36% bias= -6.66%
+
+COMPOUNDS, WORST FIRST
+   1. R245fa       460-73-1     C_{3}F_{5}H_{3}      MAPE= 17.46% ->  17.46% A=0.494
+   2. RC318        115-25-3     C_{4}F_{8}           MAPE= 14.87% ->  14.87% A=0.494
+   3. R236EA       431-63-0     C_{3}F_{6}H_{2}      MAPE= 13.67% ->  13.67% A=0.494
+   4. R134a        811-97-2     C_{2}F_{4}H_{2}      MAPE= 12.02% ->  12.02% A=0.494
+   5. R23          75-46-7      C_{1}F_{3}H_{1}      MAPE= 22.00% ->  11.26% A=0.562
+   6. R236FA       690-39-1     C_{3}F_{6}H_{2}      MAPE= 11.11% ->  11.11% A=0.494
+   7. R125         354-33-6     C_{2}F_{5}H_{1}      MAPE=  8.59% ->   8.59% A=0.494
+   8. R1234yf      754-12-1     C_{3}F_{4}H_{2}      MAPE=  7.18% ->   7.18% A=0.494
+   9. R218         76-19-7      C_{3}F_{8}           MAPE=  6.28% ->   6.28% A=0.494
+  10. R1234ze(E)   29118-24-9   C_{3}F_{4}H_{2}      MAPE=  5.47% ->   5.47% A=0.494
+  11. R227EA       431-89-0     C_{3}F_{7}H_{1}      MAPE=  4.45% ->   4.45% A=0.494
+  12. R143a        420-46-2     C_{2}F_{3}H_{3}      MAPE=  3.50% ->   3.50% A=0.494
+  13. R116         76-16-4      C_{2}F_{6}           MAPE=  2.38% ->   2.38% A=0.494
+
+ELIGIBLE FLUIDS WITHOUT USABLE CONDUCTIVITY
+  R1234ze(Z)   29118-25-0   C_{3}F_{4}H_{2}      insufficient valid CoolProp conductivity states
+  R1243zf      677-21-4     C_{3}F_{3}H_{3}      insufficient valid CoolProp conductivity states
+  R245ca       679-86-7     C_{3}F_{5}H_{3}      insufficient valid CoolProp conductivity states
+  R365MFC      406-58-6     C_{4}F_{5}H_{5}      insufficient valid CoolProp conductivity states

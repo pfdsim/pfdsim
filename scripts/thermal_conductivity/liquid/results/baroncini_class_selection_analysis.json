@@ -1,0 +1,663 @@
+{
+  "alcohol_correction": {
+    "baseline": {
+      "mape_percent": 4.904043652284185,
+      "maximum_ape_percent": 33.98620943970126,
+      "mean_signed_error_percent": -2.6381424122042327,
+      "median_ape_percent": 2.7413665441202606,
+      "p95_ape_percent": 13.81551576662704,
+      "points": 2525
+    },
+    "compounds": 25,
+    "models": {
+      "C6_hinge": {
+        "LOOCV": {
+          "mape_percent": 5.799348399466708,
+          "maximum_ape_percent": 32.522967499136456,
+          "mean_signed_error_percent": 0.40418784133996116,
+          "median_ape_percent": 3.734437089636655,
+          "p95_ape_percent": 15.9765502272229,
+          "points": 2525
+        },
+        "LOOCV_correction_factor_max": 1.101143822523114,
+        "LOOCV_correction_factor_min": 1.0186511701655294,
+        "full_fit_log_coefficients": [
+          0.02256635310773117,
+          0.004096081075302059
+        ],
+        "parameters": 2
+      },
+      "OH_substitution": {
+        "LOOCV": {
+          "mape_percent": 4.346198902317416,
+          "maximum_ape_percent": 30.537117089172572,
+          "mean_signed_error_percent": 0.22034965370414486,
+          "median_ape_percent": 2.8970349577088883,
+          "p95_ape_percent": 15.386070630184348,
+          "points": 2525
+        },
+        "LOOCV_correction_factor_max": 1.069427843330382,
+        "LOOCV_correction_factor_min": 0.9951076272568713,
+        "full_fit_log_coefficients": [
+          0.05682265722780371,
+          -0.057449840551611966,
+          -0.059032977236805735
+        ],
+        "parameters": 3
+      },
+      "constant": {
+        "LOOCV": {
+          "mape_percent": 5.483173177751523,
+          "maximum_ape_percent": 32.313781644036354,
+          "mean_signed_error_percent": 0.25149257744997033,
+          "median_ape_percent": 3.4414429493335064,
+          "p95_ape_percent": 14.571864705704822,
+          "points": 2525
+        },
+        "LOOCV_correction_factor_max": 1.033670820598419,
+        "LOOCV_correction_factor_min": 1.0245309827394018,
+        "full_fit_log_coefficients": [
+          0.02912008282821446
+        ],
+        "parameters": 1
+      },
+      "linear_carbon": {
+        "LOOCV": {
+          "mape_percent": 5.745045026549144,
+          "maximum_ape_percent": 32.31763413509366,
+          "mean_signed_error_percent": 0.262564257854569,
+          "median_ape_percent": 3.6420055493857184,
+          "p95_ape_percent": 15.293780639552537,
+          "points": 2525
+        },
+        "LOOCV_correction_factor_max": 1.0645918645887742,
+        "LOOCV_correction_factor_min": 1.0086517150929508,
+        "full_fit_log_coefficients": [
+          0.021037821062704503,
+          0.0013381228088592647
+        ],
+        "parameters": 2
+      },
+      "primary_C6_plus": {
+        "LOOCV": {
+          "mape_percent": 4.29949453287828,
+          "maximum_ape_percent": 28.94089955044804,
+          "mean_signed_error_percent": 0.22102971505196004,
+          "median_ape_percent": 1.8470580141428883,
+          "p95_ape_percent": 15.904360193496952,
+          "points": 2525
+        },
+        "LOOCV_correction_factor_max": 1.1118641894910473,
+        "LOOCV_correction_factor_min": 1.005030014481062,
+        "full_fit_log_coefficients": [
+          0.008809141233980548,
+          0.07253907712226401
+        ],
+        "parameters": 2
+      }
+    },
+    "substitution_counts": {
+      "primary": 13,
+      "secondary": 10,
+      "tertiary": 2
+    }
+  },
+  "hydrocarbon_baroncini_vs_modified_pachaiyappan": {
+    "baroncini": {
+      "mape_percent": 8.984599249781773,
+      "maximum_ape_percent": 100.0,
+      "mean_signed_error_percent": 3.67914774043056,
+      "median_ape_percent": 5.692777149397887,
+      "p95_ape_percent": 26.05553097688518,
+      "points": 6969
+    },
+    "baroncini_compound_wins": 8,
+    "by_class": {
+      "aromatics": {
+        "baroncini": {
+          "mape_percent": 5.193588266325801,
+          "maximum_ape_percent": 39.89108163367936,
+          "mean_signed_error_percent": -0.08597774376692571,
+          "median_ape_percent": 3.396787861158157,
+          "p95_ape_percent": 24.464081922024597,
+          "points": 1515
+        },
+        "compounds": 15,
+        "pachaiyappan": {
+          "mape_percent": 2.355817455380203,
+          "maximum_ape_percent": 26.00821012687955,
+          "mean_signed_error_percent": -0.9449724005685128,
+          "median_ape_percent": 1.1117634717566993,
+          "p95_ape_percent": 10.629421910251153,
+          "points": 1515
+        }
+      },
+      "cycloparaffins": {
+        "baroncini": {
+          "mape_percent": 4.678086194765351,
+          "maximum_ape_percent": 100.0,
+          "mean_signed_error_percent": -2.160045716510113,
+          "median_ape_percent": 4.569192067306183,
+          "p95_ape_percent": 8.517905212022619,
+          "points": 1111
+        },
+        "compounds": 11,
+        "pachaiyappan": {
+          "mape_percent": 1.5999716242262514,
+          "maximum_ape_percent": 58.07667238624872,
+          "mean_signed_error_percent": -0.20025823501455223,
+          "median_ape_percent": 0.3044200189243673,
+          "p95_ape_percent": 6.73119846209036,
+          "points": 1111
+        }
+      },
+      "olefins": {
+        "baroncini": {
+          "mape_percent": 15.02950983511923,
+          "maximum_ape_percent": 37.191156898270414,
+          "mean_signed_error_percent": 13.204018129433797,
+          "median_ape_percent": 13.215826267147769,
+          "p95_ape_percent": 29.53656996632138,
+          "points": 2222
+        },
+        "compounds": 22,
+        "pachaiyappan": {
+          "mape_percent": 2.2922553421382506,
+          "maximum_ape_percent": 27.971765607207434,
+          "mean_signed_error_percent": -0.8169366835334431,
+          "median_ape_percent": 1.7220438050077336,
+          "p95_ape_percent": 6.4584560412698515,
+          "points": 2222
+        }
+      },
+      "saturated_hydrocarbons": {
+        "baroncini": {
+          "mape_percent": 7.6154933202387385,
+          "maximum_ape_percent": 48.720227699071536,
+          "mean_signed_error_percent": -0.5512874152247516,
+          "median_ape_percent": 5.147370473895963,
+          "p95_ape_percent": 21.02506434873027,
+          "points": 2121
+        },
+        "compounds": 21,
+        "pachaiyappan": {
+          "mape_percent": 3.039763349991601,
+          "maximum_ape_percent": 36.08315542420685,
+          "mean_signed_error_percent": -2.04370203754541,
+          "median_ape_percent": 1.2645225099943147,
+          "p95_ape_percent": 11.247417896353495,
+          "points": 2121
+        }
+      }
+    },
+    "compounds": 69,
+    "exclusions": [
+      {
+        "cas": "74-82-8",
+        "name": "Methane",
+        "reason": "method requires at least 3 carbon atoms"
+      },
+      {
+        "cas": "74-84-0",
+        "name": "Ethane",
+        "reason": "method requires at least 3 carbon atoms"
+      },
+      {
+        "cas": "92-52-4",
+        "name": "Biphenyl",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "91-20-3",
+        "name": "Naphthalene",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "594-82-1",
+        "name": "2,2,3,3-Tetramethylbutane",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "85-01-8",
+        "name": "Phenanthrene",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "74-85-1",
+        "name": "Ethylene",
+        "reason": "method requires at least 3 carbon atoms"
+      },
+      {
+        "cas": "629-78-7",
+        "name": "Heptadecane",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "629-92-5",
+        "name": "Nonadecane",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "593-45-3",
+        "name": "Octadecane",
+        "reason": "Perry V20 unavailable"
+      },
+      {
+        "cas": "112-95-8",
+        "name": "Eicosane",
+        "reason": "Perry V20 unavailable"
+      }
+    ],
+    "pachaiyappan": {
+      "mape_percent": 2.4232115590443035,
+      "maximum_ape_percent": 58.07667238624872,
+      "mean_signed_error_percent": -1.1198228466648859,
+      "median_ape_percent": 1.0590650057491713,
+      "p95_ape_percent": 9.682863619628243,
+      "points": 6969
+    },
+    "pachaiyappan_compound_wins": 61
+  },
+  "oxygenated_baroncini_vs_govender": {
+    "classes": {
+      "alcohols": {
+        "baroncini": {
+          "mape_percent": 4.904043652284185,
+          "maximum_ape_percent": 33.98620943970126,
+          "mean_signed_error_percent": -2.6381424122042327,
+          "median_ape_percent": 2.7413665441202606,
+          "p95_ape_percent": 13.81551576662704,
+          "points": 2525
+        },
+        "baroncini_compound_wins": 17,
+        "compounds": 25,
+        "govender": {
+          "mape_percent": 8.633947785641666,
+          "maximum_ape_percent": 38.1275137922195,
+          "mean_signed_error_percent": 0.8349160643856686,
+          "median_ape_percent": 7.045924157468186,
+          "p95_ape_percent": 27.31874541112545,
+          "points": 2525
+        },
+        "govender_compound_wins": 8
+      },
+      "esters": {
+        "baroncini": {
+          "mape_percent": 2.6872244613552283,
+          "maximum_ape_percent": 20.101261970230368,
+          "mean_signed_error_percent": 0.5446351501721857,
+          "median_ape_percent": 1.9063435610179091,
+          "p95_ape_percent": 8.082622860037418,
+          "points": 1616
+        },
+        "baroncini_compound_wins": 12,
+        "compounds": 16,
+        "govender": {
+          "mape_percent": 6.6329771413863705,
+          "maximum_ape_percent": 22.97942364228225,
+          "mean_signed_error_percent": -4.363320717544298,
+          "median_ape_percent": 5.207018293836657,
+          "p95_ape_percent": 19.863267051120715,
+          "points": 1616
+        },
+        "govender_compound_wins": 4
+      },
+      "ethers": {
+        "baroncini": {
+          "mape_percent": 1.7586172068799364,
+          "maximum_ape_percent": 21.80534156018653,
+          "mean_signed_error_percent": -0.8932393415235012,
+          "median_ape_percent": 0.4338905666278703,
+          "p95_ape_percent": 9.770038040429966,
+          "points": 1717
+        },
+        "baroncini_compound_wins": 13,
+        "compounds": 17,
+        "govender": {
+          "mape_percent": 7.896808867763841,
+          "maximum_ape_percent": 26.393432612836875,
+          "mean_signed_error_percent": -3.969405619312526,
+          "median_ape_percent": 7.053896520174607,
+          "p95_ape_percent": 19.42860004534011,
+          "points": 1717
+        },
+        "govender_compound_wins": 4
+      },
+      "ketones": {
+        "baroncini": {
+          "mape_percent": 4.682222272697803,
+          "maximum_ape_percent": 13.884814891568631,
+          "mean_signed_error_percent": 2.9231275802811423,
+          "median_ape_percent": 3.03034885991208,
+          "p95_ape_percent": 12.015199076043935,
+          "points": 1414
+        },
+        "baroncini_compound_wins": 6,
+        "compounds": 14,
+        "govender": {
+          "mape_percent": 5.363274212949735,
+          "maximum_ape_percent": 13.323404321815268,
+          "mean_signed_error_percent": -1.7921468175077646,
+          "median_ape_percent": 5.6503301976768725,
+          "p95_ape_percent": 11.221321004184057,
+          "points": 1414
+        },
+        "govender_compound_wins": 8
+      },
+      "organic_acids": {
+        "baroncini": {
+          "mape_percent": 2.6883018728828585,
+          "maximum_ape_percent": 37.51471481207322,
+          "mean_signed_error_percent": -0.8416655689788713,
+          "median_ape_percent": 0.6439834254862276,
+          "p95_ape_percent": 11.200112450516032,
+          "points": 1919
+        },
+        "baroncini_compound_wins": 14,
+        "compounds": 19,
+        "govender": {
+          "mape_percent": 4.380688143193425,
+          "maximum_ape_percent": 16.935295416466232,
+          "mean_signed_error_percent": 0.7975142557432758,
+          "median_ape_percent": 4.072752439293192,
+          "p95_ape_percent": 9.711976986012386,
+          "points": 1919
+        },
+        "govender_compound_wins": 5
+      }
+    },
+    "exclusions": [
+      {
+        "cas": "64-18-6",
+        "name": "Formic acid",
+        "reason": "could not assign 2 atom(s) to any published structural group: C(0), O(1)"
+      },
+      {
+        "cas": "144-62-7",
+        "name": "Oxalic acid",
+        "reason": "molecule has no published Govender fragmentation"
+      }
+    ]
+  },
+  "oxygenated_size_analysis": {
+    "alcohols": {
+      "by_carbon_bin": {
+        "C1_C2": {
+          "compounds": 2,
+          "mean_compound_bias_percent": -5.338879612099717,
+          "mean_compound_mape_percent": 5.666287674549733,
+          "names": [
+            "Methanol",
+            "Ethanol"
+          ]
+        },
+        "C3_C4": {
+          "compounds": 5,
+          "mean_compound_bias_percent": -0.9646052628842783,
+          "mean_compound_mape_percent": 4.095246138672946,
+          "names": [
+            "2-Propanol",
+            "2-Butanol",
+            "1-Butanol",
+            "1-Propanol",
+            "2-Methyl-2-propanol"
+          ]
+        },
+        "C5_C6": {
+          "compounds": 6,
+          "mean_compound_bias_percent": -1.5384315998041862,
+          "mean_compound_mape_percent": 4.98849513958808,
+          "names": [
+            "1-Hexanol",
+            "3-Methyl-1-butanol",
+            "Cyclohexanol",
+            "1-Pentanol",
+            "2-Hexanol",
+            "2-Pentanol"
+          ]
+        },
+        "C7_plus": {
+          "compounds": 12,
+          "mean_compound_bias_percent": -3.4351820973049887,
+          "mean_compound_mape_percent": 5.071776202259328,
+          "names": [
+            "1-Nonanol",
+            "1-Heptanol",
+            "1-Octanol",
+            "1-Decanol",
+            "1-Undecanol",
+            "Benzyl alcohol",
+            "1-Methylcyclohexanol",
+            "cis-2-Methylcyclohexanol",
+            "trans-2-Methylcyclohexanol",
+            "2-Heptanol",
+            "2-Nonanol",
+            "2-Octanol"
+          ]
+        }
+      },
+      "carbon_vs_mape_pearson": 0.1407624331126205,
+      "carbon_vs_signed_bias_pearson": -0.04846556874353868,
+      "compounds": 25
+    },
+    "esters": {
+      "by_carbon_bin": {
+        "C1_C2": {
+          "compounds": 1,
+          "mean_compound_bias_percent": -3.7713210629871985,
+          "mean_compound_mape_percent": 3.7713210629871985,
+          "names": [
+            "Methyl formate"
+          ]
+        },
+        "C3_C4": {
+          "compounds": 7,
+          "mean_compound_bias_percent": 1.41414721917805,
+          "mean_compound_mape_percent": 3.3681273944322787,
+          "names": [
+            "Propyl formate",
+            "Methyl acetate",
+            "Methyl propionate",
+            "Ethyl acetate",
+            "Ethyl formate",
+            "Vinyl acetate",
+            "Methyl acrylate"
+          ]
+        },
+        "C5_C6": {
+          "compounds": 6,
+          "mean_compound_bias_percent": 0.35375671975008877,
+          "mean_compound_mape_percent": 2.4650640699840642,
+          "names": [
+            "Ethyl propionate",
+            "Methyl butyrate",
+            "Methyl methacrylate",
+            "Ethyl butyrate",
+            "Propyl acetate",
+            "Butyl acetate"
+          ]
+        },
+        "C7_plus": {
+          "compounds": 2,
+          "mean_compound_bias_percent": 0.23195630649764448,
+          "mean_compound_mape_percent": 0.4284970688830603,
+          "names": [
+            "Ethyl benzoate",
+            "Methyl benzoate"
+          ]
+        }
+      },
+      "carbon_vs_mape_pearson": -0.5705631002054966,
+      "carbon_vs_signed_bias_pearson": -0.009561692217780403,
+      "compounds": 16
+    },
+    "ethers": {
+      "by_carbon_bin": {
+        "C1_C2": {
+          "compounds": 1,
+          "mean_compound_bias_percent": -0.10595564685875472,
+          "mean_compound_mape_percent": 0.32360593536208543,
+          "names": [
+            "Dimethyl ether"
+          ]
+        },
+        "C3_C4": {
+          "compounds": 6,
+          "mean_compound_bias_percent": 0.03452389112503985,
+          "mean_compound_mape_percent": 0.6480957487717852,
+          "names": [
+            "Diethyl ether",
+            "Methylethyl ether",
+            "Methylisopropyl ether",
+            "Methylpropyl ether",
+            "Methyl vinyl ether",
+            "1,1-Dimethoxyethane"
+          ]
+        },
+        "C5_C6": {
+          "compounds": 8,
+          "mean_compound_bias_percent": -0.855553814726318,
+          "mean_compound_mape_percent": 2.1387235130076694,
+          "names": [
+            "1,2-Dimethoxypropane",
+            "Diisopropyl ether",
+            "Methylbutyl ether",
+            "Methyl pentyl ether",
+            "Ethylpropyl ether",
+            "Ethylisopropyl ether",
+            "Methylisobutyl ether",
+            "Methyl tert-butyl ether"
+          ]
+        },
+        "C7_plus": {
+          "compounds": 2,
+          "mean_compound_bias_percent": -4.220912993990231,
+          "mean_compound_mape_percent": 4.287261992452382,
+          "names": [
+            "Dibutyl ether",
+            "Ethylhexyl ether"
+          ]
+        }
+      },
+      "carbon_vs_mape_pearson": 0.39759864178991267,
+      "carbon_vs_signed_bias_pearson": -0.2940863715115736,
+      "compounds": 17
+    },
+    "ketones": {
+      "by_carbon_bin": {
+        "C3_C4": {
+          "compounds": 2,
+          "mean_compound_bias_percent": -4.2080694778322805,
+          "mean_compound_mape_percent": 6.096230372257354,
+          "names": [
+            "Acetone",
+            "Methylethyl ketone"
+          ]
+        },
+        "C5_C6": {
+          "compounds": 7,
+          "mean_compound_bias_percent": 1.736610655314676,
+          "mean_compound_mape_percent": 2.024629184312884,
+          "names": [
+            "2-Hexanone",
+            "2-Pentanone",
+            "3-Pentanone",
+            "3-Hexanone",
+            "Methylisopropyl ketone",
+            "Ethylisopropyl ketone",
+            "Methylisobutyl ketone"
+          ]
+        },
+        "C7_plus": {
+          "compounds": 5,
+          "mean_compound_bias_percent": 7.436730098479562,
+          "mean_compound_mape_percent": 7.837249356612868,
+          "names": [
+            "2-Octanone",
+            "2-Heptanone",
+            "3-Heptanone",
+            "3-Octanone",
+            "Diisopropyl ketone"
+          ]
+        }
+      },
+      "carbon_vs_mape_pearson": 0.27356884791322156,
+      "carbon_vs_signed_bias_pearson": 0.7556563268771366,
+      "compounds": 14
+    },
+    "organic_acids": {
+      "by_carbon_bin": {
+        "C1_C2": {
+          "compounds": 3,
+          "mean_compound_bias_percent": -14.879704851525274,
+          "mean_compound_mape_percent": 14.879704851525274,
+          "names": [
+            "Formic acid",
+            "Acetic acid",
+            "Oxalic acid"
+          ]
+        },
+        "C3_C4": {
+          "compounds": 7,
+          "mean_compound_bias_percent": -1.8588247089343597,
+          "mean_compound_mape_percent": 3.4414491675449073,
+          "names": [
+            "Butyric acid",
+            "Propionic acid",
+            "Isobutyric acid",
+            "Acrylic acid",
+            "Methacrylic acid",
+            "Succinic acid",
+            "Malonic acid"
+          ]
+        },
+        "C5_C6": {
+          "compounds": 4,
+          "mean_compound_bias_percent": -1.159004257167709,
+          "mean_compound_mape_percent": 3.5523394628885674,
+          "names": [
+            "Hexanoic acid",
+            "Pentanoic acid",
+            "2-Ethyl butanoic acid",
+            "2-Methylbutanoic acid"
+          ]
+        },
+        "C7_plus": {
+          "compounds": 7,
+          "mean_compound_bias_percent": 0.8766053180587784,
+          "mean_compound_mape_percent": 1.185448644943864,
+          "names": [
+            "Heptanoic acid",
+            "Octanoic acid",
+            "Nonanoic acid",
+            "2-Ethyl hexanoic acid",
+            "Decanoic acid",
+            "2-Methyloctanoic acid",
+            "Benzoic acid"
+          ]
+        }
+      },
+      "carbon_vs_mape_pearson": -0.4312316460438345,
+      "carbon_vs_signed_bias_pearson": 0.4583343219300186,
+      "compounds": 21
+    }
+  },
+  "recommended_domain": {
+    "alcohols": "one alcohol group; phenols already excluded",
+    "esters": "monoesters",
+    "ethers": "acyclic ethers",
+    "ketones": "acyclic ketones",
+    "organic_acids": "mono- and dicarboxylic acids"
+  },
+  "reproducibility": {
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "dependency_sha256": {
+      "govender_method.py": "17a0aa5df77e9cf98cc160fd51c0d49aab0859b442a5a95898497b6276b1e1a0",
+      "modified_pachaiyappan.py": "811b2f95245aa61a446b93042b78c41ce00652d106c70e248e0f47e66c417afd",
+      "scripts/thermal_conductivity/liquid/results/baroncini_perry_benchmark.json": "f48b1f8322ce4b7f29698d34a47bcc9ad04ab5cdabbf9bd3c275583a84ca3d72"
+    },
+    "python": "3.14.4",
+    "script": "scripts/thermal_conductivity/liquid/analyze_baroncini_class_selection.py",
+    "script_sha256": "c3d58910b0fe3742e64d7eec79c27f1235d8bc9e59e45ff3e024d3db2e09a47d"
+  }
+}

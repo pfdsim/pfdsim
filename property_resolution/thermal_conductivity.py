@@ -43,6 +43,27 @@ GOVENDER_LIQUID_BASE_QUALITY = 0.80
 GOVENDER_LIQUID_SMALL_MOLECULE_PENALTY = 0.08
 GOVENDER_LIQUID_SINGLE_COMPONENT_GROUP_PENALTY = 0.08
 GOVENDER_LIQUID_OTHER_CAUTION_GROUP_PENALTY = 0.04
+MODIFIED_PACHAIYAPPAN_BASE_QUALITY = 0.90
+MODIFIED_PACHAIYAPPAN_MINIMUM_VOLUME_QUALITY = 0.86
+MODIFIED_PACHAIYAPPAN_MARGINAL_VOLUME_PENALTY = 0.02
+MODIFIED_PACHAIYAPPAN_ESTIMATED_VOLUME_PENALTY = 0.05
+MODIFIED_PACHAIYAPPAN_TC_08_09_PENALTY = 0.01
+MODIFIED_PACHAIYAPPAN_TC_07_08_PENALTY = 0.02
+MODIFIED_PACHAIYAPPAN_MINIMUM_TC_QUALITY = 0.70
+BARONCINI_BASE_QUALITY = {
+    "ethers": 0.90,
+    "aldehydes": 0.90,
+    "ketones": 0.90,
+    "organic_acids": 0.88,
+    "esters": 0.88,
+    "alcohols": 0.84,
+    "halogenated_hydrocarbons": 0.80,
+}
+BARONCINI_TB_075_085_PENALTY = 0.03
+BARONCINI_MINIMUM_TB_QUALITY = 0.75
+BARONCINI_TC_08_09_PENALTY = 0.01
+BARONCINI_TC_07_08_PENALTY = 0.03
+BARONCINI_MINIMUM_TC_QUALITY = 0.70
 
 
 class ThermalConductivityMixin:
@@ -164,21 +185,7 @@ class ThermalConductivityMixin:
         *,
         allow_online: bool,
     ) -> Optional[PropertyResolutionResult]:
-        """Use Govender after all supplied and Perry liquid data are exhausted."""
-        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
-            from ..govender_method import (
-                GovenderError,
-                PAPER_CAUTION_GROUPS,
-                PAPER_SINGLE_COMPONENT_GROUPS,
-                estimate as estimate_govender,
-            )
-        else:
-            from govender_method import (
-                GovenderError,
-                PAPER_CAUTION_GROUPS,
-                PAPER_SINGLE_COMPONENT_GROUPS,
-                estimate as estimate_govender,
-            )
+        """Use hydrocarbon-specific estimation, then Govender."""
         from rdkit import Chem
 
         smiles_result = self._resolve_smiles_result(
@@ -194,17 +201,415 @@ class ThermalConductivityMixin:
         if molecule is None:
             return None
 
-        tb_props = dict(props)
-        if not (tb_props.get("smiles") or tb_props.get("SMILES")):
-            tb_props["smiles"] = smiles
-            property_sources = dict(tb_props.get("property_sources") or {})
+        modified_pachaiyappan = (
+            self._estimated_modified_pachaiyappan_liquid_thermal_conductivity(
+                identifier,
+                T,
+                props,
+                molecule=molecule,
+                smiles=smiles,
+                smiles_result=smiles_result,
+                allow_online=allow_online,
+            )
+        )
+        if modified_pachaiyappan is not None:
+            return modified_pachaiyappan
+        baroncini = self._estimated_baroncini_liquid_thermal_conductivity(
+            identifier,
+            T,
+            props,
+            molecule=molecule,
+            smiles=smiles,
+            smiles_result=smiles_result,
+            allow_online=allow_online,
+        )
+        if baroncini is not None:
+            return baroncini
+        return self._estimated_govender_liquid_thermal_conductivity(
+            identifier,
+            T,
+            props,
+            molecule=molecule,
+            smiles=smiles,
+            smiles_result=smiles_result,
+            allow_online=allow_online,
+        )
+
+    def _thermal_conductivity_props_with_smiles(
+        self,
+        props: dict[str, Any],
+        *,
+        smiles: str,
+        smiles_result: PropertyResolutionResult,
+        allow_online: bool,
+    ) -> dict[str, Any]:
+        """Expose resolved structure provenance to dependent property resolvers."""
+        resolved_props = dict(props)
+        if not (resolved_props.get("smiles") or resolved_props.get("SMILES")):
+            resolved_props["smiles"] = smiles
+            property_sources = dict(resolved_props.get("property_sources") or {})
             property_sources["smiles"] = {
                 "source": smiles_result.source,
                 "method": smiles_result.method,
                 "quality": self._result_quality(smiles_result),
                 "notes": smiles_result.notes,
             }
-            tb_props["property_sources"] = property_sources
+            resolved_props["property_sources"] = property_sources
+        if not allow_online:
+            resolved_props["_allow_online_lookup"] = False
+        return resolved_props
+
+    def _estimated_modified_pachaiyappan_liquid_thermal_conductivity(
+        self,
+        identifier: str,
+        T: float,
+        props: dict[str, Any],
+        *,
+        molecule,
+        smiles: str,
+        smiles_result: PropertyResolutionResult,
+        allow_online: bool,
+    ) -> Optional[PropertyResolutionResult]:
+        """Use Modified Pachaiyappan for hydrocarbons with at least three carbons."""
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+            from ..modified_pachaiyappan import (
+                REFERENCE_TEMPERATURE_K,
+                ModifiedPachaiyappanError,
+                describe_hydrocarbon,
+                estimate_molar_volume_20C_cm3_mol,
+                evaluate_from_mol,
+            )
+        else:
+            from modified_pachaiyappan import (
+                REFERENCE_TEMPERATURE_K,
+                ModifiedPachaiyappanError,
+                describe_hydrocarbon,
+                estimate_molar_volume_20C_cm3_mol,
+                evaluate_from_mol,
+            )
+
+        try:
+            descriptors = describe_hydrocarbon(molecule)
+        except ModifiedPachaiyappanError:
+            return None
+        resolved_props = self._thermal_conductivity_props_with_smiles(
+            props,
+            smiles=smiles,
+            smiles_result=smiles_result,
+            allow_online=allow_online,
+        )
+        try:
+            critical = self.resolve_critical_properties(
+                identifier,
+                resolved_props,
+                allow_online=allow_online,
+                allow_estimation=True,
+            )
+        except (PropertyResolutionError, ValueError, TypeError, OverflowError):
+            return None
+        tc_result = critical.get("Tc") if critical else None
+        if tc_result is None or self._positive_number(tc_result.value) is None:
+            return None
+        tc_quality = self._result_quality(tc_result, 0.0)
+        if tc_quality < MODIFIED_PACHAIYAPPAN_MINIMUM_TC_QUALITY:
+            return None
+
+        volume_result = None
+        try:
+            candidate = self.resolve_liquid_molar_volume(
+                identifier,
+                REFERENCE_TEMPERATURE_K,
+                resolved_props,
+            )
+            if self._positive_number(candidate.value) is not None:
+                volume_result = candidate
+        except (PropertyResolutionError, ValueError, TypeError, OverflowError):
+            pass
+        volume_quality = (
+            self._result_quality(volume_result, 0.0)
+            if volume_result is not None
+            else 0.0
+        )
+        volume_is_resolved = (
+            volume_result is not None
+            and volume_quality >= MODIFIED_PACHAIYAPPAN_MINIMUM_VOLUME_QUALITY
+        )
+        if volume_is_resolved:
+            volume_cm3_mol = float(volume_result.value) * 1000.0
+            volume_note = (
+                f"from {volume_result.method} ({volume_result.source}, "
+                f"quality {volume_quality:.3g})"
+            )
+        else:
+            try:
+                volume_cm3_mol = estimate_molar_volume_20C_cm3_mol(descriptors)
+            except ModifiedPachaiyappanError:
+                return None
+            volume_note = (
+                "from modified_pachaiyappan_local_v20_estimate (calculated)"
+            )
+            if volume_result is not None:
+                volume_note += (
+                    f"; rejected resolved candidate {volume_result.method} "
+                    f"({volume_result.source}, quality {volume_quality:.3g})"
+                )
+
+        try:
+            evaluation = evaluate_from_mol(
+                molecule,
+                T,
+                critical_temperature_K=float(tc_result.value),
+                molar_volume_20C_cm3_mol=volume_cm3_mol,
+            )
+        except (ModifiedPachaiyappanError, ValueError, TypeError, OverflowError):
+            return None
+
+        model_quality = MODIFIED_PACHAIYAPPAN_BASE_QUALITY
+        penalties = []
+        if volume_is_resolved:
+            if volume_quality < 0.90:
+                model_quality -= MODIFIED_PACHAIYAPPAN_MARGINAL_VOLUME_PENALTY
+                penalties.append(
+                    f"-{MODIFIED_PACHAIYAPPAN_MARGINAL_VOLUME_PENALTY:.2f} "
+                    f"for V20 quality {volume_quality:.3g} in [0.86, 0.90)"
+                )
+        else:
+            model_quality -= MODIFIED_PACHAIYAPPAN_ESTIMATED_VOLUME_PENALTY
+            penalties.append(
+                f"-{MODIFIED_PACHAIYAPPAN_ESTIMATED_VOLUME_PENALTY:.2f} "
+                "for locally estimated V20"
+            )
+        if tc_quality < 0.80:
+            model_quality -= MODIFIED_PACHAIYAPPAN_TC_07_08_PENALTY
+            penalties.append(
+                f"-{MODIFIED_PACHAIYAPPAN_TC_07_08_PENALTY:.2f} for "
+                f"Tc quality {tc_quality:.3g} in [0.70, 0.80)"
+            )
+        elif tc_quality < 0.90:
+            model_quality -= MODIFIED_PACHAIYAPPAN_TC_08_09_PENALTY
+            penalties.append(
+                f"-{MODIFIED_PACHAIYAPPAN_TC_08_09_PENALTY:.2f} for "
+                f"Tc quality {tc_quality:.3g} in [0.80, 0.90)"
+            )
+        model_quality = round(max(0.0, model_quality), 2)
+        quality = min(
+            model_quality,
+            math.floor(
+                100.0 * self._result_quality(smiles_result) + 1.0e-9
+            )
+            / 100.0,
+        )
+        penalty_note = "; ".join(penalties) if penalties else "none"
+        return PropertyResolutionResult(
+            value=evaluation.value_W_per_m_K,
+            source="calculated",
+            method="modified_pachaiyappan_liquid_thermal_conductivity",
+            quality=quality,
+            notes=(
+                "hydrocarbon liquid prediction in W/(m*K); Modified "
+                "Pachaiyappan correlation, Pachaiyappan, Ibrahim, and Kuloor, "
+                "Chemical Engineering 74(4) (1967), 140; "
+                f"{descriptors.carbon_atoms} carbon and "
+                f"{descriptors.hydrogen_atoms} hydrogen atoms, "
+                f"{descriptors.rings} ring(s), "
+                f"{'straight-chain' if descriptors.straight_chain else 'other'} "
+                f"parameter set; V20={volume_cm3_mol:g} cm3/mol {volume_note}; "
+                f"Tc={float(tc_result.value):g} K from {tc_result.method} "
+                f"({tc_result.source}, quality {tc_quality:.3g}); baseline "
+                f"quality {MODIFIED_PACHAIYAPPAN_BASE_QUALITY:.2f}; "
+                f"penalties {penalty_note}; final quality {quality:.2f}; "
+                f"SMILES from {smiles_result.method} ({smiles_result.source}, "
+                f"quality {self._result_quality(smiles_result):.3g})"
+            ),
+        )
+
+    def _estimated_baroncini_liquid_thermal_conductivity(
+        self,
+        identifier: str,
+        T: float,
+        props: dict[str, Any],
+        *,
+        molecule,
+        smiles: str,
+        smiles_result: PropertyResolutionResult,
+        allow_online: bool,
+    ) -> Optional[PropertyResolutionResult]:
+        """Use selected-domain Baroncini after Modified Pachaiyappan."""
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+            from ..baroncini_method import (
+                BaronciniError,
+                classify_molecule,
+                evaluate_from_mol,
+            )
+        else:
+            from baroncini_method import (
+                BaronciniError,
+                classify_molecule,
+                evaluate_from_mol,
+            )
+
+        try:
+            classification = classify_molecule(molecule)
+        except BaronciniError:
+            return None
+        resolved_props = self._thermal_conductivity_props_with_smiles(
+            props,
+            smiles=smiles,
+            smiles_result=smiles_result,
+            allow_online=allow_online,
+        )
+
+        tb_result = None
+        tb_quality = None
+        if classification.requires_boiling_point:
+            try:
+                tb_result = self.resolve_boiling_point(
+                    identifier,
+                    resolved_props,
+                    allow_online=allow_online,
+                    allow_estimation=True,
+                )
+            except (PropertyResolutionError, ValueError, TypeError, OverflowError):
+                return None
+            if tb_result is None or self._positive_number(tb_result.value) is None:
+                return None
+            tb_quality = self._result_quality(tb_result, 0.0)
+            if tb_quality < BARONCINI_MINIMUM_TB_QUALITY:
+                return None
+            resolved_props = dict(resolved_props)
+            resolved_props["Tb"] = float(tb_result.value)
+            property_sources = dict(resolved_props.get("property_sources") or {})
+            property_sources["Tb"] = {
+                "source": tb_result.source,
+                "method": tb_result.method,
+                "quality": tb_quality,
+                "notes": tb_result.notes,
+            }
+            resolved_props["property_sources"] = property_sources
+
+        try:
+            critical = self.resolve_critical_properties(
+                identifier,
+                resolved_props,
+                allow_online=allow_online,
+                allow_estimation=True,
+            )
+        except (PropertyResolutionError, ValueError, TypeError, OverflowError):
+            return None
+        tc_result = critical.get("Tc") if critical else None
+        if tc_result is None or self._positive_number(tc_result.value) is None:
+            return None
+        tc_quality = self._result_quality(tc_result, 0.0)
+        if tc_quality < BARONCINI_MINIMUM_TC_QUALITY:
+            return None
+
+        try:
+            evaluation = evaluate_from_mol(
+                molecule,
+                T,
+                normal_boiling_temperature_K=(
+                    float(tb_result.value) if tb_result is not None else None
+                ),
+                critical_temperature_K=float(tc_result.value),
+            )
+        except (BaronciniError, ValueError, TypeError, OverflowError):
+            return None
+
+        model_quality = BARONCINI_BASE_QUALITY[classification.category]
+        penalties = []
+        if (
+            classification.requires_boiling_point
+            and tb_quality is not None
+            and tb_quality < 0.85
+        ):
+            model_quality -= BARONCINI_TB_075_085_PENALTY
+            penalties.append(
+                f"-{BARONCINI_TB_075_085_PENALTY:.2f} for "
+                f"Tb quality {tb_quality:.3g} in [0.75, 0.85)"
+            )
+        if tc_quality < 0.80:
+            model_quality -= BARONCINI_TC_07_08_PENALTY
+            penalties.append(
+                f"-{BARONCINI_TC_07_08_PENALTY:.2f} for "
+                f"Tc quality {tc_quality:.3g} in [0.70, 0.80)"
+            )
+        elif tc_quality < 0.90:
+            model_quality -= BARONCINI_TC_08_09_PENALTY
+            penalties.append(
+                f"-{BARONCINI_TC_08_09_PENALTY:.2f} for "
+                f"Tc quality {tc_quality:.3g} in [0.80, 0.90)"
+            )
+        model_quality = round(max(0.0, model_quality), 2)
+        quality = min(
+            model_quality,
+            math.floor(
+                100.0 * self._result_quality(smiles_result) + 1.0e-9
+            )
+            / 100.0,
+        )
+        penalty_note = "; ".join(penalties) if penalties else "none"
+        tb_note = (
+            f"Tb={float(tb_result.value):g} K from {tb_result.method} "
+            f"({tb_result.source}, quality {tb_quality:.3g})"
+            if tb_result is not None
+            else "Tb not required for halocarbons because a=0"
+        )
+        return PropertyResolutionResult(
+            value=evaluation.value_W_per_m_K,
+            source="calculated",
+            method="baroncini_liquid_thermal_conductivity",
+            quality=quality,
+            notes=(
+                "selected-domain saturated-liquid Baroncini prediction in "
+                f"W/(m*K); category {classification.category}, subtype "
+                f"{classification.subtype}; A={classification.parameters[0]:g}, "
+                f"a={classification.parameters[1]:g}, "
+                f"b={classification.parameters[2]:g}, "
+                f"c={classification.parameters[3]:g}, multiplier "
+                f"{classification.multiplier:.6g}; baseline quality "
+                f"{BARONCINI_BASE_QUALITY[classification.category]:.2f}; "
+                f"penalties {penalty_note}; final quality {quality:.2f}; "
+                f"{tb_note}; Tc={float(tc_result.value):g} K from "
+                f"{tc_result.method} ({tc_result.source}, quality "
+                f"{tc_quality:.3g}); SMILES from {smiles_result.method} "
+                f"({smiles_result.source}, quality "
+                f"{self._result_quality(smiles_result):.3g}); validation and "
+                "local-refit provenance in scripts/thermal_conductivity/liquid/"
+            ),
+        )
+
+    def _estimated_govender_liquid_thermal_conductivity(
+        self,
+        identifier: str,
+        T: float,
+        props: dict[str, Any],
+        *,
+        molecule,
+        smiles: str,
+        smiles_result: PropertyResolutionResult,
+        allow_online: bool,
+    ) -> Optional[PropertyResolutionResult]:
+        """Use Govender after more specific liquid methods are exhausted."""
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+            from ..govender_method import (
+                GovenderError,
+                PAPER_CAUTION_GROUPS,
+                PAPER_SINGLE_COMPONENT_GROUPS,
+                estimate as estimate_govender,
+            )
+        else:
+            from govender_method import (
+                GovenderError,
+                PAPER_CAUTION_GROUPS,
+                PAPER_SINGLE_COMPONENT_GROUPS,
+                estimate as estimate_govender,
+            )
+        tb_props = self._thermal_conductivity_props_with_smiles(
+            props,
+            smiles=smiles,
+            smiles_result=smiles_result,
+            allow_online=allow_online,
+        )
         try:
             tb_result = self.resolve_boiling_point(
                 identifier,

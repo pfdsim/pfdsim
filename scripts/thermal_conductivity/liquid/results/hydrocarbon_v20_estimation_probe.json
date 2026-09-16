@@ -1,0 +1,429 @@
+{
+  "candidate_models_all_86": {
+    "carbon_affine": {
+      "conductivity_LOOCV": {
+        "mape_percent": 10.572578374139153,
+        "maximum_ape_percent": 56.22011923264457,
+        "mean_signed_error_percent": 1.935489362594515,
+        "median_ape_percent": 9.153575843685179,
+        "p95_ape_percent": 23.104538140065173,
+        "points": 8686
+      },
+      "parameters": 2,
+      "volume_LOOCV": {
+        "mape_percent": 10.504995935440606,
+        "maximum_ape_percent": 31.739622157544034,
+        "mean_signed_error_percent": -1.4188011388858714,
+        "median_ape_percent": 10.526307234197551,
+        "p95_ape_percent": 20.403151807549403,
+        "points": 86
+      }
+    },
+    "carbon_hydrogen_affine": {
+      "conductivity_LOOCV": {
+        "mape_percent": 4.793687377557082,
+        "maximum_ape_percent": 59.723425915056986,
+        "mean_signed_error_percent": -0.31046026383884323,
+        "median_ape_percent": 4.016552070840762,
+        "p95_ape_percent": 12.880005382084928,
+        "points": 8686
+      },
+      "parameters": 3,
+      "volume_LOOCV": {
+        "mape_percent": 4.111287594139983,
+        "maximum_ape_percent": 20.860428032465872,
+        "mean_signed_error_percent": -0.36485879264004056,
+        "median_ape_percent": 3.097654066582589,
+        "p95_ape_percent": 12.324200955983628,
+        "points": 86
+      }
+    },
+    "carbon_hydrogen_branch": {
+      "conductivity_LOOCV": {
+        "mape_percent": 4.699585199974849,
+        "maximum_ape_percent": 59.48293093056394,
+        "mean_signed_error_percent": -0.3059635813935807,
+        "median_ape_percent": 3.7201271425290727,
+        "p95_ape_percent": 13.005219030152617,
+        "points": 8686
+      },
+      "parameters": 4,
+      "volume_LOOCV": {
+        "mape_percent": 4.075335365402096,
+        "maximum_ape_percent": 21.177603680003987,
+        "mean_signed_error_percent": -0.3698415151281641,
+        "median_ape_percent": 3.0951839560896977,
+        "p95_ape_percent": 12.537459562559444,
+        "points": 86
+      }
+    },
+    "carbon_hydrogen_branch_ring": {
+      "conductivity_LOOCV": {
+        "mape_percent": 3.600696259050417,
+        "maximum_ape_percent": 58.12895016643422,
+        "mean_signed_error_percent": -0.6405651937157327,
+        "median_ape_percent": 2.5185308277446303,
+        "p95_ape_percent": 10.674647067792023,
+        "points": 8686
+      },
+      "parameters": 5,
+      "volume_LOOCV": {
+        "mape_percent": 2.5223431318633662,
+        "maximum_ape_percent": 22.628128173593442,
+        "mean_signed_error_percent": -0.19104362635849378,
+        "median_ape_percent": 1.5712056401284924,
+        "p95_ape_percent": 7.621173583562208,
+        "points": 86
+      }
+    },
+    "carbon_hydrogen_ring": {
+      "conductivity_LOOCV": {
+        "mape_percent": 3.542387073588465,
+        "maximum_ape_percent": 57.954973046083246,
+        "mean_signed_error_percent": -0.6325589713256212,
+        "median_ape_percent": 2.4318204842014026,
+        "p95_ape_percent": 10.505020138545046,
+        "points": 8686
+      },
+      "parameters": 4,
+      "volume_LOOCV": {
+        "mape_percent": 2.4778709638387975,
+        "maximum_ape_percent": 22.72689378101066,
+        "mean_signed_error_percent": -0.20039761043589163,
+        "median_ape_percent": 1.5958673803551204,
+        "p95_ape_percent": 7.712204266113882,
+        "points": 86
+      }
+    },
+    "carbon_hydrogen_ring_carbons": {
+      "conductivity_LOOCV": {
+        "mape_percent": 3.503333092910061,
+        "maximum_ape_percent": 57.542036416367445,
+        "mean_signed_error_percent": -0.628104162563249,
+        "median_ape_percent": 2.319702482972319,
+        "p95_ape_percent": 10.212692640341146,
+        "points": 8686
+      },
+      "parameters": 4,
+      "volume_LOOCV": {
+        "mape_percent": 2.4573817328269265,
+        "maximum_ape_percent": 24.050601878903777,
+        "mean_signed_error_percent": -0.19725026358418044,
+        "median_ape_percent": 1.410153068082698,
+        "p95_ape_percent": 7.473353994496001,
+        "points": 86
+      }
+    }
+  },
+  "hybrid_observed_or_estimated_V20": {
+    "compounds": 94,
+    "conductivity": {
+      "mape_percent": 2.3238320612961547,
+      "maximum_ape_percent": 58.07667238624872,
+      "mean_signed_error_percent": -1.0462763365800374,
+      "median_ape_percent": 0.8174231463617843,
+      "p95_ape_percent": 9.889255395501687,
+      "points": 9494
+    },
+    "estimated_V20_compounds": 8,
+    "observed_V20_compounds": 86
+  },
+  "missing_V20_holdout": {
+    "compounds": 8,
+    "conductivity": {
+      "mape_percent": 4.871102999600052,
+      "maximum_ape_percent": 34.958765347568644,
+      "mean_signed_error_percent": -1.6938757021308473,
+      "median_ape_percent": 2.8883517910072767,
+      "p95_ape_percent": 18.46879100951371,
+      "points": 808
+    },
+    "records": [
+      {
+        "Tc_K": 768.0,
+        "cas": "112-95-8",
+        "conductivity": {
+          "mape_percent": 1.6409069796690554,
+          "maximum_ape_percent": 3.9330418554073265,
+          "mean_signed_error_percent": -0.1402641830944331,
+          "median_ape_percent": 1.6593326041070666,
+          "p95_ape_percent": 3.487442824445741,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 0,
+          "carbon": 20,
+          "hydrogen": 42,
+          "ring_carbons": 0,
+          "rings": 0
+        },
+        "estimated_V20_cm3_mol": 353.3697332237898,
+        "formula": "C20H42",
+        "molecular_weight_g_mol": 282.54748,
+        "name": "Eicosane",
+        "smiles": "CCCCCCCCCCCCCCCCCCCC",
+        "straight_chain": true
+      },
+      {
+        "Tc_K": 747.0,
+        "cas": "593-45-3",
+        "conductivity": {
+          "mape_percent": 2.171314545506364,
+          "maximum_ape_percent": 3.8023908074343193,
+          "mean_signed_error_percent": 1.6129042048752382,
+          "median_ape_percent": 2.094958443639139,
+          "p95_ape_percent": 3.7890555823478334,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 0,
+          "carbon": 18,
+          "hydrogen": 38,
+          "ring_carbons": 0,
+          "rings": 0
+        },
+        "estimated_V20_cm3_mol": 321.60293555267174,
+        "formula": "C18H38",
+        "molecular_weight_g_mol": 254.49432,
+        "name": "Octadecane",
+        "smiles": "CCCCCCCCCCCCCCCCCC",
+        "straight_chain": true
+      },
+      {
+        "Tc_K": 568.0,
+        "cas": "594-82-1",
+        "conductivity": {
+          "mape_percent": 2.8015108110032116,
+          "maximum_ape_percent": 3.302329097130996,
+          "mean_signed_error_percent": -2.8015108110032116,
+          "median_ape_percent": 2.726779816029412,
+          "p95_ape_percent": 3.2191944900294756,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 4,
+          "carbon": 8,
+          "hydrogen": 18,
+          "ring_carbons": 0,
+          "rings": 0
+        },
+        "estimated_V20_cm3_mol": 162.76894719708145,
+        "formula": "C8H18",
+        "molecular_weight_g_mol": 114.22852,
+        "name": "2,2,3,3-Tetramethylbutane",
+        "smiles": "CC(C)(C)C(C)(C)C",
+        "straight_chain": false
+      },
+      {
+        "Tc_K": 736.0,
+        "cas": "629-78-7",
+        "conductivity": {
+          "mape_percent": 2.7077224388309182,
+          "maximum_ape_percent": 4.439798869583189,
+          "mean_signed_error_percent": 2.6399471699474972,
+          "median_ape_percent": 3.0762461995843315,
+          "p95_ape_percent": 4.426430359970346,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 0,
+          "carbon": 17,
+          "hydrogen": 36,
+          "ring_carbons": 0,
+          "rings": 0
+        },
+        "estimated_V20_cm3_mol": 305.7195367171127,
+        "formula": "C17H36",
+        "molecular_weight_g_mol": 240.46774,
+        "name": "Heptadecane",
+        "smiles": "CCCCCCCCCCCCCCCCC",
+        "straight_chain": true
+      },
+      {
+        "Tc_K": 758.0,
+        "cas": "629-92-5",
+        "conductivity": {
+          "mape_percent": 2.4416795107789797,
+          "maximum_ape_percent": 4.217371220043997,
+          "mean_signed_error_percent": 2.134293185976769,
+          "median_ape_percent": 2.58885309724064,
+          "p95_ape_percent": 4.2000541426200355,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 0,
+          "carbon": 19,
+          "hydrogen": 40,
+          "ring_carbons": 0,
+          "rings": 0
+        },
+        "estimated_V20_cm3_mol": 337.4863343882308,
+        "formula": "C19H40",
+        "molecular_weight_g_mol": 268.5209,
+        "name": "Nonadecane",
+        "smiles": "CCCCCCCCCCCCCCCCCCC",
+        "straight_chain": true
+      },
+      {
+        "Tc_K": 869.0,
+        "cas": "85-01-8",
+        "conductivity": {
+          "mape_percent": 7.398675174909022,
+          "maximum_ape_percent": 14.776568438055481,
+          "mean_signed_error_percent": 1.020378165490306,
+          "median_ape_percent": 7.37285356916737,
+          "p95_ape_percent": 14.03257394918267,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 4,
+          "carbon": 14,
+          "hydrogen": 10,
+          "ring_carbons": 14,
+          "rings": 3
+        },
+        "estimated_V20_cm3_mol": 150.74010793539543,
+        "formula": "C14H10",
+        "molecular_weight_g_mol": 178.2292,
+        "name": "Phenanthrene",
+        "smiles": "C1=CC=C2C(=C1)C=CC3=CC=CC=C32",
+        "straight_chain": false
+      },
+      {
+        "Tc_K": 748.4,
+        "cas": "91-20-3",
+        "conductivity": {
+          "mape_percent": 10.301262840242217,
+          "maximum_ape_percent": 30.259821524958262,
+          "mean_signed_error_percent": -8.677282190098042,
+          "median_ape_percent": 6.956516921267186,
+          "p95_ape_percent": 27.08462347269236,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 2,
+          "carbon": 10,
+          "hydrogen": 8,
+          "ring_carbons": 10,
+          "rings": 2
+        },
+        "estimated_V20_cm3_mol": 120.44304462029986,
+        "formula": "C10H8",
+        "molecular_weight_g_mol": 128.17052,
+        "name": "Naphthalene",
+        "smiles": "C1=CC=C2C=CC=CC2=C1",
+        "straight_chain": false
+      },
+      {
+        "Tc_K": 773.0,
+        "cas": "92-52-4",
+        "conductivity": {
+          "mape_percent": 9.505751695860654,
+          "maximum_ape_percent": 34.958765347568644,
+          "mean_signed_error_percent": -9.3394711591409,
+          "median_ape_percent": 6.035638776254782,
+          "p95_ape_percent": 29.371363425365228,
+          "points": 101
+        },
+        "descriptors": {
+          "branch_excess": 2,
+          "carbon": 12,
+          "hydrogen": 10,
+          "ring_carbons": 12,
+          "rings": 2
+        },
+        "estimated_V20_cm3_mol": 144.5902060977992,
+        "formula": "C12H10",
+        "molecular_weight_g_mol": 154.2078,
+        "name": "Biphenyl",
+        "smiles": "c1ccc(-c2ccccc2)cc1",
+        "straight_chain": false
+      }
+    ]
+  },
+  "reproducibility": {
+    "benchmark_sha256": "761cc9a9458df013ca85415c641d8eed5ef4049dc3b44069b89a8d9497501dae",
+    "conductivity_database_sha256": "467d7c38ea955fcb726ebddbe37a32464d4ab7965de4beedf6b29431cb73f053",
+    "python": "3.14.4",
+    "script": "scripts/thermal_conductivity/liquid/probe_hydrocarbon_v20_estimation.py",
+    "script_sha256": "cd89ae8c0e0bff84354d1bbd3ea0e3b7cd48cf760766e29a7d2100ec4aca12f1"
+  },
+  "selected_model_C_at_least_3": {
+    "coefficients": {
+      "carbon": 8.263762641940371,
+      "hydrogen": 3.8098180968093285,
+      "intercept": 28.08212031899058,
+      "ring": -10.37762344628454
+    },
+    "compounds": 84,
+    "conductivity_LOOCV": {
+      "mape_percent": 2.7022698689521976,
+      "maximum_ape_percent": 58.12632309590775,
+      "mean_signed_error_percent": -0.7996516709334546,
+      "median_ape_percent": 1.8221974072331115,
+      "p95_ape_percent": 7.560645978379409,
+      "points": 8484
+    },
+    "parameters": 4,
+    "volume_LOOCV": {
+      "mape_percent": 1.7241586696122078,
+      "maximum_ape_percent": 8.328985756258135,
+      "mean_signed_error_percent": -0.08454758860666545,
+      "median_ape_percent": 1.0954468141182616,
+      "p95_ape_percent": 5.898109678172732,
+      "points": 84
+    },
+    "worst_volume_LOOCV": [
+      {
+        "cas": "84-15-1",
+        "name": "o-Terphenyl",
+        "signed_error_percent": -8.328985756258135
+      },
+      {
+        "cas": "115-07-1",
+        "name": "Propylene",
+        "signed_error_percent": -7.902824898793536
+      },
+      {
+        "cas": "503-17-3",
+        "name": "Dimethyl acetylene",
+        "signed_error_percent": 7.740926942751547
+      },
+      {
+        "cas": "75-19-4",
+        "name": "Cyclopropane",
+        "signed_error_percent": -6.90653578484971
+      },
+      {
+        "cas": "74-98-6",
+        "name": "Propane",
+        "signed_error_percent": -6.067599075050911
+      },
+      {
+        "cas": "75-28-5",
+        "name": "2-Methylpropane",
+        "signed_error_percent": -4.937669762529762
+      },
+      {
+        "cas": "74-99-7",
+        "name": "Methyl acetylene",
+        "signed_error_percent": 4.919527973542248
+      },
+      {
+        "cas": "110-82-7",
+        "name": "Cyclohexane",
+        "signed_error_percent": 4.67813160756827
+      },
+      {
+        "cas": "627-21-4",
+        "name": "2-Pentyne",
+        "signed_error_percent": 4.340540431947271
+      },
+      {
+        "cas": "110-83-8",
+        "name": "Cyclohexene",
+        "signed_error_percent": 4.218788993850042
+      }
+    ]
+  }
+}

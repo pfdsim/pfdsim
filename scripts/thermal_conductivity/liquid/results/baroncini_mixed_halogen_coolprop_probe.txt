@@ -1,0 +1,30 @@
+Baroncini mixed-halogen refrigerants vs CoolProp saturated-liquid conductivity
+coverage: 8 compounds, 808 states
+baseline A=0.494: MAPE=  5.05% MdAPE=  4.30% P95= 13.20% bias= -1.64%
+authors' corrected A: MAPE=  4.31% MdAPE=  3.74% P95=  9.80% bias= -0.09%
+
+BY CARBON COUNT
+  C1       n=  4 MAPE=  4.39% MdAPE=  3.85% P95=  9.19% bias= +0.31%
+  C2_plus  n=  4 MAPE=  4.24% MdAPE=  3.44% P95= 11.63% bias= -0.49%
+
+BY HALOGEN COMBINATION
+  Cl+F     n=  8 MAPE=  4.31% MdAPE=  3.74% P95=  9.80% bias= -0.09%
+
+COMPOUNDS, WORST FIRST
+   1. R12          75-71-8      C_{1}Cl_{2}F_{2}   {'Cl': 2, 'F': 2}    MAPE=  5.42% ->   5.42% A=0.494
+   2. R141b        1717-00-6    C_{2}Cl_{2}F_{1}H_{3} {'Cl': 2, 'F': 1}    MAPE=  4.81% ->   4.81% A=0.494
+   3. R13          75-72-9      C_{1}Cl_{1}F_{3}   {'Cl': 1, 'F': 3}    MAPE=  4.43% ->   4.43% A=0.494
+   4. R124         2837-89-0    C_{2}Cl_{1}F_{4}H_{1} {'Cl': 1, 'F': 4}    MAPE=  4.22% ->   4.22% A=0.494
+   5. R22          75-45-6      C_{1}Cl_{1}F_{2}H_{1} {'Cl': 1, 'F': 2}    MAPE= 10.04% ->   4.09% A=0.562
+   6. R123         306-83-2     C_{2}Cl_{2}F_{3}H_{1} {'Cl': 2, 'F': 3}    MAPE=  4.06% ->   4.06% A=0.494
+   7. R142b        75-68-3      C_{2}Cl_{1}F_{2}H_{3} {'Cl': 1, 'F': 2}    MAPE=  3.87% ->   3.87% A=0.494
+   8. R11          75-69-4      C_{1}Cl_{3}F_{1}   {'Cl': 3, 'F': 1}    MAPE=  3.60% ->   3.60% A=0.494
+
+EXCLUSIONS
+    6 insufficient valid CoolProp conductivity states
+      R113         76-13-1      C_{2}Cl_{3}F_{3}   insufficient valid CoolProp conductivity states
+      R114         76-14-2      C_{2}Cl_{2}F_{4}   insufficient valid CoolProp conductivity states
+      R115         76-15-3      C_{2}F_{5}Cl_{1}   insufficient valid CoolProp conductivity states
+      R1233zd(E)   102687-65-0  C_{3}Cl_{1}F_{3}H_{2} insufficient valid CoolProp conductivity states
+      R13I1        2314-97-8    C_{1}F_{3}I_{1}    insufficient valid CoolProp conductivity states
+      R21          75-43-4      C_{1}Cl_{2}F_{1}H_{1} insufficient valid CoolProp conductivity states
