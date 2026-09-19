@@ -1225,7 +1225,7 @@ class EquilibriumStageColumnMixin:
         }
 
     def _sparse_newton_solve(self, residual, sparsity, x0, options: dict,
-                             jacobian=None) -> dict:
+                             jacobian=None, step_event=None) -> dict:
         quality_context = getattr(getattr(self, 'thermo', None), 'quality_context', None)
         if (
             quality_context is not None
@@ -1235,7 +1235,12 @@ class EquilibriumStageColumnMixin:
             try:
                 with quality_context(phase='solver_iteration', affects_result=False):
                     return self._sparse_newton_solve(
-                        residual, sparsity, x0, options, jacobian=jacobian
+                        residual,
+                        sparsity,
+                        x0,
+                        options,
+                        jacobian=jacobian,
+                        step_event=step_event,
                     )
             finally:
                 self._quality_solver_aux_context_active = False
@@ -1257,6 +1262,10 @@ class EquilibriumStageColumnMixin:
         max_jacobians = options['max_jacobian_evaluations']
         line_search_steps = options['line_search_steps']
         rel_step = options['finite_difference_rel_step']
+        stall_iterations = max(0, int(options.get('stall_iterations', 0)))
+        stall_relative_tolerance = max(
+            0.0, float(options.get('stall_relative_tolerance', 1e-4))
+        )
 
         groups = None
         function_evaluations = 1
@@ -1265,6 +1274,8 @@ class EquilibriumStageColumnMixin:
         model_jacobian_method = 'semi_analytic_flow'
         message = "maximum iterations reached"
         last_iteration = 0
+        stall_best_residual = math.inf
+        stall_count = 0
 
         for iteration in range(1, max_iterations + 1):
             last_iteration = iteration
@@ -1283,11 +1294,45 @@ class EquilibriumStageColumnMixin:
                     ),
                     'message': 'converged',
                 }
+            if stall_iterations:
+                if not math.isfinite(stall_best_residual):
+                    stall_best_residual = residual_norm
+                else:
+                    required_progress = max(
+                        stall_relative_tolerance * stall_best_residual,
+                        1e-12,
+                    )
+                    if residual_norm < stall_best_residual - required_progress:
+                        stall_best_residual = residual_norm
+                        stall_count = 0
+                    else:
+                        stall_best_residual = min(
+                            stall_best_residual, residual_norm
+                        )
+                        stall_count += 1
+                    if stall_count >= stall_iterations:
+                        message = (
+                            "residual stalled for "
+                            f"{stall_iterations} iterations"
+                        )
+                        break
             if jacobian_evaluations >= max_jacobians:
                 message = "maximum Jacobian evaluations reached"
                 break
 
-            jacobian_result = jacobian(x, f, rel_step) if jacobian is not None else None
+            try:
+                jacobian_result = (
+                    jacobian(x, f, rel_step) if jacobian is not None else None
+                )
+            except Exception as exc:
+                progress = getattr(exc, "add_solver_progress", None)
+                if callable(progress):
+                    progress(
+                        iterations=iteration,
+                        function_evaluations=function_evaluations,
+                        jacobian_evaluations=jacobian_evaluations + 1,
+                    )
+                raise
             if jacobian_result is None:
                 if groups is None:
                     groups = self._color_jacobian_columns(sparsity)
@@ -1320,6 +1365,19 @@ class EquilibriumStageColumnMixin:
             if dx is None:
                 message = "linear Newton system could not be solved"
                 break
+
+            if step_event is not None:
+                try:
+                    step_event(x, f, dx)
+                except Exception as exc:
+                    progress = getattr(exc, "add_solver_progress", None)
+                    if callable(progress):
+                        progress(
+                            iterations=iteration,
+                            function_evaluations=function_evaluations,
+                            jacobian_evaluations=jacobian_evaluations,
+                        )
+                    raise
 
             max_abs_step = float(np.max(np.abs(dx))) if dx.size else 0.0
             if max_abs_step > 8.0:

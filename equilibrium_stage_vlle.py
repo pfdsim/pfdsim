@@ -50,12 +50,8 @@ class VLLEColumnSolution:
     active: list[bool]
     topology_history: list[str]
     topology_events: list[dict]
-    stability_checks: int
-    stability_cache_hits: int
-    outer_solves: int
-    total_iterations: int
-    total_function_evaluations: int
-    total_jacobian_evaluations: int
+    work: dict[str, int]
+    final_topology_projection_checks: int
 
 
 class _ActiveSetChange(RuntimeError):
@@ -72,6 +68,36 @@ class _ActiveSetChange(RuntimeError):
         self.active = list(active)
         self.reason = str(reason)
         self.residual_norm = float(residual_norm)
+        self.solver_iterations = 0
+        self.function_evaluations = 0
+        self.jacobian_evaluations = 0
+
+    def add_solver_progress(
+        self,
+        *,
+        iterations: int,
+        function_evaluations: int,
+        jacobian_evaluations: int,
+    ) -> None:
+        self.solver_iterations += int(iterations)
+        self.function_evaluations += int(function_evaluations)
+        self.jacobian_evaluations += int(jacobian_evaluations)
+
+
+class VLLESolveFailure(RuntimeError):
+    """Numerical failure retaining the work spent on this initializer."""
+
+    def __init__(self, message: str, work: dict[str, int]):
+        super().__init__(message)
+        self.work = dict(work)
+
+
+class VLLETopologyCycle(VLLESolveFailure):
+    """Active-set cycle with structured topology history for recovery."""
+
+    def __init__(self, message: str, history: list[str], work: dict[str, int]):
+        super().__init__(message, work)
+        self.history = list(history)
 
 
 def _normalize(composition: dict[str, float], components) -> dict[str, float]:
@@ -442,11 +468,39 @@ class EquationOrientedVLLEColumn:
             "vlle_topology_stall_iterations",
             3,
         )))
+        self.projection_gate_fraction = float(unit.get_param(
+            "vlle_projection_gate_fraction",
+            0.15,
+        ))
+        self.projection_enabled = unit._truthy_param(unit.get_param(
+            "vlle_projection_enabled",
+            True,
+        ))
+        self.projection_contraction_ratio = float(unit.get_param(
+            "vlle_projection_contraction_ratio",
+            0.5,
+        ))
+        self.projection_candidate_streak = max(1, int(unit.get_param(
+            "vlle_projection_candidate_streak",
+            2,
+        )))
+        if not 0.0 < self.projection_gate_fraction < 0.5:
+            raise RuntimeError(
+                "vlle_projection_gate_fraction must be between 0 and 0.5"
+            )
+        if not 0.0 < self.projection_contraction_ratio < 1.0:
+            raise RuntimeError(
+                "vlle_projection_contraction_ratio must be between 0 and 1"
+            )
         self._topology_initial_residual = None
         self._topology_best_residual = math.inf
         self._topology_no_progress = 0
         self._topology_last_candidate = None
         self._topology_candidate_count = 0
+        self._projection_last_candidate = None
+        self._projection_candidate_count = 0
+        self.projection_direction_assessments = 0
+        self.projection_checks = 0
         self.solver_options = solver_options
         self.layouts, self.Q_cond_index, self.Q_reb_index, self.n_vars = self._layouts()
         self.stage_row_counts = [
@@ -1068,6 +1122,85 @@ class EquationOrientedVLLEColumn:
         )
         return matrix.tocsr(), evaluations, "vlle_semi_analytic_local_thermo"
 
+    def projected_boundary_event(self, vector, residual, direction) -> None:
+        """Contract phases whose raw Newton step repeatedly predicts absence."""
+        self.projection_direction_assessments += 1
+        predicted_vector = np.asarray(vector, dtype=float) + np.asarray(
+            direction, dtype=float
+        )
+        updated = list(self.active)
+        changed = []
+        for stage, layout in enumerate(self.layouts):
+            if not layout.active_vlle:
+                continue
+            current_logit = float(vector[layout.beta])
+            beta_step = float(direction[layout.beta])
+            current_beta = _sigmoid(current_logit)
+            moving_to_boundary = (
+                (current_beta >= 0.5 and beta_step > 0.0)
+                or (current_beta < 0.5 and beta_step < 0.0)
+            )
+            if not moving_to_boundary:
+                continue
+            predicted_beta = _sigmoid(current_logit + beta_step)
+            current_fraction = min(current_beta, 1.0 - current_beta)
+            predicted_fraction = min(predicted_beta, 1.0 - predicted_beta)
+            contraction_ratio = predicted_fraction / max(
+                current_fraction, 1e-300
+            )
+            if predicted_fraction > self.projection_gate_fraction:
+                continue
+            if contraction_ratio > self.projection_contraction_ratio:
+                continue
+
+            predicted_state = self.decode_stage(predicted_vector, stage)
+            has_lle, split_x1, split_x2, split_beta = self.stability.split(
+                predicted_state["T"], predicted_state["aggregate_x"]
+            )
+            self.projection_checks += 1
+            phase_fraction, phase_distance = _split_phase_metrics(
+                has_lle,
+                split_x1,
+                split_x2,
+                split_beta,
+                self.components,
+            )
+            mapped_active = bool(
+                has_lle
+                and phase_fraction > self.phase_fraction_min
+                and phase_distance > self.phase_distance_min
+            )
+            if not mapped_active:
+                updated[stage] = False
+                changed.append(stage)
+
+        candidate = tuple(updated) if changed else None
+        if candidate is not None and candidate == self._projection_last_candidate:
+            self._projection_candidate_count += 1
+        elif candidate is not None:
+            self._projection_last_candidate = candidate
+            self._projection_candidate_count = 1
+        else:
+            self._projection_last_candidate = None
+            self._projection_candidate_count = 0
+
+        if (
+            candidate is not None
+            and self._projection_candidate_count
+            >= self.projection_candidate_streak
+        ):
+            decoded = self.decode(vector)
+            raise _ActiveSetChange(
+                self.profile_from_decoded(decoded),
+                updated,
+                reason="projected_newton_boundary",
+                residual_norm=float(np.linalg.norm(residual, ord=np.inf)),
+            )
+
+    def reset_projected_boundary_candidate(self) -> None:
+        self._projection_last_candidate = None
+        self._projection_candidate_count = 0
+
     def profile_from_decoded(self, decoded: dict) -> VLLEProfile:
         split_data = []
         for stage, state in enumerate(decoded["stages"]):
@@ -1093,30 +1226,61 @@ class EquationOrientedVLLEColumn:
             x0,
             self.solver_options,
             jacobian=self.local_jacobian,
+            step_event=(
+                self.projected_boundary_event
+                if self.projection_enabled
+                else None
+            ),
         )
+        attempted_iterations = int(solution["iterations"])
+        attempted_functions = int(solution["function_evaluations"])
+        attempted_jacobians = int(solution["jacobian_evaluations"])
         if not solution["success"] and self.topology_policy == "adaptive":
             decoded = self.decode(solution["x"])
             updated = self.topology_for_decoded(decoded)
             if updated != self.active:
-                raise _ActiveSetChange(
+                change = _ActiveSetChange(
                     self.profile_from_decoded(decoded),
                     updated,
                     reason="failed_iterate_recovery",
                     residual_norm=float(solution["residual_norm"]),
                 )
+                change.add_solver_progress(
+                    iterations=attempted_iterations,
+                    function_evaluations=attempted_functions,
+                    jacobian_evaluations=attempted_jacobians,
+                )
+                raise change
         if (
             not solution["success"]
             and self.unit._truthy_param(
                 self.unit.get_param("vlle_colored_jacobian_fallback", True)
             )
         ):
-            fallback = self.unit._sparse_newton_solve(
-                self.residual,
-                self.sparsity(),
-                x0,
-                self.solver_options,
-                jacobian=None,
-            )
+            self.reset_projected_boundary_candidate()
+            try:
+                fallback = self.unit._sparse_newton_solve(
+                    self.residual,
+                    self.sparsity(),
+                    x0,
+                    self.solver_options,
+                    jacobian=None,
+                    step_event=(
+                        self.projected_boundary_event
+                        if self.projection_enabled
+                        else None
+                    ),
+                )
+            except _ActiveSetChange as change:
+                change.add_solver_progress(
+                    iterations=attempted_iterations,
+                    function_evaluations=attempted_functions,
+                    jacobian_evaluations=attempted_jacobians,
+                )
+                raise
+            attempted_iterations += int(fallback["iterations"])
+            attempted_functions += int(fallback["function_evaluations"])
+            attempted_jacobians += int(fallback["jacobian_evaluations"])
             if (
                 fallback["success"]
                 or fallback["residual_norm"] < solution["residual_norm"]
@@ -1126,21 +1290,35 @@ class EquationOrientedVLLEColumn:
             decoded = self.decode(solution["x"])
             updated = self.topology_for_decoded(decoded)
             if updated != self.active:
-                raise _ActiveSetChange(
+                change = _ActiveSetChange(
                     self.profile_from_decoded(decoded),
                     updated,
                     reason="failed_iterate_recovery_after_fallback",
                     residual_norm=float(solution["residual_norm"]),
                 )
+                change.add_solver_progress(
+                    iterations=attempted_iterations,
+                    function_evaluations=attempted_functions,
+                    jacobian_evaluations=attempted_jacobians,
+                )
+                raise change
         if not solution["success"]:
-            raise RuntimeError(
+            raise VLLESolveFailure(
                 f"VLLE MESH failed (residual {solution['residual_norm']:.3e}): "
-                f"{solution['message']}"
+                f"{solution['message']}",
+                {
+                    "solver_iterations": attempted_iterations,
+                    "function_evaluations": attempted_functions,
+                    "jacobian_evaluations": attempted_jacobians,
+                },
             )
         decoded = self.decode(solution["x"])
         solution["residual_norm"] = float(
             np.linalg.norm(self.residual(solution["x"]), ord=np.inf)
         )
+        solution["total_iterations"] = attempted_iterations
+        solution["total_function_evaluations"] = attempted_functions
+        solution["total_jacobian_evaluations"] = attempted_jacobians
         props = [
             self.stage_properties(stage, state)
             for stage, state in enumerate(decoded["stages"])
@@ -1248,9 +1426,24 @@ def solve_vlle_active_set(
     total_iterations = 0
     total_functions = 0
     total_jacobians = 0
+    total_projection_directions = 0
+    total_projection_checks = 0
     decoded = None
     props = None
     solution = None
+    outer = 0
+
+    def work_snapshot():
+        return {
+            "solver_iterations": total_iterations,
+            "function_evaluations": total_functions,
+            "jacobian_evaluations": total_jacobians,
+            "vlle_topology_solves": outer,
+            "vlle_stability_checks": stability.calls,
+            "vlle_stability_cache_hits": stability.hits,
+            "vlle_projection_direction_assessments": total_projection_directions,
+            "vlle_projection_checks": total_projection_checks,
+        }
 
     for outer in range(1, max_outer + 1):
         model = EquationOrientedVLLEColumn(
@@ -1278,12 +1471,19 @@ def solve_vlle_active_set(
         try:
             decoded, props, solution = model.solve()
         except _ActiveSetChange as change:
+            total_iterations += change.solver_iterations
+            total_functions += change.function_evaluations
+            total_jacobians += change.jacobian_evaluations
+            total_projection_directions += model.projection_direction_assessments
+            total_projection_checks += model.projection_checks
             previous = topology_text(active)
             proposed = topology_text(change.active)
             if proposed in visited_topologies:
-                raise RuntimeError(
+                raise VLLETopologyCycle(
                     "VLLE topology cycle detected while changing "
-                    f"{previous} -> {proposed}; history={history}"
+                    f"{previous} -> {proposed}; history={history}",
+                    history,
+                    work_snapshot(),
                 ) from change
             profile = change.profile
             active = list(change.active)
@@ -1296,12 +1496,35 @@ def solve_vlle_active_set(
                 "to": topology_text(active),
                 "reason": change.reason,
                 "residual_norm": change.residual_norm,
+                "solver_iterations": change.solver_iterations,
+                "function_evaluations": change.function_evaluations,
+                "jacobian_evaluations": change.jacobian_evaluations,
+                "projection_direction_assessments": (
+                    model.projection_direction_assessments
+                ),
+                "projection_checks": model.projection_checks,
             })
             visited_topologies.add(proposed)
             continue
-        total_iterations += int(solution["iterations"])
-        total_functions += int(solution["function_evaluations"])
-        total_jacobians += int(solution["jacobian_evaluations"])
+        except VLLESolveFailure as failure:
+            total_iterations += failure.work["solver_iterations"]
+            total_functions += failure.work["function_evaluations"]
+            total_jacobians += failure.work["jacobian_evaluations"]
+            total_projection_directions += model.projection_direction_assessments
+            total_projection_checks += model.projection_checks
+            failure.work = work_snapshot()
+            raise
+        total_iterations += int(solution.get(
+            "total_iterations", solution["iterations"]
+        ))
+        total_functions += int(solution.get(
+            "total_function_evaluations", solution["function_evaluations"]
+        ))
+        total_jacobians += int(solution.get(
+            "total_jacobian_evaluations", solution["jacobian_evaluations"]
+        ))
+        total_projection_directions += model.projection_direction_assessments
+        total_projection_checks += model.projection_checks
         profile = model.profile_from_decoded(decoded)
         updated = model.topology_for_decoded(decoded)
         history.append(topology_text(updated))
@@ -1313,29 +1536,35 @@ def solve_vlle_active_set(
                 active=active,
                 topology_history=history,
                 topology_events=topology_events,
-                stability_checks=stability.calls,
-                stability_cache_hits=stability.hits,
-                outer_solves=outer,
-                total_iterations=total_iterations,
-                total_function_evaluations=total_functions,
-                total_jacobian_evaluations=total_jacobians,
+                work=work_snapshot(),
+                final_topology_projection_checks=model.projection_checks,
             )
         topology_events.append({
             "from": topology_text(active),
             "to": topology_text(updated),
             "reason": "post_convergence_screen",
             "residual_norm": float(solution["residual_norm"]),
+            "solver_iterations": int(solution["total_iterations"]),
+            "function_evaluations": int(solution["total_function_evaluations"]),
+            "jacobian_evaluations": int(solution["total_jacobian_evaluations"]),
+            "projection_direction_assessments": (
+                model.projection_direction_assessments
+            ),
+            "projection_checks": model.projection_checks,
         })
         proposed = topology_text(updated)
         if proposed in visited_topologies:
-            raise RuntimeError(
+            raise VLLETopologyCycle(
                 "VLLE topology cycle detected after convergence while changing "
-                f"{topology_text(active)} -> {proposed}; history={history}"
+                f"{topology_text(active)} -> {proposed}; history={history}",
+                history,
+                work_snapshot(),
             )
         visited_topologies.add(proposed)
         active = updated
 
-    raise RuntimeError(
+    raise VLLESolveFailure(
         f"VLLE active set did not stabilize in {max_outer} topology attempts; "
-        f"history={history}"
+        f"history={history}",
+        work_snapshot(),
     )

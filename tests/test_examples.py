@@ -617,6 +617,8 @@ class ExampleSimulationTests(unittest.TestCase):
         column = result.units['AZE-COL']
         performance = column.performance
         self.assertEqual(performance['stage_phase_model'], 'VLLE')
+        self.assertEqual(performance['initializer'], 'vlle_homogeneous')
+        self.assertFalse(performance['vlle_seed_fallback'])
         self.assertEqual(performance['vlle_active_stages'], [1])
         self.assertGreater(performance['T_top_C'], 63.5)
         self.assertLess(performance['T_top_C'], 64.2)

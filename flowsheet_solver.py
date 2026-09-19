@@ -310,7 +310,10 @@ class FlowsheetSolver:
                     param_lower = canonical_crystallizer_parameter(param.name)
                 if isinstance(value, (int, float)) and (
                     't_' in param_lower
-                    or param_lower in {'t', 'temperature'}
+                    or param_lower in {
+                        't', 'temperature', 'vlle_azeotrope_temperature',
+                        'vlle_azeotrope_temperature_k',
+                    }
                 ):
                     unit_str = param.unit.upper() if param.unit else ''
                     if unit_str in ['C', '°C', 'CELSIUS']:

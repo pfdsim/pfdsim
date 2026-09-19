@@ -3,6 +3,7 @@ Shortcut, CMO, and equation-oriented distillation column models.
 """
 
 import math
+import time
 from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
@@ -2248,6 +2249,10 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'max_jacobian_evaluations': int(self.get_param('max_jacobian_evaluations', 60)),
             'line_search_steps': int(self.get_param('line_search_steps', 16)),
             'finite_difference_rel_step': float(self.get_param('finite_difference_rel_step', 1e-6)),
+            'stall_iterations': int(self.get_param('newton_stall_iterations', 0)),
+            'stall_relative_tolerance': float(self.get_param(
+                'newton_stall_relative_tolerance', 1e-4
+            )),
         }
         solver_options['acceptable_mesh_residual'] = float(
             self.get_param(
@@ -2279,7 +2284,13 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 solution = attempt
                 break
 
-        if not solution['success'] and attempted_optimized_jacobian:
+        if (
+            not solution['success']
+            and attempted_optimized_jacobian
+            and self._truthy_param(self.get_param(
+                'colored_jacobian_fallback', True
+            ))
+        ):
             for step in candidate_steps:
                 attempt_options = dict(solver_options)
                 attempt_options['finite_difference_rel_step'] = step
@@ -2685,6 +2696,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
             from .equilibrium_stage_vlle import (
                         VLLEProfile,
+                        VLLESolveFailure,
+                        VLLETopologyCycle,
                         solve_vlle_active_set,
                         three_phase_fugacity_residuals,
                         topology_text,
@@ -2692,17 +2705,31 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         else:
             from equilibrium_stage_vlle import (
                         VLLEProfile,
+                        VLLESolveFailure,
+                        VLLETopologyCycle,
                         solve_vlle_active_set,
                         three_phase_fugacity_residuals,
                         topology_text,
                     )
 
         seed_mode = str(self.get_param('vlle_seed', 'auto')).strip().lower()
-        if seed_mode not in ('auto', 'cheap', 'homogeneous'):
+        if seed_mode in ('azeotrope', 'vlle_azeotropic', 'direct_azeotropic'):
+            seed_mode = 'azeotropic'
+        if seed_mode not in ('auto', 'cheap', 'homogeneous', 'azeotropic'):
             raise UnitOperationError(
                 f"RigorousDistillation '{self.unit_id}' vlle_seed must be "
-                "auto, cheap, or homogeneous"
+                "auto, cheap, homogeneous, or azeotropic"
             )
+        homogeneous_initializer = str(self.get_param(
+            'vlle_homogeneous_initializer', 'estimate'
+        )).strip().lower().replace('-', '_').replace(' ', '_')
+        seed_fallback = False
+        seed_failure = None
+        azeotropic_candidates = []
+        azeotropic_search_seconds = 0.0
+        candidate_source = None
+        profile_attempts = None
+        initializer_attempts = []
 
         recycle_guess = self._recycle_profile_initial_guess(
             comps, N, T_min, T_max
@@ -2741,62 +2768,178 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 self.thermo,
                 seed_params,
             )
-            cheap = seed_unit._initial_guess(
-                inlet,
-                comps,
-                feed_z,
-                N,
-                feed_stage,
-                RR,
-                q_feed,
-                pressures,
-                condenser,
-                condenser_vapor_fraction,
-                distillate_spec,
-                [],
-                T_min,
-                T_max,
-            )
-            profile = VLLEProfile(
-                T=[float(value) for value in cheap['T']],
-                aggregate_x=[dict(value) for value in cheap['x']],
-                L=[float(value) for value in cheap['L']],
-                V=[float(value) for value in cheap['V']],
-                Q_cond=float(cheap['Q_cond']),
-                Q_reb=float(cheap['Q_reb']),
-                split_data=[None] * N,
-            )
-            cheap_has_lle = any(
-                self.thermo.liquid_liquid_equilibrium(
-                    x_stage,
-                    T_stage,
-                    max_iter=100,
-                    tol=float(self.get_param('vlle_stability_tolerance', 1e-7)),
-                )[0]
-                for T_stage, x_stage in zip(profile.T, profile.aggregate_x)
-            )
-            initializer_label = 'vlle_cheap'
+            if seed_mode == 'azeotropic':
+                azeotropic_candidates = (
+                    self._provided_vlle_azeotrope_candidates(comps)
+                )
+                candidate_source = 'provided'
+                if not azeotropic_candidates:
+                    search_started = time.perf_counter()
+                    azeotropic_candidates = self._vlle_azeotrope_candidates(
+                        comps, pressures[0], feed_z=feed_z
+                    )
+                    azeotropic_search_seconds = (
+                        time.perf_counter() - search_started
+                    )
+                    candidate_source = 'simultaneous_binary_vlle'
+                if not azeotropic_candidates:
+                    raise UnitOperationError(
+                        f"RigorousDistillation '{self.unit_id}' could not find "
+                        "a binary VLLE azeotrope at the condenser pressure; "
+                        "provide vlle_azeotrope_composition and "
+                        "vlle_azeotrope_temperature for a known higher-order "
+                        "azeotrope"
+                    )
+                seed_unit.params['initializer'] = 'azeotropic'
+                requested_profile = str(self.get_param(
+                    'vlle_azeotropic_profile', 'auto'
+                )).strip().lower().replace('-', '_')
+                if requested_profile == 'auto':
+                    profile_modes = ('linear', 'log_feed_anchor')
+                elif requested_profile in ('linear', 'log_feed_anchor'):
+                    profile_modes = (requested_profile,)
+                else:
+                    raise UnitOperationError(
+                        f"RigorousDistillation '{self.unit_id}' "
+                        "vlle_azeotropic_profile must be auto, linear, or "
+                        "log_feed_anchor"
+                    )
+                profile_attempts = []
+                for profile_mode in profile_modes:
+                    profile_attempts.append((
+                        f'vlle_azeotropic_{profile_mode}',
+                        profile_mode,
+                        None,
+                    ))
+                if self.get_param('vlle_topology_policy') is None:
+                    for profile_mode in profile_modes:
+                        profile_attempts.append((
+                            f'vlle_azeotropic_{profile_mode}_residual_gate',
+                            profile_mode,
+                            None,
+                        ))
+                initializer_label = profile_attempts[0][0]
+                profile = None
+            else:
+                cheap = seed_unit._initial_guess(
+                    inlet,
+                    comps,
+                    feed_z,
+                    N,
+                    feed_stage,
+                    RR,
+                    q_feed,
+                    pressures,
+                    condenser,
+                    condenser_vapor_fraction,
+                    distillate_spec,
+                    [],
+                    T_min,
+                    T_max,
+                )
+                profile = VLLEProfile(
+                    T=[float(value) for value in cheap['T']],
+                    aggregate_x=[dict(value) for value in cheap['x']],
+                    L=[float(value) for value in cheap['L']],
+                    V=[float(value) for value in cheap['V']],
+                    Q_cond=float(cheap['Q_cond']),
+                    Q_reb=float(cheap['Q_reb']),
+                    split_data=[None] * N,
+                )
+                cheap_has_lle = any(
+                    self.thermo.liquid_liquid_equilibrium(
+                        x_stage,
+                        T_stage,
+                        max_iter=100,
+                        tol=float(self.get_param('vlle_stability_tolerance', 1e-7)),
+                    )[0]
+                    for T_stage, x_stage in zip(profile.T, profile.aggregate_x)
+                )
+                initializer_label = 'vlle_cheap'
             if seed_mode == 'homogeneous' or (
                 seed_mode == 'auto' and not cheap_has_lle
             ):
-                homogeneous = seed_unit.solve(inlets)
-                performance = homogeneous.performance
-                profile = VLLEProfile(
-                    T=[
-                        float(value) + 273.15
-                        for value in performance['stage_temperatures_C']
-                    ],
-                    aggregate_x=[
-                        {comp: float(stage.get(comp, 0.0)) for comp in comps}
-                        for stage in performance['stage_liquid_compositions']
-                    ],
-                    L=[float(value) for value in performance['liquid_flows']],
-                    V=[float(value) for value in performance['vapor_flows']],
-                    Q_cond=float(performance['condenser_duty_kW']) * 3600.0,
-                    Q_reb=float(performance['reboiler_duty_kW']) * 3600.0,
-                    split_data=[None] * N,
+                homogeneous_params = dict(seed_params)
+                homogeneous_params['initializer'] = homogeneous_initializer
+                if seed_mode == 'auto':
+                    requested_iterations = int(self.get_param(
+                        'max_iterations', self.get_param('max_evaluations', 60)
+                    ))
+                    requested_jacobians = int(self.get_param(
+                        'max_jacobian_evaluations', 60
+                    ))
+                    homogeneous_params['max_iterations'] = min(
+                        requested_iterations,
+                        max(1, int(self.get_param(
+                            'vlle_auto_homogeneous_max_iterations', 24
+                        ))),
+                    )
+                    homogeneous_params['max_jacobian_evaluations'] = min(
+                        requested_jacobians,
+                        max(1, int(self.get_param(
+                            'vlle_auto_homogeneous_max_jacobian_evaluations', 24
+                        ))),
+                    )
+                    homogeneous_params['newton_stall_iterations'] = int(
+                        self.get_param(
+                            'vlle_auto_homogeneous_stall_iterations', 5
+                        )
+                    )
+                    homogeneous_params['newton_stall_relative_tolerance'] = float(
+                        self.get_param(
+                            'vlle_auto_homogeneous_stall_relative_tolerance',
+                            1e-4,
+                        )
+                    )
+                    homogeneous_params['finite_difference_rel_step'] = float(
+                        self.get_param(
+                            'vlle_auto_homogeneous_finite_difference_rel_step',
+                            1e-6,
+                        )
+                    )
+                    homogeneous_params['colored_jacobian_fallback'] = (
+                        self._truthy_param(self.get_param(
+                            'vlle_auto_homogeneous_colored_fallback', False
+                        ))
+                    )
+                homogeneous_unit = RigorousDistillation(
+                    f"{self.unit_id}_vlle_seed",
+                    self.thermo,
+                    homogeneous_params,
                 )
-                initializer_label = 'vlle_homogeneous'
+                try:
+                    homogeneous = homogeneous_unit.solve(inlets)
+                except UnitOperationError as exc:
+                    if (
+                        seed_mode == 'homogeneous'
+                        or 'MESH solve failed' not in str(exc)
+                    ):
+                        raise
+                    seed_fallback = True
+                    seed_failure = str(exc)
+                    initializer_label = 'vlle_cheap_fallback'
+                    warnings.append(
+                        "Automatic homogeneous VLLE seed failed; continued "
+                        f"with the cheap VLLE seed ({exc})."
+                    )
+                else:
+                    performance = homogeneous.performance
+                    profile = VLLEProfile(
+                        T=[
+                            float(value) + 273.15
+                            for value in performance['stage_temperatures_C']
+                        ],
+                        aggregate_x=[
+                            {comp: float(stage.get(comp, 0.0)) for comp in comps}
+                            for stage in performance['stage_liquid_compositions']
+                        ],
+                        L=[float(value) for value in performance['liquid_flows']],
+                        V=[float(value) for value in performance['vapor_flows']],
+                        Q_cond=float(performance['condenser_duty_kW']) * 3600.0,
+                        Q_reb=float(performance['reboiler_duty_kW']) * 3600.0,
+                        split_data=[None] * N,
+                    )
+                    initializer_label = 'vlle_homogeneous'
 
         solver_options = {
             'mesh_tolerance': float(self.get_param('mesh_tolerance', 2e-6)),
@@ -2815,30 +2958,136 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'finite_difference_rel_step', 1e-6
             )),
         }
-        try:
-            solved = solve_vlle_active_set(
-                self,
-                inlet,
-                feed_specs,
-                comps,
-                pressures,
-                RR,
-                condenser_vapor_fraction,
-                distillate_spec,
-                T_min,
-                T_max,
-                flow_scale,
-                energy_scale,
-                component_scales,
-                profile,
-                solver_options,
-                initial_active=initial_active,
+        if profile_attempts is None:
+            profile_attempts = [(initializer_label, profile, initial_active)]
+        solved = None
+        last_exception = None
+        selected_topology_policy = str(self.get_param(
+            'vlle_topology_policy', 'adaptive'
+        ))
+        for attempt_label, attempt_profile, attempt_active in profile_attempts:
+            residual_gate_retry = attempt_label.endswith('_residual_gate')
+            if residual_gate_retry and not any(
+                item.get('topology_cycle_full', False)
+                for item in initializer_attempts
+            ):
+                continue
+            seed_details = {}
+            if isinstance(attempt_profile, str):
+                direct = seed_unit._initial_guess(
+                    inlet,
+                    comps,
+                    feed_z,
+                    N,
+                    feed_stage,
+                    RR,
+                    q_feed,
+                    pressures,
+                    condenser,
+                    condenser_vapor_fraction,
+                    distillate_spec,
+                    [],
+                    T_min,
+                    T_max,
+                    azeotrope_candidates=azeotropic_candidates,
+                    azeotropic_profile=attempt_profile,
+                )
+                attempt_profile = VLLEProfile(
+                    T=[float(value) for value in direct['T']],
+                    aggregate_x=[dict(value) for value in direct['x']],
+                    L=[float(value) for value in direct['L']],
+                    V=[float(value) for value in direct['V']],
+                    Q_cond=float(direct['Q_cond']),
+                    Q_reb=float(direct['Q_reb']),
+                    split_data=[None] * N,
+                )
+                seed_details = {
+                    'profile_top_composition': dict(direct['x'][0]),
+                    'profile_bottom_composition': dict(direct['x'][-1]),
+                    'azeotropic_endpoints': dict(
+                        direct['azeotropic_endpoints']
+                    ),
+                    'pseudo_components': [
+                        dict(item)
+                        for item in direct['azeotropic_pseudo_components']
+                    ],
+                }
+            previous_topology_policy = self.params.get('vlle_topology_policy')
+            if residual_gate_retry:
+                self.params['vlle_topology_policy'] = 'residual_gate'
+            try:
+                solved = solve_vlle_active_set(
+                    self,
+                    inlet,
+                    feed_specs,
+                    comps,
+                    pressures,
+                    RR,
+                    condenser_vapor_fraction,
+                    distillate_spec,
+                    T_min,
+                    T_max,
+                    flow_scale,
+                    energy_scale,
+                    component_scales,
+                    attempt_profile,
+                    solver_options,
+                    initial_active=attempt_active,
+                )
+            except RuntimeError as exc:
+                last_exception = exc
+                initializer_attempts.append({
+                    'initializer': attempt_label,
+                    'success': False,
+                    'error': str(exc),
+                    'topology_cycle_full': (
+                        isinstance(exc, VLLETopologyCycle)
+                        and 'L' * N in exc.history
+                    ),
+                    'work': dict(exc.work) if isinstance(exc, VLLESolveFailure) else {},
+                    **seed_details,
+                })
+                numerical_failure = isinstance(exc, VLLESolveFailure)
+                if not numerical_failure:
+                    break
+                continue
+            finally:
+                if residual_gate_retry:
+                    if previous_topology_policy is None:
+                        self.params.pop('vlle_topology_policy', None)
+                    else:
+                        self.params['vlle_topology_policy'] = (
+                            previous_topology_policy
+                        )
+            initializer_label = attempt_label
+            if residual_gate_retry:
+                selected_topology_policy = 'residual_gate'
+            initializer_attempts.append({
+                'initializer': attempt_label,
+                'success': True,
+                'error': None,
+                'initial_topology': solved.topology_history[0],
+                'work': dict(solved.work),
+                **seed_details,
+            })
+            break
+        if solved is None:
+            attempted = '; '.join(
+                f"{item['initializer']}: {item['error']}"
+                for item in initializer_attempts
             )
-        except Exception as exc:
             raise UnitOperationError(
-                f"RigorousDistillation '{self.unit_id}' VLLE MESH solve failed: {exc}"
-            ) from exc
+                f"RigorousDistillation '{self.unit_id}' VLLE MESH solve failed "
+                f"after initializer attempt(s): {attempted}"
+            ) from last_exception
 
+        # These counters cover all VLLE MESH attempts, including failed
+        # profiles and topology/Jacobian fallbacks. Candidate search and the
+        # optional homogeneous VLE seed are separate initialization work.
+        solver_work = {
+            name: sum(attempt['work'][name] for attempt in initializer_attempts)
+            for name in solved.work
+        }
         decoded = solved.decoded
         stages = decoded['stages']
         stage_props = solved.stage_properties
@@ -3047,14 +3296,67 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'component_balance_error': float(component_balance_error),
             'solver': 'sparse_damped_newton_vlle_active_set',
             'initializer': initializer_label,
+            'vlle_seed_requested': seed_mode,
+            'vlle_homogeneous_initializer': homogeneous_initializer,
+            'vlle_seed_fallback': bool(seed_fallback),
+            'vlle_seed_failure': seed_failure,
+            'vlle_initializer_attempts': list(initializer_attempts),
+            'vlle_azeotropic_candidates': [
+                {
+                    'name': str(item['name']),
+                    'type': str(item.get('type', 'VLE')),
+                    'order': int(item['order']),
+                    'temperature_C': float(item['T'] - 273.15),
+                    'composition': dict(item['composition']),
+                    'fixed_point_residual': float(item.get(
+                        'fixed_point_residual', 0.0
+                    )),
+                    'fugacity_residual': float(item.get(
+                        'fugacity_residual', 0.0
+                    )),
+                    'function_evaluations': int(item.get(
+                        'function_evaluations', 0
+                    )),
+                }
+                for item in azeotropic_candidates
+            ],
+            'vlle_azeotropic_candidate_source': (
+                candidate_source if seed_mode == 'azeotropic' else None
+            ),
+            'vlle_azeotropic_search_seconds': float(
+                azeotropic_search_seconds
+            ),
+            'vlle_azeotropic_profile': str(self.get_param(
+                'vlle_azeotropic_profile', 'auto'
+            )),
+            'vlle_auto_homogeneous_max_iterations': int(self.get_param(
+                'vlle_auto_homogeneous_max_iterations', 24
+            )),
+            'vlle_auto_homogeneous_max_jacobian_evaluations': int(
+                self.get_param(
+                    'vlle_auto_homogeneous_max_jacobian_evaluations', 24
+                )
+            ),
+            'vlle_auto_homogeneous_stall_iterations': int(self.get_param(
+                'vlle_auto_homogeneous_stall_iterations', 5
+            )),
+            'vlle_auto_homogeneous_stall_relative_tolerance': float(
+                self.get_param(
+                    'vlle_auto_homogeneous_stall_relative_tolerance', 1e-4
+                )
+            ),
+            'vlle_auto_homogeneous_colored_fallback': self._truthy_param(
+                self.get_param(
+                    'vlle_auto_homogeneous_colored_fallback', False
+                )
+            ),
             'jacobian_method': str(solution.get(
                 'jacobian_method', 'vlle_semi_analytic_local_thermo'
             )),
             'jacobian_fallback': bool(jacobian_fallback),
             'jacobian_dense_mb': 0.0,
-            'solver_iterations': int(solved.total_iterations),
-            'function_evaluations': int(solved.total_function_evaluations),
-            'jacobian_evaluations': int(solved.total_jacobian_evaluations),
+            **solver_work,
+            'solver_work_basis': 'all_vlle_mesh_attempts',
             'finite_difference_rel_step': float(solution['finite_difference_rel_step']),
             'T_top_C': float(T[0] - 273.15),
             'T_bottom_C': float(T[-1] - 273.15),
@@ -3090,12 +3392,25 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'vlle_topology': topology_text(solved.active),
             'vlle_topology_history': list(solved.topology_history),
             'vlle_topology_events': list(solved.topology_events),
-            'vlle_topology_solves': int(solved.outer_solves),
-            'vlle_topology_policy': str(self.get_param(
-                'vlle_topology_policy', 'adaptive'
+            'vlle_topology_policy': selected_topology_policy,
+            'vlle_projection_gate_fraction': float(self.get_param(
+                'vlle_projection_gate_fraction', 0.15
             )),
-            'vlle_stability_checks': int(solved.stability_checks),
-            'vlle_stability_cache_hits': int(solved.stability_cache_hits),
+            'vlle_projection_enabled': self._truthy_param(self.get_param(
+                'vlle_projection_enabled', True
+            )),
+            'vlle_projection_contraction_ratio': float(self.get_param(
+                'vlle_projection_contraction_ratio', 0.5
+            )),
+            'vlle_projection_candidate_streak': int(self.get_param(
+                'vlle_projection_candidate_streak', 2
+            )),
+            'vlle_projection_phase_fraction_min': float(self.get_param(
+                'vlle_phase_fraction_min', 1e-6
+            )),
+            'vlle_final_topology_projection_checks': int(
+                solved.final_topology_projection_checks
+            ),
             'vlle_vapor_fugacity_closure': (
                 'shared_gamma_phi'
                 if getattr(self.thermo, 'vapor_eos', None) is not None
@@ -3410,6 +3725,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         side_draws: list[dict],
         T_min: float,
         T_max: float,
+        azeotrope_candidates: Optional[list[dict]] = None,
+        azeotropic_profile: str = 'linear',
     ) -> dict:
         recycle_guess = self._recycle_profile_initial_guess(comps, N, T_min, T_max)
         if recycle_guess is not None:
@@ -3449,6 +3766,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         D_guess = self._distillate_molar_guess(distillate_spec, inlet, x_top)
         fixed_side_flow = sum(draw['flow'] or 0.0 for draw in side_draws)
         B_guess = max(inlet.F - D_guess - fixed_side_flow, inlet.F * 1e-6, 1e-9)
+        azeotropic_endpoints_active = False
+        azeotropic_endpoint_data = None
 
         if initializer in (
             'azeotropic', 'azeotrope', 'azeotropic_cmo', 'azeotrope_cmo',
@@ -3456,13 +3775,21 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         ):
             try:
                 endpoints = self._azeotropic_endpoint_initial_guess(
-                    inlet, comps, distillate_spec, N, RR, pressures[0]
+                    inlet,
+                    comps,
+                    distillate_spec,
+                    N,
+                    RR,
+                    pressures[0],
+                    candidates=azeotrope_candidates,
                 )
                 if endpoints is not None:
                     x_top = endpoints['x_top']
                     x_bottom = endpoints['x_bottom']
                     D_guess = max(endpoints['D'], 1e-9)
                     B_guess = max(endpoints['B'], 1e-9)
+                    azeotropic_endpoints_active = True
+                    azeotropic_endpoint_data = endpoints
                 elif explicit_initializer:
                     raise UnitOperationError(
                         f"RigorousDistillation '{self.unit_id}' could not build an "
@@ -3498,12 +3825,49 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
 
         T = []
         x = []
+        azeotropic_profile = str(azeotropic_profile).strip().lower().replace(
+            '-', '_'
+        )
+        if azeotropic_profile not in ('linear', 'log_feed_anchor'):
+            raise UnitOperationError(
+                f"RigorousDistillation '{self.unit_id}' azeotropic_profile must "
+                "be linear or log_feed_anchor"
+            )
+        feed_index = min(max(feed_stage - 1, 1), N - 2)
+
+        def log_interpolate(left, right, fraction):
+            return self._normalize({
+                comp: math.exp(
+                    (1.0 - fraction)
+                    * math.log(max(left.get(comp, 0.0), 1e-12))
+                    + fraction
+                    * math.log(max(right.get(comp, 0.0), 1e-12))
+                )
+                for comp in comps
+            })
+
         for stage in range(N):
             frac = stage / max(N - 1, 1)
-            x_stage = {
-                comp: (1.0 - frac) * x_top.get(comp, 0.0) + frac * x_bottom.get(comp, 0.0)
-                for comp in comps
-            }
+            if (
+                azeotropic_endpoints_active
+                and azeotropic_profile == 'log_feed_anchor'
+                and N > 2
+            ):
+                if stage <= feed_index:
+                    section_frac = stage / feed_index
+                    left, right = x_top, feed_z
+                else:
+                    section_frac = (stage - feed_index) / (N - 1 - feed_index)
+                    left, right = feed_z, x_bottom
+                x_stage = log_interpolate(left, right, section_frac)
+            else:
+                x_stage = {
+                    comp: (
+                        (1.0 - frac) * x_top.get(comp, 0.0)
+                        + frac * x_bottom.get(comp, 0.0)
+                    )
+                    for comp in comps
+                }
             x_stage = self._normalize({comp: max(value, 1e-10) for comp, value in x_stage.items()})
 
             condensable_stage = {
@@ -3603,6 +3967,17 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'Q_reb': Q_reb,
             'initializer': initializer,
         }
+        if azeotropic_endpoint_data is not None:
+            initial['azeotropic_endpoints'] = {
+                'x_top': dict(azeotropic_endpoint_data['x_top']),
+                'x_bottom': dict(azeotropic_endpoint_data['x_bottom']),
+                'D': float(azeotropic_endpoint_data['D']),
+                'B': float(azeotropic_endpoint_data['B']),
+            }
+            initial['azeotropic_pseudo_components'] = [
+                dict(item)
+                for item in azeotropic_endpoint_data['pseudo_components']
+            ]
         if condenser == 'decanter':
             reflux_component = self.get_param('decanter_reflux_component', self.get_param('reflux_phase_component'))
             distillate_guess = dict(x[0])
@@ -3973,6 +4348,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         N: int,
         RR: float,
         pressure: float,
+        candidates: Optional[list[dict]] = None,
     ) -> Optional[dict]:
         """Build top/bottom endpoint guesses from VLE-only azeotrope pseudos.
 
@@ -3981,7 +4357,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         """
         from scipy.optimize import brentq
 
-        candidates = self._vle_azeotrope_candidates(comps, pressure)
+        if candidates is None:
+            candidates = self._vle_azeotrope_candidates(comps, pressure)
         if not candidates:
             return None
 
@@ -4037,29 +4414,28 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             return None
 
         pseudo_mw = {}
-        for pseudo in pseudos:
-            pseudo_mw[pseudo['name']] = sum(
+        for index, pseudo in enumerate(pseudos):
+            pseudo_mw[index] = sum(
                 pseudo['composition'].get(comp, 0.0) * self.thermo.props[comp].MW
                 for comp in comps
             )
 
-        def pseudo_mass(name: str) -> float:
-            pseudo = next(item for item in pseudos if item['name'] == name)
-            return pseudo['amount'] * pseudo_mw[name]
+        def pseudo_mass(index: int) -> float:
+            return pseudos[index]['amount'] * pseudo_mw[index]
 
         if distillate_spec['kind'] == 'mass':
             target = float(distillate_spec['value'])
-            available = sum(pseudo_mass(item['name']) for item in pseudos)
+            available = sum(pseudo_mass(index) for index in range(len(pseudos)))
             amount_for_theta = lambda theta: sum(
-                pseudo_mass(item['name']) * split_fraction(item['name'], theta)
-                for item in pseudos
+                pseudo_mass(index) * split_fraction(index, theta)
+                for index in range(len(pseudos))
             )
         elif distillate_spec['kind'] == 'molar':
             target = float(distillate_spec['value'])
             available = sum(item['amount'] for item in pseudos)
             amount_for_theta = lambda theta: sum(
-                item['amount'] * split_fraction(item['name'], theta)
-                for item in pseudos
+                item['amount'] * split_fraction(index, theta)
+                for index, item in enumerate(pseudos)
             )
         else:
             return None
@@ -4071,11 +4447,11 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         hvap = float(self.get_param('azeotropic_hvap_kJ_per_kmol', 35000.0))
         gas_constant = R_J_MOL_K
         volatility = {
-            item['name']: math.exp(
+            index: math.exp(
                 -hvap / gas_constant
                 * (1.0 / max(reference_temperature, 1e-12) - 1.0 / max(item['T'], 1e-12))
             )
-            for item in pseudos
+            for index, item in enumerate(pseudos)
         }
         heavy = min(volatility, key=volatility.get)
         effective_stages = max(1.0, N * RR / max(RR + 1.0, 1e-12))
@@ -4084,8 +4460,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             for name in volatility
         }
 
-        def split_fraction(name: str, theta: float) -> float:
-            score = scores[name]
+        def split_fraction(index: int, theta: float) -> float:
+            score = scores[index]
             return min(max(score / (score + theta), 1e-9), 1.0 - 1e-9)
 
         low = 1e-300
@@ -4104,22 +4480,18 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         )
 
         dist_pseudo = {
-            item['name']: item['amount'] * split_fraction(item['name'], theta)
-            for item in pseudos
+            index: item['amount'] * split_fraction(index, theta)
+            for index, item in enumerate(pseudos)
         }
         bot_pseudo = {
-            item['name']: max(item['amount'] - dist_pseudo[item['name']], 0.0)
-            for item in pseudos
-        }
-        pseudo_compositions = {
-            item['name']: item['composition']
-            for item in pseudos
+            index: max(item['amount'] - dist_pseudo[index], 0.0)
+            for index, item in enumerate(pseudos)
         }
 
-        def expand(amounts: dict[str, float]) -> tuple[dict[str, float], float]:
+        def expand(amounts: dict[int, float]) -> tuple[dict[str, float], float]:
             moles = {comp: 0.0 for comp in comps}
-            for name, amount in amounts.items():
-                for comp, fraction in pseudo_compositions[name].items():
+            for index, amount in amounts.items():
+                for comp, fraction in pseudos[index]['composition'].items():
                     moles[comp] += amount * fraction
             total = sum(moles.values())
             if total <= 0.0:
@@ -4136,6 +4508,18 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'x_bottom': self._dense_composition(x_bottom, comps),
             'D': D,
             'B': B,
+            'pseudo_components': [
+                {
+                    'name': item['name'],
+                    'composition': dict(item['composition']),
+                    'amount': float(item['amount']),
+                    'temperature_K': float(item['T']),
+                    'distillate_fraction': float(split_fraction(
+                        index, theta
+                    )),
+                }
+                for index, item in enumerate(pseudos)
+            ],
         }
 
     def _vle_azeotrope_candidates(self, comps: list[str], pressure: float) -> list[dict]:
@@ -4146,7 +4530,13 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
 
         active_comps = tuple(comps)
         ternary_starts = int(self.get_param('azeotropic_ternary_starts', 4))
-        cache_key = (active_comps, round(float(pressure), 10), ternary_starts)
+        max_ternary = int(self.get_param('azeotropic_max_ternary_combinations', 20))
+        cache_key = (
+            active_comps,
+            round(float(pressure), 10),
+            ternary_starts,
+            max_ternary,
+        )
         cached = cache.get(cache_key)
         if cached is not None:
             return [dict(item) for item in cached]
@@ -4166,7 +4556,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                     'composition': composition,
                 })
 
-        max_ternary = int(self.get_param('azeotropic_max_ternary_combinations', 20))
         if len(comps) >= 3 and max_ternary > 0:
             for index, trio in enumerate(itertools.combinations(comps, 3)):
                 if index >= max_ternary:
@@ -4183,6 +4572,814 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                     'composition': composition,
                 })
 
+        cache[cache_key] = [dict(item) for item in candidates]
+        return candidates
+
+    def _ternary_vlle_azeotropes(
+        self,
+        trio: tuple[str, str, str],
+        comps: list[str],
+        pressure: float,
+        binary_candidates: list[dict],
+    ) -> list[dict]:
+        """Solve ternary heteroazeotropes without nested flash calculations."""
+        import numpy as np
+        from scipy.optimize import least_squares
+
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .equilibrium_stage_vlle import shared_vlle_vapor_terms
+        else:
+            from equilibrium_stage_vlle import shared_vlle_vapor_terms
+
+        pure_temperatures = []
+        for target in trio:
+            composition = {
+                comp: (1.0 if comp == target else 0.0) for comp in comps
+            }
+            try:
+                pure_temperatures.append(
+                    self.thermo.bubble_point_T(composition, pressure)
+                )
+            except Exception:
+                props = self.thermo.props.get(target)
+                pure_temperatures.append(
+                    float(getattr(props, 'Tb', 350.0) or 350.0)
+                )
+        column_T_min, column_T_max = self._temperature_bounds(comps)
+        T_low = max(column_T_min, min(pure_temperatures) - 80.0)
+        T_high = min(column_T_max, max(pure_temperatures) + 80.0)
+        if T_high <= T_low:
+            return []
+
+        def softmax(values):
+            raw = np.r_[np.asarray(values, dtype=float), 0.0]
+            raw -= np.max(raw)
+            fractions = np.exp(raw)
+            return fractions / np.sum(fractions)
+
+        def logits(values):
+            values = np.maximum(np.asarray(values, dtype=float), 1e-12)
+            values /= np.sum(values)
+            return np.log(values[:-1] / values[-1])
+
+        def temperature(theta):
+            return (
+                0.5 * (T_low + T_high)
+                + 0.5 * (T_high - T_low) * math.tanh(float(theta))
+            )
+
+        def temperature_variable(value):
+            scaled = (
+                (2.0 * float(value) - T_low - T_high)
+                / max(T_high - T_low, 1e-12)
+            )
+            return math.atanh(min(max(scaled, -0.999999), 0.999999))
+
+        def decode(values):
+            phase1_values = softmax(values[:2])
+            phase2_values = softmax(values[2:4])
+            beta_value = min(max(float(values[4]), -40.0), 40.0)
+            beta = 1.0 / (1.0 + math.exp(-beta_value))
+            T = temperature(values[5])
+            liquid1 = {comp: 0.0 for comp in comps}
+            liquid2 = {comp: 0.0 for comp in comps}
+            for comp, value in zip(trio, phase1_values):
+                liquid1[comp] = float(value)
+            for comp, value in zip(trio, phase2_values):
+                liquid2[comp] = float(value)
+            aggregate = {
+                comp: (
+                    (1.0 - beta) * liquid1.get(comp, 0.0)
+                    + beta * liquid2.get(comp, 0.0)
+                )
+                for comp in comps
+            }
+            return liquid1, liquid2, beta, T, aggregate
+
+        def equilibrium(values):
+            liquid1, liquid2, beta, T, aggregate = decode(values)
+            gamma1 = self.thermo.activity_coefficients(T, liquid1)
+            gamma2 = self.thermo.activity_coefficients(T, liquid2)
+            vapor_terms = shared_vlle_vapor_terms(
+                self.thermo,
+                T,
+                pressure,
+                liquid1,
+                liquid2,
+                comps,
+                gamma1,
+                gamma2,
+            )
+            return (
+                liquid1,
+                liquid2,
+                beta,
+                T,
+                aggregate,
+                gamma1,
+                gamma2,
+                vapor_terms,
+            )
+
+        def residual(values):
+            try:
+                (
+                    liquid1,
+                    liquid2,
+                    _beta,
+                    _T,
+                    aggregate,
+                    gamma1,
+                    gamma2,
+                    vapor_terms,
+                ) = equilibrium(values)
+                vapor_total = sum(vapor_terms.values())
+                vapor = {
+                    comp: vapor_terms[comp] / vapor_total for comp in comps
+                }
+                return np.array(
+                    [
+                        math.log(max(
+                            liquid1[comp] * gamma1[comp], 1e-300
+                        ))
+                        - math.log(max(
+                            liquid2[comp] * gamma2[comp], 1e-300
+                        ))
+                        for comp in trio
+                    ]
+                    + [math.log(max(vapor_total, 1e-300))]
+                    + [
+                        aggregate[comp] - vapor[comp]
+                        for comp in trio[:-1]
+                    ],
+                    dtype=float,
+                )
+            except Exception:
+                return np.ones(6, dtype=float) * 1e3
+
+        starts = [
+            (
+                [0.9 if index == first else 0.05 for index in range(3)],
+                [0.9 if index == second else 0.05 for index in range(3)],
+                0.5,
+                min(pure_temperatures) - 10.0,
+            )
+            for first, second in ((0, 1), (0, 2), (1, 2))
+        ]
+        trio_set = set(trio)
+        for candidate in binary_candidates:
+            active = {
+                comp
+                for comp, value in candidate['composition'].items()
+                if value > 1e-8
+            }
+            if not active.issubset(trio_set) or len(active) != 2:
+                continue
+            epsilon = 0.02
+            phase1 = np.array([
+                max(candidate['liquid1'].get(comp, 0.0), epsilon)
+                for comp in trio
+            ])
+            phase2 = np.array([
+                max(candidate['liquid2'].get(comp, 0.0), epsilon)
+                for comp in trio
+            ])
+            phase1 /= np.sum(phase1)
+            phase2 /= np.sum(phase2)
+            starts.append((
+                phase1,
+                phase2,
+                candidate['liquid2_fraction'],
+                candidate['T'],
+            ))
+
+        tolerance = float(self.get_param(
+            'vlle_azeotropic_fugacity_tolerance', 1e-7
+        ))
+        max_evaluations = max(12, int(self.get_param(
+            'vlle_azeotropic_ternary_max_evaluations', 100
+        )))
+        solutions = []
+        for liquid1, liquid2, beta, T_start in starts:
+            beta = min(max(float(beta), 1e-8), 1.0 - 1e-8)
+            initial = np.r_[
+                logits(liquid1),
+                logits(liquid2),
+                math.log(beta / (1.0 - beta)),
+                temperature_variable(T_start),
+            ]
+            solved = least_squares(
+                residual,
+                initial,
+                method='lm',
+                xtol=1e-10,
+                ftol=1e-10,
+                gtol=1e-10,
+                max_nfev=max_evaluations,
+            )
+            norm = float(np.linalg.norm(residual(solved.x), ord=np.inf))
+            if not math.isfinite(norm) or norm > tolerance:
+                continue
+            (
+                phase1,
+                phase2,
+                solved_beta,
+                T,
+                aggregate,
+                _gamma1,
+                _gamma2,
+                vapor_terms,
+            ) = equilibrium(solved.x)
+            phase_distance = sum(
+                abs(phase1[comp] - phase2[comp]) for comp in trio
+            )
+            if phase_distance <= float(self.get_param(
+                'vlle_phase_distance_min', 1e-3
+            )):
+                continue
+            vapor_total = sum(vapor_terms.values())
+            vapor = {
+                comp: float(vapor_terms[comp] / vapor_total) for comp in comps
+            }
+            if any(vapor[comp] <= 1e-5 for comp in trio):
+                continue
+
+            def liquid_gibbs(composition):
+                gamma = self.thermo.activity_coefficients(T, composition)
+                return sum(
+                    composition[comp]
+                    * math.log(max(
+                        composition[comp] * gamma[comp], 1e-300
+                    ))
+                    for comp in trio
+                )
+
+            gibbs_benefit = (
+                liquid_gibbs(vapor)
+                - (1.0 - solved_beta) * liquid_gibbs(phase1)
+                - solved_beta * liquid_gibbs(phase2)
+            )
+            if gibbs_benefit <= float(self.get_param(
+                'vlle_azeotropic_min_gibbs_benefit', 1e-8
+            )):
+                continue
+            candidate = {
+                'name': 'vlle_az_' + '_'.join(trio),
+                'type': 'VLLE',
+                'order': 3,
+                'T': float(T),
+                'composition': vapor,
+                'liquid1': phase1,
+                'liquid2': phase2,
+                'liquid2_fraction': float(solved_beta),
+                'fixed_point_residual': max(
+                    abs(aggregate[comp] - vapor[comp]) for comp in trio
+                ),
+                'fugacity_residual': norm,
+                'gibbs_benefit': float(gibbs_benefit),
+                'function_evaluations': int(solved.nfev),
+            }
+            duplicate = any(
+                abs(candidate['T'] - item['T']) < 1e-5
+                and max(
+                    abs(
+                        candidate['composition'][comp]
+                        - item['composition'][comp]
+                    )
+                    for comp in comps
+                ) < 1e-5
+                for item in solutions
+            )
+            if not duplicate:
+                solutions.append(candidate)
+        return solutions
+
+    def _provided_vlle_azeotrope_candidates(
+        self,
+        comps: list[str],
+    ) -> list[dict]:
+        """Validate explicit VLLE azeotropes without running a phase search."""
+        raw_candidates = self.get_param('vlle_azeotropes')
+        if raw_candidates is None:
+            composition = self.get_param('vlle_azeotrope_composition')
+            temperature = self.get_param(
+                'vlle_azeotrope_temperature',
+                self.get_param('vlle_azeotrope_temperature_K'),
+            )
+            if composition is None and temperature is None:
+                return []
+            raw_candidates = [{
+                'name': 'provided_vlle_azeotrope',
+                'composition': composition,
+                'T': temperature,
+            }]
+        elif isinstance(raw_candidates, dict):
+            raw_candidates = [raw_candidates]
+        if not isinstance(raw_candidates, (list, tuple)):
+            raise UnitOperationError(
+                f"RigorousDistillation '{self.unit_id}' vlle_azeotropes must "
+                "be a list of mappings"
+            )
+
+        candidates = []
+        known_components = set(comps)
+        for index, raw in enumerate(raw_candidates, 1):
+            if not isinstance(raw, dict):
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} must be a mapping"
+                )
+            composition = raw.get('composition', raw.get('x'))
+            temperature = raw.get(
+                'T', raw.get('T_K', raw.get('temperature_K'))
+            )
+            if not isinstance(composition, dict) or temperature is None:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} requires composition and T/T_K"
+                )
+            unknown = set(composition) - known_components
+            if unknown:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} contains unknown component(s): "
+                    + ', '.join(sorted(unknown))
+                )
+            try:
+                temperature = float(temperature)
+                values = {
+                    comp: float(composition.get(comp, 0.0))
+                    for comp in comps
+                }
+            except (TypeError, ValueError) as exc:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} must contain numeric values"
+                ) from exc
+            if not math.isfinite(temperature) or temperature <= 0.0:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} temperature must be positive and finite"
+                )
+            total = sum(values.values())
+            if (
+                not math.isfinite(total)
+                or any(not math.isfinite(value) or value < 0.0
+                       for value in values.values())
+            ):
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} composition must be finite and nonnegative"
+                )
+            if total <= 0.0:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} composition must have a positive total"
+                )
+            normalized = {
+                comp: value / total for comp, value in values.items()
+            }
+            active = [
+                comp for comp, value in normalized.items() if value > 1e-8
+            ]
+            if len(active) < 2:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' VLLE azeotrope "
+                    f"candidate {index} must contain at least two components"
+                )
+            candidates.append({
+                'name': str(raw.get(
+                    'name', f'provided_vlle_azeotrope_{index}'
+                )),
+                'type': 'VLLE',
+                'order': len(active),
+                'T': temperature,
+                'composition': normalized,
+                'fixed_point_residual': float(raw.get(
+                    'fixed_point_residual', 0.0
+                )),
+                'fugacity_residual': float(raw.get(
+                    'fugacity_residual', 0.0
+                )),
+            })
+        return candidates
+
+    def _binary_vlle_azeotropes(
+        self,
+        pair: tuple[str, str],
+        comps: list[str],
+        pressure: float,
+    ) -> list[dict]:
+        """Solve binary heteroazeotropes as simultaneous VLLE systems."""
+        import numpy as np
+        from scipy.optimize import least_squares
+
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .equilibrium_stage_vlle import shared_vlle_vapor_terms
+        else:
+            from equilibrium_stage_vlle import shared_vlle_vapor_terms
+
+        comp_a, comp_b = pair
+        pure_temperatures = []
+        for target in pair:
+            composition = {
+                comp: (1.0 if comp == target else 0.0) for comp in comps
+            }
+            try:
+                pure_temperatures.append(
+                    self.thermo.bubble_point_T(composition, pressure)
+                )
+            except Exception:
+                props = self.thermo.props.get(target)
+                pure_temperatures.append(
+                    float(getattr(props, 'Tb', 350.0) or 350.0)
+                )
+        fractions = (
+            0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5,
+            0.6, 0.7, 0.8, 0.9, 0.95, 0.98,
+        )
+        possible_split = False
+        for screen_T in (
+            min(pure_temperatures) - 10.0,
+            min(pure_temperatures),
+            min(pure_temperatures) + 20.0,
+        ):
+            gibbs_values = []
+            try:
+                for fraction in fractions:
+                    composition = {comp: 0.0 for comp in comps}
+                    composition[comp_a] = fraction
+                    composition[comp_b] = 1.0 - fraction
+                    gamma = self.thermo.activity_coefficients(
+                        screen_T, composition
+                    )
+                    gibbs_values.append(
+                        fraction * math.log(max(
+                            fraction * gamma[comp_a], 1e-300
+                        ))
+                        + (1.0 - fraction) * math.log(max(
+                            (1.0 - fraction) * gamma[comp_b], 1e-300
+                        ))
+                    )
+            except Exception:
+                # An unavailable screening model must not suppress a real
+                # candidate; let the simultaneous fugacity solve decide.
+                possible_split = True
+                break
+            for index in range(1, len(fractions) - 1):
+                left, middle, right = fractions[index - 1:index + 2]
+                chord = (
+                    gibbs_values[index - 1]
+                    + (gibbs_values[index + 1] - gibbs_values[index - 1])
+                    * (middle - left) / (right - left)
+                )
+                if gibbs_values[index] - chord > -1e-3:
+                    possible_split = True
+                    break
+            if possible_split:
+                break
+        if not possible_split:
+            return []
+        column_T_min, column_T_max = self._temperature_bounds(comps)
+        T_low = max(column_T_min, min(pure_temperatures) - 80.0)
+        T_high = min(column_T_max, max(pure_temperatures) + 80.0)
+        if T_high <= T_low:
+            return []
+
+        def sigmoid(value):
+            value = min(max(float(value), -40.0), 40.0)
+            return 1.0 / (1.0 + math.exp(-value))
+
+        def logit(value):
+            value = min(max(float(value), 1e-12), 1.0 - 1e-12)
+            return math.log(value / (1.0 - value))
+
+        def temperature(theta):
+            return (
+                0.5 * (T_low + T_high)
+                + 0.5 * (T_high - T_low) * math.tanh(float(theta))
+            )
+
+        def temperature_variable(value):
+            scaled = (
+                (2.0 * float(value) - T_low - T_high)
+                / max(T_high - T_low, 1e-12)
+            )
+            return math.atanh(min(max(scaled, -0.999999), 0.999999))
+
+        def decode(values):
+            x_low = sigmoid(values[0])
+            gap_fraction = sigmoid(values[1])
+            x_high = x_low + (1.0 - x_low) * gap_fraction
+            T = temperature(values[2])
+            liquid1 = {comp: 0.0 for comp in comps}
+            liquid2 = {comp: 0.0 for comp in comps}
+            liquid1[comp_a], liquid1[comp_b] = x_high, 1.0 - x_high
+            liquid2[comp_a], liquid2[comp_b] = x_low, 1.0 - x_low
+            return liquid1, liquid2, T
+
+        def equilibrium(values):
+            liquid1, liquid2, T = decode(values)
+            gamma1 = self.thermo.activity_coefficients(T, liquid1)
+            gamma2 = self.thermo.activity_coefficients(T, liquid2)
+            vapor_terms = shared_vlle_vapor_terms(
+                self.thermo,
+                T,
+                pressure,
+                liquid1,
+                liquid2,
+                comps,
+                gamma1,
+                gamma2,
+            )
+            return liquid1, liquid2, T, gamma1, gamma2, vapor_terms
+
+        def residual(values):
+            try:
+                liquid1, liquid2, _T, gamma1, gamma2, vapor_terms = (
+                    equilibrium(values)
+                )
+                return np.array([
+                    math.log(max(
+                        liquid1[comp_a] * gamma1[comp_a], 1e-300
+                    ))
+                    - math.log(max(
+                        liquid2[comp_a] * gamma2[comp_a], 1e-300
+                    )),
+                    math.log(max(
+                        liquid1[comp_b] * gamma1[comp_b], 1e-300
+                    ))
+                    - math.log(max(
+                        liquid2[comp_b] * gamma2[comp_b], 1e-300
+                    )),
+                    math.log(max(sum(vapor_terms.values()), 1e-300)),
+                ], dtype=float)
+            except Exception:
+                return np.ones(3, dtype=float) * 1e3
+
+        max_evaluations = max(8, int(self.get_param(
+            'vlle_azeotropic_max_evaluations', 60
+        )))
+        tolerance = float(self.get_param(
+            'vlle_azeotropic_fugacity_tolerance', 1e-7
+        ))
+        starts = (
+            (0.995, 0.005),
+            (0.99, 0.15),
+            (0.8, 0.05),
+            (0.4, 0.02),
+        )
+        solutions = []
+        temperature_starts = {
+            min(max(min(pure_temperatures) + offset, T_low + 1e-6), T_high - 1e-6)
+            for offset in (-30.0, -10.0, 10.0)
+        }
+        for x_high, x_low in starts:
+            for T_start in temperature_starts:
+                initial = np.array([
+                    logit(x_low),
+                    logit((x_high - x_low) / (1.0 - x_low)),
+                    temperature_variable(T_start),
+                ])
+                solved = least_squares(
+                    residual,
+                    initial,
+                    method='lm',
+                    xtol=1e-10,
+                    ftol=1e-10,
+                    gtol=1e-10,
+                    max_nfev=max_evaluations,
+                )
+                values = residual(solved.x)
+                norm = float(np.linalg.norm(values, ord=np.inf))
+                if not math.isfinite(norm) or norm > tolerance:
+                    continue
+                liquid1, liquid2, T, _gamma1, _gamma2, vapor_terms = (
+                    equilibrium(solved.x)
+                )
+                phase_distance = sum(
+                    abs(liquid1[comp] - liquid2[comp]) for comp in pair
+                )
+                if (
+                    math.isfinite(norm)
+                    and phase_distance > float(self.get_param(
+                        'vlle_phase_distance_min', 1e-3
+                    ))
+                ):
+                    solutions.append((
+                        norm,
+                        liquid1,
+                        liquid2,
+                        float(T),
+                        vapor_terms,
+                        int(solved.nfev),
+                    ))
+        candidates = []
+        for (
+            norm,
+            liquid1,
+            liquid2,
+            T,
+            vapor_terms,
+            evaluations,
+        ) in sorted(solutions, key=lambda item: item[0]):
+            if norm > tolerance:
+                continue
+            vapor_total = sum(vapor_terms.values())
+            vapor = {
+                comp: float(vapor_terms[comp] / vapor_total)
+                for comp in comps
+            }
+            denominator = liquid2[comp_a] - liquid1[comp_a]
+            if abs(denominator) <= 1e-12:
+                continue
+            beta = (
+                vapor.get(comp_a, 0.0) - liquid1[comp_a]
+            ) / denominator
+            phase_fraction = min(beta, 1.0 - beta)
+            if (
+                beta <= 0.0
+                or beta >= 1.0
+                or phase_fraction <= float(self.get_param(
+                    'vlle_phase_fraction_min', 1e-6
+                ))
+                or any(vapor.get(comp, 0.0) <= 1e-5 for comp in pair)
+            ):
+                continue
+
+            def liquid_gibbs(composition):
+                gamma = self.thermo.activity_coefficients(T, composition)
+                return sum(
+                    composition[comp]
+                    * math.log(max(
+                        composition[comp] * gamma[comp], 1e-300
+                    ))
+                    for comp in pair
+                )
+
+            homogeneous_gibbs = liquid_gibbs(vapor)
+            split_gibbs = (
+                (1.0 - beta) * liquid_gibbs(liquid1)
+                + beta * liquid_gibbs(liquid2)
+            )
+            gibbs_benefit = homogeneous_gibbs - split_gibbs
+            if gibbs_benefit <= float(self.get_param(
+                'vlle_azeotropic_min_gibbs_benefit', 1e-8
+            )):
+                continue
+            candidate = {
+                'name': 'vlle_az_' + '_'.join(pair),
+                'type': 'VLLE',
+                'order': 2,
+                'T': T,
+                'composition': vapor,
+                'liquid1': liquid1,
+                'liquid2': liquid2,
+                'liquid2_fraction': float(beta),
+                'fixed_point_residual': 0.0,
+                'fugacity_residual': float(norm),
+                'gibbs_benefit': float(gibbs_benefit),
+                'function_evaluations': evaluations,
+            }
+            duplicate = any(
+                abs(T - item['T']) < 1e-5
+                and max(
+                    abs(vapor[comp] - item['composition'][comp])
+                    for comp in comps
+                ) < 1e-5
+                for item in candidates
+            )
+            if not duplicate:
+                candidates.append(candidate)
+        return candidates
+
+    def _vlle_azeotrope_candidates(
+        self,
+        comps: list[str],
+        pressure: float,
+        *,
+        feed_z: Optional[dict[str, float]] = None,
+    ) -> list[dict]:
+        """Find binary/ternary VLLE azeotropes with simultaneous solves."""
+        import itertools
+
+        configured_max_pairs = self.get_param(
+            'vlle_azeotropic_max_binary_pairs'
+        )
+        max_pairs = (
+            None
+            if configured_max_pairs is None
+            else max(0, int(configured_max_pairs))
+        )
+        configured_max_ternary = self.get_param(
+            'vlle_azeotropic_max_ternary_combinations'
+        )
+        max_ternary = (
+            None
+            if configured_max_ternary is None
+            else max(0, int(configured_max_ternary))
+        )
+        exhaustive_ternary = self._truthy_param(self.get_param(
+            'vlle_azeotropic_exhaustive_ternary', False
+        ))
+        ternary_k_min = float(self.get_param(
+            'vlle_azeotropic_ternary_k_min', 0.2
+        ))
+        ternary_feed_min = float(self.get_param(
+            'vlle_azeotropic_ternary_feed_fraction_min', 1e-5
+        ))
+        cache = getattr(self.thermo, '_distillation_vlle_azeotrope_cache', None)
+        if cache is None:
+            cache = {}
+            setattr(self.thermo, '_distillation_vlle_azeotrope_cache', cache)
+        cache_key = (
+            tuple(comps),
+            round(float(pressure), 10),
+            -1 if max_pairs is None else max_pairs,
+            -1 if max_ternary is None else max_ternary,
+            int(self.get_param('vlle_azeotropic_max_evaluations', 60)),
+            int(self.get_param(
+                'vlle_azeotropic_ternary_max_evaluations', 100
+            )),
+            float(self.get_param(
+                'vlle_azeotropic_fugacity_tolerance', 1e-7
+            )),
+            float(self.get_param(
+                'vlle_azeotropic_min_gibbs_benefit', 1e-8
+            )),
+            float(self.get_param('vlle_phase_fraction_min', 1e-6)),
+            float(self.get_param('vlle_phase_distance_min', 1e-3)),
+            self._temperature_bounds(comps),
+            exhaustive_ternary,
+            ternary_k_min,
+            ternary_feed_min,
+            (
+                None
+                if feed_z is None
+                else tuple(round(float(feed_z.get(comp, 0.0)), 12) for comp in comps)
+            ),
+        )
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return [dict(item) for item in cached]
+        candidates = []
+        for index, pair in enumerate(itertools.combinations(comps, 2)):
+            if max_pairs is not None and index >= max_pairs:
+                break
+            candidates.extend(self._binary_vlle_azeotropes(
+                pair, comps, pressure
+            ))
+        ternary_combinations = set()
+        if len(comps) >= 3 and exhaustive_ternary:
+            ternary_combinations.update(itertools.combinations(comps, 3))
+        elif len(comps) >= 3:
+            for candidate in candidates:
+                if candidate['order'] != 2:
+                    continue
+                pair = tuple(
+                    comp
+                    for comp in comps
+                    if candidate['composition'].get(comp, 0.0) > 1e-8
+                )
+                for third in comps:
+                    if third in pair:
+                        continue
+                    if (
+                        feed_z is not None
+                        and feed_z.get(third, 0.0) < ternary_feed_min
+                    ):
+                        continue
+                    probe = {
+                        comp: (
+                            0.999 * candidate['composition'].get(comp, 0.0)
+                            + (0.001 if comp == third else 0.0)
+                        )
+                        for comp in comps
+                    }
+                    try:
+                        K_third = self.thermo.K_values(
+                            candidate['T'], pressure, probe
+                        ).get(third, 0.0)
+                    except Exception:
+                        K_third = math.inf
+                    if K_third >= ternary_k_min:
+                        ternary_combinations.add(tuple(
+                            comp for comp in comps
+                            if comp in set(pair) | {third}
+                        ))
+        if ternary_combinations:
+            for index, trio in enumerate(sorted(
+                ternary_combinations,
+                key=lambda values: tuple(comps.index(comp) for comp in values),
+            )):
+                if max_ternary is not None and index >= max_ternary:
+                    break
+                candidates.extend(self._ternary_vlle_azeotropes(
+                    trio,
+                    comps,
+                    pressure,
+                    candidates,
+                ))
         cache[cache_key] = [dict(item) for item in candidates]
         return candidates
 

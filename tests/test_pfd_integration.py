@@ -12,6 +12,53 @@ from pfd_parser import PFDParser
 
 
 class PFDIntegrationTests(unittest.TestCase):
+    def test_vlle_azeotrope_seed_parameters_parse_into_runtime(self):
+        pfd = (
+            'PROCESS: Direct VLLE Azeotrope Parameter Parsing\n'
+            'VERSION: 1.0\n'
+            'THERMO_METHOD: NRTL\n'
+            'ONLINE_LOOKUP: false\n'
+            'COMPONENTS:\n'
+            '    butanol | 1-Butanol | MW=74.12\n'
+            '    water | Water | MW=18.02\n'
+            'STREAM Feed : FEED -> COL-1.feed\n'
+            '    T = 25 [C]\n'
+            '    P = 1 [bar]\n'
+            '    F = 100 [kmol/h]\n'
+            '    x = butanol:0.4, water:0.6\n'
+            'STREAM Distillate : COL-1.distillate -> PRODUCT\n'
+            'STREAM Bottoms : COL-1.bottoms -> PRODUCT\n'
+            'UNIT COL-1 : RigorousDistillation\n'
+            '    N_stages = 20\n'
+            '    feed_stage = 10\n'
+            '    reflux_ratio = 1.2\n'
+            '    D_to_F = 0.8\n'
+            '    P_condenser = 1 [bar]\n'
+            '    stage_phase_model = VLLE\n'
+            '    vlle_seed = azeotropic\n'
+            '    vlle_azeotrope_composition = {butanol:0.22459337, water:0.77540663}\n'
+            '    vlle_azeotrope_temperature = 93.03958 [C]\n'
+        )
+        simulator = Simulator.from_string(pfd).initialize()
+        column = simulator.solver.units['COL-1']
+
+        self.assertEqual(
+            column.params['vlle_azeotrope_composition'],
+            {'butanol': 0.22459337, 'water': 0.77540663},
+        )
+        self.assertAlmostEqual(
+            column.params['vlle_azeotrope_temperature'],
+            366.18958,
+            places=5,
+        )
+        result = simulator.run()
+        self.assertTrue(result.converged, result.errors)
+        performance = result.units['COL-1'].performance
+        self.assertEqual(
+            performance['vlle_azeotropic_candidate_source'], 'provided'
+        )
+        self.assertEqual(performance['vlle_topology'], 'L' + '.' * 19)
+
     def test_flash_dof_accepts_inherited_upstream_pressure(self):
         pfd = PFDParser().parse(
             'PROCESS: Inherited Pressure Flash\n'

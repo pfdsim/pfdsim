@@ -4341,13 +4341,27 @@ class PFDParser:
         """Parse a parameter line like 'T = 450 [C]'"""
         match = re.fullmatch(r'(\w+)\s*=\s*(.+?)(?:\s*\[([^\]]+)\])?\s*', text)
         if match:
+            name = match.group(1)
+            raw_value = match.group(2).strip()
+            if name.casefold() == 'vlle_azeotrope_composition':
+                try:
+                    value = self._parse_property_value(raw_value)
+                except ValueError:
+                    return None
+                if not isinstance(value, dict):
+                    return None
+                return Parameter(
+                    name=name,
+                    value=value,
+                    unit=match.group(3),
+                )
             if any(char in match.group(2) for char in '[]') or (
                 match.group(3) is not None and '[' in match.group(3)
             ):
                 return None
             return Parameter(
-                name=match.group(1),
-                value=match.group(2).strip(),
+                name=name,
+                value=raw_value,
                 unit=match.group(3)
             )
         return None
