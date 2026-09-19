@@ -13,6 +13,10 @@ else:
 
 try:
     from numba import njit, typeof
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .compiled_cache import numba_cached
+    else:
+        from compiled_cache import numba_cached
 except Exception:  # pragma: no cover - exercised only without optional numba
     njit = None
     typeof = None
@@ -216,7 +220,9 @@ class CompiledUNIQUACBackend:
 
 if njit is not None:
 
-    @njit(cache=True)
+    _cached_kernel = numba_cached(njit)
+
+    @_cached_kernel
     def _nrtl_activity_coefficients_numba(
         x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
         interaction_tmin, interaction_tmax,
@@ -305,7 +311,7 @@ if njit is not None:
         return out
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _nrtl_excess_enthalpy_numba(
         x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref,
         tau_energy, alpha, interaction_tmin, interaction_tmax,
@@ -340,7 +346,7 @@ if njit is not None:
         return -R_J_MOL_K * T * T * derivative_sum
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _uniquac_activity_coefficients_numba(
         x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d, tau_e,
         tau_tref,
@@ -459,7 +465,7 @@ if njit is not None:
         return out
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _uniquac_excess_enthalpy_numba(
         x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
         tau_e, tau_tref, interaction_tmin, interaction_tmax,

@@ -20,6 +20,10 @@ else:
 
 try:
     from numba import njit, typeof
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .compiled_cache import numba_cached
+    else:
+        from compiled_cache import numba_cached
 except Exception:  # pragma: no cover - exercised only without optional numba
     njit = None
     typeof = None
@@ -183,7 +187,9 @@ class CompiledUNIFACBackend:
 
 if njit is not None:
 
-    @njit(cache=True)
+    _cached_kernel = numba_cached(njit)
+
+    @_cached_kernel
     def _group_activity_coefficients_numba(X, subgroup_q, interactions, interactions_b, interactions_c, T, variant_id=0):
         n_groups = X.shape[0]
         theta = np.zeros(n_groups, dtype=np.float64)
@@ -232,7 +238,7 @@ if njit is not None:
         return ln_gamma
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _activity_coefficients_numba(
         nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
         variant_id, x, T,
@@ -361,7 +367,7 @@ if njit is not None:
         return gamma
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _excess_enthalpy_numba(
         nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
         variant_id, x, T, activity_T_low, activity_T_high,

@@ -18,6 +18,10 @@ from scipy.optimize import least_squares
 
 try:
     from numba import njit, typeof
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .compiled_cache import numba_cached
+    else:
+        from compiled_cache import numba_cached
 except Exception:  # pragma: no cover - exercised only without optional numba
     njit = None
     typeof = None
@@ -44,6 +48,22 @@ try:
 except Exception:  # pragma: no cover - exercised only without optional backend
     _nrtl_activity_coefficients_numba = None
     _uniquac_activity_coefficients_numba = None
+
+
+if njit is not None:
+    _cached_kernel = numba_cached(njit)
+    _cached_unifac_kernel = (
+        numba_cached(njit, dependencies=(_activity_coefficients_numba,))
+        if _activity_coefficients_numba is not None else None
+    )
+    _cached_nrtl_kernel = (
+        numba_cached(njit, dependencies=(_nrtl_activity_coefficients_numba,))
+        if _nrtl_activity_coefficients_numba is not None else None
+    )
+    _cached_uniquac_kernel = (
+        numba_cached(njit, dependencies=(_uniquac_activity_coefficients_numba,))
+        if _uniquac_activity_coefficients_numba is not None else None
+    )
 
 
 def _refine_binary_split(
@@ -785,7 +805,7 @@ class CompiledUNIQUACLLEBackend:
 
 if njit is not None:
 
-    @njit(cache=True)
+    @_cached_kernel
     def _normalize(values):
         n = values.shape[0]
         out = np.empty(n, dtype=np.float64)
@@ -805,7 +825,7 @@ if njit is not None:
                 out[i] /= total
         return out
 
-    @njit(cache=True)
+    @_cached_kernel
     def _lever_rule_phase_fraction(z, x1, x2, fallback):
         numerator = 0.0
         denominator = 0.0
@@ -826,7 +846,7 @@ else:
 
 if njit is not None and _activity_coefficients_numba is not None:
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _lle_split_numba(
         nu, r, q, subgroup_q, interactions, interactions_b, interactions_c,
         variant_id, z_input, T, max_iter, tol,
@@ -936,7 +956,7 @@ else:
 
 if njit is not None and _nrtl_activity_coefficients_numba is not None:
 
-    @njit(cache=True)
+    @_cached_nrtl_kernel
     def _lle_split_nrtl_numba(
         z_input, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
         interaction_tmin, interaction_tmax,
@@ -1046,7 +1066,7 @@ else:
 
 if njit is not None and _uniquac_activity_coefficients_numba is not None:
 
-    @njit(cache=True)
+    @_cached_uniquac_kernel
     def _lle_split_uniquac_numba(
         z_input, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
         tau_e, tau_tref,

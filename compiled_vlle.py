@@ -14,6 +14,10 @@ from scipy.optimize import brentq
 
 try:
     from numba import njit, typeof
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .compiled_cache import numba_cached
+    else:
+        from compiled_cache import numba_cached
 except Exception:  # pragma: no cover
     njit = None
     typeof = None
@@ -57,6 +61,36 @@ except Exception:  # pragma: no cover
     _uniquac_activity_coefficients_numba = None
     _lle_split_nrtl_numba = None
     _lle_split_uniquac_numba = None
+
+
+if njit is not None:
+    _cached_kernel = numba_cached(njit)
+    _cached_unifac_kernel = (
+        numba_cached(
+            njit,
+            dependencies=(_activity_coefficients_numba, _lle_split_numba),
+        )
+        if _activity_coefficients_numba is not None and _lle_split_numba is not None
+        else None
+    )
+    _cached_activity_kernel = (
+        numba_cached(
+            njit,
+            dependencies=(
+                _nrtl_activity_coefficients_numba,
+                _uniquac_activity_coefficients_numba,
+                _lle_split_nrtl_numba,
+                _lle_split_uniquac_numba,
+            ),
+        )
+        if all(value is not None for value in (
+            _nrtl_activity_coefficients_numba,
+            _uniquac_activity_coefficients_numba,
+            _lle_split_nrtl_numba,
+            _lle_split_uniquac_numba,
+        ))
+        else None
+    )
 
 
 @dataclass
@@ -688,7 +722,7 @@ def _psat_coefficients_for_components(
 
 if njit is not None and _activity_coefficients_numba is not None and _lle_split_numba is not None:
 
-    @njit(cache=True)
+    @_cached_kernel
     def _norm(values):
         n = values.shape[0]
         out = np.empty(n, dtype=np.float64)
@@ -708,7 +742,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return out
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _psat_array(T, antoine_a, antoine_b, antoine_c):
         n = antoine_a.shape[0]
         out = np.empty(n, dtype=np.float64)
@@ -722,7 +756,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return out
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _k_values_unifac(x, T, P, nu, r, q, subgroup_q, interactions,
                          interactions_b, interactions_c, variant_id,
                          antoine_a, antoine_b, antoine_c):
@@ -745,7 +779,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return K
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _bubble_point_p_unifac(x, T, nu, r, q, subgroup_q, interactions,
                                interactions_b, interactions_c, variant_id,
                                antoine_a, antoine_b, antoine_c):
@@ -760,7 +794,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
             total += x[i] * gamma[i] * psat[i]
         return total
 
-    @njit(cache=True)
+    @_cached_kernel
     def _rr_vle(z, K, guess):
         f0 = 0.0
         f1 = 0.0
@@ -814,7 +848,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return 0.5 * (low + high)
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _vle_flash_unifac(z_input, T, P, nu, r, q, subgroup_q, interactions,
                           interactions_b, interactions_c, variant_id,
                           antoine_a, antoine_b, antoine_c, max_iter, tol):
@@ -861,7 +895,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return V, x, y
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _seeded_vle_unifac(z_input, T, P, liquid_seed, nu, r, q, subgroup_q,
                            interactions, interactions_b, interactions_c, variant_id,
                            antoine_a, antoine_b, antoine_c, max_iter, tol):
@@ -927,7 +961,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return True, V, x, y
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _liquid_tpd_unifac(z_input, T, P, liquid_seed, nu, r, q, subgroup_q,
                            interactions, interactions_b, interactions_c, variant_id,
                            antoine_a, antoine_b, antoine_c):
@@ -945,7 +979,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return value
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _reduced_gibbs_unifac(T, P, V, x_input, y_input, nu, r, q, subgroup_q,
                               interactions, interactions_b, interactions_c, variant_id,
                               antoine_a, antoine_b, antoine_c):
@@ -968,7 +1002,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return value
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _stable_vle_from_lle_seeds_unifac(
         z, T, P, seed1, seed2, nu, r, q, subgroup_q, interactions,
         interactions_b, interactions_c, variant_id, antoine_a, antoine_b,
@@ -1008,7 +1042,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return True, V, x, y
 
 
-    @njit(cache=True)
+    @_cached_kernel
     def _solve_three_phase_rr(z, k1, k2, seed_l1, seed_l2):
         n = z.shape[0]
 
@@ -1116,7 +1150,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return True, v, l1, _norm(y), _norm(x1), _norm(x2), best_norm
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _binary_invariant(z, T, P, x1, x2, nu, r, q, subgroup_q, interactions,
                           interactions_b, interactions_c, variant_id,
                           antoine_a, antoine_b, antoine_c):
@@ -1184,7 +1218,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return True, v, l1, y, residual
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _structured_vlle_from_seeds(z, T, P, x1_seed, x2_seed, beta_seed, v_seed,
                                     status_code, nu, r, q, subgroup_q, interactions,
                                     interactions_b, interactions_c, variant_id,
@@ -1348,7 +1382,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return False, 0, 7, v, l1, l2, y, x1, x2, residual, max_iter
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _vlle_flash_tp_unifac_numba(z_input, T, P, nu, r, q, subgroup_q, interactions,
                                     interactions_b, interactions_c, variant_id,
                                     antoine_a, antoine_b, antoine_c, max_iter, tol):
@@ -1413,7 +1447,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return 2, 2, V, 1.0 - V, 0.0, y_vle, x_vle, x_vle, 0.0, 0
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _vlle_flash_pv_unifac_numba(z, P, vf_target, T_low, T_high, nu, r, q,
                                     subgroup_q, interactions, interactions_b,
                                     interactions_c, variant_id, antoine_a,
@@ -1462,7 +1496,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return mid, raw_mid
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _heterogeneous_boundary_residual(z, T, P, nu, r, q, subgroup_q, interactions,
                                          interactions_b, interactions_c, variant_id,
                                          antoine_a, antoine_b, antoine_c, max_iter, tol):
@@ -1478,7 +1512,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return True, p1 - P
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _heterogeneous_boundary_t_unifac_numba(z, P, T_low, T_high, step, nu, r, q,
                                                subgroup_q, interactions,
                                                interactions_b, interactions_c,
@@ -1535,7 +1569,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return 0.5 * (low + high), calls
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _bubble_residual_binary(x0, T, P, nu, r, q, subgroup_q, interactions,
                                 interactions_b, interactions_c, variant_id,
                                 antoine_a, antoine_b, antoine_c):
@@ -1547,7 +1581,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
                                       antoine_a, antoine_b, antoine_c) - P
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _bubble_t_binary(x0, P, T_low, T_high, nu, r, q, subgroup_q, interactions,
                          interactions_b, interactions_c, variant_id,
                          antoine_a, antoine_b, antoine_c):
@@ -1576,7 +1610,7 @@ if njit is not None and _activity_coefficients_numba is not None and _lle_split_
         return 0.5 * (low + high)
 
 
-    @njit(cache=True)
+    @_cached_unifac_kernel
     def _homogeneous_binary_azeotrope_t_unifac_numba(P, T_low, T_high, nu, r, q,
                                                      subgroup_q, interactions,
                                                      interactions_b, interactions_c,
@@ -1658,7 +1692,7 @@ if (
     and _lle_split_uniquac_numba is not None
 ):
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _activity_gamma(model_id, x, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9):
         n = x.shape[0]
         if model_id == 1:
@@ -1692,7 +1726,7 @@ if (
         )
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _activity_lle_split(model_id, z, T, integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                             max_iter, tol):
         if model_id == 1:
@@ -1727,7 +1761,7 @@ if (
         )
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _k_values_activity(x, T, P, model_id, integer_parameters, p0, p1, p2, p3, p4,
                            p5, p6, p7, p8, p9, antoine_a, antoine_b, antoine_c):
         gamma = _activity_gamma(
@@ -1742,7 +1776,7 @@ if (
         return out
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _bubble_point_p_activity(x, T, model_id, integer_parameters, p0, p1, p2, p3,
                                  p4, p5, p6, p7, p8, p9,
                                  antoine_a, antoine_b, antoine_c):
@@ -1756,7 +1790,7 @@ if (
             total += xn[i] * gamma[i] * psat[i]
         return total
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _vle_flash_activity(z_input, T, P, model_id, integer_parameters, p0, p1, p2,
                             p3, p4, p5, p6, p7, p8, p9,
                             antoine_a, antoine_b, antoine_c, max_iter, tol):
@@ -1801,7 +1835,7 @@ if (
         return V, x, y
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _seeded_vle_activity(z_input, T, P, liquid_seed, model_id,
                              integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                              antoine_a, antoine_b, antoine_c, max_iter, tol):
@@ -1867,7 +1901,7 @@ if (
         return True, V, x, y
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _liquid_tpd_activity(z_input, T, P, liquid_seed, model_id,
                              integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                              antoine_a, antoine_b, antoine_c):
@@ -1885,7 +1919,7 @@ if (
         return value
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _reduced_gibbs_activity(T, P, V, x_input, y_input, model_id,
                                 integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                                 antoine_a, antoine_b, antoine_c):
@@ -1908,7 +1942,7 @@ if (
         return value
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _stable_vle_from_lle_seeds_activity(
         z, T, P, seed1, seed2, model_id, integer_parameters, p0, p1, p2,
         p3, p4, p5, p6, p7, p8, p9,
@@ -1948,7 +1982,7 @@ if (
         return True, V, x, y
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _binary_invariant_activity(z, T, P, x1, x2, model_id, integer_parameters,
                                    p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a, antoine_b,
                                    antoine_c):
@@ -2014,7 +2048,7 @@ if (
         return True, v, l1, y, max(pressure_residual, vapor_residual)
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _structured_vlle_activity(z, T, P, x1_seed, x2_seed, beta_seed, v_seed,
                                   status_code, model_id, integer_parameters, p0, p1,
                                   p2, p3, p4, p5, p6, p7, p8, p9,
@@ -2130,7 +2164,7 @@ if (
         return False, 0, 7, v, l1, l2, y, x1, x2, rr_residual, max_iter
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _vlle_flash_tp_activity_numba(z_input, T, P, model_id, integer_parameters,
                                       p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, antoine_a, antoine_b,
                                       antoine_c, max_iter, tol):
@@ -2190,7 +2224,7 @@ if (
         return 2, 2, V, 1.0 - V, 0.0, y_vle, x_vle, x_vle, 0.0, 0
 
 
-    @njit(cache=True)
+    @_cached_activity_kernel
     def _vlle_flash_pv_activity_numba(z, P, target, T_low, T_high, model_id,
                                       integer_parameters, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9,
                                       antoine_a, antoine_b, antoine_c, max_iter, tol):
