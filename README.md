@@ -1,115 +1,111 @@
 # PFDSim
 
-**IMPORTANT: This README is outdated. Please refer to the program itself for the complete features of the library.**
+PFDSim is a Python chemical-process simulator for human-editable `.pfd`
+flowsheets. It validates and solves steady-state processes, including recycle
+loops, and produces stream and equipment results, material and energy
+balances, and human-readable `.pfr` reports.
 
-`pfdsim` is a command-line chemical process simulator. Its primary workflow is
-to run human-editable `.pfd` flowsheet files with the `pfdsim` CLI, solve them
-with sequential modular recycle handling, and write summaries or full `.pfr`
-reports.
+Use it through the command line or Python API. A standalone renderer turns
+flowsheets into SVG, PDF, or PNG diagrams without running a simulation.
 
-The project also includes a Flask editor/API, but that is secondary to the CLI
-and simulation library.
+## Main features
 
-## What It Can Model
+- **Flowsheet simulation:** sequential modular solving, automatic or explicit
+  tear streams, accelerated recycle convergence, and degrees-of-freedom
+  validation.
+- **Phase equilibrium:** VLE, LLE, and VLLE with compatible thermodynamic
+  methods; explicit phase routing through flashes, decanters, and extractors.
+- **Process equipment:** pressure and flow handling, heat transfer, rigorous
+  distillation and extraction, absorption, stripping, and molecular-sieve drying.
+- **Reaction systems:** conversion and equilibrium reactors, kinetic CSTRs,
+  batch/semi-batch reactors, PFRs, and packed beds with catalyst effectiveness
+  and pressure-drop models.
+- **Solids processing:** pure-solid crystallization, kinetic crystal growth,
+  layer crystallization and sweating, particle-size distributions, cake
+  filtration, and equilibrium warm/melt washing.
+- **Physical properties:** explicit overrides, bundled data, property
+  correlations, optional online resolution, and source/quality reporting.
+- **Text-based inputs and reports:** reusable reaction declarations,
+  thermodynamic scopes, executable examples, and engineering-style diagrams.
 
-- Steady-state process flowsheets with feeds, products, recycle loops, tear
-  streams, and degrees-of-freedom validation.
-- Material and energy balances for common process equipment.
-- Vapor-liquid, liquid-liquid, and vapor-liquid-liquid equilibrium where the
-  selected thermodynamic model supports it.
-- Cubic-EOS, activity-coefficient, gamma-phi, vapor-dimerization, Henry-law,
-  and steam-table property methods.
-- Reaction systems ranging from conversion reactors to kinetic CSTR/PFR models.
-- Property lookup and fallback from PFD overrides, local data, Perry/textbook
-  sources, resolver caches, and optional online sources.
+The flowsheet solver is steady state. Equipment that models a batch or cycle
+reports continuous-equivalent flows and duties; PFDSim is not a general dynamic
+flowsheet simulator.
 
 ## Installation
 
-Use Python 3.12 or newer.
+Use Python 3.12 or later. From a source checkout:
 
 ```bash
-cd pfdsim
 uv sync
 ```
 
-`uv sync` creates the project-local virtual environment, installs pfdsim in
-editable mode, and installs the locked runtime and development dependencies.
-Use `uv sync --no-dev` when only the runtime package is needed. The dependency
-declarations in `pyproject.toml` and the resolved `uv.lock` are authoritative.
+This installs the package in editable mode with the locked runtime and
+development dependencies. Use `uv sync --no-dev` for a runtime-only environment.
 
-The optional web application dependencies are installed explicitly:
+Optional extras:
 
 ```bash
-uv sync --extra web
+uv sync --extra render       # PDF/PNG export; also requires system Cairo
+uv sync --extra web          # legacy Flask application/API
+uv sync --extra dipole-xtb   # optional molecular geometry/dipole calculations
+uv sync --extra dipole-pvdz  # optional higher-level dipole calculations
 ```
 
-## CLI Usage
+All diagram formats require the Graphviz `dot` executable on `PATH`.
+Dependency declarations and optional extras are defined in
+[`pyproject.toml`](pyproject.toml).
 
-Run a flowsheet and print a compact result summary:
+## Run a flowsheet
 
 ```bash
+# Print a result summary.
 uv run pfdsim examples/simple_flash.pfd
-```
 
-Write a `.pfr` result file next to the input:
-
-```bash
+# Write a .pfr report beside the input.
 uv run pfdsim examples/simple_flash.pfd --output
+
+# Choose a report path.
+uv run pfdsim examples/simple_flash.pfd -o outputs/simple_flash_result.pfr
+
+# Print the complete report.
+uv run pfdsim examples/simple_flash.pfd --pfr
+
+# Show solver progress on standard error.
+uv run pfdsim examples/ethanol_pressure_swing_recycle_wasteful.pfd --verbose
 ```
 
-Choose an explicit output path:
+The CLI exits nonzero when the simulation does not converge or an input or
+simulation error occurs.
 
-```bash
-pfdsim examples/simple_flash.pfd --output outputs/simple_flash_result.pfr
-```
-
-Print the complete `.pfr` report to stdout:
-
-```bash
-pfdsim examples/simple_flash.pfd --pfr
-```
-
-Print recycle/solver progress to stderr:
-
-```bash
-pfdsim examples/ethanol_pressure_swing_recycle_wasteful.pfd --verbose
-```
-
-## Python Usage
+## Python API
 
 ```python
-from simulator import Simulator
+from pfdsim.simulator import Simulator
 
-sim = Simulator.from_file("examples/simple_flash.pfd")
-result = sim.run()
+simulator = Simulator.from_file("examples/simple_flash.pfd")
+result = simulator.run()
 
 print(result.converged)
 print(result.mass_balance_error)
 print(result.streams["Vapor"].composition)
 
-sim.write_results("outputs/simple_flash_result.pfr")
+simulator.write_results("outputs/simple_flash_result.pfr")
 ```
 
-For persistent web, application, or worker processes, initialization can be
-made explicit before serving timed requests:
+`Simulator.from_string()` accepts PFD text directly. `initialize()` prepares
+property packages and the solver graph without solving the flowsheet; `run()`
+calls it automatically. Initialization is idempotent for an unchanged
+configuration. Convenience functions `simulate_pfd()` and `simulate_file()`
+are also available in `pfdsim.simulator`.
 
-```python
-sim = Simulator.from_file("examples/simple_flash.pfd")
-sim.initialize()  # Idempotent: providers, databases, model kernels, solver graph
-result = sim.run()  # Reuses initialization; run() initializes automatically otherwise
-```
+## PFD input format
 
-`initialize()` does not calculate feed states, flashes, recycle guesses, or
-unit results. Repeated `run()` calls start with clean per-solve state while
-retaining prepared thermodynamic and property backends.
+A PFD declares components, stream connections and feed conditions, equipment,
+reactions, and thermodynamic settings. Both compact and expanded unit syntax
+are supported. This is a complete small flowsheet:
 
-Most internal modules still use source-root imports, so direct scripting is
-simplest from the repository root. The installed `pfdsim` command handles that
-path setup for CLI use.
-
-## Minimal `.pfd` Example
-
-```text
+```pfd
 PROCESS: Simple Flash Separation
 VERSION: 1.0
 ONLINE_LOOKUP: false
@@ -123,201 +119,148 @@ STREAM Feed : FEED -> HEAT-1.in
     P = 1 [bar]
     F = 100 [kmol/h]
     x = H2O:0.6, C2H5OH:0.4
-
 STREAM S1 : HEAT-1.out -> FLASH-1.in
 STREAM Vapor : FLASH-1.vap -> PRODUCT
 STREAM Liquid : FLASH-1.liq -> PRODUCT
 
-UNIT HEAT-1
-    TYPE: Heater
-    PORTS:
-        in  : inlet
-        out : outlet
-    PARAMS:
-        T_out = 80 [C]
+UNIT HEAT-1 : Heater
+    T_out = 80 [C]
 
-UNIT FLASH-1
-    TYPE: Flash
-    PORTS:
-        in  : inlet
-        vap : vapor_outlet
-        liq : liquid_outlet
-    PARAMS:
-        T = 80 [C]
-        P = 1 [bar]
+UNIT FLASH-1 : Flash
+    T = 80 [C]
+    P = 1 [bar]
 ```
 
-See [docs/pfd_format_v1.0.md](docs/pfd_format_v1.0.md) for the full input
-format and [docs/pfr_format_v1.0.md](docs/pfr_format_v1.0.md) for result files.
+Explicit property values take precedence over resolved data. Set
+`ONLINE_LOOKUP: false` to use local data and supplied values without online
+property queries. Named thermodynamic scopes allow different parts of a
+flowsheet to use different property packages.
 
-## Thermodynamic Methods
+See the [PFD format specification](docs/pfd_format_v1.0.md) for syntax,
+parameters, units, and validation rules, and the
+[PFR format specification](docs/pfr_format_v1.0.md) for reports.
 
-Supported method names are defined in `thermodynamics_models/factory.py`.
+## Thermodynamics
 
 | Family | Methods |
 | --- | --- |
-| Ideal and steam | `IDEAL`, `STEAM` / `IF97` |
+| Ideal and steam | `IDEAL`; water-only `STEAM` / `IF97` |
 | Cubic and predictive EOS | `RK`, `SRK`, `PR`, `PSRK`, `RKS-BM`, `PR-BM`, `SRK-MC`, `PR-MC`, `SRK-TWU`, `PR-TWU`, `PRSV1`, `PRSV2` |
-| Activity coefficient | `NRTL`, `UNIQUAC`, `UNIFAC`, `UNIFDMD`, `UNIFNIST` |
-| Gamma-phi | `NRTL-RK`, `NRTL-PR`, `NRTL-BV`, `UNIQUAC-RK`, `UNIQUAC-PR`, `UNIQUAC-BV`, `UNIFAC-RK`, `UNIFAC-PR`, `UNIFAC-BV`, `UNIFDMD-RK`, `UNIFDMD-PR`, `UNIFDMD-BV`, `UNIFNIST-RK`, `UNIFNIST-PR`, `UNIFNIST-BV` |
-| Vapor dimerization | `NRTL-VDM`, `UNIQUAC-VDM`, `UNIFAC-VDM`, `UNIFDMD-VDM`, `UNIFNIST-VDM` |
+| Activity coefficient | `NRTL`, `UNIQUAC`, `UNIFAC`, `UNIFAC2`, `UNIFDMD`, `UNIFM2`, `UNIFNIST` |
+| Vapor corrections | Supported activity models with cubic-EOS, second-virial, Hayden-O'Connell, or vapor-dimerization corrections |
 
-The direct `NRTL-HOC`, `UNIQUAC-HOC`, `UNIFAC-HOC`, `UNIFDMD-HOC`, and
-`UNIFNIST-HOC` spellings select the corresponding `-BV` method with the
-Hayden-O'Connell provider.
+`FLUID_PHASE_MODEL` selects conventional `VLE`, locally spinodal-aware
+`VL(L)E`, or global liquid-stability/VLLE handling. LLE/VLLE requires a
+compatible activity model; cubic EOS and PSRK are not routed through the
+current LLE/VLLE engine. Supported aqueous VLE calculations can use a Henry-law
+standard state for dilute noncondensables.
 
-Activity-model methods are required for LLE/VLLE units such as decanters,
-extractors, and three-phase flashes. `STEAM` is intended for water-only
-flowsheets and uses CoolProp/IF97-style steam properties.
+Property resolution records sources and quality diagnostics. The available
+models include thermal, transport, phase-change, and solid properties.
+See [property resolution](docs/property_resolution_design.md) and
+[PSRK model/data policy](docs/psrk.md) for details.
 
-The optional top-level `FLUID_PHASE_MODEL` declaration selects constrained
-`VLE` (default), locally spinodal-aware `VL(L)E`, or robust global `VLLE`
-behavior for unconstrained stream flashes. The latter two require an
-LLE-capable activity model. Stream states retain vapor, two liquid slots, and
-an explicit permanent-solid inventory. Components declared with
-`phase_behavior=permanent_solid` are excluded from fluid equilibrium and may
-pass through the supported basic stream and thermal operations. See the PFD
-format specification for exact semantics and unit limitations.
+## Unit operations
 
-Pure-component solid properties are available independently of solid stream
-routing. Form-aware solid Cp kernels provide scalar Cp plus analytic sensible
-enthalpy/entropy increments; solid molar volume and density resolve from PFD
-overrides, a bundled CRC solid-volume database, qualified PubChem observations,
-or the restricted organic fallback. Permanent-solid streams consume these APIs
-without claiming equilibrium solidification, melting, or dissolution.
-
-`PSRK` uses the published 2005 parameter matrix for predictive phi-phi VLE,
-including permanent gases, and supplies EOS departure enthalpy, entropy, and
-heat capacity. See [docs/psrk.md](docs/psrk.md) for its data policy and current
-limitations.
-
-## Unit Operations
-
-| Area | Unit types |
+| Area | Canonical unit names |
 | --- | --- |
-| Mixing and splitting | `Mixer`, `Splitter` |
-| Pressure and flow | `Pump`, `Compressor`, `Expander`, `Valve`, `Pipe` |
+| Flow and pressure | `Mixer`, `Splitter`, `Pump`, `Compressor`, `Expander`, `Valve`, `Pipe` |
 | Heat transfer | `Heater`, `Cooler`, `HeatExchanger` |
-| Flash and phase split | `Flash`, `Flash3`, `ThreePhaseFlash`, `FlashLLE`, `Decanter` |
+| Flash and phase separation | `Flash`, `Flash3`, `Decanter`, `MolecularSieveDryer` |
 | Distillation | `ShortcutDistillation`, `McCabeThieleDistillation`, `CMODistillation`, `RigorousDistillation` |
-| Absorption and stripping | `Absorber`, `Stripper`, `RigorousAbsorber`, `RigorousStripper` |
-| Extraction and drying | `ShortcutExtractor`, `Extractor`, `MolecularSieveDryer` |
-| Crystallization | `Crystallizer` |
-| Reaction | `Reactor`, `EquilibriumReactor`, `CSTR`, `PFR` |
+| Extraction and gas–liquid contact | `ShortcutExtractor`, `RigorousExtractor`, `Absorber`, `RigorousAbsorber`, `Stripper`, `RigorousStripper` |
+| Reactions | `Reactor`, `EquilibriumReactor`, `CSTR`, `BatchReactor`, `PFR`, `PackedBedReactor` |
+| Solids | `Crystallizer`, `LayerCrystallizer`, `Filter` |
 
-The parser also recognizes some forward-looking unit names that are not fully
-implemented in the simulator yet. Prefer the examples and tests as the current
-source of truth for working units and parameters.
+Rigorous distillation supports VLE and VLLE equilibrium stages, pressure
+profiles, multiple feeds, and optional azeotropic initialization. Its VLE
+configuration supports side draws and a top decanter; VLLE stages currently
+co-route both liquids and reject side draws and separately routed decanter
+condensers.
 
-## Property Resolution
+Crystallization and equilibrium cake washing use pure-solid equilibrium.
+Layer sweating has a restricted finite-rate solid-solution model. These do
+not provide general SLE/SLLE/SVLLE, polymorph selection, or a general
+solid-solution equilibrium solver. Permanent-solid inventories are supported
+only by equipment with an explicit solids contract.
 
-Component data can be supplied directly in a `.pfd` file:
+Model-specific capabilities and limits are documented in the
+[PFD specification](docs/pfd_format_v1.0.md),
+[filtration guide](docs/filtration.md), and
+[equilibrium washing guide](docs/equilibrium_washing.md).
 
-```text
-COMPONENTS:
-    MIBK | Methyl isobutyl ketone | CAS=108-10-1, SMILES=CC(C)CC(=O)C, dipole=2.7, UNIFAC=2CH3+1CH+1CH2+1CH3CO
+## Render a flowsheet
+
+```bash
+uv run python -m pfdsim.render examples/simple_flash.pfd
+uv run python -m pfdsim.render examples/simple_flash.pfd -o flash.pdf
+uv run python -m pfdsim.render examples/simple_flash.pfd -o flash.png --stream-table
 ```
 
-PFD-supplied values are treated as authoritative overrides. Missing properties
-are resolved through the local chemical database, identity aliases, Perry and
-textbook data, tabulated vapor-pressure data, correlation fallbacks, and
-optional online lookup. Set `ONLINE_LOOKUP: false` in a `.pfd` when an example
-or regression test should remain deterministic and self-contained.
-Permanent gas-phase dipoles may be supplied in Debye as `dipole_moment`,
-`dipole`, or `dipole_D`.
-Molecular gyration radii may be supplied in angstrom as `R` and `R_prime`
-(`R_HOC`); otherwise they can be evaluated from the shared cached GFN2-xTB
-geometry.
-
-Solid overrides use `Cp_solid`, `rho_solid`, `Vm_solid`, optional
-`solid_material_form`/`solid_polymorph`, and `Cps` or `rhos` entries in
-`PROPERTY_CORRELATIONS`. Canonical artifacts are
-`data/solid_heat_capacity.sqlite` and `data/solid_volume.sqlite`; see
-`scripts/heat_capacity/solid/README.md` for source and estimator audits.
-
-For the detailed source order and quality model, see
-[docs/property_resolution_design.md](docs/property_resolution_design.md).
+Rendering parses the source without initializing thermodynamics or solving
+it. Existing outputs require `--force` to replace; the input PFD is protected.
+Diagrams are process schematics, not P&IDs. See the
+[rendering guide](docs/rendering.md).
 
 ## Examples
 
-The `examples/` directory includes working flowsheets for:
+The [`examples/`](examples/) directory contains executable flowsheets, including:
 
-- Basic flash calculations and UNIFAC flashes.
-- Rigorous ethanol and benzene/toluene distillation.
-- Ethanol dehydration, pressure-swing recycle, and azeotropic distillation.
-- Liquid-liquid extraction and rigorous extraction.
-- Absorbers, strippers, and partial-condensation recovery.
-- Methane liquefaction and cryogenic air separation with cubic EOS methods.
-- Steam Rankine cycle calculations.
-- Kinetic CSTR and PFR reactor examples.
-- Molecular-sieve drying examples.
+| Example | Demonstrates |
+| --- | --- |
+| [Simple flash](examples/simple_flash.pfd) | Basic input syntax and heated VLE flash |
+| [Rigorous azeotropic distillation](examples/ethanol_benzene_azeotropic_distillation_rigorous.pfd) | Multistage separation with VLLE |
+| [Pressure-swing recycle](examples/ethanol_pressure_swing_recycle_wasteful.pfd) | Recycle convergence |
+| [Acrylic-acid extraction](examples/acrylic_acid_rigorous_extraction.pfd) | Rigorous LLE extraction |
+| [Cryogenic air separation](examples/cryogenic_air_separation_rks_bm.pfd) | Cubic-EOS thermodynamics |
+| [Rankine cycle](examples/simple_rankine_cycle_steam.pfd) | Steam properties |
+| [Lactic-acid dehydration](examples/lactic_acid_dehydration_pbr.pfd) | Packed-bed kinetics and downstream recovery |
+| [Batch synthesis](examples/ethyl_acetate_batch_synthesis.pfd) | Batch reaction scheduling |
+| [Cake filtration](examples/cake_filtration_washing.pfd) | Solids handling and washing |
+| [Warm/melt washing](examples/equilibrium_warm_melt_washing.pfd) | Coupled energy and solid-equilibrium calculations |
 
-Run any example with:
-
-```bash
-pfdsim examples/simple_rankine_cycle_steam.pfd
-```
-
-## Secondary Web App and API
-
-The Flask app is still available for editing, validation, example loading, and
-phase chart endpoints, but it is not the main interface:
-
-```bash
-python app.py
-```
-
-Then open `http://localhost:5000`.
-
-Important endpoints include `/api/parse`, `/api/serialize`, `/api/validate`,
-`/api/examples`, `/api/unit-templates`, `/api/chemicals`, and
-`/api/chemicals/search`. Treat the frontend as older than the CLI and
-simulation core.
-
-## Project Layout
-
-```text
-pfdsim/
-├── cli.py                         # Installed `pfdsim` command
-├── simulator.py                   # High-level simulation interface
-├── flowsheet_solver.py            # Sequential modular solver and recycles
-├── pfd_parser.py                  # .pfd parser/serializer and validation
-├── thermodynamics.py              # Compatibility facade
-├── thermodynamics_models/         # Current thermodynamic model implementations
-├── property_resolution/           # Resolver modules for physical properties
-├── unit_operations_*.py           # Unit operation implementations
-├── chemical_properties.py         # Component database and hydration layer
-├── data/                          # Local interaction/property data
-├── examples/                      # Runnable .pfd/.pfr examples
-├── docs/                          # Format and design notes
-├── tests/                         # Regression/unit tests
-├── app.py                         # Flask app/API
-├── templates/ and static/         # Web editor assets
-└── scripts/                       # Data extraction and model probes
-```
+Examples are worked inputs; their property estimates and engineering
+assumptions still need validation for a new application.
 
 ## Development
 
-Run the default test suite from the repository root:
+Run the default tests from the repository root:
 
 ```bash
 python -m pytest
 ```
 
-The project-local pytest hook runs the default tests in parallel when pytest is
-invoked without arguments. For a targeted test during development, pass the test
-file or test name explicitly:
+The project hook dispatches a no-argument run in parallel. For focused work:
 
 ```bash
-python -m pytest tests/test_steam_thermodynamics.py
+python -m pytest tests/test_render.py
+python -m ruff check .
 ```
 
-The all-examples performance regression check is opt-in:
+The all-examples performance check is opt-in:
 
 ```bash
 python -m unittest tests.performance_all_examples -q
 ```
 
+Simulation code lives in `simulator.py`, `flowsheet_solver.py`, and
+`unit_operations_*.py`; thermodynamic models and property resolution live in
+`thermodynamics_models/` and `property_resolution/`. See `docs/` for reference
+material, `tests/` for regressions, and `scripts/` for maintained builders and
+benchmarks.
+
+## Optional web API
+
+The legacy Flask application provides an editor and API for parsing,
+validation, simulation, examples, and property/phase queries:
+
+```bash
+uv run python app.py
+```
+
+Install the `web` extra first. The CLI and simulation library are the primary
+interfaces; the frontend is older than the simulation core.
+
 ## License
 
-This project is licensed under the terms in [LICENSE](LICENSE).
+PFDSim is licensed under [AGPL-3.0-only](LICENSE).
