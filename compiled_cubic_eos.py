@@ -579,8 +579,8 @@ if njit is not None:
             T, P, x, kij, Tc, omega, a0, pure_b,
             modes, c1, c2, c3, delta1, delta2,
         )
-        if root_count < 2:
-            return K
+        single_root = root_count < 2
+        initial_K = K.copy()
         phi_l = _cubic_fugacity_numba(
             T, P, x, 0, kij, Tc, omega, a0, pure_b,
             modes, c1, c2, c3, delta1, delta2,
@@ -590,12 +590,6 @@ if njit is not None:
             work[component] = x[component] * K[component]
         y = _normalize_numba(work)
         for _ in range(max_iter):
-            roots, root_count = _cubic_roots_state_numba(
-                T, P, y, kij, Tc, omega, a0, pure_b,
-                modes, c1, c2, c3, delta1, delta2,
-            )
-            if root_count < 2:
-                return K
             phi_v = _cubic_fugacity_numba(
                 T, P, y, 1, kij, Tc, omega, a0, pure_b,
                 modes, c1, c2, c3, delta1, delta2,
@@ -613,6 +607,12 @@ if njit is not None:
                     abs(y_new[component] - y[component]),
                 )
             if maximum_change < 1.0e-9:
+                trivial = single_root
+                for component in range(count_components):
+                    if x[component] > 0.0 and abs(K_new[component] - 1.0) >= 1e-6:
+                        trivial = False
+                if trivial:
+                    return initial_K
                 return K_new
             for component in range(count_components):
                 K[component] = 0.5 * K[component] + 0.5 * K_new[component]

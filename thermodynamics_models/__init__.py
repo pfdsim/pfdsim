@@ -28,13 +28,14 @@ from .ge_eos import (
     GEOSMixingState,
     ExcessGibbsEOSMixingRule,
     ModifiedHuronVidalFirstOrderMixingRule,
+    ModifiedHuronVidalSecondOrderMixingRule,
 )
 from .psrk import PSRK, PSRKError, PSRKDataError, PSRKUnsupportedComponentError, PSRKCalculationError
 from .psrk_thermo import PSRKThermodynamics
 from .activity import ActivityCoefficientThermodynamics, VLLEFlashResult, VaporDimerizationActivityMixin
 from .unifac_models import (
     UNIFACThermodynamics, UNIFAC2Thermodynamics, UNIFDMDThermodynamics,
-    UNIFM2Thermodynamics, UNIFNISTThermodynamics,
+    UNIFM2Thermodynamics, UNIFNISTThermodynamics, UNIFLBYThermodynamics,
     UNIFACVDMThermodynamics, UNIFDMDVDMThermodynamics, UNIFNISTVDMThermodynamics,
 )
 from .nrtl_uniquac import (
@@ -81,11 +82,12 @@ __all__ = [
     'SteamThermodynamics', 'RKThermodynamics', 'CubicEOSThermodynamics',
     'ExcessGibbsState', 'ExcessGibbsModel', 'GEOSMixingState',
     'ExcessGibbsEOSMixingRule', 'ModifiedHuronVidalFirstOrderMixingRule',
+    'ModifiedHuronVidalSecondOrderMixingRule',
     'PSRK', 'PSRKError', 'PSRKDataError', 'PSRKUnsupportedComponentError',
     'PSRKCalculationError', 'PSRKThermodynamics',
     'ActivityCoefficientThermodynamics', 'VLLEFlashResult', 'VaporDimerizationActivityMixin',
     'UNIFACThermodynamics', 'UNIFAC2Thermodynamics', 'UNIFDMDThermodynamics',
-    'UNIFM2Thermodynamics', 'UNIFNISTThermodynamics',
+    'UNIFM2Thermodynamics', 'UNIFNISTThermodynamics', 'UNIFLBYThermodynamics',
     'UNIFACVDMThermodynamics', 'UNIFDMDVDMThermodynamics', 'UNIFNISTVDMThermodynamics',
     'NRTLThermodynamics', 'NRTLVDMThermodynamics',
     'UNIQUACThermodynamics', 'UNIQUACVDMThermodynamics',

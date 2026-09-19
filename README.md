@@ -145,8 +145,8 @@ parameters, units, and validation rules, and the
 | Family | Methods |
 | --- | --- |
 | Ideal and steam | `IDEAL`; water-only `STEAM` / `IF97` |
-| Cubic and predictive EOS | `RK`, `SRK`, `PR`, `PSRK`, `RKS-BM`, `PR-BM`, `SRK-MC`, `PR-MC`, `SRK-TWU`, `PR-TWU`, `PRSV1`, `PRSV2` |
-| Activity coefficient | `NRTL`, `UNIQUAC`, `UNIFAC`, `UNIFAC2`, `UNIFDMD`, `UNIFM2`, `UNIFNIST` |
+| Cubic and predictive EOS | `RK`, `SRK`, `PR`, `PSRK`, `RKSMHV2`, `RKS-BM`, `PR-BM`, `SRK-MC`, `PR-MC`, `SRK-TWU`, `PR-TWU`, `PRSV1`, `PRSV2` |
+| Activity coefficient | `NRTL`, `UNIQUAC`, `UNIFAC`, `UNIFAC2`, `UNIFDMD`, `UNIFM2`, `UNIFNIST`, `UNIFLBY` |
 | Vapor corrections | Supported activity models with cubic-EOS, second-virial, Hayden-O'Connell, or vapor-dimerization corrections |
 
 `FLUID_PHASE_MODEL` selects conventional `VLE`, locally spinodal-aware
@@ -159,6 +159,8 @@ Property resolution records sources and quality diagnostics. The available
 models include thermal, transport, phase-change, and solid properties.
 See [property resolution](docs/property_resolution_design.md) and
 [PSRK model/data policy](docs/psrk.md) for details.
+The [Lyngby/RKSMHV2 guide](docs/lyngby.md) describes their published parameter
+sets, subgroup numbering, and applicability limits.
 
 ## Unit operations
 

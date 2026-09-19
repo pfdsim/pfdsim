@@ -354,6 +354,7 @@ class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
         model: str,
         db: Optional[ChemicalDatabase] = None,
         interaction_overrides: Optional[list[dict]] = None,
+        unifac_groups: Optional[dict] = None,
     ):
         super().__init__(components, db, interaction_overrides)
         if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
@@ -362,7 +363,7 @@ class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
             from cubic_eos import CubicEOS, CubicEOSError
 
         try:
-            self.cubic = CubicEOS(components, model, db, interaction_overrides)
+            self.cubic = CubicEOS(components, model, db, interaction_overrides, unifac_groups)
         except CubicEOSError as e:
             raise ThermodynamicsError(str(e)) from e
         self.model = self.cubic.model

@@ -139,6 +139,8 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
         
         # Create UNIFAC model
         self.unifac = UNIFACModel(unifac_data_path)
+        if self.unifac_variant == 'UNIFLBY' and self.unifac.variant != 'UNIFLBY':
+            raise ThermodynamicsError('UNIFLBY requires a Lyngby parameter table')
         self._activity_cache: dict[tuple, dict[str, float]] = {}
         self._compiled_unifac = None
         self._compiled_lle = None
@@ -195,7 +197,7 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
                 if comp in self.component_groups
             ]
             if compiled_components and self.unifac_variant in (
-                'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST'
+                'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST', 'UNIFLBY'
             ):
                 self._compiled_unifac = CompiledUNIFACBackend.from_model(
                     self.unifac,
@@ -279,6 +281,8 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
         )
         if len(missing) > 8:
             examples += f", ... (+{len(missing) - 8} more)"
+        if self.unifac_variant == 'UNIFLBY':
+            raise ThermodynamicsError(f'Lyngby UNIFAC interactions unavailable: {examples}')
         self.add_warning(
             f"{self.unifac_variant} group interaction parameters missing for "
             f"{len(missing)} ordered main-group pair(s); using zero interaction "
@@ -443,6 +447,13 @@ class UNIFACThermodynamics(ActivityCoefficientThermodynamics):
             activity_T_low,
             activity_T_high,
         )
+
+
+class UNIFLBYThermodynamics(UNIFACThermodynamics):
+    """Larsen/Lyngby UNIFAC (1987), with ideal vapor phase."""
+
+    unifac_variant = 'UNIFLBY'
+    default_unifac_data_filename = 'lyngby_unifac.json'
 
 
 class UNIFDMDThermodynamics(UNIFACThermodynamics):

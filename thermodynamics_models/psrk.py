@@ -1039,8 +1039,8 @@ class PSRK:
             return self._set_cached_phi_phi_K(cache_key, result)
 
         K = self._wilson_K(temperature, pressure)
-        if len(self.compressibility_roots(T_K, P_bar, x)) < 2:
-            return self._set_cached_phi_phi_K(cache_key, K)
+        initial_K = dict(K)
+        single_root = len(self.compressibility_roots(T_K, P_bar, x)) < 2
         phi_liquid = self.fugacity_coefficients(T_K, P_bar, x, "liquid")
         y_values = self._normalize_composition({
             cas: x[cas] * K[cas] for cas in self.components
@@ -1048,8 +1048,6 @@ class PSRK:
         y = dict(zip(self.components, y_values))
 
         for _ in range(max_iter):
-            if len(self.compressibility_roots(T_K, P_bar, y)) < 2:
-                return self._set_cached_phi_phi_K(cache_key, K)
             phi_vapor = self.fugacity_coefficients(T_K, P_bar, y, "vapor")
             K_new = {
                 cas: max(
@@ -1065,6 +1063,8 @@ class PSRK:
             if max(
                 abs(new_y[cas] - y[cas]) for cas in self.components
             ) < 1.0e-9:
+                if single_root and all(abs(K_new[c] - 1.0) < 1e-6 for c in self.components if x[c] > 0.0):
+                    return self._set_cached_phi_phi_K(cache_key, initial_K)
                 return self._set_cached_phi_phi_K(cache_key, K_new)
             K = {
                 cas: 0.5 * K[cas] + 0.5 * K_new[cas]

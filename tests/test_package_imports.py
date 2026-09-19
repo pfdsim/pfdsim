@@ -72,6 +72,8 @@ for method, components, phase in (
     ('PR', ['CO', 'H2', 'CH3OH'], 'vapor'),
     ('NRTL', ['water', 'butanol'], 'liquid'),
     ('PSRK', ['CO', 'H2', 'CH3OH'], 'vapor'),
+    ('RKSMHV2', ['CO', 'H2', 'CH3OH'], 'vapor'),
+    ('UNIFLBY', ['ethanol', 'water'], 'liquid'),
 ):
     thermo = create_thermodynamics(components, method)
     composition = {component: 1.0 / len(components) for component in components}

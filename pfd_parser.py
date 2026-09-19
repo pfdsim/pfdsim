@@ -15,6 +15,11 @@ from typing import Optional
 from enum import Enum
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .lyngby_parameters import canonical_lyngby_method
+else:
+    from lyngby_parameters import canonical_lyngby_method
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .crystallizer_specs import (
         CrystallizerSpecificationError, normalize_crystallizer_parameters,
         validate_layer_crystallizer_specification,
@@ -466,10 +471,6 @@ _KNOWN_UNSUPPORTED_THERMO_METHODS = {
         "There is no electrolyte-capable substitute yet.",
         "Electrolyte thermodynamics is a future implementation target.",
     ),
-    'UNIF-LBY': (
-        "Try UNIFAC, UNIFDMD, or UNIFNIST depending on the parameter set needed.",
-        "",
-    ),
     'CHAO-SEA': (
         "Try SRK or PR for hydrocarbon service.",
         "",
@@ -541,6 +542,7 @@ _ACTIVITY_HOC_METHOD_ALIASES = {
 }
 
 _SUPPORTED_THERMO_SCOPE_METHODS = frozenset({
+    'RKSMHV2', 'UNIFLBY',
     'IDEAL', 'STEAM',
     'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM', 'SRK-MC', 'PR-MC',
     'SRK-TWU', 'PR-TWU', 'PRSV1', 'PRSV2',
@@ -2018,7 +2020,7 @@ class PFDParser:
                         "THERMO_METHOD accepts one optional '| key=value, ...' block"
                     )
                     continue
-                method = pieces[0].strip().upper()
+                method = canonical_lyngby_method(pieces[0].strip().upper())
                 aliases = {
                     'REDLICH-KWONG': 'RK',
                     'REDLICHKWONG': 'RK',
@@ -2152,6 +2154,7 @@ class PFDParser:
                     'IAPWS_IF97': 'STEAM',
                 }
                 supported = {
+                    'RKSMHV2', 'UNIFLBY',
                     'IDEAL', 'STEAM', 'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM',
                     'SRK-MC', 'PR-MC', 'PRSV1', 'PRSV2', 'SRK-TWU', 'PR-TWU',
                     'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
@@ -2580,7 +2583,7 @@ class PFDParser:
                         inherit_name = 'global'
                     self.pfd.thermo_scopes.append(ThermoScope(
                         name=name,
-                        method=str(method).strip().upper().replace('_', '-'),
+                        method=canonical_lyngby_method(str(method).strip().upper().replace('_', '-')),
                         inherit=inherit_name,
                     ))
                 except ParseError as error:

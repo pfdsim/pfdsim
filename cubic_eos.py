@@ -12,8 +12,10 @@ from typing import Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .physical_constants import R_BAR_CM3_MOL_K
+    from .lyngby_parameters import canonical_lyngby_method
 else:
     from physical_constants import R_BAR_CM3_MOL_K
+    from lyngby_parameters import canonical_lyngby_method
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .chemical_properties import ChemicalDatabase, ChemicalProperties, get_database
@@ -83,10 +85,13 @@ class CubicEOS:
         model: str,
         db: Optional[ChemicalDatabase] = None,
         interaction_overrides: Optional[list[dict]] = None,
+        unifac_groups: Optional[dict] = None,
     ):
         self.db = db or get_database()
         self.components = components
         self.model = self._canonical_model(model)
+        self._ge_provider = None
+        self._ge_cache = {}
         self.family = "PR" if self.model.startswith("PR") else "SRK"
         self.use_boston_mathias = self.model.endswith("-BM")
         self.use_mathias_copeman = self.model.endswith("-MC")
@@ -111,6 +116,9 @@ class CubicEOS:
         self.warnings: list[str] = []
         self._warning_keys: set[str] = set()
 
+        if self.model == 'RKSMHV2' and (not components or len(set(components)) != len(components)):
+            raise CubicEOSError('RKSMHV2 requires a nonempty list of unique components')
+
         for comp in components:
             if hasattr(self.db, 'get_user_component'):
                 props = self.db.get_user_component(comp)
@@ -122,6 +130,11 @@ class CubicEOS:
                 raise CubicEOSError(
                     f"{self.model} requires Tc, Pc, and omega for '{comp}'"
                 )
+            if self.model == 'RKSMHV2' and (
+                not all(math.isfinite(v) for v in (props.Tc, props.Pc, props.omega))
+                or props.Tc <= 0.0 or props.Pc <= 0.0
+            ):
+                raise CubicEOSError(f'RKSMHV2 requires finite omega and positive finite Tc/Pc for {comp}')
             self.props[comp] = props
             self.component_cas[comp] = cas_for_component(comp, props)
             omega_a, omega_b = self._omega_constants()
@@ -174,6 +187,21 @@ class CubicEOS:
                         f"{self.model} Twu alpha parameters unavailable for "
                         f"{comp}; falling back to {self._parent_base_model()} alpha for this component."
                     )
+        if self.model == 'RKSMHV2':
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from .thermodynamics_models.mhv2 import MHV2ExcessGibbs
+                from .thermodynamics_models.ge_eos import ModifiedHuronVidalSecondOrderMixingRule
+            else:
+                from thermodynamics_models.mhv2 import MHV2ExcessGibbs
+                from thermodynamics_models.ge_eos import ModifiedHuronVidalSecondOrderMixingRule
+            try:
+                self._ge_provider = MHV2ExcessGibbs(
+                    components, self.props, self.db, self.component_cas, unifac_groups)
+            except ValueError as error:
+                raise CubicEOSError(str(error)) from error
+            self._ge_mixing = ModifiedHuronVidalSecondOrderMixingRule()
+            self._compiled_backend = None
+            return
         self._initialize_kij_tables()
         self._initialize_kij_overrides(interaction_overrides or [])
         self._rebuild_kij_pair_cache()
@@ -355,7 +383,9 @@ class CubicEOS:
 
     @staticmethod
     def _canonical_model(model: str) -> str:
-        text = model.upper().replace("_", "-")
+        text = canonical_lyngby_method(model.upper().replace("_", "-"))
+        if text == 'RKSMHV2':
+            return 'RKSMHV2'
         if text in ("RKS", "RK-SOAVE", "SOAVE-REDLICH-KWONG"):
             return "SRK"
         if text in ("SRK-BM", "RKS-BM", "RK-SOAVE-BM"):
@@ -497,6 +527,11 @@ class CubicEOS:
         comp: str,
         props: ChemicalProperties,
     ) -> Optional[dict]:
+        if self.model == 'RKSMHV2':
+            values = [getattr(props, f'mc_c{i}', None) for i in (1, 2, 3)]
+            if any(v is not None for v in values):
+                if values[0] is None or any(v is not None and not math.isfinite(float(v)) for v in values):
+                    raise CubicEOSError(f'RKSMHV2 requires mc_c1 and finite alpha coefficients for {comp}')
         provided = self._complete_mc_constants_from_props(props)
         if provided is not None:
             return {
@@ -507,6 +542,16 @@ class CubicEOS:
                 'Tmax_K': None,
                 'source': 'component property override',
             }
+        if self.model == 'RKSMHV2':
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from .lyngby_parameters import parameter_table
+            else:
+                from lyngby_parameters import parameter_table
+            values = parameter_table(True)['alpha'].get(self.component_cas[comp])
+            if values is not None:
+                return {**values, 'source': 'Dahl et al. (1991), Table I'}
+            self.add_warning(f'RKSMHV2 Mathias-Copeman parameters unavailable for {comp}; using Soave alpha.')
+            return None
         if not self.use_mathias_copeman or self.family != "SRK":
             return None
         cas = self.component_cas.get(comp) or getattr(props, "CAS", None)
@@ -723,6 +768,10 @@ class CubicEOS:
     def _alpha(self, params: CubicPureParams, T: float) -> float:
         Tr = max(T / params.Tc, 1e-12)
         m = self._m_soave(params.omega)
+        if self.model == 'RKSMHV2' and self._has_mc_constants(params):
+            if Tr <= 1.0:
+                return self._alpha_mathias_copeman(params, Tr)
+            return (1.0 + params.mc_c1 * (1.0 - math.sqrt(Tr))) ** 2
         if self.use_mathias_copeman and self._has_mc_constants(params):
             self._warn_mc_temperature_range(params, T)
         if self.use_twu and self._has_twu_constants(params):
@@ -740,6 +789,10 @@ class CubicEOS:
     def _dalpha_dT(self, params: CubicPureParams, T: float) -> float:
         Tr = max(T / params.Tc, 1e-12)
         m = self._m_soave(params.omega)
+        if self.model == 'RKSMHV2' and self._has_mc_constants(params):
+            if Tr <= 1.0:
+                return self._dalpha_mathias_copeman_dT(params, Tr)
+            return -(1.0 + params.mc_c1 * (1.0 - math.sqrt(Tr))) * params.mc_c1 / math.sqrt(T * params.Tc)
         if self.use_mathias_copeman and self._has_mc_constants(params):
             self._warn_mc_temperature_range(params, T)
         if self.use_twu and self._has_twu_constants(params):
@@ -878,6 +931,11 @@ class CubicEOS:
         x = self._normalized_composition(composition)
         comps = self.components
         x_values = [x[comp] for comp in comps]
+        if self._ge_provider is not None:
+            mixing = self._ge_state(T, x)
+            return (mixing.D * mixing.b * R_CM3 * T, mixing.b,
+                    {comp: self.pure_a(comp, T) for comp in comps},
+                    {comp: self.params[comp].b for comp in comps})
         if self._compiled_backend is not None:
             a_mix, b_mix, a_values, _, _ = (
                 self._compiled_backend.mixture_parameters(
@@ -912,6 +970,9 @@ class CubicEOS:
 
     def mixture_da_dT(self, T: float, composition: dict[str, float]) -> float:
         x = self._normalized_composition(composition)
+        if self._ge_provider is not None:
+            mixing = self._ge_state(T, x, temperature_derivative=True)
+            return mixing.b * R_CM3 * (mixing.D + T * mixing.dD_dT)
         comps = self.components
         x_values = [x[comp] for comp in comps]
         if self._compiled_backend is not None:
@@ -949,7 +1010,41 @@ class CubicEOS:
                 pair_index += 1
         return da_mix
 
+    def _ge_state(self, T, composition, *, temperature_derivative=False):
+        """Cache mechanical and caloric mixing states separately.
+
+        Fugacity/root iteration never consumes dD/dT, so avoid calculating
+        excess-enthalpy derivatives on that hot path.
+        """
+        if not math.isfinite(T) or T <= 0.0:
+            raise CubicEOSError('RKSMHV2 temperature must be positive and finite')
+        x = tuple(composition[comp] for comp in self.components)
+        key = (T, x, temperature_derivative)
+        if key not in self._ge_cache:
+            b = tuple(self.params[comp].b for comp in self.components)
+            d = tuple(self.pure_a(comp, T) / (bi * R_CM3 * T)
+                      for comp, bi in zip(self.components, b))
+            dd = tuple(self.pure_da_dT(comp, T) / (bi * R_CM3 * T) - di / T
+                       for comp, bi, di in zip(self.components, b, d))
+            try:
+                state = self._ge_mixing.mix(x, b, d, dd,
+                    self._ge_provider.excess_gibbs_state(
+                        x, T, temperature_derivative=temperature_derivative))
+            except (ValueError, OverflowError) as error:
+                raise CubicEOSError(f'Invalid RKSMHV2 mixing state: {error}') from error
+            if len(self._ge_cache) >= 20000:
+                self._ge_cache.clear()
+            self._ge_cache[key] = state
+        return self._ge_cache[key]
+
     def _normalized_composition(self, composition: dict[str, float]) -> dict[str, float]:
+        if self._ge_provider is not None:
+            if set(composition) - set(self.components):
+                raise CubicEOSError('RKSMHV2 composition contains unknown components')
+            if any(not math.isfinite(float(v)) or float(v) < 0.0 for v in composition.values()):
+                raise CubicEOSError('RKSMHV2 mole fractions must be nonnegative and finite')
+            if sum(composition.values()) <= 0.0:
+                raise CubicEOSError('RKSMHV2 composition must have positive total')
         values = {comp: max(float(composition.get(comp, 0.0)), 0.0) for comp in self.components}
         total = sum(values.values())
         if total <= 0.0:
@@ -996,6 +1091,8 @@ class CubicEOS:
         ]
 
     def compressibility_roots(self, T: float, P: float, composition: dict[str, float]) -> list[float]:
+        if self._ge_provider is not None and (not math.isfinite(P) or P <= 0.0):
+            raise CubicEOSError('RKSMHV2 pressure must be positive and finite')
         if self._compiled_backend is not None:
             x = self._normalized_composition(composition)
             return [
@@ -1028,8 +1125,12 @@ class CubicEOS:
         composition: dict[str, float],
         phase: str = "vapor",
     ) -> float:
+        if self._ge_provider is not None and phase not in ('vapor', 'liquid'):
+            raise CubicEOSError('RKSMHV2 phase must be vapor or liquid')
         roots = self.compressibility_roots(T, P, composition)
         if not roots:
+            if self._ge_provider is not None:
+                raise CubicEOSError('RKSMHV2 has no physical compressibility root')
             return 1.0
         return max(roots) if phase == "vapor" else min(roots)
 
@@ -1151,7 +1252,7 @@ class CubicEOS:
                 for component, value in zip(self.components, values)
             }
         a_mix, b_mix, a_i, b_i = self.mixture_params(T, x)
-        if a_mix <= 0.0 or b_mix <= 0.0:
+        if (a_mix <= 0.0 and self._ge_provider is None) or b_mix <= 0.0:
             return {comp: 1.0 for comp in self.components}
 
         A = a_mix * P / (R_CM3**2 * T**2)
@@ -1166,10 +1267,16 @@ class CubicEOS:
         comps = self.components
         x_values = [x[comp] for comp in comps]
         a_values = [a_i[comp] for comp in comps]
-        kij_values = self._pair_kij_values(T)
+        kij_values = self._pair_kij_values(T) if self._ge_provider is None else ()
+        mixing = self._ge_state(T, x) if self._ge_provider is not None else None
         pair_index = 0
         for i, comp_i in enumerate(comps):
             bi_over_b = b_i[comp_i] / b_mix
+            if mixing is not None:
+                ln_phi = (bi_over_b * (Z - 1.0) - math.log(Z - B)
+                          - mixing.composition_derivatives[i] * attraction_log / delta_diff)
+                phi[comp_i] = math.exp(ln_phi)
+                continue
             sum_aij = 0.0
             a_i_value = a_values[i]
             for j, x_j in enumerate(x_values):
@@ -1214,16 +1321,13 @@ class CubicEOS:
             }
             return self._set_cached_phi_phi_K(cache_key, result)
 
-        if len(self.compressibility_roots(T, P, x)) < 2:
-            K = self._wilson_K(T, P)
-            return self._set_cached_phi_phi_K(cache_key, K)
+        single_root = len(self.compressibility_roots(T, P, x)) < 2
         phi_l = self.fugacity_coefficients(T, P, x, "liquid")
         K = self._wilson_K(T, P)
+        initial_K = dict(K)
         y = self._normalized_composition({comp: x[comp] * K[comp] for comp in self.components})
 
         for _ in range(max_iter):
-            if len(self.compressibility_roots(T, P, y)) < 2:
-                return self._set_cached_phi_phi_K(cache_key, K)
             phi_v = self.fugacity_coefficients(T, P, y, "vapor")
             K_new = {
                 comp: max(1e-8, min(1e8, phi_l.get(comp, 1.0) / max(phi_v.get(comp, 1.0), 1e-12)))
@@ -1231,6 +1335,11 @@ class CubicEOS:
             }
             y_new = self._normalized_composition({comp: x[comp] * K_new[comp] for comp in self.components})
             if max(abs(y_new[comp] - y[comp]) for comp in self.components) < 1e-9:
+                # A single root is valid for either phase. Only reject the
+                # homogeneous K=1 fixed point, which cannot locate a phase
+                # boundary; retain Wilson's single-phase extrapolation there.
+                if single_root and all(abs(K_new[c] - 1.0) < 1e-6 for c in self.components if x[c] > 0.0):
+                    return self._set_cached_phi_phi_K(cache_key, initial_K)
                 return self._set_cached_phi_phi_K(cache_key, K_new)
             K = {comp: 0.5 * K[comp] + 0.5 * K_new[comp] for comp in self.components}
             y = y_new

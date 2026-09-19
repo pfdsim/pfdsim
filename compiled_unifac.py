@@ -93,6 +93,8 @@ class CompiledUNIFACBackend:
         interactions_b = np.zeros((n_groups, n_groups), dtype=np.float64)
         interactions_c = np.zeros((n_groups, n_groups), dtype=np.float64)
         variant_id = 1 if getattr(unifac_model, "variant", "UNIFAC") in ("UNIFDMD", "UNIFM2", "UNIFNIST") else 0
+        if getattr(unifac_model, 'variant', '') == 'UNIFLBY':
+            variant_id = 2
         for i in range(n_groups):
             for j in range(n_groups):
                 main_i = int(main_groups[i])
@@ -182,7 +184,7 @@ class CompiledUNIFACBackend:
 if njit is not None:
 
     @njit(cache=True)
-    def _group_activity_coefficients_numba(X, subgroup_q, interactions, interactions_b, interactions_c, T):
+    def _group_activity_coefficients_numba(X, subgroup_q, interactions, interactions_b, interactions_c, T, variant_id=0):
         n_groups = X.shape[0]
         theta = np.zeros(n_groups, dtype=np.float64)
         psi = np.empty((n_groups, n_groups), dtype=np.float64)
@@ -204,6 +206,11 @@ if njit is not None:
                     + interactions_b[m, n] * T
                     + interactions_c[m, n] * T * T
                 ) / T
+                if variant_id == 2:
+                    exponent = -(
+                        interactions[m, n] + interactions_b[m, n] * (T - 298.15)
+                        + interactions_c[m, n] * (T * math.log(298.15 / T) + T - 298.15)
+                    ) / T
                 psi[m, n] = math.exp(exponent)
 
         denominator = np.zeros(n_groups, dtype=np.float64)
@@ -256,6 +263,8 @@ if njit is not None:
             sum_xq += x_norm[i] * q[i]
             if variant_id == 1:
                 sum_xr34 += x_norm[i] * (r[i] ** 0.75)
+            elif variant_id == 2:
+                sum_xr34 += x_norm[i] * (r[i] ** (2.0 / 3.0))
 
         if sum_xr < 1e-10:
             sum_xr = 1e-10
@@ -273,7 +282,10 @@ if njit is not None:
 
         ln_gamma_c = np.zeros(n_components, dtype=np.float64)
         for i in range(n_components):
-            if variant_id == 1:
+            if variant_id == 2:
+                v_prime = r[i] ** (2.0 / 3.0) / sum_xr34
+                ln_gamma_c[i] = 1.0 - v_prime + math.log(v_prime)
+            elif variant_id == 1:
                 v_prime = (r[i] ** 0.75) / sum_xr34
                 v_value = r[i] / sum_xr
                 f_value = q[i] / sum_xq
@@ -321,7 +333,7 @@ if njit is not None:
             X_mix[k] /= denominator
 
         ln_gamma_group_mix = _group_activity_coefficients_numba(
-            X_mix, subgroup_q, interactions, interactions_b, interactions_c, T
+            X_mix, subgroup_q, interactions, interactions_b, interactions_c, T, variant_id
         )
 
         gamma = np.empty(n_components, dtype=np.float64)
@@ -336,7 +348,7 @@ if njit is not None:
                 X_pure[k] = nu[i, k] / pure_denominator
 
             ln_gamma_group_pure = _group_activity_coefficients_numba(
-                X_pure, subgroup_q, interactions, interactions_b, interactions_c, T
+                X_pure, subgroup_q, interactions, interactions_b, interactions_c, T, variant_id
             )
             ln_gamma_r = 0.0
             for k in range(n_groups):

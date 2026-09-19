@@ -8,6 +8,30 @@ from thermodynamics_models.base import StreamState
 
 
 class ThermodynamicScopeTests(unittest.TestCase):
+    def test_lyngby_scopes_resolve_their_own_subgroup_numbers(self):
+        source = '''PROCESS: Lyngby scopes
+ONLINE_LOOKUP: false
+THERMO_METHOD: UNIFAC
+THERMO_SCOPES:
+    lyngby | method=UNIF-LBY
+    high_pressure | method=RKS-MHV2
+COMPONENTS:
+    E | Ethanol | SMILES=CCO
+    W | Water | SMILES=O
+STREAM Feed : FEED -> PRODUCT
+    T = 350 [K]
+    P = 1 [bar]
+    F = 1 [kmol/h]
+    x = E:0.4, W:0.6
+'''
+        simulator = Simulator.from_string(source)
+        simulator.initialize()
+        self.assertEqual(simulator.thermo_scope_methods['lyngby'], 'UNIFLBY')
+        packages = simulator.thermo_packages
+        self.assertEqual(packages['lyngby'].component_groups['E'], {1: 1, 2: 1, 12: 1})
+        self.assertEqual(packages['high_pressure'].cubic._ge_provider.component_groups['E'],
+                         {59: 1, 60: 1, 12: 1})
+
     @staticmethod
     def _scope_header(extra_scopes=""):
         return f"""

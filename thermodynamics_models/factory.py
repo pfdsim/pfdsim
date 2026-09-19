@@ -2,14 +2,17 @@ from typing import Optional, Union
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..chemical_properties import ChemicalDatabase
+    from ..lyngby_parameters import canonical_lyngby_method
 else:
     from chemical_properties import ChemicalDatabase
+    from lyngby_parameters import canonical_lyngby_method
 
 from .common import ThermodynamicsError
 from .base import IdealThermodynamics
 from .steam import SteamThermodynamics
 from .eos import RKThermodynamics, CubicEOSThermodynamics
 from .psrk_thermo import PSRKThermodynamics
+from .unifac_models import UNIFLBYThermodynamics
 from .unifac_models import (UNIFACThermodynamics, UNIFAC2Thermodynamics, UNIFDMDThermodynamics, UNIFM2Thermodynamics, UNIFNISTThermodynamics, UNIFACVDMThermodynamics, UNIFDMDVDMThermodynamics, UNIFNISTVDMThermodynamics)
 from .nrtl_uniquac import (
     NRTLThermodynamics, NRTLVDMThermodynamics,
@@ -28,6 +31,7 @@ from .second_virial import normalize_second_virial_correlation
 # One canonical name per supported thermo method. Sweep-style tests
 # iterate this tuple, so methods added here are covered automatically.
 SUPPORTED_METHODS = (
+    'RKSMHV2', 'UNIFLBY',
     'IDEAL', 'STEAM',
     'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM', 'SRK-MC', 'PR-MC',
     'SRK-TWU', 'PR-TWU', 'PRSV1', 'PRSV2',
@@ -96,7 +100,7 @@ def create_thermodynamics(components: list[str],
     
     Args:
         components: List of component symbols
-        method: 'IDEAL', 'STEAM', 'IF97', 'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM',
+        method: 'IDEAL', 'STEAM', 'IF97', 'RK', 'SRK', 'PR', 'PSRK', 'RKSMHV2', 'UNIFLBY', 'RKS-BM', 'PR-BM',
             'SRK-MC', 'PR-MC', 'PRSV1', 'PRSV2', 'SRK-TWU', 'PR-TWU',
             'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
             'UNIFAC-VDM', 'UNIFDMD-VDM',
@@ -113,7 +117,7 @@ def create_thermodynamics(components: list[str],
     Returns:
         Thermodynamics calculator instance
     """
-    declared_method = str(method).strip().upper().replace('_', '-')
+    declared_method = canonical_lyngby_method(str(method).strip().upper().replace('_', '-'))
     options = {
         str(name).strip().lower(): value
         for name, value in (thermo_options or {}).items()
@@ -169,6 +173,10 @@ def create_thermodynamics(components: list[str],
         return CubicEOSThermodynamics(components, 'PR', db, interaction_overrides)
     elif method in ('PSRK', 'PREDICTIVE-SRK', 'PREDICTIVE_SRK'):
         return PSRKThermodynamics(components, db, interaction_overrides)
+    elif method == 'RKSMHV2':
+        return CubicEOSThermodynamics(components, 'RKSMHV2', db, interaction_overrides, unifac_groups)
+    elif method == 'UNIFLBY':
+        return UNIFLBYThermodynamics(components, db, unifac_groups, interaction_overrides=interaction_overrides)
     elif method in ('RKS-BM', 'RKS_BM', 'SRK-BM', 'SRK_BM'):
         return CubicEOSThermodynamics(components, 'RKS-BM', db, interaction_overrides)
     elif method in ('PR-BM', 'PR_BM', 'PENG-ROBINSON-BM', 'PENG_ROBINSON_BM'):

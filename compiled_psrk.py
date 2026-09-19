@@ -743,8 +743,8 @@ if njit is not None:
             interaction_a, interaction_b, interaction_c,
             Tc, omega, uses_mc, c1, c2, c3, a0, pure_b, q1, gas_constant,
         )
-        if count < 2:
-            return K
+        single_root = count < 2
+        initial_K = K.copy()
         phi_liquid = _psrk_fugacity_numba(
             T, P, x, 0, nu, r, q, ell, subgroup_q,
             interaction_a, interaction_b, interaction_c,
@@ -756,13 +756,6 @@ if njit is not None:
         y = _normalize_numba(y_unnormalized)
 
         for _ in range(max_iter):
-            roots, count = _psrk_roots_numba(
-                T, P, y, nu, r, q, ell, subgroup_q,
-                interaction_a, interaction_b, interaction_c,
-                Tc, omega, uses_mc, c1, c2, c3, a0, pure_b, q1, gas_constant,
-            )
-            if count < 2:
-                return K
             phi_vapor = _psrk_fugacity_numba(
                 T, P, y, 1, nu, r, q, ell, subgroup_q,
                 interaction_a, interaction_b, interaction_c,
@@ -784,6 +777,12 @@ if njit is not None:
                 if change > maximum_change:
                     maximum_change = change
             if maximum_change < 1.0e-9:
+                trivial = single_root
+                for component in range(n_components):
+                    if x[component] > 0.0 and abs(K_new[component] - 1.0) >= 1e-6:
+                        trivial = False
+                if trivial:
+                    return initial_K
                 return K_new
             for component in range(n_components):
                 K[component] = 0.5 * K[component] + 0.5 * K_new[component]

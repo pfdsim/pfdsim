@@ -542,6 +542,14 @@ def _utm_group_key_from_unifac_group(
     if text.isdigit():
         subgroup = int(text)
         normalized_variant = str(variant or '').upper()
+        if normalized_variant == 'UNIFLBY':
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from .lyngby_parameters import parameter_table
+            else:
+                from lyngby_parameters import parameter_table
+            name = next((sg['name'] for sg in parameter_table()['subgroups']
+                         if sg['number'] == subgroup), None)
+            return _utm_group_key_from_unifac_group(name) if name else None
         if normalized_variant in {'UNIFDMD', 'UNIFM2', 'UNIFNIST'}:
             if subgroup == 78:
                 candidate = 'do:78'

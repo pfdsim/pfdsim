@@ -22,6 +22,11 @@ from pathlib import Path
 from typing import Callable, Optional
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .lyngby_parameters import canonical_lyngby_method
+else:
+    from lyngby_parameters import canonical_lyngby_method
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .pfd_parser import (
         parse_pfd,
         validate_pfd,
@@ -248,7 +253,7 @@ class Simulator:
     def _resolve_thermo_method(self, thermo_method: Optional[str]) -> str:
         """Return the explicit or PFD-selected thermodynamic method."""
         if thermo_method is not None:
-            return str(thermo_method).upper()
+            return canonical_lyngby_method(thermo_method)
         selected = 'IDEAL'
         if hasattr(self.pfd, 'metadata') and self.pfd.metadata:
             if (
@@ -265,7 +270,7 @@ class Simulator:
                     ):
                         selected = prop.value
                         break
-        return str(selected).upper()
+        return canonical_lyngby_method(selected)
 
     def initialize(self, thermo_method: Optional[str] = None) -> 'Simulator':
         """
@@ -322,7 +327,7 @@ class Simulator:
         self.thermo_scope_methods = {
             'global': self.thermo_method,
             **{
-                scope.name: str(scope.method).upper()
+                scope.name: canonical_lyngby_method(scope.method)
                 for scope in getattr(self.pfd, 'thermo_scopes', [])
             },
         }
@@ -352,7 +357,7 @@ class Simulator:
         }
         uses_mathias_copeman = any(
             method.endswith('-MC')
-            or method in {'PSRK', 'PREDICTIVE-SRK'}
+            or method in {'PSRK', 'PREDICTIVE-SRK', 'RKSMHV2'}
             for method in normalized_thermo_methods
         )
         uses_prsv1 = bool(normalized_thermo_methods & {
@@ -1498,7 +1503,8 @@ class Simulator:
         # Collect UNIFAC groups if specified in PFD
         unifac_groups = None
         if any(
-            method.startswith(('UNIFAC', 'UNIFDMD', 'UNIFM2', 'UNIFNIST'))
+            method.startswith(('UNIFAC', 'UNIFDMD', 'UNIFM2', 'UNIFNIST', 'UNIFLBY'))
+            or method == 'RKSMHV2'
             for method in self.thermo_scope_methods.values()
         ) or interaction_estimation:
             unifac_groups = {}
@@ -1507,19 +1513,9 @@ class Simulator:
                     continue
                 if pfd_comp.unifac_groups:
                     unifac_groups[pfd_comp.symbol] = pfd_comp.unifac_groups
-                elif pfd_comp.smiles and self.thermo_method.upper().startswith('UNIF'):
-                    # Try to parse SMILES to get UNIFAC groups
-                    try:
-                        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                            from .unifac import parse_smiles_to_unifac
-                        else:
-                            from unifac import parse_smiles_to_unifac
-                        variant = self.thermo_method.upper().split('-', 1)[0]
-                        groups = parse_smiles_to_unifac(pfd_comp.smiles, variant)
-                        if groups:
-                            unifac_groups[pfd_comp.symbol] = groups
-                    except Exception:
-                        pass  # Will try to look up from known molecules
+                # Each property package resolves SMILES with its own subgroup
+                # numbering. Pre-fragmenting with the global method would
+                # pass incorrect numeric IDs into a Lyngby/other-model scope.
         
         def effective_scoped_records(records: list[dict], scope: str) -> list[dict]:
             """Return isolated/inherited records with nearest-scope precedence."""

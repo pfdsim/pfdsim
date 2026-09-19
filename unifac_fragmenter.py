@@ -43,6 +43,12 @@ def fragment(smiles: str, variant: str = 'UNIFAC') -> dict[int, int]:
     :class:`UNIFACFragmentationError`; callers must not substitute Dortmund
     groups into NIST or classic parameter sets after such a failure.
     """
+    if str(variant).upper().strip() == 'UNIFLBY':
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .lyngby_parameters import convert_classic_groups
+        else:
+            from lyngby_parameters import convert_classic_groups
+        return convert_classic_groups(fragment(smiles, 'UNIFAC'))
     variant = _canonical_variant(variant)
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:

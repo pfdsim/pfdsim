@@ -488,6 +488,8 @@ class UNIFACModel:
         metadata = data.get('metadata', {})
         if metadata.get('model') == 'NIST-modified UNIFAC':
             self.variant = 'UNIFNIST'
+        elif metadata.get('model') == 'Lyngby modified UNIFAC':
+            self.variant = 'UNIFLBY'
         
         for sg_data in data['subgroups']:
             subgroup = UNIFACSubgroup(**{
@@ -529,6 +531,10 @@ class UNIFACModel:
             Dict of subgroup numbers to counts
         """
         resolved = {}
+        if self.variant == 'UNIFLBY' and (not groups or any(
+                not math.isfinite(float(value)) or float(value) <= 0.0
+                for value in groups.values())):
+            raise ValueError('Lyngby UNIFAC requires positive finite group counts')
         
         for group_id, count in groups.items():
             if isinstance(group_id, int):
@@ -576,6 +582,8 @@ class UNIFACModel:
         key = (main_i, main_j)
         if key in self.interactions:
             return self.interactions[key]
+        if self.variant == 'UNIFLBY':
+            raise ValueError(f'Lyngby UNIFAC interaction {main_i}->{main_j} is unavailable')
         # If not found, return 0 (same as self-interaction)
         return 0.0
     
@@ -636,6 +644,10 @@ class UNIFACModel:
         """
         if self.variant in MODIFIED_UNIFAC_VARIANTS:
             return self._combinatorial_dortmund(x, r, q)
+        if self.variant == 'UNIFLBY':
+            volumes = [value ** (2.0 / 3.0) for value in r]
+            total = sum(xi * vi for xi, vi in zip(x, volumes))
+            return [1.0 - vi / total + math.log(vi / total) for vi in volumes]
 
         n_comp = len(x)
         z = self.Z
@@ -834,6 +846,11 @@ class UNIFACModel:
         coeffs = self.interaction_coefficients.get((main_m, main_n))
         if coeffs is not None:
             a_mn, b_mn, c_mn = coeffs
+            if self.variant == 'UNIFLBY':
+                return math.exp(-(
+                    a_mn + b_mn * (T - 298.15)
+                    + c_mn * (T * math.log(298.15 / T) + T - 298.15)
+                ) / T)
             return math.exp(-(a_mn + b_mn * T + c_mn * T * T) / T)
         a_mn = self.get_interaction(main_m, main_n)
         return math.exp(-a_mn / T)
@@ -1082,6 +1099,18 @@ def get_unifac_groups(identifier: str, smiles: Optional[str] = None,
         Dict of group names to counts
     """
     variant = variant.upper()
+
+    if variant == 'UNIFLBY':
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .lyngby_parameters import convert_classic_groups
+        else:
+            from lyngby_parameters import convert_classic_groups
+        # Reuse the structural assignments, translating only groups with an
+        # exact Lyngby counterpart or a defined decomposition.
+        if identifier.strip().lower() in ('methane', 'ch4', 'formaldehyde', 'ch2o'):
+            raise ValueError(f'No exact base Lyngby groups for {identifier}')
+        groups = get_unifac_groups(identifier, smiles, 'UNIFAC', expected_mw)
+        return convert_classic_groups(groups)
 
     # Check known molecules
     name_lower = identifier.lower().strip()

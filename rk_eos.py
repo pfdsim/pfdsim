@@ -526,20 +526,17 @@ class RedlichKwong:
             }
             return self._set_cached_phi_phi_K(cache_key, result)
 
-        if len(self.compressibility_cubic(T, P, x)) < 2:
-            K = self._wilson_K(T, P)
-            return self._set_cached_phi_phi_K(cache_key, K)
+        single_root = len(self.compressibility_cubic(T, P, x)) < 2
 
         phi_l = self.fugacity_coefficients(T, P, x, 'liquid')
         K = self._wilson_K(T, P)
+        initial_K = dict(K)
         y = self._normalized_composition({
             comp: x[comp] * K[comp]
             for comp in self.components
         })
 
         for _ in range(max_iter):
-            if len(self.compressibility_cubic(T, P, y)) < 2:
-                return self._set_cached_phi_phi_K(cache_key, K)
             phi_v = self.fugacity_coefficients(T, P, y, 'vapor')
             K_new = {
                 comp: max(
@@ -553,6 +550,8 @@ class RedlichKwong:
                 for comp in self.components
             })
             if max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components) < 1e-9:
+                if single_root and all(abs(K_new[c] - 1.0) < 1e-6 for c in self.components if x[c] > 0.0):
+                    return self._set_cached_phi_phi_K(cache_key, initial_K)
                 return self._set_cached_phi_phi_K(cache_key, K_new)
             K = {
                 comp: 0.5 * K[comp] + 0.5 * K_new[comp]

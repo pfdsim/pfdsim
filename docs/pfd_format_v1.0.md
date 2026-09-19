@@ -143,6 +143,9 @@ substitutions.
   PSRK-UNIFAC excess-Gibbs mixing rule and Mathias-Copeman pure-component
   parameters. Components require a published PSRK subgroup assignment. See
   [`psrk.md`](psrk.md) for fallback and phase-capability details.
+- `RKSMHV2` (`RKS-MHV2`, `SRK-MHV2`) - SRK with second-order modified
+  Huron–Vidal mixing and Lyngby UNIFAC, including published gas interactions.
+  See [`lyngby.md`](lyngby.md) for parameters and limitations.
 - `PRSV1`, `PRSV2` - Peng-Robinson-Stryjek-Vera alpha variants; `PRSV` is an
   alias for `PRSV1`
 - `SRK-TWU`, `PR-TWU` - SRK and PR with Twu alpha parameters
@@ -155,6 +158,8 @@ substitutions.
 - `UNIFAC`, `UNIFAC-RK`, `UNIFAC-PR`, `UNIFAC-BV` - Original UNIFAC
 - `UNIFDMD`, `UNIFDMD-RK`, `UNIFDMD-PR`, `UNIFDMD-BV` - Dortmund modified UNIFAC
 - `UNIFNIST`, `UNIFNIST-RK`, `UNIFNIST-PR`, `UNIFNIST-BV` - NIST modified UNIFAC
+- `UNIFLBY` (`UNIF-LBY`, `UNIFAC-LBY`, `UNIFAC-LYNGBY`) - Lyngby modified
+  UNIFAC with ideal vapor. Subgroup numbering is specific to Lyngby.
 - `NRTL-VDM`, `UNIQUAC-VDM`, `UNIFAC-VDM`, `UNIFDMD-VDM`, `UNIFNIST-VDM` - Activity
   models with vapor-dimerization fugacity corrections
 - `STEAM` - CoolProp IF97 steam properties for water-only flowsheets
@@ -595,6 +600,8 @@ Critical and phase-change fields:
   published critical bundle instead uses normally resolved `Tc`, `Pc`, and
   `omega` with generalized Soave alpha unless explicit MC coefficients are
   supplied.
+  `RKSMHV2` also accepts these overrides; otherwise it uses Dahl (1991)
+  Table I coefficients, or Soave alpha with a warning when unavailable.
 - `kappa1`, `kappa2`, `kappa3` - Optional PRSV pure-component alpha parameters
   for cubic EOS `PRSV1` or `PRSV2`. PFD values override
   `data/prsv_parameters_cas.json`; `PRSV1` uses `kappa1` only, while `PRSV2`
