@@ -315,8 +315,14 @@ class EquilibriumStageColumnMixin:
             }
             if condensables:
                 saturation_composition = self._normalize(condensables)
+                retry_T_min, retry_T_max = self._temperature_bounds(
+                    list(saturation_composition)
+                )
                 T_bubble = self._bubble_temperature_from_equation(
-                    saturation_composition, pressure, T_min, T_max
+                    saturation_composition,
+                    pressure,
+                    retry_T_min,
+                    retry_T_max,
                 )
             else:
                 return 1.0 - inlet.vapor_fraction
@@ -1491,8 +1497,9 @@ class EquilibriumStageColumnMixin:
                     composition.get(comp, 0.0) * gamma.get(comp, 1.0) * self.thermo.Psat(comp, T) / P
                     for comp in comps
                 ) - 1.0
+            K_values = self.thermo.K_values(T, P, composition)
             return sum(
-                composition.get(comp, 0.0) * self.thermo.K_value(comp, T, P)
+                composition.get(comp, 0.0) * K_values.get(comp, 1.0)
                 for comp in comps
             ) - 1.0
 

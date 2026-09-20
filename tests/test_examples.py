@@ -112,10 +112,20 @@ class ExampleSimulationTests(unittest.TestCase):
         self.assertEqual(result.recycle_info['tear_streams'], ['Recycle-Gas'])
         self.assertLess(result.mass_balance_error, 1.0e-4)
         self.assertLess(result.energy_balance_error, 1.0e-4)
+        separator = result.streams['Cooled-Effluent']
         product = result.streams['Methanol-Product']
         purge = result.streams['Purge']
-        self.assertGreater(product.composition['CH3OH'], 0.88)
-        self.assertLess(purge.composition['CH3OH'], 0.005)
+        self.assertAlmostEqual(separator.vapor_fraction, 0.524317, places=5)
+        self.assertAlmostEqual(
+            product.composition['CH3OH'],
+            0.990278,
+            places=4,
+        )
+        self.assertAlmostEqual(
+            purge.composition['CH3OH'],
+            0.00727234,
+            places=5,
+        )
         self.assertLess(
             result.units['EQ-100'].performance[
                 'maximum_interior_ln_equilibrium_residual'
@@ -460,8 +470,11 @@ class ExampleSimulationTests(unittest.TestCase):
                 self.assertAlmostEqual(crude.P, 75.0, places=8)
                 self.assertAlmostEqual(letdown.P, 5.0, places=8)
                 self.assertAlmostEqual(product.P, 5.0, places=8)
-                self.assertGreater(letdown.vapor_fraction, 0.10)
-                self.assertLess(letdown.vapor_fraction, 0.15)
+                self.assertAlmostEqual(
+                    letdown.vapor_fraction,
+                    0.0094881,
+                    places=5,
+                )
                 self.assertGreater(product.composition['CH3OH'], 0.99)
                 self.assertLess(product.composition['CO'], 0.002)
                 self.assertLess(product.composition['H2'], 0.007)
@@ -497,23 +510,37 @@ class ExampleSimulationTests(unittest.TestCase):
         self.assertEqual(pr_simulator.thermo_method, 'PR')
         self.assertEqual(psrk_simulator.thermo_method, 'PSRK')
 
-        # Directional pins intentionally avoid exact regression values. They
-        # retain only material PR-to-PSRK changes in this complete flowsheet.
+        # Retain both the material PR-to-PSRK directions and the corrected
+        # single-root fugacity-iteration results. The latter distinguish this
+        # solution from the former Wilson-K fallback by wide margins.
         pr_compressor_power = pr.units['C-1'].performance['shaft_power_kW']
         psrk_compressor_power = psrk.units['C-1'].performance['shaft_power_kW']
         self.assertGreater(psrk_compressor_power, 1.02 * pr_compressor_power)
 
-        self.assertLess(
-            psrk.streams['Letdown-Methanol'].T,
-            pr.streams['Letdown-Methanol'].T - 3.0,
+        pr_letdown = pr.streams['Letdown-Methanol']
+        psrk_letdown = psrk.streams['Letdown-Methanol']
+        self.assertAlmostEqual(pr_letdown.T, 315.5645, places=2)
+        self.assertAlmostEqual(psrk_letdown.T, 316.0556, places=2)
+        self.assertAlmostEqual(pr_letdown.vapor_fraction, 0.0094881, places=5)
+        self.assertAlmostEqual(
+            psrk_letdown.vapor_fraction,
+            0.0216598,
+            places=5,
         )
-        self.assertLess(
-            psrk.streams['Degassing-Gas'].F,
-            0.99 * pr.streams['Degassing-Gas'].F,
+
+        pr_gas = pr.streams['Degassing-Gas']
+        psrk_gas = psrk.streams['Degassing-Gas']
+        self.assertAlmostEqual(pr_gas.F, 0.123174, places=3)
+        self.assertAlmostEqual(psrk_gas.F, 0.283443, places=3)
+        self.assertAlmostEqual(
+            pr_gas.composition['CH3OH'],
+            0.0785885,
+            places=4,
         )
-        self.assertLess(
-            psrk.streams['Degassing-Gas'].composition['CH3OH'],
-            0.90 * pr.streams['Degassing-Gas'].composition['CH3OH'],
+        self.assertAlmostEqual(
+            psrk_gas.composition['CH3OH'],
+            0.0840905,
+            places=4,
         )
 
         pr_reactor_cooling = abs(pr.units['R-1'].heat_duty)

@@ -36,6 +36,17 @@ def test_identical_single_phase_roots_do_not_report_saturation(method):
     assert abs(model.K_values(800., 1., {'water': 1.})['water'] - 1.) > .1
 
 
+def test_compiled_psrk_fugacity_underflow_falls_back_without_dividing_by_zero():
+    model = create_thermodynamics(
+        ['CO2', 'water'], 'PSRK', ChemicalDatabase(enable_online=False)
+    )
+    if model.psrk._compiled_backend is None:
+        pytest.skip('Numba compiled PSRK backend is unavailable')
+    values = model.K_values(9.166, 1.2, {'CO2': .1, 'water': .9})
+    assert all(math.isfinite(value) and 1e-8 <= value <= 1e8
+               for value in values.values())
+
+
 @pytest.mark.parametrize('method', ['PR', 'PSRK', 'RKSMHV2'])
 @pytest.mark.parametrize('gas_fraction', [.03, .5, .9])
 def test_high_pressure_flash_closes_material_and_fugacity_balances(method, gas_fraction):

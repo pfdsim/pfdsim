@@ -750,6 +750,12 @@ if njit is not None:
             interaction_a, interaction_b, interaction_c,
             Tc, omega, uses_mc, c1, c2, c3, a0, pure_b, q1, gas_constant,
         )
+        for component in range(n_components):
+            if (
+                not math.isfinite(phi_liquid[component])
+                or phi_liquid[component] <= 0.0
+            ):
+                return initial_K
         y_unnormalized = np.empty(n_components, dtype=np.float64)
         for component in range(n_components):
             y_unnormalized[component] = x[component] * K[component]
@@ -761,6 +767,12 @@ if njit is not None:
                 interaction_a, interaction_b, interaction_c,
                 Tc, omega, uses_mc, c1, c2, c3, a0, pure_b, q1, gas_constant,
             )
+            for component in range(n_components):
+                if (
+                    not math.isfinite(phi_vapor[component])
+                    or phi_vapor[component] <= 0.0
+                ):
+                    return initial_K
             K_new = np.empty(n_components, dtype=np.float64)
             for component in range(n_components):
                 value = phi_liquid[component] / phi_vapor[component]
