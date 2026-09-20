@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+from scipy.optimize import brentq
 
 from cubic_eos import CubicEOS, R_CM3
 from chemical_properties import ChemicalDatabase
@@ -96,6 +97,71 @@ def test_integrated_flash_material_and_fugacity_closure():
         assert math.log(x[c]*pl[c]/(y[c]*pv[c])) == pytest.approx(0., abs=1e-7)
 
 
+def test_co2_ethanol_bubble_pressure_matches_mhv2_paper_figure_2():
+    model = create_thermodynamics(
+        ['CO2', 'ethanol'],
+        'RKSMHV2',
+        ChemicalDatabase(enable_online=False),
+    )
+    temperature = 333.15
+    liquid = {'CO2': .4, 'ethanol': .6}
+
+    def bubble_residual(log_pressure):
+        pressure = math.exp(log_pressure)
+        values = model.K_values(temperature, pressure, liquid)
+        return sum(liquid[component] * values[component]
+                   for component in liquid) - 1.0
+
+    pressure = math.exp(brentq(
+        bubble_residual,
+        math.log(50.0),
+        math.log(100.0),
+    ))
+    values = model.K_values(temperature, pressure, liquid)
+    vapor = {
+        component: liquid[component] * values[component]
+        for component in liquid
+    }
+
+    assert pressure == pytest.approx(77.68643, rel=2e-6)
+    assert vapor['CO2'] == pytest.approx(0.9785004, rel=2e-6)
+    assert sum(vapor.values()) == pytest.approx(1.0, abs=1e-10)
+
+
+def test_nitrogen_henry_curve_matches_mhv2_paper_figure_4():
+    model = create_thermodynamics(
+        ['N2', 'methanol', 'water'],
+        'RKSMHV2',
+        ChemicalDatabase(enable_online=False),
+    )
+    temperature = 313.15
+    pressure_bar = 1.01325
+    nitrogen_fraction = 1e-10
+    expected_katm = {
+        0.00: 103.13884,
+        0.10: 58.55273,
+        0.25: 30.59232,
+        0.50: 13.47282,
+        0.75: 6.956088,
+        1.00: 3.888221,
+    }
+
+    for methanol_fraction, expected in expected_katm.items():
+        composition = {
+            'N2': nitrogen_fraction,
+            'methanol': (1.0 - nitrogen_fraction) * methanol_fraction,
+            'water': (1.0 - nitrogen_fraction) * (1.0 - methanol_fraction),
+        }
+        phi_nitrogen = model.fugacity_coefficients(
+            temperature,
+            pressure_bar,
+            composition,
+            'liquid',
+        )['N2']
+        henry_katm = phi_nitrogen * pressure_bar / 1.01325 / 1000.0
+        assert henry_katm == pytest.approx(expected, rel=2e-6)
+
+
 def test_parser_simulator_override_and_report():
     from simulator import Simulator
     source = '''PROCESS: MHV2 override
@@ -144,3 +210,30 @@ def test_executable_flash_example():
     assert result.mass_balance_error < 1e-6
     assert result.streams['Vapor'].F > 0.
     assert result.streams['Liquid'].F > 0.
+
+
+def test_methanol_synthesis_example_with_rksmhv2():
+    from pathlib import Path
+    from simulator import Simulator
+    path = Path(__file__).resolve().parents[1] / 'examples' / 'methanol_synthesis.pfd'
+    simulator = Simulator.from_file(str(path))
+    result = simulator.run(thermo_method='RKSMHV2')
+
+    assert result.converged
+    assert result.errors == []
+    assert simulator.thermo_method == 'RKSMHV2'
+    letdown = result.streams['Letdown-Methanol']
+    gas = result.streams['Degassing-Gas']
+    product = result.streams['Methanol']
+    crude = result.streams['Crude-Methanol']
+    recovery = (
+        product.F * product.composition['CH3OH']
+        / (crude.F * crude.composition['CH3OH'])
+    )
+
+    assert letdown.T == pytest.approx(315.42291, abs=.01)
+    assert letdown.vapor_fraction == pytest.approx(0.0174801, rel=2e-5)
+    assert gas.F == pytest.approx(0.229266, rel=2e-5)
+    assert gas.composition['CH3OH'] == pytest.approx(0.0807842, rel=2e-5)
+    assert product.composition['CH3OH'] == pytest.approx(0.998751, rel=2e-6)
+    assert recovery == pytest.approx(0.998563, rel=2e-6)
