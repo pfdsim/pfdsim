@@ -24,11 +24,15 @@ from property_resolution.ideal_gas_cp import (
     clear_bundled_kernel_cache,
     load_atom_increment_model,
     rrho_ideal_gas_heat_capacity,
+    shomate_cp_is_monotonic_nondecreasing,
 )
 from property_resolution.common import PropertyResolutionResult
 from property_resolution.heat_capacity import (
     NIST_LEGACY_CP_ORIGIN,
+    NIST_SHOMATE_CP_ORIGIN,
     NIST_XTB_CP_ORIGIN,
+    XTB_RRHO_LOCK_HEARTBEAT_SECONDS,
+    XTB_RRHO_LOCK_LEASE_SECONDS,
     XTB_RRHO_DERIVED_ORIGIN,
 )
 from thermodynamics import IdealThermodynamics
@@ -55,6 +59,38 @@ class IdealGasCpKernelTests(unittest.TestCase):
         self.assertGreater(linear[1], linear[0])
         self.assertGreaterEqual(linear[0], 3.5 * R_J_MOL_K)
         self.assertLessEqual(linear[1], 4.5 * R_J_MOL_K)
+
+    def test_analytic_shomate_monotonicity_checks_interior_extrema(self):
+        self.assertTrue(
+            shomate_cp_is_monotonic_nondecreasing(
+                (30.0, 20.0, 2.0, 0.0, 0.0),
+                273.15,
+                1500.0,
+            )
+        )
+        nonmonotonic = (100.0, 0.35, -0.6, 1.0 / 3.0, 0.0)
+        self.assertFalse(
+            shomate_cp_is_monotonic_nondecreasing(
+                nonmonotonic,
+                273.15,
+                1500.0,
+            )
+        )
+        resolver = PropertyResolver()
+        points = [
+            (
+                float(temperature),
+                sum(
+                    coefficient * basis
+                    for coefficient, basis in zip(
+                        nonmonotonic,
+                        resolver._shomate_cp_basis(float(temperature)),
+                    )
+                ),
+            )
+            for temperature in np.linspace(273.15, 1500.0, 20)
+        ]
+        self.assertIsNone(resolver._fit_shomate_cp(points))
 
     def test_affine_piecewise_kernel_round_trip_and_integrals(self):
         base = PolynomialCpKernel(
@@ -311,6 +347,33 @@ class IdealGasCpKernelTests(unittest.TestCase):
 
 
 class IdealGasCpResolverTests(unittest.TestCase):
+    def test_nist_tabulated_shomate_cache_version_excludes_v2_entries(self):
+        resolver = PropertyResolver()
+        identity = '999-99-9'
+        stale = ShomateCpKernel(
+            Tmin=273.15,
+            Tmax=1500.0,
+            quality=0.92,
+            source='NIST Chemistry WebBook',
+            method='nist_in_range_shomate_ideal_gas_cp_kernel',
+            coefficients=(100.0, 0.35, -0.6, 1.0 / 3.0, 0.0),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            resolver.CACHE_DIR = Path(directory)
+            resolver._set_derived_cp_kernel(
+                'online_nist_shomate_v2',
+                identity,
+                stale,
+            )
+
+            self.assertEqual(NIST_SHOMATE_CP_ORIGIN, 'online_nist_shomate_v3')
+            self.assertIsNone(
+                resolver._get_derived_cp_kernel(
+                    NIST_SHOMATE_CP_ORIGIN,
+                    identity,
+                )
+            )
+
     def assertClose(self, actual, expected, *, rel=1e-10, abs_tol=1e-10):
         self.assertTrue(math.isclose(actual, expected, rel_tol=rel, abs_tol=abs_tol))
 
@@ -468,6 +531,51 @@ class IdealGasCpResolverTests(unittest.TestCase):
             )
         self.assertEqual(selected.method, 'nist_native_shomate_ideal_gas_cp_kernel')
 
+    def test_full_range_tabulated_nist_shomate_avoids_xtb(self):
+        resolver = PropertyResolver()
+        source = {
+            'gas': [
+                [
+                    float(temperature),
+                    30.0 + 0.02 * float(temperature),
+                ]
+                for temperature in np.linspace(273.15, 1500.0, 20)
+            ],
+            '_source': 'synthetic full-range NIST',
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch(
+                    'property_resolution.heat_capacity.load_bundled_kernel',
+                    return_value=None,
+                ),
+                patch.object(
+                    resolver,
+                    '_fetch_nist_cp_source',
+                    return_value=source,
+                ),
+                patch.object(
+                    resolver,
+                    '_xtb_rrho_ideal_gas_cp_kernel',
+                    side_effect=AssertionError(
+                        'full-range NIST Shomate must avoid xTB'
+                    ),
+                ),
+            ):
+                selected = resolver.resolve_ideal_gas_cp_kernel(
+                    'test molecule',
+                    {'smiles': '[H][H]'},
+                    allow_online=True,
+                )
+        self.assertIsInstance(selected, ShomateCpKernel)
+        self.assertEqual(
+            selected.method,
+            'nist_in_range_shomate_ideal_gas_cp_kernel',
+        )
+        self.assertEqual((selected.Tmin, selected.Tmax), (273.15, 1500.0))
+        self.assertEqual(selected.quality, 0.96)
+
     def test_sparse_nist_xtb_point_count_policy(self):
         resolver = PropertyResolver()
         xtb = self.synthetic_xtb_kernel()
@@ -622,8 +730,8 @@ class IdealGasCpResolverTests(unittest.TestCase):
                 fallback = resolver.resolve_ideal_gas_cp_kernel(
                     'test', {'CAS': '999-99-9'}, allow_online=True
                 )
-        self.assertEqual(fallback.method, 'nist_in_range_shomate_ideal_gas_cp_kernel')
-        self.assertEqual(fallback.quality, 0.92)
+        self.assertEqual(fallback.method, 'gfn2_xtb_rrho_ideal_gas_cp_kernel')
+        self.assertEqual(fallback.quality, xtb.quality)
 
     def test_malformed_online_points_are_ignored_before_counting(self):
         resolver = PropertyResolver()
@@ -877,6 +985,26 @@ class IdealGasCpResolverTests(unittest.TestCase):
             self.assertEqual(restored.method, 'gfn2_xtb_rrho_ideal_gas_cp_kernel')
             self.assertClose(restored.cp(500.0), kernel.cp(500.0), rel=1e-10)
 
+    def test_xtb_rrho_lock_uses_short_renewable_lease(self):
+        resolver = PropertyResolver()
+        with tempfile.TemporaryDirectory() as directory:
+            resolver.CACHE_DIR = Path(directory)
+            with patch(
+                'property_resolution.heat_capacity.runtime_lock'
+            ) as make_lock:
+                selected = resolver._xtb_rrho_computation_lock('smiles:CC')
+
+            self.assertIs(selected, make_lock.return_value)
+            make_lock.assert_called_once_with(
+                'xtb_rrho',
+                'smiles:CC',
+                path=Path(directory, 'locks.sqlite'),
+                lease_seconds=XTB_RRHO_LOCK_LEASE_SECONDS,
+                heartbeat_seconds=XTB_RRHO_LOCK_HEARTBEAT_SECONDS,
+            )
+        self.assertEqual(XTB_RRHO_LOCK_LEASE_SECONDS, 20.0)
+        self.assertEqual(XTB_RRHO_LOCK_HEARTBEAT_SECONDS, 5.0)
+
     def test_xtb_rrho_unavailable_or_failed_cleanly_falls_through(self):
         missing = {'tblite': 'missing', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
         smiles_result = PropertyResolutionResult(
@@ -895,7 +1023,8 @@ class IdealGasCpResolverTests(unittest.TestCase):
                 ),
             ):
                 self.assertIsNone(resolver._xtb_rrho_ideal_gas_cp_kernel(
-                    'test', {'smiles': '[H][H]'}, allow_online=False
+                    'test', {'smiles': '[H][H]'}, allow_online=False,
+                    allow_computation=True,
                 ))
 
         dependencies = {'tblite': '0.7.0', 'ase': '3.29.0', 'rdkit': '2026.3.1'}
@@ -913,14 +1042,140 @@ class IdealGasCpResolverTests(unittest.TestCase):
                 ) as calculate,
             ):
                 first = resolver._xtb_rrho_ideal_gas_cp_kernel(
-                    'test', {}, allow_online=False
+                    'test', {}, allow_online=False, allow_computation=True
                 )
                 second = resolver._xtb_rrho_ideal_gas_cp_kernel(
-                    'test', {}, allow_online=False
+                    'test', {}, allow_online=False, allow_computation=True
                 )
             self.assertIsNone(first)
             self.assertIsNone(second)
             calculate.assert_called_once()
+
+            signature = resolver._xtb_rrho_computation_signature(dependencies)
+            failure = resolver._load_xtb_rrho_failure(
+                'smiles:[H][H]',
+                signature,
+            )
+            self.assertEqual(failure['error'], 'frequency failure')
+
+            fresh = PropertyResolver()
+            fresh.CACHE_DIR = Path(directory)
+            with (
+                patch.object(
+                    fresh,
+                    '_xtb_rrho_dependency_state',
+                    return_value=dependencies,
+                ),
+                patch.object(
+                    fresh,
+                    '_resolve_smiles_result',
+                    return_value=smiles_result,
+                ),
+                patch.object(
+                    fresh,
+                    '_calculate_xtb_rrho_artifact',
+                    side_effect=AssertionError(
+                        'persistent negative cache must avoid xTB'
+                    ),
+                ),
+            ):
+                self.assertIsNone(
+                    fresh._xtb_rrho_ideal_gas_cp_kernel(
+                        'test',
+                        {},
+                        allow_online=False,
+                        allow_computation=True,
+                    )
+                )
+
+    def test_allow_computation_false_uses_cached_xtb_but_never_generates_it(self):
+        dependencies = {
+            'tblite': '0.7.0',
+            'ase': '3.29.0',
+            'rdkit': '2026.3.1',
+        }
+        smiles_result = PropertyResolutionResult(
+            value='[H][H]', source='test', method='test', quality=1.0
+        )
+        artifact = {
+            'geometry': 'linear',
+            'atom_count': 2,
+            'frequencies_cm_1': (4400.0,),
+            'imaginary_modes_below_cutoff': 0,
+            'settings': {'hessian': 'test'},
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            resolver = PropertyResolver()
+            resolver.CACHE_DIR = Path(directory)
+            with (
+                patch.object(
+                    resolver,
+                    '_fetch_nist_cp_source',
+                    return_value=None,
+                ),
+                patch.object(
+                    resolver,
+                    '_resolve_smiles_result',
+                    return_value=smiles_result,
+                ),
+                patch.object(
+                    resolver,
+                    '_xtb_rrho_dependency_state',
+                    return_value=dependencies,
+                ),
+                patch.object(
+                    resolver,
+                    '_resolve_xtb_geometry',
+                    side_effect=AssertionError('computation must be disabled'),
+                ),
+            ):
+                missing = resolver.resolve_ideal_gas_cp_kernel(
+                    'test hydrogen',
+                    {},
+                    allow_online=False,
+                    allow_computation=False,
+                )
+            self.assertEqual(
+                missing.method,
+                'atom_increment_shomate_ideal_gas_cp_kernel',
+            )
+
+            resolver._save_xtb_rrho_artifact('smiles:[H][H]', artifact)
+            resolver._ideal_gas_cp_kernel_cache.clear()
+            with (
+                patch.object(
+                    resolver,
+                    '_fetch_nist_cp_source',
+                    return_value=None,
+                ),
+                patch.object(
+                    resolver,
+                    '_resolve_smiles_result',
+                    return_value=smiles_result,
+                ),
+                patch.object(
+                    resolver,
+                    '_xtb_rrho_dependency_state',
+                    return_value=dependencies,
+                ),
+                patch.object(
+                    resolver,
+                    '_resolve_xtb_geometry',
+                    side_effect=AssertionError(
+                        'cached artifact must avoid computation'
+                    ),
+                ),
+            ):
+                cached = resolver.resolve_ideal_gas_cp_kernel(
+                    'test hydrogen',
+                    {},
+                    allow_online=False,
+                    allow_computation=False,
+                )
+            self.assertEqual(
+                cached.method,
+                'gfn2_xtb_rrho_ideal_gas_cp_kernel',
+            )
 
     def test_xtb_rrho_failure_falls_through_to_atom_increment_kernel(self):
         resolver = PropertyResolver()

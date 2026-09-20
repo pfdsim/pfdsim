@@ -392,6 +392,11 @@ class Simulator:
         else:
             from chemical_properties import ChemicalDatabase, ChemicalProperties
         allow_online_lookup = getattr(self.pfd.metadata, 'online_lookup', True)
+        allow_computation = getattr(
+            self.pfd.metadata,
+            'allow_computation',
+            True,
+        )
         psat_minimum_pressure_bar = getattr(
             self.pfd.metadata,
             'psat_minimum_pressure_bar',
@@ -587,7 +592,11 @@ class Simulator:
             correlations = pfd_comp.resolver_property_correlations()
             if correlations:
                 correlations = {
-                    key: {**correlation, 'quality': 1.0, '_pfd_override': True}
+                    key: {
+                        'quality': 1.0,
+                        **correlation,
+                        '_pfd_override': True,
+                    }
                     for key, correlation in correlations.items()
                 }
                 props.property_correlations.update(correlations)
@@ -1593,6 +1602,7 @@ class Simulator:
             known = props.to_dict()
             known.setdefault('antoine_source', 'PFD component definition')
             known['_allow_online_lookup'] = allow_online_lookup
+            known['_allow_computation'] = allow_computation
             if psat_minimum_pressure_bar is not None:
                 known['_psat_minimum_pressure_bar'] = (
                     psat_minimum_pressure_bar

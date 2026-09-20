@@ -40,6 +40,7 @@ MAX_RANGE_QUALITY_PENALTY = 0.40
 ATOM_INCREMENT_MODEL_QUALITY = 0.75
 ATOM_INCREMENT_ORGANIC_QUALITY = 0.80
 GFN2_XTB_RRHO_QUALITY = 0.89
+SHOMATE_MONOTONICITY_RELATIVE_TOLERANCE = 1.0e-12
 CONVENTIONAL_ORGANIC_CATEGORIES = frozenset({
     "H", "C", "O", "N", "F", "Cl", "P", "S", "Br", "I",
 })
@@ -69,6 +70,77 @@ def _polynomial_difference(coefficients: Sequence[float], x1: float, x2: float) 
         quotient = float(coefficients[index]) + x1 * quotient
         value = quotient + x2 * value
     return (x2 - x1) * value
+
+
+def shomate_cp_is_monotonic_nondecreasing(
+    coefficients: Sequence[float],
+    Tmin: float,
+    Tmax: float,
+) -> bool:
+    """Return whether a five-term Shomate Cp is nondecreasing on an interval.
+
+    For ``t = T/1000``, the sign of ``dCp/dT`` equals the sign of
+    ``g(t) = 3*D*t**5 + 2*C*t**4 + B*t**3 - 2*E`` because ``t**3`` is
+    positive.  Interior extrema of ``g`` are the positive roots of the
+    quadratic ``15*D*t**2 + 8*C*t + 3*B``.  Evaluating those roots and both
+    endpoints therefore checks the derivative sign over the complete range
+    without sampling.
+    """
+    values = tuple(_finite(value) for value in coefficients)
+    if len(values) != 5:
+        raise ValueError("Shomate monotonicity requires five coefficients")
+    lower = _finite(Tmin) / 1000.0
+    upper = _finite(Tmax) / 1000.0
+    if lower <= 0.0 or upper < lower:
+        raise ValueError("Shomate monotonicity requires 0 < Tmin <= Tmax")
+
+    _A, B, C, D, E = values
+    candidates = [lower, upper]
+    quadratic = 15.0 * D
+    linear = 8.0 * C
+    constant = 3.0 * B
+    coefficient_scale = max(
+        abs(quadratic),
+        abs(linear),
+        abs(constant),
+        1.0,
+    )
+    zero_tolerance = math.ulp(coefficient_scale) * 8.0
+    if abs(quadratic) <= zero_tolerance:
+        if abs(linear) > zero_tolerance:
+            root = -constant / linear
+            if lower < root < upper:
+                candidates.append(root)
+    else:
+        discriminant = linear * linear - 4.0 * quadratic * constant
+        discriminant_tolerance = (
+            math.ulp(max(abs(linear * linear), abs(4.0 * quadratic * constant), 1.0))
+            * 16.0
+        )
+        if discriminant >= -discriminant_tolerance:
+            square_root = math.sqrt(max(0.0, discriminant))
+            for root in (
+                (-linear - square_root) / (2.0 * quadratic),
+                (-linear + square_root) / (2.0 * quadratic),
+            ):
+                if lower < root < upper:
+                    candidates.append(root)
+
+    numerators = [
+        3.0 * D * t**5 + 2.0 * C * t**4 + B * t**3 - 2.0 * E
+        for t in candidates
+    ]
+    scale = max(
+        1.0,
+        *(
+            abs(3.0 * D * t**5)
+            + abs(2.0 * C * t**4)
+            + abs(B * t**3)
+            + abs(2.0 * E)
+            for t in candidates
+        ),
+    )
+    return min(numerators) >= -SHOMATE_MONOTONICITY_RELATIVE_TOLERANCE * scale
 
 
 @dataclass(frozen=True)

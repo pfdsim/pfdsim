@@ -588,6 +588,16 @@ class PropertyResolverBase:
 
 
         @staticmethod
+        def _props_allow_computation(
+            props: Optional[Dict[str, Any]],
+            allow_computation: bool = True,
+        ) -> bool:
+            if props is not None and props.get('_allow_computation') is False:
+                return False
+            return bool(allow_computation)
+
+
+        @staticmethod
         def _correlation_coefficients(correlation: Dict[str, Any]) -> Dict[str, float]:
             coefficients = correlation.get('coefficients') or {}
             if isinstance(coefficients, dict):

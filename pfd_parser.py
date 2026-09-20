@@ -377,6 +377,7 @@ _TOP_LEVEL_DIRECTIVES = (
     'PROCESS', 'VERSION', 'PFD_VERSION', 'AUTHOR', 'DATE', 'DESCRIPTION',
     'THERMO_METHOD', 'THERMO', 'PROPERTY_METHOD', 'FLUID_PHASE_MODEL',
     'FLUID_PHASES', 'ONLINE_LOOKUP', 'ALLOW_ONLINE_LOOKUP', 'FETCH_ONLINE',
+    'ALLOW_COMPUTATION',
     'PSAT_MINIMUM_PRESSURE', 'MINIMUM_PRESSURE', 'MINIMUM_PSAT_PRESSURE',
     'MINIMUM_VAPOR_PRESSURE', 'RECYCLE_METHOD', 'RECYCLE_SOLVER',
     'TEAR_STREAMS', 'RECYCLE_TEAR_STREAMS', 'TEAR_STREAM',
@@ -1394,6 +1395,7 @@ class Metadata:
     thermo_method: str = "IDEAL"
     thermo_options: dict[str, str] = field(default_factory=dict)
     online_lookup: bool = True
+    allow_computation: bool = True
     psat_minimum_pressure_bar: Optional[float] = None
     recycle_method: str = "WEGSTEIN"
     recycle_options: dict[str, float | int] = field(default_factory=dict)
@@ -1444,6 +1446,8 @@ class Metadata:
             lines.append(f"FLUID_PHASE_MODEL: {self.fluid_phase_model}")
         if self.online_lookup is False:
             lines.append("ONLINE_LOOKUP: false")
+        if self.allow_computation is False:
+            lines.append("ALLOW_COMPUTATION: false")
         if self.psat_minimum_pressure_bar is not None:
             lines.append(
                 "PSAT_MINIMUM_PRESSURE: "
@@ -2217,6 +2221,20 @@ class PFDParser:
                     self._record_error(
                         unknown_name_message(
                             'ONLINE_LOOKUP value',
+                            value,
+                            ('true', 'false'),
+                        )
+                    )
+            elif stripped.startswith('ALLOW_COMPUTATION:'):
+                value = stripped.split(':', 1)[1].strip().lower()
+                if value in {'true', 'yes', '1', 'on', 'enabled', 'enable'}:
+                    self.pfd.metadata.allow_computation = True
+                elif value in {'false', 'no', '0', 'off', 'disabled', 'disable'}:
+                    self.pfd.metadata.allow_computation = False
+                else:
+                    self._record_error(
+                        unknown_name_message(
+                            'ALLOW_COMPUTATION value',
                             value,
                             ('true', 'false'),
                         )

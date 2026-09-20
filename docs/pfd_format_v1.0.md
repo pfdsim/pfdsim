@@ -94,7 +94,21 @@ Accepted true values are `true`, `yes`, `1`, `on`, `enabled`, and `enable`;
 accepted false values are `false`, `no`, `0`, `off`, `disabled`, and `disable`.
 `ALLOW_ONLINE_LOOKUP:` and `FETCH_ONLINE:` are aliases.
 
-### 3. Canonical Vapor-Pressure Minimum
+### 3. Computational Property Policy
+
+```
+ALLOW_COMPUTATION: true
+```
+
+Optional. Defaults to `true`. Set `ALLOW_COMPUTATION: false` to prevent new
+expensive computational-property work such as GFN2-xTB geometry optimization
+and vibrational Hessians. Existing cached computational artifacts and fitted
+kernels remain eligible, and inexpensive empirical estimators remain enabled.
+This policy is independent of `ONLINE_LOOKUP`.
+
+Accepted true and false values are the same as for `ONLINE_LOOKUP`.
+
+### 4. Canonical Vapor-Pressure Minimum
 
 ```
 PSAT_MINIMUM_PRESSURE: 1 [Pa]
@@ -113,7 +127,7 @@ This changes the qualified lower Psat domain and enables the A-H inverse-tail
 fit retry when the declared pressure is below the default. It does not impose
 an exact lower-pressure fit constraint.
 
-### 4. Thermodynamics Method
+### 5. Thermodynamics Method
 
 ```
 THERMO_METHOD: <method> | <option>=<value>, ...
@@ -435,7 +449,7 @@ stream solid-component allocation is reserved for a future format extension;
 when introduced, it will provide the solid flow to which the stream PSD is
 attached.
 
-### 5. Recycle Solver Method
+### 6. Recycle Solver Method
 
 ```
 RECYCLE_METHOD: <method> | <option>=<value>, ...
@@ -505,7 +519,7 @@ STREAM Recycle : SEP-1.vap -> MIX-1.recycle
     w = solvent:0.98, water:0.02
 ```
 
-### 6. Components Section
+### 7. Components Section
 
 ```
 COMPONENTS:
@@ -738,7 +752,7 @@ has no `fluid_vapor_fraction`. Solid component flows are authoritative and
 particle defaults propagate unchanged; no settling, voidage, slurry rheology,
 or particle-size distribution is implied.
 
-### 7. Property Correlations Section
+### 8. Property Correlations Section
 
 Portable temperature-dependent property correlations can be supplied in an
 optional `PROPERTY_CORRELATIONS:` section after `COMPONENTS:`. Lines use:
@@ -866,7 +880,7 @@ PROPERTY_CORRELATIONS:
     MIBK.sigma | equation=DIPPR_EQ106, Tmin_K=250, Tmax_K=500, Tc_K=571.0, A=0.07, B=1.2, C=0.0, D=0.0, E=0.0
 ```
 
-### 8. Interaction Estimation and Parameters
+### 9. Interaction Estimation and Parameters
 
 Missing molecular UNIQUAC or NRTL binary interactions may be estimated once
 during thermodynamic initialization from a selected UNIFAC-family model. The
@@ -1027,7 +1041,7 @@ INTERACTION_PARAMETERS:
     ACETONE/EtOH | model=VDM, delta_H_residual=1000, delta_S_residual=-2.5
 ```
 
-### 9. Streams Section
+### 10. Streams Section
 
 ```
 STREAM <name> : <from> -> <to>
@@ -1097,7 +1111,7 @@ STREAM S1 : HX-1.out -> FLASH-1.in
 STREAM Product : FLASH-1.liq -> PRODUCT
 ```
 
-### 10. Units Section
+### 11. Units Section
 
 ```
 UNIT <id>
@@ -2924,7 +2938,7 @@ catalyst, slurry catalyst, and multiphase trickle/fluidized beds are not
 supported. Those arbitrary kinetics may still use a supplied
 `effectiveness_factor`.
 
-### 11. Reactions Section
+### 12. Reactions Section
 
 Within a UNIT block:
 

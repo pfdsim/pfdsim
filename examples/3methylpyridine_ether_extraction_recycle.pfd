@@ -20,6 +20,9 @@ COMPONENTS:
     water | Water | MW=18.015
     diethyl ether | Diethyl Ether | MW=74.12
 
+PROPERTY_CORRELATIONS:
+    3-methylpyridine.Cpg | equation=shomate, Tmin_K=273, Tmax_K=1000, A=-71.4900728959493, B=699.7206295646993, C=-555.9269931423866, D=175.62254081283086, E=1.1079223534054126, quality=0.89, source=calculated GFN2-xTB RRHO
+
 STREAM AqueousFeed : FEED -> EX-100.feed
     T = 30 [C]
     P = 1 [bar]

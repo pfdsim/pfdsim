@@ -136,6 +136,9 @@ Explicit property values take precedence over resolved data. Set
 property queries. Named thermodynamic scopes allow different parts of a
 flowsheet to use different property packages.
 
+Set `ALLOW_COMPUTATION: false` to prohibit new expensive computational-property
+jobs while continuing to use existing cached computational results.
+
 See the [PFD format specification](docs/pfd_format_v1.0.md) for syntax,
 parameters, units, and validation rules, and the
 [PFR format specification](docs/pfr_format_v1.0.md) for reports.

@@ -252,6 +252,7 @@ def resolve_heat_capacity(
     phase: str = 'liquid',
     props: Dict = None,
     allow_online: bool = True,
+    allow_computation: bool = True,
 ) -> PropertyResolutionResult:
     """Convenience function for heat-capacity resolution."""
     return get_property_resolver().resolve_heat_capacity(
@@ -260,6 +261,7 @@ def resolve_heat_capacity(
         phase,
         props,
         allow_online=allow_online,
+        allow_computation=allow_computation,
     )
 
 
@@ -268,6 +270,7 @@ def resolve_ideal_gas_cp_kernel(
     props: Dict = None,
     allow_online: bool = True,
     allow_estimation: bool = True,
+    allow_computation: bool = True,
 ) -> Optional[IdealGasCpKernel]:
     """Resolve one reusable ideal-gas heat-capacity correlation."""
     return get_property_resolver().resolve_ideal_gas_cp_kernel(
@@ -275,6 +278,7 @@ def resolve_ideal_gas_cp_kernel(
         props,
         allow_online=allow_online,
         allow_estimation=allow_estimation,
+        allow_computation=allow_computation,
     )
 
 

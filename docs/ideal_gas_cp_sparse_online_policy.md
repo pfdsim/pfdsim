@@ -21,6 +21,11 @@ online gas-Cp points are combined with GFN2-xTB RRHO as follows:
 | 3–9 | Full-range affine xTB, `Cp=a+b Cp_xTB`, fitted to every accepted point | `0.93` |
 | 1–2 | Full-range constant-residual xTB, `Cp=Cp_xTB+a`, using the mean observed residual | `0.91` |
 
+If a validated ten-point-or-more Shomate fit itself covers the complete
+273.15–1500 K ideal-gas Cp kernel domain, select it directly at quality `0.96`
+without invoking xTB. Direct fitted Shomate curves must remain positive and
+analytically monotonic nondecreasing across their retained range.
+
 If xTB is unavailable or unusable and at least ten points remain, retain the
 robust Shomate only on its source-supported range at quality `0.92`. Do not
 extrapolate that data-only Shomate curve.
@@ -33,9 +38,10 @@ Only after these paths are exhausted, try:
 4. The bundled formula atom-increment Shomate fallback.
 
 Any absent dependency, missing structure, unsupported identity, failed xTB
-optimization or Hessian, significant imaginary mode, nonpositive correction,
-ill-conditioned calibration, or invalid kernel is a normal provider miss. It
-must fall through without preventing a lower tier from resolving Cp.
+optimization or Hessian, unresolved significant imaginary mode, nonpositive
+correction, ill-conditioned calibration, or invalid kernel is a normal
+provider miss. It must fall through without preventing a lower tier from
+resolving Cp.
 
 ## Piecewise 10-point-or-more kernel
 
@@ -62,11 +68,32 @@ difference Hessian. The resulting RRHO curve is fitted to the portable
 rational-Chebyshev kernel contract, so point evaluation and enthalpy/entropy
 integration never invoke xTB during simulation.
 
+If the initial Hessian has a mode above the 20 cm^-1 imaginary-frequency
+cutoff, the resolver displaces the geometry in both directions along the
+worst mode, reoptimizes with tighter xTB accuracy and force convergence, and
+recomputes a four-point Hessian. The lowest-energy retry without significant
+imaginary modes is retained.
+
 The shared optimized geometry is reused when available and generated when
 missing. The expensive raw vibrational artifact is cached persistently with
 method settings and dependency provenance. Fitted kernels use the ordinary
 derived-kernel cache; an expired fitted kernel is reconstructed from the raw
 frequencies without repeating the Hessian.
+
+Failures are also cached persistently in the same SQLite artifact namespace.
+Negative entries are keyed by canonical structure and a signature containing
+the dependency versions and computation-policy version, so fresh worker
+processes avoid repeating a known failure while relevant upgrades or policy
+changes permit a retry. A renewable per-structure lease in the shared
+`data/runtime/locks.sqlite` registry prevents concurrent workers from launching
+the same uncached calculation. The xTB lease is renewed every 5 seconds and
+expires 20 seconds after its last successful renewal, allowing prompt recovery
+after a worker crash.
+
+API calls accept `allow_computation=True` by default. The top-level PFD
+directive `ALLOW_COMPUTATION: false` applies the same policy to every component.
+Disabling computation blocks only generation on a cache miss; cached xTB/RRHO
+artifacts and kernels remain usable.
 
 ## Validation basis
 

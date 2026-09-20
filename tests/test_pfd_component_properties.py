@@ -1408,6 +1408,30 @@ class PFDComponentPropertyTests(unittest.TestCase):
                         self.assertGreater(sim.thermo.Psat('XNO', 300.0), 0.0)
                         self.assertGreater(sim.thermo.Cp_ideal_gas('XNO', 300.0), 0.0)
 
+    def test_allow_computation_false_propagates_to_runtime_resolver_props(self):
+        pfd = (
+            'PROCESS: No Runtime Computation\n'
+            'VERSION: 1.0\n'
+            'ONLINE_LOOKUP: false\n'
+            'ALLOW_COMPUTATION: false\n'
+            'COMPONENTS:\n'
+            '    XNO | No computed component | MW=40, Cp_coeffs=[30, 0, 0, 0]\n'
+            'STREAM Feed : FEED -> PRODUCT\n'
+            '    T = 25 [C]\n'
+            '    P = 1 [bar]\n'
+            '    F = 1 [kmol/h]\n'
+            '    x = XNO:1\n'
+        )
+        sim = Simulator.from_string(pfd)
+        result = sim.run()
+        self.assertTrue(result.converged, result.errors)
+        self.assertFalse(sim.pfd.metadata.allow_computation)
+        self.assertFalse(
+            sim.thermo._resolver_known_props['XNO']['_allow_computation']
+        )
+        rendered = sim.pfd.to_pfd()
+        self.assertIn('ALLOW_COMPUTATION: false', rendered)
+
     def test_pfd_correlation_override_marker_is_per_correlation_key(self):
         props = {
             'property_correlations': {
@@ -1488,7 +1512,7 @@ class PFDComponentPropertyTests(unittest.TestCase):
             'B=-2845.948891914135, C=0.0, D=0.0, E=0.0, F=0.0\n'
             '    XCOR.Hvap | equation=poly_x, Tmin_K=250.0, Tmax_K=500.0, A=40.0, B=-10.0\n'
             '    XCOR.Cpl | equation=poly_x, Tmin_K=250.0, Tmax_K=500.0, A=80.0, B=5.0\n'
-            '    XCOR.Cpg | equation=shomate, Tmin_K=250.0, Tmax_K=500.0, A=30.0, B=2.0, C=3.0, D=4.0, E=5.0\n'
+            '    XCOR.Cpg | equation=shomate, Tmin_K=250.0, Tmax_K=500.0, A=30.0, B=2.0, C=3.0, D=4.0, E=5.0, quality=0.89\n'
             '    XCOR.rhol | equation=poly_x, Tmin_K=250.0, Tmax_K=350.0, A=600.0, B=-50.0\n'
             '    XCOR.mul | equation=poly_tp, Tmin_K=250.0, Tmax_K=500.0, P_ref_bar=5.0, A=0.001, B=0.002, C=0.003, D=0.004, E=0.005, F=0.006\n'
             '\n'
@@ -1505,6 +1529,10 @@ class PFDComponentPropertyTests(unittest.TestCase):
 
         self.assertTrue(result.converged)
         known = sim.thermo._resolver_known_props['XCOR']
+        self.assertEqual(
+            known['property_correlations']['Cpg']['quality'],
+            0.89,
+        )
         resolver = PropertyResolver()
         x = (300.0 - 298.15) / 100.0
         psat = resolver.resolve_vapor_pressure('XCOR', 300.0, known)
@@ -1535,7 +1563,7 @@ class PFDComponentPropertyTests(unittest.TestCase):
         t = 300.0 / 1000.0
         self.assertEqual(cp_gas.method, 'provided_heat_capacity_fit')
         self.assertAlmostEqual(cp_gas.value, 30.0 + 2.0 * t + 3.0 * t * t + 4.0 * t**3 + 5.0 / (t * t))
-        self.assertEqual(cp_gas.quality, 1.0)
+        self.assertEqual(cp_gas.quality, 0.89)
         self.assertEqual(density.method, 'provided_liquid_density_fit')
         self.assertAlmostEqual(density.value, (600.0 - 50.0 * x) / 50.0)
         self.assertEqual(density.quality, 1.0)
