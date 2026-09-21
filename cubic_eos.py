@@ -200,7 +200,15 @@ class CubicEOS:
             except ValueError as error:
                 raise CubicEOSError(str(error)) from error
             self._ge_mixing = ModifiedHuronVidalSecondOrderMixingRule()
-            self._compiled_backend = None
+            try:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from .compiled_mhv2 import CompiledMHV2EOSBackend
+                else:
+                    from compiled_mhv2 import CompiledMHV2EOSBackend
+
+                self._compiled_backend = CompiledMHV2EOSBackend.from_eos(self)
+            except Exception:
+                self._compiled_backend = None
             return
         self._initialize_kij_tables()
         self._initialize_kij_overrides(interaction_overrides or [])
@@ -931,11 +939,6 @@ class CubicEOS:
         x = self._normalized_composition(composition)
         comps = self.components
         x_values = [x[comp] for comp in comps]
-        if self._ge_provider is not None:
-            mixing = self._ge_state(T, x)
-            return (mixing.D * mixing.b * R_CM3 * T, mixing.b,
-                    {comp: self.pure_a(comp, T) for comp in comps},
-                    {comp: self.params[comp].b for comp in comps})
         if self._compiled_backend is not None:
             a_mix, b_mix, a_values, _, _ = (
                 self._compiled_backend.mixture_parameters(
@@ -950,6 +953,11 @@ class CubicEOS:
                 dict(zip(comps, (float(value) for value in a_values))),
                 {comp: self.params[comp].b for comp in comps},
             )
+        if self._ge_provider is not None:
+            mixing = self._ge_state(T, x)
+            return (mixing.D * mixing.b * R_CM3 * T, mixing.b,
+                    {comp: self.pure_a(comp, T) for comp in comps},
+                    {comp: self.params[comp].b for comp in comps})
         a_values = [self.pure_a(comp, T) for comp in comps]
         b_values = [self.params[comp].b for comp in comps]
         a_i = dict(zip(comps, a_values))
@@ -970,9 +978,6 @@ class CubicEOS:
 
     def mixture_da_dT(self, T: float, composition: dict[str, float]) -> float:
         x = self._normalized_composition(composition)
-        if self._ge_provider is not None:
-            mixing = self._ge_state(T, x, temperature_derivative=True)
-            return mixing.b * R_CM3 * (mixing.D + T * mixing.dD_dT)
         comps = self.components
         x_values = [x[comp] for comp in comps]
         if self._compiled_backend is not None:
@@ -982,6 +987,9 @@ class CubicEOS:
                 self._compiled_kij_values(T),
                 self._pair_dkij_dT_values(T),
             )[-1])
+        if self._ge_provider is not None:
+            mixing = self._ge_state(T, x, temperature_derivative=True)
+            return mixing.b * R_CM3 * (mixing.D + T * mixing.dD_dT)
         a_values = [self.pure_a(comp, T) for comp in comps]
         da_values = [self.pure_da_dT(comp, T) for comp in comps]
         kij_values = self._pair_kij_values(T)

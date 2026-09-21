@@ -71,6 +71,108 @@ def test_pure_limit_and_alpha(model):
     assert model.params['ethanol'].mc_c1 == 1.4252
 
 
+@pytest.mark.parametrize(
+    ('temperature', 'pressure', 'composition'),
+    [
+        (350.0, 1.0, {'ethanol': 0.4, 'water': 0.6}),
+        (500.0, 50.0, {'ethanol': 0.1, 'water': 0.9}),
+    ],
+)
+def test_compiled_mhv2_matches_python_backend(
+    model,
+    temperature,
+    pressure,
+    composition,
+):
+    compiled = model._compiled_backend
+    if compiled is None:
+        pytest.skip('Numba compiled MHV2 backend is unavailable')
+
+    compiled_values = {
+        phase: {
+            'phi': model.fugacity_coefficients(
+                temperature,
+                pressure,
+                composition,
+                phase,
+            ),
+            'h': model.departure_enthalpy(
+                temperature,
+                pressure,
+                composition,
+                phase,
+            ),
+            's': model.departure_entropy(
+                temperature,
+                pressure,
+                composition,
+                phase,
+            ),
+        }
+        for phase in ('liquid', 'vapor')
+    }
+    compiled_roots = model.compressibility_roots(
+        temperature,
+        pressure,
+        composition,
+    )
+    compiled_k = model.phi_phi_K_values(
+        temperature,
+        pressure,
+        composition,
+    )
+
+    model._compiled_backend = None
+    model._phi_phi_k_cache.clear()
+    try:
+        python_roots = model.compressibility_roots(
+            temperature,
+            pressure,
+            composition,
+        )
+        python_k = model.phi_phi_K_values(
+            temperature,
+            pressure,
+            composition,
+        )
+        assert compiled_roots == pytest.approx(python_roots, abs=2e-13)
+        assert compiled_k == pytest.approx(python_k, rel=2e-12)
+        for phase in ('liquid', 'vapor'):
+            python_phi = model.fugacity_coefficients(
+                temperature,
+                pressure,
+                composition,
+                phase,
+            )
+            python_h = model.departure_enthalpy(
+                temperature,
+                pressure,
+                composition,
+                phase,
+            )
+            python_s = model.departure_entropy(
+                temperature,
+                pressure,
+                composition,
+                phase,
+            )
+            assert compiled_values[phase]['phi'] == pytest.approx(
+                python_phi,
+                rel=2e-12,
+            )
+            assert compiled_values[phase]['h'] == pytest.approx(
+                python_h,
+                rel=2e-12,
+            )
+            assert compiled_values[phase]['s'] == pytest.approx(
+                python_s,
+                rel=2e-12,
+            )
+    finally:
+        model._compiled_backend = compiled
+        model._phi_phi_k_cache.clear()
+
+
 def test_gas_extension_and_alcohol_footnote():
     model = CubicEOS(['H2', 'N2', 'ethanol', 'hexane'], 'RKSMHV2', ChemicalDatabase(enable_online=False))
     provider = model._ge_provider
@@ -210,6 +312,52 @@ def test_executable_flash_example():
     assert result.mass_balance_error < 1e-6
     assert result.streams['Vapor'].F > 0.
     assert result.streams['Liquid'].F > 0.
+
+
+def test_compiled_mhv2_absorber_example():
+    from pathlib import Path
+    from simulator import Simulator
+
+    path = (
+        Path(__file__).resolve().parents[1]
+        / 'examples'
+        / 'ethylene_ethane_isoparaffin_absorption.pfd'
+    )
+    simulator = Simulator.from_file(str(path))
+    result = simulator.run()
+
+    assert result.converged
+    assert result.errors == []
+    assert result.mass_balance_error < 1e-10
+    treated = result.streams['Treated-Gas']
+    rich = result.streams['Rich-Solvent']
+    gas_feed = result.streams['Olefin-Gas']
+    solvent_feed = result.streams['Lean-Solvent']
+    assert treated.F == pytest.approx(32.84389345, rel=2e-8)
+    assert rich.F == pytest.approx(367.15610655, rel=2e-8)
+    assert treated.composition['ethanol'] == pytest.approx(
+        0.01037515765,
+        rel=2e-8,
+    )
+    for component, expected_absorption in (
+        ('ethylene', 0.6344193911),
+        ('ethane', 0.8850481345),
+    ):
+        feed_amount = (
+            gas_feed.F * gas_feed.composition.get(component, 0.0)
+            + solvent_feed.F * solvent_feed.composition.get(component, 0.0)
+        )
+        gas_amount = treated.F * treated.composition[component]
+        assert 1.0 - gas_amount / feed_amount == pytest.approx(
+            expected_absorption,
+            rel=2e-8,
+        )
+
+    backend = simulator.thermo.cubic._compiled_backend
+    if backend is not None:
+        from compiled_mhv2 import CompiledMHV2EOSBackend
+
+        assert isinstance(backend, CompiledMHV2EOSBackend)
 
 
 def test_methanol_synthesis_example_with_rksmhv2():

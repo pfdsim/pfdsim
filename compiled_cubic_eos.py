@@ -27,6 +27,49 @@ ALPHA_PRSV1 = 3
 ALPHA_PRSV2 = 4
 ALPHA_TWU = 5
 ALPHA_REDLICH_KWONG = 6
+ALPHA_RKSMHV2_MATHIAS_COPEMAN = 7
+
+
+def compiled_alpha_parameter_arrays(eos, *, mhv2: bool = False):
+    """Build the shared fixed-component alpha arrays for compiled EOS kernels."""
+    modes = []
+    c1 = []
+    c2 = []
+    c3 = []
+    params_values = [eos.params[component] for component in eos.components]
+    for params in params_values:
+        if mhv2 and eos._has_mc_constants(params):
+            mode = ALPHA_RKSMHV2_MATHIAS_COPEMAN
+            constants = (params.mc_c1, params.mc_c2, params.mc_c3)
+        elif eos.use_twu and eos._has_twu_constants(params):
+            mode = ALPHA_TWU
+            constants = (params.twu_l, params.twu_m, params.twu_n)
+        elif eos.use_prsv2 and eos._has_prsv_constants(params):
+            mode = ALPHA_PRSV2
+            constants = (params.kappa1, params.kappa2, params.kappa3)
+        elif eos.use_prsv1 and eos._has_prsv_constants(params):
+            mode = ALPHA_PRSV1
+            constants = (params.kappa1, 0.0, 0.0)
+        elif eos.use_mathias_copeman and eos._has_mc_constants(params):
+            mode = ALPHA_MATHIAS_COPEMAN
+            constants = (params.mc_c1, params.mc_c2, params.mc_c3)
+        elif eos.use_boston_mathias or eos.use_mathias_copeman:
+            mode = ALPHA_BOSTON_MATHIAS
+            constants = (0.0, 0.0, 0.0)
+        else:
+            mode = ALPHA_SOAVE
+            constants = (0.0, 0.0, 0.0)
+        modes.append(mode)
+        c1.append(float(constants[0]))
+        c2.append(float(constants[1]))
+        c3.append(float(constants[2]))
+    return (
+        params_values,
+        np.asarray(modes, dtype=np.int64),
+        np.asarray(c1, dtype=np.float64),
+        np.asarray(c2, dtype=np.float64),
+        np.asarray(c3, dtype=np.float64),
+    )
 
 
 @dataclass
@@ -49,34 +92,7 @@ class CompiledCubicEOSBackend:
     def from_eos(cls, eos) -> "CompiledCubicEOSBackend | None":
         if njit is None:
             return None
-        modes = []
-        c1 = []
-        c2 = []
-        c3 = []
-        params_values = [eos.params[component] for component in eos.components]
-        for params in params_values:
-            if eos.use_twu and eos._has_twu_constants(params):
-                mode = ALPHA_TWU
-                constants = (params.twu_l, params.twu_m, params.twu_n)
-            elif eos.use_prsv2 and eos._has_prsv_constants(params):
-                mode = ALPHA_PRSV2
-                constants = (params.kappa1, params.kappa2, params.kappa3)
-            elif eos.use_prsv1 and eos._has_prsv_constants(params):
-                mode = ALPHA_PRSV1
-                constants = (params.kappa1, 0.0, 0.0)
-            elif eos.use_mathias_copeman and eos._has_mc_constants(params):
-                mode = ALPHA_MATHIAS_COPEMAN
-                constants = (params.mc_c1, params.mc_c2, params.mc_c3)
-            elif eos.use_boston_mathias or eos.use_mathias_copeman:
-                mode = ALPHA_BOSTON_MATHIAS
-                constants = (0.0, 0.0, 0.0)
-            else:
-                mode = ALPHA_SOAVE
-                constants = (0.0, 0.0, 0.0)
-            modes.append(mode)
-            c1.append(float(constants[0]))
-            c2.append(float(constants[1]))
-            c3.append(float(constants[2]))
+        params_values, modes, c1, c2, c3 = compiled_alpha_parameter_arrays(eos)
         delta1, delta2 = eos._delta_roots()
         backend = cls(
             components=tuple(eos.components),
@@ -85,10 +101,10 @@ class CompiledCubicEOSBackend:
             omega=np.asarray([params.omega for params in params_values], dtype=np.float64),
             a0=np.asarray([params.a0 for params in params_values], dtype=np.float64),
             pure_b=np.asarray([params.b for params in params_values], dtype=np.float64),
-            alpha_mode=np.asarray(modes, dtype=np.int64),
-            c1=np.asarray(c1, dtype=np.float64),
-            c2=np.asarray(c2, dtype=np.float64),
-            c3=np.asarray(c3, dtype=np.float64),
+            alpha_mode=modes,
+            c1=c1,
+            c2=c2,
+            c3=c3,
             delta1=float(delta1),
             delta2=float(delta2),
         )
@@ -259,6 +275,20 @@ if njit is not None:
             Tr = 1.0e-12
         sqrt_Tr = math.sqrt(Tr)
         m_soave = _soave_m_numba(omega, is_pr)
+
+        if mode == ALPHA_RKSMHV2_MATHIAS_COPEMAN:
+            theta = 1.0 - sqrt_Tr
+            if Tr <= 1.0:
+                factor = 1.0 + c1 * theta + c2 * theta**2 + c3 * theta**3
+                dfactor_dtheta = c1 + 2.0 * c2 * theta + 3.0 * c3 * theta**2
+            else:
+                factor = 1.0 + c1 * theta
+                dfactor_dtheta = c1
+            dtheta_dT = -1.0 / (2.0 * Tc * sqrt_Tr)
+            return (
+                factor * factor,
+                2.0 * factor * dfactor_dtheta * dtheta_dT,
+            )
 
         if mode == ALPHA_TWU:
             exponent_a = c3 * (c2 - 1.0)
