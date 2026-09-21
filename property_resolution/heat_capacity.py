@@ -3,6 +3,7 @@
 from .common import *
 import sqlite3
 from dataclasses import replace
+from functools import lru_cache
 from importlib.metadata import PackageNotFoundError, version
 
 import numpy as np
@@ -105,6 +106,17 @@ NIST_LEGACY_CP_ORIGIN = 'online_nist_legacy_v2'
 COMPUTATIONAL_RRHO_QUALITY = 0.89
 NIST_TABULATED_SHOMATE_QUALITY = 0.92
 FULL_RANGE_NIST_SHOMATE_QUALITY = 0.96
+
+
+@lru_cache(maxsize=1)
+def _installed_xtb_rrho_dependency_state() -> tuple[tuple[str, str], ...]:
+    dependencies = {}
+    for name in ('tblite', 'ase', 'rdkit'):
+        try:
+            dependencies[name] = version(name)
+        except PackageNotFoundError:
+            dependencies[name] = 'missing'
+    return tuple(sorted(dependencies.items()))
 
 
 class HeatCapacityMixin:
@@ -825,13 +837,7 @@ class HeatCapacityMixin:
 
         @staticmethod
         def _xtb_rrho_dependency_state() -> dict[str, str]:
-            dependencies = {}
-            for name in ('tblite', 'ase', 'rdkit'):
-                try:
-                    dependencies[name] = version(name)
-                except PackageNotFoundError:
-                    dependencies[name] = 'missing'
-            return dependencies
+            return dict(_installed_xtb_rrho_dependency_state())
 
 
         def _xtb_rrho_artifact_cache(self):

@@ -34,6 +34,7 @@ from property_resolution.heat_capacity import (
     XTB_RRHO_LOCK_HEARTBEAT_SECONDS,
     XTB_RRHO_LOCK_LEASE_SECONDS,
     XTB_RRHO_DERIVED_ORIGIN,
+    _installed_xtb_rrho_dependency_state,
 )
 from thermodynamics import IdealThermodynamics
 
@@ -347,6 +348,21 @@ class IdealGasCpKernelTests(unittest.TestCase):
 
 
 class IdealGasCpResolverTests(unittest.TestCase):
+    def test_xtb_dependency_versions_are_discovered_once_per_process(self):
+        resolver = PropertyResolver()
+        _installed_xtb_rrho_dependency_state.cache_clear()
+        try:
+            with patch(
+                'property_resolution.heat_capacity.version',
+                side_effect=lambda name: f'{name}-version',
+            ) as package_version:
+                first = resolver._xtb_rrho_dependency_state()
+                second = resolver._xtb_rrho_dependency_state()
+            self.assertEqual(first, second)
+            self.assertEqual(package_version.call_count, 3)
+        finally:
+            _installed_xtb_rrho_dependency_state.cache_clear()
+
     def test_nist_tabulated_shomate_cache_version_excludes_v2_entries(self):
         resolver = PropertyResolver()
         identity = '999-99-9'

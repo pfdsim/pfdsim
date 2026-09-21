@@ -30,6 +30,7 @@ class PropertyResolverBase:
             self._ideal_gas_cp_kernel_cache = {}
             self._liquid_cp_kernel_cache = {}
             self._solid_cp_kernel_cache = {}
+            self._hvap_carboxylic_acid_cache = {}
             self._online_attempt_trackers = []
 
 

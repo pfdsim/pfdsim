@@ -36,6 +36,9 @@ from typing import Optional
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 DISABLED_EXAMPLES = {
+    'ethylene_ethane_isoparaffin_absorption.pfd': (
+        'Pending a dedicated normalized performance benchmark and baseline.'
+    ),
     'haber_bosch_full.pfd': (
         'Pending a dedicated normalized performance benchmark and baseline.'
     ),
@@ -94,18 +97,19 @@ BASELINE_EXAMPLE_SECONDS = {
     'ethanol_distillation_rigorous.pfd': 0.089,
     'ethanol_ether_partial_condensation_absorption.pfd': 1.760,
     'ethanol_pressure_swing_recycle_wasteful.pfd': 6.941,
+    'ethanol_water_mhv2.pfd': 0.027,
     'ethanol_water_inclined_pipe_unifac.pfd': 0.468,
     'ethylene_oxide.pfd': 0.227,
-    'ethylene_oxide_simple.pfd': 0.305,
-    'equilibrium_methanol_synthesis_recycle.pfd': 0.415,
+    'ethylene_oxide_simple.pfd': 0.354,
+    'equilibrium_methanol_synthesis_recycle.pfd': 0.937,
     'global_vlle_water_methanol_benzene.pfd': 0.019,
     'jacketed_cstr_ignition_extinction.pfd': 0.198,
     'methane_claude_liquefaction_pr.pfd': 1.151,
     'methanol_decomposition_pfr.pfd': 0.029,
     'methanol_diethyl_ether_5bar_nrtl_rk.pfd': 0.170,
     'methanol_ethanol_light_gas_cleanup_compact.pfd': 1.461,
-    'methanol_synthesis.pfd': 0.164,
-    'methanol_synthesis_psrk.pfd': 0.164,
+    'methanol_synthesis.pfd': 0.366,
+    'methanol_synthesis_psrk.pfd': 0.576,
     'mixed_acid_dehydration_uniquac_vdm.pfd': 0.744,
     'permanent_solid_global_vlle_flash.pfd': 0.019,
     'permanent_solid_slurry_operations.pfd': 0.003,

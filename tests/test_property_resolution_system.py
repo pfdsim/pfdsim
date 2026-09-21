@@ -1057,6 +1057,72 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertIsNone(stored.Hvap)
         self.assertNotIn('Hvap', stored.property_sources)
 
+    def test_hvap_acid_classification_caches_conclusive_structure(self):
+        resolver = PropertyResolver()
+        with patch(
+            'vapor_dimerization.is_monocarboxylic_acid',
+            side_effect=AssertionError('identifier fallback must not run'),
+        ):
+            self.assertFalse(resolver._hvap_is_carboxylic_acid(
+                'ethanol fixture',
+                {'smiles': 'CCO'},
+                allow_online=False,
+            ))
+            self.assertFalse(resolver._hvap_is_carboxylic_acid(
+                'ethanol alias fixture',
+                {'smiles': 'OCC'},
+                allow_online=False,
+            ))
+
+        self.assertIn(('smiles', 'CCO'), resolver._hvap_carboxylic_acid_cache)
+        self.assertFalse(
+            resolver._hvap_carboxylic_acid_cache[('smiles', 'CCO')]
+        )
+
+    def test_hvap_acid_classification_caches_identity_fallback(self):
+        resolver = PropertyResolver()
+        props = {'CAS': '64-19-7'}
+        with patch(
+            'vapor_dimerization.is_monocarboxylic_acid',
+            return_value=True,
+        ) as classify:
+            self.assertTrue(resolver._hvap_is_carboxylic_acid(
+                'acetic acid fixture',
+                props,
+                allow_online=False,
+            ))
+            first_call_count = classify.call_count
+            self.assertGreater(first_call_count, 0)
+            self.assertTrue(resolver._hvap_is_carboxylic_acid(
+                'different acetic acid alias',
+                props,
+                allow_online=False,
+            ))
+            self.assertEqual(classify.call_count, first_call_count)
+
+    def test_hvap_acid_classification_uses_conclusive_formula(self):
+        resolver = PropertyResolver()
+        with patch(
+            'vapor_dimerization.is_monocarboxylic_acid',
+            side_effect=AssertionError('identifier fallback must not run'),
+        ):
+            self.assertFalse(resolver._hvap_is_carboxylic_acid(
+                'ethylene oxide fixture',
+                {'formula': 'C2H4O'},
+                allow_online=False,
+            ))
+
+        with patch(
+            'vapor_dimerization.is_monocarboxylic_acid',
+            return_value=True,
+        ) as classify:
+            self.assertTrue(resolver._hvap_is_carboxylic_acid(
+                'possible acid fixture',
+                {'formula': 'C2H4O2'},
+                allow_online=False,
+            ))
+            self.assertGreater(classify.call_count, 0)
+
     def test_unscaled_trouton_uses_tb_quality_everywhere(self):
         resolver = PropertyResolver()
         props = {

@@ -20,6 +20,11 @@ from .base import PropertyResolverBase
 from .cache_expiration import runtime_cache_row_is_fresh
 from .organic_classification import hydrogen_bond_donor_profile
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..compound_identity import parse_formula_counts
+else:
+    from compound_identity import parse_formula_counts
+
 
 class PhaseChangeMixin:
         PHASE_POINT_CACHE_VERSION = 16
@@ -1364,11 +1369,78 @@ class PhaseChangeMixin:
                 smiles_result
                 or self._smiles_result_for_boiling_point(props)
             )
-            profile = hydrogen_bond_donor_profile(
-                str(smiles_result.value)
-            ) if smiles_result is not None and smiles_result.value else None
-            if profile and profile.carboxylic_acid_oh:
-                return True
+            cache = self._hvap_carboxylic_acid_cache
+            explicit_smiles = (
+                str(smiles_result.value).strip()
+                if smiles_result is not None and smiles_result.value
+                else ''
+            )
+            if explicit_smiles:
+                raw_smiles_key = ('smiles_raw', explicit_smiles)
+                if raw_smiles_key in cache:
+                    return cache[raw_smiles_key]
+                canonical_smiles = None
+                try:
+                    from rdkit import Chem
+
+                    molecule = Chem.MolFromSmiles(explicit_smiles)
+                    if molecule is not None:
+                        canonical_smiles = Chem.MolToSmiles(
+                            molecule,
+                            isomericSmiles=True,
+                        )
+                except Exception:
+                    canonical_smiles = None
+                if canonical_smiles is not None:
+                    canonical_smiles_key = ('smiles', canonical_smiles)
+                    if canonical_smiles_key in cache:
+                        result = cache[canonical_smiles_key]
+                        cache[raw_smiles_key] = result
+                        return result
+                    profile = hydrogen_bond_donor_profile(explicit_smiles)
+                    if profile is not None:
+                        result = bool(profile.carboxylic_acid_oh)
+                        cache[canonical_smiles_key] = result
+                        cache[raw_smiles_key] = result
+                        return result
+
+            formula = str(
+                props.get('formula')
+                or props.get('Formula')
+                or symbol
+                or ''
+            ).strip()
+            formula_counts = parse_formula_counts(formula) if formula else None
+            formula_key = (
+                (
+                    'formula_nonacid',
+                    tuple(sorted(formula_counts.items())),
+                )
+                if formula_counts
+                else None
+            )
+            if formula_key is not None and formula_key in cache:
+                return cache[formula_key]
+            if formula_counts and (
+                formula_counts.get('C', 0) < 1
+                or formula_counts.get('H', 0) < 1
+                or formula_counts.get('O', 0) < 2
+            ):
+                cache[formula_key] = False
+                return False
+
+            cas = str(props.get('CAS') or props.get('cas') or '').strip()
+            candidates = tuple(
+                str(identifier)
+                for identifier in self._identifier_candidates(symbol, props)
+            )
+            identity_key = (
+                ('cas', cas.lower())
+                if cas
+                else ('identifiers', candidates, explicit_smiles)
+            )
+            if identity_key in cache:
+                return cache[identity_key]
             try:
                 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
                     from ..vapor_dimerization import is_monocarboxylic_acid
@@ -1376,20 +1448,17 @@ class PhaseChangeMixin:
                     from vapor_dimerization import is_monocarboxylic_acid
             except ImportError:
                 return False
-            explicit_smiles = (
-                str(smiles_result.value)
-                if smiles_result is not None and smiles_result.value
-                else None
-            )
-            for identifier in self._identifier_candidates(symbol, props):
+            for identifier in candidates:
                 try:
                     if is_monocarboxylic_acid(
                         str(identifier),
-                        smiles=explicit_smiles,
+                        smiles=explicit_smiles or None,
                     ):
+                        cache[identity_key] = True
                         return True
                 except (ArithmeticError, LookupError, TypeError, ValueError):
                     continue
+            cache[identity_key] = False
             return False
 
 

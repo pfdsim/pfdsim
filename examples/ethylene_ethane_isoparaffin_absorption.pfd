@@ -1,0 +1,49 @@
+# Ethylene/ethane absorption into a mixed C6 solvent using RKSMHV2.
+
+PROCESS: Ethylene-Ethane Absorption into Mixed C6 Solvent
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: RKSMHV2
+DESCRIPTION: An isothermal equilibrium-stage absorber contacts a 4:1 ethylene/ethane gas with a solvent containing 20 mol% ethanol and a 70/20/10 ratio of hexane, 2-methylpentane, and 3-methylpentane in the remaining C6 fraction.
+
+COMPONENTS:
+    ethylene         | Ethylene         | CAS=74-85-1
+    ethane           | Ethane           | CAS=74-84-0
+    hexane           | n-Hexane         | CAS=110-54-3
+    2-methylpentane  | 2-Methylpentane  | CAS=107-83-5
+    3-methylpentane  | 3-Methylpentane  | CAS=96-14-0
+    ethanol          | Ethanol          | CAS=64-17-5
+
+STREAM Olefin-Gas : FEED -> ABS-100.gas
+    T = 40 [C]
+    P = 10 [bar]
+    F = 100 [kmol/h]
+    x = ethylene:0.80, ethane:0.20
+
+STREAM Lean-Solvent : FEED -> ABS-100.solvent
+    T = 25 [C]
+    P = 10 [bar]
+    F = 300 [kmol/h]
+    x = hexane:0.56, 2-methylpentane:0.16, 3-methylpentane:0.08, ethanol:0.20
+
+STREAM Treated-Gas : ABS-100.gas_out -> PRODUCT
+STREAM Rich-Solvent : ABS-100.liquid_out -> PRODUCT
+
+UNIT ABS-100 : RigorousAbsorber
+    N_stages = 8
+    mode = isothermal
+    T = 30 [C]
+    P = 10 [bar]
+    P_drop_per_stage = 0
+    henry_components = none
+    mesh_tolerance = 1e-7
+    max_iterations = 120
+
+# Expected behavior:
+# - The eight-stage absorber removes about 63% of the ethylene and 89% of the
+#   ethane from the feed gas.
+# - The treated-gas flow is about 32.8 kmol/h; the rich-solvent flow is about
+#   367.2 kmol/h.
+# - About 0.57% of the feed ethanol leaves with the treated gas, whose ethanol
+#   mole fraction is about 1.04%.
+# - Ethane is absorbed more strongly than ethylene under these conditions.
