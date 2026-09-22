@@ -2883,6 +2883,115 @@ class UnitOperationSmokeTests(unittest.TestCase):
         self.assertAlmostEqual(outlet.T, target.T, places=8)
         self.assertAlmostEqual(outlet.H, target.H, places=7)
 
+    def test_direct_ph_preserves_legacy_signature(self):
+        state = SimpleNamespace(T=400.0, H=100.0, fluid_vapor_fraction=1.0)
+        thermo = SimpleNamespace(
+            components=['N2'],
+            calculate_state_PH=lambda P, H, F, composition: state,
+        )
+        solver = basic_ops._ThermoStateSolver(thermo, 'legacy PH')
+        self.assertIs(
+            solver.state_at_enthalpy(
+                1.0, 1.0, {'N2': 1.0}, 100.0, 300.0, force_phase='vapor',
+            )[0],
+            state,
+        )
+
+    def test_direct_ph_respects_temperature_bounds(self):
+        outside = SimpleNamespace(T=600.0, H=100.0, fluid_vapor_fraction=1.0)
+        inside = SimpleNamespace(T=400.0, H=100.0, fluid_vapor_fraction=1.0)
+        thermo = SimpleNamespace(
+            components=['N2'], calculate_state_PH=lambda *args, **kwargs: outside,
+        )
+        solver = basic_ops._ThermoStateSolver(thermo, 'bounded PH')
+        with patch.object(solver, '_newton_temperature_for_enthalpy', return_value=400.0) as fallback:
+            with patch.object(solver, '_calculate_trial_state', return_value=inside):
+                state, residual = solver.state_at_enthalpy(
+                    1.0, 1.0, {'N2': 1.0}, 100.0, 300.0,
+                    force_phase='vapor', T_bounds=(300.0, 500.0),
+                )
+        self.assertIs(state, inside)
+        self.assertEqual(residual, 0.0)
+        fallback.assert_called_once()
+
+    def test_temperature_ph_falls_back_for_invalid_results(self):
+        for result in ((400.0, 100.0), (float('nan'), 0.0), (-1.0, 0.0)):
+            with self.subTest(result=result):
+                thermo = SimpleNamespace(
+                    components=['N2'], temperature_at_PH=lambda *args, **kwargs: result,
+                )
+                solver = basic_ops._ThermoStateSolver(thermo, 'fallback PH')
+                with patch.object(
+                    solver, 'state_at_enthalpy',
+                    return_value=(SimpleNamespace(T=500.0), 0.0),
+                ) as fallback:
+                    self.assertEqual(solver.temperature_at_enthalpy(
+                        1.0, 1.0, {'N2': 1.0}, 100.0, 300.0, force_phase='vapor',
+                    ), (500.0, 0.0))
+                fallback.assert_called_once()
+                self.assertEqual(solver._ph_predictor_count, 0)
+
+    def test_direct_ph_uses_online_projected_secant_seed(self):
+        thermo = create_thermodynamics(['N2', 'H2'], 'RKS-BM')
+        composition = {'N2': 0.25, 'H2': 0.75}
+        solver = basic_ops._ThermoStateSolver(thermo, 'secant fixture')
+        seeds = []
+        direct_ph = thermo.calculate_state_PH
+
+        def record_seed(
+            P,
+            H,
+            F,
+            composition,
+            include=None,
+            *,
+            phase=None,
+            T_guess=None,
+        ):
+            seeds.append(T_guess)
+            return direct_ph(
+                P,
+                H,
+                F,
+                composition,
+                include=include,
+                phase=phase,
+                T_guess=T_guess,
+            )
+
+        thermo.calculate_state_PH = record_seed
+        targets = [
+            thermo.calculate_state(
+                temperature,
+                100.0,
+                1.0,
+                composition,
+                phase='vapor',
+                flash=False,
+                include=('H',),
+            )
+            for temperature in (600.0, 610.0, 620.0)
+        ]
+        recovered = [
+            solver.state_at_enthalpy(
+                100.0,
+                1.0,
+                composition,
+                target.H,
+                500.0,
+                force_phase='vapor',
+                include=('H',),
+            )[0]
+            for target in targets
+        ]
+
+        self.assertEqual(seeds[0], 500.0)
+        self.assertAlmostEqual(seeds[1], 600.0, places=8)
+        self.assertLess(abs(seeds[2] - 620.0), 0.1)
+        for state, target in zip(recovered, targets):
+            self.assertAlmostEqual(state.T, target.T, places=8)
+            self.assertAlmostEqual(state.H, target.H, places=7)
+
     def test_methanol_water_shortcut_and_cmo_distillation_respect_specs(self):
         thermo = create_thermodynamics(['CH3OH', 'H2O'], 'UNIFAC')
         methanol_moles = 300.0 / thermo.props['CH3OH'].MW

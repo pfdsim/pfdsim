@@ -3,6 +3,7 @@ Basic stream handling, pressure-change, heat-transfer, and flash unit operations
 """
 
 import math
+import inspect
 
 from scipy.optimize import brentq
 
@@ -61,6 +62,120 @@ class _ThermoStateSolver:
     def __init__(self, thermo, unit_label: str):
         self.thermo = thermo
         self.unit_label = unit_label
+        self._ph_predictor_count = 0
+        self._ph_predictor_mean = None
+        self._ph_predictor_m2 = None
+        self._ph_predictor_history = []
+        self._ph_predictor_phase = None
+
+    def _reset_ph_predictor(self, phase: str | None) -> None:
+        self._ph_predictor_count = 0
+        self._ph_predictor_mean = None
+        self._ph_predictor_m2 = None
+        self._ph_predictor_history = []
+        self._ph_predictor_phase = phase
+
+    def _ph_predictor_feature(
+        self,
+        P: float,
+        H_target: float,
+        composition: dict,
+    ) -> tuple[float, ...]:
+        return (
+            float(H_target),
+            math.log(max(float(P), 1.0e-300)),
+            *(
+                float(composition.get(component, 0.0))
+                for component in self.thermo.components
+            ),
+        )
+
+    def _ph_predictor_seed(
+        self,
+        feature: tuple[float, ...],
+        fallback: float,
+    ) -> float:
+        history = self._ph_predictor_history
+        if not history:
+            return float(fallback)
+        if len(history) == 1:
+            return float(history[-1][1])
+        count = self._ph_predictor_count
+        scale = []
+        floors = (100.0, 0.01, *([1.0e-4] * len(self.thermo.components)))
+        for index, floor in enumerate(floors):
+            variance = (
+                self._ph_predictor_m2[index] / max(count - 1, 1)
+                if self._ph_predictor_m2 is not None
+                else 0.0
+            )
+            scale.append(max(math.sqrt(max(variance, 0.0)), floor))
+        older_feature, older_temperature = history[-2]
+        previous_feature, previous_temperature = history[-1]
+        previous_delta = tuple(
+            (new - old) / item_scale
+            for new, old, item_scale in zip(
+                previous_feature,
+                older_feature,
+                scale,
+            )
+        )
+        current_delta = tuple(
+            (new - old) / item_scale
+            for new, old, item_scale in zip(
+                feature,
+                previous_feature,
+                scale,
+            )
+        )
+        denominator = sum(value * value for value in previous_delta)
+        factor = (
+            0.0
+            if denominator <= 1.0e-20
+            else sum(
+                current * previous
+                for current, previous in zip(current_delta, previous_delta)
+            ) / denominator
+        )
+        prediction = previous_temperature + factor * (
+            previous_temperature - older_temperature
+        )
+        maximum_jump = max(
+            10.0,
+            3.0 * abs(previous_temperature - older_temperature),
+        )
+        return max(
+            1.0,
+            min(
+                5000.0,
+                max(
+                    previous_temperature - maximum_jump,
+                    min(previous_temperature + maximum_jump, prediction),
+                ),
+            ),
+        )
+
+    def _update_ph_predictor(
+        self,
+        feature: tuple[float, ...],
+        temperature: float,
+    ) -> None:
+        count = self._ph_predictor_count
+        if count == 0:
+            self._ph_predictor_mean = list(feature)
+            self._ph_predictor_m2 = [0.0] * len(feature)
+        else:
+            new_count = count + 1
+            for index, value in enumerate(feature):
+                delta = value - self._ph_predictor_mean[index]
+                self._ph_predictor_mean[index] += delta / new_count
+                self._ph_predictor_m2[index] += delta * (
+                    value - self._ph_predictor_mean[index]
+                )
+        self._ph_predictor_count = count + 1
+        self._ph_predictor_history.append((feature, float(temperature)))
+        if len(self._ph_predictor_history) > 2:
+            self._ph_predictor_history.pop(0)
 
     def _calculate_trial_state(self, T: float, P: float, F: float,
                                composition: dict, include,
@@ -107,27 +222,113 @@ class _ThermoStateSolver:
 
     def _direct_state_at_enthalpy(self, P: float, F: float, composition: dict,
                                   H_target: float, force_phase: str | None,
-                                  include=None) -> StreamState | None:
+                                  include=None,
+                                  T_guess: float | None = None) -> StreamState | None:
         solver = getattr(self.thermo, 'calculate_state_PH', None)
         if solver is None:
             return None
         solver_include = self._include_with(include, 'H')
-        try:
-            state = solver(P, H_target, F, composition, include=solver_include)
-        except TypeError:
+        if force_phase != self._ph_predictor_phase:
+            self._reset_ph_predictor(force_phase)
+        feature = self._ph_predictor_feature(P, H_target, composition)
+        predictor_seed = self._ph_predictor_seed(
+            feature,
+            T_guess if T_guess is not None else 298.15,
+        )
+        supported_keywords = getattr(self, '_direct_ph_keywords', None)
+        if supported_keywords is None:
             try:
-                state = solver(P, H_target, F, composition)
-            except Exception:
-                return None
+                parameters = inspect.signature(solver).parameters
+                accepts_keywords = any(
+                    parameter.kind == inspect.Parameter.VAR_KEYWORD
+                    for parameter in parameters.values()
+                )
+                supported_keywords = {
+                    name for name in ('include', 'phase', 'T_guess')
+                    if accepts_keywords or (
+                        name in parameters
+                        and parameters[name].kind != inspect.Parameter.POSITIONAL_ONLY
+                    )
+                }
+            except (TypeError, ValueError):
+                supported_keywords = {'include'}
+            self._direct_ph_keywords = supported_keywords
+        keywords = {
+            'include': solver_include,
+            'phase': force_phase,
+            'T_guess': predictor_seed,
+        }
+        try:
+            state = solver(
+                P, H_target, F, composition,
+                **{key: value for key, value in keywords.items()
+                   if key in supported_keywords},
+            )
         except (NotImplementedError, AttributeError):
             return None
         except Exception:
             return None
-        if state.H is None:
+        if (
+            state.H is None
+            or not math.isfinite(state.T)
+            or state.T <= 0.0
+            or not math.isfinite(state.H)
+            or abs(state.H - H_target) > self._property_tolerance(H_target)
+        ):
             return None
         if not self._direct_state_compatible(state, force_phase):
             return None
+        self._update_ph_predictor(feature, state.T)
         return state
+
+    def temperature_at_enthalpy(
+        self,
+        P: float,
+        F: float,
+        composition: dict,
+        H_target: float,
+        T_guess: float,
+        force_phase: str | None = None,
+    ) -> tuple[float, float]:
+        """Solve PH for temperature without constructing a full stream state."""
+        solver = getattr(self.thermo, 'temperature_at_PH', None)
+        if callable(solver):
+            if force_phase != self._ph_predictor_phase:
+                self._reset_ph_predictor(force_phase)
+            feature = self._ph_predictor_feature(P, H_target, composition)
+            predictor_seed = self._ph_predictor_seed(feature, T_guess)
+            try:
+                temperature, residual = solver(
+                    P,
+                    H_target,
+                    composition,
+                    phase=force_phase,
+                    T_guess=predictor_seed,
+                )
+                temperature = float(temperature)
+                residual = float(residual)
+                if (
+                    math.isfinite(temperature) and temperature > 0.0
+                    and math.isfinite(residual)
+                    and abs(residual) <= self._property_tolerance(H_target)
+                ):
+                    self._update_ph_predictor(feature, temperature)
+                    return temperature, residual
+            except (NotImplementedError, AttributeError):
+                pass
+            except Exception:
+                pass
+
+        state, residual = self.state_at_enthalpy(
+            P,
+            F,
+            composition,
+            H_target,
+            T_guess,
+            force_phase=force_phase,
+            include=('H',),
+        )
+        return float(state.T), float(residual)
 
     def _pure_saturation_temperature(self, comp: str, P: float,
                                      composition: dict, T_guess: float) -> float | None:
@@ -1034,9 +1235,18 @@ class _ThermoStateSolver:
                           T_bounds: tuple[float, float] | None = None
                           ) -> tuple[StreamState, float]:
         direct = self._direct_state_at_enthalpy(
-            P, F, composition, H_target, force_phase, include=include
+            P,
+            F,
+            composition,
+            H_target,
+            force_phase,
+            include=include,
+            T_guess=T_guess,
         )
-        if direct is not None:
+        if direct is not None and (
+            T_bounds is None
+            or min(T_bounds) <= direct.T <= max(T_bounds)
+        ):
             return direct, (direct.H or 0.0) - H_target
 
         if force_phase is None:

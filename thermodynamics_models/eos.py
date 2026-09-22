@@ -8,6 +8,7 @@ else:
 
 from .common import (
     P_REF,
+    T_REF,
     ThermodynamicsError,
     _solve_bubble_point_temperature,
     _solve_dew_point_temperature,
@@ -377,6 +378,91 @@ class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
                 affects_result=True,
             )
         self.extend_warnings(getattr(self.cubic, 'warnings', []))
+
+    def _compiled_pressure_enthalpy_backend(self):
+        state = getattr(self, '_compiled_pressure_enthalpy_state', None)
+        cubic_backend = self.cubic._compiled_backend
+        if state is not None and state[0] is cubic_backend:
+            return state[1]
+        try:
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from ..compiled_cubic_ph import CompiledCubicPHBackend
+            else:
+                from compiled_cubic_ph import CompiledCubicPHBackend
+
+            backend = CompiledCubicPHBackend.from_thermo(self)
+        except Exception:
+            backend = None
+        self._compiled_pressure_enthalpy_state = cubic_backend, backend
+        return backend
+
+    def calculate_state_PH(
+        self,
+        P: float,
+        H: float,
+        F: float,
+        composition: dict[str, float],
+        include: Optional[Union[str, Iterable[str]]] = None,
+        *,
+        phase: Optional[str] = None,
+        T_guess: Optional[float] = None,
+    ) -> StreamState:
+        """Direct homogeneous PH state using compact compiled EOS properties."""
+        temperature, _residual = self.temperature_at_PH(
+            P,
+            H,
+            composition,
+            phase=phase,
+            T_guess=T_guess,
+        )
+        normalized = self.cubic._normalized_composition(composition)
+        phase_name = str(phase).strip().lower()
+        if phase_name == 'gas':
+            phase_name = 'vapor'
+        return self.calculate_state(
+            temperature,
+            P,
+            F,
+            normalized,
+            phase=phase_name,
+            flash=False,
+            include=include,
+        )
+
+    def temperature_at_PH(
+        self,
+        P: float,
+        H: float,
+        composition: dict[str, float],
+        *,
+        phase: Optional[str] = None,
+        T_guess: Optional[float] = None,
+    ) -> tuple[float, float]:
+        """Return homogeneous PH temperature and enthalpy residual."""
+        phase_name = str(phase or '').strip().lower()
+        if phase_name == 'gas':
+            phase_name = 'vapor'
+        if phase_name not in {'liquid', 'vapor'}:
+            raise NotImplementedError(
+                'direct cubic-EOS PH requires an explicit homogeneous phase'
+            )
+        backend = self._compiled_pressure_enthalpy_backend()
+        if backend is None:
+            raise NotImplementedError(
+                'direct cubic-EOS PH requires compatible compiled Cp and EOS backends'
+            )
+        normalized = self.cubic._normalized_composition(composition)
+        values = [normalized[component] for component in self.components]
+        seed = float(T_guess) if T_guess is not None else T_REF
+        temperature, residual, _evaluations, converged = (
+            backend.solve_temperature(P, H, values, seed, phase_name)
+        )
+        if not converged:
+            raise ThermodynamicsError(
+                'compiled cubic-EOS PH temperature solve did not converge; '
+                f'last residual {residual:.6g} kJ/kmol'
+            )
+        return float(temperature), float(residual)
 
     def compressibility_factor(self, T: float, P: float,
                                 composition: dict[str, float],

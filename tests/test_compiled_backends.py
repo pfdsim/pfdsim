@@ -110,6 +110,7 @@ class CompiledBackendTests(unittest.TestCase):
             _cubic_mixture_numba,
             _cubic_phi_phi_k_numba,
             _cubic_roots_state_numba,
+            _interaction_parameters_numba,
         )
 
         simulator = Simulator.from_file(
@@ -125,6 +126,7 @@ class CompiledBackendTests(unittest.TestCase):
             _cubic_departure_enthalpy_numba,
             _cubic_departure_entropy_numba,
             _cubic_phi_phi_k_numba,
+            _interaction_parameters_numba,
         )
         before = tuple(tuple(dispatcher.signatures) for dispatcher in dispatchers)
         self.assertTrue(all(before))
@@ -134,6 +136,188 @@ class CompiledBackendTests(unittest.TestCase):
         after = tuple(tuple(dispatcher.signatures) for dispatcher in dispatchers)
         self.assertTrue(result.converged, result.errors)
         self.assertEqual(after, before)
+
+    def test_compiled_eos_interaction_policy_matches_python_selection(self):
+        simulator = Simulator.from_file(
+            os.path.join(ROOT, 'examples', 'haber_bosch_full.pfd')
+        )
+        simulator.initialize()
+        eos = simulator.thermo.cubic
+        backend = eos._compiled_backend
+        if backend is None:
+            self.skipTest('Compiled cubic EOS backend is unavailable')
+
+        for temperature in (65.0, 90.0, 110.0, 150.0, 600.0):
+            with self.subTest(temperature=temperature):
+                expected_kij = eos._pair_kij_values(temperature)
+                expected_derivative = eos._pair_dkij_dT_values(temperature)
+                compiled_kij, compiled_derivative = backend._interactions(
+                    temperature,
+                    None,
+                )
+                self.assertEqual(
+                    tuple(compiled_kij.ravel()),
+                    expected_kij,
+                )
+                self.assertEqual(
+                    tuple(compiled_derivative.ravel()),
+                    expected_derivative,
+                )
+
+    def test_interaction_median_derivative_tracks_selected_values(self):
+        for coefficients in (
+            ((-0.2, 0.001), (-0.4, 0.002), (0.3, 0.0)),
+            ((-0.2, 0.001), (-0.4, 0.002), (0.3, 0.0), (0.4, 0.0)),
+        ):
+            thermo = create_thermodynamics(['N2', 'H2'], 'PR', interaction_overrides=[
+                dict(component1='N2', component2='H2', model='PR', kij_a=a, kij_c=c)
+                for a, c in coefficients
+            ])
+            eos = thermo.cubic
+            delta = 1.0e-3
+            expected = (eos._kij('N2', 'H2', 300.0 + delta)
+                        - eos._kij('N2', 'H2', 300.0 - delta)) / (2.0 * delta)
+            self.assertAlmostEqual(eos._dkij_dT('N2', 'H2', 300.0), expected, places=10)
+            backend = eos._compiled_backend
+            self.assertIsNotNone(backend)
+            _, derivatives = backend._interactions(300.0, None)
+            self.assertAlmostEqual(derivatives[0, 1], expected, places=10)
+
+    def test_compiled_cubic_ph_matches_properties_and_recovers_temperature(self):
+        thermo = create_thermodynamics(
+            ['N2', 'H2', 'NH3'],
+            'RKS-BM',
+        )
+        backend = thermo._compiled_pressure_enthalpy_backend()
+        if backend is None:
+            self.skipTest('Compiled cubic PH backend is unavailable')
+        composition = {'N2': 0.21, 'H2': 0.63, 'NH3': 0.16}
+        values = [composition[component] for component in thermo.components]
+        temperature = 650.0
+        pressure = 100.0
+
+        for phase in ('liquid', 'vapor'):
+            with self.subTest(phase=phase):
+                expected_h = thermo.mixture_enthalpy(
+                    composition,
+                    temperature,
+                    1.0 if phase == 'vapor' else 0.0,
+                    P=pressure,
+                )
+                expected_cp = thermo.mixture_Cp(
+                    composition,
+                    temperature,
+                    1.0 if phase == 'vapor' else 0.0,
+                    pressure,
+                )
+                actual_h, actual_cp = backend.enthalpy_cp(
+                    temperature,
+                    pressure,
+                    values,
+                    phase,
+                )
+                self.assertAlmostEqual(actual_h, expected_h, places=8)
+                self.assertAlmostEqual(actual_cp, expected_cp, places=8)
+                recovered = thermo.calculate_state_PH(
+                    pressure,
+                    expected_h,
+                    1.0,
+                    composition,
+                    phase=phase,
+                    T_guess=500.0,
+                    include=('H', 'Cp'),
+                )
+                self.assertAlmostEqual(recovered.T, temperature, places=8)
+                self.assertAlmostEqual(recovered.H, expected_h, places=7)
+
+    def test_compiled_cubic_ph_supports_all_analytic_cp_kernel_forms(self):
+        from property_resolution.ideal_gas_cp import (
+            AffineIdealGasCpKernel,
+            PiecewiseIdealGasCpKernel,
+            PolynomialCpKernel,
+            ShomateCpKernel,
+        )
+
+        thermo = create_thermodynamics(
+            ['N2', 'H2', 'NH3', 'CH4'],
+            'RKS-BM',
+        )
+
+        def common(method, Tmin=200.0, Tmax=800.0):
+            return {
+                'Tmin': Tmin,
+                'Tmax': Tmax,
+                'quality': 0.9,
+                'source': 'compiled PH test',
+                'method': method,
+            }
+
+        first_piece = AffineIdealGasCpKernel(
+            **common('piece one', Tmax=500.0),
+            base_kernel=PolynomialCpKernel(
+                **common('wider base'), coefficients=(30.0,),
+            ),
+        )
+        second_piece = PolynomialCpKernel(
+            **common('piece two', Tmin=500.0),
+            coefficients=(25.0, 0.01),
+        )
+        base = PolynomialCpKernel(
+            **common('affine base'),
+            coefficients=(25.0,),
+        )
+        thermo._ideal_gas_cp_kernels = {
+            'N2': PolynomialCpKernel(
+                **common('polynomial'),
+                coefficients=(28.0, 0.01),
+            ),
+            'H2': ShomateCpKernel(
+                **common('shomate'),
+                coefficients=(30.0, 2.0, -0.5, 0.1, 0.02),
+            ),
+            'NH3': AffineIdealGasCpKernel(
+                **common('affine'),
+                base_kernel=base,
+                intercept=5.0,
+                scale_factor=1.1,
+            ),
+            'CH4': PiecewiseIdealGasCpKernel(
+                **common('piecewise'),
+                segments=(first_piece, second_piece),
+            ),
+        }
+        thermo._compiled_pressure_enthalpy_state = None
+        backend = thermo._compiled_pressure_enthalpy_backend()
+        self.assertIsNotNone(backend)
+        composition = {
+            'N2': 0.25,
+            'H2': 0.25,
+            'NH3': 0.25,
+            'CH4': 0.25,
+        }
+        values = [composition[component] for component in thermo.components]
+        for temperature in (150.0, 350.0, 650.0, 850.0):
+            with self.subTest(temperature=temperature):
+                expected_h = thermo.mixture_enthalpy(
+                    composition,
+                    temperature,
+                    1.0,
+                    P=50.0,
+                )
+                expected_cp = thermo.mixture_Cp(
+                    composition,
+                    temperature,
+                    1.0,
+                    50.0,
+                )
+                actual_h, actual_cp = backend.enthalpy_cp(
+                    temperature,
+                    50.0,
+                    values,
+                    'vapor',
+                )
+                self.assertAlmostEqual(actual_h, expected_h, places=8)
+                self.assertAlmostEqual(actual_cp, expected_cp, places=8)
 
     def test_compiled_constrained_vle_candidate_matches_reference_at_endpoints(self):
         cases = (

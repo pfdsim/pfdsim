@@ -9,8 +9,10 @@ import numpy as np
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .physical_constants import R_BAR_CM3_MOL_K
+    from .interaction_parameters import EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K
 else:
     from physical_constants import R_BAR_CM3_MOL_K
+    from interaction_parameters import EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K
 
 try:
     from numba import njit, typeof
@@ -28,6 +30,103 @@ ALPHA_PRSV2 = 4
 ALPHA_TWU = 5
 ALPHA_REDLICH_KWONG = 6
 ALPHA_RKSMHV2_MATHIAS_COPEMAN = 7
+
+
+def _interaction_record_coefficients(record):
+    if any(key in record for key in ('kij_a', 'kij_b', 'kij_c')):
+        return (
+            float(record.get('kij_a', 0.0)),
+            float(record.get('kij_b', 0.0)),
+            float(record.get('kij_c', 0.0)),
+        )
+    return float(record.get('kij', 0.0)), 0.0, 0.0
+
+
+def _compiled_interaction_plan(eos):
+    """Encode authoritative EOS interaction selection as fixed numeric arrays."""
+    pair_keys = tuple(eos._pair_keys)
+    pair_count = len(pair_keys)
+    maximum_override_ranged = max(
+        (len(eos._override_temperature_kij.get(key, ())) for key in pair_keys),
+        default=0,
+    )
+    maximum_override_static = max(
+        (len(eos._override_static_kij.get(key, ())) for key in pair_keys),
+        default=0,
+    )
+    maximum_database_ranged = max(
+        (len(eos._temperature_kij.get(key, ())) for key in pair_keys),
+        default=0,
+    )
+    override_ranged_count = np.zeros(pair_count, dtype=np.int64)
+    override_ranged = np.zeros(
+        (pair_count, max(1, maximum_override_ranged), 5),
+        dtype=np.float64,
+    )
+    override_static_count = np.zeros(pair_count, dtype=np.int64)
+    override_static = np.zeros(
+        (pair_count, max(1, maximum_override_static), 3),
+        dtype=np.float64,
+    )
+    database_ranged_count = np.zeros(pair_count, dtype=np.int64)
+    database_ranged = np.zeros(
+        (pair_count, max(1, maximum_database_ranged), 3),
+        dtype=np.float64,
+    )
+    database_has_static = np.zeros(pair_count, dtype=np.int64)
+    database_static = np.zeros(pair_count, dtype=np.float64)
+
+    for pair_index, key in enumerate(pair_keys):
+        ranged_overrides = eos._override_temperature_kij.get(key, ())
+        override_ranged_count[pair_index] = len(ranged_overrides)
+        for record_index, record in enumerate(ranged_overrides):
+            coefficients = _interaction_record_coefficients(record)
+            low, high = record['temperature_range']
+            override_ranged[pair_index, record_index, :3] = coefficients
+            override_ranged[pair_index, record_index, 3:] = float(low), float(high)
+
+        static_overrides = eos._override_static_kij.get(key, ())
+        override_static_count[pair_index] = len(static_overrides)
+        for record_index, record in enumerate(static_overrides):
+            override_static[pair_index, record_index, :] = (
+                _interaction_record_coefficients(record)
+            )
+
+        ranged_database = eos._temperature_kij.get(key, ())
+        database_ranged_count[pair_index] = len(ranged_database)
+        for record_index, record in enumerate(ranged_database):
+            value, low, high = record
+            database_ranged[pair_index, record_index, :] = (
+                float(value), float(low), float(high)
+            )
+        if key in eos._static_kij:
+            database_has_static[pair_index] = 1
+            database_static[pair_index] = float(eos._static_kij[key])
+
+    return (
+        override_ranged_count,
+        override_ranged,
+        override_static_count,
+        override_static,
+        database_ranged_count,
+        database_ranged,
+        database_has_static,
+        database_static,
+    )
+
+
+def _zero_interaction_plan(component_count):
+    pair_count = component_count * component_count
+    return (
+        np.zeros(pair_count, dtype=np.int64),
+        np.zeros((pair_count, 1, 5), dtype=np.float64),
+        np.zeros(pair_count, dtype=np.int64),
+        np.zeros((pair_count, 1, 3), dtype=np.float64),
+        np.zeros(pair_count, dtype=np.int64),
+        np.zeros((pair_count, 1, 3), dtype=np.float64),
+        np.ones(pair_count, dtype=np.int64),
+        np.zeros(pair_count, dtype=np.float64),
+    )
 
 
 def compiled_alpha_parameter_arrays(eos, *, mhv2: bool = False):
@@ -86,6 +185,7 @@ class CompiledCubicEOSBackend:
     c3: np.ndarray
     delta1: float
     delta2: float
+    interaction_plan: tuple
     compilation_complete: bool = False
 
     @classmethod
@@ -107,6 +207,7 @@ class CompiledCubicEOSBackend:
             c3=c3,
             delta1=float(delta1),
             delta2=float(delta2),
+            interaction_plan=_compiled_interaction_plan(eos),
         )
         backend.compile_kernels()
         return backend
@@ -134,6 +235,7 @@ class CompiledCubicEOSBackend:
             c3=np.zeros(len(params_values), dtype=np.float64),
             delta1=1.0,
             delta2=0.0,
+            interaction_plan=_zero_interaction_plan(len(params_values)),
         )
         backend.compile_kernels()
         return backend
@@ -184,6 +286,7 @@ class CompiledCubicEOSBackend:
             self.alpha_mode, self.c1, self.c2, self.c3,
             self.delta1, self.delta2,
         )
+        compile_for(_interaction_parameters_numba, 300.0, self.interaction_plan)
         self.compilation_complete = True
 
     def _arrays(self, composition, kij, dkij=None):
@@ -197,8 +300,22 @@ class CompiledCubicEOSBackend:
             dkij_array = np.asarray(dkij, dtype=np.float64).reshape(kij_array.shape)
         return x, kij_array, dkij_array
 
-    def mixture_parameters(self, T, composition, kij, dkij=None):
-        x, kij_array, dkij_array = self._arrays(composition, kij, dkij)
+    def _interactions(self, T, kij, dkij=None):
+        if kij is None:
+            return _interaction_parameters_numba(
+                float(T),
+                self.interaction_plan,
+            )
+        _, kij_array, dkij_array = self._arrays(
+            np.zeros(len(self.components), dtype=np.float64),
+            kij,
+            dkij,
+        )
+        return kij_array, dkij_array
+
+    def mixture_parameters(self, T, composition, kij=None, dkij=None):
+        x = np.asarray(composition, dtype=np.float64)
+        kij_array, dkij_array = self._interactions(T, kij, dkij)
         return _cubic_mixture_numba(
             float(T), x, kij_array, dkij_array,
             self.Tc, self.omega, self.a0, self.pure_b,
@@ -206,8 +323,9 @@ class CompiledCubicEOSBackend:
             self.delta1,
         )
 
-    def compressibility_roots(self, T, P, composition, kij):
-        x, kij_array, _ = self._arrays(composition, kij)
+    def compressibility_roots(self, T, P, composition, kij=None):
+        x = np.asarray(composition, dtype=np.float64)
+        kij_array, _ = self._interactions(T, kij)
         roots, count = _cubic_roots_state_numba(
             float(T), float(P), x, kij_array,
             self.Tc, self.omega, self.a0, self.pure_b,
@@ -216,8 +334,9 @@ class CompiledCubicEOSBackend:
         )
         return roots[:count].copy()
 
-    def fugacity_coefficients(self, T, P, composition, phase, kij):
-        x, kij_array, _ = self._arrays(composition, kij)
+    def fugacity_coefficients(self, T, P, composition, phase, kij=None):
+        x = np.asarray(composition, dtype=np.float64)
+        kij_array, _ = self._interactions(T, kij)
         phase_id = 1 if str(phase).strip().lower() == 'vapor' else 0
         return _cubic_fugacity_numba(
             float(T), float(P), x, phase_id, kij_array,
@@ -226,8 +345,11 @@ class CompiledCubicEOSBackend:
             self.delta1, self.delta2,
         )
 
-    def departure_enthalpy(self, T, P, composition, phase, kij, dkij):
-        x, kij_array, dkij_array = self._arrays(composition, kij, dkij)
+    def departure_enthalpy(
+        self, T, P, composition, phase, kij=None, dkij=None
+    ):
+        x = np.asarray(composition, dtype=np.float64)
+        kij_array, dkij_array = self._interactions(T, kij, dkij)
         phase_id = 1 if str(phase).strip().lower() == 'vapor' else 0
         return float(_cubic_departure_enthalpy_numba(
             float(T), float(P), x, phase_id, kij_array, dkij_array,
@@ -236,8 +358,11 @@ class CompiledCubicEOSBackend:
             self.delta1, self.delta2,
         ))
 
-    def departure_entropy(self, T, P, composition, phase, kij, dkij):
-        x, kij_array, dkij_array = self._arrays(composition, kij, dkij)
+    def departure_entropy(
+        self, T, P, composition, phase, kij=None, dkij=None
+    ):
+        x = np.asarray(composition, dtype=np.float64)
+        kij_array, dkij_array = self._interactions(T, kij, dkij)
         phase_id = 1 if str(phase).strip().lower() == 'vapor' else 0
         return float(_cubic_departure_entropy_numba(
             float(T), float(P), x, phase_id, kij_array, dkij_array,
@@ -246,8 +371,9 @@ class CompiledCubicEOSBackend:
             self.delta1, self.delta2,
         ))
 
-    def phi_phi_K_values(self, T, P, composition, max_iter, kij):
-        x, kij_array, _ = self._arrays(composition, kij)
+    def phi_phi_K_values(self, T, P, composition, max_iter, kij=None):
+        x = np.asarray(composition, dtype=np.float64)
+        kij_array, _ = self._interactions(T, kij)
         return _cubic_phi_phi_k_numba(
             float(T), float(P), x, int(max_iter), kij_array,
             self.Tc, self.Pc, self.omega, self.a0, self.pure_b,
@@ -257,6 +383,150 @@ class CompiledCubicEOSBackend:
 
 
 if njit is not None:
+
+    @njit(cache=True)
+    def _interaction_record_value_numba(record, T):
+        return record[0] + record[1] / T + record[2] * T
+
+
+    @njit(cache=True)
+    def _interaction_record_derivative_numba(record, T):
+        return -record[1] / (T * T) + record[2]
+
+
+    @njit(cache=True)
+    def _median_prefix_numba(values, derivatives, count):
+        ordered = values.copy()
+        ordered_derivatives = derivatives.copy()
+        for index in range(1, count):
+            value = ordered[index]
+            derivative = ordered_derivatives[index]
+            position = index
+            while position > 0 and ordered[position - 1] > value:
+                ordered[position] = ordered[position - 1]
+                ordered_derivatives[position] = ordered_derivatives[position - 1]
+                position -= 1
+            ordered[position] = value
+            ordered_derivatives[position] = derivative
+        midpoint = count // 2
+        if count % 2:
+            return ordered[midpoint], ordered_derivatives[midpoint]
+        return (
+            0.5 * (ordered[midpoint - 1] + ordered[midpoint]),
+            0.5 * (ordered_derivatives[midpoint - 1] + ordered_derivatives[midpoint]),
+        )
+
+
+    @njit(cache=True)
+    def _interaction_parameters_numba(T, plan):
+        (
+            override_ranged_count,
+            override_ranged,
+            override_static_count,
+            override_static,
+            database_ranged_count,
+            database_ranged,
+            database_has_static,
+            database_static,
+        ) = plan
+        pair_count = override_ranged_count.shape[0]
+        component_count = int(round(math.sqrt(pair_count)))
+        values = np.empty(pair_count, dtype=np.float64)
+        derivatives = np.zeros(pair_count, dtype=np.float64)
+
+        for pair_index in range(pair_count):
+            selected = -1
+            best_width = math.inf
+            for record_index in range(override_ranged_count[pair_index]):
+                low = override_ranged[pair_index, record_index, 3]
+                high = override_ranged[pair_index, record_index, 4]
+                if low == high:
+                    low -= EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K
+                    high += EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K
+                if low <= T <= high and high - low < best_width:
+                    selected = record_index
+                    best_width = high - low
+            if selected >= 0:
+                record = override_ranged[pair_index, selected, :3]
+                values[pair_index] = _interaction_record_value_numba(record, T)
+                derivatives[pair_index] = (
+                    _interaction_record_derivative_numba(record, T)
+                )
+                continue
+
+            static_count = override_static_count[pair_index]
+            if static_count:
+                static_values = np.empty(
+                    override_static.shape[1],
+                    dtype=np.float64,
+                )
+                static_derivatives = np.empty(
+                    override_static.shape[1],
+                    dtype=np.float64,
+                )
+                for record_index in range(static_count):
+                    record = override_static[pair_index, record_index, :]
+                    static_values[record_index] = (
+                        _interaction_record_value_numba(record, T)
+                    )
+                    static_derivatives[record_index] = (
+                        _interaction_record_derivative_numba(record, T)
+                    )
+                values[pair_index], derivatives[pair_index] = _median_prefix_numba(
+                    static_values,
+                    static_derivatives,
+                    static_count,
+                )
+                continue
+
+            ranged_count = database_ranged_count[pair_index]
+            selected = -1
+            best_outside = True
+            best_distance = math.inf
+            best_width = math.inf
+            for record_index in range(ranged_count):
+                low = database_ranged[pair_index, record_index, 1]
+                high = database_ranged[pair_index, record_index, 2]
+                if low == high:
+                    low -= EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K
+                    high += EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K
+                width = high - low
+                inside = low <= T <= high
+                distance = 0.0 if inside else min(abs(T - low), abs(T - high))
+                outside = not inside
+                if (
+                    selected < 0
+                    or outside < best_outside
+                    or (
+                        outside == best_outside
+                        and (
+                            distance < best_distance
+                            or (
+                                distance == best_distance
+                                and width < best_width
+                            )
+                        )
+                    )
+                ):
+                    selected = record_index
+                    best_outside = outside
+                    best_distance = distance
+                    best_width = width
+            if selected >= 0:
+                ranged_value = database_ranged[pair_index, selected, 0]
+                if best_outside and database_has_static[pair_index]:
+                    values[pair_index] = 0.5 * (
+                        database_static[pair_index] + ranged_value
+                    )
+                else:
+                    values[pair_index] = ranged_value
+            elif database_has_static[pair_index]:
+                values[pair_index] = database_static[pair_index]
+            else:
+                values[pair_index] = 0.0
+
+        shape = (component_count, component_count)
+        return values.reshape(shape), derivatives.reshape(shape)
 
     @njit(cache=True)
     def _soave_m_numba(omega, is_pr):
@@ -650,6 +920,9 @@ if njit is not None:
         return K
 
 else:
+
+    def _interaction_parameters_numba(*_args, **_kwargs):  # pragma: no cover
+        raise RuntimeError('Numba is not available')
 
     def _cubic_mixture_numba(*_args, **_kwargs):  # pragma: no cover
         raise RuntimeError('Numba is not available')

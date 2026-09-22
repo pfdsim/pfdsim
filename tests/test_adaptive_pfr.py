@@ -231,6 +231,51 @@ class AdaptivePFRUnitTests(unittest.TestCase):
             places=8,
         )
 
+    def test_compiled_cubic_pfr_uses_temperature_only_ph_in_rhs(self):
+        thermo = create_thermodynamics(self.components, 'RKS-BM')
+        feed = thermo.calculate_state(
+            500.0,
+            10.0,
+            10.0,
+            {'C2H4O': 1.0},
+            phase='vapor',
+            flash=False,
+        )
+        unit = KineticsPFR('PFR-fast-PH', thermo, {
+            'volume': 0.1,
+            'diameter': 0.1,
+            'mode': 'adiabatic',
+            'phase': 'vapor',
+            'profile_points': 5,
+            'reactions': [reaction_definition()],
+        })
+        with (
+            patch.object(
+                thermo,
+                'temperature_at_PH',
+                wraps=thermo.temperature_at_PH,
+            ) as temperature_ph,
+            patch.object(
+                thermo,
+                'calculate_state',
+                wraps=thermo.calculate_state,
+            ) as full_state,
+        ):
+            result = unit.solve({'in': feed})
+
+        self.assertGreater(temperature_ph.call_count, 0)
+        self.assertGreater(temperature_ph.call_count, full_state.call_count)
+        self.assertEqual(result.performance['profile_points'], 5)
+        self.assertEqual(len(result.performance['profile']), 5)
+        self.assertLess(
+            abs(result.performance['energy_balance_residual_kW']),
+            1.0e-8,
+        )
+        self.assertLess(
+            result.performance['maximum_material_balance_residual_kmol_h'],
+            1.0e-9,
+        )
+
     def test_geometry_is_inferred_or_rejected_when_inconsistent(self):
         by_length = self.solve(volume=None, length=10.0, diameter=0.1)
         expected_volume = math.pi * 0.1**2 / 4.0 * 10.0

@@ -381,12 +381,15 @@ class CubicEOS:
         self._pair_dkij_values_cache[cache_key] = result
         return result
 
-    def _compiled_kij_values(self, T: float) -> tuple[float, ...]:
+    def _compiled_temperature_warnings(self, T: float) -> None:
         """Preserve runtime alpha warnings before entering compiled code."""
         if self.use_mathias_copeman:
             for params in self.params.values():
                 if self._has_mc_constants(params):
                     self._warn_mc_temperature_range(params, T)
+
+    def _compiled_kij_values(self, T: float) -> tuple[float, ...]:
+        self._compiled_temperature_warnings(T)
         return self._pair_kij_values(T)
 
     @staticmethod
@@ -891,7 +894,10 @@ class CubicEOS:
                 return self._record_dkij_dT(selected, T)
         static = getattr(self, "_override_static_kij", {}).get(key, [])
         if static:
-            return median(self._record_dkij_dT(record, T) for record in static)
+            ordered = sorted(static, key=lambda record: eos_record_kij(record, T))
+            middle = len(ordered) // 2
+            selected = ordered[middle:middle + 1] if len(ordered) % 2 else ordered[middle - 1:middle + 1]
+            return sum(self._record_dkij_dT(record, T) for record in selected) / len(selected)
         if ranged and T is None:
             return median(
                 self._record_dkij_dT(record, record.get("T_ref_K", 298.15))
@@ -940,11 +946,11 @@ class CubicEOS:
         comps = self.components
         x_values = [x[comp] for comp in comps]
         if self._compiled_backend is not None:
+            self._compiled_temperature_warnings(T)
             a_mix, b_mix, a_values, _, _ = (
                 self._compiled_backend.mixture_parameters(
                     T,
                     x_values,
-                    self._compiled_kij_values(T),
                 )
             )
             return (
@@ -981,11 +987,11 @@ class CubicEOS:
         comps = self.components
         x_values = [x[comp] for comp in comps]
         if self._compiled_backend is not None:
+            self._compiled_temperature_warnings(T)
             return float(self._compiled_backend.mixture_parameters(
                 T,
                 x_values,
-                self._compiled_kij_values(T),
-                self._pair_dkij_dT_values(T),
+                dkij=(),
             )[-1])
         if self._ge_provider is not None:
             mixing = self._ge_state(T, x, temperature_derivative=True)
@@ -1103,13 +1109,13 @@ class CubicEOS:
             raise CubicEOSError('RKSMHV2 pressure must be positive and finite')
         if self._compiled_backend is not None:
             x = self._normalized_composition(composition)
+            self._compiled_temperature_warnings(T)
             return [
                 float(value)
                 for value in self._compiled_backend.compressibility_roots(
                     T,
                     P,
                     [x[component] for component in self.components],
-                    self._compiled_kij_values(T),
                 )
             ]
         a_mix, b_mix, _, _ = self.mixture_params(T, composition)
@@ -1163,13 +1169,12 @@ class CubicEOS:
         """EOS residual/departure enthalpy H-H(ideal gas) [kJ/kmol]."""
         if self._compiled_backend is not None:
             x = self._normalized_composition(composition)
+            self._compiled_temperature_warnings(T)
             return self._compiled_backend.departure_enthalpy(
                 T,
                 P,
                 [x[component] for component in self.components],
                 phase,
-                self._compiled_kij_values(T),
-                self._pair_dkij_dT_values(T),
             )
         x = self._normalized_composition(composition)
         a_mix, b_mix, _, _ = self.mixture_params(T, x)
@@ -1200,13 +1205,12 @@ class CubicEOS:
         """EOS residual/departure entropy S-S(ideal gas) [kJ/kmol-K]."""
         if self._compiled_backend is not None:
             x = self._normalized_composition(composition)
+            self._compiled_temperature_warnings(T)
             return self._compiled_backend.departure_entropy(
                 T,
                 P,
                 [x[component] for component in self.components],
                 phase,
-                self._compiled_kij_values(T),
-                self._pair_dkij_dT_values(T),
             )
         x = self._normalized_composition(composition)
         _, b_mix, _, _ = self.mixture_params(T, x)
@@ -1248,12 +1252,12 @@ class CubicEOS:
     ) -> dict[str, float]:
         x = self._normalized_composition(composition)
         if self._compiled_backend is not None:
+            self._compiled_temperature_warnings(T)
             values = self._compiled_backend.fugacity_coefficients(
                 T,
                 P,
                 [x[component] for component in self.components],
                 phase,
-                self._compiled_kij_values(T),
             )
             return {
                 component: float(value)
@@ -1316,12 +1320,12 @@ class CubicEOS:
             return dict(cached)
 
         if self._compiled_backend is not None:
+            self._compiled_temperature_warnings(T)
             values = self._compiled_backend.phi_phi_K_values(
                 T,
                 P,
                 [x[component] for component in self.components],
                 max_iter,
-                self._compiled_kij_values(T),
             )
             result = {
                 component: float(value)

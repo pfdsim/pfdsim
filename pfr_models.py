@@ -344,7 +344,13 @@ def _solve_adaptive_axial_reactor(
             )
         return float(values[enthalpy_index])
 
-    def point_from_values(coordinate: float, values, *, pressure_override=None):
+    def point_from_values(
+        coordinate: float,
+        values,
+        *,
+        pressure_override=None,
+        construct_stream_state=False,
+    ):
         extents = np.asarray(values[:len(reactions)], dtype=float)
         flows = flows_for(extents)
         clean = np.maximum(flows, 0.0)
@@ -368,21 +374,34 @@ def _solve_adaptive_axial_reactor(
             stream_state = None
         else:
             enthalpy_target = enthalpy_flow_for(values) / total
-            stream_state, enthalpy_error = state_solver.state_at_enthalpy(
-                local_pressure,
-                total,
-                composition,
-                enthalpy_target,
-                _bounded_temperature_guess(inlet.T),
-                force_phase=phase_name,
-                include=('H',),
-            )
+            if construct_stream_state:
+                stream_state, enthalpy_error = state_solver.state_at_enthalpy(
+                    local_pressure,
+                    total,
+                    composition,
+                    enthalpy_target,
+                    _bounded_temperature_guess(inlet.T),
+                    force_phase=phase_name,
+                    include=('H',),
+                )
+                temperature = float(stream_state.T)
+            else:
+                temperature, enthalpy_error = (
+                    state_solver.temperature_at_enthalpy(
+                        local_pressure,
+                        total,
+                        composition,
+                        enthalpy_target,
+                        _bounded_temperature_guess(inlet.T),
+                        force_phase=phase_name,
+                    )
+                )
+                stream_state = None
             if abs(enthalpy_error) > max(1.0e-5, abs(enthalpy_target) * 1.0e-9):
                 raise KineticsError(
                     f"{reactor_name} local enthalpy solve residual is "
                     f"{enthalpy_error:.6g} kJ/kmol"
                 )
-            temperature = float(stream_state.T)
         rate_state = HomogeneousRateState.from_flows(
             thermo,
             {component: float(clean[index]) for index, component in enumerate(components)},
@@ -855,7 +874,11 @@ def _solve_adaptive_axial_reactor(
     profile_states = []
     for column, coordinate in enumerate(solution.position_m):
         values = solution.values[:, column]
-        point = point_from_values(float(coordinate), values)
+        point = point_from_values(
+            float(coordinate),
+            values,
+            construct_stream_state=True,
+        )
         if thermal_mode == 'isothermal':
             stream_state = thermo.calculate_state(
                 point['temperature'],
