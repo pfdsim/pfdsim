@@ -841,7 +841,7 @@ class FlowsheetSolver:
         """Re-evaluate thermodynamic state fields without transport properties."""
         thermo = self.thermo_packages[scope]
         phase = self._scope_phase_constraint(state)
-        include = ['H', 'S', 'Cp', 'rho', 'mu']
+        include = ['H', 'S', 'Cp', 'rho']
         conventional_solid_flows = {
             component: flow
             for component, flow in state.solid_component_flows.items()
@@ -901,7 +901,6 @@ class FlowsheetSolver:
             or source_view.S is None
             or source_view.Cp is None
             or source_view.rho is None
-            or source_view.mu is None
         ):
             source_view = self._state_in_thermo_scope(state, source_scope)
         destination_view = self._state_in_thermo_scope(
@@ -929,8 +928,11 @@ class FlowsheetSolver:
             'destination_Cp_kJ_per_kmol_K': destination_view.Cp,
             'source_density_kmol_per_m3': source_view.rho,
             'destination_density_kmol_per_m3': destination_view.rho,
-            'source_viscosity_Pa_s': source_view.mu,
-            'destination_viscosity_Pa_s': destination_view.mu,
+            # Scope transitions reconcile thermodynamic state only. Keep the
+            # established payload fields, but do not eagerly calculate an
+            # unused transport property merely to populate diagnostics.
+            'source_viscosity_Pa_s': None,
+            'destination_viscosity_Pa_s': None,
         }
         return destination_view
 

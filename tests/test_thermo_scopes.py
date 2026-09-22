@@ -418,9 +418,9 @@ UNIT D-1 : Decanter
             result = simulator.run()
 
         self.assertTrue(result.converged)
-        # Two topology boundaries, with source- and destination-package
-        # property views evaluated at each boundary.
-        self.assertEqual(rehydrate.call_count, 4)
+        # Both source states already carry the required thermodynamic fields,
+        # so only the destination-package view is evaluated at each boundary.
+        self.assertEqual(rehydrate.call_count, 2)
         self.assertEqual(
             [item['stream_id'] for item in result.thermo_scope_corrections],
             ['Feed', 'Product'],
@@ -480,7 +480,7 @@ UNIT M-1 : Mixer
         )
         self.assertLess(result.energy_balance_error, 1e-12)
 
-    def test_boundary_recomputes_density_and_viscosity_in_destination_scope(self):
+    def test_boundary_recomputes_density_without_eager_transport_properties(self):
         simulator = Simulator.from_string(self._heater_chain_pfd()).initialize()
         solver = simulator.solver
         global_thermo = simulator.thermo_packages['global']
@@ -492,17 +492,21 @@ UNIT M-1 : Mixer
             {'H2O': 0.2, 'ETOH': 0.8},
             phase='vapor',
             flash=False,
-            include=('H', 'S', 'Cp', 'rho', 'mu'),
+            include=('H', 'S', 'Cp', 'rho'),
         )
         vapor.thermo_scope = 'global'
         vapor.rho = -1.0
-        vapor.mu = 123.0
-        scoped_vapor = solver._transition_stream_state(
-            'vapor-probe', vapor, 'extraction'
-        )
+        with patch.object(
+            simulator.thermo_packages['extraction'],
+            'mixture_viscosity',
+            side_effect=AssertionError('scope transition requested viscosity'),
+        ):
+            scoped_vapor = solver._transition_stream_state(
+                'vapor-probe', vapor, 'extraction'
+            )
         self.assertGreater(scoped_vapor.rho, 0.0)
         self.assertNotEqual(scoped_vapor.rho, -1.0)
-        self.assertNotEqual(scoped_vapor.mu, 123.0)
+        self.assertIsNone(scoped_vapor.mu)
 
         liquid = global_thermo.calculate_state(
             298.15,
@@ -511,16 +515,30 @@ UNIT M-1 : Mixer
             {'H2O': 0.8, 'ETOH': 0.2},
             phase='liquid',
             flash=False,
-            include=('H', 'S', 'Cp', 'rho', 'mu'),
+            include=('H', 'S', 'Cp', 'rho'),
         )
         liquid.thermo_scope = 'global'
         liquid.rho = -2.0
-        liquid.mu = 456.0
-        scoped_liquid = solver._transition_stream_state(
-            'liquid-probe', liquid, 'extraction'
-        )
+        with patch.object(
+            simulator.thermo_packages['extraction'],
+            'mixture_viscosity',
+            side_effect=AssertionError('scope transition requested viscosity'),
+        ):
+            scoped_liquid = solver._transition_stream_state(
+                'liquid-probe', liquid, 'extraction'
+            )
         self.assertNotEqual(scoped_liquid.rho, -2.0)
-        self.assertNotEqual(scoped_liquid.mu, 456.0)
+        self.assertIsNone(scoped_liquid.mu)
+        self.assertIsNone(
+            solver._thermo_scope_corrections['liquid-probe'][
+                'source_viscosity_Pa_s'
+            ]
+        )
+        self.assertIsNone(
+            solver._thermo_scope_corrections['liquid-probe'][
+                'destination_viscosity_Pa_s'
+            ]
+        )
 
         first = dict(solver._thermo_scope_corrections['liquid-probe'])
         liquid.F = 20.0
@@ -542,6 +560,36 @@ UNIT M-1 : Mixer
             scoped_liquid,
         )
         self.assertNotIn('liquid-probe', solver._thermo_scope_corrections)
+
+    def test_scope_boundaries_do_not_emit_unused_jouyban_acree_warnings(self):
+        simulator = Simulator.from_string("""
+PROCESS: hot scoped liquid without transport
+THERMO_METHOD: IDEAL
+ONLINE_LOOKUP: false
+THERMO_SCOPES:
+    scoped | method=IDEAL
+COMPONENTS:
+    H2O | Water | CAS=7732-18-5, MW=18.015
+    ETOH | Ethanol | CAS=64-17-5, MW=46.069
+STREAM Feed : FEED -> H-1.in
+    T = 80 [C]
+    P = 1 [bar]
+    F = 100 [kmol/h]
+    x = H2O:0.6, ETOH:0.4
+STREAM Product : H-1.out -> PRODUCT
+UNIT H-1 : Heater
+    T = 90 [C]
+    thermo_scope = scoped
+""").initialize()
+
+        result = simulator.run()
+
+        self.assertTrue(result.converged, result.errors)
+        self.assertFalse(any(
+            'Jouyban-Acree' in warning
+            for warning in result.warnings
+        ))
+        self.assertIsNone(result.streams['Product'].mu)
 
     def test_only_explicitly_constrained_phase_is_preserved_at_boundary(self):
         unconstrained = StreamState(
