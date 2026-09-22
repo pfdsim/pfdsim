@@ -356,6 +356,50 @@ class SteamThermodynamics(IdealThermodynamics):
             vapor_fraction=vapor_fraction,
         )
 
+    def temperature_at_PH(self, P, H, composition, *, phase=None, T_guess=None):
+        """Use IF97's native inverse and forward properties without StreamStates."""
+        self._normalize_water_composition(composition)
+        phase = str(phase or '').strip().lower()
+        if phase == 'gas':
+            phase = 'vapor'
+        if phase not in {'liquid', 'vapor'}:
+            raise NotImplementedError('temperature-only steam PH requires a homogeneous phase')
+        pressure = self._pressure_to_pa(P)
+        target = self._molar_enthalpy_to_mass(float(H) - self._reference_H_offset)
+        if not math.isfinite(target) or not math.isfinite(pressure) or pressure <= 0.0:
+            raise ThermodynamicsError('steam PH requires finite inputs and positive pressure')
+        # A PH temperature alone cannot describe a wet state. Check enthalpy
+        # endpoints before using the inverse, including the forced phase.
+        quality = 1.0 if phase == 'vapor' else 0.0
+        saturated = False
+        if P < self._pcrit_bar:
+            boundary = self._props('H', 'P', pressure, 'Q', quality)
+            saturated = abs(target - boundary) <= 1.0e-5
+            if not saturated and ((phase == 'vapor' and target < boundary)
+                                  or (phase == 'liquid' and target > boundary)):
+                raise NotImplementedError('steam PH target is outside the requested homogeneous phase')
+        temperature = self._props('T', 'P', pressure, 'H', target)
+        if saturated:
+            return temperature, self._mass_enthalpy_to_molar(boundary - target)
+
+        def evaluate(T):
+            return (
+                self._mass_enthalpy_to_molar(self._props('H', 'T', T, 'P', pressure))
+                + self._reference_H_offset,
+                self._mass_entropy_to_molar(self._props('Cpmass', 'T', T, 'P', pressure)),
+            )
+
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from ..ph_solver import solve_caloric_temperature
+        else:
+            from ph_solver import solve_caloric_temperature
+        temperature, residual, _evaluations, converged = solve_caloric_temperature(
+            evaluate, (), float(H), temperature,
+        )
+        if not converged:
+            raise ThermodynamicsError(f'steam PH residual {residual:.6g} kJ/kmol')
+        return float(temperature), float(residual)
+
     def calculate_state_PH(self, P: float, H: float, F: float,
                            composition: dict[str, float],
                            include: Optional[Union[str, Iterable[str]]] = None) -> StreamState:

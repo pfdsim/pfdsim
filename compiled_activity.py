@@ -100,8 +100,12 @@ class CompiledNRTLBackend:
     def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
         x_array = np.asarray(x, dtype=np.float64)
         return float(_nrtl_excess_enthalpy_numba(
-            x_array,
-            float(T),
+            x_array, float(T), *self.enthalpy_parameters(),
+        ))
+
+    def enthalpy_parameters(self):
+        """Shared numeric arguments for scalar and fused caloric kernels."""
+        return (
             self.tau_mode,
             self.tau_c,
             self.tau_d,
@@ -113,7 +117,7 @@ class CompiledNRTLBackend:
             self.alpha,
             self.interaction_tmin,
             self.interaction_tmax,
-        ))
+        )
 
 
 @dataclass
@@ -201,8 +205,12 @@ class CompiledUNIQUACBackend:
     def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
         x_array = np.asarray(x, dtype=np.float64)
         return float(_uniquac_excess_enthalpy_numba(
-            x_array,
-            float(T),
+            x_array, float(T), *self.enthalpy_parameters(),
+        ))
+
+    def enthalpy_parameters(self):
+        """Shared numeric arguments for scalar and fused caloric kernels."""
+        return (
             self.r,
             self.q,
             self.q_residual,
@@ -215,7 +223,7 @@ class CompiledUNIQUACBackend:
             self.tau_tref,
             self.interaction_tmin,
             self.interaction_tmax,
-        ))
+        )
 
 
 if njit is not None:

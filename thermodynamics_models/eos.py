@@ -386,11 +386,14 @@ class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
             return state[1]
         try:
             if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                from ..compiled_cubic_ph import CompiledCubicPHBackend
+                from ..compiled_ph import CompiledPHBackend
             else:
-                from compiled_cubic_ph import CompiledCubicPHBackend
+                from compiled_ph import CompiledPHBackend
 
-            backend = CompiledCubicPHBackend.from_thermo(self)
+            backend = (
+                CompiledPHBackend.from_thermo(self, cubic_backend=cubic_backend)
+                if cubic_backend is not None else None
+            )
         except Exception:
             backend = None
         self._compiled_pressure_enthalpy_state = cubic_backend, backend

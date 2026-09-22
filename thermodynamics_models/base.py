@@ -4761,6 +4761,113 @@ class IdealThermodynamics:
                 "frozen interaction is being extrapolated."
             )
 
+    def _compiled_caloric_backend(self, phase: str):
+        """Resolve compact pure caloric curves without replacing model corrections."""
+        names = ('enthalpy_ideal_gas', 'Cp_ideal_gas')
+        if phase == 'liquid':
+            names += ('enthalpy_liquid', 'Cp_liquid')
+        if any(
+            getattr(getattr(self, name), '__func__', None)
+            is not getattr(IdealThermodynamics, name)
+            for name in names
+        ):
+            return None
+        cache = getattr(self, '_compiled_caloric_backends', None)
+        if cache is None:
+            cache = self._compiled_caloric_backends = {}
+        if phase not in cache:
+            try:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from ..compiled_ph import CompiledPHBackend
+                else:
+                    from compiled_ph import CompiledPHBackend
+                cache[phase] = CompiledPHBackend.from_thermo(self, phase=phase)
+            except Exception:
+                cache[phase] = None
+        return cache[phase]
+
+    def _ph_caloric_evaluator(self, P, composition, phase):
+        """Return a complete compact backend or an authoritative H/Cp callback."""
+        if (
+            getattr(self.mixture_enthalpy, '__func__', None)
+            is IdealThermodynamics.mixture_enthalpy
+            and getattr(self.mixture_Cp, '__func__', None)
+            is IdealThermodynamics.mixture_Cp
+        ):
+            backend = self._compiled_caloric_backend(phase)
+            if backend is not None:
+                return backend, None
+        vapor_fraction = 1.0 if phase == 'vapor' else 0.0
+
+        def evaluate(T):
+            return (
+                self.mixture_enthalpy(composition, T, vapor_fraction, P=P),
+                self.mixture_Cp(composition, T, vapor_fraction, P),
+            )
+
+        return None, evaluate
+
+    def temperature_at_PH(self, P, H, composition, *, phase=None, T_guess=None):
+        """Homogeneous PH solve without allocating intermediate StreamStates.
+
+        Phase equilibrium and permanent-solid mixtures remain the responsibility
+        of the state solver; this method never guesses a homogeneous phase.
+        """
+        phase = str(phase or '').strip().lower()
+        if phase == 'gas':
+            phase = 'vapor'
+        if phase not in {'vapor', 'liquid'}:
+            raise NotImplementedError('direct PH requires an explicit homogeneous phase')
+        if any(composition.get(comp, 0.0) > 0.0 for comp in self.permanent_solid_components):
+            raise NotImplementedError('direct PH does not include permanent solids')
+        P, H = float(P), float(H)
+        seed = T_REF if T_guess is None else float(T_guess)
+        if not all(math.isfinite(value) for value in (P, H, seed)) or P <= 0.0:
+            raise ThermodynamicsError('PH requires finite inputs and positive pressure')
+        if any(not math.isfinite(float(z)) or float(z) < 0.0 for z in composition.values()):
+            raise ThermodynamicsError('PH composition must be finite and nonnegative')
+        if any(comp not in self.components and z > 0.0 for comp, z in composition.items()):
+            raise ThermodynamicsError('PH composition contains an unknown component')
+        total = sum(composition.values())
+        if not math.isfinite(total) or total <= 0.0:
+            raise ThermodynamicsError('PH composition must contain positive flow')
+        normalized = {comp: z / total for comp, z in composition.items() if z > 0.0}
+        backend, evaluate = self._ph_caloric_evaluator(P, normalized, phase)
+        if backend is not None:
+            result = backend.solve_temperature(
+                P, H, [normalized.get(comp, 0.0) for comp in self.components], seed, phase,
+            )
+        else:
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from ..ph_solver import solve_caloric_temperature
+            else:
+                from ph_solver import solve_caloric_temperature
+            result = solve_caloric_temperature(evaluate, (), H, seed)
+        temperature, residual, _evaluations, converged = result
+        if not converged:
+            raise ThermodynamicsError(
+                f'homogeneous PH solve did not converge; residual {residual:.6g} kJ/kmol'
+            )
+        # Preserve range/provenance reporting that full trial states used to do.
+        for comp in normalized:
+            kernel = (self._ideal_gas_cp_kernel(comp) if phase == 'vapor'
+                      else self._liquid_cp_kernel(comp))
+            if kernel is not None:
+                record = (self._record_ideal_gas_cp_kernel_range_use if phase == 'vapor'
+                          else self._record_liquid_cp_kernel_range_use)
+                record(comp, T_REF, kernel)
+                record(comp, temperature, kernel)
+        return float(temperature), float(residual)
+
+    def calculate_state_PH(self, P, H, F, composition, include=None, *, phase=None, T_guess=None):
+        temperature, _residual = self.temperature_at_PH(
+            P, H, composition, phase=phase, T_guess=T_guess,
+        )
+        return self.calculate_state(
+            temperature, P, F, composition, phase=str(phase).strip().lower(),
+            flash=False, include=include,
+        )
+
     def calculate_state(self, T: float, P: float, F: float,
                        composition: dict[str, float],
                        phase: Optional[str] = None,

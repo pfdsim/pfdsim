@@ -276,6 +276,28 @@ class AdaptivePFRUnitTests(unittest.TestCase):
             1.0e-9,
         )
 
+    def test_non_eos_adiabatic_pfr_uses_temperature_only_ph(self):
+        for model, phase, temperature in (('IDEAL', 'vapor', 500.0), ('NRTL', 'liquid', 300.0)):
+            with self.subTest(model=model):
+                thermo = create_thermodynamics(self.components, model)
+                feed = thermo.calculate_state(
+                    temperature, 10.0, 1.0, {'C2H4O': 0.5, 'CH3CHO': 0.5},
+                    phase=phase, flash=False,
+                )
+                unit = KineticsPFR('PFR-non-EOS-PH', thermo, {
+                    'volume': 0.001, 'diameter': 0.1, 'mode': 'adiabatic',
+                    'phase': phase, 'profile_points': 3,
+                    'reactions': [reaction_definition(A=0.1)],
+                })
+                with (
+                    patch.object(thermo, 'temperature_at_PH', wraps=thermo.temperature_at_PH) as direct,
+                    patch.object(thermo, 'calculate_state', wraps=thermo.calculate_state) as full,
+                ):
+                    result = unit.solve({'in': feed})
+                self.assertGreater(direct.call_count, full.call_count)
+                self.assertLess(abs(result.performance['energy_balance_residual_kW']), 1.0e-8)
+                self.assertLess(result.performance['maximum_material_balance_residual_kmol_h'], 1.0e-9)
+
     def test_geometry_is_inferred_or_rejected_when_inconsistent(self):
         by_length = self.solve(volume=None, length=10.0, diameter=0.1)
         expected_volume = math.pi * 0.1**2 / 4.0 * 10.0

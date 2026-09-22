@@ -170,6 +170,13 @@ class CompiledUNIFACBackend:
     ) -> float:
         x_array = np.asarray(x, dtype=np.float64)
         return float(_excess_enthalpy_numba(
+            *self.enthalpy_parameters(), x_array, float(T),
+            float(activity_T_low), float(activity_T_high),
+        ))
+
+    def enthalpy_parameters(self):
+        """Shared numeric arguments for scalar and fused caloric kernels."""
+        return (
             self.nu,
             self.r,
             self.q,
@@ -178,11 +185,7 @@ class CompiledUNIFACBackend:
             self.interactions_b,
             self.interactions_c,
             self.variant_id,
-            x_array,
-            float(T),
-            float(activity_T_low),
-            float(activity_T_high),
-        ))
+        )
 
 
 if njit is not None:

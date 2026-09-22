@@ -828,6 +828,103 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             reference[comp] = phi_sat * Psat * poynting
         return reference
 
+    def _ph_caloric_evaluator(self, P, composition, phase):
+        # Keep association and custom caloric models on their authoritative
+        # property methods whenever the pure reference curves are overridden.
+        if (
+            getattr(self.mixture_enthalpy, '__func__', None)
+            is not ActivityCoefficientThermodynamics.mixture_enthalpy
+            or getattr(self.mixture_Cp, '__func__', None)
+            is not ActivityCoefficientThermodynamics.mixture_Cp
+        ):
+            return super()._ph_caloric_evaluator(P, composition, phase)
+        backend = self._compiled_caloric_backend(phase)
+        if backend is None:
+            return super()._ph_caloric_evaluator(P, composition, phase)
+        if (
+            phase == 'vapor' and not self._vapor_phase_correction_active()
+            and getattr(self._vapor_residual_enthalpy, '__func__', None)
+            is ActivityCoefficientThermodynamics._vapor_residual_enthalpy
+        ):
+            return backend, None
+        if phase == 'liquid':
+            compiled = self._compiled_liquid_ph_backend(backend)
+            if compiled is not None:
+                return compiled, None
+        elif (
+            getattr(self._vapor_residual_enthalpy, '__func__', None)
+            is ActivityCoefficientThermodynamics._vapor_residual_enthalpy
+            and getattr(self._vapor_residual_cp, '__func__', None)
+            is ActivityCoefficientThermodynamics._vapor_residual_cp
+        ):
+            cubic = getattr(self.vapor_eos, '_compiled_backend', None)
+            if cubic is not None:
+                cached = getattr(self, '_compiled_vapor_ph_state', None)
+                if cached is None or cached[0] is not backend or cached[1] is not cubic:
+                    try:
+                        compiled = backend.with_cubic_departure(cubic)
+                    except Exception:
+                        compiled = None
+                    cached = self._compiled_vapor_ph_state = backend, cubic, compiled
+                if cached[2] is not None:
+                    return cached[2], None
+        pure = backend.bind(P, [composition.get(c, 0.0) for c in self.components], phase)
+
+        def evaluate(T):
+            enthalpy, cp = pure(T)
+            if phase == 'liquid':
+                return (enthalpy + self.excess_enthalpy(composition, T),
+                        cp + self._excess_cp(composition, T))
+            return (enthalpy + self._vapor_residual_enthalpy(composition, T, P),
+                    cp + self._vapor_residual_cp(composition, T, P))
+
+        return None, evaluate
+
+    def _compiled_liquid_ph_backend(self, pure):
+        """Fuse only the standard excess models; preserve custom overrides."""
+        if getattr(self._excess_cp, '__func__', None) is not ActivityCoefficientThermodynamics._excess_cp:
+            return None
+        from .nrtl_uniquac import NRTLThermodynamics, UNIQUACThermodynamics
+        from .unifac_models import UNIFACThermodynamics
+
+        method = getattr(self.excess_enthalpy, '__func__', None)
+        if method in (NRTLThermodynamics.excess_enthalpy, UNIQUACThermodynamics.excess_enthalpy):
+            activity = self._compiled_activity_backend()
+        elif method is UNIFACThermodynamics.excess_enthalpy:
+            activity = self._compiled_unifac
+        else:
+            return None
+        if activity is None:
+            return None
+        cached = getattr(self, '_compiled_liquid_ph_state', None)
+        if cached is not None and cached[0] is pure and cached[1] is activity:
+            return cached[2]
+        try:
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from ..compiled_ph import CompiledActivityPHBackend
+            else:
+                from compiled_ph import CompiledActivityPHBackend
+            result = CompiledActivityPHBackend.from_backends(pure, activity)
+        except Exception:
+            result = None
+        self._compiled_liquid_ph_state = pure, activity, result
+        return result
+
+    def temperature_at_PH(self, P, H, composition, *, phase=None, T_guess=None):
+        temperature, residual = super().temperature_at_PH(
+            P, H, composition, phase=phase, T_guess=T_guess,
+        )
+        if str(phase).strip().lower() == 'liquid':
+            warn = getattr(self, '_warn_activity_interaction_extrapolation', None)
+            if callable(warn):
+                warn(temperature)
+        else:
+            warn = getattr(self.vapor_eos, '_compiled_temperature_warnings', None)
+            if callable(warn):
+                warn(temperature)
+                self.extend_warnings(getattr(self.vapor_eos, 'warnings', []))
+        return temperature, residual
+
     def mixture_enthalpy(self, composition: dict[str, float], T: float,
                         vapor_fraction: float = 1.0,
                         x: Optional[dict] = None,

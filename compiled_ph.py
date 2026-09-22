@@ -1,9 +1,9 @@
-"""Compiled homogeneous pressure-enthalpy solves for cubic EOS packages."""
+"""Shared compact caloric properties and homogeneous pressure-enthalpy solves."""
 
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
@@ -21,6 +21,14 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
         ShomateCpKernel,
     )
     from .thermodynamics_models.common import T_REF
+    from .property_resolution import liquid_cp
+    from .physical_constants import R_J_MOL_K
+    from .ph_solver import solve_caloric_temperature
+    from .compiled_activity import (
+        CompiledNRTLBackend, CompiledUNIQUACBackend,
+        _nrtl_excess_enthalpy_numba, _uniquac_excess_enthalpy_numba,
+    )
+    from .compiled_unifac import CompiledUNIFACBackend, _excess_enthalpy_numba
 else:
     from compiled_cubic_eos import (
         CompiledCubicEOSBackend,
@@ -35,9 +43,22 @@ else:
         ShomateCpKernel,
     )
     from thermodynamics_models.common import T_REF
+    from property_resolution import liquid_cp
+    from physical_constants import R_J_MOL_K
+    from ph_solver import solve_caloric_temperature
+    from compiled_activity import (
+        CompiledNRTLBackend, CompiledUNIQUACBackend,
+        _nrtl_excess_enthalpy_numba, _uniquac_excess_enthalpy_numba,
+    )
+    from compiled_unifac import CompiledUNIFACBackend, _excess_enthalpy_numba
 
 try:
     from numba import njit, typeof
+    from numba.extending import register_jitable
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .compiled_cache import numba_cached
+    else:
+        from compiled_cache import numba_cached
 except Exception:  # pragma: no cover - optional dependency fallback
     njit = None
     typeof = None
@@ -46,9 +67,15 @@ except Exception:  # pragma: no cover - optional dependency fallback
 CP_KIND_POLYNOMIAL = 1
 CP_KIND_SHOMATE = 2
 CP_KIND_CHEBYSHEV = 3
+CP_KIND_LINEAR_CHEBYSHEV = 4
+CP_KIND_ZABRANSKY = 5
 
 
 def _flatten_analytic_kernel(kernel, intercept=0.0, scale_factor=1.0):
+    if isinstance(kernel, liquid_cp.ScaledIdealGasLiquidCpKernel):
+        return _flatten_analytic_kernel(
+            kernel.ideal_gas_kernel, intercept, scale_factor * kernel.scale_factor,
+        )
     if isinstance(kernel, AffineIdealGasCpKernel):
         return _flatten_analytic_kernel(
             kernel.base_kernel,
@@ -73,12 +100,17 @@ def _flatten_analytic_kernel(kernel, intercept=0.0, scale_factor=1.0):
                 if child['Tmin'] < child['Tmax']:
                     records.append(child)
         return records
-    if isinstance(kernel, PolynomialCpKernel):
+    if isinstance(kernel, (PolynomialCpKernel, liquid_cp.PolynomialLiquidCpKernel,
+                           liquid_cp.ConstantLiquidCpKernel)):
         kind = CP_KIND_POLYNOMIAL
-    elif isinstance(kernel, ShomateCpKernel):
+    elif isinstance(kernel, (ShomateCpKernel, liquid_cp.ShomateLiquidCpKernel)):
         kind = CP_KIND_SHOMATE
     elif isinstance(kernel, ChebyshevCpKernel):
         kind = CP_KIND_CHEBYSHEV
+    elif isinstance(kernel, liquid_cp.LinearChebyshevLiquidCpKernel):
+        kind = CP_KIND_LINEAR_CHEBYSHEV
+    elif isinstance(kernel, liquid_cp.NativeZabranskyLiquidCpKernel):
+        kind = CP_KIND_ZABRANSKY
     else:
         raise TypeError(
             f'unsupported analytic ideal-gas Cp kernel {type(kernel).__name__}'
@@ -91,11 +123,13 @@ def _flatten_analytic_kernel(kernel, intercept=0.0, scale_factor=1.0):
         'Tmax': math.inf,
         'intercept': float(intercept),
         'scale_factor': float(scale_factor),
-        'coefficients': tuple(float(value) for value in kernel.coefficients),
-        'center': float(getattr(kernel, 'center', 0.0)),
-        'scale': float(getattr(kernel, 'scale', 0.0)),
+        'coefficients': ((float(kernel.value),) if isinstance(
+            kernel, liquid_cp.ConstantLiquidCpKernel
+        ) else tuple(float(value) for value in kernel.coefficients)),
+        'center': float(getattr(kernel, 'center', getattr(kernel, 'critical_temperature', 0.0))),
+        'scale': float(getattr(kernel, 'scale', getattr(kernel, 'half_width', 0.0))),
         'h_polynomial': tuple(
-            float(value) for value in getattr(kernel, 'h_polynomial', ())
+            float(value) for value in getattr(kernel, 'h_polynomial', getattr(kernel, 'h_coefficients', ()))
         ),
         'h_logarithmic': float(
             getattr(kernel, 'h_log_coefficient', 0.0)
@@ -107,8 +141,8 @@ def _flatten_analytic_kernel(kernel, intercept=0.0, scale_factor=1.0):
 
 
 @dataclass
-class CompiledCubicPHBackend:
-    """Compact ideal-gas plus EOS-departure evaluator and PH solver."""
+class CompiledPHBackend:
+    """Compact vapor/liquid reference curves with optional EOS departures."""
 
     components: tuple[str, ...]
     formation_enthalpy: np.ndarray
@@ -129,18 +163,18 @@ class CompiledCubicPHBackend:
     segment_h_polynomial_count: np.ndarray
     segment_h_logarithmic: np.ndarray
     segment_h_reciprocal: np.ndarray
-    cubic_backend: CompiledCubicEOSBackend
+    cubic_backend: CompiledCubicEOSBackend | None
     compilation_complete: bool = False
 
     @classmethod
-    def from_thermo(cls, thermo) -> "CompiledCubicPHBackend | None":
-        if njit is None or not isinstance(
-            thermo.cubic._compiled_backend,
-            CompiledCubicEOSBackend,
-        ):
+    def from_thermo(cls, thermo, *, phase='vapor', cubic_backend=None) -> "CompiledPHBackend | None":
+        if njit is None:
+            return None
+        if cubic_backend is not None and not isinstance(cubic_backend, CompiledCubicEOSBackend):
             return None
         kernels = [
-            thermo._ideal_gas_cp_kernel(component)
+            (thermo._liquid_cp_kernel(component) if phase == 'liquid'
+             else thermo._ideal_gas_cp_kernel(component))
             for component in thermo.components
         ]
         try:
@@ -187,7 +221,9 @@ class CompiledCubicPHBackend:
         backend = cls(
             components=tuple(thermo.components),
             formation_enthalpy=np.asarray([
-                float(thermo.props[component].Hf or 0.0)
+                (thermo.enthalpy_ideal_gas(component, T_REF)
+                 - thermo.Hvap_at_T(component, T_REF) if phase == 'liquid'
+                 else thermo.enthalpy_ideal_gas(component, T_REF))
                 for component in thermo.components
             ]),
             lower_temperature=np.asarray([
@@ -225,7 +261,7 @@ class CompiledCubicPHBackend:
             segment_h_reciprocal=np.asarray([
                 item['h_reciprocal'] for item in records
             ]),
-            cubic_backend=thermo.cubic._compiled_backend,
+            cubic_backend=cubic_backend,
         )
         backend.compile_kernels()
         return backend
@@ -254,6 +290,8 @@ class CompiledCubicPHBackend:
 
     def _cubic_state(self):
         backend = self.cubic_backend
+        if backend is None:
+            return None
         return (
             backend.Tc,
             backend.omega,
@@ -320,6 +358,24 @@ class CompiledCubicPHBackend:
             self._cubic_state(),
         )
 
+    def bind(self, P, composition, phase):
+        """Bind the numeric state once for a Python-driven caloric solve."""
+        arguments = (
+            float(P), self._composition(composition),
+            1 if phase == 'vapor' else 0, self._cp_state(), self._cubic_state(),
+        )
+        return lambda T: _compact_enthalpy_cp_numba(float(T), *arguments)
+
+    def with_cubic_departure(self, cubic_backend):
+        """Reuse resolved Cp arrays for a compatible gamma-phi vapor backend."""
+        if not isinstance(cubic_backend, CompiledCubicEOSBackend):
+            return None
+        if tuple(cubic_backend.components) != self.components:
+            return None
+        backend = replace(self, cubic_backend=cubic_backend, compilation_complete=False)
+        backend.compile_kernels()
+        return backend
+
     def solve_temperature(self, P, H, composition, T_guess, phase):
         phase_id = 1 if str(phase).strip().lower() == 'vapor' else 0
         return _direct_ph_numba(
@@ -333,9 +389,96 @@ class CompiledCubicPHBackend:
         )
 
 
+@dataclass
+class CompiledActivityPHBackend:
+    """A pure-liquid caloric backend fused with the existing excess kernels."""
+
+    pure: CompiledPHBackend
+    indices: np.ndarray
+    activity_states: tuple
+
+    @classmethod
+    def from_backends(cls, pure, activity):
+        states = [None, None, None]
+        if isinstance(activity, CompiledNRTLBackend):
+            index = 0
+        elif isinstance(activity, CompiledUNIQUACBackend):
+            index = 1
+        elif isinstance(activity, CompiledUNIFACBackend):
+            index = 2
+        else:
+            return None
+        states[index] = activity.enthalpy_parameters()
+        backend = cls(pure, np.asarray([
+            pure.components.index(comp) for comp in activity.components
+        ], dtype=np.int64), tuple(states))
+        arguments = (
+            0.0, np.zeros(len(pure.components)), 300.0,
+            pure._cp_state(), backend.indices, backend.activity_states,
+        )
+        _direct_activity_ph_numba.compile(tuple(typeof(arg) for arg in arguments))
+        return backend
+
+    def solve_temperature(self, P, H, composition, T_guess, phase):
+        return _direct_activity_ph_numba(
+            float(H), self.pure._composition(composition), float(T_guess),
+            self.pure._cp_state(), self.indices, self.activity_states,
+        )
+
+
 if njit is not None:
 
-    @njit(cache=True)
+    _solve_caloric_temperature_numba = register_jitable(inline='always')(solve_caloric_temperature)
+    _linear_chebyshev_value_numba = numba_cached(njit)(liquid_cp._chebyshev_value)
+    _linear_chebyshev_difference_numba = numba_cached(njit)(liquid_cp._chebyshev_difference)
+    _caloric_cached = numba_cached(njit, dependencies=(
+        liquid_cp._chebyshev_difference, _cubic_departure_enthalpy_numba,
+        _interaction_parameters_numba,
+    ))
+
+    _activity_cached = numba_cached(njit, dependencies=(
+        solve_caloric_temperature, _nrtl_excess_enthalpy_numba,
+        _uniquac_excess_enthalpy_numba, _excess_enthalpy_numba,
+        liquid_cp._chebyshev_difference,
+    ))
+
+    @_activity_cached
+    def _ph_excess_enthalpy_numba(T, composition, indices, nrtl, uniquac, unifac):
+        active = composition[indices]
+        fraction = np.sum(active)
+        if fraction <= 0.0:
+            return 0.0
+        active = active / fraction
+        if nrtl is not None:
+            return fraction * _nrtl_excess_enthalpy_numba(active, T, *nrtl)
+        if uniquac is not None:
+            return fraction * _uniquac_excess_enthalpy_numba(active, T, *uniquac)
+        if unifac is not None:
+            delta = max(1.0e-3, 1.0e-4 * T)
+            excess = _excess_enthalpy_numba(
+                *unifac, active, T, max(1.0, T - delta), T + delta,
+            )
+            return fraction * excess
+        return 0.0
+
+    @_activity_cached
+    def _activity_ph_enthalpy_cp_numba(T, composition, cp_state, indices, states):
+        enthalpy, cp = _ideal_enthalpy_cp_numba(T, composition, cp_state)
+        excess = _ph_excess_enthalpy_numba(T, composition, indices, *states)
+        delta = max(0.25, 1.0e-3 * T)
+        low_T, high_T = max(1.0, T - delta), T + delta
+        low = _ph_excess_enthalpy_numba(low_T, composition, indices, *states)
+        high = _ph_excess_enthalpy_numba(high_T, composition, indices, *states)
+        return enthalpy + excess, cp + (high - low) / (high_T - low_T)
+
+    @_activity_cached
+    def _direct_activity_ph_numba(target, composition, seed, cp_state, indices, states):
+        return _solve_caloric_temperature_numba(
+            _activity_ph_enthalpy_cp_numba, (composition, cp_state, indices, states),
+            target, seed,
+        )
+
+    @_caloric_cached
     def _polynomial_difference_numba(coefficients, count, first, second):
         if count <= 1 or first == second:
             return 0.0
@@ -347,7 +490,7 @@ if njit is not None:
         return (second - first) * value
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _native_chebyshev_cp_numba(T, center, scale, coefficients, count):
         mapped = (T - center) / (scale * (T + center))
         first = 0.0
@@ -359,7 +502,7 @@ if njit is not None:
         return mapped * first - second + coefficients[0]
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _native_chebyshev_delta_h_numba(
         first_temperature,
         second_temperature,
@@ -395,8 +538,20 @@ if njit is not None:
         )
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _base_cp_numba(kind, T, coefficients, count, center, scale):
+        if kind == CP_KIND_LINEAR_CHEBYSHEV:
+            return _linear_chebyshev_value_numba(coefficients[:count], (T - center) / scale)
+        if kind == CP_KIND_ZABRANSKY:
+            reduced = T / center
+            gap = 1.0 - reduced
+            if gap <= 0.0:
+                raise ValueError('Zabransky liquid Cp is undefined at or above Tc')
+            return R_J_MOL_K * (
+                coefficients[0] * math.log(gap) + coefficients[1] / gap
+                + coefficients[2] + coefficients[3] * reduced
+                + coefficients[4] * reduced**2 + coefficients[5] * reduced**3
+            )
         if kind == CP_KIND_POLYNOMIAL:
             value = 0.0
             for index in range(count - 1, -1, -1):
@@ -423,7 +578,7 @@ if njit is not None:
         )
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _base_delta_h_numba(
         kind,
         first,
@@ -437,6 +592,26 @@ if njit is not None:
         logarithmic,
         reciprocal,
     ):
+        if kind == CP_KIND_LINEAR_CHEBYSHEV:
+            return _linear_chebyshev_difference_numba(
+                polynomial[:polynomial_count], (first - center) / scale,
+                (second - center) / scale,
+            )
+        if kind == CP_KIND_ZABRANSKY:
+            delta = second - first
+            if second >= center or first >= center:
+                raise ValueError('Zabransky liquid Cp is undefined at or above Tc')
+            a1, a2, a3, a4, a5, a6 = coefficients[:6]
+            primitive = np.array((
+                0.0, a3 - a1, a4 / (2.0 * center),
+                a5 / (3.0 * center**2), a6 / (4.0 * center**3),
+            ))
+            return R_J_MOL_K * (
+                _polynomial_difference_numba(primitive, 5, first, second)
+                + a1 * delta * math.log1p(-first / center)
+                + (a1 * second - center * (a1 + a2))
+                * math.log1p(-delta / (center - first))
+            )
         if kind == CP_KIND_POLYNOMIAL:
             total = 0.0
             for power in range(count):
@@ -471,7 +646,7 @@ if njit is not None:
         )
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _segment_cp_numba(segment, T, state):
         (
             _formation_enthalpy, _lower_temperature, _upper_temperature,
@@ -497,7 +672,7 @@ if njit is not None:
         )
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _segment_delta_h_numba(segment, first, second, state):
         (
             _formation_enthalpy, _lower_temperature, _upper_temperature,
@@ -528,7 +703,7 @@ if njit is not None:
         )
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _component_native_cp_numba(component, T, state):
         offset = state[3][component]
         count = state[4][component]
@@ -543,7 +718,7 @@ if njit is not None:
         return _segment_cp_numba(selected, T, state)
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _component_native_delta_h_numba(component, first, second, state):
         offset = state[3][component]
         count = state[4][component]
@@ -562,7 +737,7 @@ if njit is not None:
         return total
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _component_conditioned_delta_h_numba(
         component,
         first,
@@ -605,7 +780,7 @@ if njit is not None:
         return sign * total
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _ideal_enthalpy_cp_numba(T, composition, state):
         (
             formation_enthalpy,
@@ -653,7 +828,7 @@ if njit is not None:
         return enthalpy, heat_capacity
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _departure_enthalpy_numba(T, P, composition, phase_id, cubic_state):
         (
             Tc, omega, a0, pure_b, modes, c1, c2, c3,
@@ -667,7 +842,7 @@ if njit is not None:
         )
 
 
-    @njit(cache=True)
+    @_caloric_cached
     def _compact_enthalpy_cp_numba(
         T,
         P,
@@ -681,6 +856,8 @@ if njit is not None:
             composition,
             cp_state,
         )
+        if cubic_state is None:
+            return ideal_enthalpy, ideal_cp
         departure = _departure_enthalpy_numba(
             T,
             P,
@@ -709,7 +886,8 @@ if njit is not None:
         return ideal_enthalpy + departure, ideal_cp + departure_cp
 
 
-    @njit(cache=True)
+    @numba_cached(njit, dependencies=(solve_caloric_temperature, liquid_cp._chebyshev_difference,
+                                     _cubic_departure_enthalpy_numba, _interaction_parameters_numba))
     def _direct_ph_numba(
         P,
         target_enthalpy,
@@ -719,67 +897,11 @@ if njit is not None:
         cp_state,
         cubic_state,
     ):
-        tolerance = max(1.0e-8, abs(target_enthalpy) * 1.0e-12)
-        temperature = max(1.0, min(5000.0, temperature_guess))
-        evaluations = 0
-        for _iteration in range(12):
-            enthalpy, heat_capacity = _compact_enthalpy_cp_numba(
-                temperature,
-                P,
-                composition,
-                phase_id,
-                cp_state,
-                cubic_state,
-            )
-            evaluations += 1
-            residual = enthalpy - target_enthalpy
-            if abs(residual) <= tolerance:
-                return temperature, residual, evaluations, True
-            if not math.isfinite(heat_capacity) or abs(heat_capacity) < 1.0e-12:
-                return temperature, residual, evaluations, False
-            maximum_step = 0.35 * max(abs(temperature), 50.0)
-            step = max(
-                -maximum_step,
-                min(maximum_step, residual / heat_capacity),
-            )
-            accepted = False
-            damping = 1.0
-            for _trial in range(8):
-                candidate = max(
-                    1.0,
-                    min(5000.0, temperature - damping * step),
-                )
-                candidate_enthalpy, _ = _compact_enthalpy_cp_numba(
-                    candidate,
-                    P,
-                    composition,
-                    phase_id,
-                    cp_state,
-                    cubic_state,
-                )
-                evaluations += 1
-                candidate_residual = candidate_enthalpy - target_enthalpy
-                if (
-                    abs(candidate_residual) <= abs(residual) * 0.9
-                    or abs(candidate_residual) <= tolerance
-                ):
-                    temperature = candidate
-                    accepted = True
-                    break
-                damping *= 0.5
-            if not accepted:
-                return temperature, residual, evaluations, False
-        enthalpy, _ = _compact_enthalpy_cp_numba(
-            temperature,
-            P,
-            composition,
-            phase_id,
-            cp_state,
-            cubic_state,
+        return _solve_caloric_temperature_numba(
+            _compact_enthalpy_cp_numba,
+            (P, composition, phase_id, cp_state, cubic_state),
+            target_enthalpy, temperature_guess,
         )
-        evaluations += 1
-        residual = enthalpy - target_enthalpy
-        return temperature, residual, evaluations, abs(residual) <= tolerance
 
 else:
 
@@ -788,3 +910,4 @@ else:
 
     _compact_enthalpy_cp_numba = _unavailable
     _direct_ph_numba = _unavailable
+    _direct_activity_ph_numba = _unavailable

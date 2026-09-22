@@ -2883,6 +2883,21 @@ class UnitOperationSmokeTests(unittest.TestCase):
         self.assertAlmostEqual(outlet.T, target.T, places=8)
         self.assertAlmostEqual(outlet.H, target.H, places=7)
 
+    def test_direct_ph_preserves_legacy_forwarding_wrapper(self):
+        state = SimpleNamespace(T=400.0, H=100.0, fluid_vapor_fraction=1.0)
+
+        def legacy(P, H, F, composition, include=None):
+            return state
+
+        def forward(*args, **kwargs):
+            return legacy(*args, **kwargs)
+
+        thermo = SimpleNamespace(components=['N2'], calculate_state_PH=forward)
+        solver = basic_ops._ThermoStateSolver(thermo, 'legacy wrapper PH')
+        self.assertIs(solver.state_at_enthalpy(
+            1.0, 1.0, {'N2': 1.0}, 100.0, 300.0, force_phase='vapor',
+        )[0], state)
+
     def test_direct_ph_preserves_legacy_signature(self):
         state = SimpleNamespace(T=400.0, H=100.0, fluid_vapor_fraction=1.0)
         thermo = SimpleNamespace(

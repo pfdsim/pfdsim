@@ -245,7 +245,9 @@ class _ThermoStateSolver:
                 )
                 supported_keywords = {
                     name for name in ('include', 'phase', 'T_guess')
-                    if accepts_keywords or (
+                    # A legacy forwarding wrapper may accept **kwargs even
+                    # though its underlying backend has no phase/seed API.
+                    if (name == 'include' and accepts_keywords) or (
                         name in parameters
                         and parameters[name].kind != inspect.Parameter.POSITIONAL_ONLY
                     )
