@@ -36,12 +36,6 @@ from typing import Optional
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 DISABLED_EXAMPLES = {
-    'ethylene_ethane_isoparaffin_absorption.pfd': (
-        'Pending a dedicated normalized performance benchmark and baseline.'
-    ),
-    'haber_bosch_full.pfd': (
-        'Pending a dedicated normalized performance benchmark and baseline.'
-    ),
     'lactic_acid_dehydration_pbr.pfd': (
         'Pending a dedicated normalized performance benchmark and baseline.'
     ),
@@ -78,7 +72,7 @@ PER_EXAMPLE_RELATIVE_REGRESSION = {
 # enough absolute slack to avoid flagging scheduling noise as a regression.
 MIN_EXAMPLE_SLOWDOWN_SECONDS = 0.03
 
-BASELINE_WALL_SECONDS = 12.087
+BASELINE_WALL_SECONDS = 13.0
 BASELINE_EXAMPLE_SECONDS = {
     '3methylpyridine_ether_extraction_recycle.pfd': 1.445,
     'adaptive_spinodal_water_toluene.pfd': 0.016,
@@ -99,10 +93,12 @@ BASELINE_EXAMPLE_SECONDS = {
     'ethanol_pressure_swing_recycle_wasteful.pfd': 6.941,
     'ethanol_water_mhv2.pfd': 0.027,
     'ethanol_water_inclined_pipe_unifac.pfd': 0.468,
+    'ethylene_ethane_isoparaffin_absorption.pfd': 2.883,
     'ethylene_oxide.pfd': 0.227,
     'ethylene_oxide_simple.pfd': 0.354,
     'equilibrium_methanol_synthesis_recycle.pfd': 0.937,
     'global_vlle_water_methanol_benzene.pfd': 0.019,
+    'haber_bosch_full.pfd': 4.504,
     'jacketed_cstr_ignition_extinction.pfd': 0.198,
     'methane_claude_liquefaction_pr.pfd': 1.151,
     'methanol_decomposition_pfr.pfd': 0.029,

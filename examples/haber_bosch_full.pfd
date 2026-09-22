@@ -91,10 +91,10 @@ STREAM Recycle-Polish-Liquid : F-304.liquid_out -> M-301.polish_liquid
 STREAM Ammonia-Product-10bar : M-301.out -> PRODUCT
 STREAM Recycle-Candidate-10bar : F-304.vapor_out -> SPL-301.in
 STREAM Recycle-LP : SPL-301.out -> C-301R.in
-    T = -40 [C]
+    T = -36 [C]
     P = 10 [bar]
-    F = 2300 [kmol/h]
-    x = N2:0.234, O2:0.001, H2:0.686, CH4:0.001, NH3:0.078
+    F = 2500 [kmol/h]
+    x = N2:0.227, O2:0.001, H2:0.681, CH4:0.002, NH3:0.088
 STREAM Purge-Gas : SPL-301.out2 -> PRODUCT
 STREAM Recycle-100bar : C-301R.out -> H-302.in
 
