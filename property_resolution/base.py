@@ -30,6 +30,9 @@ class PropertyResolverBase:
             self._ideal_gas_cp_kernel_cache = {}
             self._liquid_cp_kernel_cache = {}
             self._solid_cp_kernel_cache = {}
+            self._viscosity_kernel_cache = {}
+            self._reichenberg_viscosity_input_cache = {}
+            self._yoon_thodos_viscosity_input_cache = {}
             self._hvap_carboxylic_acid_cache = {}
             self._online_attempt_trackers = []
 
@@ -303,7 +306,16 @@ class PropertyResolverBase:
             props: Optional[Dict[str, Any]],
             evaluator_name: str,
             *args,
+            prepared=None,
         ):
+            if prepared is not None:
+                library, entries = prepared
+                evaluator = getattr(library, f'{evaluator_name}_from_entry')
+                for entry in entries:
+                    result = evaluator(entry, *args)
+                    if result is not None:
+                        return result
+                return None
             library = self._get_perry_library()
             if library is None:
                 return None
@@ -404,14 +416,17 @@ class PropertyResolverBase:
             phase: str,
             *,
             extrapolation_limit: float = 20.0,
+            prepared=None,
         ) -> Optional[tuple[float, Any, str, float, float]]:
             """Return a nearby Perry viscosity extrapolation before weaker fallbacks.
 
             The final tuple is ``value, row, method, distance_K, quality_penalty``.
             """
-            library = self._get_perry_library()
-            if library is None:
+            if prepared is None:
+                prepared = self._prepare_perry_viscosity(identifier, props)
+            if prepared is None:
                 return None
+            library, entries = prepared
             phase_key = phase.strip().lower().replace('-', '_')
             if phase_key in {'liquid', 'l'}:
                 table_key = 'liquid_viscosity'
@@ -427,10 +442,7 @@ class PropertyResolverBase:
                 return None
 
             candidates = []
-            for candidate in self._identifier_candidates(identifier, props):
-                entry = library.get(candidate)
-                if not entry:
-                    continue
+            for entry in entries:
                 for row in entry.get(table_key, []) or []:
                     equation_id = row.get('equation_id')
                     if supported is not None and equation_id not in supported:

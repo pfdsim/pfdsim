@@ -26,6 +26,7 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
         ShomateSolidCpKernel, Perry151SolidCpKernel, TabularSolidCpKernel,
         PiecewiseSolidCpKernel, LastovkaSolidCpKernel,
         ModifiedKoppSolidCpKernel, SolidCpCollectionKernel,
+        ViscosityKernel,
         PropertyResolver,
     )
 else:
@@ -49,6 +50,7 @@ else:
         ShomateSolidCpKernel, Perry151SolidCpKernel, TabularSolidCpKernel,
         PiecewiseSolidCpKernel, LastovkaSolidCpKernel,
         ModifiedKoppSolidCpKernel, SolidCpCollectionKernel,
+        ViscosityKernel,
         PropertyResolver,
     )
 
@@ -97,6 +99,7 @@ __all__ = (
     'LastovkaSolidCpKernel',
     'ModifiedKoppSolidCpKernel',
     'SolidCpCollectionKernel',
+    'ViscosityKernel',
     'PropertyResolver',
     'get_property_resolver',
     'resolve_vapor_pressure',
@@ -121,6 +124,7 @@ __all__ = (
     'resolve_liquid_molar_volume',
     'resolve_liquid_molar_volume_nearest',
     'resolve_viscosity',
+    'resolve_viscosity_kernel',
     'resolve_thermal_conductivity',
     'resolve_surface_tension',
     'resolve_dipole_moment',
@@ -423,6 +427,22 @@ def resolve_viscosity(
         props,
         P=P,
         rho_molar=rho_molar,
+        allow_online=allow_online,
+    )
+
+
+def resolve_viscosity_kernel(
+    symbol: str,
+    phase: str,
+    props: Dict = None,
+    *,
+    allow_online: bool = True,
+) -> ViscosityKernel:
+    """Resolve one reusable pure-component viscosity kernel."""
+    return get_property_resolver().resolve_viscosity_kernel(
+        symbol,
+        phase,
+        props,
         allow_online=allow_online,
     )
 

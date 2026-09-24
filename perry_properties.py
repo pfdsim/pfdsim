@@ -868,10 +868,16 @@ class PerryPropertyLibrary:
         return value / 1000.0, row, method
 
     def viscosity_Pa_s(self, identifier: str, T: float, phase: str) -> Optional[PerryEvaluation]:
-        phase_key = phase.strip().lower().replace("-", "_")
         entry = self.get(identifier)
         if not entry:
             return None
+        return self.viscosity_Pa_s_from_entry(entry, T, phase)
+
+    def viscosity_Pa_s_from_entry(
+        self, entry: dict[str, Any], T: float, phase: str,
+    ) -> Optional[PerryEvaluation]:
+        """Evaluate a prepared entry using the same selection as identifier lookup."""
+        phase_key = phase.strip().lower().replace("-", "_")
 
         if phase_key in {"gas", "vapor", "vapour", "ideal_gas", "ideal"}:
             row = self._select_in_range(entry, "vapor_viscosity", T)

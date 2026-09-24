@@ -2426,6 +2426,133 @@ class PropertyResolutionSystemTests(unittest.TestCase):
                         **state,
                     )
 
+    def test_viscosity_kernel_is_reused_and_matches_scalar_resolution(self):
+        resolver = PropertyResolver()
+        props = {
+            'CAS': '79-10-7',
+            'name': 'Acrylic acid',
+            '_allow_online_lookup': False,
+        }
+        first = resolver.resolve_viscosity_kernel(
+            'Acrylic acid',
+            'vapor',
+            props,
+            allow_online=False,
+        )
+        second = resolver.resolve_viscosity_kernel(
+            'Acrylic acid',
+            'gas',
+            dict(props),
+            allow_online=False,
+        )
+        self.assertIs(first, second)
+
+        evaluated = first.evaluate(633.15, P=1.01325)
+        scalar = resolver.resolve_viscosity(
+            'Acrylic acid',
+            633.15,
+            'vapor',
+            props,
+            P=1.01325,
+            allow_online=False,
+        )
+        self.assertEqual(evaluated, scalar)
+        self.assertEqual(evaluated.method, 'perry_vapor_viscosity')
+        self.assertEqual(
+            first.viscosity(633.15, P=1.01325),
+            evaluated.value,
+        )
+
+    def test_viscosity_kernel_rejects_missing_temperature(self):
+        from property_resolver import ViscosityKernel
+
+        kernel = ViscosityKernel('liquid', lambda *args: self.fail('evaluated invalid state'))
+        for temperature in (None, 0.0, -1.0, float('nan'), float('inf')):
+            with self.subTest(T=temperature):
+                with self.assertRaises(PropertyResolutionError):
+                    kernel.evaluate(temperature)
+
+    def test_viscosity_kernel_snapshots_nested_correlations(self):
+        resolver = PropertyResolver()
+        props = {
+            'property_correlations': {
+                'mug': {
+                    'equation': 'viscosity_exp_rhor',
+                    'coefficients': {'A': math.log(10.0)},
+                },
+            },
+        }
+        original = resolver.resolve_viscosity_kernel(
+            'provided-gas', 'vapor', props, allow_online=False,
+        )
+        props['property_correlations']['mug']['coefficients']['A'] = math.log(20.0)
+        updated = resolver.resolve_viscosity_kernel(
+            'provided-gas', 'vapor', props, allow_online=False,
+        )
+        self.assertIsNot(original, updated)
+        self.assertClose(original.viscosity(400.0), 10.0e-6)
+        self.assertClose(updated.viscosity(400.0), 20.0e-6)
+        props['property_correlations']['mug']['coefficients']['A'] = math.log(10.0)
+        self.assertIs(original, resolver.resolve_viscosity_kernel(
+            'provided-gas', 'vapor', props, allow_online=False,
+        ))
+
+    def test_viscosity_kernel_preserves_override_with_custom_coolprop(self):
+        resolver = PropertyResolver()
+        props = {
+            'property_correlations': {
+                'mug': {
+                    '_pfd_override': True,
+                    'equation': 'viscosity_exp_rhor',
+                    'coefficients': {'A': math.log(10.0)},
+                },
+            },
+        }
+        with patch.object(resolver, '_coolprop_viscosity') as coolprop:
+            kernel = resolver.resolve_viscosity_kernel(
+                'provided-gas', 'vapor', props, allow_online=False,
+            )
+            self.assertClose(kernel.viscosity(400.0), 10.0e-6)
+            coolprop.assert_not_called()
+
+    def test_viscosity_estimate_caches_follow_changed_properties(self):
+        for method in ('yoon_thodos', 'reichenberg'):
+            with self.subTest(method=method):
+                resolver = PropertyResolver()
+                props = {'MW': 44.0, 'Tc': 400.0, 'Pc': 50.0, '_allow_online_lookup': False}
+
+                def evaluate():
+                    if method == 'yoon_thodos':
+                        return resolver._yoon_thodos_viscosity(
+                            'fixture', props, 400.0, 'vapor',
+                            method_factor=0.8, composition_note='fixture',
+                        )
+                    return resolver._reichenberg_vapor_viscosity(
+                        'fixture', props, 400.0,
+                        composition_class='inorganic', heavy_atoms=3, inorganic=True,
+                    )
+
+                first = evaluate()
+                props['MW'] *= 4.0
+                second = evaluate()
+                self.assertIsNotNone(first)
+                self.assertIsNotNone(second)
+                self.assertClose(second.value / first.value, 2.0)
+
+    def test_viscosity_kernel_honors_subclass_coolprop_provider(self):
+        result = PropertyResolutionResult(
+            value=1.0e-5, source='local', method='custom', quality=0.99,
+        )
+
+        class CustomResolver(PropertyResolver):
+            def _coolprop_viscosity(self, *args, **kwargs):
+                return result
+
+        kernel = CustomResolver().resolve_viscosity_kernel(
+            'fixture', 'vapor', {}, allow_online=False,
+        )
+        self.assertIs(kernel.evaluate(400.0), result)
+
     def test_jossi_stiel_thodos_reproduces_perry_co2_example(self):
         resolver = PropertyResolver()
         props = {

@@ -352,6 +352,7 @@ class IdealThermodynamics:
         self._liquid_molar_volume_info_cache: dict[tuple[str, float], tuple[float, Optional[str]]] = {}
         self._solid_molar_volume_cache: dict[tuple[str, float], float] = {}
         self._viscosity_cache: dict[tuple[str, str, float, float], float] = {}
+        self._viscosity_kernels: dict[tuple[str, str], object] = {}
         self._thermal_conductivity_cache: dict[tuple[str, str, float], float] = {}
         self._surface_tension_cache: dict[tuple[str, float], float] = {}
         self._surface_tension_calculators: dict[tuple[str, ...], object] = {}
@@ -3720,17 +3721,21 @@ class IdealThermodynamics:
         if props is None:
             raise ThermodynamicsError(f"Component '{comp}' not found for viscosity calculation")
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                from ..property_resolver import get_property_resolver
-            else:
-                from property_resolver import get_property_resolver
-            result = get_property_resolver().resolve_viscosity(
-                _property_lookup_identifier(comp, props),
-                T,
-                phase=phase_key,
-                props=self._resolver_known_props.get(comp),
-                P=P,
-            )
+            kernel_key = (phase_key, comp)
+            kernel = self._viscosity_kernels.get(kernel_key)
+            if kernel is None:
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from ..property_resolver import get_property_resolver
+                else:
+                    from property_resolver import get_property_resolver
+                kernel = get_property_resolver().resolve_viscosity_kernel(
+                    _property_lookup_identifier(comp, props),
+                    phase=phase_key,
+                    props=self._resolver_known_props.get(comp),
+                    allow_online=self._allow_online_lookup_for_component(comp),
+                )
+                self._viscosity_kernels[kernel_key] = kernel
+            result = kernel.evaluate(T, P=P)
         except Exception as exc:
             raise ThermodynamicsError(
                 f"Cannot resolve {phase_key} viscosity for {self._component_label(comp)} "

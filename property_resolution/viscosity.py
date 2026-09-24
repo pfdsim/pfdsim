@@ -6,7 +6,9 @@ from .online_viscosity import (
     PubChemViscosityResult,
 )
 from .organic_classification import hydrogen_bond_donor_profile
+from .viscosity_kernel import ViscosityKernel
 from collections import Counter
+from copy import deepcopy
 
 
 COOLPROP_VISCOSITY_QUALITY = 0.99
@@ -35,6 +37,20 @@ ONLINE_VISCOSITY_FULL_QUALITY_FIT_SPAN_K = 20.0
 
 
 class ViscosityMixin:
+        @staticmethod
+        def _viscosity_kernel_props_fingerprint(props: Optional[Dict[str, Any]]) -> str:
+            if props is None:
+                return '<database-properties>'
+            encoded = json.dumps(
+                props,
+                sort_keys=True,
+                separators=(',', ':'),
+                ensure_ascii=False,
+                default=str,
+            )
+            return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+
+
         def resolve_viscosity(
             self,
             symbol: str,
@@ -46,25 +62,126 @@ class ViscosityMixin:
             rho_molar: Optional[float] = None,
             allow_online: bool = True,
         ) -> PropertyResolutionResult:
-            """Resolve viscosity in Pa*s; P is bar and rho_molar is kmol/m^3."""
-            P, rho_molar = self._normalize_viscosity_state(P, rho_molar)
-            props = self._coerce_props(
+            """Resolve viscosity through a retained executable kernel."""
+            kernel = self.resolve_viscosity_kernel(
+                symbol,
+                phase,
+                props,
+                allow_online=allow_online,
+            )
+            return kernel.evaluate(T, P=P, rho_molar=rho_molar)
+
+
+        def resolve_viscosity_kernel(
+            self,
+            symbol: str,
+            phase: str,
+            props: Dict[str, Any] = None,
+            *,
+            allow_online: bool = True,
+        ) -> ViscosityKernel:
+            """Resolve and retain one executable viscosity plan."""
+            phase_key = phase.strip().lower().replace('-', '_')
+            phase_key = (
+                'vapor'
+                if phase_key in {'gas', 'vapor', 'vapour', 'ideal_gas', 'ideal'}
+                else 'liquid'
+                if phase_key in {'liquid', 'l'}
+                else phase_key
+            )
+            cache_key = (
+                str(symbol),
+                phase_key,
+                self._viscosity_kernel_props_fingerprint(props),
+                bool(allow_online),
+            )
+            cached = self._viscosity_kernel_cache.get(cache_key)
+            if cached is not None:
+                return cached
+
+            prepared_props = self._coerce_props(
                 symbol,
                 props,
                 allow_online=allow_online,
             )
-            allow_online = self._props_allow_online(props, allow_online)
-            props = {**props, '_allow_online_lookup': allow_online}
-            phase_key = phase.strip().lower().replace('-', '_')
-            correlation_key = 'mug' if phase_key in {'gas', 'vapor', 'vapour', 'ideal_gas', 'ideal'} else 'mul'
+            allow_online = self._props_allow_online(prepared_props, allow_online)
+            prepared_props = {
+                **deepcopy(prepared_props),
+                '_allow_online_lookup': allow_online,
+            }
+            correlation_key = (
+                'mug'
+                if phase_key == 'vapor'
+                else 'mul'
+            )
+            coolprop_reference = None
+            use_dynamic_coolprop = (
+                getattr(self._coolprop_viscosity, '__func__', None)
+                is not ViscosityMixin._coolprop_viscosity
+            )
+            if (
+                not use_dynamic_coolprop
+                and not self._is_pfd_correlation_override(
+                    prepared_props,
+                    correlation_key,
+                )
+            ):
+                coolprop_reference = self._coolprop_reference(
+                    symbol,
+                    prepared_props,
+                )
+            perry_prepared = self._prepare_perry_viscosity(symbol, prepared_props)
 
-            if not self._is_pfd_correlation_override(props, correlation_key):
-                # PFD components with explicit override correlations keep
-                # their declared behavior even when their CAS matches a
-                # CoolProp reference fluid.
+            def evaluate(T, P, rho_molar):
+                return self._resolve_prepared_viscosity(
+                    symbol,
+                    prepared_props,
+                    T,
+                    phase_key,
+                    P,
+                    rho_molar,
+                    allow_online,
+                    coolprop_reference,
+                    perry_prepared,
+                    use_dynamic_coolprop,
+                )
+
+            kernel = ViscosityKernel(phase=phase_key, evaluator=evaluate)
+            self._viscosity_kernel_cache[cache_key] = kernel
+            return kernel
+
+
+        def _resolve_prepared_viscosity(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+            T: float,
+            phase_key: str,
+            P: Optional[float],
+            rho_molar: Optional[float],
+            allow_online: bool,
+            coolprop_reference,
+            perry_prepared,
+            use_dynamic_coolprop: bool,
+        ) -> PropertyResolutionResult:
+            """Evaluate an already-normalized viscosity provider hierarchy."""
+            correlation_key = 'mug' if phase_key == 'vapor' else 'mul'
+
+            if use_dynamic_coolprop and not self._is_pfd_correlation_override(
+                props, correlation_key,
+            ):
                 coolprop_viscosity = self._coolprop_viscosity(
                     symbol,
                     props,
+                    T,
+                    phase_key,
+                    P=P,
+                )
+                if coolprop_viscosity:
+                    return coolprop_viscosity
+            elif coolprop_reference is not None:
+                coolprop_viscosity = self._coolprop_viscosity_from_reference(
+                    coolprop_reference,
                     T,
                     phase_key,
                     P=P,
@@ -139,44 +256,12 @@ class ViscosityMixin:
                         symbol, props, T, phase_key, baseline, P, rho_molar,
                     )
 
-            perry_viscosity = self._get_perry_evaluation(symbol, props, "viscosity_Pa_s", T, phase)
-            if perry_viscosity:
-                baseline = PropertyResolutionResult(
-                    value=perry_viscosity.value,
-                    source='local',
-                    method=perry_viscosity.method,
-                    quality=0.97,
-                    notes=(
-                        f"{perry_viscosity.source}; 1 atm correlation basis; "
-                        f"units {perry_viscosity.units}"
-                    ),
-                )
-                return self._apply_viscosity_pressure_correction(
-                    symbol, props, T, phase_key, baseline, P, rho_molar,
-                )
-
-            perry_extrapolated = self._get_perry_viscosity_bounded(
-                symbol,
-                props,
-                T,
-                phase,
+            perry_result = self._evaluate_prepared_perry_viscosity(
+                symbol, props, T, phase_key, perry_prepared,
             )
-            if perry_extrapolated:
-                value, row, method, distance, quality_penalty = perry_extrapolated
-                baseline = PropertyResolutionResult(
-                    value=value,
-                    source='local',
-                    method=f'{method}_bounded_extrapolation',
-                    quality=max(0.0, 0.97 - quality_penalty),
-                    notes=(
-                        f"Perry 9th Table {row.get('source_table')}; "
-                        f"1 atm correlation basis; units Pa*s; "
-                        f"extrapolated {distance:.3g} K beyond tabulated range; "
-                        f"quality penalty {quality_penalty:.2f}"
-                    ),
-                )
+            if perry_result is not None:
                 return self._apply_viscosity_pressure_correction(
-                    symbol, props, T, phase_key, baseline, P, rho_molar,
+                    symbol, props, T, phase_key, perry_result, P, rho_molar,
                 )
 
             estimated_vapor_viscosity = self._estimated_vapor_viscosity(
@@ -221,36 +306,73 @@ class ViscosityMixin:
                 )
 
             raise PropertyResolutionError(
-                f"Cannot determine {phase} viscosity for '{symbol}' at T={T:.1f}K."
+                f"Cannot determine {phase_key} viscosity for '{symbol}' at T={T:.1f}K."
             )
 
 
-        @staticmethod
-        def _normalize_viscosity_state(
-            P: Optional[float],
-            rho_molar: Optional[float],
-        ) -> tuple[Optional[float], Optional[float]]:
-            normalized = []
-            for name, value, units in (
-                ('P', P, 'bar'),
-                ('rho_molar', rho_molar, 'kmol/m^3'),
-            ):
-                if value is None:
-                    normalized.append(None)
+        def _prepare_perry_viscosity(
+            self,
+            symbol: str,
+            props: Dict[str, Any],
+        ):
+            library = self._get_perry_library()
+            if library is None:
+                return None
+            entries = []
+            seen = set()
+            for candidate in self._identifier_candidates(symbol, props):
+                entry = library.get(candidate)
+                if entry is None or id(entry) in seen:
                     continue
-                try:
-                    value = float(value)
-                except (TypeError, ValueError) as exc:
-                    raise PropertyResolutionError(
-                        f"Viscosity state {name} must be a positive finite value in {units}."
-                    ) from exc
-                if value <= 0.0 or not math.isfinite(value):
-                    raise PropertyResolutionError(
-                        f"Viscosity state {name} must be a positive finite value in {units}."
-                    )
-                normalized.append(value)
-            return normalized[0], normalized[1]
+                seen.add(id(entry))
+                entries.append(entry)
+            return library, tuple(entries)
 
+
+        def _evaluate_prepared_perry_viscosity(
+            self, symbol, props, T, phase_key, prepared,
+        ):
+            perry = self._get_perry_evaluation(
+                symbol,
+                props,
+                'viscosity_Pa_s',
+                T,
+                phase_key,
+                prepared=prepared,
+            )
+            if perry is not None:
+                return PropertyResolutionResult(
+                    value=perry.value,
+                    source='local',
+                    method=perry.method,
+                    quality=0.97,
+                    notes=(
+                        f"{perry.source}; 1 atm correlation basis; "
+                        f"units {perry.units}"
+                    ),
+                )
+            bounded = self._get_perry_viscosity_bounded(
+                symbol,
+                props,
+                T,
+                phase_key,
+                prepared=prepared,
+            )
+            if bounded is None:
+                return None
+            value, row, method, distance, penalty = bounded
+            return PropertyResolutionResult(
+                value=value,
+                source='local',
+                method=f'{method}_bounded_extrapolation',
+                quality=max(0.0, 0.97 - penalty),
+                notes=(
+                    f"Perry 9th Table {row.get('source_table')}; "
+                    "1 atm correlation basis; units Pa*s; "
+                    f"extrapolated {distance:.3g} K beyond tabulated range; "
+                    f"quality penalty {penalty:.2f}"
+                ),
+            )
 
         def _viscosity_critical_density(
             self,
@@ -1319,6 +1441,21 @@ class ViscosityMixin:
             reference = self._coolprop_reference(symbol, props)
             if reference is None:
                 return None
+            return self._coolprop_viscosity_from_reference(
+                reference,
+                T,
+                phase_key,
+                P=P,
+            )
+
+
+        def _coolprop_viscosity_from_reference(
+            self,
+            reference,
+            T: float,
+            phase_key: str,
+            P: Optional[float] = None,
+        ) -> Optional[PropertyResolutionResult]:
             CP = self._coolprop_module()
             if CP is None:
                 return None
@@ -1526,35 +1663,6 @@ class ViscosityMixin:
             except ImportError:
                 return None
 
-            mw_result = self._source_result_for_value(props, 'MW', units='g/mol')
-            if mw_result is None or mw_result.value is None:
-                return None
-            try:
-                critical = self.resolve_critical_properties(
-                    symbol,
-                    props,
-                    allow_online=self._props_allow_online(props),
-                    allow_estimation=True,
-                )
-            except Exception:
-                return None
-            tc_result = critical.get('Tc') if critical else None
-            pc_result = critical.get('Pc') if critical else None
-            if (
-                tc_result is None or tc_result.value is None
-                or pc_result is None or pc_result.value is None
-            ):
-                return None
-            try:
-                mw = float(mw_result.value)
-                tc = float(tc_result.value)
-                pc_bar = float(pc_result.value)
-                T = float(T)
-            except (TypeError, ValueError):
-                return None
-            if min(mw, tc, pc_bar, T) <= 0.0:
-                return None
-
             if inorganic:
                 fragmentation = None
                 method_factor = REICHENBERG_INORGANIC_FACTOR
@@ -1584,6 +1692,72 @@ class ViscosityMixin:
                     f'groups: {groups}'
                 )
 
+            cache_key = (
+                str(symbol),
+                self._viscosity_kernel_props_fingerprint(props),
+                composition_class,
+                int(heavy_atoms),
+                bool(inorganic),
+                branch_note,
+                repr(structure_result),
+            )
+            prepared = self._reichenberg_viscosity_input_cache.get(cache_key)
+            if prepared is None:
+                mw_result = self._source_result_for_value(
+                    props,
+                    'MW',
+                    units='g/mol',
+                )
+                if mw_result is None or mw_result.value is None:
+                    return None
+                try:
+                    critical = self.resolve_critical_properties(
+                        symbol,
+                        props,
+                        allow_online=self._props_allow_online(props),
+                        allow_estimation=True,
+                    )
+                except Exception:
+                    return None
+                tc_result = critical.get('Tc') if critical else None
+                pc_result = critical.get('Pc') if critical else None
+                if (
+                    tc_result is None or tc_result.value is None
+                    or pc_result is None or pc_result.value is None
+                ):
+                    return None
+                try:
+                    mw = float(mw_result.value)
+                    tc = float(tc_result.value)
+                    pc_bar = float(pc_result.value)
+                except (TypeError, ValueError):
+                    return None
+                if min(mw, tc, pc_bar) <= 0.0:
+                    return None
+                inputs = [mw_result, tc_result, pc_result]
+                if structure_result is not None and not inorganic:
+                    inputs.append(structure_result)
+                quality = self._combine_quality(
+                    inputs,
+                    method_factor=method_factor,
+                )
+                notes = (
+                    f'Reichenberg low-pressure vapor viscosity estimate with zero '
+                    f'dipole; {branch_note}; {heavy_atoms} heavy atoms; '
+                    f'MW from {mw_result.source}/{mw_result.method}, '
+                    f'Tc from {tc_result.source}/{tc_result.method}, '
+                    f'Pc from {pc_result.source}/{pc_result.method}; units Pa*s'
+                )
+                prepared = (mw, tc, pc_bar, quality, notes)
+                self._reichenberg_viscosity_input_cache[cache_key] = prepared
+            mw, tc, pc_bar, quality, notes = prepared
+            try:
+                T = float(T)
+            except (TypeError, ValueError):
+                return None
+            if T <= 0.0:
+                return None
+
             try:
                 value = reichenberg_method.viscosity_Pa_s(
                     T,
@@ -1596,22 +1770,12 @@ class ViscosityMixin:
                 )
             except (TypeError, ValueError, OverflowError):
                 return None
-            inputs = [mw_result, tc_result, pc_result]
-            if structure_result is not None and not inorganic:
-                inputs.append(structure_result)
-            quality = self._combine_quality(inputs, method_factor=method_factor)
             return PropertyResolutionResult(
                 value=value,
                 source='estimated',
                 method=method,
                 quality=quality,
-                notes=(
-                    f'Reichenberg low-pressure vapor viscosity estimate with zero '
-                    f'dipole; {branch_note}; {heavy_atoms} heavy atoms; '
-                    f'MW from {mw_result.source}/{mw_result.method}, '
-                    f'Tc from {tc_result.source}/{tc_result.method}, '
-                    f'Pc from {pc_result.source}/{pc_result.method}; units Pa*s'
-                ),
+                notes=notes,
             )
 
 
@@ -1812,40 +1976,72 @@ class ViscosityMixin:
             if T <= 0.0:
                 return None
 
-            mw_result = self._source_result_for_value(props, 'MW', units='g/mol')
-            if mw_result is None or mw_result.value is None:
-                return None
-            try:
-                mw = float(mw_result.value)
-            except (TypeError, ValueError):
-                return None
-            if mw <= 0.0:
-                return None
-
-            try:
-                critical = self.resolve_critical_properties(
+            if method_factor is None or composition_note is None:
+                default_factor, default_note = self._yoon_thodos_composition_factor(
                     symbol,
                     props,
-                    allow_online=self._props_allow_online(props),
-                    allow_estimation=True,
                 )
-            except Exception:
-                return None
-            tc_result = critical.get('Tc') if critical else None
-            pc_result = critical.get('Pc') if critical else None
-            if (
-                tc_result is None or tc_result.value is None
-                or pc_result is None or pc_result.value is None
-            ):
-                return None
+                if method_factor is None:
+                    method_factor = default_factor
+                if composition_note is None:
+                    composition_note = default_note
 
-            try:
-                tc = float(tc_result.value)
-                pc_bar = float(pc_result.value)
-            except (TypeError, ValueError):
-                return None
-            if tc <= 0.0 or pc_bar <= 0.0:
-                return None
+            cache_key = (
+                str(symbol),
+                self._viscosity_kernel_props_fingerprint(props),
+                float(method_factor),
+                str(composition_note),
+            )
+            prepared = self._yoon_thodos_viscosity_input_cache.get(cache_key)
+            if prepared is None:
+                mw_result = self._source_result_for_value(
+                    props,
+                    'MW',
+                    units='g/mol',
+                )
+                if mw_result is None or mw_result.value is None:
+                    return None
+                try:
+                    mw = float(mw_result.value)
+                except (TypeError, ValueError):
+                    return None
+                if mw <= 0.0:
+                    return None
+                try:
+                    critical = self.resolve_critical_properties(
+                        symbol,
+                        props,
+                        allow_online=self._props_allow_online(props),
+                        allow_estimation=True,
+                    )
+                except Exception:
+                    return None
+                tc_result = critical.get('Tc') if critical else None
+                pc_result = critical.get('Pc') if critical else None
+                if (
+                    tc_result is None or tc_result.value is None
+                    or pc_result is None or pc_result.value is None
+                ):
+                    return None
+                try:
+                    tc = float(tc_result.value)
+                    pc_bar = float(pc_result.value)
+                except (TypeError, ValueError):
+                    return None
+                if tc <= 0.0 or pc_bar <= 0.0:
+                    return None
+                quality = self._combine_quality(
+                    [tc_result, pc_result],
+                    method_factor=method_factor,
+                )
+                notes = (
+                    "Yoon-Thodos low-pressure vapor viscosity estimate; "
+                    f"{composition_note}; Tc from {tc_result.source}/{tc_result.method}, "
+                    f"Pc from {pc_result.source}/{pc_result.method}; units Pa*s"
+                )
+                prepared = (mw, tc, pc_bar, quality, notes)
+                self._yoon_thodos_viscosity_input_cache[cache_key] = prepared
+            mw, tc, pc_bar, quality, notes = prepared
 
             tr = T / tc
             pc_pa = pc_bar * 1.0e5
@@ -1868,29 +2064,12 @@ class ViscosityMixin:
             if value <= 0.0 or not math.isfinite(value):
                 return None
 
-            if method_factor is None or composition_note is None:
-                default_factor, default_note = self._yoon_thodos_composition_factor(
-                    symbol,
-                    props,
-                )
-                if method_factor is None:
-                    method_factor = default_factor
-                if composition_note is None:
-                    composition_note = default_note
-            quality = self._combine_quality(
-                [tc_result, pc_result],
-                method_factor=method_factor,
-            )
             return PropertyResolutionResult(
                 value=value,
                 source='calculated',
                 method='yoon_thodos_gas_viscosity',
                 quality=quality,
-                notes=(
-                    "Yoon-Thodos low-pressure vapor viscosity estimate; "
-                    f"{composition_note}; Tc from {tc_result.source}/{tc_result.method}, "
-                    f"Pc from {pc_result.source}/{pc_result.method}; units Pa*s"
-                ),
+                notes=notes,
             )
 
 
