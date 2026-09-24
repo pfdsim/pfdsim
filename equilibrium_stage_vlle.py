@@ -15,7 +15,11 @@ from functools import lru_cache
 from typing import Optional
 
 import numpy as np
-from scipy.sparse import lil_matrix
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+else:
+    from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
 
 
 @dataclass
@@ -526,6 +530,11 @@ class EquationOrientedVLLEColumn:
             max(abs(float(distillate_spec["value"])), flow_scale * feed_mw, 1.0)
             if distillate_spec["kind"] == "mass" else flow_scale
         )
+        # Each EquationOrientedVLLEColumn represents one fixed active-set
+        # topology.  A topology change constructs a new system and therefore a
+        # new checked Jacobian pattern automatically.
+        self._sparsity = self.sparsity()
+        self._jacobian_pattern = FixedPatternCSR(self._sparsity)
 
     def _layouts(self):
         layouts = []
@@ -784,7 +793,7 @@ class EquationOrientedVLLEColumn:
         return np.asarray(values, dtype=float)
 
     def sparsity(self):
-        matrix = lil_matrix((self.n_rows, self.n_vars), dtype=int)
+        matrix = SparsePatternBuilder((self.n_rows, self.n_vars))
         for stage, count in enumerate(self.stage_row_counts):
             rows = range(
                 self.stage_row_starts[stage],
@@ -798,16 +807,16 @@ class EquationOrientedVLLEColumn:
             for row in rows:
                 for dependent in dependencies:
                     layout = self.layouts[dependent]
-                    matrix[row, layout.start:layout.stop] = 1
+                    matrix.mark_range(row, layout.start, layout.stop)
                 if stage == 0:
-                    matrix[row, self.Q_cond_index] = 1
+                    matrix.mark(row, self.Q_cond_index)
                 if stage == self.N - 1:
-                    matrix[row, self.Q_reb_index] = 1
+                    matrix.mark(row, self.Q_reb_index)
         top = self.layouts[0]
         spec_row = self.n_rows - 2
-        matrix[spec_row, top.start:top.stop] = 1
-        matrix[spec_row + 1, top.liquid_flow] = 1
-        matrix[spec_row + 1, top.vapor_flow] = 1
+        matrix.mark_range(spec_row, top.start, top.stop)
+        matrix.mark(spec_row + 1, top.liquid_flow)
+        matrix.mark(spec_row + 1, top.vapor_flow)
         return matrix.tocsr()
 
     def topology_assessment(self, decoded: dict) -> tuple[list[bool], list[dict]]:
@@ -942,13 +951,12 @@ class EquationOrientedVLLEColumn:
 
         stages = decoded["stages"]
         props = [self.stage_properties(stage, state) for stage, state in enumerate(stages)]
-        matrix = lil_matrix((self.n_rows, self.n_vars), dtype=float)
+        matrix = self._jacobian_pattern.empty()
         evaluations = 0
         top_vapor_fraction = self.condenser_vapor_fraction
 
         def add(row, column, value):
-            if value:
-                matrix[row, column] = matrix[row, column] + value
+            matrix.add(row, column, value)
 
         for stage, layout in enumerate(self.layouts):
             columns = [layout.temperature]
@@ -1220,9 +1228,17 @@ class EquationOrientedVLLEColumn:
 
     def solve(self):
         x0 = self.pack_initial()
+        try:
+            sparsity = self._sparsity
+        except AttributeError:
+            # Some callers construct a solver-shaped test double without
+            # running __init__.  Real systems cache this topology-specific
+            # pattern, while those deliberately partial instances can retain
+            # the original lazy behavior.
+            sparsity = self.sparsity()
         solution = self.unit._sparse_newton_solve(
             self.residual,
-            self.sparsity(),
+            sparsity,
             x0,
             self.solver_options,
             jacobian=self.local_jacobian,

@@ -23,6 +23,10 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 else:
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+else:
+    from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
 
 
 _DISTILLATE_MOLAR_NAMES = ('distillate_flow', 'top_flow', 'D', 'D_flow')
@@ -5859,8 +5863,6 @@ class CMODistillation(RigorousDistillation):
             return np.array(values, dtype=float)
 
         def cmo_jacobian(vector, _f0, rel_step: float):
-            from scipy.sparse import lil_matrix
-
             decoded = self._cmo_decode_variables(
                 vector, comps, N, inlet.F, T_min, T_max
             )
@@ -5884,8 +5886,7 @@ class CMODistillation(RigorousDistillation):
             D_vapor = condenser_vapor_fraction * D
             D_liquid = (1.0 - condenser_vapor_fraction) * D
 
-            n_vars = 1 + N * nc
-            matrix = lil_matrix((n_vars, n_vars), dtype=float)
+            matrix = jacobian_pattern.empty()
             D_step = rel_step * max(abs(float(vector[0])), 1.0)
             D_theta = float(np.clip(vector[0] + D_step, -60.0, 60.0))
             perturbed_D = inlet.F / (1.0 + math.exp(-D_theta))
@@ -5931,7 +5932,11 @@ class CMODistillation(RigorousDistillation):
                             + dV_dD[stage]
                             * y[stage].get(comp, 0.0)
                         )
-                    matrix[stage * nc + ci, 0] = derivative / component_scales[comp]
+                    matrix.set(
+                        stage * nc + ci,
+                        0,
+                        derivative / component_scales[comp],
+                    )
 
             spec_row = N * nc
             if distillate_spec['kind'] == 'mass':
@@ -5942,11 +5947,13 @@ class CMODistillation(RigorousDistillation):
                     ) * self.thermo.props[comp].MW
                     for comp in comps
                 )
-                matrix[spec_row, 0] = (
-                    dD * product_mw / distillate_spec_scale
+                matrix.set(
+                    spec_row,
+                    0,
+                    dD * product_mw / distillate_spec_scale,
                 )
             else:
-                matrix[spec_row, 0] = dD / distillate_spec_scale
+                matrix.set(spec_row, 0, dD / distillate_spec_scale)
 
             evaluations = 0
             logits_start = 1 + N
@@ -6114,27 +6121,39 @@ class CMODistillation(RigorousDistillation):
                                         liquid_out_flow * dx[comp]
                                         + vapor_out_flow * dy[comp]
                                     )
-                            matrix[target_stage * nc + ci, column] = (
-                                derivative / component_scales[comp]
+                            matrix.set(
+                                target_stage * nc + ci,
+                                column,
+                                derivative / component_scales[comp],
                             )
 
-                    matrix[source_stage * nc + nc - 1, column] = dbubble
+                    matrix.set(source_stage * nc + nc - 1, column, dbubble)
                     if (
                         distillate_spec['kind'] == 'mass'
                         and source_stage == 0
                         and local_index > 0
                     ):
-                        matrix[spec_row, column] = D * sum(
-                            self.thermo.props[comp].MW * (
-                                (1.0 - condenser_vapor_fraction) * dx[comp]
-                                + condenser_vapor_fraction * dy[comp]
+                        matrix.set(
+                            spec_row,
+                            column,
+                            D * sum(
+                                self.thermo.props[comp].MW * (
+                                    (1.0 - condenser_vapor_fraction) * dx[comp]
+                                    + condenser_vapor_fraction * dy[comp]
+                                )
+                                for comp in comps
                             )
-                            for comp in comps
-                        ) / distillate_spec_scale
+                            / distillate_spec_scale,
+                        )
 
             return matrix.tocsr(), evaluations
 
-        sparsity = self._cmo_sparsity(N, nc)
+        sparsity = self._cmo_sparsity(
+            N,
+            nc,
+            latent_heat_correction=latent_heat_correction,
+        )
+        jacobian_pattern = FixedPatternCSR(sparsity)
         tolerance = float(self.get_param('cmo_tolerance', self.get_param('mesh_tolerance', 1e-7)))
         acceptable = float(
             self.get_param(
@@ -6493,32 +6512,39 @@ class CMODistillation(RigorousDistillation):
             })
         return {'D': float(D), 'T': T, 'x': x}
 
-    def _cmo_sparsity(self, N: int, nc: int):
-        from scipy.sparse import lil_matrix
-
+    def _cmo_sparsity(
+        self,
+        N: int,
+        nc: int,
+        *,
+        latent_heat_correction: bool,
+    ):
         n_rows = N * nc + 1
         n_cols = 1 + N * nc
-        matrix = lil_matrix((n_rows, n_cols), dtype=int)
+        matrix = SparsePatternBuilder((n_rows, n_cols))
 
         def mark_stage(row: int, stage: int) -> None:
             if not 0 <= stage < N:
                 return
-            matrix[row, 1 + stage] = 1
+            matrix.mark(row, 1 + stage)
             start = 1 + N + stage * (nc - 1)
-            for col in range(start, start + nc - 1):
-                matrix[row, col] = 1
+            matrix.mark_range(row, start, start + nc - 1)
 
         row = 0
         for stage in range(N):
             for _ in range(nc - 1):
-                matrix[row, 0] = 1
+                matrix.mark(row, 0)
                 mark_stage(row, stage)
                 mark_stage(row, stage - 1)
                 mark_stage(row, stage + 1)
+                if latent_heat_correction and N > 1:
+                    # Changes to the second stage alter latent-heat-corrected
+                    # internal traffic throughout the column.
+                    mark_stage(row, 1)
                 row += 1
             mark_stage(row, stage)
             row += 1
-        matrix[row, 0] = 1
+        matrix.mark(row, 0)
         mark_stage(row, 0)
         return matrix.tocsr()
 

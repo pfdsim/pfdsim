@@ -25,6 +25,10 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 else:
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+else:
+    from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
 
 
 class Flash3(Flash):
@@ -2434,8 +2438,6 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
         solvent_keys: list[str],
     ) -> UnitResult:
         import numpy as np
-        from scipy.sparse import lil_matrix
-
         nc = len(comps)
         total_F = feed.F + solvent.F
         flow_scale = max(total_F, 1.0)
@@ -2885,14 +2887,13 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             return np.array(residuals, dtype=float)
 
         def sparsity():
-            matrix = lil_matrix((n_rows, n_vars), dtype=int)
+            matrix = SparsePatternBuilder((n_rows, n_vars))
 
             def mark_stage(row: int, stage: int):
                 if not 0 <= stage < N:
                     return
                 off = offsets(stage)
-                for col in range(off['R'], off['R'] + stage_var_count):
-                    matrix[row, col] = 1
+                matrix.mark_range(row, off['R'], off['R'] + stage_var_count)
 
             row = 0
             for stage in range(N):
@@ -2915,19 +2916,19 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             return matrix.tocsr()
 
         sparsity_matrix = sparsity()
+        jacobian_pattern = FixedPatternCSR(sparsity_matrix)
 
         def semi_analytic_flow_jacobian(vector, f0, rel_step: float):
             if not self._truthy_param(self.get_param('semi_analytic_flow_jacobian', True)):
                 return None
 
-            J = lil_matrix(sparsity_matrix.shape, dtype=float)
+            J = jacobian_pattern.empty()
             Rv, Ev, xRv, xEv, Tv = decode(vector)
             hR = [phase_enthalpy(xRv[stage], Tv[stage]) for stage in range(N)]
             hE = [phase_enthalpy(xEv[stage], Tv[stage]) for stage in range(N)]
 
             def add(row_index: int, col_index: int, value: float) -> None:
-                if value:
-                    J[row_index, col_index] = J[row_index, col_index] + value
+                J.add(row_index, col_index, value)
 
             use_local_thermo = self._truthy_param(
                 self.get_param('semi_analytic_local_thermo_jacobian', True)
@@ -3142,7 +3143,7 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
                     for col in group:
                         rows = column_rows[col]
                         if rows.size:
-                            J[rows, col] = diff[rows] / step[col]
+                            J.set_column(rows, col, diff[rows] / step[col])
 
             for stage in range(N):
                 row_base = stage * stage_row_count
@@ -3535,9 +3536,8 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
 
     def _finite_difference_jacobian(self, residual, x, f0, sparsity, groups, rel_step: float):
         import numpy as np
-        from scipy.sparse import lil_matrix
 
-        J = lil_matrix(sparsity.shape, dtype=float)
+        J = FixedPatternCSR(sparsity).empty()
         evaluations = 0
         column_rows = [
             sparsity[:, col].nonzero()[0]
@@ -3553,7 +3553,7 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             for col in group:
                 rows = column_rows[col]
                 if rows.size:
-                    J[rows, col] = diff[rows] / step[col]
+                    J.set_column(rows, col, diff[rows] / step[col])
         return J.tocsr(), evaluations
 
 
@@ -4606,8 +4606,6 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
         aqueous_context=None,
     ) -> dict:
         import numpy as np
-        from scipy.sparse import csr_matrix, lil_matrix
-
         nc = len(comps)
         logits_start = N
         L_start = logits_start + N * (nc - 1)
@@ -4774,17 +4772,16 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
 
         def sparsity():
             n_rows = N * (nc + 2)
-            matrix = lil_matrix((n_rows, n_vars), dtype=int)
+            matrix = SparsePatternBuilder((n_rows, n_vars))
 
             def mark_stage(row: int, stage: int):
                 if not 0 <= stage < N:
                     return
-                matrix[row, stage] = 1
+                matrix.mark(row, stage)
                 start = logits_start + stage * (nc - 1)
-                for col in range(start, start + nc - 1):
-                    matrix[row, col] = 1
-                matrix[row, L_start + stage] = 1
-                matrix[row, V_start + stage] = 1
+                matrix.mark_range(row, start, start + nc - 1)
+                matrix.mark(row, L_start + stage)
+                matrix.mark(row, V_start + stage)
 
             row = 0
             for stage in range(N):
@@ -4805,6 +4802,7 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
             return matrix.tocsr()
 
         sparsity_matrix = sparsity()
+        jacobian_pattern = FixedPatternCSR(sparsity_matrix)
 
         def semi_analytic_flow_jacobian(vector, f0, rel_step: float):
             if not self._truthy_param(
@@ -4824,12 +4822,11 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
             y = [item['y'] for item in props]
             hL = [item['hL'] for item in props]
             hV = [item['hV'] for item in props]
-            J = np.zeros(sparsity_matrix.shape, dtype=float)
+            J = jacobian_pattern.empty()
             evaluations = 0
 
             def add(row: int, col: int, value: float) -> None:
-                if value:
-                    J[row, col] += value
+                J.add(row, col, value)
 
             use_local_thermo = self._truthy_param(
                 self.get_param('semi_analytic_local_thermo_jacobian', True)
@@ -4978,7 +4975,11 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
                     for col in group:
                         rows = column_rows[col]
                         if rows.size:
-                            J[rows, col] = diff[rows] / perturbation[col]
+                            J.set_column(
+                                rows,
+                                col,
+                                diff[rows] / perturbation[col],
+                            )
 
             for stage in range(N):
                 for ci, comp in enumerate(comps):
@@ -5033,7 +5034,7 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
                     )
 
             return (
-                csr_matrix(J),
+                J.tocsr(),
                 evaluations,
                 (
                     'semi_analytic_local_thermo'

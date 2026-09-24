@@ -17,6 +17,10 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_operations_base import UnitOperationError
 else:
     from unit_operations_base import UnitOperationError
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+else:
+    from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
 
 
 class EquilibriumStageColumnMixin:
@@ -499,8 +503,6 @@ class EquilibriumStageColumnMixin:
         T_max: float,
     ) -> dict:
         import numpy as np
-        from scipy.sparse import csr_matrix, lil_matrix
-
         nc = len(comps)
         logits_start = N
         L_start = logits_start + N * (nc - 1)
@@ -823,23 +825,21 @@ class EquilibriumStageColumnMixin:
 
         def sparsity():
             n_rows = N * (nc + 2) + (nc + 2 if condenser == 'decanter' else 2)
-            matrix = lil_matrix((n_rows, n_vars), dtype=int)
+            matrix = SparsePatternBuilder((n_rows, n_vars))
 
             def mark_stage(row: int, stage: int):
                 if not 0 <= stage < N:
                     return
-                matrix[row, stage] = 1
+                matrix.mark(row, stage)
                 start = logits_start + stage * (nc - 1)
-                for col in range(start, start + nc - 1):
-                    matrix[row, col] = 1
-                matrix[row, L_start + stage] = 1
-                matrix[row, V_start + stage] = 1
+                matrix.mark_range(row, start, start + nc - 1)
+                matrix.mark(row, L_start + stage)
+                matrix.mark(row, V_start + stage)
 
             def mark_decanter(row: int):
                 if condenser != 'decanter':
                     return
-                for col in range(decanter_x_start, decanter_x_start + nc):
-                    matrix[row, col] = 1
+                matrix.mark_range(row, decanter_x_start, decanter_x_start + nc)
 
             row = 0
             for stage in range(N):
@@ -852,17 +852,17 @@ class EquilibriumStageColumnMixin:
                     for local in local_stages:
                         mark_stage(row, local)
                     if stage == 0:
-                        matrix[row, V_start] = 1
+                        matrix.mark(row, V_start)
                         mark_decanter(row)
                     row += 1
                 for local in local_stages:
                     mark_stage(row, local)
                 if stage == 0:
-                    matrix[row, V_start] = 1
-                    matrix[row, Q_start] = 1
+                    matrix.mark(row, V_start)
+                    matrix.mark(row, Q_start)
                     mark_decanter(row)
                 if stage == N - 1:
-                    matrix[row, Q_start + 1] = 1
+                    matrix.mark(row, Q_start + 1)
                 row += 1
                 mark_stage(row, stage)
                 if condenser == 'decanter' and stage == 0 and N > 1:
@@ -874,10 +874,10 @@ class EquilibriumStageColumnMixin:
             if condenser == 'decanter' and N > 1:
                 mark_stage(row, 1)
                 mark_decanter(row)
-            matrix[row, V_start] = 1
+            matrix.mark(row, V_start)
             row += 1
-            matrix[row, L_start] = 1
-            matrix[row, V_start] = 1
+            matrix.mark(row, L_start)
+            matrix.mark(row, V_start)
             if condenser == 'decanter' and N > 1:
                 mark_stage(row, 0)
                 mark_stage(row, 1)
@@ -893,6 +893,7 @@ class EquilibriumStageColumnMixin:
             return matrix.tocsr()
 
         sparsity_matrix = sparsity()
+        jacobian_pattern = FixedPatternCSR(sparsity_matrix)
 
         dense_jacobian_mb = (
             sparsity_matrix.shape[0]
@@ -943,16 +944,11 @@ class EquilibriumStageColumnMixin:
                     self.get_param('semi_analytic_local_thermo_jacobian', True)
                 )
             )
-            J = (
-                np.zeros(sparsity_matrix.shape, dtype=float)
-                if use_local_thermo
-                else lil_matrix(sparsity_matrix.shape, dtype=float)
-            )
+            J = jacobian_pattern.empty()
             evaluations = 0
 
             def add(row: int, col: int, value: float) -> None:
-                if value:
-                    J[row, col] = J[row, col] + value
+                J.add(row, col, value)
 
             if use_local_thermo:
                 mass_scale = None
@@ -1140,7 +1136,11 @@ class EquilibriumStageColumnMixin:
                     for col in group:
                         rows = column_rows[col]
                         if rows.size:
-                            J[rows, col] = diff[rows] / perturbation[col]
+                            J.set_column(
+                                rows,
+                                col,
+                                diff[rows] / perturbation[col],
+                            )
 
             for stage in range(N):
                 for ci, comp in enumerate(comps):
@@ -1209,7 +1209,7 @@ class EquilibriumStageColumnMixin:
             add(spec_row + 1, L_start, L[0] / flow_scale)
             add(spec_row + 1, V_start, -RR * V[0] / flow_scale)
             return (
-                csr_matrix(J) if use_local_thermo else J.tocsr(),
+                J.tocsr(),
                 evaluations,
                 (
                     'semi_analytic_local_thermo'
@@ -1454,9 +1454,8 @@ class EquilibriumStageColumnMixin:
 
     def _finite_difference_jacobian(self, residual, x, f0, sparsity, groups, rel_step: float):
         import numpy as np
-        from scipy.sparse import lil_matrix
 
-        J = lil_matrix(sparsity.shape, dtype=float)
+        J = FixedPatternCSR(sparsity).empty()
         evaluations = 0
         column_rows = [
             sparsity[:, col].nonzero()[0]
@@ -1472,7 +1471,7 @@ class EquilibriumStageColumnMixin:
             for col in group:
                 rows = column_rows[col]
                 if rows.size:
-                    J[rows, col] = diff[rows] / step[col]
+                    J.set_column(rows, col, diff[rows] / step[col])
         return J.tocsr(), evaluations
 
     def _bubble_temperature_from_equation(
