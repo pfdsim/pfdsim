@@ -45,6 +45,17 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     ):
         super().__init__(components, db, interaction_overrides)
         self._activity_interaction_extrapolation_warning_keys: set[tuple] = set()
+        self._activity_interaction_bounds: dict[
+            tuple[str, str], tuple[float, float]
+        ] = {}
+        self._activity_interaction_pending_lower: dict[
+            tuple[str, str], tuple[float, float]
+        ] = {}
+        self._activity_interaction_pending_upper: dict[
+            tuple[str, str], tuple[float, float]
+        ] = {}
+        self._activity_interaction_lower_safe_temperature = -math.inf
+        self._activity_interaction_upper_safe_temperature = math.inf
 
     @staticmethod
     def _activity_interaction_temperature_bounds(record: dict) -> tuple[float, float]:
@@ -87,6 +98,27 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if effective == requested:
             return requested
         boundary = 'Tmin_K' if requested < low else 'Tmax_K'
+        self._record_activity_interaction_extrapolation(
+            component1,
+            component2,
+            boundary,
+            requested,
+            effective,
+            low,
+            high,
+        )
+        return effective
+
+    def _record_activity_interaction_extrapolation(
+        self,
+        component1: str,
+        component2: str,
+        boundary: str,
+        requested: float,
+        effective: float,
+        low: float,
+        high: float,
+    ) -> None:
         key = (tuple(sorted((component1, component2))), boundary)
         if key not in self._activity_interaction_extrapolation_warning_keys:
             self._activity_interaction_extrapolation_warning_keys.add(key)
@@ -96,14 +128,88 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 f"do_not_extrapolate=true and the declared range is "
                 f"{low:g}-{high:g} K."
             )
-        return effective
+
+    def _prepare_activity_interaction_extrapolation(self, resolver) -> None:
+        """Resolve immutable clamp-warning metadata once during initialization."""
+        bounds = {}
+        for index, component1 in enumerate(self.components):
+            for component2 in self.components[index + 1:]:
+                record = resolver(component1, component2)
+                if record is None:
+                    continue
+                low, high = self._activity_interaction_temperature_bounds(record)
+                if math.isfinite(low) or math.isfinite(high):
+                    bounds[(component1, component2)] = (low, high)
+
+        self._activity_interaction_bounds = bounds
+        self._activity_interaction_pending_lower = dict(bounds)
+        self._activity_interaction_pending_upper = dict(bounds)
+        self._refresh_activity_interaction_safe_temperatures()
+
+    def _refresh_activity_interaction_safe_temperatures(self) -> None:
+        lower = self._activity_interaction_pending_lower.values()
+        upper = self._activity_interaction_pending_upper.values()
+        self._activity_interaction_lower_safe_temperature = max(
+            (bounds[0] for bounds in lower),
+            default=-math.inf,
+        )
+        self._activity_interaction_upper_safe_temperature = min(
+            (bounds[1] for bounds in upper),
+            default=math.inf,
+        )
 
     def _warn_activity_interaction_extrapolation(
         self,
         T: float,
         components=None,
     ) -> None:
-        """Allow record-backed models to surface compiled-path clamp warnings."""
+        """Surface each pre-resolved pair/boundary clamp warning at most once."""
+        requested = float(T)
+        selected = None if components is None else frozenset(components)
+        changed = False
+
+        if requested < self._activity_interaction_lower_safe_temperature:
+            for pair, (low, high) in tuple(
+                self._activity_interaction_pending_lower.items()
+            ):
+                key = (tuple(sorted(pair)), 'Tmin_K')
+                if key in self._activity_interaction_extrapolation_warning_keys:
+                    del self._activity_interaction_pending_lower[pair]
+                    changed = True
+                    continue
+                if selected is not None and (
+                    pair[0] not in selected or pair[1] not in selected
+                ):
+                    continue
+                if requested < low:
+                    self._record_activity_interaction_extrapolation(
+                        pair[0], pair[1], 'Tmin_K', requested, low, low, high
+                    )
+                    del self._activity_interaction_pending_lower[pair]
+                    changed = True
+
+        if requested > self._activity_interaction_upper_safe_temperature:
+            for pair, (low, high) in tuple(
+                self._activity_interaction_pending_upper.items()
+            ):
+                key = (tuple(sorted(pair)), 'Tmax_K')
+                if key in self._activity_interaction_extrapolation_warning_keys:
+                    del self._activity_interaction_pending_upper[pair]
+                    changed = True
+                    continue
+                if selected is not None and (
+                    pair[0] not in selected or pair[1] not in selected
+                ):
+                    continue
+                if requested > high:
+                    self._record_activity_interaction_extrapolation(
+                        pair[0], pair[1], 'Tmax_K', requested, high, low, high
+                    )
+                    del self._activity_interaction_pending_upper[pair]
+                    changed = True
+
+        if changed:
+            self._refresh_activity_interaction_safe_temperatures()
 
     def _validate_activity_interactions(self, resolver) -> None:
         for index, component1 in enumerate(self.components):

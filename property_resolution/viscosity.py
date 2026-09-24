@@ -1395,16 +1395,27 @@ class ViscosityMixin:
             symbol: str,
             props: Dict[str, Any],
         ):
+            native_smiles = self._viscosity_smiles(props)
+            cache_key = (symbol, native_smiles)
+            cache = getattr(self, '_reichenberg_structure_cache', None)
+            if cache is None:
+                cache = {}
+                self._reichenberg_structure_cache = cache
+            if cache_key in cache:
+                return cache[cache_key]
+
             try:
                 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
                     from .. import reichenberg_method
                 else:
                     import reichenberg_method
             except ImportError:
-                return None, None
+                result = (None, None)
+                cache[cache_key] = result
+                return result
 
             resolved_smiles = None
-            smiles = self._viscosity_smiles(props)
+            smiles = native_smiles
             if not smiles:
                 resolved_smiles = self._resolve_smiles_result(
                     symbol,
@@ -1416,7 +1427,9 @@ class ViscosityMixin:
                     if resolved_smiles and resolved_smiles.value else None
                 )
             if not smiles:
-                return None, None
+                result = (None, None)
+                cache[cache_key] = result
+                return result
             structure_result = resolved_smiles or self._source_result_for_value(
                 props,
                 'smiles',
@@ -1428,8 +1441,12 @@ class ViscosityMixin:
             try:
                 profile = reichenberg_method.structure_profile(smiles)
             except reichenberg_method.ReichenbergFragmentationError:
-                return structure_result, None
-            return structure_result, profile
+                result = (structure_result, None)
+                cache[cache_key] = result
+                return result
+            result = (structure_result, profile)
+            cache[cache_key] = result
+            return result
 
 
         def _reichenberg_fragmentation(

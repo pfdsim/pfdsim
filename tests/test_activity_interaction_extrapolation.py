@@ -1,5 +1,6 @@
 import math
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -180,6 +181,35 @@ class ActivityInteractionExtrapolationTests(unittest.TestCase):
                     self.assertAlmostEqual(
                         vlle_gamma[index], compiled[index], places=12
                     )
+
+    def test_runtime_warning_checks_use_prepared_bounds_without_resolving_pairs(self):
+        for model, resolver_name in (
+            ('NRTL', '_nrtl_interaction_for_components'),
+            ('UNIQUAC', '_uniquac_interaction_for_components'),
+        ):
+            with self.subTest(model=model):
+                thermo = create_thermodynamics(
+                    ['water', 'ethanol'],
+                    model,
+                    interaction_overrides=[
+                        self._record(model, 'water', 'ethanol', clamp=True),
+                    ],
+                )
+                with patch.object(
+                    thermo,
+                    resolver_name,
+                    side_effect=AssertionError('interaction pair was re-resolved'),
+                ):
+                    for temperature in (325.0, 400.0, 425.0, 275.0, 250.0):
+                        thermo._warn_activity_interaction_extrapolation(temperature)
+
+                warnings = [
+                    warning for warning in thermo.warnings
+                    if 'do_not_extrapolate=true' in warning
+                ]
+                self.assertEqual(len(warnings), 2)
+                self.assertIn('350 K instead of 400 K', warnings[0])
+                self.assertIn('300 K instead of 275 K', warnings[1])
 
     def test_water_propionic_uniquac_policy_is_built_and_runtime_visible(self):
         records, _, _ = supplemental_literature_vle_activity_records(

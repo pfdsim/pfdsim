@@ -147,6 +147,96 @@ def _safe_power(base: float, exponent: float) -> float:
     return float(value)
 
 
+def _safe_expression_divide(left: float, right: float) -> float:
+    if right == 0.0:
+        raise KineticsError("Division by zero in kinetic expression")
+    return left / right
+
+
+def _safe_expression_log(value: float) -> float:
+    if value <= 0.0:
+        raise KineticsError("log(...) requires a positive argument")
+    return math.log(value)
+
+
+def _safe_expression_log10(value: float) -> float:
+    if value <= 0.0:
+        raise KineticsError("log10(...) requires a positive argument")
+    return math.log10(value)
+
+
+def _safe_expression_sqrt(value: float) -> float:
+    if value < 0.0:
+        raise KineticsError("sqrt(...) requires a nonnegative argument")
+    return math.sqrt(value)
+
+
+def _safe_expression_mapping_value(mapping: Mapping[str, object], key: str) -> float:
+    return float(mapping.get(key, 0.0))
+
+
+_SAFE_RATE_EXPRESSION_GLOBALS = {
+    '__builtins__': {},
+    '__rate_abs': abs,
+    '__rate_divide': _safe_expression_divide,
+    '__rate_exp': math.exp,
+    '__rate_log': _safe_expression_log,
+    '__rate_log10': _safe_expression_log10,
+    '__rate_mapping_value': _safe_expression_mapping_value,
+    '__rate_max': max,
+    '__rate_min': min,
+    '__rate_power': _safe_power,
+    '__rate_sqrt': _safe_expression_sqrt,
+}
+
+
+class _SafeRateExpressionLowerer(ast.NodeTransformer):
+    """Lower validated expressions to calls with the interpreter's semantics."""
+
+    _function_names = {
+        'abs': '__rate_abs',
+        'exp': '__rate_exp',
+        'log': '__rate_log',
+        'log10': '__rate_log10',
+        'max': '__rate_max',
+        'min': '__rate_min',
+        'sqrt': '__rate_sqrt',
+    }
+
+    def visit_BinOp(self, node):
+        node = self.generic_visit(node)
+        helper = None
+        if isinstance(node.op, ast.Div):
+            helper = '__rate_divide'
+        elif isinstance(node.op, ast.Pow):
+            helper = '__rate_power'
+        if helper is None:
+            return node
+        return ast.copy_location(
+            ast.Call(
+                func=ast.Name(id=helper, ctx=ast.Load()),
+                args=[node.left, node.right],
+                keywords=[],
+            ),
+            node,
+        )
+
+    def visit_Call(self, node):
+        node = self.generic_visit(node)
+        node.func.id = self._function_names[node.func.id]
+        return node
+
+    def visit_Subscript(self, node):
+        return ast.copy_location(
+            ast.Call(
+                func=ast.Name(id='__rate_mapping_value', ctx=ast.Load()),
+                args=[self.visit(node.value), self.visit(node.slice)],
+                keywords=[],
+            ),
+            node,
+        )
+
+
 class SafeRateExpression:
     """A tiny arithmetic expression language for custom kinetic rates."""
 
@@ -211,7 +301,13 @@ class SafeRateExpression:
             and node.id not in self._function_names
             and node.id not in self.mapping_names
         )
-        self._tree = tree.body
+        lowered = _SafeRateExpressionLowerer().visit(tree)
+        ast.fix_missing_locations(lowered)
+        self._compiled_code = compile(
+            lowered,
+            '<kinetic expression>',
+            'eval',
+        )
 
     def _validate(self, node) -> None:
         if isinstance(node, ast.Expression):
@@ -268,59 +364,20 @@ class SafeRateExpression:
         )
 
     def evaluate(self, context: Mapping[str, object]) -> float:
-        def visit(node):
-            if isinstance(node, ast.Constant):
-                return float(node.value)
-            if isinstance(node, ast.Name):
-                return float(context[node.id])
-            if isinstance(node, ast.UnaryOp):
-                value = visit(node.operand)
-                return value if isinstance(node.op, ast.UAdd) else -value
-            if isinstance(node, ast.BinOp):
-                left = visit(node.left)
-                right = visit(node.right)
-                if isinstance(node.op, ast.Add):
-                    return left + right
-                if isinstance(node.op, ast.Sub):
-                    return left - right
-                if isinstance(node.op, ast.Mult):
-                    return left * right
-                if isinstance(node.op, ast.Div):
-                    if right == 0.0:
-                        raise KineticsError("Division by zero in kinetic expression")
-                    return left / right
-                return _safe_power(left, right)
-            if isinstance(node, ast.Call):
-                values = [visit(argument) for argument in node.args]
-                name = node.func.id
-                if name == 'log':
-                    value = values[0]
-                    if value <= 0.0:
-                        raise KineticsError("log(...) requires a positive argument")
-                    return math.log(value)
-                if name == 'log10':
-                    value = values[0]
-                    if value <= 0.0:
-                        raise KineticsError("log10(...) requires a positive argument")
-                    return math.log10(value)
-                if name == 'sqrt':
-                    value = values[0]
-                    if value < 0.0:
-                        raise KineticsError("sqrt(...) requires a nonnegative argument")
-                    return math.sqrt(value)
-                if name == 'abs':
-                    return abs(values[0])
-                if name == 'min':
-                    return min(values)
-                if name == 'max':
-                    return max(values)
-                return math.exp(values[0])
-            if isinstance(node, ast.Subscript):
-                return float(context[node.value.id].get(node.slice.value, 0.0))
-            raise KineticsError("Unsupported kinetic expression node")
-
         try:
-            result = float(visit(self._tree))
+            local_values = {
+                name: float(context[name])
+                for name in self.names
+            }
+            local_values.update({
+                name: context[name]
+                for name in self.mapping_names
+            })
+            result = float(eval(
+                self._compiled_code,
+                _SAFE_RATE_EXPRESSION_GLOBALS,
+                local_values,
+            ))
         except (ArithmeticError, OverflowError, ValueError) as error:
             if isinstance(error, KineticsError):
                 raise

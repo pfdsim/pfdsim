@@ -2718,6 +2718,28 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         self.assertClose(viscosity.quality, 0.91)
         self.assertIn('unbranched terminal C4+ 1-alkyne', viscosity.notes)
 
+    def test_reichenberg_structure_classification_is_cached_across_states(self):
+        import reichenberg_method
+
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C6H10',
+            'smiles': 'C#CCCCC',
+            'MW': 82.146,
+            'Tc': 497.0,
+            'Pc': 39.5,
+        }
+        with patch.object(
+            reichenberg_method,
+            'structure_profile',
+            wraps=reichenberg_method.structure_profile,
+        ) as structure_profile:
+            first = resolver._reichenberg_structure('1-hexyne fixture', props)
+            second = resolver._reichenberg_structure('1-hexyne fixture', props)
+
+        self.assertIs(first, second)
+        self.assertEqual(structure_profile.call_count, 1)
+
     def test_internal_alkyne_structure_stays_on_yoon_thodos(self):
         resolver = PropertyResolver()
         props = {

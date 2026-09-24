@@ -5,6 +5,7 @@ from copy import deepcopy
 from kinetic_models import (
     HomogeneousRateState,
     KineticsError,
+    SafeRateExpression,
     evaluate_forward_reaction_rate,
     evaluate_reaction_rate,
     kinetic_reaction_from_mapping,
@@ -194,6 +195,42 @@ class KineticReactionDefinitionTests(unittest.TestCase):
                         self.components,
                         self.thermo.props,
                     )
+
+    def test_compiled_expression_preserves_arithmetic_and_domain_semantics(self):
+        expression = SafeRateExpression(
+            "min(max(abs(-x), sqrt(y)), 5) + log(z) + log10(z) + M['a']**0.5",
+            {'x', 'y', 'z'},
+            scalar_names={'x', 'y', 'z'},
+            mapping_names={'M'},
+            function_names={'abs', 'sqrt', 'min', 'max', 'log', 'log10'},
+        )
+        actual = expression.evaluate({
+            'x': 2.0,
+            'y': 9.0,
+            'z': 10.0,
+            'M': {'a': 4.0},
+        })
+        self.assertAlmostEqual(actual, 3.0 + math.log(10.0) + 1.0 + 2.0)
+
+        cases = (
+            ('1 / x', {'x': 0.0}, 'Division by zero'),
+            ('x ** 0.5', {'x': -1.0}, 'Fractional powers'),
+            ('log(x)', {'x': 0.0}, 'requires a positive argument'),
+            ('sqrt(x)', {'x': -1.0}, 'requires a nonnegative argument'),
+        )
+        for source, context, message in cases:
+            functions = {'log'} if source.startswith('log') else (
+                {'sqrt'} if source.startswith('sqrt') else set()
+            )
+            with self.subTest(source=source):
+                compiled = SafeRateExpression(
+                    source,
+                    {'x'},
+                    scalar_names={'x'},
+                    function_names=functions,
+                )
+                with self.assertRaisesRegex(KineticsError, message):
+                    compiled.evaluate(context)
 
     def test_custom_expression_uses_shared_gas_constant(self):
         reaction = kinetic_reaction_from_mapping(

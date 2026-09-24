@@ -102,7 +102,9 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                 estimated, 'NRTL'
             )
             self.estimated_interaction_metadata = metadata
-        self._validate_activity_interactions(self._nrtl_interaction_for_components)
+        self._prepare_activity_interaction_extrapolation(
+            self._nrtl_interaction_for_components
+        )
         self._warn_missing_nrtl_interactions()
 
     def prepare_compiled_backends(
@@ -175,14 +177,6 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
                         f"NRTL binary interaction parameters missing for "
                         f"{comp_i}/{comp_j}; using tau_ij=tau_ji=0 with alpha_ij=0.3."
                     )
-
-    def _warn_activity_interaction_extrapolation(self, T: float, components=None) -> None:
-        selected = list(self.components if components is None else components)
-        for index, comp_i in enumerate(selected):
-            for comp_j in selected[index + 1:]:
-                data = self._nrtl_interaction_for_components(comp_i, comp_j)
-                if data is not None:
-                    self._activity_interaction_temperature(data, comp_i, comp_j, T)
 
     def _compiled_activity_backend(self, T: Optional[float] = None):
         cache_key = "all_temperatures"
@@ -508,7 +502,9 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                 estimated, 'UNIQUAC'
             )
             self.estimated_interaction_metadata = metadata
-        self._validate_activity_interactions(self._uniquac_interaction_for_components)
+        self._prepare_activity_interaction_extrapolation(
+            self._uniquac_interaction_for_components
+        )
         self._warn_missing_uniquac_interactions()
 
     def prepare_compiled_backends(
@@ -586,14 +582,6 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
                         f"UNIQUAC binary interaction parameters missing for "
                         f"{comp_i}/{comp_j}; using tau_ij=tau_ji=1."
                     )
-
-    def _warn_activity_interaction_extrapolation(self, T: float, components=None) -> None:
-        selected = list(self.components if components is None else components)
-        for index, comp_i in enumerate(selected):
-            for comp_j in selected[index + 1:]:
-                data = self._uniquac_interaction_for_components(comp_i, comp_j)
-                if data is not None:
-                    self._activity_interaction_temperature(data, comp_i, comp_j, T)
 
     def _compiled_activity_backend(self, T: Optional[float] = None):
         active_components = tuple(
