@@ -109,6 +109,9 @@ class ViscosityMixin:
                 **deepcopy(prepared_props),
                 '_allow_online_lookup': allow_online,
             }
+            prepared_props_fingerprint = (
+                self._viscosity_kernel_props_fingerprint(prepared_props)
+            )
             correlation_key = (
                 'mug'
                 if phase_key == 'vapor'
@@ -144,6 +147,7 @@ class ViscosityMixin:
                     coolprop_reference,
                     perry_prepared,
                     use_dynamic_coolprop,
+                    prepared_props_fingerprint,
                 )
 
             kernel = ViscosityKernel(phase=phase_key, evaluator=evaluate)
@@ -163,6 +167,7 @@ class ViscosityMixin:
             coolprop_reference,
             perry_prepared,
             use_dynamic_coolprop: bool,
+            props_fingerprint: str,
         ) -> PropertyResolutionResult:
             """Evaluate an already-normalized viscosity provider hierarchy."""
             correlation_key = 'mug' if phase_key == 'vapor' else 'mul'
@@ -269,6 +274,7 @@ class ViscosityMixin:
                 props,
                 T,
                 phase_key,
+                props_fingerprint=props_fingerprint,
             )
             if estimated_vapor_viscosity:
                 return self._apply_viscosity_pressure_correction(
@@ -1654,6 +1660,7 @@ class ViscosityMixin:
             structure_result: Optional[PropertyResolutionResult] = None,
             fragmentation=None,
             inorganic: bool = False,
+            props_fingerprint: Optional[str] = None,
         ) -> Optional[PropertyResolutionResult]:
             try:
                 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
@@ -1694,7 +1701,11 @@ class ViscosityMixin:
 
             cache_key = (
                 str(symbol),
-                self._viscosity_kernel_props_fingerprint(props),
+                (
+                    props_fingerprint
+                    if props_fingerprint is not None
+                    else self._viscosity_kernel_props_fingerprint(props)
+                ),
                 composition_class,
                 int(heavy_atoms),
                 bool(inorganic),
@@ -1785,9 +1796,13 @@ class ViscosityMixin:
             props: Dict[str, Any],
             T: float,
             phase_key: str,
+            *,
+            props_fingerprint: Optional[str] = None,
         ) -> Optional[PropertyResolutionResult]:
             if phase_key not in {'gas', 'vapor', 'vapour', 'ideal_gas', 'ideal'}:
                 return None
+            if props_fingerprint is None:
+                props_fingerprint = self._viscosity_kernel_props_fingerprint(props)
 
             counts = self._viscosity_formula_counts(symbol, props)
             composition_class, heavy_atoms = self._vapor_viscosity_composition_class(
@@ -1836,6 +1851,7 @@ class ViscosityMixin:
                         heavy_atoms=heavy_atoms,
                         structure_result=structure_result,
                         fragmentation=fragmentation,
+                        props_fingerprint=props_fingerprint,
                     )
                     if reichenberg is not None:
                         return reichenberg
@@ -1846,6 +1862,7 @@ class ViscosityMixin:
                     phase_key,
                     method_factor=YOON_THODOS_HYDROCARBON_FACTOR,
                     composition_note='hydrocarbon multiplier 0.88',
+                    props_fingerprint=props_fingerprint,
                 )
 
             # scripts/vapor_viscosity/fit_reichenberg_aldehyde_group.py found
@@ -1873,6 +1890,7 @@ class ViscosityMixin:
                         'unbranched C3+ aldehyde selected for Yoon-Thodos by '
                         'the Perry aldehyde-family benchmark'
                     ),
+                    props_fingerprint=props_fingerprint,
                 )
 
             if heavy_atoms is None:
@@ -1886,6 +1904,7 @@ class ViscosityMixin:
                         'formula and usable structure unavailable; '
                         'conservative polar-organic fallback multiplier 0.75'
                     ),
+                    props_fingerprint=props_fingerprint,
                 )
             if heavy_atoms < REICHENBERG_MINIMUM_HEAVY_ATOMS:
                 return self._yoon_thodos_viscosity(
@@ -1898,6 +1917,7 @@ class ViscosityMixin:
                         f'{heavy_atoms} heavy atoms; below Reichenberg minimum of '
                         f'{REICHENBERG_MINIMUM_HEAVY_ATOMS}; multiplier 0.50'
                     ),
+                    props_fingerprint=props_fingerprint,
                 )
 
             if composition_class == 'inorganic':
@@ -1908,6 +1928,7 @@ class ViscosityMixin:
                     composition_class=composition_class,
                     heavy_atoms=heavy_atoms,
                     inorganic=True,
+                    props_fingerprint=props_fingerprint,
                 )
                 if reichenberg is not None:
                     return reichenberg
@@ -1920,6 +1941,7 @@ class ViscosityMixin:
                     heavy_atoms=heavy_atoms,
                     structure_result=structure_result,
                     fragmentation=fragmentation,
+                    props_fingerprint=props_fingerprint,
                 )
                 if reichenberg is not None:
                     return reichenberg
@@ -1937,6 +1959,7 @@ class ViscosityMixin:
                         composition_class='inorganic',
                         heavy_atoms=heavy_atoms,
                         inorganic=True,
+                        props_fingerprint=props_fingerprint,
                     )
                     if reichenberg is not None:
                         return reichenberg
@@ -1954,6 +1977,7 @@ class ViscosityMixin:
                 phase_key,
                 method_factor=factor,
                 composition_note=note,
+                props_fingerprint=props_fingerprint,
             )
 
 
@@ -1966,6 +1990,7 @@ class ViscosityMixin:
             *,
             method_factor: Optional[float] = None,
             composition_note: Optional[str] = None,
+            props_fingerprint: Optional[str] = None,
         ) -> Optional[PropertyResolutionResult]:
             if phase_key not in {'gas', 'vapor', 'vapour', 'ideal_gas', 'ideal'}:
                 return None
@@ -1988,7 +2013,11 @@ class ViscosityMixin:
 
             cache_key = (
                 str(symbol),
-                self._viscosity_kernel_props_fingerprint(props),
+                (
+                    props_fingerprint
+                    if props_fingerprint is not None
+                    else self._viscosity_kernel_props_fingerprint(props)
+                ),
                 float(method_factor),
                 str(composition_note),
             )

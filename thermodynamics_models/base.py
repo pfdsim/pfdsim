@@ -377,6 +377,7 @@ class IdealThermodynamics:
         self._quality_context_stack: list[dict] = []
         self._henry_quality_marked_contexts: set[tuple] = set()
         self._static_quality_marked_contexts: set[tuple] = set()
+        self._viscosity_quality_marked_contexts: set[tuple] = set()
         self._runtime_initialized = False
         self.warnings: list[str] = []
         self._warning_keys: set[str] = set()
@@ -780,6 +781,53 @@ class IdealThermodynamics:
 
         if len(self._lazy_property_sources) > 20000:
             self._lazy_property_sources.clear()
+            self._viscosity_quality_marked_contexts.clear()
+
+    def _record_viscosity_kernel_source_once(
+        self,
+        comp: str,
+        phase: str,
+        T: float,
+        result,
+    ) -> None:
+        """Record one row per distinct viscosity provider state and context.
+
+        Prepared viscosity kernels normally retain the same source, method,
+        quality, and notes across thousands of nearby ODE states.  Preserve
+        diagnostics for actual provider/fallback/range changes without
+        repeatedly aggregating identical static provenance.
+        """
+        source = str(getattr(result, 'source', None) or 'unknown')
+        method = str(getattr(result, 'method', None) or 'unknown')
+        notes = str(getattr(result, 'notes', None) or '').strip()
+        raw_quality = getattr(result, 'quality', None)
+        try:
+            quality = (
+                None
+                if raw_quality is None
+                else max(0.0, min(1.0, float(raw_quality)))
+            )
+        except (TypeError, ValueError):
+            quality = None
+        context_key = self._quality_context_key(self._current_quality_context())
+        key = (
+            str(comp),
+            str(phase),
+            source,
+            method,
+            quality,
+            notes,
+            context_key,
+        )
+        if key in self._viscosity_quality_marked_contexts:
+            return
+        self._viscosity_quality_marked_contexts.add(key)
+        self._record_lazy_property_source(
+            comp,
+            f'{phase}_viscosity',
+            T,
+            result,
+        )
 
     def lazy_property_quality_sources(self) -> list[dict]:
         """Return aggregate provenance rows for lazy T-dependent properties."""
@@ -3747,7 +3795,12 @@ class IdealThermodynamics:
                 f"Property resolver returned invalid {phase_key} viscosity for "
                 f"{self._component_label(comp)}"
             )
-        self._record_lazy_property_source(comp, f'{phase_key}_viscosity', T, result)
+        self._record_viscosity_kernel_source_once(
+            comp,
+            phase_key,
+            T,
+            result,
+        )
         return self._set_limited_cache(self._viscosity_cache, cache_key, value)
 
     @staticmethod

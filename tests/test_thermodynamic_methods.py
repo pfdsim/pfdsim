@@ -221,6 +221,50 @@ class ThermodynamicMethodTests(unittest.TestCase):
             for row in thermo.lazy_property_quality_sources()
         ))
 
+    def test_viscosity_kernel_provenance_records_only_distinct_states(self):
+        from property_resolver import PropertyResolutionResult, ViscosityKernel
+
+        thermo = create_thermodynamics(['C3H8'], 'IDEAL')
+
+        def evaluate(T, _P, _rho_molar):
+            fallback = T >= 320.0
+            return PropertyResolutionResult(
+                value=1.0e-5 + T * 1.0e-9,
+                source='estimated' if fallback else 'local',
+                method='fallback' if fallback else 'primary',
+                quality=0.8 if fallback else 0.98,
+                notes='outside range' if fallback else 'inside range',
+            )
+
+        thermo._viscosity_kernels[('vapor', 'C3H8')] = ViscosityKernel(
+            'vapor',
+            evaluate,
+        )
+        thermo._lazy_property_sources.clear()
+        thermo._viscosity_quality_marked_contexts.clear()
+
+        for temperature in (300.0, 310.0, 330.0, 340.0):
+            thermo._pure_viscosity('C3H8', temperature, 1.0, 'vapor')
+
+        rows = [
+            row
+            for row in thermo.lazy_property_quality_sources()
+            if row['property'] == 'vapor_viscosity(T)'
+        ]
+        self.assertEqual({row['method'] for row in rows}, {'primary', 'fallback'})
+        self.assertEqual(sum(row['count'] for row in rows), 2)
+
+        with thermo.quality_context(phase='diagnostic', affects_result=False):
+            thermo._pure_viscosity('C3H8', 350.0, 1.0, 'vapor')
+        rows = [
+            row
+            for row in thermo.lazy_property_quality_sources()
+            if row['property'] == 'vapor_viscosity(T)'
+        ]
+        self.assertEqual(sum(row['count'] for row in rows), 3)
+        fallback = next(row for row in rows if row['method'] == 'fallback')
+        self.assertEqual(len(fallback['contexts']), 2)
+
     def test_calculate_state_can_include_liquid_mixture_viscosity(self):
         thermo = create_thermodynamics(['ethanol', 'water'], 'IDEAL')
 

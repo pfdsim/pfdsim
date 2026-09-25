@@ -2463,6 +2463,47 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             evaluated.value,
         )
 
+    def test_viscosity_kernel_precomputes_estimator_property_fingerprint(self):
+        resolver = PropertyResolver()
+        props = {
+            'formula': 'C2H4O',
+            'smiles': 'CC=O',
+            'MW': 44.053,
+            'Tc': 466.0,
+            'Pc': 55.7,
+            '_allow_online_lookup': False,
+        }
+        fingerprint = resolver._viscosity_kernel_props_fingerprint
+        with patch.object(
+            resolver,
+            '_viscosity_kernel_props_fingerprint',
+            wraps=fingerprint,
+        ) as fingerprint_call, patch.object(
+            resolver,
+            '_coolprop_viscosity',
+            return_value=None,
+        ), patch.object(
+            resolver,
+            '_prepare_perry_viscosity',
+            return_value=None,
+        ):
+            kernel = resolver.resolve_viscosity_kernel(
+                'acetaldehyde fixture',
+                'vapor',
+                props,
+                allow_online=False,
+            )
+            construction_calls = fingerprint_call.call_count
+            first = kernel.evaluate(350.0, P=1.0)
+            second = kernel.evaluate(375.0, P=1.0)
+
+        self.assertEqual(
+            first.method,
+            'reichenberg_zero_dipole_organic_gas_viscosity',
+        )
+        self.assertEqual(second.method, first.method)
+        self.assertEqual(fingerprint_call.call_count, construction_calls)
+
     def test_viscosity_kernel_rejects_missing_temperature(self):
         from property_resolver import ViscosityKernel
 
