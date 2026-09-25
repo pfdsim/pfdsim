@@ -36,6 +36,10 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 else:
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .temperature_target import solve_temperature_residual as _solve_temperature_target
+else:
+    from temperature_target import solve_temperature_residual as _solve_temperature_target
 
 
 BTU_H_FT2_F_TO_W_M2_K = 5.6783
@@ -5051,8 +5055,15 @@ class Flash(UnitOperation):
             stream.P,
         )
 
-    def _state_at_TP(self, composition: dict, T: float, P: float, F: float,
-                     aqueous_context=None) -> StreamState:
+    def _state_at_TP(
+        self,
+        composition: dict,
+        T: float,
+        P: float,
+        F: float,
+        aqueous_context=None,
+        aqueous_flash_seed: StreamState | None = None,
+    ) -> StreamState:
         if aqueous_context is not None:
             (
                 normalized,
@@ -5063,11 +5074,25 @@ class Flash(UnitOperation):
             ) = self.thermo._split_permanent_solid_composition(composition)
             if fluid_fraction <= 1.0e-15:
                 return self.thermo.calculate_state(T, P, F, normalized)
+            seed_vapor_fraction = None
+            seed_liquid_composition = None
+            if aqueous_flash_seed is not None:
+                seed_vapor_fraction = (
+                    aqueous_flash_seed.fluid_vapor_fraction
+                    if aqueous_flash_seed.fluid_vapor_fraction is not None
+                    else aqueous_flash_seed.vapor_fraction
+                )
+                seed_liquid_composition = (
+                    aqueous_flash_seed.x
+                    or aqueous_flash_seed.x1
+                )
             V, x, y = self.thermo.aqueous_flash_TP(
                 fluid_composition,
                 T,
                 P,
                 aqueous_context,
+                vapor_fraction_guess=seed_vapor_fraction,
+                liquid_composition_guess=seed_liquid_composition,
             )
             fluid_state = self._combined_state_from_flash(
                 T, P, F * fluid_fraction, fluid_composition,
@@ -5088,32 +5113,79 @@ class Flash(UnitOperation):
             )
         return self.thermo.calculate_state(T, P, F, composition)
 
+    def _solve_aqueous_temperature_target(
+        self,
+        composition: dict,
+        P: float,
+        F: float,
+        T_guess: float,
+        aqueous_context,
+        residual_from_state,
+        label: str,
+        residual_tolerance: float,
+    ) -> StreamState:
+        """Solve one aqueous property target with memoized, warm TP states."""
+        solver = _ThermoStateSolver(
+            self.thermo,
+            f"Flash '{self.unit_id}'",
+        )
+        states: dict[float, StreamState] = {}
+
+        def state_at(temperature: float) -> StreamState:
+            key = round(float(temperature), 10)
+            state = states.get(key)
+            if state is not None:
+                return state
+            seed = (
+                min(states.values(), key=lambda item: abs(item.T - temperature))
+                if states
+                else None
+            )
+            state = self._state_at_TP(
+                composition,
+                temperature,
+                P,
+                F,
+                aqueous_context,
+                aqueous_flash_seed=seed,
+            )
+            states[key] = state
+            return state
+
+        def residual(temperature: float) -> float:
+            return float(residual_from_state(state_at(temperature)))
+
+        temperature = _solve_temperature_target(
+            residual,
+            T_guess=T_guess,
+            centers=(T_guess,),
+            label=label,
+            exact_tolerance=residual_tolerance,
+            grid_builder=lambda centers: solver._temperature_grid(*centers),
+            grid_solver=lambda function, grid, preferred, name, tolerance: (
+                solver._solve_temperature(
+                    function,
+                    grid,
+                    name,
+                    preferred_T=preferred,
+                    residual_tolerance=tolerance,
+                )
+            ),
+        )
+        return state_at(temperature)
+
     def _state_at_PV(self, composition: dict, P: float, VF: float, F: float,
                      T_guess: float, aqueous_context=None) -> StreamState:
         if aqueous_context is not None:
-            solver = _ThermoStateSolver(
-                self.thermo,
-                f"Flash '{self.unit_id}'",
-            )
-
-            def residual(T_value: float) -> float:
-                return self._state_at_TP(
-                    composition,
-                    T_value,
-                    P,
-                    F,
-                    aqueous_context,
-                ).vapor_fraction - VF
-
-            T = solver._solve_temperature(
-                residual,
-                solver._temperature_grid(T_guess),
+            return self._solve_aqueous_temperature_target(
+                composition,
+                P,
+                F,
+                T_guess,
+                aqueous_context,
+                lambda state: state.vapor_fraction - VF,
                 f"Henry-aware vapor fraction {VF:g} at {P:g} bar",
-                preferred_T=T_guess,
-                residual_tolerance=1e-8,
-            )
-            return self._state_at_TP(
-                composition, T, P, F, aqueous_context
+                1e-8,
             )
         direct_pq = getattr(self.thermo, 'calculate_state_PQ', None)
         if direct_pq is not None:
@@ -5138,34 +5210,23 @@ class Flash(UnitOperation):
     def _state_at_PH(self, composition: dict, P: float, H_target: float, F: float,
                      T_guess: float, aqueous_context=None) -> StreamState:
         if aqueous_context is not None:
-            solver = _ThermoStateSolver(
-                self.thermo,
-                f"Flash '{self.unit_id}'",
-            )
+            tolerance = max(1e-6, abs(H_target) * 1e-8)
 
-            def residual(T_value: float) -> float:
-                state = self._state_at_TP(
-                    composition,
-                    T_value,
-                    P,
-                    F,
-                    aqueous_context,
-                )
+            def residual_from_state(state: StreamState) -> float:
                 if state.H is None:
                     raise UnitOperationError("Enthalpy was not calculated")
                 return state.H - H_target
 
-            T = solver._solve_temperature(
-                residual,
-                solver._temperature_grid(T_guess),
+            state = self._solve_aqueous_temperature_target(
+                composition,
+                P,
+                F,
+                T_guess,
+                aqueous_context,
+                residual_from_state,
                 f"Henry-aware target enthalpy at {P:g} bar",
-                preferred_T=T_guess,
-                residual_tolerance=max(1e-6, abs(H_target) * 1e-8),
+                tolerance,
             )
-            state = self._state_at_TP(
-                composition, T, P, F, aqueous_context
-            )
-            tolerance = max(1e-6, abs(H_target) * 1e-8)
             if state.H is None or abs(state.H - H_target) > tolerance:
                 residual_value = None if state.H is None else state.H - H_target
                 raise UnitOperationError(

@@ -483,6 +483,92 @@ class HenryThermodynamicsTests(unittest.TestCase):
                 )
                 self.assertAlmostEqual(result.heat_duty / 3600.0, duty_kW, places=5)
 
+    def test_aqueous_flash_warm_seed_matches_cold_equilibrium(self):
+        thermo, inlet = self._hot_wet_ethylene_case()
+        context = thermo.create_aqueous_equilibrium_context(
+            ['ethylene'],
+            'water',
+        )
+        seed = thermo.aqueous_flash_TP(
+            inlet.composition,
+            346.0,
+            inlet.P,
+            context,
+        )
+        cold = thermo.aqueous_flash_TP(
+            inlet.composition,
+            348.15,
+            inlet.P,
+            context,
+        )
+        warm = thermo.aqueous_flash_TP(
+            inlet.composition,
+            348.15,
+            inlet.P,
+            context,
+            vapor_fraction_guess=seed[0],
+            liquid_composition_guess=seed[1],
+        )
+        invalid_seed = thermo.aqueous_flash_TP(
+            inlet.composition,
+            348.15,
+            inlet.P,
+            context,
+            vapor_fraction_guess=float('nan'),
+            liquid_composition_guess={},
+        )
+
+        self.assertAlmostEqual(warm[0], cold[0], delta=1.0e-10)
+        self.assertEqual(invalid_seed, cold)
+        for phase_index in (1, 2):
+            for component in inlet.composition:
+                self.assertAlmostEqual(
+                    warm[phase_index][component],
+                    cold[phase_index][component],
+                    delta=1.0e-10,
+                )
+
+    def test_henry_ph_reuses_temperature_states_and_nearby_flash_seeds(self):
+        thermo, inlet = self._hot_wet_ethylene_case()
+        common = {'henry_components': 'ethylene'}
+        reference = Flash(
+            'F-TP-SEED-REFERENCE',
+            thermo,
+            {**common, 'T': 348.15, 'P': inlet.P},
+        ).solve({'in': inlet})
+
+        with patch.object(
+            thermo,
+            'aqueous_flash_TP',
+            wraps=thermo.aqueous_flash_TP,
+        ) as aqueous_flash:
+            recovered = Flash(
+                'F-PH-SEEDED',
+                thermo,
+                {
+                    **common,
+                    'P': inlet.P,
+                    'Q': reference.heat_duty / 3600.0,
+                },
+            ).solve({'in': inlet})
+
+        temperatures = [
+            round(float(call.args[1]), 10)
+            for call in aqueous_flash.call_args_list
+        ]
+        self.assertEqual(len(temperatures), len(set(temperatures)))
+        self.assertLess(len(temperatures), 20)
+        self.assertTrue(any(
+            call.kwargs.get('liquid_composition_guess') is not None
+            for call in aqueous_flash.call_args_list[1:]
+        ))
+        self.assertAlmostEqual(recovered.performance['T_C'], 75.0, places=6)
+        self.assertAlmostEqual(
+            recovered.performance['vapor_fraction'],
+            reference.performance['vapor_fraction'],
+            places=8,
+        )
+
     def test_flash_henry_auto_selection_and_water_rich_gate(self):
         thermo = create_thermodynamics(['water', 'ethylene'], 'UNIFNIST')
         inlet = thermo.calculate_state(

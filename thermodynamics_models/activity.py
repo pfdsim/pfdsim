@@ -16,6 +16,11 @@ from .common import (
 from .base import FluidPhaseEquilibrium, IdealThermodynamics, StreamState
 from .henry import AqueousEquilibriumContext
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from ..temperature_target import solve_temperature_residual as _solve_temperature_target
+else:
+    from temperature_target import solve_temperature_residual as _solve_temperature_target
+
 
 @dataclass
 class VLLEFlashResult:
@@ -3308,56 +3313,22 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         label: str,
         exact_tolerance: float = 1e-8,
     ) -> float:
-        clean_centers = []
-        for value in centers:
-            try:
-                T = float(value)
-            except (TypeError, ValueError):
-                continue
-            if math.isfinite(T) and T > 0.0:
-                clean_centers.append(max(1.0, min(5000.0, T)))
-        if not clean_centers:
-            clean_centers.append(max(1.0, min(5000.0, float(T_guess))))
-
-        residual_cache = {}
-
-        def cached_residual(T: float) -> float:
-            key = round(float(T), 10)
-            if key not in residual_cache:
-                residual_cache[key] = float(residual(float(T)))
-            return residual_cache[key]
-
-        for center in clean_centers:
-            try:
-                f_center = cached_residual(center)
-                if math.isfinite(f_center) and abs(f_center) <= exact_tolerance:
-                    return center
-            except Exception:
-                pass
-            for width in (2.0, 5.0, 10.0, 20.0, 40.0, 80.0):
-                low = max(1.0, center - width)
-                high = min(5000.0, center + width)
-                if high <= low:
-                    continue
-                try:
-                    f_low = cached_residual(low)
-                    if math.isfinite(f_low) and abs(f_low) <= exact_tolerance:
-                        return low
-                    f_high = cached_residual(high)
-                    if math.isfinite(f_high) and abs(f_high) <= exact_tolerance:
-                        return high
-                    if math.isfinite(f_low) and math.isfinite(f_high) and f_low * f_high < 0.0:
-                        return brentq(cached_residual, low, high, xtol=1e-7, rtol=1e-9, maxiter=80)
-                except Exception:
-                    continue
-
-        grid = self._temperature_grid(clean_centers)
-        return self._solve_grid_scalar_residual(
-            cached_residual,
-            grid,
-            preferred=clean_centers[0],
+        return _solve_temperature_target(
+            residual,
+            T_guess=T_guess,
+            centers=centers,
             label=label,
             exact_tolerance=exact_tolerance,
+            grid_builder=lambda clean: self._temperature_grid(clean),
+            grid_solver=lambda function, grid, preferred, name, tolerance: (
+                self._solve_grid_scalar_residual(
+                    function,
+                    grid,
+                    preferred=preferred,
+                    label=name,
+                    exact_tolerance=tolerance,
+                )
+            ),
         )
 
     def _solve_bounded_scalar_residual(

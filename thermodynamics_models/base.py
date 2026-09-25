@@ -2788,27 +2788,62 @@ class IdealThermodynamics:
         context: AqueousEquilibriumContext,
         max_iter: int = 100,
         tol: float = 1e-9,
+        *,
+        vapor_fraction_guess: Optional[float] = None,
+        liquid_composition_guess: Optional[dict[str, float]] = None,
     ) -> tuple[float, dict[str, float], dict[str, float]]:
-        """Two-phase TP flash with a frozen aqueous Henry standard-state set."""
+        """Two-phase TP flash with optional state-local warm initialization."""
         z = self._normalized_aqueous_composition(composition, self.components)
-        K = self.aqueous_K_values(T, P, z, context)
-        V = 0.5
-        for _ in range(max_iter):
-            V = self._rachford_rice_bounded(z, K, V)
-            x, _y = self._flash_phase_compositions(z, K, V)
-            K_new = self.aqueous_K_values(T, P, x, context)
-            max_change = max(
-                abs(K_new.get(comp, 1.0) - K.get(comp, 1.0))
-                / max(abs(K.get(comp, 1.0)), 1e-300)
-                for comp in self.components
-            )
-            K = K_new
-            if max_change < tol:
-                break
 
-        V = self._rachford_rice_bounded(z, K, V)
-        x, y = self._flash_phase_compositions(z, K, V)
-        return V, x, y
+        def iterate(initial_x: dict[str, float], initial_v: float):
+            K = self.aqueous_K_values(T, P, initial_x, context)
+            V = max(0.0, min(1.0, float(initial_v)))
+            converged = False
+            for _ in range(max_iter):
+                V = self._rachford_rice_bounded(z, K, V)
+                x, _y = self._flash_phase_compositions(z, K, V)
+                K_new = self.aqueous_K_values(T, P, x, context)
+                max_change = max(
+                    abs(K_new.get(comp, 1.0) - K.get(comp, 1.0))
+                    / max(abs(K.get(comp, 1.0)), 1e-300)
+                    for comp in self.components
+                )
+                K = K_new
+                if max_change < tol:
+                    converged = True
+                    break
+            V = self._rachford_rice_bounded(z, K, V)
+            x, y = self._flash_phase_compositions(z, K, V)
+            return (V, x, y), converged
+
+        if (
+            liquid_composition_guess is not None
+            or vapor_fraction_guess is not None
+        ):
+            try:
+                initial_x = (
+                    z
+                    if liquid_composition_guess is None
+                    else self._normalized_aqueous_composition(
+                        liquid_composition_guess,
+                        self.components,
+                    )
+                )
+                initial_v = (
+                    0.5
+                    if vapor_fraction_guess is None
+                    else float(vapor_fraction_guess)
+                )
+                if not math.isfinite(initial_v):
+                    raise ValueError("non-finite aqueous flash vapor seed")
+                result, converged = iterate(initial_x, initial_v)
+                if converged:
+                    return result
+            except (TypeError, ValueError, ThermodynamicsError):
+                pass
+
+        result, _converged = iterate(z, 0.5)
+        return result
 
     def aqueous_liquid_enthalpy(
         self,
