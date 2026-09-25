@@ -61,6 +61,98 @@ def initialized_recycle_stream(stream_id: str = 'Recycle') -> str:
 
 
 class RecycleSolverTests(unittest.TestCase):
+    def _run_with_one_final_pass_drift(
+        self,
+        method: str,
+        drift_final_pass: int,
+        max_iterations: int = 30,
+    ):
+        pfd_text = simple_water_recycle_pfd(
+            initialized_recycle_stream()
+        ).replace(
+            'RECYCLE_METHOD: DIRECT',
+            f'RECYCLE_METHOD: {method}',
+        ).replace(
+            '        split_fracs = product:0.5,recycle:0.5',
+            '        outlets = product,recycle\n'
+            '        split_fracs = product:0.5,recycle:0.5',
+        )
+        simulator = Simulator.from_string(pfd_text).initialize()
+        splitter = simulator.solver.units['SPLIT-1']
+        original_solve = splitter.solve
+        final_passes = 0
+
+        def solve_with_one_drift(inlets):
+            nonlocal final_passes
+            result = original_solve(inlets)
+            if splitter.solve_context.get('recycle_final_pass'):
+                final_passes += 1
+                if final_passes == drift_final_pass:
+                    recycle = result.outlet_streams['recycle'].copy()
+                    recycle.F *= 1.0001
+                    result.outlet_streams['recycle'] = recycle
+            return result
+
+        splitter.solve = solve_with_one_drift
+        messages = []
+        result = simulator.run(
+            max_iterations=max_iterations,
+            tolerance=1e-7,
+            progress_callback=messages.append,
+        )
+        return result, messages, final_passes
+
+    def test_failed_method_verification_resumes_each_recycle_solver(self):
+        for method in ('DIRECT', 'WEGSTEIN', 'BROYDEN'):
+            with self.subTest(method=method):
+                result, messages, final_passes = self._run_with_one_final_pass_drift(
+                    method,
+                    drift_final_pass=1,
+                )
+
+                self.assertTrue(result.converged, result.warnings)
+                self.assertGreater(result.iterations, 1)
+                self.assertGreaterEqual(final_passes, 3)
+                self.assertTrue(any(
+                    message.startswith(
+                        f'recycle_verification_failed method={method} '
+                    )
+                    for message in messages
+                ))
+
+    def test_failed_verification_respects_exhausted_iteration_budget(self):
+        for method in ('DIRECT', 'WEGSTEIN', 'BROYDEN'):
+            with self.subTest(method=method):
+                result, messages, _ = self._run_with_one_final_pass_drift(
+                    method,
+                    drift_final_pass=1,
+                    max_iterations=1,
+                )
+
+                self.assertFalse(result.converged)
+                self.assertEqual(result.iterations, 1)
+                self.assertTrue(any(
+                    message.endswith('remaining_iterations=0')
+                    for message in messages
+                    if message.startswith(
+                        f'recycle_verification_failed method={method} '
+                    )
+                ))
+
+    def test_failed_global_verification_runs_joint_recycle_recovery(self):
+        result, messages, final_passes = self._run_with_one_final_pass_drift(
+            'BROYDEN',
+            drift_final_pass=2,
+        )
+
+        self.assertTrue(result.converged, result.warnings)
+        self.assertGreater(result.iterations, 1)
+        self.assertGreaterEqual(final_passes, 3)
+        self.assertTrue(any(
+            message.startswith('recycle_global_verification_failed ')
+            for message in messages
+        ))
+
     def test_method_options_parse_validate_and_round_trip(self):
         pfd_text = simple_water_recycle_pfd(
             initialized_recycle_stream()

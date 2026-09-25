@@ -1659,7 +1659,7 @@ class FlowsheetSolver:
                                    fallback_states: dict[str, StreamState],
                                    tolerance: float,
                                    evaluations: int
-                                   ) -> tuple[bool, list[str], float]:
+                                   ) -> tuple[bool, list[str], float, object]:
         import numpy as np
 
         self._apply_tear_vector(
@@ -1702,11 +1702,21 @@ class FlowsheetSolver:
             old_tear_states,
             tolerance,
         )
+        verified_vector = np.array(
+            self._tear_states_to_vector(
+                tear_streams,
+                {
+                    stream_id: self.streams[stream_id]
+                    for stream_id in tear_streams
+                },
+            ),
+            dtype=float,
+        ) / scale
         self._emit_progress(
             f"recycle_solver_done converged={converged} evaluations={evaluations} "
             f"max_error={max_error:.6g}"
         )
-        return converged, final_warnings, max_error
+        return converged, final_warnings, max_error, verified_vector
 
     def _solve_recycles_direct(self, calc_order: list[str],
                                tear_streams: list[str],
@@ -1736,13 +1746,26 @@ class FlowsheetSolver:
                 best_error = evaluation.error
                 best_x = evaluation.x.copy()
             if evaluation.error < tolerance:
-                converged, final_warnings, final_error = self._finalize_recycle_solution(
+                converged, final_warnings, final_error, verified_x = self._finalize_recycle_solution(
                     calc_order, tear_streams, evaluation.x, scale, fallback_states, tolerance, evaluations
                 )
-                return converged, evaluations, final_warnings or latest_warnings, final_error
+                if converged:
+                    return True, evaluations, final_warnings or latest_warnings, final_error
+                remaining = max_iterations - evaluations
+                self._emit_progress(
+                    "recycle_verification_failed method=DIRECT "
+                    f"error={final_error:.6g} remaining_iterations={remaining}"
+                )
+                latest_warnings = final_warnings or latest_warnings
+                if remaining <= 0:
+                    return False, evaluations, latest_warnings, final_error
+                best_error = final_error
+                best_x = evaluation.x.copy()
+                x = verified_x
+                continue
             x = evaluation.x + damping * evaluation.residual
 
-        converged, final_warnings, final_error = self._finalize_recycle_solution(
+        converged, final_warnings, final_error, _ = self._finalize_recycle_solution(
             calc_order, tear_streams, best_x, scale, fallback_states, tolerance, evaluations
         )
         return converged, evaluations, final_warnings or latest_warnings, min(best_error, final_error)
@@ -1796,10 +1819,26 @@ class FlowsheetSolver:
             else:
                 stagnant_iterations += 1
             if evaluation.error < tolerance:
-                converged, final_warnings, final_error = self._finalize_recycle_solution(
+                converged, final_warnings, final_error, verified_x = self._finalize_recycle_solution(
                     calc_order, tear_streams, evaluation.x, scale, fallback_states, tolerance, evaluations
                 )
-                return converged, evaluations, final_warnings or latest_warnings, final_error
+                if converged:
+                    return True, evaluations, final_warnings or latest_warnings, final_error
+                remaining = max_iterations - evaluations
+                self._emit_progress(
+                    "recycle_verification_failed method=WEGSTEIN "
+                    f"error={final_error:.6g} remaining_iterations={remaining}"
+                )
+                latest_warnings = final_warnings or latest_warnings
+                if remaining <= 0:
+                    return False, evaluations, latest_warnings, final_error
+                best_error = final_error
+                best_x = evaluation.x.copy()
+                previous_x = None
+                previous_gx = None
+                stagnant_iterations = 0
+                x = verified_x
+                continue
             if (
                 iteration >= max(5, max_iterations // 2)
                 and tolerance * 2.0 < best_error < 1e-2
@@ -1882,7 +1921,7 @@ class FlowsheetSolver:
             )
             return converged, evaluations + extra_evals, warnings or latest_warnings, error
 
-        converged, final_warnings, final_error = self._finalize_recycle_solution(
+        converged, final_warnings, final_error, _ = self._finalize_recycle_solution(
             calc_order, tear_streams, best_x, scale, fallback_states, tolerance, evaluations
         )
         if not converged and final_error < 1e-2:
@@ -1967,10 +2006,26 @@ class FlowsheetSolver:
             else:
                 stagnant_iterations += 1
             if evaluation.error < tolerance:
-                converged, final_warnings, final_error = self._finalize_recycle_solution(
+                converged, final_warnings, final_error, verified_x = self._finalize_recycle_solution(
                     calc_order, tear_streams, evaluation.x, scale, fallback_states, tolerance, evaluations
                 )
-                return converged, evaluations, final_warnings or latest_warnings, final_error
+                if converged:
+                    return True, evaluations, final_warnings or latest_warnings, final_error
+                remaining = max_iterations - evaluations
+                self._emit_progress(
+                    "recycle_verification_failed method=BROYDEN "
+                    f"error={final_error:.6g} remaining_iterations={remaining}"
+                )
+                latest_warnings = final_warnings or latest_warnings
+                if remaining <= 0:
+                    return False, evaluations, latest_warnings, final_error
+                best_error = final_error
+                best_x = evaluation.x.copy()
+                inverse_jacobian = -np.eye(n)
+                previous_eval = None
+                stagnant_iterations = 0
+                x = verified_x
+                continue
             if stagnant_iterations >= stagnation_limit:
                 remaining = max_iterations - evaluations
                 if remaining > 0:
@@ -2019,7 +2074,7 @@ class FlowsheetSolver:
             previous_eval = evaluation
             x = candidate
 
-        converged, final_warnings, final_error = self._finalize_recycle_solution(
+        converged, final_warnings, final_error, _ = self._finalize_recycle_solution(
             calc_order, tear_streams, best_x, scale, fallback_states, tolerance, evaluations
         )
         return converged, evaluations, final_warnings or latest_warnings, min(best_error, final_error)
@@ -2136,6 +2191,7 @@ class FlowsheetSolver:
             )
 
         total_evaluations = 0
+        max_block_evaluations = 0
         all_warnings = []
         converged = True
         max_error = 0.0
@@ -2165,6 +2221,7 @@ class FlowsheetSolver:
                 method,
             )
             total_evaluations += evaluations
+            max_block_evaluations = max(max_block_evaluations, evaluations)
             all_warnings.extend(warnings)
             max_error = max(max_error, error)
             if not block_converged:
@@ -2180,7 +2237,7 @@ class FlowsheetSolver:
                 for stream_id in tear_streams
             }
             x0, scale = self._make_recycle_scale(tear_streams, fallback_states)
-            converged, final_warnings, final_error = self._finalize_recycle_solution(
+            converged, final_warnings, final_error, _ = self._finalize_recycle_solution(
                 calc_order,
                 tear_streams,
                 x0 / scale,
@@ -2191,6 +2248,27 @@ class FlowsheetSolver:
             )
             all_warnings = final_warnings or all_warnings
             max_error = max(max_error, final_error)
+            if not converged:
+                remaining = max_iterations - max_block_evaluations
+                self._emit_progress(
+                    "recycle_global_verification_failed "
+                    f"error={final_error:.6g} remaining_iterations={remaining}"
+                )
+                if remaining > 0:
+                    # A block solve may be internally consistent while a final
+                    # all-unit pass moves one or more tears. Resume with every
+                    # tear and unit active so the verified state, rather than
+                    # the independently solved block states, is authoritative.
+                    converged, evaluations, warnings, error = self._solve_recycle_block(
+                        calc_order,
+                        tear_streams,
+                        tolerance,
+                        remaining,
+                        method,
+                    )
+                    total_evaluations += evaluations
+                    all_warnings = warnings or all_warnings
+                    max_error = error
 
         return converged, total_evaluations, all_warnings, max_error
     

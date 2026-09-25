@@ -126,8 +126,8 @@ STREAM Solvent-Water-Makeup : FEED -> M-301.water
 STREAM Organic-Recycle : D-401.light -> P-302.in
     T = 25 [C]
     P = 0.16 [bar]
-    F = 27.0992252962 [kmol/h]
-    x = H2O:0.1166058412, AA:1.143242613e-6, AcH:2.289699266e-7, PA:7.576714273e-8, MIBK:0.8833927108
+    F = 27.1 [kmol/h]
+    x = H2O:0.1166, MIBK:0.8834
 STREAM Pressurized-Organic-Recycle : P-302.out -> M-301.organic
 STREAM Extraction-Solvent : M-301.out -> X-301.solvent
 STREAM Extraction-Raffinate : X-301.raffinate
@@ -136,8 +136,8 @@ STREAM Extraction-Extract : X-301.extract -> M-401.extract
 STREAM Aqueous-Recycle : S-401.recycle -> P-401.in
     T = 25 [C]
     P = 0.16 [bar]
-    F = 8.79848170243 [kmol/h]
-    x = H2O:0.9966594302, AA:1.958580919e-7, AcH:4.564690098e-8, PA:2.295383249e-8, MIBK:0.003340305311
+    F = 8.8 [kmol/h]
+    x = H2O:0.9967, MIBK:0.0033
 STREAM Aqueous-Purge : S-401.purge
 STREAM Pressurized-Aqueous-Recycle : P-401.out -> M-401.water
 STREAM Water-Assisted-Extract : M-401.out -> V-401.in
