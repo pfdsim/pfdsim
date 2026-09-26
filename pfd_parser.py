@@ -4364,7 +4364,10 @@ class PFDParser:
         if match:
             name = match.group(1)
             raw_value = match.group(2).strip()
-            if name.casefold() == 'vlle_azeotrope_composition':
+            if name.casefold() in {
+                'vlle_azeotrope_composition', 'isotherms',
+                'initial_loadings', 'kinetic_diameters',
+            }:
                 try:
                     value = self._parse_property_value(raw_value)
                 except ValueError:

@@ -147,6 +147,14 @@ such as `ThreePhaseFlash`, `Dryer`, `KineticsBatch`, `PlugFlowReactor`, and
 `PBR` report as `Flash3`, `MolecularSieveDryer`, `BatchReactor`, `PFR`, and
 `PackedBedReactor`.
 
+Adsorption units can additionally report `unrepresented_enthalpy_change`
+in kW: the net enthalpy change in adsorbed inventories minus the enthalpy
+already represented by the adsorbate accounting stream. The overall energy
+audit includes this term on the outlet side. When adsorption enthalpies are
+identifiable, `heat_duty` includes the physical isothermal bed duty; otherwise
+the unit reports an explicit warning and null `bed_heat_duty_kJ_h` performance
+value. See [molecular sieve enthalpy](molecular_sieves.md).
+
 ```
 UNIT RESULTS
 ================================================================================

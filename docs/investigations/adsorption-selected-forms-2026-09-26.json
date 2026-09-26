@@ -1,0 +1,538 @@
+{
+  "entries": [
+    {
+      "sieve": "13X",
+      "component": "1-butene",
+      "model": "sips",
+      "train_mare": 0.005763754208284003,
+      "validation_mare": 0.00915391297758885,
+      "temperature_range_K": [
+        373.0,
+        373.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.006202565115134124
+    },
+    {
+      "sieve": "13X",
+      "component": "Ar",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.059940282317709044,
+      "validation_mare": 0.0610309269851666,
+      "temperature_range_K": [
+        87.0,
+        87.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.05993556257575557
+    },
+    {
+      "sieve": "13X",
+      "component": "CH4",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.010298783459679602,
+      "validation_mare": 0.023536695139578914,
+      "temperature_range_K": [
+        303.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.010315819737043198
+    },
+    {
+      "sieve": "13X",
+      "component": "CO2",
+      "model": "sips",
+      "train_mare": 0.11469991357037637,
+      "validation_mare": 0.11532915311958392,
+      "temperature_range_K": [
+        253.0,
+        363.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.14472227565049772
+    },
+    {
+      "sieve": "13X",
+      "component": "N2",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.022138739591899947,
+      "validation_mare": 0.07199095745840317,
+      "temperature_range_K": [
+        303.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.02213878974303808
+    },
+    {
+      "sieve": "13X",
+      "component": "O2",
+      "model": "langmuir",
+      "train_mare": 0.0933319540756627,
+      "validation_mare": 0.10594667013922329,
+      "temperature_range_K": [
+        303.0,
+        303.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.0934562829580593
+    },
+    {
+      "sieve": "13X",
+      "component": "acetylene",
+      "model": "toth",
+      "train_mare": 0.013739718109767447,
+      "validation_mare": 0.017116051196200528,
+      "temperature_range_K": [
+        305.0,
+        305.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.04395141538902246
+    },
+    {
+      "sieve": "13X",
+      "component": "ethane",
+      "model": "sips",
+      "train_mare": 0.03788410848805495,
+      "validation_mare": 0.03834951118145032,
+      "temperature_range_K": [
+        298.0,
+        298.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.14562921246652555
+    },
+    {
+      "sieve": "13X",
+      "component": "ethylene",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.00534801891362832,
+      "validation_mare": 0.005604099556726956,
+      "temperature_range_K": [
+        298.0,
+        298.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.005348018772878151
+    },
+    {
+      "sieve": "13X",
+      "component": "isobutane",
+      "model": "sips",
+      "train_mare": 0.05433622412574561,
+      "validation_mare": 0.10382115927981553,
+      "temperature_range_K": [
+        373.0,
+        373.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.11459684821768226
+    },
+    {
+      "sieve": "13X",
+      "component": "propane",
+      "model": "sips",
+      "train_mare": 0.02457563501193102,
+      "validation_mare": 0.028029243122053873,
+      "temperature_range_K": [
+        300.0,
+        300.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.06751002666297526
+    },
+    {
+      "sieve": "13X",
+      "component": "propylene",
+      "model": "langmuir",
+      "train_mare": 0.031435433105231766,
+      "validation_mare": 0.03302380170330241,
+      "temperature_range_K": [
+        373.0,
+        373.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.01122744458109083
+    },
+    {
+      "sieve": "13X",
+      "component": "sulfur hexafluoride",
+      "model": "sips",
+      "train_mare": 0.07462496679035653,
+      "validation_mare": 0.07463466600727729,
+      "temperature_range_K": [
+        273.0,
+        293.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.10997829586576259
+    },
+    {
+      "sieve": "13X",
+      "component": "water",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.07401600107690189,
+      "validation_mare": 0.08346087006620061,
+      "temperature_range_K": [
+        295.0,
+        373.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.0740160292566226
+    },
+    {
+      "sieve": "3A",
+      "component": "NH3",
+      "model": "langmuir",
+      "train_mare": 0.010475001163557809,
+      "validation_mare": 0.021794173672214565,
+      "temperature_range_K": [
+        303.15,
+        303.15
+      ],
+      "temperature_dependent": false,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.010475001151741433
+    },
+    {
+      "sieve": "3A",
+      "component": "Ne",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.013270943842750621,
+      "validation_mare": 0.03998758960203842,
+      "temperature_range_K": [
+        77.0,
+        77.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.013271054666361234
+    },
+    {
+      "sieve": "4A",
+      "component": "CH4",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.0033546466424053773,
+      "validation_mare": 0.006138875869326752,
+      "temperature_range_K": [
+        272.99,
+        322.989
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.20367529628929296
+    },
+    {
+      "sieve": "4A",
+      "component": "CO2",
+      "model": "toth",
+      "train_mare": 0.1267339324268322,
+      "validation_mare": 0.13116205160486155,
+      "temperature_range_K": [
+        273.0,
+        363.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.13809179139564562
+    },
+    {
+      "sieve": "4A",
+      "component": "H2S",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.01055827718659946,
+      "validation_mare": 0.01215625217337775,
+      "temperature_range_K": [
+        273.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.010558276642838555
+    },
+    {
+      "sieve": "4A",
+      "component": "N2",
+      "model": "langmuir",
+      "train_mare": 0.011671119018860487,
+      "validation_mare": 0.20599746829867058,
+      "temperature_range_K": [
+        293.0,
+        363.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.011671118700459596
+    },
+    {
+      "sieve": "4A",
+      "component": "carbonyl sulfide",
+      "model": "sips",
+      "train_mare": 0.08292429473218203,
+      "validation_mare": 0.08390029061435289,
+      "temperature_range_K": [
+        273.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.08559834008963246
+    },
+    {
+      "sieve": "4A",
+      "component": "propane",
+      "model": "langmuir",
+      "train_mare": 0.04494981702603869,
+      "validation_mare": 0.1860756263081802,
+      "temperature_range_K": [
+        423.0,
+        473.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.044949817594495636
+    },
+    {
+      "sieve": "4A",
+      "component": "propylene",
+      "model": "langmuir",
+      "train_mare": 0.06843442801467468,
+      "validation_mare": 0.07658990733433857,
+      "temperature_range_K": [
+        423.0,
+        473.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.05581055704985829
+    },
+    {
+      "sieve": "5A",
+      "component": "Ar",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.04540550232038399,
+      "validation_mare": 0.04746757626101646,
+      "temperature_range_K": [
+        87.0,
+        87.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.045405489801995394
+    },
+    {
+      "sieve": "5A",
+      "component": "CH4",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.017193489689738602,
+      "validation_mare": 0.041634138017747895,
+      "temperature_range_K": [
+        303.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.017193490820633248
+    },
+    {
+      "sieve": "5A",
+      "component": "CO",
+      "model": "sips",
+      "train_mare": 0.007875341236983115,
+      "validation_mare": 0.018824778926802708,
+      "temperature_range_K": [
+        296.0,
+        296.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.008003184349815586
+    },
+    {
+      "sieve": "5A",
+      "component": "CO2",
+      "model": "sips",
+      "train_mare": 0.07942037318027252,
+      "validation_mare": 0.07967687223929411,
+      "temperature_range_K": [
+        253.0,
+        343.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.08622353211219784
+    },
+    {
+      "sieve": "5A",
+      "component": "He",
+      "model": "sips",
+      "train_mare": 0.035023767005473085,
+      "validation_mare": 0.06367745150451887,
+      "temperature_range_K": [
+        77.0,
+        77.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.17362730413762287
+    },
+    {
+      "sieve": "5A",
+      "component": "N2",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.024543803781523085,
+      "validation_mare": 0.058499132804777004,
+      "temperature_range_K": [
+        303.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.024543804206775627
+    },
+    {
+      "sieve": "5A",
+      "component": "O2",
+      "model": "langmuir",
+      "train_mare": 0.1026231870554571,
+      "validation_mare": 0.2768786251229717,
+      "temperature_range_K": [
+        296.0,
+        318.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.10262317707120014
+    },
+    {
+      "sieve": "5A",
+      "component": "ethane",
+      "model": "langmuir",
+      "train_mare": 0.03422324437708234,
+      "validation_mare": 0.04862386213531957,
+      "temperature_range_K": [
+        283.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.03172074183302817
+    },
+    {
+      "sieve": "5A",
+      "component": "ethylene",
+      "model": "dual_site_langmuir",
+      "train_mare": 0.01821839122149264,
+      "validation_mare": 0.026850300134357824,
+      "temperature_range_K": [
+        283.0,
+        323.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.01821839235873167
+    },
+    {
+      "sieve": "5A",
+      "component": "propane",
+      "model": "sips",
+      "train_mare": 0.04342657739934121,
+      "validation_mare": 0.11701069583664708,
+      "temperature_range_K": [
+        300.0,
+        300.0
+      ],
+      "temperature_dependent": false,
+      "previous_model": "langmuir",
+      "previous_train_mare": 0.09616476291772254
+    },
+    {
+      "sieve": "5A",
+      "component": "propylene",
+      "model": "sips",
+      "train_mare": 0.05392025066607673,
+      "validation_mare": 0.061368319201838155,
+      "temperature_range_K": [
+        298.0,
+        423.0
+      ],
+      "temperature_dependent": true,
+      "previous_model": "dual_site_langmuir",
+      "previous_train_mare": 0.0438139144879994
+    }
+  ],
+  "fitted_pairs": 34,
+  "thermal_fitted_pairs": 19,
+  "additional_retained_curve": "3A water GSTA, temperature dependent",
+  "methane_4a_external_validation": [
+    {
+      "source_record": "10.1007s10450-020-00206-7.Isotherm26",
+      "temperature_K": 313,
+      "pressure_bar": 1.01433,
+      "observed_mol_kg": 0.585366,
+      "predicted_mol_kg": 0.581882666159111,
+      "relative_error": -0.005950693823845388,
+      "temperature_extrapolation": false,
+      "fugacity_extrapolation": true,
+      "caveat": "Different adsorbent batch; reported excess loading approximates absolute at low pressure. Not fitted."
+    },
+    {
+      "source_record": "10.1007s10450-020-00206-7.Isotherm39",
+      "temperature_K": 273,
+      "pressure_bar": 0.99265,
+      "observed_mol_kg": 1.25666,
+      "predicted_mol_kg": 1.4053071848316856,
+      "relative_error": 0.11828751200140486,
+      "temperature_extrapolation": false,
+      "fugacity_extrapolation": true,
+      "caveat": "Different adsorbent batch; reported excess loading approximates absolute at low pressure. Not fitted."
+    },
+    {
+      "source_record": "10.1007s10450-020-00206-7.Isotherm40",
+      "temperature_K": 363,
+      "pressure_bar": 1.05882,
+      "observed_mol_kg": 0.26367,
+      "predicted_mol_kg": 0.25357031242936556,
+      "relative_error": -0.03830427265382652,
+      "temperature_extrapolation": true,
+      "fugacity_extrapolation": true,
+      "caveat": "Different adsorbent batch; reported excess loading approximates absolute at low pressure. Not fitted."
+    }
+  ],
+  "methane_4a_isosteric_heats": [
+    {
+      "temperature_K": 272.99,
+      "fugacity_bar": 0.5,
+      "loading_mol_kg": 0.7950496729084464,
+      "Qst_kJ_mol": 19.2470454500715
+    },
+    {
+      "temperature_K": 297.991,
+      "fugacity_bar": 0.5,
+      "loading_mol_kg": 0.422397533097431,
+      "Qst_kJ_mol": 18.503972316955682
+    },
+    {
+      "temperature_K": 322.989,
+      "fugacity_bar": 0.5,
+      "loading_mol_kg": 0.24702551488566551,
+      "Qst_kJ_mol": 17.897144284575564
+    }
+  ]
+}

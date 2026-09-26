@@ -1,0 +1,26 @@
+{
+  "description": "Audited interpretation corrections; raw NIST records remain unchanged.",
+  "record_corrections": {
+    "10.1007s1045001698416.Isotherm20": {
+      "temperature_K": 272.990,
+      "original_temperature_K": 298,
+      "source": "wynnyk_2017_supplement.docx, Online resource 9, methane rows beginning at p=0.1525 bar, absolute loading=0.2620 mmol/g",
+      "reason": "NIST temperature mislabel: original table explicitly gives -0.160 +/- 0.005 C, not 25 C."
+    },
+    "10.1007s1045001698416.Isotherm22": {
+      "temperature_K": 297.991,
+      "original_temperature_K": 298,
+      "source": "wynnyk_2017_supplement.docx, Online resource 9, T=24.841 +/- 0.005 C",
+      "reason": "Use the original measured temperature rather than rounded nominal temperature."
+    },
+    "10.1007s1045001698416.Isotherm24": {
+      "temperature_K": 322.989,
+      "original_temperature_K": 323,
+      "source": "wynnyk_2017_supplement.docx, Online resource 9, T=49.839 +/- 0.005 C",
+      "reason": "Use the original measured temperature rather than rounded nominal temperature."
+    }
+  },
+  "DOI": "10.1007/s10450-016-9841-6",
+  "publication_date": "2016-11-18 online; January 2017 issue",
+  "supplement_url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1007%2Fs10450-016-9841-6/MediaObjects/10450_2016_9841_MOESM1_ESM.docx"
+}

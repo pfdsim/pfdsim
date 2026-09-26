@@ -1,0 +1,15 @@
+{
+  "component": "Neon",
+  "CAS": "7440-01-9",
+  "reference": "Thol et al., Thermodynamic Properties for Neon for Temperatures from the Triple Point to 700 K at Pressures to 700 MPa, J. Phys. Chem. Ref. Data 48, 023101 (2019)",
+  "url": "https://coolprop.org/fluid_properties/fluids/Neon.html",
+  "extraction": "CoolProp.CoolProp.PropsSI for Neon; critical volume is 1/rhomolar_critical",
+  "Tc_K": 44.39999970498691,
+  "Pc_Pa": 2661630.706279463,
+  "rhomolar_critical_mol_m3": 24099.990089768857,
+  "molar_mass_kg_mol": 0.020179,
+  "acentric_factor": -0.03549258024442481,
+  "normal_boiling_temperature_K": 27.09997968642401,
+  "triple_point_temperature_K": 24.56,
+  "ideal_gas_heat_capacity": "5R/2 for a monatomic ideal gas; standard elemental formation H and G are zero"
+}

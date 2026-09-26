@@ -1,0 +1,17 @@
+{
+  "source_provider": "primary literature, manually digitized",
+  "DOI": "10.11450/seitaikogaku1989.6.2_1",
+  "url": "https://www.jstage.jst.go.jp/article/seitaikogaku1989/6/2/6_2_1/_pdf",
+  "title": "Selective Separation of Ammonia from a Ammonia-Hydrogen-Nitrogen Mixture by Pressure Swing Adsorption Method",
+  "authors": "Sakata et al. (1994)",
+  "figure": "Figure 6, page 7, Z1 filled-circle branch",
+  "material": "Commercial 3A (K,Na)-A, Z1, 1 mm spheres; initially dried under vacuum at 300 C for one hour, then vacuum-regenerated for 90 minutes after first ammonia adsorption",
+  "temperature_K": 303.15,
+  "branch": "Repeat adsorption after vacuum regeneration; first-cycle irreversible ammonia chemisorption is excluded",
+  "method": "Approximate manual reading of clearly separated filled-circle markers; near-axis markers omitted because pressure cannot be resolved",
+  "estimated_digitization_uncertainty": {"pressure_Torr": 25, "loading_cm3_STP_per_g": 4},
+  "pressure_Torr": [140, 230, 330, 420, 550, 910, 1570],
+  "loading_cm3_STP_per_g": [100, 106, 111, 111, 117, 122, 126],
+  "STP_assumption": "273.15 K, 1 atm; molar volume 22413.96954 cm3/mol",
+  "limitations": "Single-temperature curve; no adsorption enthalpy inferred. The graph does not resolve the Henry region. Repeat-cycle capacity applies to this regenerated material, not virgin capacity or irreversible acid-site uptake. N2/H2 curves are too close to the baseline to extract reliable nonzero loadings."
+}

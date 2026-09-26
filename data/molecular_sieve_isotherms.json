@@ -1,0 +1,2555 @@
+{
+  "source": "source/molecular_sieve_nist.json",
+  "commit": "9e1ee472967d66ec7845e23c5d5b986eca5ff020",
+  "sieves": {
+    "13X": {
+      "1-butene": {
+        "model": "sips",
+        "qmax": 2.08242922221934,
+        "b": 111.40723681859298,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 0.4869033809815111,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.024561353867581955,
+              "validation_mare": 0.03602156710575332,
+              "rmse_mol_kg": 0.04643531969639319
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.006202560615715631,
+              "validation_mare": 0.017706997261714916,
+              "rmse_mol_kg": 0.01313770896126044
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.005795731827477239,
+              "validation_mare": 0.00962581861563077,
+              "rmse_mol_kg": 0.011564346255971318
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.005763754208284003,
+              "validation_mare": 0.00915391297758885,
+              "rmse_mol_kg": 0.01151036735733829
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 373.0,
+        "T_max": 373.0,
+        "f_min": 0.02254321526449442,
+        "f_max": 0.932431864092252,
+        "pressure_max_bar": 0.9443,
+        "source_records": [
+          "10.108001496390902775935.Isotherm13"
+        ],
+        "DOIs": [
+          "10.1080/01496390902775935"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 11,
+        "rmse_mol_kg": 0.01151036735733829,
+        "mean_absolute_relative_error": 0.005763754208284003,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "Ar": {
+        "model": "dual_site_langmuir",
+        "qmax": 9.995553343709814,
+        "b": 1796.812799980351,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "qmax2": 403.4287934927344,
+        "b2": 0.0017293249651399302,
+        "heat2": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06857438803967472,
+              "validation_mare": 0.06962448956552343,
+              "rmse_mol_kg": 0.3422832732236221
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.059940282317709044,
+              "validation_mare": 0.0610309269851666,
+              "rmse_mol_kg": 0.2961660919914272
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.07397227428368343,
+              "validation_mare": 0.07453969413436233,
+              "rmse_mol_kg": 0.3288225297816138
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0759609202677892,
+              "validation_mare": 0.07680064639600169,
+              "rmse_mol_kg": 0.3225905710060818
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 87.0,
+        "T_max": 87.0,
+        "f_min": 9.99999969310024e-07,
+        "f_max": 0.9224336435613982,
+        "pressure_max_bar": 0.950058,
+        "source_records": [
+          "10.1007s10450-020-00206-7.Isotherm1"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00206-7"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 49,
+        "rmse_mol_kg": 0.2961660919914272,
+        "mean_absolute_relative_error": 0.059940282317709044,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "CH4": {
+        "model": "dual_site_langmuir",
+        "qmax": 0.006605808628021297,
+        "b": 189.2586503596565,
+        "T_ref": 298.15,
+        "heat": 3.5993988181639744e-31,
+        "qmax2": 403.42879349273477,
+        "b2": 0.001241268030114394,
+        "heat2": 13167.30678090886,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.046652838166214225,
+              "validation_mare": 0.0820073870567104,
+              "rmse_mol_kg": 0.00765979214016169
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.010298783459679602,
+              "validation_mare": 0.023536695139578914,
+              "rmse_mol_kg": 0.0019088655559561301
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03267436727523988,
+              "validation_mare": 0.05856041612053955,
+              "rmse_mol_kg": 0.006307543934315401
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.026496690785594162,
+              "validation_mare": 0.046784752038065716,
+              "rmse_mol_kg": 0.004802889020216153
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 303.0,
+        "T_max": 323.0,
+        "f_min": 0.04869500868428405,
+        "f_max": 0.7926360363018186,
+        "pressure_max_bar": 0.7937,
+        "source_records": [
+          "10.1021je5008235.Isotherm3",
+          "10.1021je5008235.Isotherm4"
+        ],
+        "DOIs": [
+          "10.1021/je5008235"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 10,
+        "rmse_mol_kg": 0.0019088655559561301,
+        "mean_absolute_relative_error": 0.010298783459679602,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "CO2": {
+        "model": "sips",
+        "qmax": 6.67793634519917,
+        "b": 11.942729975931236,
+        "T_ref": 298.15,
+        "heat": 30489.11979603798,
+        "n": 0.6528471700968818,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.2586491877459833,
+              "validation_mare": 0.25904704220610764,
+              "rmse_mol_kg": 0.8062692596112289
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.14472228150240643,
+              "validation_mare": 0.14477188522210757,
+              "rmse_mol_kg": 0.2545182217993903
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.14065582844693691,
+              "validation_mare": 0.14140438591960158,
+              "rmse_mol_kg": 0.29850774706117944
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.11469991357037637,
+              "validation_mare": 0.11532915311958392,
+              "rmse_mol_kg": 0.29381315575954975
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 253.0,
+        "T_max": 363.0,
+        "f_min": 3.199999095237442e-05,
+        "f_max": 0.9736037092738854,
+        "pressure_max_bar": 0.976381,
+        "source_records": [
+          "10.1007s10450-020-00206-7.Isotherm17",
+          "10.1007s10450-020-00206-7.Isotherm29",
+          "10.1007s10450-020-00206-7.Isotherm30"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00206-7"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 121,
+        "rmse_mol_kg": 0.29381315575954975,
+        "mean_absolute_relative_error": 0.11469991357037637,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "N2": {
+        "model": "dual_site_langmuir",
+        "qmax": 0.004095572622533293,
+        "b": 551778041911223.9,
+        "T_ref": 298.15,
+        "heat": 21966.121993776607,
+        "qmax2": 4.78867931480979,
+        "b2": 0.060392881618497984,
+        "heat2": 13731.813528286544,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.05181413398346653,
+              "validation_mare": 0.08499591805554695,
+              "rmse_mol_kg": 0.0034692000532405938
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.022138739591899947,
+              "validation_mare": 0.07199095745840317,
+              "rmse_mol_kg": 0.003155956124844559
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.040579071229870305,
+              "validation_mare": 0.07564598536510377,
+              "rmse_mol_kg": 0.0031936603859835395
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03392666709716669,
+              "validation_mare": 0.08080740847148098,
+              "rmse_mol_kg": 0.002958277863411304
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 303.0,
+        "T_max": 323.0,
+        "f_min": 0.046999106091076846,
+        "f_max": 0.9877733155708681,
+        "pressure_max_bar": 0.988,
+        "source_records": [
+          "10.1021je5008235.Isotherm5",
+          "10.1021je5008235.Isotherm6"
+        ],
+        "DOIs": [
+          "10.1021/je5008235"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 11,
+        "rmse_mol_kg": 0.003155956124844559,
+        "mean_absolute_relative_error": 0.022138739591899947,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "O2": {
+        "model": "langmuir",
+        "qmax": 403.42879349273477,
+        "b": 0.00028891611090307726,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0933319540756627,
+              "validation_mare": 0.10594667013922329,
+              "rmse_mol_kg": 0.006287385260482157
+            },
+            "dual_site_langmuir": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "toth": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "sips": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 303.0,
+        "T_max": 303.0,
+        "f_min": 0.13998307041420305,
+        "f_max": 0.939237922848167,
+        "pressure_max_bar": 0.94,
+        "source_records": [
+          "10.1021je900539m.Isotherm7"
+        ],
+        "DOIs": [
+          "10.1021/je900539m"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 4,
+        "rmse_mol_kg": 0.006287385260482157,
+        "mean_absolute_relative_error": 0.0933319540756627,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "acetylene": {
+        "model": "toth",
+        "qmax": 3.57497851040673,
+        "b": 2.991763319882514,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 1.7689834559099937,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "toth",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04395141376525934,
+              "validation_mare": 0.04439355299806154,
+              "rmse_mol_kg": 0.10229048490443036
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0439514134132724,
+              "validation_mare": 0.044393552870498634,
+              "rmse_mol_kg": 0.10229048812198967
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.013739718109767447,
+              "validation_mare": 0.017116051196200528,
+              "rmse_mol_kg": 0.013286856361449901
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03362661416200548,
+              "validation_mare": 0.03874097291905804,
+              "rmse_mol_kg": 0.06108991096176046
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 305.0,
+        "T_max": 305.0,
+        "f_min": 0.012319031250225479,
+        "f_max": 0.7472858363684676,
+        "pressure_max_bar": 0.75088,
+        "source_records": [
+          "10.1007s10450020002963.Isotherm11"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00296-3"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 16,
+        "rmse_mol_kg": 0.013286856361449901,
+        "mean_absolute_relative_error": 0.013739718109767447,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "ethane": {
+        "model": "sips",
+        "qmax": 3.088446022947035,
+        "b": 4.5806601088379955,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 1.3410624697724196,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.14562920324102255,
+              "validation_mare": 0.14617517532980567,
+              "rmse_mol_kg": 0.20670976849952796
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.1456292079474642,
+              "validation_mare": 0.14617516765036767,
+              "rmse_mol_kg": 0.20670980070116587
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.09796506578155517,
+              "validation_mare": 0.09800550764302007,
+              "rmse_mol_kg": 0.10723744828437347
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03788410848805495,
+              "validation_mare": 0.03834951118145032,
+              "rmse_mol_kg": 0.03241905934094039
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 298.0,
+        "T_max": 298.0,
+        "f_min": 0.0059297067086100524,
+        "f_max": 0.9906936277695697,
+        "pressure_max_bar": 0.999,
+        "source_records": [
+          "10.1021acs.iecr.7b04391.Isotherm5"
+        ],
+        "DOIs": [
+          "10.1021/acs.iecr.7b04391"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 32,
+        "rmse_mol_kg": 0.03241905934094039,
+        "mean_absolute_relative_error": 0.03788410848805495,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "ethylene": {
+        "model": "dual_site_langmuir",
+        "qmax": 1.7959801744904123,
+        "b": 108.14655693421632,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "qmax2": 1.674313154516516,
+        "b2": 8.633451814734554,
+        "heat2": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06115342477827273,
+              "validation_mare": 0.0624568824386023,
+              "rmse_mol_kg": 0.15846760464681442
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.00534801891362832,
+              "validation_mare": 0.005604099556726956,
+              "rmse_mol_kg": 0.016213273713525145
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.008639451829719367,
+              "validation_mare": 0.010455423442748647,
+              "rmse_mol_kg": 0.020368775586111113
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.018679513937900318,
+              "validation_mare": 0.02284590376092896,
+              "rmse_mol_kg": 0.044298274068756145
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 298.0,
+        "T_max": 298.0,
+        "f_min": 0.0014299867986794876,
+        "f_max": 0.9925697302205708,
+        "pressure_max_bar": 0.999,
+        "source_records": [
+          "10.1021acs.iecr.7b04391.Isotherm3"
+        ],
+        "DOIs": [
+          "10.1021/acs.iecr.7b04391"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 33,
+        "rmse_mol_kg": 0.016213273713525145,
+        "mean_absolute_relative_error": 0.00534801891362832,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "isobutane": {
+        "model": "sips",
+        "qmax": 1.431524822330816,
+        "b": 27.545742769096403,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 1.607952742370798,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.11459684644613968,
+              "validation_mare": 0.15332037035882667,
+              "rmse_mol_kg": 0.10662193720643086
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.11459680878523035,
+              "validation_mare": 0.15332037422603945,
+              "rmse_mol_kg": 0.10662190512161782
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.07747231258901449,
+              "validation_mare": 0.1213302423711556,
+              "rmse_mol_kg": 0.06569741107299262
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.05433622412574561,
+              "validation_mare": 0.10382115927981553,
+              "rmse_mol_kg": 0.06054775539414551
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 373.0,
+        "T_max": 373.0,
+        "f_min": 0.00795913946638159,
+        "f_max": 0.968385584704869,
+        "pressure_max_bar": 0.98143,
+        "source_records": [
+          "10.108001496390902775935.Isotherm11"
+        ],
+        "DOIs": [
+          "10.1080/01496390902775935"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 16,
+        "rmse_mol_kg": 0.06054775539414551,
+        "mean_absolute_relative_error": 0.05433622412574561,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "propane": {
+        "model": "sips",
+        "qmax": 2.1868154748893587,
+        "b": 68.31926926534466,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 1.2520024451599199,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06751002523887113,
+              "validation_mare": 0.07553733135120703,
+              "rmse_mol_kg": 0.09187378328200585
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06751006234532199,
+              "validation_mare": 0.07553735268628711,
+              "rmse_mol_kg": 0.09187386967016548
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04227447293794652,
+              "validation_mare": 0.04975882917752216,
+              "rmse_mol_kg": 0.06945314973363927
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.02457563501193102,
+              "validation_mare": 0.028029243122053873,
+              "rmse_mol_kg": 0.04437298643906685
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 300.0,
+        "T_max": 300.0,
+        "f_min": 0.002208921372147957,
+        "f_max": 0.612475598444255,
+        "pressure_max_bar": 0.618632,
+        "source_records": [
+          "10.1007s1045001899621.Isotherm11"
+        ],
+        "DOIs": [
+          "10.1007/s10450-018-9962-1"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 11,
+        "rmse_mol_kg": 0.04437298643906685,
+        "mean_absolute_relative_error": 0.02457563501193102,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "propylene": {
+        "model": "langmuir",
+        "qmax": 2.1069429065337997,
+        "b": 24.321452903781402,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.031435433105231766,
+              "validation_mare": 0.03302380170330241,
+              "rmse_mol_kg": 0.05704040703834762
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.01122744600017287,
+              "validation_mare": 0.03652966690719297,
+              "rmse_mol_kg": 0.017011742786149118
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.01720794429784954,
+              "validation_mare": 0.04460287958645242,
+              "rmse_mol_kg": 0.028700650095554222
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.02074200277798459,
+              "validation_mare": 0.05486583339271467,
+              "rmse_mol_kg": 0.03539011534368829
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 373.0,
+        "T_max": 373.0,
+        "f_min": 0.006629658589106078,
+        "f_max": 0.9020922219441131,
+        "pressure_max_bar": 0.90849,
+        "source_records": [
+          "10.108001496390902775935.Isotherm12"
+        ],
+        "DOIs": [
+          "10.1080/01496390902775935"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 13,
+        "rmse_mol_kg": 0.05704040703834762,
+        "mean_absolute_relative_error": 0.031435433105231766,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "sulfur hexafluoride": {
+        "model": "sips",
+        "qmax": 2.0469756111532127,
+        "b": 7.7206467699857795,
+        "T_ref": 298.15,
+        "heat": 20445.763785708765,
+        "n": 1.2538389056259143,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.11044353405063084,
+              "validation_mare": 0.11116684458240647,
+              "rmse_mol_kg": 0.11563240452524555
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.10997831204992838,
+              "validation_mare": 0.11173907791464698,
+              "rmse_mol_kg": 0.12255983032304336
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08168283717256225,
+              "validation_mare": 0.08227508797604591,
+              "rmse_mol_kg": 0.09027583254910182
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.07462496679035653,
+              "validation_mare": 0.07463466600727729,
+              "rmse_mol_kg": 0.07438025977409074
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 273.0,
+        "T_max": 293.0,
+        "f_min": 0.000269999053628386,
+        "f_max": 0.9847876119653562,
+        "pressure_max_bar": 0.99908,
+        "source_records": [
+          "10.1016j.cej.2015.04.087.Isotherm18",
+          "10.1016j.cej.2015.04.087.Isotherm24",
+          "10.1016j.cej.2015.04.087.Isotherm6"
+        ],
+        "DOIs": [
+          "10.1016/j.cej.2015.04.087"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 124,
+        "rmse_mol_kg": 0.07438025977409074,
+        "mean_absolute_relative_error": 0.07462496679035653,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "water": {
+        "model": "dual_site_langmuir",
+        "qmax": 13.505944250388236,
+        "b": 8765.415191723836,
+        "T_ref": 298.15,
+        "heat": 41742.00285279691,
+        "qmax2": 5.442925551402201,
+        "b2": 89.88267849207861,
+        "heat2": 46715.736222156214,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.10956623963706157,
+              "validation_mare": 0.12004966125891933,
+              "rmse_mol_kg": 1.4326041203030702
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.07401600107690189,
+              "validation_mare": 0.08346087006620061,
+              "rmse_mol_kg": 1.0691354205426387
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08838247433612843,
+              "validation_mare": 0.0964242599570851,
+              "rmse_mol_kg": 1.2462256598554262
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.09863488058651411,
+              "validation_mare": 0.10601304513301593,
+              "rmse_mol_kg": 1.3371636591305849
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 295.0,
+        "T_max": 373.0,
+        "f_min": 1.5999995990875173e-05,
+        "f_max": 0.023667221551672835,
+        "pressure_max_bar": 0.023676,
+        "source_records": [
+          "10.1007s10450-020-00199-3.Isotherm1",
+          "10.1007s10450-020-00199-3.Isotherm2",
+          "10.1007s10450-020-00199-3.Isotherm3",
+          "10.1007s10450-020-00199-3.Isotherm4",
+          "10.1007s10450-020-00199-3.Isotherm5",
+          "10.1007s10450-020-00199-3.Isotherm6"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00199-3"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 104,
+        "rmse_mol_kg": 1.0691354205426387,
+        "mean_absolute_relative_error": 0.07401600107690189,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      }
+    },
+    "3A": {
+      "NH3": {
+        "model": "langmuir",
+        "qmax": 5.407905909518865,
+        "b": 24.420627328232626,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.010475001163557809,
+              "validation_mare": 0.021794173672214565,
+              "rmse_mol_kg": 0.0627473193726721
+            },
+            "dual_site_langmuir": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0073023901002855305,
+              "validation_mare": 0.023004100098723872,
+              "rmse_mol_kg": 0.04607881805213857
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.007439812050781404,
+              "validation_mare": 0.023394529245159962,
+              "rmse_mol_kg": 0.04598806125608213
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 303.15,
+        "T_max": 303.15,
+        "f_min": 0.18637872919926163,
+        "f_max": 0.7290684616683504,
+        "pressure_max_bar": 0.7332730263157895,
+        "source_records": [
+          "Sakata1994.Figure6.Z1.regenerated"
+        ],
+        "DOIs": [
+          "10.11450/seitaikogaku1989.6.2_1"
+        ],
+        "source_provider": "primary literature, manually digitized",
+        "source_file": "source/molecular_sieve_ammonia.json",
+        "notes": "Single-temperature curve; no adsorption enthalpy inferred. The graph does not resolve the Henry region. Repeat-cycle capacity applies to this regenerated material, not virgin capacity or irreversible acid-site uptake. N2/H2 curves are too close to the baseline to extract reliable nonzero loadings.",
+        "points": 5,
+        "rmse_mol_kg": 0.0627473193726721,
+        "mean_absolute_relative_error": 0.010475001163557809,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "Ne": {
+        "model": "dual_site_langmuir",
+        "qmax": 0.0016858356362844838,
+        "b": 70.71210912998252,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "qmax2": 403.42879349273477,
+        "b2": 6.727989271442589e-06,
+        "heat2": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.12103497497797497,
+              "validation_mare": 0.14395595867840721,
+              "rmse_mol_kg": 0.000416616198423438
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.013270943842750621,
+              "validation_mare": 0.03998758960203842,
+              "rmse_mol_kg": 6.099773840352487e-05
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.049479094665276724,
+              "validation_mare": 0.059365479719237155,
+              "rmse_mol_kg": 0.00018839165843834784
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.045365516852070194,
+              "validation_mare": 0.05399797377472247,
+              "rmse_mol_kg": 0.000175939290386056
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 77.0,
+        "T_max": 77.0,
+        "f_min": 0.04080812326539193,
+        "f_max": 0.9022972696998219,
+        "pressure_max_bar": 0.904687,
+        "source_records": [
+          "10.1021jp044110u.Isotherm11"
+        ],
+        "DOIs": [
+          "10.1021/jp044110u"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 10,
+        "rmse_mol_kg": 6.099773840352487e-05,
+        "mean_absolute_relative_error": 0.013270943842750621,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      }
+    },
+    "4A": {
+      "CH4": {
+        "model": "dual_site_langmuir",
+        "qmax": 3.317143253348059,
+        "b": 0.08985472262002327,
+        "T_ref": 298.15,
+        "heat": 24500.45331178647,
+        "qmax2": 3.3389410571859792,
+        "b2": 0.18179518434317132,
+        "heat2": 15288.02799372241,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0068281721551689215,
+              "validation_mare": 0.008625711972970958,
+              "rmse_mol_kg": 0.004552773138559502
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0033546466424053773,
+              "validation_mare": 0.006138875869326752,
+              "rmse_mol_kg": 0.003553076014926109
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0069009102993864944,
+              "validation_mare": 0.010875905821863856,
+              "rmse_mol_kg": 0.004718004044841175
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.006833711766949109,
+              "validation_mare": 0.011528646426448354,
+              "rmse_mol_kg": 0.0047363442707491505
+            }
+          }
+        },
+        "temperature_corrections": {
+          "10.1007s1045001698416.Isotherm20": {
+            "temperature_K": 272.99,
+            "original_temperature_K": 298,
+            "source": "wynnyk_2017_supplement.docx, Online resource 9, methane rows beginning at p=0.1525 bar, absolute loading=0.2620 mmol/g",
+            "reason": "NIST temperature mislabel: original table explicitly gives -0.160 +/- 0.005 C, not 25 C."
+          },
+          "10.1007s1045001698416.Isotherm22": {
+            "temperature_K": 297.991,
+            "original_temperature_K": 298,
+            "source": "wynnyk_2017_supplement.docx, Online resource 9, T=24.841 +/- 0.005 C",
+            "reason": "Use the original measured temperature rather than rounded nominal temperature."
+          },
+          "10.1007s1045001698416.Isotherm24": {
+            "temperature_K": 322.989,
+            "original_temperature_K": 323,
+            "source": "wynnyk_2017_supplement.docx, Online resource 9, T=49.839 +/- 0.005 C",
+            "reason": "Use the original measured temperature rather than rounded nominal temperature."
+          }
+        },
+        "low_pressure_limit": "Henry",
+        "T_min": 272.99,
+        "T_max": 322.989,
+        "f_min": 0.15243154514580118,
+        "f_max": 0.8503636226275896,
+        "pressure_max_bar": 0.8525,
+        "source_records": [
+          "10.1007s1045001698416.Isotherm20",
+          "10.1007s1045001698416.Isotherm22",
+          "10.1007s1045001698416.Isotherm24"
+        ],
+        "DOIs": [
+          "10.1007/s10450-016-9841-6"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 13,
+        "rmse_mol_kg": 0.003553076014926109,
+        "mean_absolute_relative_error": 0.0033546466424053773,
+        "loading_basis": "absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "CO2": {
+        "model": "toth",
+        "qmax": 4.567716105601025,
+        "b": 457.5199257620282,
+        "T_ref": 298.15,
+        "heat": 48635.22574418218,
+        "n": 0.47350792905607153,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "toth",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.21212641441503324,
+              "validation_mare": 0.21591535363692854,
+              "rmse_mol_kg": 0.47110127626193327
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.1380917243985066,
+              "validation_mare": 0.14682054554537052,
+              "rmse_mol_kg": 0.23512383951071303
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.1267339324268322,
+              "validation_mare": 0.13116205160486155,
+              "rmse_mol_kg": 0.14511419532567418
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.12612366389596405,
+              "validation_mare": 0.131342853180582,
+              "rmse_mol_kg": 0.2117860313332105
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 273.0,
+        "T_max": 363.0,
+        "f_min": 1.0999999430362335e-05,
+        "f_max": 0.9781059062964864,
+        "pressure_max_bar": 0.980909,
+        "source_records": [
+          "10.1007s10450-020-00206-7.Isotherm18",
+          "10.1007s10450-020-00206-7.Isotherm35",
+          "10.1007s10450-020-00206-7.Isotherm36"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00206-7"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 127,
+        "rmse_mol_kg": 0.14511419532567418,
+        "mean_absolute_relative_error": 0.1267339324268322,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "H2S": {
+        "model": "dual_site_langmuir",
+        "qmax": 3.282396771797607,
+        "b": 201.63312109401525,
+        "T_ref": 298.15,
+        "heat": 8081.234565285934,
+        "qmax2": 1.8783514551614027,
+        "b2": 4.634303578850163,
+        "heat2": 37368.124566875194,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04521728425216592,
+              "validation_mare": 0.045941616660377924,
+              "rmse_mol_kg": 0.21144388645201126
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.01055827718659946,
+              "validation_mare": 0.01215625217337775,
+              "rmse_mol_kg": 0.07046097041559254
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.014685037860210868,
+              "validation_mare": 0.016096003627712695,
+              "rmse_mol_kg": 0.0935799782200916
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.014344279645032943,
+              "validation_mare": 0.01572881500401456,
+              "rmse_mol_kg": 0.09204914049811987
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 273.0,
+        "T_max": 323.0,
+        "f_min": 0.05327213265341589,
+        "f_max": 0.9025629777796491,
+        "pressure_max_bar": 0.909,
+        "source_records": [
+          "10.1007s1045001698416.Isotherm14",
+          "10.1007s1045001698416.Isotherm16",
+          "10.1007s1045001698416.Isotherm18"
+        ],
+        "DOIs": [
+          "10.1007/s10450-016-9841-6"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 30,
+        "rmse_mol_kg": 0.07046097041559254,
+        "mean_absolute_relative_error": 0.01055827718659946,
+        "loading_basis": "absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "N2": {
+        "model": "langmuir",
+        "qmax": 0.8487043471592399,
+        "b": 0.6595486361420064,
+        "T_ref": 298.15,
+        "heat": 36135.27981280287,
+        "fit_selection": {
+          "method": "leave-one-out; too few points for three-fold validation",
+          "baseline_model": "langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "leave-one-out; too few points for three-fold validation",
+              "train_mare": 0.011671119018860487,
+              "validation_mare": 0.20599746829867058,
+              "rmse_mol_kg": 0.0005093553912010036
+            },
+            "dual_site_langmuir": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "toth": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "sips": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 293.0,
+        "T_max": 363.0,
+        "f_min": 0.4065459296532444,
+        "f_max": 0.7181004089893274,
+        "pressure_max_bar": 0.7181,
+        "source_records": [
+          "10.1007s10450-020-00206-7.Isotherm37",
+          "10.1007s10450-020-00206-7.Isotherm38"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00206-7"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 4,
+        "rmse_mol_kg": 0.0005093553912010036,
+        "mean_absolute_relative_error": 0.011671119018860487,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "carbonyl sulfide": {
+        "model": "sips",
+        "qmax": 3.2633019324184955,
+        "b": 3.0221561480853745,
+        "T_ref": 298.15,
+        "heat": 7248.251226097682,
+        "n": 1.246953696063326,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08559834253039922,
+              "validation_mare": 0.08590121821957385,
+              "rmse_mol_kg": 0.14661268462040838
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08559834034538756,
+              "validation_mare": 0.08590121438202113,
+              "rmse_mol_kg": 0.14661268064707803
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08496739299948514,
+              "validation_mare": 0.08513567055105213,
+              "rmse_mol_kg": 0.1412769730369828
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08292429473218203,
+              "validation_mare": 0.08390029061435289,
+              "rmse_mol_kg": 0.13672987113291582
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 273.0,
+        "T_max": 323.0,
+        "f_min": 0.05127567341517927,
+        "f_max": 0.9646497255843774,
+        "pressure_max_bar": 0.9784,
+        "source_records": [
+          "10.1007s1045001698416.Isotherm10",
+          "10.1007s1045001698416.Isotherm12",
+          "10.1007s1045001698416.Isotherm8"
+        ],
+        "DOIs": [
+          "10.1007/s10450-016-9841-6"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 73,
+        "rmse_mol_kg": 0.13672987113291582,
+        "mean_absolute_relative_error": 0.08292429473218203,
+        "loading_basis": "absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "propane": {
+        "model": "langmuir",
+        "qmax": 1.9503725630438096,
+        "b": 1.5374317272026767,
+        "T_ref": 298.15,
+        "heat": 12497.523516697096,
+        "fit_selection": {
+          "method": "leave-one-out; too few points for three-fold validation",
+          "baseline_model": "langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "leave-one-out; too few points for three-fold validation",
+              "train_mare": 0.04494981702603869,
+              "validation_mare": 0.1860756263081802,
+              "rmse_mol_kg": 0.011193034342535468
+            },
+            "dual_site_langmuir": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "toth": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "sips": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 423.0,
+        "T_max": 473.0,
+        "f_min": 0.13988341163273016,
+        "f_max": 0.8916825500700493,
+        "pressure_max_bar": 0.895,
+        "source_records": [
+          "10.1023a1026223914143.Isotherm4",
+          "10.1023a1026223914143.Isotherm5"
+        ],
+        "DOIs": [
+          "10.1023/a:1026223914143"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 4,
+        "rmse_mol_kg": 0.011193034342535468,
+        "mean_absolute_relative_error": 0.04494981702603869,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "propylene": {
+        "model": "langmuir",
+        "qmax": 1.4725866770660487,
+        "b": 228.6087306505557,
+        "T_ref": 298.15,
+        "heat": 32452.922545621987,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06843442801467468,
+              "validation_mare": 0.07658990733433857,
+              "rmse_mol_kg": 0.03760358044477946
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0558105528708584,
+              "validation_mare": 0.08693189586006303,
+              "rmse_mol_kg": 0.031093176293207077
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.05720677272005152,
+              "validation_mare": 0.0762984644825046,
+              "rmse_mol_kg": 0.030045585660847744
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.05681225924351476,
+              "validation_mare": 0.07757426545245273,
+              "rmse_mol_kg": 0.029798019602856444
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 423.0,
+        "T_max": 473.0,
+        "f_min": 0.02589644478420522,
+        "f_max": 0.982419471610132,
+        "pressure_max_bar": 0.986,
+        "source_records": [
+          "10.1023a1026223914143.Isotherm3",
+          "10.1023a1026223914143.Isotherm6"
+        ],
+        "DOIs": [
+          "10.1023/a:1026223914143"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 23,
+        "rmse_mol_kg": 0.03760358044477946,
+        "mean_absolute_relative_error": 0.06843442801467468,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      }
+    },
+    "5A": {
+      "Ar": {
+        "model": "dual_site_langmuir",
+        "qmax": 7.71253566768226,
+        "b": 12019.688353325253,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "qmax2": 1.4039637349086722,
+        "b2": 2.1497668524696354,
+        "heat2": 0.0,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0685935156669471,
+              "validation_mare": 0.070227677691599,
+              "rmse_mol_kg": 0.3528543671938213
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04540550232038399,
+              "validation_mare": 0.04746757626101646,
+              "rmse_mol_kg": 0.1898322126177663
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06868960907347191,
+              "validation_mare": 0.06970511478126115,
+              "rmse_mol_kg": 0.36784042926115273
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0690280983562849,
+              "validation_mare": 0.07127296071477712,
+              "rmse_mol_kg": 0.35280810966799186
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 87.0,
+        "T_max": 87.0,
+        "f_min": 9.99999969310024e-07,
+        "f_max": 0.9559377737080091,
+        "pressure_max_bar": 0.985669,
+        "source_records": [
+          "10.1007s10450-020-00206-7.Isotherm2"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00206-7"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 47,
+        "rmse_mol_kg": 0.1898322126177663,
+        "mean_absolute_relative_error": 0.04540550232038399,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "CH4": {
+        "model": "dual_site_langmuir",
+        "qmax": 0.010747355399186889,
+        "b": 703353752052783.0,
+        "T_ref": 298.15,
+        "heat": 10406.395625729152,
+        "qmax2": 4.349148466153585,
+        "b2": 0.13857983422870263,
+        "heat2": 21829.181480808104,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.07108643029891715,
+              "validation_mare": 0.081960944917449,
+              "rmse_mol_kg": 0.013411608390756797
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.017193489689738602,
+              "validation_mare": 0.041634138017747895,
+              "rmse_mol_kg": 0.003127962342948839
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.05072517398373104,
+              "validation_mare": 0.06879554814561438,
+              "rmse_mol_kg": 0.009378538044579474
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.040050442832969706,
+              "validation_mare": 0.060675738936892216,
+              "rmse_mol_kg": 0.006361572364726135
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 303.0,
+        "T_max": 323.0,
+        "f_min": 0.04379596252988578,
+        "f_max": 0.9883393097612364,
+        "pressure_max_bar": 0.9904,
+        "source_records": [
+          "10.1021je4005036.Isotherm3",
+          "10.1021je4005036.Isotherm4"
+        ],
+        "DOIs": [
+          "10.1021/je4005036"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 13,
+        "rmse_mol_kg": 0.003127962342948839,
+        "mean_absolute_relative_error": 0.017193489689738602,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "CO": {
+        "model": "sips",
+        "qmax": 4.041333098324673,
+        "b": 0.27240686965613864,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 0.6762111419778383,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08424935643020864,
+              "validation_mare": 0.10181596956114945,
+              "rmse_mol_kg": 0.052484057876097626
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.008003184415382397,
+              "validation_mare": 0.02725272803480949,
+              "rmse_mol_kg": 0.004913954187193126
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.0102632846878207,
+              "validation_mare": 0.0225755622237035,
+              "rmse_mol_kg": 0.005998885439982064
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.007875341236983115,
+              "validation_mare": 0.018824778926802708,
+              "rmse_mol_kg": 0.004008462910170236
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 296.0,
+        "T_max": 296.0,
+        "f_min": 0.017731812702348415,
+        "f_max": 0.7160630531774753,
+        "pressure_max_bar": 0.716368,
+        "source_records": [
+          "10.1021ie020133o.Isotherm4",
+          "10.1021ie020133o.Isotherm5"
+        ],
+        "DOIs": [
+          "10.1021/ie020133o"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 18,
+        "rmse_mol_kg": 0.004008462910170236,
+        "mean_absolute_relative_error": 0.007875341236983115,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "CO2": {
+        "model": "sips",
+        "qmax": 5.6405321380167415,
+        "b": 35.8346587547673,
+        "T_ref": 298.15,
+        "heat": 43336.45925676603,
+        "n": 0.7249253106475427,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.1879126673044215,
+              "validation_mare": 0.18822738851353188,
+              "rmse_mol_kg": 0.3918421442432554
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08622353483152258,
+              "validation_mare": 0.08788772902740635,
+              "rmse_mol_kg": 0.20747343744819483
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.10858085015639184,
+              "validation_mare": 0.10880861836353624,
+              "rmse_mol_kg": 0.15728971123733482
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.07942037318027252,
+              "validation_mare": 0.07967687223929411,
+              "rmse_mol_kg": 0.1208529646763576
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 253.0,
+        "T_max": 343.0,
+        "f_min": 3.999999858630846e-06,
+        "f_max": 0.9169535172108982,
+        "pressure_max_bar": 0.919929,
+        "source_records": [
+          "10.1007s10450-020-00206-7.Isotherm5",
+          "10.1007s10450-020-00206-7.Isotherm6",
+          "10.1007s10450-020-00206-7.Isotherm7",
+          "10.1007s10450-020-00206-7.Isotherm8"
+        ],
+        "DOIs": [
+          "10.1007/s10450-020-00206-7"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 163,
+        "rmse_mol_kg": 0.1208529646763576,
+        "mean_absolute_relative_error": 0.07942037318027252,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "He": {
+        "model": "sips",
+        "qmax": 1.8949712166231094,
+        "b": 31.410020473188673,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 1.3571264309730298,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.1727286364935206,
+              "validation_mare": 0.18202744647985755,
+              "rmse_mol_kg": 0.0717497399907371
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.17246716785211708,
+              "validation_mare": 0.1817491477622925,
+              "rmse_mol_kg": 0.07152360232125003
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.172206179472018,
+              "validation_mare": 0.18147138199726254,
+              "rmse_mol_kg": 0.07129807777632523
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.035023767005473085,
+              "validation_mare": 0.06367745150451887,
+              "rmse_mol_kg": 0.02445170996496684
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 77.0,
+        "T_max": 77.0,
+        "f_min": 0.0013549992044666075,
+        "f_max": 0.028018660025366928,
+        "pressure_max_bar": 0.028019,
+        "source_records": [
+          "10.1021jp044110u.Isotherm1"
+        ],
+        "DOIs": [
+          "10.1021/jp044110u"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 8,
+        "rmse_mol_kg": 0.02445170996496684,
+        "mean_absolute_relative_error": 0.035023767005473085,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "N2": {
+        "model": "dual_site_langmuir",
+        "qmax": 0.010840115860971715,
+        "b": 462.7769285811505,
+        "T_ref": 298.15,
+        "heat": 119999.9999999999,
+        "qmax2": 2.3093362534680475,
+        "b2": 0.1290713692722775,
+        "heat2": 15372.929796122065,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06362287987148633,
+              "validation_mare": 0.09689224925396182,
+              "rmse_mol_kg": 0.006669398289428556
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.024543803781523085,
+              "validation_mare": 0.058499132804777004,
+              "rmse_mol_kg": 0.0029992412914876697
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.042879809057116976,
+              "validation_mare": 0.0792118890584529,
+              "rmse_mol_kg": 0.00517506933951171
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04363916488181944,
+              "validation_mare": 0.0805078146628961,
+              "rmse_mol_kg": 0.005175730482973452
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 303.0,
+        "T_max": 323.0,
+        "f_min": 0.055398758058058876,
+        "f_max": 0.9879063566606606,
+        "pressure_max_bar": 0.9883,
+        "source_records": [
+          "10.1021je4005036.Isotherm5",
+          "10.1021je4005036.Isotherm6"
+        ],
+        "DOIs": [
+          "10.1021/je4005036"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 12,
+        "rmse_mol_kg": 0.0029992412914876697,
+        "mean_absolute_relative_error": 0.024543803781523085,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "O2": {
+        "model": "langmuir",
+        "qmax": 0.3795021575012868,
+        "b": 0.8403356419163364,
+        "T_ref": 298.15,
+        "heat": 13721.72426380295,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.1026231870554571,
+              "validation_mare": 0.2768786251229717,
+              "rmse_mol_kg": 0.012065502217485678
+            },
+            "dual_site_langmuir": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "toth": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            },
+            "sips": {
+              "eligible": false,
+              "reason": "Too few training points for parameter count"
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 296.0,
+        "T_max": 318.0,
+        "f_min": 0.13915345954476815,
+        "f_max": 0.8931974657515122,
+        "pressure_max_bar": 0.893957,
+        "source_records": [
+          "10.1007s10450019001596.Isotherm3",
+          "10.1007s10450019001596.Isotherm4"
+        ],
+        "DOIs": [
+          "10.1007/s10450-019-00159-6"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 5,
+        "rmse_mol_kg": 0.012065502217485678,
+        "mean_absolute_relative_error": 0.1026231870554571,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "ethane": {
+        "model": "langmuir",
+        "qmax": 2.3827332574644973,
+        "b": 3.614343624364669,
+        "T_ref": 298.15,
+        "heat": 21017.646821156377,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03422324437708234,
+              "validation_mare": 0.04862386213531957,
+              "rmse_mol_kg": 0.06210783173576314
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03172076565952941,
+              "validation_mare": 0.049792380832291816,
+              "rmse_mol_kg": 0.05543445883388036
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.035119526839882086,
+              "validation_mare": 0.05980959955575573,
+              "rmse_mol_kg": 0.062074273344812775
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.03495749428826877,
+              "validation_mare": 0.06123471802689521,
+              "rmse_mol_kg": 0.062073826896259406
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 283.0,
+        "T_max": 323.0,
+        "f_min": 0.08153587690840534,
+        "f_max": 0.9163771293926989,
+        "pressure_max_bar": 0.923,
+        "source_records": [
+          "10.1007s1045001294231.Isotherm20",
+          "10.1007s1045001294231.Isotherm21",
+          "10.1007s1045001294231.Isotherm22",
+          "10.1007s1045001294231.Isotherm23"
+        ],
+        "DOIs": [
+          "10.1007/s10450-012-9423-1"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 24,
+        "rmse_mol_kg": 0.06210783173576314,
+        "mean_absolute_relative_error": 0.03422324437708234,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "ethylene": {
+        "model": "dual_site_langmuir",
+        "qmax": 2.301948457839416,
+        "b": 13.678029452160374,
+        "T_ref": 298.15,
+        "heat": 8552.280344959741,
+        "qmax2": 0.5417136954011663,
+        "b2": 3.1273444234926395,
+        "heat2": 119999.99999999999,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "dual_site_langmuir",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04565885308664357,
+              "validation_mare": 0.04725529619292017,
+              "rmse_mol_kg": 0.11167712917261892
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.01821839122149264,
+              "validation_mare": 0.026850300134357824,
+              "rmse_mol_kg": 0.04890311346082216
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.024883151281125393,
+              "validation_mare": 0.03180149507675554,
+              "rmse_mol_kg": 0.05445479857205522
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.02557083958360625,
+              "validation_mare": 0.03447741583179196,
+              "rmse_mol_kg": 0.056547683935252974
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "Henry",
+        "T_min": 283.0,
+        "T_max": 323.0,
+        "f_min": 0.048982048377124526,
+        "f_max": 0.9573041876899367,
+        "pressure_max_bar": 0.963,
+        "source_records": [
+          "10.1007s1045001294231.Isotherm17",
+          "10.1007s1045001294231.Isotherm18",
+          "10.1007s1045001294231.Isotherm19"
+        ],
+        "DOIs": [
+          "10.1007/s10450-012-9423-1"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 23,
+        "rmse_mol_kg": 0.04890311346082216,
+        "mean_absolute_relative_error": 0.01821839122149264,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      },
+      "propane": {
+        "model": "sips",
+        "qmax": 1.6432654788939038,
+        "b": 71.22558929619558,
+        "T_ref": 298.15,
+        "heat": 0.0,
+        "n": 1.5515296892244106,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 2,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.09616475778542569,
+              "validation_mare": 0.12312095823497504,
+              "rmse_mol_kg": 0.09682007154394844
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.09616475737938426,
+              "validation_mare": 0.12595348224501451,
+              "rmse_mol_kg": 0.09682007062276157
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.06820007692787175,
+              "validation_mare": 0.13549512416979728,
+              "rmse_mol_kg": 0.0890190978574586
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.04342657739934121,
+              "validation_mare": 0.11701069583664708,
+              "rmse_mol_kg": 0.07853864767592773
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 300.0,
+        "T_max": 300.0,
+        "f_min": 0.0055095108024605845,
+        "f_max": 0.8503250346394479,
+        "pressure_max_bar": 0.862278,
+        "source_records": [
+          "10.1007s1045001899621.Isotherm8"
+        ],
+        "DOIs": [
+          "10.1007/s10450-018-9962-1"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 8,
+        "rmse_mol_kg": 0.07853864767592773,
+        "mean_absolute_relative_error": 0.04342657739934121,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "single temperature; heats unidentifiable"
+      },
+      "propylene": {
+        "model": "sips",
+        "qmax": 2.2449022790835746,
+        "b": 108.25093123748286,
+        "T_ref": 298.15,
+        "heat": 23792.567686592116,
+        "n": 0.5679695762902999,
+        "fit_selection": {
+          "method": "interleaved three-fold within source curves",
+          "baseline_model": "dual_site_langmuir",
+          "selected_model": "sips",
+          "candidates": {
+            "langmuir": {
+              "eligible": true,
+              "parameters_count": 3,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.08166529957785966,
+              "validation_mare": 0.09475394683607054,
+              "rmse_mol_kg": 0.1403470448140961
+            },
+            "dual_site_langmuir": {
+              "eligible": true,
+              "parameters_count": 6,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.043813915441605074,
+              "validation_mare": 0.06901407763617035,
+              "rmse_mol_kg": 0.08910760281719209
+            },
+            "toth": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.055031262755750314,
+              "validation_mare": 0.06507924062671878,
+              "rmse_mol_kg": 0.11127419537954726
+            },
+            "sips": {
+              "eligible": true,
+              "parameters_count": 4,
+              "validation_method": "interleaved three-fold within source curves",
+              "train_mare": 0.05392025066607673,
+              "validation_mare": 0.061368319201838155,
+              "rmse_mol_kg": 0.10947891728677381
+            }
+          }
+        },
+        "temperature_corrections": {},
+        "low_pressure_limit": "non-Henry empirical extrapolation",
+        "T_min": 298.0,
+        "T_max": 423.0,
+        "f_min": 0.017296487629779474,
+        "f_max": 0.9845295354618525,
+        "pressure_max_bar": 0.9974,
+        "source_records": [
+          "10.1021acs.jced.6b00294.Isotherm19",
+          "10.1021acs.jced.6b00294.Isotherm20",
+          "10.1021acs.jced.6b00294.Isotherm21",
+          "10.1021acs.jced.6b00294.Isotherm22",
+          "10.1021acs.jced.6b00294.Isotherm23"
+        ],
+        "DOIs": [
+          "10.1021/acs.jced.6b00294"
+        ],
+        "source_provider": "NIST ISODB",
+        "source_file": "source/molecular_sieve_nist.json",
+        "notes": "",
+        "points": 24,
+        "rmse_mol_kg": 0.10947891728677381,
+        "mean_absolute_relative_error": 0.05392025066607673,
+        "loading_basis": "low-pressure reported loading approximation to absolute",
+        "fugacity_basis": "pure-component PR fugacity",
+        "temperature_fit": "vanthoff"
+      }
+    }
+  },
+  "species": {
+    "1-butene": {
+      "CAS": "106-98-9",
+      "aliases": [
+        "1-butene"
+      ]
+    },
+    "Ar": {
+      "CAS": "7440-37-1",
+      "aliases": [
+        "ar",
+        "argon"
+      ]
+    },
+    "CH4": {
+      "CAS": "74-82-8",
+      "aliases": [
+        "ch4",
+        "methane"
+      ]
+    },
+    "CO2": {
+      "CAS": "124-38-9",
+      "aliases": [
+        "carbon dioxide",
+        "co2"
+      ]
+    },
+    "N2": {
+      "CAS": "7727-37-9",
+      "aliases": [
+        "n2",
+        "nitrogen"
+      ]
+    },
+    "O2": {
+      "CAS": "7782-44-7",
+      "aliases": [
+        "o2",
+        "oxygen"
+      ]
+    },
+    "acetylene": {
+      "CAS": "",
+      "aliases": [
+        "acetylene"
+      ]
+    },
+    "ethane": {
+      "CAS": "74-84-0",
+      "aliases": [
+        "ethane"
+      ]
+    },
+    "ethylene": {
+      "CAS": "74-85-1",
+      "aliases": [
+        "ethene",
+        "ethylene"
+      ]
+    },
+    "isobutane": {
+      "CAS": "75-28-5",
+      "aliases": [
+        "isobutane"
+      ]
+    },
+    "propane": {
+      "CAS": "74-98-6",
+      "aliases": [
+        "n-propane",
+        "propane"
+      ]
+    },
+    "propylene": {
+      "CAS": "115-07-1",
+      "aliases": [
+        "propene",
+        "propylene"
+      ]
+    },
+    "sulfur hexafluoride": {
+      "CAS": "2551-62-4",
+      "aliases": [
+        "sulfur hexafluoride"
+      ]
+    },
+    "water": {
+      "CAS": "7732-18-5",
+      "aliases": [
+        "water"
+      ]
+    },
+    "NH3": {
+      "CAS": "7664-41-7",
+      "aliases": [
+        "ammonia",
+        "nh3"
+      ]
+    },
+    "Ne": {
+      "CAS": "7440-01-9",
+      "aliases": [
+        "ne",
+        "neon"
+      ]
+    },
+    "H2S": {
+      "CAS": "7783-06-4",
+      "aliases": [
+        "h2s",
+        "hydrogen sulfide"
+      ]
+    },
+    "carbonyl sulfide": {
+      "CAS": "",
+      "aliases": [
+        "carbonyl sulfide"
+      ]
+    },
+    "CO": {
+      "CAS": "630-08-0",
+      "aliases": [
+        "carbon monoxide",
+        "co"
+      ]
+    },
+    "He": {
+      "CAS": "7440-59-7",
+      "aliases": [
+        "he",
+        "helium"
+      ]
+    }
+  },
+  "excluded_pairs": [
+    {
+      "sieve": "4A",
+      "component": "Ne",
+      "reason": "Mean absolute relative fit error exceeds 25%; source requires further assessment",
+      "fit_error": 1.0301339768644575,
+      "source_records": [
+        "10.1021jp044110u.Isotherm12",
+        "10.1021jp044110u.Isotherm6"
+      ]
+    },
+    {
+      "sieve": "5A",
+      "component": "Ne",
+      "reason": "Mean absolute relative fit error exceeds 25%; source requires further assessment",
+      "fit_error": 2.231302135127986,
+      "source_records": [
+        "10.1021jp044110u.Isotherm13",
+        "10.1021jp044110u.Isotherm14",
+        "10.1021jp044110u.Isotherm7",
+        "10.1021jp044110u.Isotherm8"
+      ]
+    }
+  ],
+  "excluded_records": {
+    "10.1021acs.jced.6b00294.Isotherm24": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1021acs.jced.6b00294.Isotherm25": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1021acs.jced.6b00294.Isotherm26": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1021acs.jced.6b00294.Isotherm27": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1021acs.jced.6b00294.Isotherm28": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1021acs.jced.6b00294.Isotherm29": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1021acs.jced.6b00294.Isotherm30": "Propane series includes apparent axis/temperature transcription inconsistencies; use independent 300 K source instead.",
+    "10.1016j.jhazmat.2015.07.078.Isotherm10": "Different figure/adsorption history from the Figure 3 pure adsorption series; do not combine.",
+    "10.108001496390902775935.Isotherm10": "Poor fit; independent 300 K propane source selected instead.",
+    "10.1007s10450-020-00206-7.Isotherm22": "No observations within the <=1 bar fitting domain; high-pressure excess/absolute conversion not established.",
+    "10.1016j.jhazmat.2015.07.078.Isotherm4": "Loading decreases by more than 10% of its maximum as pressure rises; not a usable monotonic equilibrium branch.",
+    "10.1016j.jhazmat.2015.07.078.Isotherm6": "Loading decreases by more than 10% of its maximum as pressure rises; not a usable monotonic equilibrium branch.",
+    "10.1021la950969e.Isotherm2": "No observations within the <=1 bar fitting domain; high-pressure excess/absolute conversion not established."
+  }
+}

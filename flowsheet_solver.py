@@ -2316,6 +2316,7 @@ class FlowsheetSolver:
         for unit_id, result in self.unit_results.items():
             Q_total += result.heat_duty
             W_total += result.work
+            H_out += result.unrepresented_enthalpy_change
 
         scope_correction = sum(
             float(record['enthalpy_flow_correction_kJ_per_h'])

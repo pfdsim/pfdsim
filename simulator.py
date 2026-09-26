@@ -2392,6 +2392,11 @@ class Simulator:
             utility_work = self._unit_utility_work(unit_result)
             lines.append(f"    work = {utility_work/3600:.4f} [kW]")
             lines.append(f"    process_work = {unit_result.work/3600:.4f} [kW]")
+            if unit_result.unrepresented_enthalpy_change:
+                lines.append(
+                    '    unrepresented_enthalpy_change = '
+                    f'{unit_result.unrepresented_enthalpy_change/3600:.6g} [kW]'
+                )
             
             # Performance metrics
             lines.append("    PERFORMANCE:")

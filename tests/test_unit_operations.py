@@ -3467,17 +3467,18 @@ class UnitOperationSmokeTests(unittest.TestCase):
             performance['equilibrium_loading_kg_water_per_kg_sieve'],
             places=9,
         )
-        # Drying removes water from an exothermically mixed ethanol/water
-        # liquid, so the products' stream-enthalpy duty is positive. The
-        # exothermic adsorption contribution is reported separately below.
-        self.assertGreater(result.heat_duty, 0.0)
+        # Physical bed duty includes adsorption, using a gas reference and
+        # the liquid feed enthalpy exactly once (no duplicated latent heat).
+        self.assertLess(result.heat_duty, 0.0)
         self.assertGreater(performance['adsorption_heat_release_kJ_h'], 0.0)
         stream_enthalpy_duty = (
             product.F * product.H
             + adsorbate.F * adsorbate.H
             - feed.F * feed.H
         )
-        self.assertAlmostEqual(result.heat_duty, stream_enthalpy_duty, places=8)
+        self.assertAlmostEqual(result.heat_duty,
+                               stream_enthalpy_duty+result.unrepresented_enthalpy_change,
+                               places=8)
         self.assertAlmostEqual(
             performance['stream_enthalpy_duty_kJ_h'],
             stream_enthalpy_duty,
@@ -3642,7 +3643,7 @@ class UnitOperationSmokeTests(unittest.TestCase):
             target_performance['equilibrium_loading_kg_water_per_kg_sieve'],
             places=12,
         )
-        self.assertGreater(target_result.heat_duty, 0.0)
+        self.assertLess(target_result.heat_duty, 0.0)
 
         removal_result = MolecularSieveDryer(
             'MS-REMOVAL',
@@ -3657,7 +3658,7 @@ class UnitOperationSmokeTests(unittest.TestCase):
             removal_performance['equilibrium_loading_kg_water_per_kg_sieve'],
             places=12,
         )
-        self.assertGreater(removal_result.heat_duty, 0.0)
+        self.assertLess(removal_result.heat_duty, 0.0)
 
     def test_molecular_sieve_rejects_initial_loading_above_3a_maximum(self):
         thermo = create_thermodynamics(['ethanol', 'water'], 'UNIQUAC')

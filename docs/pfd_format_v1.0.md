@@ -1249,7 +1249,7 @@ serialization and `.pfr` reporting expose.
 - `McCabeThieleDistillation` - Binary McCabe-Thiele column with optional latent-heat-corrected operating curves
 - `CMODistillation` - Multicomponent stage-by-stage constant-molar-overflow column with total, partial, or mixed condenser
 - `RigorousDistillation` - Sparse Newton MESH-equation distillation column with pressure profiles, side draws, total/partial/mixed condensers, and optional top decanter
-- `MolecularSieveDryer` - Selective 3A adsorption dryer for trace water removal; alias: `Dryer`
+- `MolecularSieveDryer` - Competitive molecular-sieve adsorption with built-in and custom isotherms; alias: `Dryer`
 - `ShortcutExtractor` - Shortcut multi-stage LLE extraction; aliases: `Extractor`, `LiquidLiquidExtractor`, `LLE`
 - `RigorousExtractor` - Equilibrium-stage LLE extraction; alias: `RigorousLiquidLiquidExtractor`
 - `Absorber` - Shortcut gas absorption column; alias: `AbsorptionColumn`
@@ -2317,18 +2317,29 @@ obtained for the actual solute, solvent, crystal form, and equipment.
 
 **MolecularSieveDryer / Dryer:**
 
-- Selective water adsorption with one `feed`/`in` inlet and `product` plus
-  `adsorbate` outlets. Only 3A molecular sieve is currently supported.
-- `water_component` - Component symbol to remove; otherwise `water` or `H2O`
-  is detected.
-- Specify at most one sizing/performance target:
-  `target_water_mole_fraction` (default `1e-4`), `removal_fraction`, or an
+- Competitive adsorption with one `feed`/`in` inlet and `product` plus
+  `adsorbate` outlets. Every feed species with a valid isotherm participates
+  in IAST; nominally size-accessible species without curves generate warnings.
+- `water_component` - Optional water symbol for the water target and legacy
+  loading parameters; otherwise water is identified by name or CAS.
+- Specify exactly one sizing/performance target:
+  `target_water_mole_fraction`, `target_mole_fraction`, `removal_fraction`, or an
   adsorbent mass flow (`adsorbent_mass_flow`, `sieve_mass_flow`,
   `molecular_sieve_mass_flow`, `adsorbent_flow`, `sieve_flow`,
   `adsorbent_mass`, or `sieve_mass`). Mass-flow values use kg/h by default.
-- `sieve_type` or `molecular_sieve` - Must select `3A`.
+- `target_component` - Component to use for generic mole-fraction or removal
+  sizing; defaults to water when present. Sizing accounts for coadsorption.
+- `sieve_type` or `molecular_sieve` - `3A` (default), `4A`, `5A`, `13X`, or a
+  custom type with supplied isotherms. A sieve type alone is underspecified.
+- `isotherms` - Component map of Langmuir, dual-site Langmuir, Sips, Toth,
+  Henry, Freundlich or custom equation settings. Loadings are mol/kg dry sieve,
+  fugacity is bar, and temperature is K.
+- `kinetic_diameters` and `pore_diameter` - Optional size-screening values in
+  angstrom for missing-isotherm warnings.
 - `initial_loading_kg_per_kg` or `initial_loading` - Initial water loading of
   regenerated sieve, default zero.
+- `initial_loadings` - Component map of initial kg adsorbate/kg sieve.
+- See [molecular sieve models, equations, source data and energy convention](molecular_sieves.md).
 
 **ShortcutExtractor / Extractor / LiquidLiquidExtractor / LLE:**
 

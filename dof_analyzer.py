@@ -819,6 +819,22 @@ UNIT_DOF_RULES = {
     # =========================================================================
     # MEMBRANE AND ADSORPTION
     # =========================================================================
+    'MolecularSieveDryer': {
+        'description': 'Competitive equilibrium adsorption on molecular sieves',
+        'category': 'separation',
+        'phase_support': ['vapor', 'liquid', 'VLE'],
+        'required_specs': ['adsorbent_mass_flow|target_mole_fraction|target_water_mole_fraction|removal_fraction'],
+        'optional_specs': {
+            'sieve_type': {'default': '3A'},
+            'target_component': {},
+            'isotherms': {'description': 'Per-component pure isotherm settings'},
+            'initial_loadings': {'unit': 'kg/kg'},
+            'kinetic_diameters': {'unit': 'angstrom'},
+            'pore_diameter': {'unit': 'angstrom'},
+        },
+        'calculated': ['adsorbent_mass_flow_kg_h', 'removed_kmol_h', 'equilibrium_loadings_mol_per_kg'],
+        'dof_notes': 'Specify exactly one sieve flow or target. All components with valid isotherms compete through IAST.',
+    },
     'Membrane': {
         'description': 'Membrane separation unit',
         'category': 'separation',
@@ -1032,6 +1048,21 @@ class DOFAnalyzer:
                 message = f"Unit '{unit.id}' has both outlet temperature and heat duty"
                 details.append("Specify at most one of T_out/T/temperature or Q/duty/heat_duty")
             
+        elif unit_type == 'MolecularSieveDryer':
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from .molecular_sieve import MolecularSieveDryer
+            else:
+                from molecular_sieve import MolecularSieveDryer
+            names = set(MolecularSieveDryer.ADSORBENT_MASS_NAMES) | {
+                'target_mole_fraction', 'target_water_mole_fraction', 'removal_fraction',
+            }
+            count = len(names & param_names)
+            dof = 1-count
+            if dof:
+                status = SpecificationStatus.UNDER_SPECIFIED if dof>0 else SpecificationStatus.OVER_SPECIFIED
+                message = f"Unit '{unit.id}' requires exactly one sieve flow or sizing target"
+                details.append('Specify a target component for non-water sizing; isotherms determine every coadsorbate.')
+
         elif unit_type == 'Splitter':
             has_molar_flow_specs = any(
                 p.startswith(('f_', 'flow_', 'molar_flow_'))

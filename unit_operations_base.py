@@ -33,6 +33,10 @@ class UnitResult:
     work: float = 0.0  # kJ/h (positive = work done on system)
     performance: dict = field(default_factory=dict)  # Unit-specific metrics
     warnings: list[str] = field(default_factory=list)
+    # Net enthalpy leaving in inventories not represented by stream H, kJ/h.
+    # For adsorption this replaces the fluid-accounting adsorbate enthalpy
+    # with the change in adsorbed-phase enthalpy on the dry-solid basis.
+    unrepresented_enthalpy_change: float = 0.0
 
     def to_dict(self) -> dict:
         return {
@@ -43,6 +47,7 @@ class UnitResult:
             'work_kW': self.work / 3600,
             'performance': self.performance,
             'warnings': self.warnings,
+            'unrepresented_enthalpy_change': self.unrepresented_enthalpy_change,
         }
 
 

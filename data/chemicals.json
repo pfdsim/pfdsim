@@ -1384,6 +1384,23 @@
       "omega": -0.39,
       "phase_at_STP": "gas"
     },
+    "Ne": {
+      "CAS": "7440-01-9",
+      "Gf": 0.0,
+      "Hf": 0.0,
+      "MW": 20.179,
+      "Pc": 26.61630706279463,
+      "Tb": 27.09997968642401,
+      "Tc": 44.39999970498691,
+      "Tm": 24.56,
+      "Vc": 41.49379299634973,
+      "omega": -0.03549258024442481,
+      "Cp_coeffs": [20.7861565453831, 0.0, 0.0, 0.0],
+      "formula": "Ne",
+      "name": "Neon",
+      "phase_at_STP": "gas",
+      "source": "CoolProp Neon / Thol et al., J. Phys. Chem. Ref. Data 48, 023101 (2019); ideal monatomic Cp=5R/2"
+    },
     "N2": {
       "CAS": "7727-37-9",
       "Gf": 0.0,

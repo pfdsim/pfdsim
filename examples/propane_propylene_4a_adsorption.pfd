@@ -1,0 +1,39 @@
+PROCESS: Propane Propylene Stream with Light Impurities through 4A
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: PR
+DESCRIPTION: Competitive adsorption of a C3 vapor containing CO2, methane and nitrogen on fresh 4A molecular sieve.
+
+COMPONENTS:
+    propane | Propane | MW=44.09562
+    propylene | Propylene | MW=42.07974
+    CO2 | Carbon dioxide | MW=44.0095
+    CH4 | Methane | MW=16.04246
+    N2 | Nitrogen | MW=28.0134
+
+STREAM Feed : FEED -> MS.feed
+    T = 313 [K]
+    P = 1 [bar]
+    F = 1 [kmol/h]
+    x = propane:0.85, propylene:0.10, CO2:0.03, CH4:0.01, N2:0.01
+
+STREAM Product : MS.product -> PRODUCT
+STREAM Adsorbate : MS.adsorbate -> PRODUCT
+
+UNIT MS : MolecularSieveDryer
+    sieve_type = 4A
+    adsorbent_mass_flow = 50 [kg/h]
+
+# One isothermal equilibrium contact; 50 kg/h is fresh/regenerated dry-sieve
+# throughput, not a fixed-bed inventory or a breakthrough specification.
+# All five species have built-in isotherms and compete through IAST.
+# CO2 removal comes with hydrocarbon loss, particularly propylene uptake.
+# Methane and nitrogen are weakly adsorbed; this is not complete light-gas
+# cleanup. Compare component molar flows as well as product mole fractions.
+#
+# Data limitation: the propane/propylene curves were measured at 423-473 K;
+# their use at 313 K is temperature extrapolation. IAST fictitious pure
+# fugacities can also leave the measured ranges. Keep the runtime warnings:
+# this example illustrates model behavior, not a validated separation design.
+# Adsorbate is a material-accounting outlet for uptake on the solid.
+# Physical cooling duty includes adsorption; sieve regeneration is not modeled.
