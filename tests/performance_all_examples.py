@@ -36,9 +36,6 @@ from typing import Optional
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 DISABLED_EXAMPLES = {
-    'lactic_acid_dehydration_pbr.pfd': (
-        'Pending a dedicated normalized performance benchmark and baseline.'
-    ),
     'saponification_cstr.pfd': (
         'Requires the deferred aqueous-electrolyte and salt-speciation model.'
     ),
@@ -72,45 +69,46 @@ PER_EXAMPLE_RELATIVE_REGRESSION = {
 # enough absolute slack to avoid flagging scheduling noise as a regression.
 MIN_EXAMPLE_SLOWDOWN_SECONDS = 0.03
 
-BASELINE_WALL_SECONDS = 13.0
+BASELINE_WALL_SECONDS = 15.5
 BASELINE_EXAMPLE_SECONDS = {
     '3methylpyridine_ether_extraction_recycle.pfd': 1.445,
-    'adaptive_spinodal_water_toluene.pfd': 0.016,
+    'adaptive_spinodal_water_toluene.pfd': 0.010,
     'acrylic_acid_rigorous_extraction.pfd': 0.288,
-    'air_3a_molecular_sieve_drying.pfd': 0.007,
+    'air_3a_molecular_sieve_drying.pfd': 0.003,
     'ammonia_oxidation.pfd': 0.037,
-    'ammonia_synthesis.pfd': 0.021,
+    'ammonia_synthesis.pfd': 0.013,
     'benzene_toluene_20_stage_distillation_nrtl.pfd': 0.086,
-    'biosteam_mesh_hydrocarbon_distillation.pfd': 1.796,
+    'biosteam_mesh_hydrocarbon_distillation.pfd': 1.113,
     'butanol_water_lle.pfd': 0.007,
-    'cryogenic_air_separation_rks_bm.pfd': 0.322,
-    'cstr_pfr_comparison.pfd': 0.148,
+    'cryogenic_air_separation_rks_bm.pfd': 0.264,
+    'cstr_pfr_comparison.pfd': 0.090,
     'dcm_3a_molecular_sieve_drying.pfd': 0.008,
     'ethanol_3a_molecular_sieve_drying.pfd': 0.006,
     'ethanol_benzene_azeotropic_distillation_rigorous.pfd': 0.410,
     'ethanol_distillation_rigorous.pfd': 0.089,
     'ethanol_ether_partial_condensation_absorption.pfd': 1.760,
     'ethanol_pressure_swing_recycle_wasteful.pfd': 6.941,
-    'ethanol_water_mhv2.pfd': 0.027,
+    'ethanol_water_mhv2.pfd': 0.006,
     'ethanol_water_inclined_pipe_unifac.pfd': 0.468,
     'ethylene_ethane_isoparaffin_absorption.pfd': 2.883,
     'ethylene_oxide.pfd': 0.227,
     'ethylene_oxide_simple.pfd': 0.354,
-    'equilibrium_methanol_synthesis_recycle.pfd': 0.937,
-    'global_vlle_water_methanol_benzene.pfd': 0.019,
-    'haber_bosch_full.pfd': 4.504,
+    'equilibrium_methanol_synthesis_recycle.pfd': 0.783,
+    'global_vlle_water_methanol_benzene.pfd': 0.016,
+    'haber_bosch_full.pfd': 3.921,
     'jacketed_cstr_ignition_extinction.pfd': 0.198,
     'methane_claude_liquefaction_pr.pfd': 1.151,
-    'methanol_decomposition_pfr.pfd': 0.029,
+    'lactic_acid_dehydration_pbr.pfd': 10.845,
+    'methanol_decomposition_pfr.pfd': 0.021,
     'methanol_diethyl_ether_5bar_nrtl_rk.pfd': 0.170,
-    'methanol_ethanol_light_gas_cleanup_compact.pfd': 1.461,
+    'methanol_ethanol_light_gas_cleanup_compact.pfd': 1.171,
     'methanol_synthesis.pfd': 0.366,
     'methanol_synthesis_psrk.pfd': 0.576,
     'mixed_acid_dehydration_uniquac_vdm.pfd': 0.744,
     'permanent_solid_global_vlle_flash.pfd': 0.019,
     'permanent_solid_slurry_operations.pfd': 0.003,
-    'pyridine_ether_extraction.pfd': 0.256,
-    'rk_thermodynamics_pfr.pfd': 0.310,
+    'pyridine_ether_extraction.pfd': 0.197,
+    'rk_thermodynamics_pfr.pfd': 0.129,
     'simple_flash.pfd': 0.005,
     'simple_rankine_cycle_steam.pfd': 0.001,
     'trace_organic_water_stripping_isothermal_unifnist.pfd': 0.501,
@@ -121,7 +119,7 @@ BASELINE_EXAMPLE_SECONDS = {
     'equilibrium_warm_melt_washing.pfd': 0.355,
     'ethyl_acetate_batch_synthesis.pfd': 0.079,
     'isopropanol_diisopropyl_ether_distillation_nrtl_estimated.pfd': 0.098,
-    'isopropanol_water_nrtl_uniquac_comparison.pfd': 0.147,
+    'isopropanol_water_nrtl_uniquac_comparison.pfd': 0.112,
 }
 
 
@@ -323,11 +321,23 @@ def _run_example(path: str) -> dict:
         }
 
 
+def _schedule_example_paths(paths: list[str]) -> list[str]:
+    """Schedule unknown jobs first, then known jobs longest-first."""
+    def key(path: str) -> tuple[int, float, str]:
+        name = os.path.basename(path)
+        baseline = BASELINE_EXAMPLE_SECONDS.get(name)
+        if baseline is None:
+            return 0, 0.0, name
+        return 1, -baseline, name
+
+    return sorted(paths, key=key)
+
+
 def _run_all_examples_once() -> tuple[float, list[dict]]:
-    paths = [
-        path for path in sorted(glob.glob(os.path.join(ROOT, 'examples', '*.pfd')))
+    paths = _schedule_example_paths([
+        path for path in glob.glob(os.path.join(ROOT, 'examples', '*.pfd'))
         if os.path.basename(path) not in DISABLED_EXAMPLES
-    ]
+    ])
     context = multiprocessing.get_context('fork')
     start = time.perf_counter()
     with concurrent.futures.ProcessPoolExecutor(

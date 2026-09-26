@@ -129,6 +129,26 @@ class PerformanceCPUReferenceTests(unittest.TestCase):
         simulator.initialize.assert_called_once_with()
         simulator.run.assert_called_once_with()
 
+    def test_example_schedule_starts_unknown_then_uses_longest_first(self):
+        paths = [
+            '/tmp/simple_flash.pfd',
+            '/tmp/unknown-z.pfd',
+            '/tmp/haber_bosch_full.pfd',
+            '/tmp/unknown-a.pfd',
+            '/tmp/ethanol_pressure_swing_recycle_wasteful.pfd',
+        ]
+
+        self.assertEqual(
+            performance._schedule_example_paths(paths),
+            [
+                '/tmp/unknown-a.pfd',
+                '/tmp/unknown-z.pfd',
+                '/tmp/ethanol_pressure_swing_recycle_wasteful.pfd',
+                '/tmp/haber_bosch_full.pfd',
+                '/tmp/simple_flash.pfd',
+            ],
+        )
+
     @patch('tests.performance_all_examples.subprocess.run')
     def test_measurement_compiles_once_and_runs_exactly_six_times(self, run):
         compile_result = subprocess.CompletedProcess([], 0, '', '')
