@@ -1,0 +1,1259 @@
+{
+  "analyses": {
+    "isobutanol_1_butanol": {
+      "candidate_fits": {
+        "NRTL": {
+          "A_plus_B_over_T_fixed_alpha": {
+            "fit": {
+              "AICc": -693.4168374518831,
+              "point_count": 75,
+              "pressure_AARD_percent": 0.654825555742616,
+              "pressure_RMSE_percent": 0.9279739780340699,
+              "pressure_bias_percent": 0.006935213637978036,
+              "pressure_max_abs_percent": 2.8506838989013628
+            },
+            "leave_one_composition_out": {
+              "AICc": -681.9126258781439,
+              "point_count": 75,
+              "pressure_AARD_percent": 0.7142008469241881,
+              "pressure_RMSE_percent": 1.001945045475966,
+              "pressure_bias_percent": 0.013157518999398505,
+              "pressure_max_abs_percent": 3.0481333461726656
+            },
+            "parameters": [
+              -1.22255274450143,
+              967.6901746929058,
+              -0.7968953746479467,
+              -76.73454577129391
+            ]
+          },
+          "B_over_T_fixed_alpha": {
+            "fit": {
+              "AICc": -593.9833990445654,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.407068779105391,
+              "pressure_RMSE_percent": 1.8542922395766757,
+              "pressure_bias_percent": -0.04480248118167592,
+              "pressure_max_abs_percent": 5.918804845398496
+            },
+            "leave_one_composition_out": {
+              "AICc": -587.7094079644456,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.4668614902015034,
+              "pressure_RMSE_percent": 1.9334958553192874,
+              "pressure_bias_percent": -0.027094567952203736,
+              "pressure_max_abs_percent": 6.142389596567
+            },
+            "parameters": [
+              22.01417278014551,
+              -13.997477010917768
+            ]
+          },
+          "zero": {
+            "fit": {
+              "AICc": -594.6070477858248,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.3331609052185356,
+              "pressure_RMSE_percent": 1.8986122047786582,
+              "pressure_bias_percent": -0.4238213359903696,
+              "pressure_max_abs_percent": 6.322390303744552
+            },
+            "leave_one_composition_out": {
+              "AICc": -594.6070477858248,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.3331609052185356,
+              "pressure_RMSE_percent": 1.8986122047786582,
+              "pressure_bias_percent": -0.4238213359903696,
+              "pressure_max_abs_percent": 6.322390303744552
+            },
+            "parameters": []
+          }
+        },
+        "UNIQUAC": {
+          "A_plus_B_over_T": {
+            "fit": {
+              "AICc": -692.0067558261486,
+              "point_count": 75,
+              "pressure_AARD_percent": 0.660414203142708,
+              "pressure_RMSE_percent": 0.9367385698267986,
+              "pressure_bias_percent": 0.022798907035438482,
+              "pressure_max_abs_percent": 2.8285709767201794
+            },
+            "leave_one_composition_out": {
+              "AICc": -680.410539004224,
+              "point_count": 75,
+              "pressure_AARD_percent": 0.7213144814088781,
+              "pressure_RMSE_percent": 1.0120288403381648,
+              "pressure_bias_percent": 0.028347538940983075,
+              "pressure_max_abs_percent": 2.989419315894448
+            },
+            "parameters": [
+              0.22696331309871484,
+              -382.3481045154944,
+              0.410654975905433,
+              63.11918093340165
+            ]
+          },
+          "B_over_T": {
+            "fit": {
+              "AICc": -593.9663023423952,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.4066858282296861,
+              "pressure_RMSE_percent": 1.8545036001693869,
+              "pressure_bias_percent": -0.046846047859569584,
+              "pressure_max_abs_percent": 5.92186316491683
+            },
+            "leave_one_composition_out": {
+              "AICc": -587.7026572296796,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.4664274536192485,
+              "pressure_RMSE_percent": 1.9335828740620096,
+              "pressure_bias_percent": -0.02850774635566733,
+              "pressure_max_abs_percent": 6.143003769443778
+            },
+            "parameters": [
+              -6.979749049807519,
+              4.411287758489854
+            ]
+          },
+          "zero": {
+            "fit": {
+              "AICc": -594.6093159582233,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.3331840742665393,
+              "pressure_RMSE_percent": 1.8985834957970584,
+              "pressure_bias_percent": -0.4236685932852831,
+              "pressure_max_abs_percent": 6.322243589562959
+            },
+            "leave_one_composition_out": {
+              "AICc": -594.6093159582233,
+              "point_count": 75,
+              "pressure_AARD_percent": 1.3331840742665393,
+              "pressure_RMSE_percent": 1.8985834957970584,
+              "pressure_bias_percent": -0.4236685932852831,
+              "pressure_max_abs_percent": 6.322243589562959
+            },
+            "parameters": []
+          }
+        },
+        "published_nrtl_reproduction": {
+          "AICc": -617.7022049108703,
+          "point_count": 75,
+          "pressure_AARD_percent": 1.1886591424072983,
+          "pressure_RMSE_percent": 1.56033722138568,
+          "pressure_bias_percent": 0.0780031250599218,
+          "pressure_max_abs_percent": 4.89676169198251
+        }
+      },
+      "cas": [
+        "78-83-1",
+        "71-36-3"
+      ],
+      "components": [
+        "isobutanol",
+        "1-butanol"
+      ],
+      "fit_exclusions": [],
+      "mixed_composition_data": {
+        "0.1023": [
+          {
+            "T_K": 326.15,
+            "p_kPa": 5.823
+          },
+          {
+            "T_K": 330.65,
+            "p_kPa": 7.453
+          },
+          {
+            "T_K": 335.15,
+            "p_kPa": 9.457
+          },
+          {
+            "T_K": 339.65,
+            "p_kPa": 11.902
+          },
+          {
+            "T_K": 344.15,
+            "p_kPa": 14.89
+          },
+          {
+            "T_K": 348.65,
+            "p_kPa": 18.421
+          },
+          {
+            "T_K": 353.15,
+            "p_kPa": 22.864
+          },
+          {
+            "T_K": 357.65,
+            "p_kPa": 27.861
+          },
+          {
+            "T_K": 362.15,
+            "p_kPa": 34.109
+          },
+          {
+            "T_K": 366.65,
+            "p_kPa": 40.874
+          },
+          {
+            "T_K": 371.15,
+            "p_kPa": 49.525
+          },
+          {
+            "T_K": 375.65,
+            "p_kPa": 58.998
+          },
+          {
+            "T_K": 380.15,
+            "p_kPa": 70.068
+          },
+          {
+            "T_K": 384.65,
+            "p_kPa": 82.903
+          },
+          {
+            "T_K": 389.15,
+            "p_kPa": 97.029
+          }
+        ],
+        "0.3007": [
+          {
+            "T_K": 324.15,
+            "p_kPa": 5.756
+          },
+          {
+            "T_K": 328.65,
+            "p_kPa": 7.453
+          },
+          {
+            "T_K": 333.15,
+            "p_kPa": 9.559
+          },
+          {
+            "T_K": 337.65,
+            "p_kPa": 11.935
+          },
+          {
+            "T_K": 342.15,
+            "p_kPa": 14.856
+          },
+          {
+            "T_K": 346.65,
+            "p_kPa": 18.557
+          },
+          {
+            "T_K": 351.15,
+            "p_kPa": 22.869
+          },
+          {
+            "T_K": 355.65,
+            "p_kPa": 28.065
+          },
+          {
+            "T_K": 360.15,
+            "p_kPa": 34.007
+          },
+          {
+            "T_K": 364.65,
+            "p_kPa": 41.477
+          },
+          {
+            "T_K": 369.15,
+            "p_kPa": 49.898
+          },
+          {
+            "T_K": 373.65,
+            "p_kPa": 59.61
+          },
+          {
+            "T_K": 378.15,
+            "p_kPa": 70.645
+          },
+          {
+            "T_K": 382.65,
+            "p_kPa": 83.854
+          },
+          {
+            "T_K": 387.15,
+            "p_kPa": 98.998
+          }
+        ],
+        "0.5011": [
+          {
+            "T_K": 322.15,
+            "p_kPa": 5.857
+          },
+          {
+            "T_K": 326.65,
+            "p_kPa": 7.453
+          },
+          {
+            "T_K": 331.15,
+            "p_kPa": 9.457
+          },
+          {
+            "T_K": 335.65,
+            "p_kPa": 11.935
+          },
+          {
+            "T_K": 340.15,
+            "p_kPa": 14.958
+          },
+          {
+            "T_K": 344.65,
+            "p_kPa": 18.625
+          },
+          {
+            "T_K": 349.15,
+            "p_kPa": 22.835
+          },
+          {
+            "T_K": 353.65,
+            "p_kPa": 28.166
+          },
+          {
+            "T_K": 358.15,
+            "p_kPa": 34.211
+          },
+          {
+            "T_K": 362.65,
+            "p_kPa": 41.511
+          },
+          {
+            "T_K": 367.15,
+            "p_kPa": 49.864
+          },
+          {
+            "T_K": 371.65,
+            "p_kPa": 59.508
+          },
+          {
+            "T_K": 376.15,
+            "p_kPa": 71.426
+          },
+          {
+            "T_K": 380.65,
+            "p_kPa": 84.703
+          },
+          {
+            "T_K": 385.15,
+            "p_kPa": 98.964
+          }
+        ],
+        "0.7006": [
+          {
+            "T_K": 320.15,
+            "p_kPa": 5.688
+          },
+          {
+            "T_K": 324.65,
+            "p_kPa": 7.317
+          },
+          {
+            "T_K": 329.15,
+            "p_kPa": 9.253
+          },
+          {
+            "T_K": 333.65,
+            "p_kPa": 11.46
+          },
+          {
+            "T_K": 338.15,
+            "p_kPa": 14.788
+          },
+          {
+            "T_K": 342.65,
+            "p_kPa": 18.014
+          },
+          {
+            "T_K": 347.15,
+            "p_kPa": 22.733
+          },
+          {
+            "T_K": 351.65,
+            "p_kPa": 28.031
+          },
+          {
+            "T_K": 356.15,
+            "p_kPa": 34.244
+          },
+          {
+            "T_K": 360.65,
+            "p_kPa": 41.409
+          },
+          {
+            "T_K": 365.15,
+            "p_kPa": 50.204
+          },
+          {
+            "T_K": 369.65,
+            "p_kPa": 59.983
+          },
+          {
+            "T_K": 374.15,
+            "p_kPa": 71.528
+          },
+          {
+            "T_K": 378.65,
+            "p_kPa": 84.941
+          },
+          {
+            "T_K": 383.15,
+            "p_kPa": 99.779
+          }
+        ],
+        "0.9027": [
+          {
+            "T_K": 318.15,
+            "p_kPa": 5.318
+          },
+          {
+            "T_K": 322.65,
+            "p_kPa": 6.92
+          },
+          {
+            "T_K": 327.15,
+            "p_kPa": 9.049
+          },
+          {
+            "T_K": 331.65,
+            "p_kPa": 11.222
+          },
+          {
+            "T_K": 336.15,
+            "p_kPa": 14.414
+          },
+          {
+            "T_K": 340.65,
+            "p_kPa": 17.946
+          },
+          {
+            "T_K": 345.15,
+            "p_kPa": 22.122
+          },
+          {
+            "T_K": 349.65,
+            "p_kPa": 26.74
+          },
+          {
+            "T_K": 354.15,
+            "p_kPa": 33.396
+          },
+          {
+            "T_K": 358.65,
+            "p_kPa": 40.594
+          },
+          {
+            "T_K": 363.15,
+            "p_kPa": 49.321
+          },
+          {
+            "T_K": 367.65,
+            "p_kPa": 59.44
+          },
+          {
+            "T_K": 372.15,
+            "p_kPa": 71.154
+          },
+          {
+            "T_K": 376.65,
+            "p_kPa": 84.601
+          },
+          {
+            "T_K": 381.15,
+            "p_kPa": 99.474
+          }
+        ]
+      },
+      "pure_component_validation": {
+        "1-butanol": {
+          "AICc": -227.66723086034472,
+          "point_count": 15,
+          "pressure_AARD_percent": 0.04380688942413095,
+          "pressure_RMSE_percent": 0.050603349493454235,
+          "pressure_bias_percent": 1.2803325086796491e-05,
+          "pressure_max_abs_percent": 0.09006086485305875
+        },
+        "isobutanol": {
+          "AICc": -217.99532801686647,
+          "point_count": 15,
+          "pressure_AARD_percent": 0.060491851822488396,
+          "pressure_RMSE_percent": 0.06985450165426771,
+          "pressure_bias_percent": 2.4398030697240593e-05,
+          "pressure_max_abs_percent": 0.12314012872576274
+        }
+      },
+      "source_index": 19,
+      "source_table": "Table 3",
+      "uniquac_rq": {
+        "1-butanol": {
+          "q": 3.052,
+          "r": 3.4543
+        },
+        "isobutanol": {
+          "q": 3.048,
+          "r": 3.4535
+        }
+      }
+    },
+    "isobutanol_2_ethyl_1_hexanol": {
+      "candidate_fits": {
+        "NRTL": {
+          "A_plus_B_over_T_fixed_alpha": {
+            "fit": {
+              "AICc": -628.7645053094918,
+              "point_count": 82,
+              "pressure_AARD_percent": 1.681197477296932,
+              "pressure_RMSE_percent": 2.0529796457956384,
+              "pressure_bias_percent": 0.1184348233047721,
+              "pressure_max_abs_percent": 4.377174008457896
+            },
+            "leave_one_composition_out": {
+              "AICc": -608.7526177737816,
+              "point_count": 82,
+              "pressure_AARD_percent": 1.8496446589911792,
+              "pressure_RMSE_percent": 2.319417155649072,
+              "pressure_bias_percent": 0.4629121842352796,
+              "pressure_max_abs_percent": 6.15093828398563
+            },
+            "parameters": [
+              -1.5585120554755454,
+              345.16173893791256,
+              -0.016179891980100832,
+              244.9400658946356
+            ]
+          },
+          "B_over_T_fixed_alpha": {
+            "fit": {
+              "AICc": -495.9784811013664,
+              "point_count": 82,
+              "pressure_AARD_percent": 3.413428621583339,
+              "pressure_RMSE_percent": 4.737903314749777,
+              "pressure_bias_percent": -0.0825889388845446,
+              "pressure_max_abs_percent": 14.005721549070515
+            },
+            "leave_one_composition_out": {
+              "AICc": -466.14666692503954,
+              "point_count": 82,
+              "pressure_AARD_percent": 4.05403905383549,
+              "pressure_RMSE_percent": 5.683095150266607,
+              "pressure_bias_percent": 0.4484278126196407,
+              "pressure_max_abs_percent": 17.038736021955316
+            },
+            "parameters": [
+              -102.28317991496797,
+              54.99461799594227
+            ]
+          },
+          "zero": {
+            "fit": {
+              "AICc": -441.92899574970403,
+              "point_count": 82,
+              "pressure_AARD_percent": 4.795658086217556,
+              "pressure_RMSE_percent": 6.756339082479319,
+              "pressure_bias_percent": 3.772264817379114,
+              "pressure_max_abs_percent": 20.259064160361696
+            },
+            "leave_one_composition_out": {
+              "AICc": -441.92899574970403,
+              "point_count": 82,
+              "pressure_AARD_percent": 4.795658086217556,
+              "pressure_RMSE_percent": 6.756339082479319,
+              "pressure_bias_percent": 3.772264817379114,
+              "pressure_max_abs_percent": 20.259064160361696
+            },
+            "parameters": []
+          }
+        },
+        "UNIQUAC": {
+          "A_plus_B_over_T": {
+            "fit": {
+              "AICc": -611.8822598528975,
+              "point_count": 82,
+              "pressure_AARD_percent": 1.8756468744129247,
+              "pressure_RMSE_percent": 2.2755749475995355,
+              "pressure_bias_percent": 0.0626631540198571,
+              "pressure_max_abs_percent": 4.850089506344402
+            },
+            "leave_one_composition_out": {
+              "AICc": -564.1515730545148,
+              "point_count": 82,
+              "pressure_AARD_percent": 2.3791693354711327,
+              "pressure_RMSE_percent": 3.0443076965395934,
+              "pressure_bias_percent": 0.5518420352974941,
+              "pressure_max_abs_percent": 7.333768401687313
+            },
+            "parameters": [
+              0.353185650655618,
+              -45.25249686713441,
+              0.1015848091810929,
+              -138.11883349944534
+            ]
+          },
+          "B_over_T": {
+            "fit": {
+              "AICc": -499.1137572266216,
+              "point_count": 82,
+              "pressure_AARD_percent": 3.4315231760684872,
+              "pressure_RMSE_percent": 4.648186585096177,
+              "pressure_bias_percent": 0.058615382779589,
+              "pressure_max_abs_percent": 14.012061005502364
+            },
+            "leave_one_composition_out": {
+              "AICc": -471.55377361132554,
+              "point_count": 82,
+              "pressure_AARD_percent": 4.015329704516467,
+              "pressure_RMSE_percent": 5.498777761813541,
+              "pressure_bias_percent": 0.2852559040804598,
+              "pressure_max_abs_percent": 16.22959683948697
+            },
+            "parameters": [
+              -3.3103367394941863,
+              1.721379457414231
+            ]
+          },
+          "zero": {
+            "fit": {
+              "AICc": -502.23801362601455,
+              "point_count": 82,
+              "pressure_AARD_percent": 3.472104713267737,
+              "pressure_RMSE_percent": 4.677404086358561,
+              "pressure_bias_percent": -0.38836989538888234,
+              "pressure_max_abs_percent": 13.430991321240814
+            },
+            "leave_one_composition_out": {
+              "AICc": -502.23801362601455,
+              "point_count": 82,
+              "pressure_AARD_percent": 3.472104713267737,
+              "pressure_RMSE_percent": 4.677404086358561,
+              "pressure_bias_percent": -0.38836989538888234,
+              "pressure_max_abs_percent": 13.430991321240814
+            },
+            "parameters": []
+          }
+        },
+        "published_nrtl_reproduction": {
+          "AICc": -609.6064999725779,
+          "point_count": 82,
+          "pressure_AARD_percent": 1.7121451918430965,
+          "pressure_RMSE_percent": 2.17813354962485,
+          "pressure_bias_percent": 0.5562958284346811,
+          "pressure_max_abs_percent": 4.772142826692494
+        }
+      },
+      "cas": [
+        "78-83-1",
+        "104-76-7"
+      ],
+      "components": [
+        "isobutanol",
+        "2-ethyl-1-hexanol"
+      ],
+      "fit_exclusions": [
+        {
+          "T_K": 315.15,
+          "p_kPa": 4.126,
+          "reason": "T is 1.264 K below PFDSim's qualified canonical 2-ethyl-1-hexanol Psat range.",
+          "x1": 0.9006
+        }
+      ],
+      "mixed_composition_data": {
+        "0.1085": [
+          {
+            "T_K": 349.15,
+            "p_kPa": 4.126
+          },
+          {
+            "T_K": 354.15,
+            "p_kPa": 5.212
+          },
+          {
+            "T_K": 359.15,
+            "p_kPa": 6.299
+          },
+          {
+            "T_K": 364.15,
+            "p_kPa": 7.623
+          },
+          {
+            "T_K": 369.15,
+            "p_kPa": 9.205
+          },
+          {
+            "T_K": 374.15,
+            "p_kPa": 11.306
+          },
+          {
+            "T_K": 379.15,
+            "p_kPa": 13.833
+          },
+          {
+            "T_K": 384.15,
+            "p_kPa": 16.745
+          },
+          {
+            "T_K": 389.15,
+            "p_kPa": 20.594
+          },
+          {
+            "T_K": 394.15,
+            "p_kPa": 24.771
+          },
+          {
+            "T_K": 399.15,
+            "p_kPa": 28.947
+          },
+          {
+            "T_K": 404.15,
+            "p_kPa": 34.958
+          },
+          {
+            "T_K": 409.15,
+            "p_kPa": 42.326
+          },
+          {
+            "T_K": 414.15,
+            "p_kPa": 50.204
+          },
+          {
+            "T_K": 419.15,
+            "p_kPa": 58.659
+          },
+          {
+            "T_K": 424.15,
+            "p_kPa": 67.385
+          },
+          {
+            "T_K": 429.15,
+            "p_kPa": 75.942
+          },
+          {
+            "T_K": 434.15,
+            "p_kPa": 87.046
+          },
+          {
+            "T_K": 439.15,
+            "p_kPa": 98.32
+          }
+        ],
+        "0.3014": [
+          {
+            "T_K": 333.15,
+            "p_kPa": 4.092
+          },
+          {
+            "T_K": 338.15,
+            "p_kPa": 5.518
+          },
+          {
+            "T_K": 343.15,
+            "p_kPa": 6.978
+          },
+          {
+            "T_K": 348.15,
+            "p_kPa": 8.54
+          },
+          {
+            "T_K": 353.15,
+            "p_kPa": 10.679
+          },
+          {
+            "T_K": 358.15,
+            "p_kPa": 13.531
+          },
+          {
+            "T_K": 363.15,
+            "p_kPa": 16.655
+          },
+          {
+            "T_K": 368.15,
+            "p_kPa": 20.153
+          },
+          {
+            "T_K": 373.15,
+            "p_kPa": 24.329
+          },
+          {
+            "T_K": 378.15,
+            "p_kPa": 29.762
+          },
+          {
+            "T_K": 383.15,
+            "p_kPa": 35.942
+          },
+          {
+            "T_K": 388.15,
+            "p_kPa": 43.48
+          },
+          {
+            "T_K": 393.15,
+            "p_kPa": 51.528
+          },
+          {
+            "T_K": 398.15,
+            "p_kPa": 60.968
+          },
+          {
+            "T_K": 403.15,
+            "p_kPa": 71.46
+          },
+          {
+            "T_K": 408.15,
+            "p_kPa": 83.99
+          }
+        ],
+        "0.5017": [
+          {
+            "T_K": 328.15,
+            "p_kPa": 4.974
+          },
+          {
+            "T_K": 333.15,
+            "p_kPa": 6.469
+          },
+          {
+            "T_K": 338.15,
+            "p_kPa": 8.37
+          },
+          {
+            "T_K": 343.15,
+            "p_kPa": 10.781
+          },
+          {
+            "T_K": 348.15,
+            "p_kPa": 13.362
+          },
+          {
+            "T_K": 353.15,
+            "p_kPa": 16.825
+          },
+          {
+            "T_K": 358.15,
+            "p_kPa": 21.002
+          },
+          {
+            "T_K": 363.15,
+            "p_kPa": 26.299
+          },
+          {
+            "T_K": 368.15,
+            "p_kPa": 32.445
+          },
+          {
+            "T_K": 373.15,
+            "p_kPa": 39.847
+          },
+          {
+            "T_K": 378.15,
+            "p_kPa": 48.438
+          },
+          {
+            "T_K": 383.15,
+            "p_kPa": 58.217
+          },
+          {
+            "T_K": 388.15,
+            "p_kPa": 70.034
+          },
+          {
+            "T_K": 393.15,
+            "p_kPa": 83.413
+          },
+          {
+            "T_K": 398.15,
+            "p_kPa": 97.844
+          }
+        ],
+        "0.7041": [
+          {
+            "T_K": 319.15,
+            "p_kPa": 4.16
+          },
+          {
+            "T_K": 324.15,
+            "p_kPa": 5.45
+          },
+          {
+            "T_K": 329.15,
+            "p_kPa": 7.284
+          },
+          {
+            "T_K": 334.15,
+            "p_kPa": 9.524
+          },
+          {
+            "T_K": 339.15,
+            "p_kPa": 12.003
+          },
+          {
+            "T_K": 344.15,
+            "p_kPa": 15.433
+          },
+          {
+            "T_K": 349.15,
+            "p_kPa": 19.508
+          },
+          {
+            "T_K": 354.15,
+            "p_kPa": 24.465
+          },
+          {
+            "T_K": 359.15,
+            "p_kPa": 30.17
+          },
+          {
+            "T_K": 364.15,
+            "p_kPa": 37.063
+          },
+          {
+            "T_K": 369.15,
+            "p_kPa": 45.552
+          },
+          {
+            "T_K": 374.15,
+            "p_kPa": 55.229
+          },
+          {
+            "T_K": 379.15,
+            "p_kPa": 66.876
+          },
+          {
+            "T_K": 384.15,
+            "p_kPa": 82.292
+          },
+          {
+            "T_K": 389.15,
+            "p_kPa": 96.893
+          }
+        ],
+        "0.9006": [
+          {
+            "T_K": 315.15,
+            "p_kPa": 4.126
+          },
+          {
+            "T_K": 319.15,
+            "p_kPa": 5.246
+          },
+          {
+            "T_K": 323.15,
+            "p_kPa": 6.57
+          },
+          {
+            "T_K": 327.15,
+            "p_kPa": 8.098
+          },
+          {
+            "T_K": 331.15,
+            "p_kPa": 10.102
+          },
+          {
+            "T_K": 335.15,
+            "p_kPa": 12.445
+          },
+          {
+            "T_K": 339.15,
+            "p_kPa": 15.365
+          },
+          {
+            "T_K": 343.15,
+            "p_kPa": 18.693
+          },
+          {
+            "T_K": 347.15,
+            "p_kPa": 22.598
+          },
+          {
+            "T_K": 351.15,
+            "p_kPa": 27.012
+          },
+          {
+            "T_K": 355.15,
+            "p_kPa": 32.488
+          },
+          {
+            "T_K": 359.15,
+            "p_kPa": 38.387
+          },
+          {
+            "T_K": 363.15,
+            "p_kPa": 45.246
+          },
+          {
+            "T_K": 367.15,
+            "p_kPa": 53.396
+          },
+          {
+            "T_K": 371.15,
+            "p_kPa": 62.564
+          },
+          {
+            "T_K": 375.15,
+            "p_kPa": 73.09
+          },
+          {
+            "T_K": 379.15,
+            "p_kPa": 85.008
+          },
+          {
+            "T_K": 383.15,
+            "p_kPa": 97.776
+          }
+        ]
+      },
+      "pure_component_validation": {
+        "2-ethyl-1-hexanol": {
+          "AICc": -273.7489664247402,
+          "point_count": 18,
+          "pressure_AARD_percent": 0.042802861072534074,
+          "pressure_RMSE_percent": 0.04983848659391064,
+          "pressure_bias_percent": 1.2419949298643948e-05,
+          "pressure_max_abs_percent": 0.10365625108382792
+        },
+        "isobutanol": {
+          "AICc": -217.99532801686647,
+          "point_count": 15,
+          "pressure_AARD_percent": 0.060491851822488396,
+          "pressure_RMSE_percent": 0.06985450165426771,
+          "pressure_bias_percent": 2.4398030697240593e-05,
+          "pressure_max_abs_percent": 0.12314012872576274
+        }
+      },
+      "source_index": 20,
+      "source_table": "Table 4",
+      "uniquac_rq": {
+        "2-ethyl-1-hexanol": {
+          "q": 5.208,
+          "r": 6.1511
+        },
+        "isobutanol": {
+          "q": 3.048,
+          "r": 3.4535
+        }
+      }
+    }
+  },
+  "interactions": [
+    {
+      "Tmax_K": 389.15,
+      "Tmin_K": 318.15,
+      "alpha12": 0.3,
+      "cas1": "78-83-1",
+      "cas2": "71-36-3",
+      "comment": "isobutanol + 1-butanol Fendu 2025 PFDSim NRTL p-T-x refit",
+      "component1": "isobutanol",
+      "component2": "1-butanol",
+      "extrapolation": "inverse_linear_quadratic",
+      "fit_evidence": {
+        "fit": {
+          "AICc": -693.4168374518831,
+          "point_count": 75,
+          "pressure_AARD_percent": 0.654825555742616,
+          "pressure_RMSE_percent": 0.9279739780340699,
+          "pressure_bias_percent": 0.006935213637978036,
+          "pressure_max_abs_percent": 2.8506838989013628
+        },
+        "leave_one_composition_out": {
+          "AICc": -681.9126258781439,
+          "point_count": 75,
+          "pressure_AARD_percent": 0.7142008469241881,
+          "pressure_RMSE_percent": 1.001945045475966,
+          "pressure_bias_percent": 0.013157518999398505,
+          "pressure_max_abs_percent": 3.0481333461726656
+        },
+        "objective": "unweighted relative pressure residuals",
+        "published_nrtl_reproduction": {
+          "AICc": -617.7022049108703,
+          "point_count": 75,
+          "pressure_AARD_percent": 1.1886591424072983,
+          "pressure_RMSE_percent": 1.56033722138568,
+          "pressure_bias_percent": 0.0780031250599218,
+          "pressure_max_abs_percent": 4.89676169198251
+        },
+        "selected_model": "A+B/T"
+      },
+      "fit_status": "recommended_ptx_refit",
+      "fit_system": "isobutanol_1_butanol",
+      "model": "NRTL",
+      "source": "Fendu and Pricop-Nicolae 2025 PFDSim p-T-x refit",
+      "source_doi": "10.3390/pr13072034",
+      "tau12_c": -1.22255274450143,
+      "tau12_d": 967.6901746929058,
+      "tau21_c": -0.7968953746479467,
+      "tau21_d": -76.73454577129391
+    },
+    {
+      "Tmax_K": 389.15,
+      "Tmin_K": 318.15,
+      "cas1": "78-83-1",
+      "cas2": "71-36-3",
+      "comment": "isobutanol + 1-butanol Fendu 2025 PFDSim UNIQUAC p-T-x refit",
+      "component1": "isobutanol",
+      "component2": "1-butanol",
+      "extrapolation": "inverse_linear_quadratic",
+      "fit_evidence": {
+        "fit": {
+          "AICc": -692.0067558261486,
+          "point_count": 75,
+          "pressure_AARD_percent": 0.660414203142708,
+          "pressure_RMSE_percent": 0.9367385698267986,
+          "pressure_bias_percent": 0.022798907035438482,
+          "pressure_max_abs_percent": 2.8285709767201794
+        },
+        "leave_one_composition_out": {
+          "AICc": -680.410539004224,
+          "point_count": 75,
+          "pressure_AARD_percent": 0.7213144814088781,
+          "pressure_RMSE_percent": 1.0120288403381648,
+          "pressure_bias_percent": 0.028347538940983075,
+          "pressure_max_abs_percent": 2.989419315894448
+        },
+        "objective": "unweighted relative pressure residuals",
+        "paper_uniquac_status": "The paper reports that its UNIQUAC regression had large deviations and does not publish those parameters.",
+        "selected_model": "A+B/T"
+      },
+      "fit_status": "recommended_ptx_refit",
+      "fit_system": "isobutanol_1_butanol",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Fendu and Pricop-Nicolae 2025 PFDSim p-T-x refit",
+      "source_doi": "10.3390/pr13072034",
+      "tau12_a": 0.22696331309871484,
+      "tau12_b": -382.3481045154944,
+      "tau21_a": 0.410654975905433,
+      "tau21_b": 63.11918093340165,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 439.15,
+      "Tmin_K": 319.15,
+      "alpha12": 0.3,
+      "cas1": "78-83-1",
+      "cas2": "104-76-7",
+      "comment": "isobutanol + 2-ethyl-1-hexanol Fendu 2025 PFDSim NRTL p-T-x refit",
+      "component1": "isobutanol",
+      "component2": "2-ethyl-1-hexanol",
+      "extrapolation": "inverse_linear_quadratic",
+      "fit_evidence": {
+        "fit": {
+          "AICc": -628.7645053094918,
+          "point_count": 82,
+          "pressure_AARD_percent": 1.681197477296932,
+          "pressure_RMSE_percent": 2.0529796457956384,
+          "pressure_bias_percent": 0.1184348233047721,
+          "pressure_max_abs_percent": 4.377174008457896
+        },
+        "leave_one_composition_out": {
+          "AICc": -608.7526177737816,
+          "point_count": 82,
+          "pressure_AARD_percent": 1.8496446589911792,
+          "pressure_RMSE_percent": 2.319417155649072,
+          "pressure_bias_percent": 0.4629121842352796,
+          "pressure_max_abs_percent": 6.15093828398563
+        },
+        "objective": "unweighted relative pressure residuals",
+        "published_nrtl_reproduction": {
+          "AICc": -609.6064999725779,
+          "point_count": 82,
+          "pressure_AARD_percent": 1.7121451918430965,
+          "pressure_RMSE_percent": 2.17813354962485,
+          "pressure_bias_percent": 0.5562958284346811,
+          "pressure_max_abs_percent": 4.772142826692494
+        },
+        "selected_model": "A+B/T"
+      },
+      "fit_status": "recommended_ptx_refit",
+      "fit_system": "isobutanol_2_ethyl_1_hexanol",
+      "model": "NRTL",
+      "source": "Fendu and Pricop-Nicolae 2025 PFDSim p-T-x refit",
+      "source_doi": "10.3390/pr13072034",
+      "tau12_c": -1.5585120554755454,
+      "tau12_d": 345.16173893791256,
+      "tau21_c": -0.016179891980100832,
+      "tau21_d": 244.9400658946356
+    },
+    {
+      "Tmax_K": 439.15,
+      "Tmin_K": 319.15,
+      "cas1": "78-83-1",
+      "cas2": "104-76-7",
+      "comment": "isobutanol + 2-ethyl-1-hexanol Fendu 2025 PFDSim UNIQUAC p-T-x refit",
+      "component1": "isobutanol",
+      "component2": "2-ethyl-1-hexanol",
+      "extrapolation": "inverse_linear_quadratic",
+      "fit_evidence": {
+        "fit": {
+          "AICc": -611.8822598528975,
+          "point_count": 82,
+          "pressure_AARD_percent": 1.8756468744129247,
+          "pressure_RMSE_percent": 2.2755749475995355,
+          "pressure_bias_percent": 0.0626631540198571,
+          "pressure_max_abs_percent": 4.850089506344402
+        },
+        "leave_one_composition_out": {
+          "AICc": -564.1515730545148,
+          "point_count": 82,
+          "pressure_AARD_percent": 2.3791693354711327,
+          "pressure_RMSE_percent": 3.0443076965395934,
+          "pressure_bias_percent": 0.5518420352974941,
+          "pressure_max_abs_percent": 7.333768401687313
+        },
+        "objective": "unweighted relative pressure residuals",
+        "paper_uniquac_status": "The paper reports that its UNIQUAC regression had large deviations and does not publish those parameters.",
+        "selected_model": "A+B/T"
+      },
+      "fit_status": "recommended_ptx_refit",
+      "fit_system": "isobutanol_2_ethyl_1_hexanol",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Fendu and Pricop-Nicolae 2025 PFDSim p-T-x refit",
+      "source_doi": "10.3390/pr13072034",
+      "tau12_a": 0.353185650655618,
+      "tau12_b": -45.25249686713441,
+      "tau21_a": 0.1015848091810929,
+      "tau21_b": -138.11883349944534,
+      "use_q_prime": false
+    }
+  ],
+  "metadata": {
+    "description": "PFDSim refits of Fendu 2025 Tables 3 and 4 to compact, exactly supported NRTL and UNIQUAC forms.",
+    "objective": "sum((Pcalc/Pexp)-1)^2",
+    "pure_component_pressure_basis": {
+      "coefficients": {
+        "1-butanol": {
+          "A": 6.829378852164458,
+          "B_K": 1504.140292447773,
+          "C_K": -79.212042515588
+        },
+        "2-ethyl-1-hexanol": {
+          "A": 5.735611936987607,
+          "B_K": 1170.92930261847,
+          "C_K": -143.90785977838766
+        },
+        "isobutanol": {
+          "A": 6.53056588528963,
+          "B_K": 1278.5144182457748,
+          "C_K": -98.01608093477785
+        }
+      },
+      "equation": "log10(P/kPa) = A - B/(T/K + C)",
+      "source": "Fendu 2025 pure-component pressure tables embedded in this script"
+    },
+    "script": "scripts/activity_fitting/fit_fendu_2025_activity_parameters.py",
+    "selection": "A+B/T selected over zero and B/T using AICc plus composition-held-out pressure errors.",
+    "source": {
+      "article": 2034,
+      "authors": [
+        "Elena Mirela Fendu",
+        "Marilena Pricop-Nicolae"
+      ],
+      "doi": "10.3390/pr13072034",
+      "journal": "Processes",
+      "title": "Experimental and Regression VLE Data for Isobutanol + 1-Butanol, Isobutanol + 2-Ethyl-1-hexanol, and 1-Butanol + 2-Ethyl-1-hexanol Binary Systems",
+      "volume": 13,
+      "year": 2025
+    },
+    "validation": "leave one complete liquid-composition series out"
+  }
+}

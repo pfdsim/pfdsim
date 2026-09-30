@@ -4232,7 +4232,7 @@
       "kij": -0.1,
       "model": "PR",
       "source": "Regressed in this work from EO\u2013H\u2082O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and \u03b3^\u221e_{EO,H\u2082O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng\u2013Robinson and k12=-0.10 following Huang et al. (2012).",
-      "source_file": "data/source/water_ethylene_oxide_interactions.json"
+      "source_file": "data/source/activity_fitting/water_ethylene_oxide_interactions.json"
     },
     {
       "Tmax_K": 400.0,
@@ -4245,7 +4245,7 @@
       "kij": -0.13,
       "model": "SRK",
       "source": "Regressed in this work from EO\u2013H\u2082O VLE data of MacCormack and Chenier (1955), Gillespie et al. (1985), and Schilk and Hurd (1957) as reproduced by Huang et al. (2012), with atmospheric bubble-point data from Union Carbide (1973) as reproduced by Mello (2010), and \u03b3^\u221e_{EO,H\u2082O}(298.15 K) from Sherman et al. (1996). Vapor fugacities calculated with Peng\u2013Robinson and k12=-0.10 following Huang et al. (2012).",
-      "source_file": "data/source/water_ethylene_oxide_interactions.json"
+      "source_file": "data/source/activity_fitting/water_ethylene_oxide_interactions.json"
     },
     {
       "cas1": "7440-59-7",

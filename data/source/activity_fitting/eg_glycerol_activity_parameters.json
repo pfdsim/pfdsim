@@ -1,0 +1,640 @@
+{
+  "interactions": [
+    {
+      "Tmax_K": 353.15,
+      "Tmin_K": 273.15,
+      "alpha12": 0.2,
+      "cas1": "64-17-5",
+      "cas2": "56-81-5",
+      "comment": "Preferred over the narrower 2015 two-temperature fit. Zaoui et al. cover nine temperatures and report agreement with independent Coelho/Veneral data. Their printed NRTL/UNIQUAC coefficient table has an awkward unit/index convention, so the simulator coefficients here were refit directly to the paper's binary Barker/Redlich-Kister GE/RT surface rather than risking a unit/sign transcription error.",
+      "component1": "ethanol",
+      "component2": "glycerol",
+      "extrapolation": "inverse_square_cubic",
+      "fit_evidence": {
+        "NRTL_GE_over_RT_RMSE": 0.01001679,
+        "NRTL_alpha_fixed_to_source": 0.2,
+        "NRTL_pressure_AARD_percent": 3.011790284809,
+        "T_range_K": [
+          273.15,
+          353.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 5.86798226517,
+        "UNIQUAC_GE_over_RT_RMSE": 0.00969006,
+        "UNIQUAC_pressure_AARD_percent": 2.993706592493,
+        "UNIQUAC_rq_used": {
+          "ethanol": {
+            "q": 2.588,
+            "r": 2.5755
+          },
+          "glycerol": {
+            "q": 4.908,
+            "r": 4.7957
+          }
+        },
+        "confidence": "high",
+        "raw_points": 84,
+        "selected_fit": "refit_from_binary_RK_surface"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Zaoui-Djelloul-Daouadji et al. (2014)",
+      "source_doi": "10.1016/j.jct.2013.09.046",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": -4.25741709,
+      "tau12_d": 1707.57939642,
+      "tau21_c": 2.37948619,
+      "tau21_d": -706.23601675
+    },
+    {
+      "Tmax_K": 353.15,
+      "Tmin_K": 273.15,
+      "cas1": "64-17-5",
+      "cas2": "56-81-5",
+      "comment": "Preferred over the narrower 2015 two-temperature fit. Zaoui et al. cover nine temperatures and report agreement with independent Coelho/Veneral data. Their printed NRTL/UNIQUAC coefficient table has an awkward unit/index convention, so the simulator coefficients here were refit directly to the paper's binary Barker/Redlich-Kister GE/RT surface rather than risking a unit/sign transcription error.",
+      "component1": "ethanol",
+      "component2": "glycerol",
+      "extrapolation": "inverse_square_cubic",
+      "fit_evidence": {
+        "NRTL_GE_over_RT_RMSE": 0.01001679,
+        "NRTL_alpha_fixed_to_source": 0.2,
+        "NRTL_pressure_AARD_percent": 3.011790284809,
+        "T_range_K": [
+          273.15,
+          353.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 5.86798226517,
+        "UNIQUAC_GE_over_RT_RMSE": 0.00969006,
+        "UNIQUAC_pressure_AARD_percent": 2.993706592493,
+        "UNIQUAC_rq_used": {
+          "ethanol": {
+            "q": 2.588,
+            "r": 2.5755
+          },
+          "glycerol": {
+            "q": 4.908,
+            "r": 4.7957
+          }
+        },
+        "confidence": "high",
+        "raw_points": 84,
+        "selected_fit": "refit_from_binary_RK_surface"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Zaoui-Djelloul-Daouadji et al. (2014)",
+      "source_doi": "10.1016/j.jct.2013.09.046",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 1.54977589,
+      "tau12_b": -434.9661965,
+      "tau21_a": -1.91357655,
+      "tau21_b": 396.45785751,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 273.15,
+      "alpha12": 0.45,
+      "cas1": "7732-18-5",
+      "cas2": "56-81-5",
+      "comment": "Broad ten-temperature direct binary dataset and agreement with older independent binary measurements. The single-temperature glycerol-water fit appearing in Mustain et al. (2022) was retained only as a cross-check, not as the default.",
+      "component1": "water",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_GE_over_RT_RMSE": 0.00579604,
+        "NRTL_alpha_fixed_to_source": 0.45,
+        "NRTL_pressure_AARD_percent": 2.53128556529,
+        "T_range_K": [
+          273.15,
+          363.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 5.229766142537,
+        "UNIQUAC_GE_over_RT_RMSE": 0.01815286,
+        "UNIQUAC_pressure_AARD_percent": 4.034264718575,
+        "UNIQUAC_rq_used": {
+          "glycerol": {
+            "q": 4.908,
+            "r": 4.7957
+          },
+          "water": {
+            "q": 1.4,
+            "r": 0.92
+          }
+        },
+        "confidence": "high",
+        "raw_points": 94,
+        "selected_fit": "refit_from_binary_RK_surface"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Zaoui-Djelloul-Daouadji et al. (2014)",
+      "source_doi": "10.1016/j.jct.2013.09.046",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": -0.39654173,
+      "tau12_d": -13.7743186,
+      "tau21_c": 0.53633085,
+      "tau21_d": -264.01450463
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 273.15,
+      "cas1": "7732-18-5",
+      "cas2": "56-81-5",
+      "comment": "Broad ten-temperature direct binary dataset and agreement with older independent binary measurements. The single-temperature glycerol-water fit appearing in Mustain et al. (2022) was retained only as a cross-check, not as the default.",
+      "component1": "water",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_GE_over_RT_RMSE": 0.00579604,
+        "NRTL_alpha_fixed_to_source": 0.45,
+        "NRTL_pressure_AARD_percent": 2.53128556529,
+        "T_range_K": [
+          273.15,
+          363.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 5.229766142537,
+        "UNIQUAC_GE_over_RT_RMSE": 0.01815286,
+        "UNIQUAC_pressure_AARD_percent": 4.034264718575,
+        "UNIQUAC_rq_used": {
+          "glycerol": {
+            "q": 4.908,
+            "r": 4.7957
+          },
+          "water": {
+            "q": 1.4,
+            "r": 0.92
+          }
+        },
+        "confidence": "high",
+        "raw_points": 94,
+        "selected_fit": "refit_from_binary_RK_surface"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Zaoui-Djelloul-Daouadji et al. (2014)",
+      "source_doi": "10.1016/j.jct.2013.09.046",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 0.21955572,
+      "tau12_b": 102.28833857,
+      "tau21_a": -0.51400189,
+      "tau21_b": -9.95096733,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 343.15,
+      "Tmin_K": 333.15,
+      "alpha12": 0.47,
+      "cas1": "71-36-3",
+      "cas2": "56-81-5",
+      "comment": "Passes the user's ternary rule: the ternary data were predicted afterward using independently fitted constituent-binary parameters; they were not used to create the glycerol BIPs.",
+      "component1": "1-butanol",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_pressure_AARD_percent": 1.625803827129,
+        "T_range_K": [
+          333.15,
+          343.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 5.632605556515,
+        "UNIQUAC_pressure_AARD_percent": 2.231718641728,
+        "confidence": "medium-high",
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.6,
+          "UNIQUAC": 2.2
+        },
+        "raw_points": 30,
+        "selected_fit": "published_fit_normalized",
+        "ternary_prediction_AAD_percent": {
+          "NRTL": 1.8,
+          "UNIQUAC": 2.9
+        }
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Mustain et al. (2022)",
+      "source_doi": "10.1021/acs.jced.1c00937",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": 0.0,
+      "tau12_d": 458.40605401,
+      "tau21_c": 0.0,
+      "tau21_d": 382.61041586
+    },
+    {
+      "Tmax_K": 343.15,
+      "Tmin_K": 333.15,
+      "cas1": "71-36-3",
+      "cas2": "56-81-5",
+      "comment": "Passes the user's ternary rule: the ternary data were predicted afterward using independently fitted constituent-binary parameters; they were not used to create the glycerol BIPs.",
+      "component1": "1-butanol",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_pressure_AARD_percent": 1.625803827129,
+        "T_range_K": [
+          333.15,
+          343.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 5.632605556515,
+        "UNIQUAC_pressure_AARD_percent": 2.231718641728,
+        "confidence": "medium-high",
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.6,
+          "UNIQUAC": 2.2
+        },
+        "raw_points": 30,
+        "selected_fit": "published_fit_normalized",
+        "ternary_prediction_AAD_percent": {
+          "NRTL": 1.8,
+          "UNIQUAC": 2.9
+        }
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Mustain et al. (2022)",
+      "source_doi": "10.1021/acs.jced.1c00937",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 0.0,
+      "tau12_b": 6.53078888,
+      "tau21_a": 0.0,
+      "tau21_b": -161.09279234,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 323.15,
+      "Tmin_K": 313.15,
+      "alpha12": 0.47,
+      "cas1": "78-83-1",
+      "cas2": "56-81-5",
+      "comment": "Direct binary regression; ternary measurements were only used afterward as an external prediction check.",
+      "component1": "2-methyl-1-propanol",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_pressure_AARD_percent": 1.612816638388,
+        "T_range_K": [
+          313.15,
+          323.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 8.837740808161,
+        "UNIQUAC_pressure_AARD_percent": 3.004856301673,
+        "confidence": "medium-high",
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.6,
+          "UNIQUAC": 3.0
+        },
+        "raw_points": 30,
+        "selected_fit": "published_fit_normalized",
+        "ternary_prediction_AAD_percent": {
+          "NRTL": 2.2,
+          "UNIQUAC": 1.7
+        }
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Mustain et al. (2022)",
+      "source_doi": "10.1021/acs.jced.1c00937",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": 0.0,
+      "tau12_d": 639.93311948,
+      "tau21_c": 0.0,
+      "tau21_d": 425.8483275
+    },
+    {
+      "Tmax_K": 323.15,
+      "Tmin_K": 313.15,
+      "cas1": "78-83-1",
+      "cas2": "56-81-5",
+      "comment": "Direct binary regression; ternary measurements were only used afterward as an external prediction check.",
+      "component1": "2-methyl-1-propanol",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_pressure_AARD_percent": 1.612816638388,
+        "T_range_K": [
+          313.15,
+          323.15
+        ],
+        "UNIFNIST_pressure_AARD_percent": 8.837740808161,
+        "UNIQUAC_pressure_AARD_percent": 3.004856301673,
+        "confidence": "medium-high",
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.6,
+          "UNIQUAC": 3.0
+        },
+        "raw_points": 30,
+        "selected_fit": "published_fit_normalized",
+        "ternary_prediction_AAD_percent": {
+          "NRTL": 2.2,
+          "UNIQUAC": 1.7
+        }
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Mustain et al. (2022)",
+      "source_doi": "10.1021/acs.jced.1c00937",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 0.0,
+      "tau12_b": -41.86680679,
+      "tau21_a": 0.0,
+      "tau21_b": -116.59202098,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 389.79,
+      "Tmin_K": 354.0,
+      "alpha12": 0.3,
+      "cas1": "64-17-5",
+      "cas2": "107-21-1",
+      "comment": "Only Pla-Franco Table 7 is used. The corrected Table 6 is intentionally excluded because those parameters came from the ternary-system correlation.",
+      "component1": "ethanol",
+      "component2": "ethylene glycol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_temperature_MAE_K": 0.123973761585,
+        "NRTL_y1_MAE": 0.001047893777,
+        "P_kPa": 101.3,
+        "UNIQUAC_temperature_MAE_K": 0.125479319751,
+        "UNIQUAC_y1_MAE": 0.001049619823,
+        "confidence": "high",
+        "published_binary_AADT_K": {
+          "NRTL": 0.12,
+          "UNIQUAC": 0.13
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.0008,
+          "UNIQUAC": 0.0008
+        },
+        "raw_points": 15,
+        "selected_fit": "published_binary_recorrelation_normalized"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Pla-Franco et al. (re-correlation of Kamihama et al. binary VLE) (2013)",
+      "source_doi": "10.1016/j.fluid.2012.12.022",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": 0.0,
+      "tau12_d": 149.58032252,
+      "tau21_c": 0.0,
+      "tau21_d": 98.42848992
+    },
+    {
+      "Tmax_K": 389.79,
+      "Tmin_K": 354.0,
+      "cas1": "64-17-5",
+      "cas2": "107-21-1",
+      "comment": "Only Pla-Franco Table 7 is used. The corrected Table 6 is intentionally excluded because those parameters came from the ternary-system correlation.",
+      "component1": "ethanol",
+      "component2": "ethylene glycol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_temperature_MAE_K": 0.123973761585,
+        "NRTL_y1_MAE": 0.001047893777,
+        "P_kPa": 101.3,
+        "UNIQUAC_temperature_MAE_K": 0.125479319751,
+        "UNIQUAC_y1_MAE": 0.001049619823,
+        "confidence": "high",
+        "published_binary_AADT_K": {
+          "NRTL": 0.12,
+          "UNIQUAC": 0.13
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.0008,
+          "UNIQUAC": 0.0008
+        },
+        "raw_points": 15,
+        "selected_fit": "published_binary_recorrelation_normalized"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Pla-Franco et al. (re-correlation of Kamihama et al. binary VLE) (2013)",
+      "source_doi": "10.1016/j.fluid.2012.12.022",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 0.0,
+      "tau12_b": -24.67146819,
+      "tau21_a": 0.0,
+      "tau21_b": -95.02237683,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 470.27,
+      "Tmin_K": 373.15,
+      "alpha12": 0.3,
+      "cas1": "7732-18-5",
+      "cas2": "107-21-1",
+      "comment": "Preferred over the older Kamihama re-correlation because this is a newer direct binary measurement; the paper reports good agreement with the older water+EG literature.",
+      "component1": "water",
+      "component2": "ethylene glycol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_temperature_MAE_K": 0.146512737339,
+        "NRTL_y1_MAE": 0.003598537555,
+        "P_kPa": 101.3,
+        "UNIQUAC_temperature_MAE_K": 0.46404278635,
+        "UNIQUAC_y1_MAE": 0.002619819074,
+        "confidence": "high",
+        "published_binary_AADT_K": {
+          "NRTL": 0.15,
+          "UNIQUAC": 0.58
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.0036,
+          "UNIQUAC": 0.0036
+        },
+        "raw_points": 19,
+        "selected_fit": "published_binary_fit_normalized"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Pla-Franco et al. (2015)",
+      "source_doi": "10.1016/j.cep.2015.03.007",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": 0.0,
+      "tau12_d": -225.96890338,
+      "tau21_c": 0.0,
+      "tau21_d": 258.2668416
+    },
+    {
+      "Tmax_K": 470.27,
+      "Tmin_K": 373.15,
+      "cas1": "7732-18-5",
+      "cas2": "107-21-1",
+      "comment": "Preferred over the older Kamihama re-correlation because this is a newer direct binary measurement; the paper reports good agreement with the older water+EG literature.",
+      "component1": "water",
+      "component2": "ethylene glycol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_temperature_MAE_K": 0.146512737339,
+        "NRTL_y1_MAE": 0.003598537555,
+        "P_kPa": 101.3,
+        "UNIQUAC_temperature_MAE_K": 0.46404278635,
+        "UNIQUAC_y1_MAE": 0.002619819074,
+        "confidence": "high",
+        "published_binary_AADT_K": {
+          "NRTL": 0.15,
+          "UNIQUAC": 0.58
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.0036,
+          "UNIQUAC": 0.0036
+        },
+        "raw_points": 19,
+        "selected_fit": "published_binary_fit_normalized"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Pla-Franco et al. (2015)",
+      "source_doi": "10.1016/j.cep.2015.03.007",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 0.0,
+      "tau12_b": -39.18882253,
+      "tau21_a": 0.0,
+      "tau21_b": 152.25277425,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 470.27,
+      "Tmin_K": 370.4,
+      "alpha12": 0.3,
+      "cas1": "71-23-8",
+      "cas2": "107-21-1",
+      "comment": "Direct binary fit. The ternary 1-propanol+water+EG data were predicted afterward from constituent binary parameters, so this pair satisfies the user's binary-only rule.",
+      "component1": "1-propanol",
+      "component2": "ethylene glycol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_temperature_MAE_K": 0.606092664868,
+        "NRTL_y1_MAE": 0.006770158495,
+        "P_kPa": 101.3,
+        "UNIQUAC_temperature_MAE_K": 0.366533007655,
+        "UNIQUAC_y1_MAE": 0.00432340983,
+        "confidence": "high",
+        "published_binary_AADT_K": {
+          "NRTL": 0.22,
+          "UNIQUAC": 0.31
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.006,
+          "UNIQUAC": 0.0064
+        },
+        "raw_points": 21,
+        "selected_fit": "published_binary_fit_normalized"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "NRTL",
+      "source": "Pla-Franco et al. (2015)",
+      "source_doi": "10.1016/j.cep.2015.03.007",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_c": 0.0,
+      "tau12_d": -11.95038147,
+      "tau21_c": 0.0,
+      "tau21_d": 413.21407742
+    },
+    {
+      "Tmax_K": 470.27,
+      "Tmin_K": 370.4,
+      "cas1": "71-23-8",
+      "cas2": "107-21-1",
+      "comment": "Direct binary fit. The ternary 1-propanol+water+EG data were predicted afterward from constituent binary parameters, so this pair satisfies the user's binary-only rule.",
+      "component1": "1-propanol",
+      "component2": "ethylene glycol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "NRTL_temperature_MAE_K": 0.606092664868,
+        "NRTL_y1_MAE": 0.006770158495,
+        "P_kPa": 101.3,
+        "UNIQUAC_temperature_MAE_K": 0.366533007655,
+        "UNIQUAC_y1_MAE": 0.00432340983,
+        "confidence": "high",
+        "published_binary_AADT_K": {
+          "NRTL": 0.22,
+          "UNIQUAC": 0.31
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.006,
+          "UNIQUAC": 0.0064
+        },
+        "raw_points": 21,
+        "selected_fit": "published_binary_fit_normalized"
+      },
+      "fit_status": "recommended_source_reproduced",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Pla-Franco et al. (2015)",
+      "source_doi": "10.1016/j.cep.2015.03.007",
+      "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json",
+      "tau12_a": 0.0,
+      "tau12_b": -10.55890248,
+      "tau21_a": 0.0,
+      "tau21_b": -159.45684777,
+      "use_q_prime": false
+    }
+  ],
+  "metadata": {
+    "audit_scripts": [
+      "scripts/activity_fitting/fit_methanol_glycerol_activity.py",
+      "scripts/activity_fitting/fit_propanol_glycerol_activity.py"
+    ],
+    "description": "Reviewed EG/glycerol NRTL and UNIQUAC records",
+    "excluded_pairs": [
+      "methanol + glycerol: irreconcilable glycerol-rich source data",
+      "1-propanol + glycerol: no transferable joint temperature correlation",
+      "2-propanol + glycerol: direct Wibawa/Soujanya pressure conflict"
+    ],
+    "reference_files": [
+      "data/reference/vapor-liquid-equilibria/2012-kamihama-ethanol-water-ethylene-glycol-thermoml.json",
+      "data/reference/vapor-liquid-equilibria/2014-zaoui-ethanol-water-glycerol-thermoml.json",
+      "data/reference/vapor-liquid-equilibria/2015-pla-franco-propanol-water-ethylene-glycol-vle.pdf",
+      "data/reference/vapor-liquid-equilibria/2015-wibawa-ethanol-isopropanol-glycerol-vle.pdf",
+      "data/reference/vapor-liquid-equilibria/2016-soujanya-methanol-isopropanol-water-glycerol-vle.pdf",
+      "data/reference/vapor-liquid-equilibria/2016-zaoui-glycerol-binary-vle-modeling-thesis.pdf",
+      "data/reference/vapor-liquid-equilibria/2020-batutah-ethanol-propanol-glycerol-vle.pdf",
+      "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle.pdf",
+      "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle-supporting-information.pdf"
+    ],
+    "selected_pair_count": 7,
+    "selected_record_count": 14,
+    "selection_rule": "Direct binary fits with reproduced source metrics and explicit UNIQUAC structural bases",
+    "source_file": "data/source/activity_fitting/eg_glycerol_nrtl_uniquac_curated.json"
+  },
+  "uniquac_components": [
+    {
+      "cas": "107-21-1",
+      "formula": "C2H6O2",
+      "name": "ethylene glycol",
+      "q": 2.248,
+      "r": 2.4087,
+      "source": "Pla-Franco et al. 2015 and Zhong et al. 2014; Aspen/DECHEMA basis"
+    },
+    {
+      "cas": "56-81-5",
+      "formula": "C3H8O3",
+      "name": "glycerol",
+      "q": 4.908,
+      "r": 4.7957,
+      "source": "Zaoui et al. 2014; Wiguno et al. 2016; Mustain et al. 2022"
+    },
+    {
+      "cas": "71-36-3",
+      "formula": "C4H10O",
+      "name": "1-butanol",
+      "q": 3.052,
+      "r": 3.4543,
+      "source": "Matsuda et al. 2025 standard basis; Mustain et al. 2022 source basis"
+    },
+    {
+      "cas": "78-83-1",
+      "formula": "C4H10O",
+      "name": "isobutanol",
+      "q": 3.048,
+      "r": 3.4535,
+      "source": "existing PFDSim standard basis; Mustain et al. 2022 source basis"
+    }
+  ]
+}

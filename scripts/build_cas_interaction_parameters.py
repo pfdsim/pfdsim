@@ -22,6 +22,7 @@ from physical_constants import R_J_MOL_K
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
 LEGACY_SOURCE_DATA = SOURCE_DATA / "legacy"
+ACTIVITY_SOURCE_DATA = SOURCE_DATA / "activity_fitting"
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 
 ASSORTED_ALCOHOL_ETHER_CAS = {
@@ -63,6 +64,54 @@ EOS_IPD_FILES = {
 ACTIVITY_IPD_FILES = {
     "NRTL": "nrtl.ipd",
     "UNIQUAC": "uniquac.ipd",
+}
+
+
+def source_path(filename: str) -> Path:
+    """Locate shared inputs and the dedicated activity-fitting collections."""
+    if filename in SOURCE_INTERACTION_FILES:
+        directory = (
+            LEGACY_SOURCE_DATA
+            if filename == "eos_binary_interactions.json"
+            else ACTIVITY_SOURCE_DATA / "legacy"
+        )
+    elif filename in {
+        "chemsep_components.json",
+        "interaction_component_cas_overrides.json",
+        "interaction_record_identity_overrides.json",
+        *EOS_IPD_FILES.values(),
+    }:
+        directory = SOURCE_DATA
+    else:
+        directory = ACTIVITY_SOURCE_DATA
+    return directory / filename
+
+CURATED_WATER_NONWATER_FILES = (
+    "water_nonwater_binary_parameters_curated.json",
+    "fendu_2025_activity_refits.json",
+    "mohsen_nia_2010_pentanol_propionic_association.json",
+    "moreau_ovejero_pentanol_cyclohexane_joint_fit.json",
+    "moreau_2012_pentanol_toluene_joint_fit.json",
+    "moreau_ovejero_2016_2007_pentanol_hexane_joint_fit.json",
+    "eg_glycerol_activity_parameters.json",
+)
+COMMON_BASIS_UNIQUAC_FILE = "uniquac_common_basis_refits.json"
+COMMON_BASIS_UNIQUAC_PAIRS = frozenset(
+    tuple(sorted(pair))
+    for pair in (
+        ("64-17-5", "111-27-3"),
+        ("64-17-5", "111-87-5"),
+        ("64-17-5", "56-81-5"),
+        ("71-36-3", "56-81-5"),
+        ("78-83-1", "56-81-5"),
+    )
+)
+ACTIVITY_EXTRAPOLATIONS = {
+    "unrestricted",
+    "clamp",
+    "constant_inverse",
+    "inverse_linear_quadratic",
+    "inverse_square_cubic",
 }
 
 CURATED_ACTIVITY_DISABLED_RECORDS = {
@@ -264,13 +313,18 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 
 
 def load_record_identity_overrides() -> dict[str, dict[str, dict]]:
-    path = SOURCE_DATA / "interaction_record_identity_overrides.json"
+    path = source_path("interaction_record_identity_overrides.json")
     if not path.exists():
         return {}
     return load_json(path).get("records", {})
 
 
-def add_name_alias(mapping: dict[str, tuple[str, str, str]], name: Optional[str], cas: Optional[str], source: str) -> None:
+def add_name_alias(
+    mapping: dict[str, tuple[str, str, str]],
+    name: Optional[str],
+    cas: Optional[str],
+    source: str,
+) -> None:
     if not name or not cas or not CAS_RE.match(cas):
         return
     key = normalize_name(str(name))
@@ -289,7 +343,12 @@ def local_name_to_cas() -> dict[str, tuple[str, str, str]]:
     if chemicals_path.exists():
         for key, entry in load_json(chemicals_path).get("chemicals", {}).items():
             cas = entry.get("CAS") or entry.get("cas")
-            for name in (key, entry.get("name"), entry.get("symbol"), entry.get("formula")):
+            for name in (
+                key,
+                entry.get("name"),
+                entry.get("symbol"),
+                entry.get("formula"),
+            ):
                 add_name_alias(mapping, name, cas, "chemicals.json")
 
     perry_path = DATA / "perry_properties.json"
@@ -304,10 +363,17 @@ def local_name_to_cas() -> dict[str, tuple[str, str, str]]:
     vapor_path = DATA / "perry_table_2_10_vapor_pressure.json"
     if vapor_path.exists():
         for cas, entry in load_json(vapor_path).get("chemicals", {}).items():
-            names = [entry.get("name"), entry.get("table_name"), entry.get("formula"), entry.get("query")]
+            names = [
+                entry.get("name"),
+                entry.get("table_name"),
+                entry.get("formula"),
+                entry.get("query"),
+            ]
             names.extend(entry.get("aliases") or [])
             for name in names:
-                add_name_alias(mapping, name, cas, "perry_table_2_10_vapor_pressure.json")
+                add_name_alias(
+                    mapping, name, cas, "perry_table_2_10_vapor_pressure.json"
+                )
 
     return mapping
 
@@ -323,15 +389,14 @@ def clean_comment_side(value: str) -> str:
 
 def collect_component_candidates() -> dict[str, list[str]]:
     candidates: dict[str, list[str]] = {}
-    components = load_json(SOURCE_DATA / "chemsep_components.json")["components"]
+    components = load_json(source_path("chemsep_components.json"))["components"]
     for comp_id, entry in components.items():
         candidates[comp_id] = [
-            value for value in (entry.get("name"), entry.get("dwsim_name"))
-            if value
+            value for value in (entry.get("name"), entry.get("dwsim_name")) if value
         ]
 
     for filename in SOURCE_INTERACTION_FILES:
-        for record in load_json(LEGACY_SOURCE_DATA / filename)["interactions"]:
+        for record in load_json(source_path(filename))["interactions"]:
             comment = record.get("comment", "")
             if "/" not in comment:
                 continue
@@ -353,7 +418,7 @@ def collect_component_candidates() -> dict[str, list[str]]:
 def interaction_source_ids() -> set[str]:
     ids: set[str] = set()
     for filename in SOURCE_INTERACTION_FILES:
-        for record in load_json(LEGACY_SOURCE_DATA / filename)["interactions"]:
+        for record in load_json(source_path(filename))["interactions"]:
             ids.add(str(record["id1"]))
             ids.add(str(record["id2"]))
     return ids
@@ -366,20 +431,28 @@ def load_chemicals_resolver(path: Optional[str]):
     try:
         from chemicals.identifiers import search_chemical
     except Exception as exc:
-        raise RuntimeError(f"Could not import chemicals.identifiers from {path!r}") from exc
+        raise RuntimeError(
+            f"Could not import chemicals.identifiers from {path!r}"
+        ) from exc
     return search_chemical
 
 
-def resolve_component_ids(chemicals_path: Optional[str] = None) -> tuple[dict[str, dict], list[dict]]:
+def resolve_component_ids(
+    chemicals_path: Optional[str] = None,
+) -> tuple[dict[str, dict], list[dict]]:
     name_map = local_name_to_cas()
     candidates = collect_component_candidates()
     source_ids = interaction_source_ids()
-    overrides = load_json(SOURCE_DATA / "interaction_component_cas_overrides.json").get("components", {})
+    overrides = load_json(source_path("interaction_component_cas_overrides.json")).get(
+        "components", {}
+    )
     search_chemical = load_chemicals_resolver(chemicals_path)
     resolved: dict[str, dict] = {}
     unresolved: list[dict] = []
 
-    for comp_id in sorted(source_ids, key=lambda value: int(value) if value.isdigit() else value):
+    for comp_id in sorted(
+        source_ids, key=lambda value: int(value) if value.isdigit() else value
+    ):
         values = candidates.get(comp_id, [])
         override = overrides.get(comp_id)
         if override:
@@ -392,7 +465,8 @@ def resolve_component_ids(chemicals_path: Optional[str] = None) -> tuple[dict[st
                 if value
             }
             candidate_aliases = {
-                value for value in values
+                value
+                for value in values
                 if normalize_name(value) in override_alias_keys
             }
             resolved[comp_id] = {
@@ -447,10 +521,12 @@ def resolve_component_ids(chemicals_path: Optional[str] = None) -> tuple[dict[st
         if hit and CAS_RE.match(hit["cas"]):
             resolved[comp_id] = hit
         else:
-            unresolved.append({
-                "source_component_id": comp_id,
-                "candidates": sorted({item for item in values if item}),
-            })
+            unresolved.append(
+                {
+                    "source_component_id": comp_id,
+                    "candidates": sorted({item for item in values if item}),
+                }
+            )
 
     return resolved, unresolved
 
@@ -485,39 +561,49 @@ def component_from_record_override(entry: dict, side: str) -> Optional[dict]:
     }
 
 
-def convert_records(filename: str, resolved: dict[str, dict]) -> tuple[list[dict], list[dict]]:
+def convert_records(
+    filename: str, resolved: dict[str, dict]
+) -> tuple[list[dict], list[dict]]:
     converted: list[dict] = []
     skipped: list[dict] = []
     record_overrides = load_record_identity_overrides().get(filename, {})
-    for index, record in enumerate(load_json(LEGACY_SOURCE_DATA / filename)["interactions"]):
+    for index, record in enumerate(
+        load_json(source_path(filename))["interactions"]
+    ):
         id1, id2 = str(record["id1"]), str(record["id2"])
         override = record_overrides.get(str(index), {})
-        comp1 = component_from_record_override(override, "component1") or resolved.get(id1)
-        comp2 = component_from_record_override(override, "component2") or resolved.get(id2)
+        comp1 = component_from_record_override(override, "component1") or resolved.get(
+            id1
+        )
+        comp2 = component_from_record_override(override, "component2") or resolved.get(
+            id2
+        )
         if comp1 is None or comp2 is None:
-            skipped.append({
-                "index": index,
-                "source_file": filename,
-                "source_id1": id1,
-                "source_id2": id2,
-                "comment": record.get("comment", ""),
-                "reason": "missing unambiguous CAS for one or both source component IDs",
-            })
+            skipped.append(
+                {
+                    "index": index,
+                    "source_file": filename,
+                    "source_id1": id1,
+                    "source_id2": id2,
+                    "comment": record.get("comment", ""),
+                    "reason": "missing unambiguous CAS for one or both source component IDs",
+                }
+            )
             continue
 
         new_record = {
-            key: value
-            for key, value in record.items()
-            if key not in {"id1", "id2"}
+            key: value for key, value in record.items() if key not in {"id1", "id2"}
         }
-        new_record.update({
-            "cas1": comp1["cas"],
-            "cas2": comp2["cas"],
-            "component1": comp1.get("name", ""),
-            "component2": comp2.get("name", ""),
-            "source_id1": id1,
-            "source_id2": id2,
-        })
+        new_record.update(
+            {
+                "cas1": comp1["cas"],
+                "cas2": comp2["cas"],
+                "component1": comp1.get("name", ""),
+                "component2": comp2.get("name", ""),
+                "source_id1": id1,
+                "source_id2": id2,
+            }
+        )
         for key in ("disabled", "disabled_reason"):
             if key in override:
                 new_record[key] = override[key]
@@ -552,7 +638,7 @@ def resolve_matrix_component_cas(name: str) -> str:
 
 
 def supplemental_nrtl_matrix_records(existing: list[dict]) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "nrtl_temperature_matrix_interactions.json"
+    path = source_path("nrtl_temperature_matrix_interactions.json")
     if not path.exists():
         return [], 0
 
@@ -563,19 +649,15 @@ def supplemental_nrtl_matrix_records(existing: list[dict]) -> tuple[list[dict], 
         tuple(sorted(item.get("components", []))): item.get("reason", "")
         for item in payload.get("disabled_pairs", [])
     }
-    cas_by_name = {
-        name: resolve_matrix_component_cas(name)
-        for name in components
-    }
+    cas_by_name = {name: resolve_matrix_component_cas(name) for name in components}
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
 
     records: list[dict] = []
     new_pairs = 0
     for i, comp_i in enumerate(components):
-        for comp_j in components[i + 1:]:
+        for comp_j in components[i + 1 :]:
             forward = matrix[comp_i][comp_j]
             reverse = matrix[comp_j][comp_i]
             cas_i = cas_by_name[comp_i]
@@ -598,10 +680,12 @@ def supplemental_nrtl_matrix_records(existing: list[dict]) -> tuple[list[dict], 
                 "tau21_e": 0.0,
                 "tau21_f": 0.0,
                 "tau21_g": 0.0,
-                "alpha12": max(float(forward.get("c", 0.0)), float(reverse.get("c", 0.0))),
+                "alpha12": max(
+                    float(forward.get("c", 0.0)), float(reverse.get("c", 0.0))
+                ),
                 "comment": f"{comp_i}/{comp_j} supplemental NRTL matrix; tau_ij = a_ij + b_ij/T",
                 "source": payload.get("source", "supplemental NRTL matrix"),
-                "source_file": "data/source/nrtl_temperature_matrix_interactions.json",
+                "source_file": "data/source/activity_fitting/nrtl_temperature_matrix_interactions.json",
             }
             disabled_reason = disabled_pairs.get(tuple(sorted((comp_i, comp_j))))
             if disabled_reason:
@@ -615,14 +699,13 @@ def supplemental_water_aromatic_regression_records(
     existing: list[dict],
     model: str,
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "water_aromatic_solubility_regression.json"
+    path = source_path("water_aromatic_solubility_regression.json")
     if not path.exists():
         return [], 0
 
     payload = load_json(path)
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     new_pairs = 0
@@ -644,43 +727,47 @@ def supplemental_water_aromatic_regression_records(
             "Tmin_K": float(system["applicable_temperature_range_K"][0]),
             "Tmax_K": float(system["applicable_temperature_range_K"][1]),
             "source": payload["source"],
-            "source_file": "data/source/water_aromatic_solubility_regression.json",
+            "source_file": "data/source/activity_fitting/water_aromatic_solubility_regression.json",
             "comment": (
                 f"{component1}/{component2} water/aromatic solubility regression "
                 f"from {payload['source']}"
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "alpha12": float(params["alpha12"]),
-                "tau12_c": float(params["tau12_c"]),
-                "tau12_d": float(params["tau12_d"]),
-                "tau12_e": float(params.get("tau12_e", 0.0)),
-                "tau12_f": float(params.get("tau12_f", 0.0)),
-                "tau12_g": float(params.get("tau12_g", 0.0)),
-                "tau21_c": float(params["tau21_c"]),
-                "tau21_d": float(params["tau21_d"]),
-                "tau21_e": float(params.get("tau21_e", 0.0)),
-                "tau21_f": float(params.get("tau21_f", 0.0)),
-                "tau21_g": float(params.get("tau21_g", 0.0)),
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "alpha12": float(params["alpha12"]),
+                    "tau12_c": float(params["tau12_c"]),
+                    "tau12_d": float(params["tau12_d"]),
+                    "tau12_e": float(params.get("tau12_e", 0.0)),
+                    "tau12_f": float(params.get("tau12_f", 0.0)),
+                    "tau12_g": float(params.get("tau12_g", 0.0)),
+                    "tau21_c": float(params["tau21_c"]),
+                    "tau21_d": float(params["tau21_d"]),
+                    "tau21_e": float(params.get("tau21_e", 0.0)),
+                    "tau21_f": float(params.get("tau21_f", 0.0)),
+                    "tau21_g": float(params.get("tau21_g", 0.0)),
+                    "tau_tref": 298.15,
+                }
+            )
         elif model_key == "UNIQUAC":
-            record.update({
-                "model_variant": "standard_uniquac",
-                "use_q_prime": False,
-                "tau12_a": float(params["tau12_a"]),
-                "tau12_b": float(params["tau12_b"]),
-                "tau12_c": float(params.get("tau12_c", 0.0)),
-                "tau12_d": float(params.get("tau12_d", 0.0)),
-                "tau12_e": float(params.get("tau12_e", 0.0)),
-                "tau21_a": float(params["tau21_a"]),
-                "tau21_b": float(params["tau21_b"]),
-                "tau21_c": float(params.get("tau21_c", 0.0)),
-                "tau21_d": float(params.get("tau21_d", 0.0)),
-                "tau21_e": float(params.get("tau21_e", 0.0)),
-                "tau_tref": float(params.get("tau_tref", 298.15)),
-            })
+            record.update(
+                {
+                    "model_variant": "standard_uniquac",
+                    "use_q_prime": False,
+                    "tau12_a": float(params["tau12_a"]),
+                    "tau12_b": float(params["tau12_b"]),
+                    "tau12_c": float(params.get("tau12_c", 0.0)),
+                    "tau12_d": float(params.get("tau12_d", 0.0)),
+                    "tau12_e": float(params.get("tau12_e", 0.0)),
+                    "tau21_a": float(params["tau21_a"]),
+                    "tau21_b": float(params["tau21_b"]),
+                    "tau21_c": float(params.get("tau21_c", 0.0)),
+                    "tau21_d": float(params.get("tau21_d", 0.0)),
+                    "tau21_e": float(params.get("tau21_e", 0.0)),
+                    "tau_tref": float(params.get("tau_tref", 298.15)),
+                }
+            )
         else:
             continue
         records.append(record)
@@ -692,7 +779,7 @@ def supplemental_water_organic_binary_fit_records(
     model: str,
 ) -> tuple[list[dict], int, set[tuple[str, str]]]:
     """Build the curated water/organic interaction overlay for one model."""
-    path = SOURCE_DATA / "water_organic_binary_fits.json"
+    path = source_path("water_organic_binary_fits.json")
     if not path.exists():
         return [], 0, set()
 
@@ -703,8 +790,7 @@ def supplemental_water_organic_binary_fit_records(
         return [], 0, set()
 
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     covered_pairs: set[tuple[str, str]] = set()
@@ -729,7 +815,7 @@ def supplemental_water_organic_binary_fit_records(
             "Tmin_K": float(temperature_range["Tmin"]),
             "Tmax_K": float(temperature_range["Tmax"]),
             "source": "water_organic_binary_fits.json",
-            "source_file": "data/source/water_organic_binary_fits.json",
+            "source_file": "data/source/activity_fitting/water_organic_binary_fits.json",
             "fit_status": system["fit_status"],
             "comment": (
                 f"{system['component1']}/{system['component2']} curated "
@@ -737,36 +823,40 @@ def supplemental_water_organic_binary_fit_records(
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "alpha12": float(fit["alpha12"]),
-                "tau12_c": float(params["tau12_c"]),
-                "tau12_d": float(params["tau12_d"]),
-                "tau12_e": float(params.get("tau12_e", 0.0)),
-                "tau12_f": float(params.get("tau12_f", 0.0)),
-                "tau12_g": float(params.get("tau12_g", 0.0)),
-                "tau21_c": float(params["tau21_c"]),
-                "tau21_d": float(params["tau21_d"]),
-                "tau21_e": float(params.get("tau21_e", 0.0)),
-                "tau21_f": float(params.get("tau21_f", 0.0)),
-                "tau21_g": float(params.get("tau21_g", 0.0)),
-                "tau_tref": float(fit.get("tau_tref_K", 298.15)),
-            })
+            record.update(
+                {
+                    "alpha12": float(fit["alpha12"]),
+                    "tau12_c": float(params["tau12_c"]),
+                    "tau12_d": float(params["tau12_d"]),
+                    "tau12_e": float(params.get("tau12_e", 0.0)),
+                    "tau12_f": float(params.get("tau12_f", 0.0)),
+                    "tau12_g": float(params.get("tau12_g", 0.0)),
+                    "tau21_c": float(params["tau21_c"]),
+                    "tau21_d": float(params["tau21_d"]),
+                    "tau21_e": float(params.get("tau21_e", 0.0)),
+                    "tau21_f": float(params.get("tau21_f", 0.0)),
+                    "tau21_g": float(params.get("tau21_g", 0.0)),
+                    "tau_tref": float(fit.get("tau_tref_K", 298.15)),
+                }
+            )
         else:
-            record.update({
-                "model_variant": fit.get("model_variant", "standard_uniquac"),
-                "use_q_prime": bool(fit.get("use_q_prime", False)),
-                "tau12_a": float(params["tau12_a"]),
-                "tau12_b": float(params["tau12_b"]),
-                "tau12_c": float(params.get("tau12_c", 0.0)),
-                "tau12_d": float(params.get("tau12_d", 0.0)),
-                "tau12_e": float(params.get("tau12_e", 0.0)),
-                "tau21_a": float(params["tau21_a"]),
-                "tau21_b": float(params["tau21_b"]),
-                "tau21_c": float(params.get("tau21_c", 0.0)),
-                "tau21_d": float(params.get("tau21_d", 0.0)),
-                "tau21_e": float(params.get("tau21_e", 0.0)),
-                "tau_tref": float(fit.get("tau_tref_K", 298.15)),
-            })
+            record.update(
+                {
+                    "model_variant": fit.get("model_variant", "standard_uniquac"),
+                    "use_q_prime": bool(fit.get("use_q_prime", False)),
+                    "tau12_a": float(params["tau12_a"]),
+                    "tau12_b": float(params["tau12_b"]),
+                    "tau12_c": float(params.get("tau12_c", 0.0)),
+                    "tau12_d": float(params.get("tau12_d", 0.0)),
+                    "tau12_e": float(params.get("tau12_e", 0.0)),
+                    "tau21_a": float(params["tau21_a"]),
+                    "tau21_b": float(params["tau21_b"]),
+                    "tau21_c": float(params.get("tau21_c", 0.0)),
+                    "tau21_d": float(params.get("tau21_d", 0.0)),
+                    "tau21_e": float(params.get("tau21_e", 0.0)),
+                    "tau_tref": float(fit.get("tau_tref_K", 298.15)),
+                }
+            )
         records.append(record)
 
     new_pairs = len(covered_pairs - existing_pairs)
@@ -783,8 +873,7 @@ def supplemental_literature_vle_activity_records(
         return [], 0, set()
 
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     covered_pairs: set[tuple[str, str]] = set()
@@ -799,7 +888,7 @@ def supplemental_literature_vle_activity_records(
         parameters: dict,
         comment: str,
         temperature_range: tuple[float, float] | None = None,
-        do_not_extrapolate: bool = False,
+        extrapolation: str = "unrestricted",
         fit_status: str = "recommended_literature_interaction",
         fit_vapor_treatment: dict | None = None,
     ) -> None:
@@ -815,60 +904,67 @@ def supplemental_literature_vle_activity_records(
             "component1": component1,
             "component2": component2,
             "source": source,
-            "source_file": f"data/source/{source}",
+            "source_file": source_path(source).relative_to(ROOT).as_posix(),
             "fit_status": fit_status,
             "comment": comment,
         }
-        if do_not_extrapolate and temperature_range is None:
+        if extrapolation not in ACTIVITY_EXTRAPOLATIONS:
+            raise ValueError(f"Unsupported {model_key} extrapolation={extrapolation}")
+        if extrapolation != "unrestricted" and temperature_range is None:
             raise ValueError(
-                f"{model_key} do_not_extrapolate=true requires a temperature range"
+                f"{model_key} extrapolation policy requires a temperature range"
             )
         if temperature_range is not None:
-            record.update({
-                "Tmin_K": float(temperature_range[0]),
-                "Tmax_K": float(temperature_range[1]),
-            })
-        if do_not_extrapolate:
-            record["do_not_extrapolate"] = True
+            record.update(
+                {
+                    "Tmin_K": float(temperature_range[0]),
+                    "Tmax_K": float(temperature_range[1]),
+                }
+            )
+        record["extrapolation"] = extrapolation
         if fit_vapor_treatment is not None:
             record["fit_vapor_treatment"] = fit_vapor_treatment
         if model_key == "NRTL":
-            record.update({
-                "alpha12": float(parameters["alpha12"]),
-                "tau12_c": float(parameters["tau12_c"]),
-                "tau12_d": float(parameters.get("tau12_d", 0.0)),
-                "tau12_e": float(parameters.get("tau12_e", 0.0)),
-                "tau12_f": float(parameters.get("tau12_f", 0.0)),
-                "tau12_g": float(parameters.get("tau12_g", 0.0)),
-                "tau21_c": float(parameters["tau21_c"]),
-                "tau21_d": float(parameters.get("tau21_d", 0.0)),
-                "tau21_e": float(parameters.get("tau21_e", 0.0)),
-                "tau21_f": float(parameters.get("tau21_f", 0.0)),
-                "tau21_g": float(parameters.get("tau21_g", 0.0)),
-                "tau_tref": float(parameters.get("tau_tref", 298.15)),
-            })
+            record.update(
+                {
+                    "alpha12": float(parameters["alpha12"]),
+                    "tau12_c": float(parameters["tau12_c"]),
+                    "tau12_d": float(parameters.get("tau12_d", 0.0)),
+                    "tau12_e": float(parameters.get("tau12_e", 0.0)),
+                    "tau12_f": float(parameters.get("tau12_f", 0.0)),
+                    "tau12_g": float(parameters.get("tau12_g", 0.0)),
+                    "tau21_c": float(parameters["tau21_c"]),
+                    "tau21_d": float(parameters.get("tau21_d", 0.0)),
+                    "tau21_e": float(parameters.get("tau21_e", 0.0)),
+                    "tau21_f": float(parameters.get("tau21_f", 0.0)),
+                    "tau21_g": float(parameters.get("tau21_g", 0.0)),
+                    "tau_tref": float(parameters.get("tau_tref", 298.15)),
+                }
+            )
         else:
-            record.update({
-                "model_variant": parameters.get(
-                    "model_variant", "standard_uniquac"
-                ),
-                "use_q_prime": bool(parameters.get("use_q_prime", False)),
-                "tau12_a": float(parameters["tau12_a"]),
-                "tau12_b": float(parameters.get("tau12_b", 0.0)),
-                "tau12_c": float(parameters.get("tau12_c", 0.0)),
-                "tau12_d": float(parameters.get("tau12_d", 0.0)),
-                "tau12_e": float(parameters.get("tau12_e", 0.0)),
-                "tau21_a": float(parameters["tau21_a"]),
-                "tau21_b": float(parameters.get("tau21_b", 0.0)),
-                "tau21_c": float(parameters.get("tau21_c", 0.0)),
-                "tau21_d": float(parameters.get("tau21_d", 0.0)),
-                "tau21_e": float(parameters.get("tau21_e", 0.0)),
-                "tau_tref": float(parameters.get("tau_tref", 298.15)),
-            })
+            record.update(
+                {
+                    "model_variant": parameters.get(
+                        "model_variant", "standard_uniquac"
+                    ),
+                    "use_q_prime": bool(parameters.get("use_q_prime", False)),
+                    "tau12_a": float(parameters["tau12_a"]),
+                    "tau12_b": float(parameters.get("tau12_b", 0.0)),
+                    "tau12_c": float(parameters.get("tau12_c", 0.0)),
+                    "tau12_d": float(parameters.get("tau12_d", 0.0)),
+                    "tau12_e": float(parameters.get("tau12_e", 0.0)),
+                    "tau21_a": float(parameters["tau21_a"]),
+                    "tau21_b": float(parameters.get("tau21_b", 0.0)),
+                    "tau21_c": float(parameters.get("tau21_c", 0.0)),
+                    "tau21_d": float(parameters.get("tau21_d", 0.0)),
+                    "tau21_e": float(parameters.get("tau21_e", 0.0)),
+                    "tau_tref": float(parameters.get("tau_tref", 298.15)),
+                }
+            )
         records.append(record)
 
     acetaldehyde_file = "acetaldehyde_water_vle.json"
-    acetaldehyde = load_json(SOURCE_DATA / acetaldehyde_file)
+    acetaldehyde = load_json(source_path(acetaldehyde_file))
     acetaldehyde_range = tuple(
         acetaldehyde["system"]["recommended_temperature_range_K"]
     )
@@ -920,7 +1016,7 @@ def supplemental_literature_vle_activity_records(
         )
 
     acid_file = "three_acids_vle.json"
-    acid_payload = load_json(SOURCE_DATA / acid_file)
+    acid_payload = load_json(source_path(acid_file))
     acid_cas = {
         "Acetic acid": "64-19-7",
         "Propionic acid": "79-09-4",
@@ -953,9 +1049,7 @@ def supplemental_literature_vle_activity_records(
             temperature = float(fit_source["temperature_K"])
             temperature_range = (temperature, temperature)
         elif fit_source and fit_source.get("points"):
-            temperatures = [
-                float(point[2]) + 273.15 for point in fit_source["points"]
-            ]
+            temperatures = [float(point[2]) + 273.15 for point in fit_source["points"]]
             temperature_range = (min(temperatures), max(temperatures))
 
         is_defensible_zero = (
@@ -990,7 +1084,7 @@ def supplemental_literature_vle_activity_records(
             )
 
     water_acid_file = "water_c3_acid_vle_interactions.json"
-    water_acid_payload = load_json(SOURCE_DATA / water_acid_file)
+    water_acid_payload = load_json(source_path(water_acid_file))
     water_acid_cas = {
         "water_acrylic_acid": "79-10-7",
         "water_propionic_acid": "79-09-4",
@@ -1001,8 +1095,9 @@ def supplemental_literature_vle_activity_records(
     }
     water_acid_ranges = {
         "water_acrylic_acid": tuple(
-            water_acid_payload["systems"]["water_acrylic_acid"]["metadata"]
-            ["fit_basis"]["temperature_range_K"]
+            water_acid_payload["systems"]["water_acrylic_acid"]["metadata"][
+                "fit_basis"
+            ]["temperature_range_K"]
         ),
         "water_propionic_acid": (313.15, 373.15),
     }
@@ -1054,7 +1149,7 @@ def supplemental_literature_vle_activity_records(
                 "literature regression with fixed VDM"
             ),
             temperature_range=water_acid_ranges[system_key],
-            do_not_extrapolate=bool(fit.get("do_not_extrapolate", False)),
+            extrapolation=str(fit.get("extrapolation", "unrestricted")),
             fit_status=(
                 "recommended_literature_interaction"
                 if fit["recommended"]
@@ -1063,7 +1158,7 @@ def supplemental_literature_vle_activity_records(
         )
 
     mibk_file = "mibk_water_acids_vle.json"
-    mibk_payload = load_json(SOURCE_DATA / mibk_file)
+    mibk_payload = load_json(source_path(mibk_file))
     water_mibk = mibk_payload["H2O_MIBK"]
     water_mibk_fit = water_mibk["recommended_parameters"][model_key]
     water_mibk_raw = water_mibk_fit["parameters"]
@@ -1099,8 +1194,7 @@ def supplemental_literature_vle_activity_records(
         ),
         temperature_range=tuple(
             float(value) + 273.15
-            for value in water_mibk["system"]
-            ["recommended_temperature_range_C"]
+            for value in water_mibk["system"]["recommended_temperature_range_C"]
         ),
         fit_status="recommended_joint_vle_lle_vlle_interaction",
     )
@@ -1167,7 +1261,7 @@ def supplemental_literature_vle_activity_records(
         )
 
     ethanol_water_file = "ethanol_water_interactions.json"
-    ethanol_water = load_json(SOURCE_DATA / ethanol_water_file)
+    ethanol_water = load_json(source_path(ethanol_water_file))
     activity = ethanol_water["parameters"]["activity_models"][model_key]
     if model_key == "NRTL":
         forward = activity["g12_over_R"]
@@ -1220,7 +1314,7 @@ def supplemental_literature_vle_activity_records(
     )
 
     alkane_water_file = "heptane_octane_water.json"
-    alkane_water = load_json(SOURCE_DATA / alkane_water_file)
+    alkane_water = load_json(source_path(alkane_water_file))
     alkane_status = {
         "water_n_heptane": "recommended_neighbor_constrained_literature_interaction",
         "water_n_octane": "recommended_direct_high_temperature_literature_interaction",
@@ -1288,7 +1382,7 @@ def supplemental_assorted_alcohol_ether_records(
     model: str,
 ) -> tuple[list[dict], int, set[tuple[str, str]]]:
     """Build recommended alcohol/ether fits and evidence-backed zeroes."""
-    path = SOURCE_DATA / "assorted_alcohols_ethers.json"
+    path = source_path("assorted_alcohols_ethers.json")
     if not path.exists():
         return [], 0, set()
     model_key = model.upper()
@@ -1299,8 +1393,7 @@ def supplemental_assorted_alcohol_ether_records(
     payload = load_json(path)
     excluded_pair = frozenset(("2-propanol", "water"))
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     covered_pairs: set[tuple[str, str]] = set()
@@ -1351,7 +1444,7 @@ def supplemental_assorted_alcohol_ether_records(
                 "assorted_alcohols_ethers.json"
                 + (f"; {', '.join(source_ids)}" if source_ids else "")
             ),
-            "source_file": "data/source/assorted_alcohols_ethers.json",
+            "source_file": "data/source/activity_fitting/assorted_alcohols_ethers.json",
             "fit_status": "recommended_literature_interaction",
             "fit_vapor_treatment": {
                 "type": "likely_HOC_or_equivalent_association_correction",
@@ -1369,40 +1462,44 @@ def supplemental_assorted_alcohol_ether_records(
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "alpha12": float(parameters["alpha"]),
-                "tau12_c": float(parameters["a12"]),
-                "tau12_d": float(parameters["b12_K"]),
-                "tau12_e": 0.0,
-                "tau12_f": float(parameters.get("c12_per_K", 0.0)),
-                "tau12_g": float(parameters.get("d12_per_K2", 0.0)),
-                "tau21_c": float(parameters["a21"]),
-                "tau21_d": float(parameters["b21_K"]),
-                "tau21_e": 0.0,
-                "tau21_f": float(parameters.get("c21_per_K", 0.0)),
-                "tau21_g": float(parameters.get("d21_per_K2", 0.0)),
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "alpha12": float(parameters["alpha"]),
+                    "tau12_c": float(parameters["a12"]),
+                    "tau12_d": float(parameters["b12_K"]),
+                    "tau12_e": 0.0,
+                    "tau12_f": float(parameters.get("c12_per_K", 0.0)),
+                    "tau12_g": float(parameters.get("d12_per_K2", 0.0)),
+                    "tau21_c": float(parameters["a21"]),
+                    "tau21_d": float(parameters["b21_K"]),
+                    "tau21_e": 0.0,
+                    "tau21_f": float(parameters.get("c21_per_K", 0.0)),
+                    "tau21_g": float(parameters.get("d21_per_K2", 0.0)),
+                    "tau_tref": 298.15,
+                }
+            )
         else:
             if parameters.get("model_variant") != "standard_uniquac":
                 raise ValueError(
                     f"Recommended nonstandard UNIQUAC entry was not excluded: {components}"
                 )
-            record.update({
-                "model_variant": "standard_uniquac",
-                "use_q_prime": False,
-                "tau12_a": float(parameters["a12"]),
-                "tau12_b": float(parameters["b12_K"]),
-                "tau12_c": 0.0,
-                "tau12_d": float(parameters.get("c12_per_K", 0.0)),
-                "tau12_e": float(parameters.get("d12_per_K2", 0.0)),
-                "tau21_a": float(parameters["a21"]),
-                "tau21_b": float(parameters["b21_K"]),
-                "tau21_c": 0.0,
-                "tau21_d": float(parameters.get("c21_per_K", 0.0)),
-                "tau21_e": float(parameters.get("d21_per_K2", 0.0)),
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "model_variant": "standard_uniquac",
+                    "use_q_prime": False,
+                    "tau12_a": float(parameters["a12"]),
+                    "tau12_b": float(parameters["b12_K"]),
+                    "tau12_c": 0.0,
+                    "tau12_d": float(parameters.get("c12_per_K", 0.0)),
+                    "tau12_e": float(parameters.get("d12_per_K2", 0.0)),
+                    "tau21_a": float(parameters["a21"]),
+                    "tau21_b": float(parameters["b21_K"]),
+                    "tau21_c": 0.0,
+                    "tau21_d": float(parameters.get("c21_per_K", 0.0)),
+                    "tau21_e": float(parameters.get("d21_per_K2", 0.0)),
+                    "tau_tref": 298.15,
+                }
+            )
         records.append(record)
 
     for entry in payload["retired_or_not_promoted"]:
@@ -1425,7 +1522,7 @@ def supplemental_assorted_alcohol_ether_records(
                 "assorted_alcohols_ethers.json"
                 + (f"; {', '.join(source_ids)}" if source_ids else "")
             ),
-            "source_file": "data/source/assorted_alcohols_ethers.json",
+            "source_file": "data/source/activity_fitting/assorted_alcohols_ethers.json",
             "fit_status": "recommended_defensible_zero_interaction",
             "fit_vapor_treatment": {
                 "type": "likely_HOC_or_equivalent_association_correction",
@@ -1442,36 +1539,40 @@ def supplemental_assorted_alcohol_ether_records(
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "alpha12": 0.3,
-                "tau12_c": 0.0,
-                "tau12_d": 0.0,
-                "tau12_e": 0.0,
-                "tau12_f": 0.0,
-                "tau12_g": 0.0,
-                "tau21_c": 0.0,
-                "tau21_d": 0.0,
-                "tau21_e": 0.0,
-                "tau21_f": 0.0,
-                "tau21_g": 0.0,
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "alpha12": 0.3,
+                    "tau12_c": 0.0,
+                    "tau12_d": 0.0,
+                    "tau12_e": 0.0,
+                    "tau12_f": 0.0,
+                    "tau12_g": 0.0,
+                    "tau21_c": 0.0,
+                    "tau21_d": 0.0,
+                    "tau21_e": 0.0,
+                    "tau21_f": 0.0,
+                    "tau21_g": 0.0,
+                    "tau_tref": 298.15,
+                }
+            )
         else:
-            record.update({
-                "model_variant": "standard_uniquac",
-                "use_q_prime": False,
-                "tau12_a": 0.0,
-                "tau12_b": 0.0,
-                "tau12_c": 0.0,
-                "tau12_d": 0.0,
-                "tau12_e": 0.0,
-                "tau21_a": 0.0,
-                "tau21_b": 0.0,
-                "tau21_c": 0.0,
-                "tau21_d": 0.0,
-                "tau21_e": 0.0,
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "model_variant": "standard_uniquac",
+                    "use_q_prime": False,
+                    "tau12_a": 0.0,
+                    "tau12_b": 0.0,
+                    "tau12_c": 0.0,
+                    "tau12_d": 0.0,
+                    "tau12_e": 0.0,
+                    "tau21_a": 0.0,
+                    "tau21_b": 0.0,
+                    "tau21_c": 0.0,
+                    "tau21_d": 0.0,
+                    "tau21_e": 0.0,
+                    "tau_tref": 298.15,
+                }
+            )
         records.append(record)
 
     return records, len(covered_pairs - existing_pairs), covered_pairs
@@ -1482,7 +1583,7 @@ def supplemental_isopropanol_water_records(
     model: str,
 ) -> tuple[list[dict], int, set[tuple[str, str]]]:
     """Build the curated broad-range 2-propanol/water interaction fit."""
-    path = SOURCE_DATA / "isopropanol_water_interactions.json"
+    path = source_path("isopropanol_water_interactions.json")
     if not path.exists():
         return [], 0, set()
     model_key = model.upper()
@@ -1496,8 +1597,7 @@ def supplemental_isopropanol_water_records(
     cas1, cas2 = component1["cas"], component2["cas"]
     pair = tuple(sorted((cas1, cas2)))
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     model_data = payload["models"][model_key]
     if not model_data.get("selected", False):
@@ -1514,10 +1614,8 @@ def supplemental_isopropanol_water_records(
         "component2": component2["name"],
         "Tmin_K": float(validity["temperature_min_K"]),
         "Tmax_K": float(validity["temperature_max_K"]),
-        "source": (
-            "isopropanol_water_interactions.json; " + ", ".join(fit_sources)
-        ),
-        "source_file": "data/source/isopropanol_water_interactions.json",
+        "source": ("isopropanol_water_interactions.json; " + ", ".join(fit_sources)),
+        "source_file": "data/source/activity_fitting/isopropanol_water_interactions.json",
         "fit_status": "recommended_broad_range_literature_interaction",
         "fit_vapor_treatment": payload["vapor_phase_treatment"],
         "comment": (
@@ -1537,36 +1635,40 @@ def supplemental_isopropanol_water_records(
                 "PFDSim's NRTL runtime requires symmetric alpha for the "
                 "2-propanol/water fit"
             )
-        record.update({
-            "alpha12": alpha12,
-            "tau12_c": float(forward["a"]),
-            "tau12_d": float(forward["b"]),
-            "tau12_e": 0.0,
-            "tau12_f": float(forward["c"]),
-            "tau12_g": float(forward.get("d", 0.0)),
-            "tau21_c": float(reverse["a"]),
-            "tau21_d": float(reverse["b"]),
-            "tau21_e": 0.0,
-            "tau21_f": float(reverse["c"]),
-            "tau21_g": float(reverse.get("d", 0.0)),
-            "tau_tref": 298.15,
-        })
+        record.update(
+            {
+                "alpha12": alpha12,
+                "tau12_c": float(forward["a"]),
+                "tau12_d": float(forward["b"]),
+                "tau12_e": 0.0,
+                "tau12_f": float(forward["c"]),
+                "tau12_g": float(forward.get("d", 0.0)),
+                "tau21_c": float(reverse["a"]),
+                "tau21_d": float(reverse["b"]),
+                "tau21_e": 0.0,
+                "tau21_f": float(reverse["c"]),
+                "tau21_g": float(reverse.get("d", 0.0)),
+                "tau_tref": 298.15,
+            }
+        )
     else:
-        record.update({
-            "model_variant": "standard_uniquac",
-            "use_q_prime": False,
-            "tau12_a": float(forward["a"]),
-            "tau12_b": float(forward["b"]),
-            "tau12_c": 0.0,
-            "tau12_d": float(forward["c"]),
-            "tau12_e": float(forward.get("d", 0.0)),
-            "tau21_a": float(reverse["a"]),
-            "tau21_b": float(reverse["b"]),
-            "tau21_c": 0.0,
-            "tau21_d": float(reverse["c"]),
-            "tau21_e": float(reverse.get("d", 0.0)),
-            "tau_tref": 298.15,
-        })
+        record.update(
+            {
+                "model_variant": "standard_uniquac",
+                "use_q_prime": False,
+                "tau12_a": float(forward["a"]),
+                "tau12_b": float(forward["b"]),
+                "tau12_c": 0.0,
+                "tau12_d": float(forward["c"]),
+                "tau12_e": float(forward.get("d", 0.0)),
+                "tau21_a": float(reverse["a"]),
+                "tau21_b": float(reverse["b"]),
+                "tau21_c": 0.0,
+                "tau21_d": float(reverse["c"]),
+                "tau21_e": float(reverse.get("d", 0.0)),
+                "tau_tref": 298.15,
+            }
+        )
     return [record], 0 if pair in existing_pairs else 1, {pair}
 
 
@@ -1574,15 +1676,14 @@ def supplemental_phenolic_temperature_records(
     existing: list[dict],
     model: str,
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "phenolic_temperature_interactions.json"
+    path = source_path("phenolic_temperature_interactions.json")
     if not path.exists():
         return [], 0
 
     payload = load_json(path)
     tref = float(payload["metadata"]["temperature_reference_K"])
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     new_pairs = 0
@@ -1609,51 +1710,57 @@ def supplemental_phenolic_temperature_records(
             "Tmin_K": float(temperature_range[0]),
             "Tmax_K": float(temperature_range[1]),
             "source": payload["metadata"]["source"],
-            "source_file": "data/source/phenolic_temperature_interactions.json",
+            "source_file": "data/source/activity_fitting/phenolic_temperature_interactions.json",
             "comment": (
                 f"{component1}/{component2} phenolic temperature-dependent "
                 f"{model_key} Table 5; Cij = CijC + CijT*(T - 273.15 K)"
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "alpha12": float(params["alpha12"]),
-                "tau12_c": c12t,
-                "tau12_d": c12c - tref * c12t,
-                "tau12_e": 0.0,
-                "tau12_f": 0.0,
-                "tau12_g": 0.0,
-                "tau21_c": c21t,
-                "tau21_d": c21c - tref * c21t,
-                "tau21_e": 0.0,
-                "tau21_f": 0.0,
-                "tau21_g": 0.0,
-                "tau_tref": tref,
-            })
+            record.update(
+                {
+                    "alpha12": float(params["alpha12"]),
+                    "tau12_c": c12t,
+                    "tau12_d": c12c - tref * c12t,
+                    "tau12_e": 0.0,
+                    "tau12_f": 0.0,
+                    "tau12_g": 0.0,
+                    "tau21_c": c21t,
+                    "tau21_d": c21c - tref * c21t,
+                    "tau21_e": 0.0,
+                    "tau21_f": 0.0,
+                    "tau21_g": 0.0,
+                    "tau_tref": tref,
+                }
+            )
         elif model_key == "UNIQUAC":
-            record.update({
-                "model_variant": "standard_uniquac",
-                "use_q_prime": False,
-                "tau12_a": -c12t,
-                "tau12_b": -c12c + tref * c12t,
-                "tau12_c": 0.0,
-                "tau12_d": 0.0,
-                "tau12_e": 0.0,
-                "tau21_a": -c21t,
-                "tau21_b": -c21c + tref * c21t,
-                "tau21_c": 0.0,
-                "tau21_d": 0.0,
-                "tau21_e": 0.0,
-                "tau_tref": tref,
-            })
+            record.update(
+                {
+                    "model_variant": "standard_uniquac",
+                    "use_q_prime": False,
+                    "tau12_a": -c12t,
+                    "tau12_b": -c12c + tref * c12t,
+                    "tau12_c": 0.0,
+                    "tau12_d": 0.0,
+                    "tau12_e": 0.0,
+                    "tau21_a": -c21t,
+                    "tau21_b": -c21c + tref * c21t,
+                    "tau21_c": 0.0,
+                    "tau21_d": 0.0,
+                    "tau21_e": 0.0,
+                    "tau_tref": tref,
+                }
+            )
         else:
             continue
         records.append(record)
     return records, new_pairs
 
 
-def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "cesari_phenolic_nrtl_interactions.json"
+def supplemental_cesari_phenolic_nrtl_records(
+    existing: list[dict],
+) -> tuple[list[dict], int]:
+    path = source_path("cesari_phenolic_nrtl_interactions.json")
     if not path.exists():
         return [], 0
 
@@ -1661,8 +1768,7 @@ def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[lis
     r_j_per_mol_k = R_J_MOL_K
     alpha = float(payload["metadata"]["alpha12"])
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     new_pairs = 0
@@ -1675,32 +1781,34 @@ def supplemental_cesari_phenolic_nrtl_records(existing: list[dict]) -> tuple[lis
         pair = tuple(sorted((cas1, cas2)))
         if pair not in existing_pairs:
             new_pairs += 1
-        records.append({
-            "cas1": cas1,
-            "cas2": cas2,
-            "component1": component1,
-            "component2": component2,
-            "Tmin_K": float(temperature_range[0]),
-            "Tmax_K": float(temperature_range[1]),
-            "source": payload["metadata"]["source"],
-            "source_file": "data/source/cesari_phenolic_nrtl_interactions.json",
-            "alpha12": alpha,
-            "tau12_c": float(system["b12_J_per_mol_K"]) / r_j_per_mol_k,
-            "tau12_d": float(system["a12_J_per_mol"]) / r_j_per_mol_k,
-            "tau12_e": 0.0,
-            "tau12_f": 0.0,
-            "tau12_g": 0.0,
-            "tau21_c": float(system["b21_J_per_mol_K"]) / r_j_per_mol_k,
-            "tau21_d": float(system["a21_J_per_mol"]) / r_j_per_mol_k,
-            "tau21_e": 0.0,
-            "tau21_f": 0.0,
-            "tau21_g": 0.0,
-            "tau_tref": 298.15,
-            "comment": (
-                f"{component1}/{component2} Cesari phenolic NRTL Table {system['table']}; "
-                "Delta_g_ij = a_ij + b_ij*T"
-            ),
-        })
+        records.append(
+            {
+                "cas1": cas1,
+                "cas2": cas2,
+                "component1": component1,
+                "component2": component2,
+                "Tmin_K": float(temperature_range[0]),
+                "Tmax_K": float(temperature_range[1]),
+                "source": payload["metadata"]["source"],
+                "source_file": "data/source/activity_fitting/cesari_phenolic_nrtl_interactions.json",
+                "alpha12": alpha,
+                "tau12_c": float(system["b12_J_per_mol_K"]) / r_j_per_mol_k,
+                "tau12_d": float(system["a12_J_per_mol"]) / r_j_per_mol_k,
+                "tau12_e": 0.0,
+                "tau12_f": 0.0,
+                "tau12_g": 0.0,
+                "tau21_c": float(system["b21_J_per_mol_K"]) / r_j_per_mol_k,
+                "tau21_d": float(system["a21_J_per_mol"]) / r_j_per_mol_k,
+                "tau21_e": 0.0,
+                "tau21_f": 0.0,
+                "tau21_g": 0.0,
+                "tau_tref": 298.15,
+                "comment": (
+                    f"{component1}/{component2} Cesari phenolic NRTL Table {system['table']}; "
+                    "Delta_g_ij = a_ij + b_ij*T"
+                ),
+            }
+        )
     return records, new_pairs
 
 
@@ -1708,7 +1816,7 @@ def supplemental_diethyl_ether_water_records(
     existing: list[dict],
     model: str,
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "diethyl_ether_water_35c_fit.json"
+    path = source_path("diethyl_ether_water_35c_fit.json")
     if not path.exists():
         return [], 0
 
@@ -1722,8 +1830,7 @@ def supplemental_diethyl_ether_water_records(
     component1, component2 = payload["metadata"]["components"]
     pair = tuple(sorted((cas1, cas2)))
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     record = {
         "cas1": cas1,
@@ -1737,36 +1844,44 @@ def supplemental_diethyl_ether_water_records(
         ),
     }
     if model_key == "NRTL":
-        record.update({
-            "alpha12": float(params["alpha12"]),
-            "tau12_c": float(params["tau12_c"]),
-            "tau12_d": float(params["tau12_d"]),
-            "tau12_e": float(params.get("tau12_e", 0.0)),
-            "tau12_f": float(params.get("tau12_f", 0.0)),
-            "tau12_g": float(params.get("tau12_g", 0.0)),
-            "tau21_c": float(params["tau21_c"]),
-            "tau21_d": float(params["tau21_d"]),
-            "tau21_e": float(params.get("tau21_e", 0.0)),
-            "tau21_f": float(params.get("tau21_f", 0.0)),
-            "tau21_g": float(params.get("tau21_g", 0.0)),
-            "tau_tref": float(params.get("tau_tref", payload["metadata"]["temperature_K"])),
-        })
+        record.update(
+            {
+                "alpha12": float(params["alpha12"]),
+                "tau12_c": float(params["tau12_c"]),
+                "tau12_d": float(params["tau12_d"]),
+                "tau12_e": float(params.get("tau12_e", 0.0)),
+                "tau12_f": float(params.get("tau12_f", 0.0)),
+                "tau12_g": float(params.get("tau12_g", 0.0)),
+                "tau21_c": float(params["tau21_c"]),
+                "tau21_d": float(params["tau21_d"]),
+                "tau21_e": float(params.get("tau21_e", 0.0)),
+                "tau21_f": float(params.get("tau21_f", 0.0)),
+                "tau21_g": float(params.get("tau21_g", 0.0)),
+                "tau_tref": float(
+                    params.get("tau_tref", payload["metadata"]["temperature_K"])
+                ),
+            }
+        )
     elif model_key == "UNIQUAC":
-        record.update({
-            "model_variant": "standard_uniquac",
-            "use_q_prime": False,
-            "tau12_a": float(params["tau12_a"]),
-            "tau12_b": float(params["tau12_b"]),
-            "tau12_c": float(params.get("tau12_c", 0.0)),
-            "tau12_d": float(params.get("tau12_d", 0.0)),
-            "tau12_e": float(params.get("tau12_e", 0.0)),
-            "tau21_a": float(params["tau21_a"]),
-            "tau21_b": float(params["tau21_b"]),
-            "tau21_c": float(params.get("tau21_c", 0.0)),
-            "tau21_d": float(params.get("tau21_d", 0.0)),
-            "tau21_e": float(params.get("tau21_e", 0.0)),
-            "tau_tref": float(params.get("tau_tref", payload["metadata"]["temperature_K"])),
-        })
+        record.update(
+            {
+                "model_variant": "standard_uniquac",
+                "use_q_prime": False,
+                "tau12_a": float(params["tau12_a"]),
+                "tau12_b": float(params["tau12_b"]),
+                "tau12_c": float(params.get("tau12_c", 0.0)),
+                "tau12_d": float(params.get("tau12_d", 0.0)),
+                "tau12_e": float(params.get("tau12_e", 0.0)),
+                "tau21_a": float(params["tau21_a"]),
+                "tau21_b": float(params["tau21_b"]),
+                "tau21_c": float(params.get("tau21_c", 0.0)),
+                "tau21_d": float(params.get("tau21_d", 0.0)),
+                "tau21_e": float(params.get("tau21_e", 0.0)),
+                "tau_tref": float(
+                    params.get("tau_tref", payload["metadata"]["temperature_K"])
+                ),
+            }
+        )
     else:
         return [], 0
     return [record], 0 if pair in existing_pairs else 1
@@ -1776,7 +1891,7 @@ def supplemental_1_butanol_water_records(
     existing: list[dict],
     model: str,
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "1_butanol_water_interactions.json"
+    path = source_path("1_butanol_water_interactions.json")
     if not path.exists():
         return [], 0
 
@@ -1792,8 +1907,7 @@ def supplemental_1_butanol_water_records(
     temperature_range = metadata["applicable_temperature_range_K"]
     pair = tuple(sorted((cas1, cas2)))
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     record = {
         "cas1": cas1,
@@ -1803,40 +1917,44 @@ def supplemental_1_butanol_water_records(
         "Tmin_K": float(temperature_range[0]),
         "Tmax_K": float(temperature_range[1]),
         "source": metadata["source"],
-        "source_file": "data/source/1_butanol_water_interactions.json",
+        "source_file": "data/source/activity_fitting/1_butanol_water_interactions.json",
         "comment": f"{component1}/{component2} temperature-dependent {model_key}",
     }
     if model_key == "NRTL":
-        record.update({
-            "alpha12": float(params["alpha12"]),
-            "tau12_c": float(params["tau12_c"]),
-            "tau12_d": float(params["tau12_d"]),
-            "tau12_e": float(params["tau12_e"]),
-            "tau12_f": float(params.get("tau12_f", 0.0)),
-            "tau12_g": float(params.get("tau12_g", 0.0)),
-            "tau21_c": float(params["tau21_c"]),
-            "tau21_d": float(params["tau21_d"]),
-            "tau21_e": float(params["tau21_e"]),
-            "tau21_f": float(params.get("tau21_f", 0.0)),
-            "tau21_g": float(params.get("tau21_g", 0.0)),
-            "tau_tref": float(params["tau_tref"]),
-        })
+        record.update(
+            {
+                "alpha12": float(params["alpha12"]),
+                "tau12_c": float(params["tau12_c"]),
+                "tau12_d": float(params["tau12_d"]),
+                "tau12_e": float(params["tau12_e"]),
+                "tau12_f": float(params.get("tau12_f", 0.0)),
+                "tau12_g": float(params.get("tau12_g", 0.0)),
+                "tau21_c": float(params["tau21_c"]),
+                "tau21_d": float(params["tau21_d"]),
+                "tau21_e": float(params["tau21_e"]),
+                "tau21_f": float(params.get("tau21_f", 0.0)),
+                "tau21_g": float(params.get("tau21_g", 0.0)),
+                "tau_tref": float(params["tau_tref"]),
+            }
+        )
     elif model_key == "UNIQUAC":
-        record.update({
-            "model_variant": "standard_uniquac",
-            "use_q_prime": False,
-            "tau12_a": float(params["tau12_a"]),
-            "tau12_b": float(params["tau12_b"]),
-            "tau12_c": float(params.get("tau12_c", 0.0)),
-            "tau12_d": float(params.get("tau12_d", 0.0)),
-            "tau12_e": float(params.get("tau12_e", 0.0)),
-            "tau21_a": float(params["tau21_a"]),
-            "tau21_b": float(params["tau21_b"]),
-            "tau21_c": float(params.get("tau21_c", 0.0)),
-            "tau21_d": float(params.get("tau21_d", 0.0)),
-            "tau21_e": float(params.get("tau21_e", 0.0)),
-            "tau_tref": float(params.get("tau_tref", 298.15)),
-        })
+        record.update(
+            {
+                "model_variant": "standard_uniquac",
+                "use_q_prime": False,
+                "tau12_a": float(params["tau12_a"]),
+                "tau12_b": float(params["tau12_b"]),
+                "tau12_c": float(params.get("tau12_c", 0.0)),
+                "tau12_d": float(params.get("tau12_d", 0.0)),
+                "tau12_e": float(params.get("tau12_e", 0.0)),
+                "tau21_a": float(params["tau21_a"]),
+                "tau21_b": float(params["tau21_b"]),
+                "tau21_c": float(params.get("tau21_c", 0.0)),
+                "tau21_d": float(params.get("tau21_d", 0.0)),
+                "tau21_e": float(params.get("tau21_e", 0.0)),
+                "tau_tref": float(params.get("tau_tref", 298.15)),
+            }
+        )
     else:
         return [], 0
     return [record], 0 if pair in existing_pairs else 1
@@ -1846,7 +1964,7 @@ def supplemental_acetic_acid_vle_records(
     existing: list[dict],
     model: str,
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "acetic_acid_vle_interactions.json"
+    path = source_path("acetic_acid_vle_interactions.json")
     if not path.exists():
         return [], 0
 
@@ -1856,8 +1974,7 @@ def supplemental_acetic_acid_vle_records(
     component1 = metadata["component1"]
     cas1 = metadata["cas1"]
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     new_pairs = 0
@@ -1888,9 +2005,7 @@ def supplemental_acetic_acid_vle_records(
         if model_key == "NRTL":
             record["alpha12"] = float(params["alpha12"])
         elif model_key == "UNIQUAC":
-            record["model_variant"] = params.get(
-                "model_variant", "standard_uniquac"
-            )
+            record["model_variant"] = params.get("model_variant", "standard_uniquac")
             record["use_q_prime"] = bool(params.get("use_q_prime", False))
         else:
             continue
@@ -1903,7 +2018,7 @@ def supplemental_ester_alcohol_fit_records(
     existing: list[dict],
     model: str,
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "ester_alcohol_nrtl_uniquac_recommended_fits.json"
+    path = source_path("ester_alcohol_nrtl_uniquac_recommended_fits.json")
     if not path.exists():
         return [], 0
 
@@ -1915,8 +2030,7 @@ def supplemental_ester_alcohol_fit_records(
         return [], 0
     direct_rq = load_json(DATA / "uniquac_rq_cas.json").get("components", {})
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     records: list[dict] = []
     new_pairs: set[tuple[str, str]] = set()
@@ -1975,7 +2089,7 @@ def supplemental_ester_alcohol_fit_records(
             "fit_vapor_composition_AAD": float(fit["y1_AAD"]),
             "selection_reason": fit["selection_reason"],
             "source": "ester_alcohol_nrtl_uniquac_fit_report.txt",
-            "source_file": "data/source/ester_alcohol_nrtl_uniquac_recommended_fits.json",
+            "source_file": "data/source/activity_fitting/ester_alcohol_nrtl_uniquac_recommended_fits.json",
             "comment": (
                 f"{fit['pair']} recommended {model_key} {fit['form']} fit; "
                 f"vapor={fit['vapor_treatment']}; n={fit['n_points']} from "
@@ -1983,36 +2097,40 @@ def supplemental_ester_alcohol_fit_records(
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "alpha12": float(fit["alpha"]),
-                "tau12_c": float(fit["A12"]),
-                "tau12_d": float(fit["B12_K"]),
-                "tau12_e": 0.0,
-                "tau12_f": 0.0,
-                "tau12_g": 0.0,
-                "tau21_c": float(fit["A21"]),
-                "tau21_d": float(fit["B21_K"]),
-                "tau21_e": 0.0,
-                "tau21_f": 0.0,
-                "tau21_g": 0.0,
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "alpha12": float(fit["alpha"]),
+                    "tau12_c": float(fit["A12"]),
+                    "tau12_d": float(fit["B12_K"]),
+                    "tau12_e": 0.0,
+                    "tau12_f": 0.0,
+                    "tau12_g": 0.0,
+                    "tau21_c": float(fit["A21"]),
+                    "tau21_d": float(fit["B21_K"]),
+                    "tau21_e": 0.0,
+                    "tau21_f": 0.0,
+                    "tau21_g": 0.0,
+                    "tau_tref": 298.15,
+                }
+            )
         else:
-            record.update({
-                "model_variant": "standard_uniquac",
-                "use_q_prime": False,
-                "tau12_a": -float(fit["A12"]),
-                "tau12_b": -float(fit["B12_K"]),
-                "tau12_c": 0.0,
-                "tau12_d": 0.0,
-                "tau12_e": 0.0,
-                "tau21_a": -float(fit["A21"]),
-                "tau21_b": -float(fit["B21_K"]),
-                "tau21_c": 0.0,
-                "tau21_d": 0.0,
-                "tau21_e": 0.0,
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "model_variant": "standard_uniquac",
+                    "use_q_prime": False,
+                    "tau12_a": -float(fit["A12"]),
+                    "tau12_b": -float(fit["B12_K"]),
+                    "tau12_c": 0.0,
+                    "tau12_d": 0.0,
+                    "tau12_e": 0.0,
+                    "tau21_a": -float(fit["A21"]),
+                    "tau21_b": -float(fit["B21_K"]),
+                    "tau21_c": 0.0,
+                    "tau21_d": 0.0,
+                    "tau21_e": 0.0,
+                    "tau_tref": 298.15,
+                }
+            )
         records.append(record)
     return records, len(new_pairs)
 
@@ -2021,7 +2139,7 @@ def supplemental_water_ethylene_oxide_records(
     existing: list[dict],
     models: tuple[str, ...],
 ) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "water_ethylene_oxide_interactions.json"
+    path = source_path("water_ethylene_oxide_interactions.json")
     if not path.exists():
         return [], 0
 
@@ -2031,8 +2149,7 @@ def supplemental_water_ethylene_oxide_records(
     cas1, cas2 = metadata["cas"]
     pair = tuple(sorted((cas1, cas2)))
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     parameters = payload["fitted_parameters"]
     records: list[dict] = []
@@ -2047,69 +2164,75 @@ def supplemental_water_ethylene_oxide_records(
             "component1": component1,
             "component2": component2,
             "source": metadata["source"],
-            "source_file": "data/source/water_ethylene_oxide_interactions.json",
+            "source_file": "data/source/activity_fitting/water_ethylene_oxide_interactions.json",
             "comment": (
-                f"{component1}/{component2} fitted {model_key}; "
-                f"{metadata['source']}"
+                f"{component1}/{component2} fitted {model_key}; {metadata['source']}"
             ),
         }
         if model_key == "NRTL":
-            record.update({
-                "Tmin_K": float(metadata["activity_temperature_range_K"][0]),
-                "Tmax_K": float(metadata["activity_temperature_range_K"][1]),
-                "alpha12": float(params["alpha12"]),
-                "tau12_c": float(params["tau12_c"]),
-                "tau12_d": float(params["tau12_d"]),
-                "tau12_e": float(params.get("tau12_e", 0.0)),
-                "tau12_f": float(params.get("tau12_f", 0.0)),
-                "tau12_g": float(params.get("tau12_g", 0.0)),
-                "tau21_c": float(params["tau21_c"]),
-                "tau21_d": float(params["tau21_d"]),
-                "tau21_e": float(params.get("tau21_e", 0.0)),
-                "tau21_f": float(params.get("tau21_f", 0.0)),
-                "tau21_g": float(params.get("tau21_g", 0.0)),
-                "tau_tref": float(params.get("tau_tref", 298.15)),
-            })
+            record.update(
+                {
+                    "Tmin_K": float(metadata["activity_temperature_range_K"][0]),
+                    "Tmax_K": float(metadata["activity_temperature_range_K"][1]),
+                    "alpha12": float(params["alpha12"]),
+                    "tau12_c": float(params["tau12_c"]),
+                    "tau12_d": float(params["tau12_d"]),
+                    "tau12_e": float(params.get("tau12_e", 0.0)),
+                    "tau12_f": float(params.get("tau12_f", 0.0)),
+                    "tau12_g": float(params.get("tau12_g", 0.0)),
+                    "tau21_c": float(params["tau21_c"]),
+                    "tau21_d": float(params["tau21_d"]),
+                    "tau21_e": float(params.get("tau21_e", 0.0)),
+                    "tau21_f": float(params.get("tau21_f", 0.0)),
+                    "tau21_g": float(params.get("tau21_g", 0.0)),
+                    "tau_tref": float(params.get("tau_tref", 298.15)),
+                }
+            )
         elif model_key == "UNIQUAC":
-            record.update({
-                "Tmin_K": float(metadata["activity_temperature_range_K"][0]),
-                "Tmax_K": float(metadata["activity_temperature_range_K"][1]),
-                "model_variant": params.get("model_variant", "standard_uniquac"),
-                "use_q_prime": bool(params.get("use_q_prime", False)),
-                "tau12_a": float(params["tau12_a"]),
-                "tau12_b": float(params["tau12_b"]),
-                "tau12_c": float(params.get("tau12_c", 0.0)),
-                "tau12_d": float(params.get("tau12_d", 0.0)),
-                "tau12_e": float(params.get("tau12_e", 0.0)),
-                "tau21_a": float(params["tau21_a"]),
-                "tau21_b": float(params["tau21_b"]),
-                "tau21_c": float(params.get("tau21_c", 0.0)),
-                "tau21_d": float(params.get("tau21_d", 0.0)),
-                "tau21_e": float(params.get("tau21_e", 0.0)),
-                "tau_tref": 298.15,
-            })
+            record.update(
+                {
+                    "Tmin_K": float(metadata["activity_temperature_range_K"][0]),
+                    "Tmax_K": float(metadata["activity_temperature_range_K"][1]),
+                    "model_variant": params.get("model_variant", "standard_uniquac"),
+                    "use_q_prime": bool(params.get("use_q_prime", False)),
+                    "tau12_a": float(params["tau12_a"]),
+                    "tau12_b": float(params["tau12_b"]),
+                    "tau12_c": float(params.get("tau12_c", 0.0)),
+                    "tau12_d": float(params.get("tau12_d", 0.0)),
+                    "tau12_e": float(params.get("tau12_e", 0.0)),
+                    "tau21_a": float(params["tau21_a"]),
+                    "tau21_b": float(params["tau21_b"]),
+                    "tau21_c": float(params.get("tau21_c", 0.0)),
+                    "tau21_d": float(params.get("tau21_d", 0.0)),
+                    "tau21_e": float(params.get("tau21_e", 0.0)),
+                    "tau_tref": 298.15,
+                }
+            )
         elif model_key in {"PR", "SRK"}:
-            record.update({
-                "model": model_key,
-                "kij": float(params["kij"]),
-                "Tmin_K": float(metadata["eos_temperature_range_K"][0]),
-                "Tmax_K": float(metadata["eos_temperature_range_K"][1]),
-            })
+            record.update(
+                {
+                    "model": model_key,
+                    "kij": float(params["kij"]),
+                    "Tmin_K": float(metadata["eos_temperature_range_K"][0]),
+                    "Tmax_K": float(metadata["eos_temperature_range_K"][1]),
+                }
+            )
         else:
             continue
         records.append(record)
     return records, 0 if pair in existing_pairs else 1
 
 
-def supplemental_extended_uniquac_records(existing: list[dict]) -> tuple[list[dict], int]:
-    path = SOURCE_DATA / "nagata_gmehling_extended_uniquac_interactions.json"
+def supplemental_extended_uniquac_records(
+    existing: list[dict],
+) -> tuple[list[dict], int]:
+    path = source_path("nagata_gmehling_extended_uniquac_interactions.json")
     if not path.exists():
         return [], 0
 
     payload = load_json(path)
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
 
     records: list[dict] = []
@@ -2122,35 +2245,145 @@ def supplemental_extended_uniquac_records(existing: list[dict]) -> tuple[list[di
         pair = tuple(sorted((cas_i, cas_j)))
         if pair not in existing_pairs:
             new_pairs += 1
-        records.append({
-            "cas1": cas_i,
-            "cas2": cas_j,
-            "component1": comp_i,
-            "component2": comp_j,
-            "disabled": True,
-            "disabled_reason": (
-                "Extended UNIQUAC parameters from this paper do not reproduce "
-                "known azeotropes when used in the standard UNIQUAC runtime path."
-            ),
-            "model_variant": "extended_uniquac",
-            "tau12_a": -float(source_record["B12"]),
-            "tau12_b": -float(source_record["A12"]),
-            "tau12_c": 0.0,
-            "tau12_d": -float(source_record["C12"]),
-            "tau12_e": 0.0,
-            "tau21_a": -float(source_record["B21"]),
-            "tau21_b": -float(source_record["A21"]),
-            "tau21_c": 0.0,
-            "tau21_d": -float(source_record["C21"]),
-            "tau21_e": 0.0,
-            "tau_tref": 298.15,
-            "use_q_prime": True,
-            "tau_expression": payload["metadata"]["tau_expression"],
-            "source": payload["metadata"]["source"],
-            "source_file": "data/source/nagata_gmehling_extended_uniquac_interactions.json",
-            "comment": f"{comp_i}/{comp_j} extended UNIQUAC Table 2; tau_ij = exp(-B_ij - A_ij/T - C_ij*T)",
-        })
+        records.append(
+            {
+                "cas1": cas_i,
+                "cas2": cas_j,
+                "component1": comp_i,
+                "component2": comp_j,
+                "disabled": True,
+                "disabled_reason": (
+                    "Extended UNIQUAC parameters from this paper do not reproduce "
+                    "known azeotropes when used in the standard UNIQUAC runtime path."
+                ),
+                "model_variant": "extended_uniquac",
+                "tau12_a": -float(source_record["B12"]),
+                "tau12_b": -float(source_record["A12"]),
+                "tau12_c": 0.0,
+                "tau12_d": -float(source_record["C12"]),
+                "tau12_e": 0.0,
+                "tau21_a": -float(source_record["B21"]),
+                "tau21_b": -float(source_record["A21"]),
+                "tau21_c": 0.0,
+                "tau21_d": -float(source_record["C21"]),
+                "tau21_e": 0.0,
+                "tau_tref": 298.15,
+                "use_q_prime": True,
+                "tau_expression": payload["metadata"]["tau_expression"],
+                "source": payload["metadata"]["source"],
+                "source_file": "data/source/activity_fitting/nagata_gmehling_extended_uniquac_interactions.json",
+                "comment": f"{comp_i}/{comp_j} extended UNIQUAC Table 2; tau_ij = exp(-B_ij - A_ij/T - C_ij*T)",
+            }
+        )
     return records, new_pairs
+
+
+def supplemental_curated_water_nonwater_records(
+    existing: list[dict],
+    model: str,
+) -> tuple[list[dict], int, set[tuple[str, str]]]:
+    """Return the reviewed, runtime-compatible subset of the staged collections."""
+    model_key = model.upper()
+    if model_key not in {"NRTL", "UNIQUAC"}:
+        return [], 0, set()
+    existing_pairs = {
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
+    }
+    records: list[dict] = []
+    covered_pairs: set[tuple[str, str]] = set()
+    replacements = {}
+    if model_key == "UNIQUAC":
+        payload = load_json(source_path(COMMON_BASIS_UNIQUAC_FILE))
+        if payload.get("metadata", {}).get("failed_cases"):
+            raise ValueError("Cannot activate an incomplete common-basis UNIQUAC refit")
+        for item in payload.get("interactions", []):
+            pair = tuple(sorted((item["cas1"], item["cas2"])))
+            if pair in replacements or item.get("model") != "UNIQUAC":
+                raise ValueError(f"Invalid common-basis UNIQUAC replacement for {pair}")
+            if item.get("use_q_prime"):
+                raise ValueError(
+                    f"Common-basis UNIQUAC replacement changes structural basis for {pair}"
+                )
+            replacements[pair] = item
+        if set(replacements) != COMMON_BASIS_UNIQUAC_PAIRS:
+            raise ValueError(
+                "Common-basis UNIQUAC refits must contain exactly the five reviewed pairs"
+            )
+    for filename in CURATED_WATER_NONWATER_FILES:
+        path = source_path(filename)
+        if not path.exists():
+            continue
+        for source_record in load_json(path).get("interactions", []):
+            if str(source_record.get("model", "")).upper() != model_key:
+                continue
+            pair = tuple(sorted((source_record["cas1"], source_record["cas2"])))
+            replacement = replacements.get(pair)
+            effective_filename = (
+                COMMON_BASIS_UNIQUAC_FILE if replacement is not None else filename
+            )
+            if replacement is not None:
+                source_record = replacement | {
+                    "superseded_source_file": source_path(filename).relative_to(ROOT).as_posix(),
+                }
+            record = dict(source_record)
+            record.pop("model", None)
+            for provenance_field in (
+                "fit_evidence",
+                "regularization",
+                "model_selection",
+                "fit_provenance",
+            ):
+                record.pop(provenance_field, None)
+            source_payload = record.get("source_file", "")
+            record["source_file"] = source_path(effective_filename).relative_to(ROOT).as_posix()
+            if source_payload:
+                record["source_collection"] = Path(source_payload).name
+            cas1, cas2 = record["cas1"], record["cas2"]
+            pair = tuple(sorted((cas1, cas2)))
+            if pair in covered_pairs:
+                raise ValueError(
+                    f"Duplicate curated {model_key} water/nonwater record for {pair}"
+                )
+            if not (CAS_RE.match(cas1) and CAS_RE.match(cas2)) or cas1 == cas2:
+                raise ValueError(f"Invalid curated {model_key} CAS pair {cas1}/{cas2}")
+            low = float(record["Tmin_K"])
+            high = float(record["Tmax_K"])
+            if not (0.0 < low < high):
+                raise ValueError(
+                    f"Invalid curated {model_key} temperature range for {pair}"
+                )
+            extrapolation = record.get("extrapolation", "unrestricted")
+            if not isinstance(extrapolation, str):
+                raise ValueError(
+                    f"Curated {model_key} extrapolation must be a string for {pair}"
+                )
+            if extrapolation not in ACTIVITY_EXTRAPOLATIONS:
+                raise ValueError(
+                    f"Curated {model_key} extrapolation={extrapolation} is "
+                    f"unsupported for {pair}"
+                )
+            for flag in ("use_q_prime",):
+                if flag in record and not isinstance(record[flag], bool):
+                    raise ValueError(
+                        f"Curated {model_key} {flag} must be boolean for {pair}"
+                    )
+            required = (
+                ("alpha12", "tau12_c", "tau21_c")
+                if model_key == "NRTL"
+                else ("tau12_a", "tau21_a")
+            )
+            missing = [field for field in required if field not in record]
+            if missing:
+                raise ValueError(
+                    f"Curated {model_key} record for {pair} lacks {missing}"
+                )
+            covered_pairs.add(pair)
+            records.append(record)
+    if not set(replacements).issubset(covered_pairs):
+        raise ValueError(
+            "Common-basis UNIQUAC refit lacks a corresponding curated source pair"
+        )
+    return records, len(covered_pairs - existing_pairs), covered_pairs
 
 
 def ipd_component_names(comment: str) -> tuple[str, str]:
@@ -2161,7 +2394,7 @@ def ipd_component_names(comment: str) -> tuple[str, str]:
 
 
 def parse_ipd_records(model: str, filename: str) -> list[dict]:
-    path = SOURCE_DATA / filename
+    path = source_path(filename)
     if not path.exists():
         return []
 
@@ -2217,7 +2450,9 @@ def parse_ipd_records(model: str, filename: str) -> list[dict]:
     return records
 
 
-def eos_record_hydration_key(record: dict) -> tuple[str, tuple[str, str], tuple[float | None, float | None] | None]:
+def eos_record_hydration_key(
+    record: dict,
+) -> tuple[str, tuple[str, str], tuple[float | None, float | None] | None]:
     temperature_key = None
     if "Tmin_K" in record and "Tmax_K" in record:
         temperature_key = (float(record["Tmin_K"]), float(record["Tmax_K"]))
@@ -2228,7 +2463,9 @@ def eos_record_hydration_key(record: dict) -> tuple[str, tuple[str, str], tuple[
     )
 
 
-def collapse_eos_duplicate_records(records: list[dict]) -> tuple[list[dict], dict[str, Any]]:
+def collapse_eos_duplicate_records(
+    records: list[dict],
+) -> tuple[list[dict], dict[str, Any]]:
     groups: dict[
         tuple[str, tuple[str, str], tuple[float | None, float | None] | None],
         list[int],
@@ -2237,11 +2474,7 @@ def collapse_eos_duplicate_records(records: list[dict]) -> tuple[list[dict], dic
         groups.setdefault(eos_record_hydration_key(record), []).append(index)
 
     duplicate_groups = [indexes for indexes in groups.values() if len(indexes) > 1]
-    duplicate_indexes = {
-        index
-        for indexes in duplicate_groups
-        for index in indexes
-    }
+    duplicate_indexes = {index for indexes in duplicate_groups for index in indexes}
     collapsed_by_first_index = {}
     for indexes in duplicate_groups:
         originals = [records[index] for index in indexes]
@@ -2249,12 +2482,12 @@ def collapse_eos_duplicate_records(records: list[dict]) -> tuple[list[dict], dic
         collapsed = dict(originals[0])
         collapsed["kij"] = kij
         collapsed["comment"] = " | ".join(
-            record.get("comment", "")
-            for record in originals
-            if record.get("comment")
+            record.get("comment", "") for record in originals if record.get("comment")
         )
         collapsed["source"] = "median of duplicate EOS records"
-        collapsed["duplicate_policy"] = "median_kij_for_same_model_pair_temperature_range"
+        collapsed["duplicate_policy"] = (
+            "median_kij_for_same_model_pair_temperature_range"
+        )
         collapsed["duplicate_records"] = [
             {
                 "kij": float(record["kij"]),
@@ -2279,19 +2512,23 @@ def collapse_eos_duplicate_records(records: list[dict]) -> tuple[list[dict], dic
     return collapsed_records, {
         "eos_duplicate_policy": "Exact same model, unordered CAS pair, and temperature range are collapsed with median k_ij.",
         "eos_collapsed_duplicate_groups": len(duplicate_groups),
-        "eos_collapsed_duplicate_records": len(duplicate_indexes) - len(duplicate_groups),
+        "eos_collapsed_duplicate_records": len(duplicate_indexes)
+        - len(duplicate_groups),
     }
 
 
 def reverse_activity_record(record: dict) -> bool:
-    return (record["cas1"], record["cas2"]) != tuple(sorted((record["cas1"], record["cas2"])))
+    return (record["cas1"], record["cas2"]) != tuple(
+        sorted((record["cas1"], record["cas2"]))
+    )
 
 
 def activity_extrapolation_signature(record: dict) -> tuple:
-    if not bool(record.get("do_not_extrapolate", False)):
+    extrapolation = record.get("extrapolation", "unrestricted")
+    if extrapolation == "unrestricted":
         return (False,)
     return (
-        True,
+        extrapolation,
         float(record["Tmin_K"]),
         float(record["Tmax_K"]),
     )
@@ -2323,11 +2560,19 @@ def activity_record_signature(record: dict, model: str) -> tuple:
                 else None
             )
             policy = activity_extrapolation_signature(record)
-            return ("tau", backward, forward, alpha, tref, policy) if reverse else ("tau", forward, backward, alpha, tref, policy)
+            return (
+                ("tau", backward, forward, alpha, tref, policy)
+                if reverse
+                else ("tau", forward, backward, alpha, tref, policy)
+            )
         forward = float(record["a12_cal_per_mol"])
         backward = float(record["a21_cal_per_mol"])
         policy = activity_extrapolation_signature(record)
-        return ("energy", backward, forward, alpha, policy) if reverse else ("energy", forward, backward, alpha, policy)
+        return (
+            ("energy", backward, forward, alpha, policy)
+            if reverse
+            else ("energy", forward, backward, alpha, policy)
+        )
 
     if "tau12_a" in record and "tau21_a" in record:
         forward = (
@@ -2360,16 +2605,22 @@ def activity_record_signature(record: dict, model: str) -> tuple:
     forward = float(record["a12_cal_per_mol"])
     backward = float(record["a21_cal_per_mol"])
     policy = activity_extrapolation_signature(record)
-    return ("energy", backward, forward, policy) if reverse else ("energy", forward, backward, policy)
+    return (
+        "energy",
+        backward if reverse else forward,
+        forward if reverse else backward,
+        bool(record.get("use_q_prime", False)),
+        record.get("model_variant", "standard_uniquac"),
+        policy,
+    )
 
 
 def activity_signatures_equivalent(first: Any, second: Any) -> bool:
     if type(first) is not type(second):
         return False
     if isinstance(first, tuple):
-        return (
-            len(first) == len(second)
-            and all(activity_signatures_equivalent(a, b) for a, b in zip(first, second))
+        return len(first) == len(second) and all(
+            activity_signatures_equivalent(a, b) for a, b in zip(first, second)
         )
     if isinstance(first, (bool, str)):
         return first == second
@@ -2393,7 +2644,9 @@ def collapse_activity_equivalent_duplicates(
 ) -> tuple[list[dict], dict[str, Any]]:
     groups: dict[tuple[str, str], list[int]] = {}
     for index, record in enumerate(records):
-        groups.setdefault(tuple(sorted((record["cas1"], record["cas2"]))), []).append(index)
+        groups.setdefault(tuple(sorted((record["cas1"], record["cas2"]))), []).append(
+            index
+        )
 
     duplicate_indexes: set[int] = set()
     collapsed_by_first_index: dict[int, dict] = {}
@@ -2472,7 +2725,9 @@ def apply_curated_activity_disables(records: list[dict], model: str) -> int:
     return disabled
 
 
-def ipd_hydration_records(existing: list[dict], source_name: str) -> tuple[list[dict], int, dict[str, int]]:
+def ipd_hydration_records(
+    existing: list[dict], source_name: str
+) -> tuple[list[dict], int, dict[str, int]]:
     records: list[dict] = []
     by_source: dict[str, int] = {}
 
@@ -2508,8 +2763,7 @@ def ipd_hydration_records(existing: list[dict], source_name: str) -> tuple[list[
         return [], 0, {}
 
     existing_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in existing
+        tuple(sorted((record["cas1"], record["cas2"]))) for record in existing
     }
     new_pairs = 0
     for record in parse_ipd_records(model, filename):
@@ -2542,12 +2796,49 @@ def component_index(resolved: dict[str, dict]) -> dict[str, Any]:
             },
         )
         component["source_component_ids"].append(source_id)
-        component["sources"] = sorted(set(component["sources"]) | {entry.get("source", "")})
+        component["sources"] = sorted(
+            set(component["sources"]) | {entry.get("source", "")}
+        )
         component["aliases"] = sorted(
             set(component["aliases"])
             | {entry.get("name", ""), entry.get("query", "")}
             | set(entry.get("aliases", []))
         )
+
+    for filename in CURATED_WATER_NONWATER_FILES:
+        path = source_path(filename)
+        if not path.exists():
+            continue
+        payload = load_json(path)
+        curated_components = list(payload.get("uniquac_components", []))
+        for interaction in payload.get("interactions", []):
+            for side in ("1", "2"):
+                curated_components.append(
+                    {
+                        "cas": interaction.get(f"cas{side}"),
+                        "name": interaction.get(f"component{side}"),
+                    }
+                )
+        for entry in curated_components:
+            cas = str(entry.get("cas", ""))
+            name = str(entry.get("name", ""))
+            if not CAS_RE.match(cas) or not name:
+                continue
+            component = by_cas.setdefault(
+                cas,
+                {
+                    "cas": cas,
+                    "name": name,
+                    "formula": str(entry.get("formula", "")),
+                    "sources": [],
+                    "source_component_ids": [],
+                    "aliases": [],
+                },
+            )
+            component["sources"] = sorted(
+                set(component["sources"]) | {source_path(filename).relative_to(ROOT).as_posix()}
+            )
+            component["aliases"] = sorted(set(component["aliases"]) | {name})
 
     for cas, component in by_cas.items():
         for alias in component["aliases"]:
@@ -2577,10 +2868,7 @@ def build_interaction_payload(
     unresolved: list[dict],
 ) -> dict:
     records, skipped = convert_records(source_name, resolved)
-    base_pairs = {
-        tuple(sorted((record["cas1"], record["cas2"])))
-        for record in records
-    }
+    base_pairs = {tuple(sorted((record["cas1"], record["cas2"]))) for record in records}
     supplemental_records: list[dict] = []
     supplemental_new_pairs = 0
     water_organic_overlay_records = 0
@@ -2596,6 +2884,9 @@ def build_interaction_payload(
     isopropanol_water_overlay_records = 0
     isopropanol_water_overlay_replaced_records = 0
     isopropanol_water_overlay_replaced_pairs = 0
+    curated_water_nonwater_records = 0
+    curated_water_nonwater_replaced_records = 0
+    curated_water_nonwater_replaced_pairs = 0
     water_eo_models = {
         "eos_binary_interactions.json": ("PR", "SRK"),
         "nrtl_binary_interactions.json": ("NRTL",),
@@ -2630,16 +2921,20 @@ def build_interaction_payload(
     if source_name == "nrtl_binary_interactions.json":
         matrix_records, matrix_new_pairs = supplemental_nrtl_matrix_records(records)
         records.extend(matrix_records)
-        regression_records, regression_new_pairs = supplemental_water_aromatic_regression_records(
-            records,
-            "NRTL",
+        regression_records, regression_new_pairs = (
+            supplemental_water_aromatic_regression_records(
+                records,
+                "NRTL",
+            )
         )
         supplemental_records += matrix_records + regression_records
         supplemental_new_pairs += matrix_new_pairs + regression_new_pairs
         records.extend(regression_records)
-        phenolic_records, phenolic_new_pairs = supplemental_phenolic_temperature_records(
-            records,
-            "NRTL",
+        phenolic_records, phenolic_new_pairs = (
+            supplemental_phenolic_temperature_records(
+                records,
+                "NRTL",
+            )
         )
         supplemental_records += phenolic_records
         supplemental_new_pairs += phenolic_new_pairs
@@ -2665,18 +2960,24 @@ def build_interaction_payload(
         supplemental_new_pairs += butanol_new_pairs
         records.extend(butanol_records)
     elif source_name == "uniquac_binary_interactions.json":
-        extended_records, extended_new_pairs = supplemental_extended_uniquac_records(records)
+        extended_records, extended_new_pairs = supplemental_extended_uniquac_records(
+            records
+        )
         records.extend(extended_records)
-        regression_records, regression_new_pairs = supplemental_water_aromatic_regression_records(
-            records,
-            "UNIQUAC",
+        regression_records, regression_new_pairs = (
+            supplemental_water_aromatic_regression_records(
+                records,
+                "UNIQUAC",
+            )
         )
         supplemental_records += extended_records + regression_records
         supplemental_new_pairs += extended_new_pairs + regression_new_pairs
         records.extend(regression_records)
-        phenolic_records, phenolic_new_pairs = supplemental_phenolic_temperature_records(
-            records,
-            "UNIQUAC",
+        phenolic_records, phenolic_new_pairs = (
+            supplemental_phenolic_temperature_records(
+                records,
+                "UNIQUAC",
+            )
         )
         supplemental_records += phenolic_records
         supplemental_new_pairs += phenolic_new_pairs
@@ -2701,62 +3002,68 @@ def build_interaction_payload(
             supplemental_water_organic_binary_fit_records(records, acid_model)
         )
         superseded = [
-            record for record in records
+            record
+            for record in records
             if tuple(sorted((record["cas1"], record["cas2"]))) in overlay_pairs
         ]
         superseded_ids = {id(record) for record in superseded}
         water_organic_overlay_replaced_records = len(superseded)
-        water_organic_overlay_replaced_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in superseded
-        })
+        water_organic_overlay_replaced_pairs = len(
+            {tuple(sorted((record["cas1"], record["cas2"]))) for record in superseded}
+        )
         records = [record for record in records if id(record) not in superseded_ids]
         supplemental_records = [
-            record for record in supplemental_records
+            record
+            for record in supplemental_records
             if id(record) not in superseded_ids
         ]
         records[0:0] = overlay_records
         supplemental_records += overlay_records
         water_organic_overlay_records = len(overlay_records)
-        supplemental_new_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in supplemental_records
-        } - base_pairs)
+        supplemental_new_pairs = len(
+            {
+                tuple(sorted((record["cas1"], record["cas2"])))
+                for record in supplemental_records
+            }
+            - base_pairs
+        )
 
         literature_records, _literature_new_pairs, literature_pairs = (
             supplemental_literature_vle_activity_records(records, acid_model)
         )
         superseded = [
-            record for record in records
-            if tuple(sorted((record["cas1"], record["cas2"])))
-            in literature_pairs
+            record
+            for record in records
+            if tuple(sorted((record["cas1"], record["cas2"]))) in literature_pairs
         ]
         superseded_ids = {id(record) for record in superseded}
         literature_vle_overlay_replaced_records = len(superseded)
-        literature_vle_overlay_replaced_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in superseded
-        })
-        records = [
-            record for record in records if id(record) not in superseded_ids
-        ]
+        literature_vle_overlay_replaced_pairs = len(
+            {tuple(sorted((record["cas1"], record["cas2"]))) for record in superseded}
+        )
+        records = [record for record in records if id(record) not in superseded_ids]
         supplemental_records = [
-            record for record in supplemental_records
+            record
+            for record in supplemental_records
             if id(record) not in superseded_ids
         ]
         records[0:0] = literature_records
         supplemental_records += literature_records
         literature_vle_overlay_records = len(literature_records)
-        supplemental_new_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in supplemental_records
-        } - base_pairs)
+        supplemental_new_pairs = len(
+            {
+                tuple(sorted((record["cas1"], record["cas2"])))
+                for record in supplemental_records
+            }
+            - base_pairs
+        )
 
         assorted_records, _assorted_new_pairs, assorted_pairs = (
             supplemental_assorted_alcohol_ether_records(records, acid_model)
         )
         superseded = [
-            record for record in records
+            record
+            for record in records
             if tuple(sorted((record["cas1"], record["cas2"]))) in assorted_pairs
         ]
         supplemental_ids = {id(record) for record in supplemental_records}
@@ -2774,13 +3081,10 @@ def build_interaction_payload(
             )
         superseded_ids = {id(record) for record in superseded}
         assorted_overlay_replaced_records = len(superseded)
-        assorted_overlay_replaced_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in superseded
-        })
-        records = [
-            record for record in records if id(record) not in superseded_ids
-        ]
+        assorted_overlay_replaced_pairs = len(
+            {tuple(sorted((record["cas1"], record["cas2"]))) for record in superseded}
+        )
+        records = [record for record in records if id(record) not in superseded_ids]
         records[0:0] = assorted_records
         supplemental_records += assorted_records
         assorted_overlay_records = len(assorted_records)
@@ -2788,16 +3092,20 @@ def build_interaction_payload(
             record.get("fit_status") == "recommended_defensible_zero_interaction"
             for record in assorted_records
         )
-        supplemental_new_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in supplemental_records
-        } - base_pairs)
+        supplemental_new_pairs = len(
+            {
+                tuple(sorted((record["cas1"], record["cas2"])))
+                for record in supplemental_records
+            }
+            - base_pairs
+        )
 
-        ipa_records, _ipa_new_pairs, ipa_pairs = (
-            supplemental_isopropanol_water_records(records, acid_model)
+        ipa_records, _ipa_new_pairs, ipa_pairs = supplemental_isopropanol_water_records(
+            records, acid_model
         )
         superseded = [
-            record for record in records
+            record
+            for record in records
             if tuple(sorted((record["cas1"], record["cas2"]))) in ipa_pairs
         ]
         supplemental_ids = {id(record) for record in supplemental_records}
@@ -2815,20 +3123,50 @@ def build_interaction_payload(
             )
         superseded_ids = {id(record) for record in superseded}
         isopropanol_water_overlay_replaced_records = len(superseded)
-        isopropanol_water_overlay_replaced_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
-            for record in superseded
-        })
-        records = [
-            record for record in records if id(record) not in superseded_ids
-        ]
+        isopropanol_water_overlay_replaced_pairs = len(
+            {tuple(sorted((record["cas1"], record["cas2"]))) for record in superseded}
+        )
+        records = [record for record in records if id(record) not in superseded_ids]
         records[0:0] = ipa_records
         supplemental_records += ipa_records
         isopropanol_water_overlay_records = len(ipa_records)
-        supplemental_new_pairs = len({
-            tuple(sorted((record["cas1"], record["cas2"])))
+        supplemental_new_pairs = len(
+            {
+                tuple(sorted((record["cas1"], record["cas2"])))
+                for record in supplemental_records
+            }
+            - base_pairs
+        )
+
+        curated_records, _curated_new_pairs, curated_pairs = (
+            supplemental_curated_water_nonwater_records(records, acid_model)
+        )
+        superseded = [
+            record
+            for record in records
+            if tuple(sorted((record["cas1"], record["cas2"]))) in curated_pairs
+        ]
+        superseded_ids = {id(record) for record in superseded}
+        curated_water_nonwater_replaced_records = len(superseded)
+        curated_water_nonwater_replaced_pairs = len(
+            {tuple(sorted((record["cas1"], record["cas2"]))) for record in superseded}
+        )
+        records = [record for record in records if id(record) not in superseded_ids]
+        supplemental_records = [
+            record
             for record in supplemental_records
-        } - base_pairs)
+            if id(record) not in superseded_ids
+        ]
+        records[0:0] = curated_records
+        supplemental_records += curated_records
+        curated_water_nonwater_records = len(curated_records)
+        supplemental_new_pairs = len(
+            {
+                tuple(sorted((record["cas1"], record["cas2"])))
+                for record in supplemental_records
+            }
+            - base_pairs
+        )
 
     hydration_records, hydration_new_pairs, hydration_by_source = ipd_hydration_records(
         records,
@@ -2839,16 +3177,24 @@ def build_interaction_payload(
     if source_name == "eos_binary_interactions.json":
         records, dedupe_metadata = collapse_eos_duplicate_records(records)
     elif source_name == "nrtl_binary_interactions.json":
-        records, dedupe_metadata = collapse_activity_equivalent_duplicates(records, "NRTL")
-        dedupe_metadata["activity_curated_disabled_records"] = apply_curated_activity_disables(
-            records,
-            "NRTL",
+        records, dedupe_metadata = collapse_activity_equivalent_duplicates(
+            records, "NRTL"
+        )
+        dedupe_metadata["activity_curated_disabled_records"] = (
+            apply_curated_activity_disables(
+                records,
+                "NRTL",
+            )
         )
     elif source_name == "uniquac_binary_interactions.json":
-        records, dedupe_metadata = collapse_activity_equivalent_duplicates(records, "UNIQUAC")
-        dedupe_metadata["activity_curated_disabled_records"] = apply_curated_activity_disables(
-            records,
-            "UNIQUAC",
+        records, dedupe_metadata = collapse_activity_equivalent_duplicates(
+            records, "UNIQUAC"
+        )
+        dedupe_metadata["activity_curated_disabled_records"] = (
+            apply_curated_activity_disables(
+                records,
+                "UNIQUAC",
+            )
         )
 
     if source_name == "nrtl_binary_interactions.json":
@@ -2856,8 +3202,12 @@ def build_interaction_payload(
         # documented zero defaults, so omit explicit zeros from runtime JSON.
         for record in records:
             for field in (
-                "tau12_e", "tau21_e", "tau12_f", "tau21_f",
-                "tau12_g", "tau21_g",
+                "tau12_e",
+                "tau21_e",
+                "tau12_f",
+                "tau21_f",
+                "tau12_g",
+                "tau21_g",
             ):
                 if field in record and abs(float(record[field])) <= 0.0:
                     record.pop(field)
@@ -2868,8 +3218,12 @@ def build_interaction_payload(
         # default to zero. Tref matters only when an anchored term is present.
         for record in records:
             for field in (
-                "tau12_c", "tau21_c", "tau12_d", "tau21_d",
-                "tau12_e", "tau21_e",
+                "tau12_c",
+                "tau21_c",
+                "tau12_d",
+                "tau21_d",
+                "tau12_e",
+                "tau21_e",
             ):
                 if field in record and abs(float(record[field])) <= 0.0:
                     record.pop(field)
@@ -2879,9 +3233,11 @@ def build_interaction_payload(
     payload = {
         "metadata": {
             "key_basis": "CAS",
-            "source_file": f"data/source/legacy/{source_name}",
+            "source_file": source_path(source_name).relative_to(ROOT).as_posix(),
             "converted_records": len(records),
-            "base_converted_records": len(records) - len(supplemental_records) - len(hydration_records),
+            "base_converted_records": len(records)
+            - len(supplemental_records)
+            - len(hydration_records),
             "supplemental_records": len(supplemental_records),
             "supplemental_new_pairs": supplemental_new_pairs,
             "ipd_hydration_records": len(hydration_records),
@@ -2896,22 +3252,27 @@ def build_interaction_payload(
         "interactions": records,
     }
     if acid_model is not None:
-        payload["metadata"].update({
-            "water_organic_overlay_records": water_organic_overlay_records,
-            "water_organic_overlay_replaced_records": water_organic_overlay_replaced_records,
-            "water_organic_overlay_replaced_pairs": water_organic_overlay_replaced_pairs,
-            "literature_vle_overlay_records": literature_vle_overlay_records,
-            "literature_vle_overlay_replaced_records": literature_vle_overlay_replaced_records,
-            "literature_vle_overlay_replaced_pairs": literature_vle_overlay_replaced_pairs,
-            "assorted_overlay_records": assorted_overlay_records,
-            "assorted_overlay_zero_records": assorted_overlay_zero_records,
-            "assorted_overlay_replaced_records": assorted_overlay_replaced_records,
-            "assorted_overlay_replaced_pairs": assorted_overlay_replaced_pairs,
-            "isopropanol_water_overlay_records": isopropanol_water_overlay_records,
-            "isopropanol_water_overlay_replaced_records": isopropanol_water_overlay_replaced_records,
-            "isopropanol_water_overlay_replaced_pairs": isopropanol_water_overlay_replaced_pairs,
-        })
-    source_payload = load_json(LEGACY_SOURCE_DATA / source_name)
+        payload["metadata"].update(
+            {
+                "water_organic_overlay_records": water_organic_overlay_records,
+                "water_organic_overlay_replaced_records": water_organic_overlay_replaced_records,
+                "water_organic_overlay_replaced_pairs": water_organic_overlay_replaced_pairs,
+                "literature_vle_overlay_records": literature_vle_overlay_records,
+                "literature_vle_overlay_replaced_records": literature_vle_overlay_replaced_records,
+                "literature_vle_overlay_replaced_pairs": literature_vle_overlay_replaced_pairs,
+                "assorted_overlay_records": assorted_overlay_records,
+                "assorted_overlay_zero_records": assorted_overlay_zero_records,
+                "assorted_overlay_replaced_records": assorted_overlay_replaced_records,
+                "assorted_overlay_replaced_pairs": assorted_overlay_replaced_pairs,
+                "isopropanol_water_overlay_records": isopropanol_water_overlay_records,
+                "isopropanol_water_overlay_replaced_records": isopropanol_water_overlay_replaced_records,
+                "isopropanol_water_overlay_replaced_pairs": isopropanol_water_overlay_replaced_pairs,
+                "curated_water_nonwater_records": curated_water_nonwater_records,
+                "curated_water_nonwater_replaced_records": curated_water_nonwater_replaced_records,
+                "curated_water_nonwater_replaced_pairs": curated_water_nonwater_replaced_pairs,
+            }
+        )
+    source_payload = load_json(source_path(source_name))
     for key in ("source", "units"):
         if key in source_payload:
             payload["metadata"][key] = source_payload[key]
@@ -2938,9 +3299,24 @@ def main() -> None:
 
     resolved, unresolved = resolve_component_ids(args.chemicals_path)
     write_json(DATA / "interaction_component_cas_index.json", component_index(resolved))
-    write_interaction_file("eos_binary_interactions_cas.json", "eos_binary_interactions.json", resolved, unresolved)
-    write_interaction_file("nrtl_binary_interactions_cas.json", "nrtl_binary_interactions.json", resolved, unresolved)
-    write_interaction_file("uniquac_binary_interactions_cas.json", "uniquac_binary_interactions.json", resolved, unresolved)
+    write_interaction_file(
+        "eos_binary_interactions_cas.json",
+        "eos_binary_interactions.json",
+        resolved,
+        unresolved,
+    )
+    write_interaction_file(
+        "nrtl_binary_interactions_cas.json",
+        "nrtl_binary_interactions.json",
+        resolved,
+        unresolved,
+    )
+    write_interaction_file(
+        "uniquac_binary_interactions_cas.json",
+        "uniquac_binary_interactions.json",
+        resolved,
+        unresolved,
+    )
 
     unresolved_ids = {item["source_component_id"] for item in unresolved}
     skipped_total = 0

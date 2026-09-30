@@ -11,6 +11,7 @@
     "101815": "101-81-5",
     "103651": "103-65-1",
     "104518": "104-51-8",
+    "104767": "104-76-7",
     "106365": "106-36-5",
     "106423": "106-42-3",
     "106467": "106-46-7",
@@ -70,6 +71,7 @@
     "111660": "111-66-0",
     "111762": "111-76-2",
     "111842": "111-84-2",
+    "111875": "111-87-5",
     "111trichloroethane": "71-55-6",
     "1122tetrachloroethane": "79-34-5",
     "112301": "112-30-1",
@@ -106,6 +108,8 @@
     "141797": "141-79-7",
     "142825": "142-82-5",
     "142847": "142-84-7",
+    "142927": "142-92-7",
+    "143077": "143-07-7",
     "14butanediol": "110-63-4",
     "14dioxane": "123-91-1",
     "151677": "151-67-7",
@@ -121,10 +125,12 @@
     "1methyl2pyrrolidinone": "872-50-4",
     "1methylnaphthalene": "90-12-0",
     "1nitropropane": "108-03-2",
+    "1octanol": "111-87-5",
     "1octene": "111-66-0",
     "1pentanol": "71-41-0",
     "1propanol": "71-23-8",
     "2004708": "2004-70-8",
+    "20292084": "20292-08-4",
     "224trimethylpentane": "540-84-1",
     "22dimethylbutane": "75-83-2",
     "23butanediol": "513-85-9",
@@ -132,6 +138,8 @@
     "26dimethylpyridine": "108-48-5",
     "2butanol": "78-92-2",
     "2butoxyethanol": "111-76-2",
+    "2ethyl1hexanol": "104-76-7",
+    "2ethylhexyldodecanoate": "20292-08-4",
     "2hexanol": "626-93-7",
     "2methoxyethanol": "109-86-4",
     "2methyl1propanol": "78-83-1",
@@ -162,6 +170,7 @@
     "544763": "544-76-3",
     "56235": "56-23-5",
     "563804": "563-80-4",
+    "56815": "56-81-5",
     "57556": "57-55-6",
     "590192": "590-19-2",
     "592416": "592-41-6",
@@ -330,6 +339,7 @@
     "diphenylmethane": "101-81-5",
     "dipropylamine": "142-84-7",
     "dipropylether": "111-43-3",
+    "dodecanoicacid": "143-07-7",
     "etano": "74-84-0",
     "etanol": "64-17-5",
     "ethane": "74-84-0",
@@ -346,6 +356,7 @@
     "fluorobenzene": "462-06-6",
     "formamide": "75-12-7",
     "furfural": "98-01-1",
+    "glycerol": "56-81-5",
     "h2": "1333-74-0",
     "h2o": "7732-18-5",
     "halothane": "151-67-7",
@@ -356,6 +367,7 @@
     "hexafluorobenzene": "392-56-3",
     "hexamethyldisiloxane": "107-46-0",
     "hexane": "110-54-3",
+    "hexylacetate": "142-92-7",
     "hydrogen": "1333-74-0",
     "hydrogensulfide": "7783-06-4",
     "ibutano": "75-28-5",
@@ -363,6 +375,7 @@
     "ipentano": "78-78-4",
     "isoamylacetate": "123-92-2",
     "isobutane": "75-28-5",
+    "isobutanol": "78-83-1",
     "isobutene": "115-11-7",
     "isopentane": "78-78-4",
     "isopentylacetate": "123-92-2",
@@ -626,6 +639,19 @@
         "perry_properties.json"
       ]
     },
+    "104-76-7": {
+      "aliases": [
+        "2-ethyl-1-hexanol"
+      ],
+      "cas": "104-76-7",
+      "formula": "C8H18O",
+      "name": "2-ethyl-1-hexanol",
+      "source_component_ids": [],
+      "sources": [
+        "data/source/activity_fitting/fendu_2025_activity_refits.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
+      ]
+    },
     "106-36-5": {
       "aliases": [
         "Propylpropionate",
@@ -823,7 +849,8 @@
     },
     "107-21-1": {
       "aliases": [
-        "Ethylene glycol"
+        "Ethylene glycol",
+        "ethylene glycol"
       ],
       "cas": "107-21-1",
       "formula": "",
@@ -832,6 +859,7 @@
         "1201"
       ],
       "sources": [
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
         "perry_properties.json"
       ]
     },
@@ -1015,7 +1043,8 @@
     "108-88-3": {
       "aliases": [
         "Toluene",
-        "Tolueno"
+        "Tolueno",
+        "toluene"
       ],
       "cas": "108-88-3",
       "formula": "",
@@ -1024,7 +1053,8 @@
         "502"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/moreau_2012_pentanol_toluene_joint_fit.json"
       ]
     },
     "108-89-4": {
@@ -1282,6 +1312,7 @@
       "aliases": [
         "C6H14",
         "N-hexane",
+        "n-hexane",
         "nHexano"
       ],
       "cas": "110-54-3",
@@ -1291,7 +1322,9 @@
         "11"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/moreau_ovejero_2016_2007_pentanol_hexane_joint_fit.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "110-63-4": {
@@ -1310,7 +1343,8 @@
     },
     "110-82-7": {
       "aliases": [
-        "Cyclohexane"
+        "Cyclohexane",
+        "cyclohexane"
       ],
       "cas": "110-82-7",
       "formula": "",
@@ -1319,7 +1353,9 @@
         "137"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/moreau_ovejero_pentanol_cyclohexane_joint_fit.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "110-83-8": {
@@ -1407,6 +1443,7 @@
         "1114"
       ],
       "sources": [
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
         "perry_properties.json"
       ]
     },
@@ -1500,6 +1537,18 @@
       ],
       "sources": [
         "perry_properties.json"
+      ]
+    },
+    "111-87-5": {
+      "aliases": [
+        "1-octanol"
+      ],
+      "cas": "111-87-5",
+      "formula": "C8H18O",
+      "name": "1-octanol",
+      "source_component_ids": [],
+      "sources": [
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "112-30-1": {
@@ -1876,6 +1925,30 @@
         "perry_properties.json"
       ]
     },
+    "142-92-7": {
+      "aliases": [
+        "hexyl acetate"
+      ],
+      "cas": "142-92-7",
+      "formula": "C8H16O2",
+      "name": "hexyl acetate",
+      "source_component_ids": [],
+      "sources": [
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
+      ]
+    },
+    "143-07-7": {
+      "aliases": [
+        "dodecanoic acid"
+      ],
+      "cas": "143-07-7",
+      "formula": "C12H24O2",
+      "name": "dodecanoic acid",
+      "source_component_ids": [],
+      "sources": [
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
+      ]
+    },
     "151-67-7": {
       "aliases": [
         "Halothane",
@@ -1932,6 +2005,18 @@
       ],
       "sources": [
         "perry_table_2_10_vapor_pressure.json"
+      ]
+    },
+    "20292-08-4": {
+      "aliases": [
+        "2-ethylhexyl dodecanoate"
+      ],
+      "cas": "20292-08-4",
+      "formula": "C20H40O2",
+      "name": "2-ethylhexyl dodecanoate",
+      "source_component_ids": [],
+      "sources": [
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "392-56-3": {
@@ -2101,6 +2186,18 @@
         "chemicals.json"
       ]
     },
+    "56-81-5": {
+      "aliases": [
+        "glycerol"
+      ],
+      "cas": "56-81-5",
+      "formula": "C3H8O3",
+      "name": "glycerol",
+      "source_component_ids": [],
+      "sources": [
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json"
+      ]
+    },
     "563-80-4": {
       "aliases": [
         "Methyl isopropyl ketone",
@@ -2238,7 +2335,8 @@
       "aliases": [
         "C2H5OH",
         "Etanol",
-        "Ethanol"
+        "Ethanol",
+        "ethanol"
       ],
       "cas": "64-17-5",
       "formula": "",
@@ -2247,7 +2345,9 @@
         "1102"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "64-19-7": {
@@ -2302,7 +2402,8 @@
     },
     "67-64-1": {
       "aliases": [
-        "Acetone"
+        "Acetone",
+        "acetone"
       ],
       "cas": "67-64-1",
       "formula": "",
@@ -2311,7 +2412,8 @@
         "1051"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "67-66-3": {
@@ -2372,6 +2474,7 @@
       ],
       "sources": [
         "chemicals.json",
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
         "manual_record_identity_override"
       ]
     },
@@ -2387,12 +2490,16 @@
         "1105"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
+        "data/source/activity_fitting/fendu_2025_activity_refits.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "71-41-0": {
       "aliases": [
-        "1-Pentanol"
+        "1-Pentanol",
+        "1-pentanol"
       ],
       "cas": "71-41-0",
       "formula": "",
@@ -2401,6 +2508,11 @@
         "1109"
       ],
       "sources": [
+        "data/source/activity_fitting/mohsen_nia_2010_pentanol_propionic_association.json",
+        "data/source/activity_fitting/moreau_2012_pentanol_toluene_joint_fit.json",
+        "data/source/activity_fitting/moreau_ovejero_2016_2007_pentanol_hexane_joint_fit.json",
+        "data/source/activity_fitting/moreau_ovejero_pentanol_cyclohexane_joint_fit.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
         "perry_properties.json"
       ]
     },
@@ -3017,7 +3129,8 @@
       "aliases": [
         "Agua",
         "H2O",
-        "Water"
+        "Water",
+        "water"
       ],
       "cas": "7732-18-5",
       "formula": "",
@@ -3026,7 +3139,9 @@
         "1921"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json"
       ]
     },
     "7782-44-7": {
@@ -3094,7 +3209,8 @@
     },
     "78-83-1": {
       "aliases": [
-        "2-methyl-1-propanol"
+        "2-methyl-1-propanol",
+        "isobutanol"
       ],
       "cas": "78-83-1",
       "formula": "",
@@ -3103,6 +3219,9 @@
         "1106"
       ],
       "sources": [
+        "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
+        "data/source/activity_fitting/fendu_2025_activity_refits.json",
+        "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
         "perry_table_2_10_vapor_pressure.json"
       ]
     },
@@ -3170,7 +3289,8 @@
     },
     "79-09-4": {
       "aliases": [
-        "Propionic acid"
+        "Propionic acid",
+        "propionic acid"
       ],
       "cas": "79-09-4",
       "formula": "",
@@ -3179,7 +3299,8 @@
         "1253"
       ],
       "sources": [
-        "chemicals.json"
+        "chemicals.json",
+        "data/source/activity_fitting/mohsen_nia_2010_pentanol_propionic_association.json"
       ]
     },
     "79-10-7": {

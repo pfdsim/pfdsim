@@ -1,0 +1,711 @@
+{
+  "schema_version": "1.0",
+  "Tref_K": 298.15,
+  "R_J_mol_K": 8.31446261815324,
+  "forms": {
+    "NRTL": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+    "UNIQUAC": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2"
+  },
+  "conventions": {
+    "component_order": "Every pair is ordered component_1, component_2. Coefficients 12 mean 1->2 and 21 mean 2->1.",
+    "zero_terms": "Terms not explicitly needed by the selected fit are set to 0.0.",
+    "uniquac_sign": "Coefficients are already normalized to the ln(tau_ij) form shown above; do not apply an additional minus sign.",
+    "nrtl_units": "All NRTL coefficients are dimensionless except d_ij [K], f_ij [1/K], and g_ij [1/K^2].",
+    "uniquac_units": "All UNIQUAC coefficients are dimensionless except b_ij [K], d_ij [1/K], and e_ij [1/K^2]."
+  },
+  "pairs": [
+    {
+      "component_1": {
+        "name": "ethanol",
+        "cas": "64-17-5"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.2,
+        "12": {
+          "c": -4.25741709,
+          "d": 1707.57939642,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 2.37948619,
+          "d": -706.23601675,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 1.54977589,
+          "b": -434.9661965,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": -1.91357655,
+          "b": 396.45785751,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Zaoui-Djelloul-Daouadji et al.",
+        "year": 2014,
+        "journal": "Journal of Chemical Thermodynamics",
+        "doi": "10.1016/j.jct.2013.09.046",
+        "basis": "Direct binary vapor-pressure data; Barker-reduced fourth-order Redlich-Kister GE/RT surface."
+      },
+      "selected_fit": "refit_from_binary_RK_surface",
+      "fit_details": {
+        "T_range_K": [
+          273.15,
+          353.15
+        ],
+        "NRTL_alpha_fixed_to_source": 0.2,
+        "NRTL_GE_over_RT_RMSE": 0.01001679,
+        "UNIQUAC_GE_over_RT_RMSE": 0.00969006,
+        "UNIQUAC_rq_used": {
+          "ethanol": {
+            "r": 2.5755,
+            "q": 2.588
+          },
+          "glycerol": {
+            "r": 4.7957,
+            "q": 4.908
+          }
+        }
+      },
+      "confidence": "high",
+      "screening_note": "Preferred over the narrower 2015 two-temperature fit. Zaoui et al. cover nine temperatures and report agreement with independent Coelho/Veneral data. Their printed NRTL/UNIQUAC coefficient table has an awkward unit/index convention, so the simulator coefficients here were refit directly to the paper's binary Barker/Redlich-Kister GE/RT surface rather than risking a unit/sign transcription error."
+    },
+    {
+      "component_1": {
+        "name": "water",
+        "cas": "7732-18-5"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.45,
+        "12": {
+          "c": -0.39654173,
+          "d": -13.7743186,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.53633085,
+          "d": -264.01450463,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.21955572,
+          "b": 102.28833857,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": -0.51400189,
+          "b": -9.95096733,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Zaoui-Djelloul-Daouadji et al.",
+        "year": 2014,
+        "journal": "Journal of Chemical Thermodynamics",
+        "doi": "10.1016/j.jct.2013.09.046",
+        "basis": "Direct binary vapor-pressure data; Barker-reduced fourth-order Redlich-Kister GE/RT surface."
+      },
+      "selected_fit": "refit_from_binary_RK_surface",
+      "fit_details": {
+        "T_range_K": [
+          273.15,
+          363.15
+        ],
+        "NRTL_alpha_fixed_to_source": 0.45,
+        "NRTL_GE_over_RT_RMSE": 0.00579604,
+        "UNIQUAC_GE_over_RT_RMSE": 0.01815286,
+        "UNIQUAC_rq_used": {
+          "water": {
+            "r": 0.92,
+            "q": 1.4
+          },
+          "glycerol": {
+            "r": 4.7957,
+            "q": 4.908
+          }
+        }
+      },
+      "confidence": "high",
+      "screening_note": "Broad ten-temperature direct binary dataset and agreement with older independent binary measurements. The single-temperature glycerol-water fit appearing in Mustain et al. (2022) was retained only as a cross-check, not as the default."
+    },
+    {
+      "component_1": {
+        "name": "methanol",
+        "cas": "67-56-1"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.25,
+        "12": {
+          "c": 0.0,
+          "d": 586.95314708,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": -383.89733006,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": 7.97405714,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": -119.81532009,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Wiguno et al.",
+        "year": 2016,
+        "journal": "Indonesian Journal of Chemistry",
+        "basis": "Direct isothermal binary P-x data fitted by Barker's method."
+      },
+      "selected_fit": "published_fit_normalized",
+      "fit_details": {
+        "T_range_K": [
+          313.15,
+          323.15
+        ],
+        "published_pressure_AAD_percent": {
+          "NRTL": 3.2,
+          "UNIQUAC": 3.5,
+          "Raoult": 3.7
+        }
+      },
+      "confidence": "medium",
+      "screening_note": "The system is nearly ideal in this range, so the BIPs are only weakly identifiable. Broader low-pressure binary data exist in the literature, but the accessible papers do not provide a cleaner directly verifiable NRTL+UNIQUAC parameter pair than this set."
+    },
+    {
+      "component_1": {
+        "name": "1-propanol",
+        "cas": "71-23-8"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.25,
+        "12": {
+          "c": 0.0,
+          "d": 378.50912855,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": -293.53670972,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": -240.85741821,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": 174.40694205,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Wiguno et al.",
+        "year": 2016,
+        "journal": "Indonesian Journal of Chemistry",
+        "basis": "Direct isothermal binary P-x data fitted by Barker's method."
+      },
+      "selected_fit": "published_fit_normalized_provisional",
+      "fit_details": {
+        "T_range_K": [
+          343.15,
+          363.15
+        ],
+        "published_pressure_AAD_percent": {
+          "NRTL": 3.0,
+          "UNIQUAC": 2.9,
+          "Raoult": 3.1
+        }
+      },
+      "confidence": "low-medium",
+      "screening_note": "Keep this as a range-limited default only. Batutah et al. (2020) provide thermodynamically consistent direct binary T-x-y data at 16.0 and 101.3 kPa, but their independently fitted BIPs change strongly with pressure/temperature and disagree materially with the 2016 P-x data. A forced global c+d/T refit degraded both datasets, so no synthetic 'compromise' fit was accepted."
+    },
+    {
+      "component_1": {
+        "name": "2-propanol",
+        "cas": "67-63-0"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.2,
+        "12": {
+          "c": -39.3952,
+          "d": 13487.42,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 22.1856,
+          "d": -7328.31,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 9.01,
+          "b": -2968.2,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": -8.0588,
+          "b": 2532.16,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Wibawa et al.",
+        "year": 2015,
+        "journal": "Journal of Chemical & Engineering Data",
+        "doi": "10.1021/je501019y",
+        "basis": "Direct binary isothermal P-x data; source equations already use tau=A+B/T (NRTL) and ln(tau)=A+B/T (UNIQUAC)."
+      },
+      "selected_fit": "published_temperature_dependent_fit",
+      "fit_details": {
+        "T_range_K": [
+          333.15,
+          343.15
+        ],
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.3,
+          "UNIQUAC": 1.3
+        }
+      },
+      "confidence": "medium",
+      "screening_note": "Best fully numerical NRTL+UNIQUAC set in the supplied papers. A broader 2016 direct binary IPA+glycerol study at four pressures exists and may ultimately supersede this set, but its numerical BIP table was not accessible in the screened sources, so it was not guessed or reconstructed."
+    },
+    {
+      "component_1": {
+        "name": "1-butanol",
+        "cas": "71-36-3"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.47,
+        "12": {
+          "c": 0.0,
+          "d": 458.40605401,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": 382.61041586,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": 6.53078888,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": -161.09279234,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Mustain et al.",
+        "year": 2022,
+        "journal": "Journal of Chemical & Engineering Data",
+        "doi": "10.1021/acs.jced.1c00937",
+        "basis": "Direct binary bubble-pressure data fitted by Barker's method."
+      },
+      "selected_fit": "published_fit_normalized",
+      "fit_details": {
+        "T_range_K": [
+          333.15,
+          343.15
+        ],
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.6,
+          "UNIQUAC": 2.2
+        },
+        "ternary_prediction_AAD_percent": {
+          "NRTL": 1.8,
+          "UNIQUAC": 2.9
+        }
+      },
+      "confidence": "medium-high",
+      "screening_note": "Passes the user's ternary rule: the ternary data were predicted afterward using independently fitted constituent-binary parameters; they were not used to create the glycerol BIPs."
+    },
+    {
+      "component_1": {
+        "name": "2-methyl-1-propanol",
+        "common_name": "isobutanol",
+        "cas": "78-83-1"
+      },
+      "component_2": {
+        "name": "glycerol",
+        "cas": "56-81-5"
+      },
+      "NRTL": {
+        "alpha": 0.47,
+        "12": {
+          "c": 0.0,
+          "d": 639.93311948,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": 425.8483275,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": -41.86680679,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": -116.59202098,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Mustain et al.",
+        "year": 2022,
+        "journal": "Journal of Chemical & Engineering Data",
+        "doi": "10.1021/acs.jced.1c00937",
+        "basis": "Direct binary bubble-pressure data fitted by Barker's method."
+      },
+      "selected_fit": "published_fit_normalized",
+      "fit_details": {
+        "T_range_K": [
+          313.15,
+          323.15
+        ],
+        "published_pressure_AAD_percent": {
+          "NRTL": 1.6,
+          "UNIQUAC": 3.0
+        },
+        "ternary_prediction_AAD_percent": {
+          "NRTL": 2.2,
+          "UNIQUAC": 1.7
+        }
+      },
+      "confidence": "medium-high",
+      "screening_note": "Direct binary regression; ternary measurements were only used afterward as an external prediction check."
+    },
+    {
+      "component_1": {
+        "name": "ethanol",
+        "cas": "64-17-5"
+      },
+      "component_2": {
+        "name": "ethylene glycol",
+        "abbreviation": "EG",
+        "cas": "107-21-1"
+      },
+      "NRTL": {
+        "alpha": 0.3,
+        "12": {
+          "c": 0.0,
+          "d": 149.58032252,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": 98.42848992,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": -24.67146819,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": -95.02237683,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Pla-Franco et al. (re-correlation of Kamihama et al. binary VLE)",
+        "year": 2013,
+        "journal": "Fluid Phase Equilibria",
+        "doi": "10.1016/j.fluid.2012.12.022",
+        "basis": "Table 7 re-correlation of binary Kamihama VLE with nonideal vapor treatment."
+      },
+      "selected_fit": "published_binary_recorrelation_normalized",
+      "fit_details": {
+        "P_kPa": 101.3,
+        "published_binary_AADT_K": {
+          "NRTL": 0.12,
+          "UNIQUAC": 0.13
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.0008,
+          "UNIQUAC": 0.0008
+        }
+      },
+      "confidence": "high",
+      "screening_note": "Only Pla-Franco Table 7 is used. The corrected Table 6 is intentionally excluded because those parameters came from the ternary-system correlation."
+    },
+    {
+      "component_1": {
+        "name": "water",
+        "cas": "7732-18-5"
+      },
+      "component_2": {
+        "name": "ethylene glycol",
+        "abbreviation": "EG",
+        "cas": "107-21-1"
+      },
+      "NRTL": {
+        "alpha": 0.3,
+        "12": {
+          "c": 0.0,
+          "d": -225.96890338,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": 258.2668416,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": -39.18882253,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": 152.25277425,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Pla-Franco et al.",
+        "year": 2015,
+        "journal": "Chemical Engineering and Processing: Process Intensification",
+        "doi": "10.1016/j.cep.2015.03.007",
+        "basis": "Direct thermodynamically consistent binary VLE at 101.3 kPa."
+      },
+      "selected_fit": "published_binary_fit_normalized",
+      "fit_details": {
+        "P_kPa": 101.3,
+        "published_binary_AADT_K": {
+          "NRTL": 0.15,
+          "UNIQUAC": 0.58
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.0036,
+          "UNIQUAC": 0.0036
+        }
+      },
+      "confidence": "high",
+      "screening_note": "Preferred over the older Kamihama re-correlation because this is a newer direct binary measurement; the paper reports good agreement with the older water+EG literature."
+    },
+    {
+      "component_1": {
+        "name": "1-propanol",
+        "cas": "71-23-8"
+      },
+      "component_2": {
+        "name": "ethylene glycol",
+        "abbreviation": "EG",
+        "cas": "107-21-1"
+      },
+      "NRTL": {
+        "alpha": 0.3,
+        "12": {
+          "c": 0.0,
+          "d": -11.95038147,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        },
+        "21": {
+          "c": 0.0,
+          "d": 413.21407742,
+          "e": 0.0,
+          "f": 0.0,
+          "g": 0.0
+        }
+      },
+      "UNIQUAC": {
+        "12": {
+          "a": 0.0,
+          "b": -10.55890248,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        },
+        "21": {
+          "a": 0.0,
+          "b": -159.45684777,
+          "c": 0.0,
+          "d": 0.0,
+          "e": 0.0
+        }
+      },
+      "source": {
+        "authors": "Pla-Franco et al.",
+        "year": 2015,
+        "journal": "Chemical Engineering and Processing: Process Intensification",
+        "doi": "10.1016/j.cep.2015.03.007",
+        "basis": "Direct thermodynamically consistent binary VLE at 101.3 kPa."
+      },
+      "selected_fit": "published_binary_fit_normalized",
+      "fit_details": {
+        "P_kPa": 101.3,
+        "published_binary_AADT_K": {
+          "NRTL": 0.22,
+          "UNIQUAC": 0.31
+        },
+        "published_binary_AAD_y": {
+          "NRTL": 0.006,
+          "UNIQUAC": 0.0064
+        }
+      },
+      "confidence": "high",
+      "screening_note": "Direct binary fit. The ternary 1-propanol+water+EG data were predicted afterward from constituent binary parameters, so this pair satisfies the user's binary-only rule."
+    }
+  ],
+  "screened_not_in_default_set": [
+    {
+      "pair": "acetonitrile + ethylene glycol",
+      "status": "qualifies_but_numeric_BIP_not_recovered",
+      "model_availability": "NRTL reported; UNIQUAC not reported",
+      "source": "Qian et al., J. Chem. Thermodyn. 2013, 67, 241-246, DOI 10.1016/j.jct.2013.08.011",
+      "reason": "The binary experiment and binary-only regression clearly qualify, but the accessible ThermoML/indexed copies did not expose the numerical NRTL parameter table. It is omitted rather than guessed."
+    },
+    {
+      "pair": "ethylene glycol + glycerol",
+      "status": "no_vetted_binary_NRTL_or_UNIQUAC_fit_found",
+      "reason": "Searches returned multicomponent/LLE correlations where EG-glycerol interactions were not independently determined from this binary pair. Those were excluded under the user's rule."
+    },
+    {
+      "pair": "2-propanol + glycerol (Soujanya et al. 2016)",
+      "status": "potential_upgrade",
+      "source": "Fluid Phase Equilibria 409 (2016) 327-333, DOI 10.1016/j.fluid.2015.09.052",
+      "reason": "This later paper measured the binary directly at 53.33, 66.66, 79.99, and 94.93 kPa and correlated NRTL/UNIQUAC. It is broader than Wibawa 2015, but its numerical BIP table was not available in the accessible sources, so Wibawa remains the current numerical default."
+    },
+    {
+      "pair": "Pla-Franco 2013 corrected Table 6 glycerol/EG parameters",
+      "status": "excluded",
+      "reason": "Those parameters were obtained in the ternary-system correlation. Only the separate Table 7 re-correlation of binary Kamihama data is accepted."
+    },
+    {
+      "pair": "1-propanol + glycerol Batutah et al. 2020 pressure-specific fits",
+      "status": "excluded_as_global_default",
+      "reason": "The direct binary data are useful, but separately regressed parameters differ strongly between 16.0 and 101.3 kPa and conflict with the 2016 isothermal P-x dataset; a single portable temperature-only BIP set is not justified from them."
+    }
+  ]
+}

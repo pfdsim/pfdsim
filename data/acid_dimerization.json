@@ -19,7 +19,7 @@
       ],
       "delta_S_residual": 0.0,
       "delta_H_residual": 0.0,
-      "source": "Miyamoto et al., Journal of Chemical & Engineering Data 46 (2001) 405-409, DOI 10.1021/je000205n; assessed in data/source/three_acids_vle.json",
+      "source": "Miyamoto et al., Journal of Chemical & Engineering Data 46 (2001) 405-409, DOI 10.1021/je000205n; assessed in data/source/activity_fitting/three_acids_vle.json",
       "note": "Binary VLE supports statistical acetic-acid/propionic-acid cross-association without a residual correction."
     },
     {
@@ -29,7 +29,7 @@
       ],
       "delta_S_residual": 0.0,
       "delta_H_residual": 0.0,
-      "source": "Linek and Wichterle, Collection of Czechoslovak Chemical Communications 38 (1973) 1853-1857; assessed in data/source/three_acids_vle.json",
+      "source": "Linek and Wichterle, Collection of Czechoslovak Chemical Communications 38 (1973) 1853-1857; assessed in data/source/activity_fitting/three_acids_vle.json",
       "note": "Binary VLE supports statistical acetic-acid/acrylic-acid cross-association without a residual correction."
     },
     {
@@ -39,7 +39,7 @@
       ],
       "delta_S_residual": 0.0,
       "delta_H_residual": 0.0,
-      "source": "Propionic-acid/acrylic-acid literature assessment in data/source/three_acids_vle.json",
+      "source": "Propionic-acid/acrylic-acid literature assessment in data/source/activity_fitting/three_acids_vle.json",
       "note": "Normalized binary VLE strongly supports statistical propionic-acid/acrylic-acid cross-association; any residual correction is below the experimental resolution."
     }
   ],

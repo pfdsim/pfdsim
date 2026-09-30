@@ -6,14 +6,15 @@ from dataclasses import dataclass
 
 import numpy as np
 
-if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .physical_constants import R_J_MOL_K
 else:
     from physical_constants import R_J_MOL_K
 
 try:
     from numba import njit, typeof
-    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+
+    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
         from .compiled_cache import numba_cached
     else:
         from compiled_cache import numba_cached
@@ -67,9 +68,19 @@ class CompiledNRTLBackend:
             return
         composition = np.zeros(len(self.components), dtype=np.float64)
         args = (
-            composition, 298.15, self.tau_mode, self.tau_c, self.tau_d,
-            self.tau_e, self.tau_f, self.tau_g, self.tau_tref, self.tau_energy, self.alpha,
-            self.interaction_tmin, self.interaction_tmax,
+            composition,
+            298.15,
+            self.tau_mode,
+            self.tau_c,
+            self.tau_d,
+            self.tau_e,
+            self.tau_f,
+            self.tau_g,
+            self.tau_tref,
+            self.tau_energy,
+            self.alpha,
+            self.interaction_tmin,
+            self.interaction_tmax,
         )
         _nrtl_activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
@@ -79,7 +90,9 @@ class CompiledNRTLBackend:
         )
         self.compilation_complete = True
 
-    def activity_coefficients(self, x: list[float] | np.ndarray, T: float) -> list[float]:
+    def activity_coefficients(
+        self, x: list[float] | np.ndarray, T: float
+    ) -> list[float]:
         x_array = np.asarray(x, dtype=np.float64)
         return _nrtl_activity_coefficients_numba(
             x_array,
@@ -99,9 +112,13 @@ class CompiledNRTLBackend:
 
     def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
         x_array = np.asarray(x, dtype=np.float64)
-        return float(_nrtl_excess_enthalpy_numba(
-            x_array, float(T), *self.enthalpy_parameters(),
-        ))
+        return float(
+            _nrtl_excess_enthalpy_numba(
+                x_array,
+                float(T),
+                *self.enthalpy_parameters(),
+            )
+        )
 
     def enthalpy_parameters(self):
         """Shared numeric arguments for scalar and fused caloric kernels."""
@@ -149,18 +166,36 @@ class CompiledUNIQUACBackend:
         params = thermo._uniquac_parameter_matrices()
         backend = cls(
             components=selected_components,
-            r=np.asarray([thermo.r[comp] for comp in selected_components], dtype=np.float64),
-            q=np.asarray([thermo.q[comp] for comp in selected_components], dtype=np.float64),
+            r=np.asarray(params["r_combinatorial"], dtype=np.float64)[index_array],
+            q=np.asarray(params["q_combinatorial"], dtype=np.float64)[index_array],
             q_residual=np.asarray(params["q_residual"], dtype=np.float64)[index_array],
-            tau_mode=np.asarray(params["tau_mode"], dtype=np.int64)[index_array, :][:, index_array],
-            tau_a=np.asarray(params["tau_a"], dtype=np.float64)[index_array, :][:, index_array],
-            tau_b=np.asarray(params["tau_b"], dtype=np.float64)[index_array, :][:, index_array],
-            tau_c=np.asarray(params["tau_c"], dtype=np.float64)[index_array, :][:, index_array],
-            tau_d=np.asarray(params["tau_d"], dtype=np.float64)[index_array, :][:, index_array],
-            tau_e=np.asarray(params["tau_e"], dtype=np.float64)[index_array, :][:, index_array],
-            tau_tref=np.asarray(params["tau_tref"], dtype=np.float64)[index_array, :][:, index_array],
-            interaction_tmin=np.asarray(params["interaction_tmin"], dtype=np.float64)[index_array, :][:, index_array],
-            interaction_tmax=np.asarray(params["interaction_tmax"], dtype=np.float64)[index_array, :][:, index_array],
+            tau_mode=np.asarray(params["tau_mode"], dtype=np.int64)[index_array, :][
+                :, index_array
+            ],
+            tau_a=np.asarray(params["tau_a"], dtype=np.float64)[index_array, :][
+                :, index_array
+            ],
+            tau_b=np.asarray(params["tau_b"], dtype=np.float64)[index_array, :][
+                :, index_array
+            ],
+            tau_c=np.asarray(params["tau_c"], dtype=np.float64)[index_array, :][
+                :, index_array
+            ],
+            tau_d=np.asarray(params["tau_d"], dtype=np.float64)[index_array, :][
+                :, index_array
+            ],
+            tau_e=np.asarray(params["tau_e"], dtype=np.float64)[index_array, :][
+                :, index_array
+            ],
+            tau_tref=np.asarray(params["tau_tref"], dtype=np.float64)[index_array, :][
+                :, index_array
+            ],
+            interaction_tmin=np.asarray(params["interaction_tmin"], dtype=np.float64)[
+                index_array, :
+            ][:, index_array],
+            interaction_tmax=np.asarray(params["interaction_tmax"], dtype=np.float64)[
+                index_array, :
+            ][:, index_array],
         )
         backend.compile_kernels()
         return backend
@@ -170,10 +205,20 @@ class CompiledUNIQUACBackend:
             return
         composition = np.zeros(len(self.components), dtype=np.float64)
         args = (
-            composition, 298.15, self.r, self.q, self.q_residual,
-            self.tau_mode, self.tau_a, self.tau_b, self.tau_c,
-            self.tau_d, self.tau_e, self.tau_tref,
-            self.interaction_tmin, self.interaction_tmax,
+            composition,
+            298.15,
+            self.r,
+            self.q,
+            self.q_residual,
+            self.tau_mode,
+            self.tau_a,
+            self.tau_b,
+            self.tau_c,
+            self.tau_d,
+            self.tau_e,
+            self.tau_tref,
+            self.interaction_tmin,
+            self.interaction_tmax,
         )
         _uniquac_activity_coefficients_numba.compile(
             tuple(typeof(argument) for argument in args)
@@ -183,7 +228,9 @@ class CompiledUNIQUACBackend:
         )
         self.compilation_complete = True
 
-    def activity_coefficients(self, x: list[float] | np.ndarray, T: float) -> list[float]:
+    def activity_coefficients(
+        self, x: list[float] | np.ndarray, T: float
+    ) -> list[float]:
         x_array = np.asarray(x, dtype=np.float64)
         return _uniquac_activity_coefficients_numba(
             x_array,
@@ -204,9 +251,13 @@ class CompiledUNIQUACBackend:
 
     def excess_enthalpy(self, x: list[float] | np.ndarray, T: float) -> float:
         x_array = np.asarray(x, dtype=np.float64)
-        return float(_uniquac_excess_enthalpy_numba(
-            x_array, float(T), *self.enthalpy_parameters(),
-        ))
+        return float(
+            _uniquac_excess_enthalpy_numba(
+                x_array,
+                float(T),
+                *self.enthalpy_parameters(),
+            )
+        )
 
     def enthalpy_parameters(self):
         """Shared numeric arguments for scalar and fused caloric kernels."""
@@ -227,13 +278,23 @@ class CompiledUNIQUACBackend:
 
 
 if njit is not None:
-
     _cached_kernel = numba_cached(njit)
 
     @_cached_kernel
     def _nrtl_activity_coefficients_numba(
-        x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref, tau_energy, alpha,
-        interaction_tmin, interaction_tmax,
+        x,
+        T,
+        tau_mode,
+        tau_c,
+        tau_d,
+        tau_e,
+        tau_f,
+        tau_g,
+        tau_tref,
+        tau_energy,
+        alpha,
+        interaction_tmin,
+        interaction_tmax,
     ):
         n = x.shape[0]
         out = np.ones(n, dtype=np.float64)
@@ -259,24 +320,59 @@ if njit is not None:
                     tau[i, j] = 0.0
                     G[i, j] = 1.0
                     continue
-                mode = tau_mode[i, j]
+                encoded_mode = tau_mode[i, j]
+                mode = encoded_mode % 10
+                extrapolation_mode = encoded_mode // 10
                 interaction_T = T
-                if interaction_T < interaction_tmin[i, j]:
+                if extrapolation_mode == 1 and interaction_T < interaction_tmin[i, j]:
                     interaction_T = interaction_tmin[i, j]
-                elif interaction_T > interaction_tmax[i, j]:
+                elif extrapolation_mode == 1 and interaction_T > interaction_tmax[i, j]:
                     interaction_T = interaction_tmax[i, j]
                 if mode == 1:
                     tref = tau_tref[i, j]
+                    boundary = interaction_T
+                    if extrapolation_mode >= 2:
+                        if T < interaction_tmin[i, j]:
+                            boundary = interaction_tmin[i, j]
+                        elif T > interaction_tmax[i, j]:
+                            boundary = interaction_tmax[i, j]
                     tau_ij = (
                         tau_c[i, j]
-                        + tau_d[i, j] / interaction_T
-                        + tau_e[i, j] * (
-                            (tref - interaction_T) / interaction_T
-                            + np.log(interaction_T / tref)
-                        )
-                        + tau_f[i, j] * interaction_T
-                        + tau_g[i, j] * interaction_T * interaction_T
+                        + tau_d[i, j] / boundary
+                        + tau_e[i, j]
+                        * ((tref - boundary) / boundary + np.log(boundary / tref))
+                        + tau_f[i, j] * boundary
+                        + tau_g[i, j] * boundary * boundary
                     )
+                    if extrapolation_mode >= 2 and boundary != T:
+                        derivative = (
+                            -tau_d[i, j] / (boundary * boundary)
+                            + tau_e[i, j] * (boundary - tref) / (boundary * boundary)
+                            + tau_f[i, j]
+                            + 2.0 * tau_g[i, j] * boundary
+                        )
+                        if extrapolation_mode == 2:
+                            outside_b = -boundary * boundary * derivative
+                            outside_a = tau_ij + boundary * derivative
+                            tau_ij = outside_a + outside_b / T
+                        elif extrapolation_mode == 3:
+                            outside_b = boundary * (
+                                2.0 * tau_ij + boundary * derivative
+                            )
+                            outside_c = (
+                                -boundary * boundary * (tau_ij + boundary * derivative)
+                            )
+                            tau_ij = outside_b / T + outside_c / (T * T)
+                        else:
+                            outside_c = (
+                                boundary
+                                * boundary
+                                * (3.0 * tau_ij + boundary * derivative)
+                            )
+                            outside_d = -(boundary**3) * (
+                                2.0 * tau_ij + boundary * derivative
+                            )
+                            tau_ij = outside_c / (T * T) + outside_d / (T * T * T)
                 elif mode == 2:
                     tau_ij = tau_energy[i, j] / interaction_T
                 else:
@@ -303,10 +399,7 @@ if njit is not None:
                 ln_gamma += xn[j] * tau[j, i] * G[j, i] / denom_col[i]
             for j in range(n):
                 ln_gamma += (
-                    xn[j]
-                    * G[i, j]
-                    / denom_col[j]
-                    * (tau[i, j] - weighted_tau_col[j])
+                    xn[j] * G[i, j] / denom_col[j] * (tau[i, j] - weighted_tau_col[j])
                 )
             if ln_gamma > 50.0:
                 ln_gamma = 50.0
@@ -318,11 +411,21 @@ if njit is not None:
             out[i] = value
         return out
 
-
     @_cached_kernel
     def _nrtl_excess_enthalpy_numba(
-        x, T, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g, tau_tref,
-        tau_energy, alpha, interaction_tmin, interaction_tmax,
+        x,
+        T,
+        tau_mode,
+        tau_c,
+        tau_d,
+        tau_e,
+        tau_f,
+        tau_g,
+        tau_tref,
+        tau_energy,
+        alpha,
+        interaction_tmin,
+        interaction_tmax,
     ):
         total = 0.0
         for value in x:
@@ -337,28 +440,64 @@ if njit is not None:
         T_low = max(1.0, T - dT)
         T_high = T + dT
         gamma_low = _nrtl_activity_coefficients_numba(
-            xn, T_low, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g,
-            tau_tref, tau_energy, alpha, interaction_tmin, interaction_tmax,
+            xn,
+            T_low,
+            tau_mode,
+            tau_c,
+            tau_d,
+            tau_e,
+            tau_f,
+            tau_g,
+            tau_tref,
+            tau_energy,
+            alpha,
+            interaction_tmin,
+            interaction_tmax,
         )
         gamma_high = _nrtl_activity_coefficients_numba(
-            xn, T_high, tau_mode, tau_c, tau_d, tau_e, tau_f, tau_g,
-            tau_tref, tau_energy, alpha, interaction_tmin, interaction_tmax,
+            xn,
+            T_high,
+            tau_mode,
+            tau_c,
+            tau_d,
+            tau_e,
+            tau_f,
+            tau_g,
+            tau_tref,
+            tau_energy,
+            alpha,
+            interaction_tmin,
+            interaction_tmax,
         )
         derivative_sum = 0.0
         for i in range(xn.shape[0]):
             if xn[i] > 0.0:
-                derivative_sum += xn[i] * (
-                    np.log(max(gamma_high[i], 1.0e-300))
-                    - np.log(max(gamma_low[i], 1.0e-300))
-                ) / (T_high - T_low)
+                derivative_sum += (
+                    xn[i]
+                    * (
+                        np.log(max(gamma_high[i], 1.0e-300))
+                        - np.log(max(gamma_low[i], 1.0e-300))
+                    )
+                    / (T_high - T_low)
+                )
         return -R_J_MOL_K * T * T * derivative_sum
-
 
     @_cached_kernel
     def _uniquac_activity_coefficients_numba(
-        x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d, tau_e,
+        x,
+        T,
+        r,
+        q,
+        q_residual,
+        tau_mode,
+        tau_a,
+        tau_b,
+        tau_c,
+        tau_d,
+        tau_e,
         tau_tref,
-        interaction_tmin, interaction_tmax,
+        interaction_tmin,
+        interaction_tmax,
     ):
         n = x.shape[0]
         out = np.ones(n, dtype=np.float64)
@@ -382,24 +521,61 @@ if njit is not None:
                 if i == j:
                     tau[i, j] = 1.0
                     continue
-                mode = tau_mode[i, j]
+                encoded_mode = tau_mode[i, j]
+                mode = encoded_mode % 10
+                extrapolation_mode = encoded_mode // 10
                 interaction_T = T
-                if interaction_T < interaction_tmin[i, j]:
+                if extrapolation_mode == 1 and interaction_T < interaction_tmin[i, j]:
                     interaction_T = interaction_tmin[i, j]
-                elif interaction_T > interaction_tmax[i, j]:
+                elif extrapolation_mode == 1 and interaction_T > interaction_tmax[i, j]:
                     interaction_T = interaction_tmax[i, j]
                 if mode == 1:
                     tref = tau_tref[i, j]
+                    boundary = interaction_T
+                    if extrapolation_mode >= 2:
+                        if T < interaction_tmin[i, j]:
+                            boundary = interaction_tmin[i, j]
+                        elif T > interaction_tmax[i, j]:
+                            boundary = interaction_tmax[i, j]
                     exponent = (
                         tau_a[i, j]
-                        + tau_b[i, j] / interaction_T
-                        + tau_c[i, j] * (
-                            (tref - interaction_T) / interaction_T
-                            + np.log(interaction_T / tref)
-                        )
-                        + tau_d[i, j] * interaction_T
-                        + tau_e[i, j] * interaction_T * interaction_T
+                        + tau_b[i, j] / boundary
+                        + tau_c[i, j]
+                        * ((tref - boundary) / boundary + np.log(boundary / tref))
+                        + tau_d[i, j] * boundary
+                        + tau_e[i, j] * boundary * boundary
                     )
+                    if extrapolation_mode >= 2 and boundary != T:
+                        derivative = (
+                            -tau_b[i, j] / (boundary * boundary)
+                            + tau_c[i, j] * (boundary - tref) / (boundary * boundary)
+                            + tau_d[i, j]
+                            + 2.0 * tau_e[i, j] * boundary
+                        )
+                        if extrapolation_mode == 2:
+                            outside_b = -boundary * boundary * derivative
+                            outside_a = exponent + boundary * derivative
+                            exponent = outside_a + outside_b / T
+                        elif extrapolation_mode == 3:
+                            outside_b = boundary * (
+                                2.0 * exponent + boundary * derivative
+                            )
+                            outside_c = (
+                                -boundary
+                                * boundary
+                                * (exponent + boundary * derivative)
+                            )
+                            exponent = outside_b / T + outside_c / (T * T)
+                        else:
+                            outside_c = (
+                                boundary
+                                * boundary
+                                * (3.0 * exponent + boundary * derivative)
+                            )
+                            outside_d = -(boundary**3) * (
+                                2.0 * exponent + boundary * derivative
+                            )
+                            exponent = outside_c / (T * T) + outside_d / (T * T * T)
                 elif mode == 2:
                     exponent = -tau_a[i, j] / interaction_T
                 else:
@@ -472,11 +648,22 @@ if njit is not None:
             out[i] = value
         return out
 
-
     @_cached_kernel
     def _uniquac_excess_enthalpy_numba(
-        x, T, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c, tau_d,
-        tau_e, tau_tref, interaction_tmin, interaction_tmax,
+        x,
+        T,
+        r,
+        q,
+        q_residual,
+        tau_mode,
+        tau_a,
+        tau_b,
+        tau_c,
+        tau_d,
+        tau_e,
+        tau_tref,
+        interaction_tmin,
+        interaction_tmax,
     ):
         total = 0.0
         for value in x:
@@ -491,20 +678,48 @@ if njit is not None:
         T_low = max(1.0, T - dT)
         T_high = T + dT
         gamma_low = _uniquac_activity_coefficients_numba(
-            xn, T_low, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
-            tau_d, tau_e, tau_tref, interaction_tmin, interaction_tmax,
+            xn,
+            T_low,
+            r,
+            q,
+            q_residual,
+            tau_mode,
+            tau_a,
+            tau_b,
+            tau_c,
+            tau_d,
+            tau_e,
+            tau_tref,
+            interaction_tmin,
+            interaction_tmax,
         )
         gamma_high = _uniquac_activity_coefficients_numba(
-            xn, T_high, r, q, q_residual, tau_mode, tau_a, tau_b, tau_c,
-            tau_d, tau_e, tau_tref, interaction_tmin, interaction_tmax,
+            xn,
+            T_high,
+            r,
+            q,
+            q_residual,
+            tau_mode,
+            tau_a,
+            tau_b,
+            tau_c,
+            tau_d,
+            tau_e,
+            tau_tref,
+            interaction_tmin,
+            interaction_tmax,
         )
         derivative_sum = 0.0
         for i in range(xn.shape[0]):
             if xn[i] > 0.0:
-                derivative_sum += xn[i] * (
-                    np.log(max(gamma_high[i], 1.0e-300))
-                    - np.log(max(gamma_low[i], 1.0e-300))
-                ) / (T_high - T_low)
+                derivative_sum += (
+                    xn[i]
+                    * (
+                        np.log(max(gamma_high[i], 1.0e-300))
+                        - np.log(max(gamma_low[i], 1.0e-300))
+                    )
+                    / (T_high - T_low)
+                )
         return -R_J_MOL_K * T * T * derivative_sum
 
 else:

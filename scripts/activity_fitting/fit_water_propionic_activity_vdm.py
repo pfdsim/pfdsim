@@ -19,7 +19,7 @@ import sys
 import numpy as np
 from scipy.optimize import brentq, least_squares, minimize
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics

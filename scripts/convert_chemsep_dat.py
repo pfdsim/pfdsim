@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
+ACTIVITY_SOURCE_DATA = SOURCE_DATA / "activity_fitting"
 ARCHIVED_DATA = DATA / "archived"
 
 
@@ -58,7 +59,7 @@ def parse_eos_interactions(filename: str, model: str) -> list[dict]:
 
 def parse_nrtl() -> list[dict]:
     records: list[dict] = []
-    for line in (SOURCE_DATA / "nrtl.dat.txt").read_text().splitlines():
+    for line in (ACTIVITY_SOURCE_DATA / "nrtl.dat.txt").read_text().splitlines():
         line = line.strip()
         if not line or line.startswith("==="):
             continue
@@ -87,7 +88,7 @@ def parse_nrtl() -> list[dict]:
 
 def parse_uniquac() -> list[dict]:
     records: list[dict] = []
-    for line in (SOURCE_DATA / "uniquac.dat.txt").read_text().splitlines():
+    for line in (ACTIVITY_SOURCE_DATA / "uniquac.dat.txt").read_text().splitlines():
         line = line.strip()
         if not line or line.startswith("==="):
             continue

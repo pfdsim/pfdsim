@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
+import json
 import math
 from pathlib import Path
+import re
 from typing import Any, Callable, Mapping, Optional
 
 from scipy.integrate import solve_ivp
@@ -91,6 +93,9 @@ AMBROSE_WALTON_HARD_BOUNDARY_MINIMUM_PROPERTY_QUALITY = 0.80
 PSAT_MINIMUM_BOILING_POINT_QUALITY = 0.90
 AMBROSE_WALTON_MINIMUM_REDUCED_TEMPERATURE = 0.70
 ANTOINE_CACHE_DIR = Path(__file__).resolve().parent.parent / ".property_cache"
+TRUSTED_OTHER_ANTOINE_PATH = (
+    Path(__file__).resolve().parents[1] / "data" / "trusted_other_antoine.json"
+)
 
 
 class PsatAdapterError(ValueError):
@@ -1147,6 +1152,7 @@ def _other_antoine_segment(
     T_boiling: Optional[float],
     confidence_profile: DirectPsatConfidenceProfile,
     metadata: Mapping[str, Any],
+    priority: int = int(PsatPriority.OTHER_ANTOINE),
 ) -> tuple[Optional[PsatSegment], Optional[str]]:
     try:
         ln_pressure, derivative, P_min_bar, P_max_bar = _antoine_functions(
@@ -1171,7 +1177,7 @@ def _other_antoine_segment(
         source=source,
         method=method,
         segment_type=PsatSegmentType.PINNED,
-        priority=int(PsatPriority.OTHER_ANTOINE),
+        priority=int(priority),
         T_min=T_min,
         T_max=T_max,
         ln_pressure_function=ln_pressure,
@@ -1191,6 +1197,85 @@ def _other_antoine_segment(
         T_boiling=T_boiling,
         confidence_profile=confidence_profile,
         source_label=f"{source} Antoine row",
+    )
+
+
+def _collect_trusted_other_antoine_inputs(
+    adapter: PsatCanonicalizationAdapter,
+    *,
+    T_boiling: Optional[float] = None,
+    **_state: Any,
+) -> PsatCanonicalizationInputs:
+    """Load normalized, source-attributed Antoine rows at priority 550."""
+    if not TRUSTED_OTHER_ANTOINE_PATH.exists():
+        return PsatCanonicalizationInputs()
+    payload = json.loads(TRUSTED_OTHER_ANTOINE_PATH.read_text())
+
+    identifiers = {
+        re.sub(r"[^a-z0-9]+", "", str(value).lower())
+        for field in ("CAS", "cas", "name", "symbol")
+        if (value := adapter.component_value(field)) not in (None, "")
+    }
+    segments = []
+    warnings = []
+    for entry in payload.get("correlations", []):
+        identity = entry.get("identity", {})
+        entry_identifiers = {
+            re.sub(r"[^a-z0-9]+", "", str(value).lower())
+            for value in (
+                identity.get("cas"),
+                identity.get("name"),
+                *identity.get("aliases", []),
+            )
+            if value not in (None, "")
+        }
+        if identifiers.isdisjoint(entry_identifiers):
+            continue
+        correlation = entry.get("correlation", {})
+        if correlation.get("equation") != "antoine_log10_bar_degC":
+            warnings.append(
+                f"Unsupported trusted Antoine equation for {entry.get('record_id')}"
+            )
+            continue
+        source = entry.get("source", {})
+        citation = str(
+            source.get("doi")
+            or source.get("title")
+            or entry.get("record_id")
+            or "trusted literature Antoine"
+        )
+        segment, warning = _other_antoine_segment(
+            adapter,
+            source=citation,
+            method="trusted_other_antoine",
+            A=float(correlation["A"]),
+            B=float(correlation["B"]),
+            C=float(correlation["C"]),
+            T_min=float(correlation["Tmin_K"]),
+            T_max=float(correlation["Tmax_K"]),
+            T_boiling=T_boiling,
+            confidence_profile=HIGH_QUALITY_ANTOINE_PROFILE,
+            metadata={
+                "record_id": entry.get("record_id"),
+                "data_file": "data/trusted_other_antoine.json",
+                "citation": citation,
+                "source": source,
+                "provenance": entry.get("provenance", {}),
+            },
+            priority=int(PsatPriority.HIGH_QUALITY_ANTOINE),
+        )
+        if segment is not None:
+            segments.append(segment)
+        if warning:
+            warnings.append(warning)
+    return PsatCanonicalizationInputs(
+        segments=_ordered_other_antoine_segments(segments, T_boiling),
+        warnings=tuple(warnings),
+        metadata=(
+            {"trusted_other_antoine_row_count": len(segments)}
+            if segments
+            else {}
+        ),
     )
 
 
@@ -4260,6 +4345,7 @@ DEFAULT_PSAT_INPUT_METHODS: tuple[PsatInputMethod, ...] = (
     _collect_local_correlation_inputs,
     _collect_curated_antoine_inputs,
     _collect_perry_2_8_inputs,
+    _collect_trusted_other_antoine_inputs,
     _collect_textbook_antoine_inputs,
     _collect_perry_2_10_inputs,
     _collect_cached_nist_antoine_inputs,
@@ -4278,6 +4364,7 @@ DIRECT_PSAT_INPUT_METHODS: tuple[PsatInputMethod, ...] = (
     _collect_local_correlation_inputs,
     _collect_curated_antoine_inputs,
     _collect_perry_2_8_inputs,
+    _collect_trusted_other_antoine_inputs,
     _collect_textbook_antoine_inputs,
     _collect_perry_2_10_inputs,
     _collect_cached_nist_antoine_inputs,

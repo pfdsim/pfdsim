@@ -409,10 +409,10 @@ UNIT HEAT-1
         self.assertEqual(payload['metadata']['key_basis'], 'CAS')
         self.assertGreaterEqual(payload['metadata']['component_count'], 73)
         self.assertEqual(payload['metadata']['component_count'], len(payload['components']))
-        self.assertIn('data/source/dwsim_uniquac_combinatorial_parameters.csv', payload['metadata']['source_files'])
-        self.assertIn('data/source/nagata_gmehling_extended_uniquac_rq.json', payload['metadata']['source_files'])
+        self.assertIn('data/source/activity_fitting/dwsim_uniquac_combinatorial_parameters.csv', payload['metadata']['source_files'])
+        self.assertIn('data/source/activity_fitting/nagata_gmehling_extended_uniquac_rq.json', payload['metadata']['source_files'])
         self.assertIn(
-            'data/source/ester_uniquac_combinatorial_parameters.json',
+            'data/source/activity_fitting/ester_uniquac_combinatorial_parameters.json',
             payload['metadata']['source_files'],
         )
 

@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
@@ -15,90 +15,83 @@ import compiled_lle
 
 class CompiledBackendTests(unittest.TestCase):
     def test_activity_initialization_compiles_without_evaluating_a_state(self):
-        for model in ('NRTL', 'UNIQUAC', 'UNIFAC'):
+        for model in ("NRTL", "UNIQUAC", "UNIFAC"):
             record = {
-                'component1': 'water',
-                'component2': 'ethanol',
-                'model': model,
-                'do_not_extrapolate': True,
-                'Tmin_K': 300.0,
-                'Tmax_K': 350.0,
+                "component1": "water",
+                "component2": "ethanol",
+                "model": model,
+                "extrapolation": "clamp",
+                "Tmin_K": 300.0,
+                "Tmax_K": 350.0,
             }
-            if model == 'NRTL':
-                record.update({
-                    'alpha12': 0.3,
-                    'tau12_c': 0.1,
-                    'tau12_d': 0.0,
-                    'tau21_c': -0.2,
-                    'tau21_d': 0.0,
-                })
-            elif model == 'UNIQUAC':
-                record.update({
-                    'tau12_a': 0.1,
-                    'tau12_b': 0.0,
-                    'tau21_a': -0.2,
-                    'tau21_b': 0.0,
-                })
+            if model == "NRTL":
+                record.update(
+                    {
+                        "alpha12": 0.3,
+                        "tau12_c": 0.1,
+                        "tau12_d": 0.0,
+                        "tau21_c": -0.2,
+                        "tau21_d": 0.0,
+                    }
+                )
+            elif model == "UNIQUAC":
+                record.update(
+                    {
+                        "tau12_a": 0.1,
+                        "tau12_b": 0.0,
+                        "tau21_a": -0.2,
+                        "tau21_b": 0.0,
+                    }
+                )
             with self.subTest(model=model):
                 thermo = create_thermodynamics(
-                    ['water', 'ethanol'],
+                    ["water", "ethanol"],
                     model,
-                    interaction_overrides=(
-                        [record] if model != 'UNIFAC' else None
-                    ),
+                    interaction_overrides=([record] if model != "UNIFAC" else None),
                 )
                 backend = (
                     thermo._compiled_unifac
-                    if model == 'UNIFAC'
+                    if model == "UNIFAC"
                     else thermo._compiled_activity_backend()
                 )
                 if backend is None:
-                    self.skipTest(f'Compiled {model} backend is unavailable')
+                    self.skipTest(f"Compiled {model} backend is unavailable")
                 backend.compilation_complete = False
                 with patch.object(
                     thermo,
-                    'activity_coefficients',
-                    side_effect=AssertionError('synthetic state evaluated'),
+                    "activity_coefficients",
+                    side_effect=AssertionError("synthetic state evaluated"),
                 ):
                     thermo.initialize()
                 self.assertTrue(backend.compilation_complete)
-                self.assertFalse(any(
-                    'do_not_extrapolate=true' in warning
-                    for warning in thermo.warnings
-                ))
+                self.assertFalse(
+                    any("extrapolation=clamp" in warning for warning in thermo.warnings)
+                )
 
     def test_simulator_initialization_compiles_only_reachable_backends(self):
         ordinary = Simulator.from_file(
-            os.path.join(ROOT, 'examples', 'unifac_flash.pfd')
+            os.path.join(ROOT, "examples", "unifac_flash.pfd")
         )
         ordinary.initialize()
-        self.assertTrue(
-            ordinary.thermo._compiled_unifac.compilation_complete
-        )
-        self.assertFalse(
-            ordinary.thermo._compiled_lle.compilation_complete
-        )
+        self.assertTrue(ordinary.thermo._compiled_unifac.compilation_complete)
+        self.assertFalse(ordinary.thermo._compiled_lle.compilation_complete)
         self.assertFalse(ordinary.thermo._compiled_vlle_initialized)
         ordinary.run()
-        self.assertFalse(
-            ordinary.thermo._compiled_lle.compilation_complete
-        )
+        self.assertFalse(ordinary.thermo._compiled_lle.compilation_complete)
         self.assertFalse(ordinary.thermo._compiled_vlle_initialized)
 
         lle = Simulator.from_file(
-            os.path.join(ROOT, 'examples', 'butanol_water_lle.pfd')
+            os.path.join(ROOT, "examples", "butanol_water_lle.pfd")
         )
         lle.initialize()
         self.assertTrue(lle.thermo._compiled_lle.compilation_complete)
         self.assertFalse(lle.thermo._compiled_vlle_initialized)
 
         vlle = Simulator.from_file(
-            os.path.join(ROOT, 'examples', 'global_vlle_water_methanol_benzene.pfd')
+            os.path.join(ROOT, "examples", "global_vlle_water_methanol_benzene.pfd")
         )
         vlle.initialize()
-        self.assertTrue(
-            vlle.thermo._compiled_lle_backend(298.15).compilation_complete
-        )
+        self.assertTrue(vlle.thermo._compiled_lle_backend(298.15).compilation_complete)
         self.assertTrue(vlle.thermo._compiled_vlle_initialized)
         self.assertTrue(vlle.thermo._compiled_vlle.compilation_complete)
 
@@ -114,7 +107,7 @@ class CompiledBackendTests(unittest.TestCase):
         )
 
         simulator = Simulator.from_file(
-            os.path.join(ROOT, 'examples', 'air_3a_molecular_sieve_drying.pfd')
+            os.path.join(ROOT, "examples", "air_3a_molecular_sieve_drying.pfd")
         )
         simulator.initialize()
         backend = simulator.thermo.cubic
@@ -139,13 +132,13 @@ class CompiledBackendTests(unittest.TestCase):
 
     def test_compiled_eos_interaction_policy_matches_python_selection(self):
         simulator = Simulator.from_file(
-            os.path.join(ROOT, 'examples', 'haber_bosch_full.pfd')
+            os.path.join(ROOT, "examples", "haber_bosch_full.pfd")
         )
         simulator.initialize()
         eos = simulator.thermo.cubic
         backend = eos._compiled_backend
         if backend is None:
-            self.skipTest('Compiled cubic EOS backend is unavailable')
+            self.skipTest("Compiled cubic EOS backend is unavailable")
 
         for temperature in (65.0, 90.0, 110.0, 150.0, 600.0):
             with self.subTest(temperature=temperature):
@@ -169,15 +162,21 @@ class CompiledBackendTests(unittest.TestCase):
             ((-0.2, 0.001), (-0.4, 0.002), (0.3, 0.0)),
             ((-0.2, 0.001), (-0.4, 0.002), (0.3, 0.0), (0.4, 0.0)),
         ):
-            thermo = create_thermodynamics(['N2', 'H2'], 'PR', interaction_overrides=[
-                dict(component1='N2', component2='H2', model='PR', kij_a=a, kij_c=c)
-                for a, c in coefficients
-            ])
+            thermo = create_thermodynamics(
+                ["N2", "H2"],
+                "PR",
+                interaction_overrides=[
+                    dict(component1="N2", component2="H2", model="PR", kij_a=a, kij_c=c)
+                    for a, c in coefficients
+                ],
+            )
             eos = thermo.cubic
             delta = 1.0e-3
-            expected = (eos._kij('N2', 'H2', 300.0 + delta)
-                        - eos._kij('N2', 'H2', 300.0 - delta)) / (2.0 * delta)
-            self.assertAlmostEqual(eos._dkij_dT('N2', 'H2', 300.0), expected, places=10)
+            expected = (
+                eos._kij("N2", "H2", 300.0 + delta)
+                - eos._kij("N2", "H2", 300.0 - delta)
+            ) / (2.0 * delta)
+            self.assertAlmostEqual(eos._dkij_dT("N2", "H2", 300.0), expected, places=10)
             backend = eos._compiled_backend
             self.assertIsNotNone(backend)
             _, derivatives = backend._interactions(300.0, None)
@@ -185,29 +184,29 @@ class CompiledBackendTests(unittest.TestCase):
 
     def test_compiled_cubic_ph_matches_properties_and_recovers_temperature(self):
         thermo = create_thermodynamics(
-            ['N2', 'H2', 'NH3'],
-            'RKS-BM',
+            ["N2", "H2", "NH3"],
+            "RKS-BM",
         )
         backend = thermo._compiled_pressure_enthalpy_backend()
         if backend is None:
-            self.skipTest('Compiled cubic PH backend is unavailable')
-        composition = {'N2': 0.21, 'H2': 0.63, 'NH3': 0.16}
+            self.skipTest("Compiled cubic PH backend is unavailable")
+        composition = {"N2": 0.21, "H2": 0.63, "NH3": 0.16}
         values = [composition[component] for component in thermo.components]
         temperature = 650.0
         pressure = 100.0
 
-        for phase in ('liquid', 'vapor'):
+        for phase in ("liquid", "vapor"):
             with self.subTest(phase=phase):
                 expected_h = thermo.mixture_enthalpy(
                     composition,
                     temperature,
-                    1.0 if phase == 'vapor' else 0.0,
+                    1.0 if phase == "vapor" else 0.0,
                     P=pressure,
                 )
                 expected_cp = thermo.mixture_Cp(
                     composition,
                     temperature,
-                    1.0 if phase == 'vapor' else 0.0,
+                    1.0 if phase == "vapor" else 0.0,
                     pressure,
                 )
                 actual_h, actual_cp = backend.enthalpy_cp(
@@ -225,7 +224,7 @@ class CompiledBackendTests(unittest.TestCase):
                     composition,
                     phase=phase,
                     T_guess=500.0,
-                    include=('H', 'Cp'),
+                    include=("H", "Cp"),
                 )
                 self.assertAlmostEqual(recovered.T, temperature, places=8)
                 self.assertAlmostEqual(recovered.H, expected_h, places=7)
@@ -239,50 +238,51 @@ class CompiledBackendTests(unittest.TestCase):
         )
 
         thermo = create_thermodynamics(
-            ['N2', 'H2', 'NH3', 'CH4'],
-            'RKS-BM',
+            ["N2", "H2", "NH3", "CH4"],
+            "RKS-BM",
         )
 
         def common(method, Tmin=200.0, Tmax=800.0):
             return {
-                'Tmin': Tmin,
-                'Tmax': Tmax,
-                'quality': 0.9,
-                'source': 'compiled PH test',
-                'method': method,
+                "Tmin": Tmin,
+                "Tmax": Tmax,
+                "quality": 0.9,
+                "source": "compiled PH test",
+                "method": method,
             }
 
         first_piece = AffineIdealGasCpKernel(
-            **common('piece one', Tmax=500.0),
+            **common("piece one", Tmax=500.0),
             base_kernel=PolynomialCpKernel(
-                **common('wider base'), coefficients=(30.0,),
+                **common("wider base"),
+                coefficients=(30.0,),
             ),
         )
         second_piece = PolynomialCpKernel(
-            **common('piece two', Tmin=500.0),
+            **common("piece two", Tmin=500.0),
             coefficients=(25.0, 0.01),
         )
         base = PolynomialCpKernel(
-            **common('affine base'),
+            **common("affine base"),
             coefficients=(25.0,),
         )
         thermo._ideal_gas_cp_kernels = {
-            'N2': PolynomialCpKernel(
-                **common('polynomial'),
+            "N2": PolynomialCpKernel(
+                **common("polynomial"),
                 coefficients=(28.0, 0.01),
             ),
-            'H2': ShomateCpKernel(
-                **common('shomate'),
+            "H2": ShomateCpKernel(
+                **common("shomate"),
                 coefficients=(30.0, 2.0, -0.5, 0.1, 0.02),
             ),
-            'NH3': AffineIdealGasCpKernel(
-                **common('affine'),
+            "NH3": AffineIdealGasCpKernel(
+                **common("affine"),
                 base_kernel=base,
                 intercept=5.0,
                 scale_factor=1.1,
             ),
-            'CH4': PiecewiseIdealGasCpKernel(
-                **common('piecewise'),
+            "CH4": PiecewiseIdealGasCpKernel(
+                **common("piecewise"),
                 segments=(first_piece, second_piece),
             ),
         }
@@ -290,10 +290,10 @@ class CompiledBackendTests(unittest.TestCase):
         backend = thermo._compiled_pressure_enthalpy_backend()
         self.assertIsNotNone(backend)
         composition = {
-            'N2': 0.25,
-            'H2': 0.25,
-            'NH3': 0.25,
-            'CH4': 0.25,
+            "N2": 0.25,
+            "H2": 0.25,
+            "NH3": 0.25,
+            "CH4": 0.25,
         }
         values = [composition[component] for component in thermo.components]
         for temperature in (150.0, 350.0, 650.0, 850.0):
@@ -314,7 +314,7 @@ class CompiledBackendTests(unittest.TestCase):
                     temperature,
                     50.0,
                     values,
-                    'vapor',
+                    "vapor",
                 )
                 self.assertAlmostEqual(actual_h, expected_h, places=8)
                 self.assertAlmostEqual(actual_cp, expected_cp, places=8)
@@ -322,21 +322,21 @@ class CompiledBackendTests(unittest.TestCase):
     def test_compiled_constrained_vle_candidate_matches_reference_at_endpoints(self):
         cases = (
             (
-                'NRTL',
-                ['water', 'methanol', 'benzene'],
-                {'water': 0.20, 'methanol': 0.30, 'benzene': 0.50},
+                "NRTL",
+                ["water", "methanol", "benzene"],
+                {"water": 0.20, "methanol": 0.30, "benzene": 0.50},
                 333.0,
             ),
             (
-                'UNIQUAC',
-                ['water', 'ethanol', 'benzene'],
-                {'water': 0.30, 'ethanol': 0.10, 'benzene': 0.60},
+                "UNIQUAC",
+                ["water", "ethanol", "benzene"],
+                {"water": 0.30, "ethanol": 0.10, "benzene": 0.60},
                 339.0,
             ),
             (
-                'UNIFNIST',
-                ['water', 'ethanol', 'cyclohexane'],
-                {'water': 0.30, 'ethanol': 0.20, 'cyclohexane': 0.50},
+                "UNIFNIST",
+                ["water", "ethanol", "cyclohexane"],
+                {"water": 0.30, "ethanol": 0.20, "cyclohexane": 0.50},
                 337.0,
             ),
         )
@@ -367,30 +367,30 @@ class CompiledBackendTests(unittest.TestCase):
                     )
 
     def test_compiled_unifac_preserves_infinite_dilution_activity(self):
-        thermo = create_thermodynamics(['water', 'benzene'], 'UNIFNIST')
+        thermo = create_thermodynamics(["water", "benzene"], "UNIFNIST")
         if thermo._compiled_unifac is None:
             self.skipTest("Compiled UNIFNIST backend is unavailable")
 
         gamma_above = thermo.activity_coefficients(
             298.15,
-            {'water': 1.0 - 1e-8, 'benzene': 1e-8},
-        )['benzene']
+            {"water": 1.0 - 1e-8, "benzene": 1e-8},
+        )["benzene"]
         gamma_below = thermo.activity_coefficients(
             298.15,
-            {'water': 1.0 - 1e-12, 'benzene': 1e-12},
-        )['benzene']
+            {"water": 1.0 - 1e-12, "benzene": 1e-12},
+        )["benzene"]
         gamma_zero = thermo.activity_coefficients(
             298.15,
-            {'water': 1.0, 'benzene': 0.0},
-        )['benzene']
+            {"water": 1.0, "benzene": 0.0},
+        )["benzene"]
 
         compiled_backend = thermo._compiled_unifac
         thermo._compiled_unifac = None
         thermo._activity_cache.clear()
         gamma_reference = thermo.activity_coefficients(
             298.15,
-            {'water': 1.0, 'benzene': 0.0},
-        )['benzene']
+            {"water": 1.0, "benzene": 0.0},
+        )["benzene"]
         thermo._compiled_unifac = compiled_backend
 
         self.assertGreater(gamma_zero, 10.0)
@@ -399,16 +399,16 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertAlmostEqual(gamma_reference, gamma_zero, delta=gamma_zero * 1e-10)
 
     def test_compiled_unifac_matches_reference_backend(self):
-        components = ['diethyl ether', 'n-hexane', 'acrylic acid', 'water']
+        components = ["diethyl ether", "n-hexane", "acrylic acid", "water"]
         composition = {
-            'diethyl ether': 0.45,
-            'n-hexane': 0.45,
-            'acrylic acid': 0.08,
-            'water': 0.02,
+            "diethyl ether": 0.45,
+            "n-hexane": 0.45,
+            "acrylic acid": 0.08,
+            "water": 0.02,
         }
         x = [composition[comp] for comp in components]
 
-        for method in ('UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST'):
+        for method in ("UNIFAC", "UNIFAC2", "UNIFDMD", "UNIFM2", "UNIFNIST"):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(components, method)
                 if thermo._compiled_unifac is None:
@@ -426,17 +426,17 @@ class CompiledBackendTests(unittest.TestCase):
                     )
 
     def test_compiled_lle_matches_reference_splitter(self):
-        components = ['diethyl ether', 'n-hexane', 'acrylic acid', 'water']
+        components = ["diethyl ether", "n-hexane", "acrylic acid", "water"]
         # Use the component order generated inside the rigorous extractor:
         # aqueous feed components first, then solvent components.
         composition = {
-            'acrylic acid': 0.024974946990,
-            'water': 0.748981289912,
-            'diethyl ether': 0.121392237235,
-            'n-hexane': 0.104651525863,
+            "acrylic acid": 0.024974946990,
+            "water": 0.748981289912,
+            "diethyl ether": 0.121392237235,
+            "n-hexane": 0.104651525863,
         }
 
-        for method in ('UNIFAC', 'UNIFDMD', 'UNIFNIST'):
+        for method in ("UNIFAC", "UNIFDMD", "UNIFNIST"):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(components, method)
                 if thermo._compiled_lle is None:
@@ -462,35 +462,35 @@ class CompiledBackendTests(unittest.TestCase):
     def test_compiled_unifac_binary_lle_matches_reference_splitter(self):
         cases = [
             (
-                ['water', 'ethyl acetate'],
-                {'water': 0.5, 'ethyl acetate': 0.5},
+                ["water", "ethyl acetate"],
+                {"water": 0.5, "ethyl acetate": 0.5},
                 5e-6,
             ),
             (
-                ['water', 'toluene'],
-                {'water': 0.5, 'toluene': 0.5},
+                ["water", "toluene"],
+                {"water": 0.5, "toluene": 0.5},
                 5e-8,
             ),
             (
-                ['methanol', 'heptane'],
-                {'methanol': 0.5, 'heptane': 0.5},
+                ["methanol", "heptane"],
+                {"methanol": 0.5, "heptane": 0.5},
                 5e-6,
             ),
             (
-                ['hexane', 'water'],
-                {'hexane': 0.001, 'water': 0.999},
+                ["hexane", "water"],
+                {"hexane": 0.001, "water": 0.999},
                 5e-6,
             ),
             (
-                ['hexane', 'water'],
-                {'hexane': 0.999, 'water': 0.001},
+                ["hexane", "water"],
+                {"hexane": 0.999, "water": 0.001},
                 5e-6,
             ),
         ]
 
         for components, composition, tolerance in cases:
             with self.subTest(components=components):
-                thermo = create_thermodynamics(components, 'UNIFAC')
+                thermo = create_thermodynamics(components, "UNIFAC")
                 if thermo._compiled_lle is None:
                     self.skipTest("Compiled UNIFAC LLE backend is unavailable")
 
@@ -512,26 +512,26 @@ class CompiledBackendTests(unittest.TestCase):
                         )
 
     def test_compiled_unifac_binary_lle_rejects_endpoint_split(self):
-        thermo = create_thermodynamics(['water', 'butanol'], 'UNIFAC')
+        thermo = create_thermodynamics(["water", "butanol"], "UNIFAC")
         if thermo._compiled_lle is None:
             self.skipTest("Compiled UNIFAC LLE backend is unavailable")
 
         compiled = thermo._compiled_lle.split(
-            {'water': 0.5, 'butanol': 0.5}, 298.15, max_iter=200, tol=1e-6
+            {"water": 0.5, "butanol": 0.5}, 298.15, max_iter=200, tol=1e-6
         )
 
         self.assertFalse(compiled[0])
 
     def test_compiled_nrtl_and_uniquac_match_reference_activity(self):
-        components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        components = ["H2O", "CH3OH", "methyl acetate", "(C2H5)2O"]
         composition = {
-            'H2O': 0.10,
-            'CH3OH': 0.01,
-            'methyl acetate': 0.44,
-            '(C2H5)2O': 0.45,
+            "H2O": 0.10,
+            "CH3OH": 0.01,
+            "methyl acetate": 0.44,
+            "(C2H5)2O": 0.45,
         }
 
-        for method in ('NRTL', 'UNIQUAC'):
+        for method in ("NRTL", "UNIQUAC"):
             with self.subTest(method=method):
                 reference_thermo = create_thermodynamics(components, method)
                 reference_thermo._compiled_activity_backend = lambda _T: None
@@ -557,21 +557,19 @@ class CompiledBackendTests(unittest.TestCase):
                         )
 
     def test_compiled_excess_enthalpy_matches_generic_temperature_difference(self):
-        composition = {'ethanol': 0.35, 'water': 0.65}
-        for method in ('NRTL', 'UNIQUAC', 'UNIFDMD'):
+        composition = {"ethanol": 0.35, "water": 0.65}
+        for method in ("NRTL", "UNIQUAC", "UNIFDMD"):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(
-                    ['ethanol', 'water'],
+                    ["ethanol", "water"],
                     method,
                 )
                 for temperature in (298.15, 320.0, 340.0):
                     with self.subTest(temperature=temperature):
-                        reference = (
-                            ActivityCoefficientThermodynamics.excess_enthalpy(
-                                thermo,
-                                composition,
-                                temperature,
-                            )
+                        reference = ActivityCoefficientThermodynamics.excess_enthalpy(
+                            thermo,
+                            composition,
+                            temperature,
                         )
                         compiled = thermo.excess_enthalpy(
                             composition,
@@ -584,49 +582,51 @@ class CompiledBackendTests(unittest.TestCase):
                         )
 
     def test_compiled_nrtl_and_uniquac_preserve_infinite_dilution_activity(self):
-        for method in ('NRTL', 'UNIQUAC'):
+        for method in ("NRTL", "UNIQUAC"):
             with self.subTest(method=method):
-                thermo = create_thermodynamics(['water', 'benzene'], method)
+                thermo = create_thermodynamics(["water", "benzene"], method)
                 compiled = thermo._compiled_activity_backend(298.15)
                 if compiled is None:
                     self.skipTest(f"Compiled {method} activity backend is unavailable")
 
                 gamma_above = thermo.activity_coefficients(
                     298.15,
-                    {'water': 1.0 - 1e-8, 'benzene': 1e-8},
-                )['benzene']
+                    {"water": 1.0 - 1e-8, "benzene": 1e-8},
+                )["benzene"]
                 gamma_below = thermo.activity_coefficients(
                     298.15,
-                    {'water': 1.0 - 1e-12, 'benzene': 1e-12},
-                )['benzene']
+                    {"water": 1.0 - 1e-12, "benzene": 1e-12},
+                )["benzene"]
                 gamma_zero = thermo.activity_coefficients(
                     298.15,
-                    {'water': 1.0, 'benzene': 0.0},
-                )['benzene']
+                    {"water": 1.0, "benzene": 0.0},
+                )["benzene"]
 
-                reference_thermo = create_thermodynamics(['water', 'benzene'], method)
+                reference_thermo = create_thermodynamics(["water", "benzene"], method)
                 reference_thermo._compiled_activity_backend = lambda _T: None
                 gamma_reference = reference_thermo.activity_coefficients(
                     298.15,
-                    {'water': 1.0, 'benzene': 0.0},
-                )['benzene']
+                    {"water": 1.0, "benzene": 0.0},
+                )["benzene"]
 
                 self.assertGreater(gamma_zero, 10.0)
                 self.assertAlmostEqual(gamma_below, gamma_zero, delta=gamma_zero * 1e-8)
                 self.assertAlmostEqual(gamma_above, gamma_zero, delta=gamma_zero * 1e-4)
-                self.assertAlmostEqual(gamma_reference, gamma_zero, delta=gamma_zero * 1e-10)
+                self.assertAlmostEqual(
+                    gamma_reference, gamma_zero, delta=gamma_zero * 1e-10
+                )
 
     def test_compiled_nrtl_and_uniquac_lle_matches_reference_splitter(self):
-        components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        components = ["H2O", "CH3OH", "methyl acetate", "(C2H5)2O"]
         tolerance = 1e-5
         composition = {
-            'H2O': 0.45,
-            'CH3OH': 0.01,
-            'methyl acetate': 0.25,
-            '(C2H5)2O': 0.29,
+            "H2O": 0.45,
+            "CH3OH": 0.01,
+            "methyl acetate": 0.25,
+            "(C2H5)2O": 0.29,
         }
 
-        for method in ('NRTL', 'UNIQUAC'):
+        for method in ("NRTL", "UNIQUAC"):
             with self.subTest(method=method):
                 reference_thermo = create_thermodynamics(components, method)
                 reference_thermo._compiled_activity_backend = lambda _T: None
@@ -651,9 +651,7 @@ class CompiledBackendTests(unittest.TestCase):
                 )
 
                 self.assertEqual(reference[0], compiled[0])
-                self.assertAlmostEqual(
-                    reference[3], compiled[3], delta=2.0 * tolerance
-                )
+                self.assertAlmostEqual(reference[3], compiled[3], delta=2.0 * tolerance)
                 for phase_index in (1, 2):
                     for comp in composition:
                         self.assertAlmostEqual(
@@ -666,10 +664,7 @@ class CompiledBackendTests(unittest.TestCase):
                 gamma1 = thermo.activity_coefficients(298.15, phase1)
                 gamma2 = thermo.activity_coefficients(298.15, phase2)
                 equilibrium_residual = max(
-                    abs(
-                        phase1[comp] * gamma1[comp]
-                        - phase2[comp] * gamma2[comp]
-                    )
+                    abs(phase1[comp] * gamma1[comp] - phase2[comp] * gamma2[comp])
                     / max(
                         phase1[comp] * gamma1[comp],
                         phase2[comp] * gamma2[comp],
@@ -679,22 +674,19 @@ class CompiledBackendTests(unittest.TestCase):
                 )
                 self.assertLessEqual(equilibrium_residual, tolerance)
                 for comp in components:
-                    reconstructed = (
-                        (1.0 - beta) * phase1[comp]
-                        + beta * phase2[comp]
-                    )
+                    reconstructed = (1.0 - beta) * phase1[comp] + beta * phase2[comp]
                     self.assertLessEqual(
                         abs(reconstructed - composition[comp]), tolerance
                     )
 
     def test_compiled_nrtl_and_uniquac_lle_accept_component_subset(self):
-        components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        components = ["H2O", "CH3OH", "methyl acetate", "(C2H5)2O"]
         composition = {
-            'H2O': 0.46,
-            'methyl acetate': 0.25,
-            '(C2H5)2O': 0.29,
+            "H2O": 0.46,
+            "methyl acetate": 0.25,
+            "(C2H5)2O": 0.29,
         }
-        for method in ('NRTL', 'UNIQUAC'):
+        for method in ("NRTL", "UNIQUAC"):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(components, method)
                 backend = thermo._compiled_lle_backend(298.15)
@@ -727,13 +719,13 @@ class CompiledBackendTests(unittest.TestCase):
                         )
 
     def test_compiled_unifac_lle_accepts_component_subset(self):
-        components = ['diethyl ether', 'n-hexane', 'acrylic acid', 'water']
+        components = ["diethyl ether", "n-hexane", "acrylic acid", "water"]
         composition = {
-            'acrylic acid': 0.03,
-            'water': 0.75,
-            'diethyl ether': 0.22,
+            "acrylic acid": 0.03,
+            "water": 0.75,
+            "diethyl ether": 0.22,
         }
-        thermo = create_thermodynamics(components, 'UNIFDMD')
+        thermo = create_thermodynamics(components, "UNIFDMD")
         backend = thermo._compiled_lle
         if backend is None:
             self.skipTest("Compiled UNIFDMD LLE backend is unavailable")
@@ -766,14 +758,14 @@ class CompiledBackendTests(unittest.TestCase):
     def test_nrtl_and_uniquac_binary_lle_use_compiled_backend(self):
         compiled_split = (
             True,
-            {'water': 0.9, 'acetonitrile': 0.1},
-            {'water': 0.2, 'acetonitrile': 0.8},
+            {"water": 0.9, "acetonitrile": 0.1},
+            {"water": 0.2, "acetonitrile": 0.8},
             0.4,
         )
 
-        for method in ('NRTL', 'UNIQUAC'):
+        for method in ("NRTL", "UNIQUAC"):
             with self.subTest(method=method):
-                thermo = create_thermodynamics(['water', 'acetonitrile'], method)
+                thermo = create_thermodynamics(["water", "acetonitrile"], method)
                 calls = []
 
                 def split(composition, T, max_iter=100, tol=1e-6):
@@ -783,7 +775,7 @@ class CompiledBackendTests(unittest.TestCase):
                 thermo._compiled_lle_backend = lambda _T: SimpleNamespace(split=split)
 
                 result = thermo.liquid_liquid_equilibrium(
-                    {'water': 0.5, 'acetonitrile': 0.5},
+                    {"water": 0.5, "acetonitrile": 0.5},
                     298.15,
                     max_iter=123,
                     tol=1e-7,
@@ -795,20 +787,20 @@ class CompiledBackendTests(unittest.TestCase):
                 self.assertEqual(calls[0][3], 1e-7)
 
     def test_compiled_lle_reports_nonconvergence_to_caller(self):
-        components = ['H2O', 'CH3OH', 'methyl acetate', '(C2H5)2O']
+        components = ["H2O", "CH3OH", "methyl acetate", "(C2H5)2O"]
         composition = {
-            'H2O': 0.45,
-            'CH3OH': 0.01,
-            'methyl acetate': 0.25,
-            '(C2H5)2O': 0.29,
+            "H2O": 0.45,
+            "CH3OH": 0.01,
+            "methyl acetate": 0.25,
+            "(C2H5)2O": 0.29,
         }
 
-        for method in ('NRTL', 'UNIQUAC'):
+        for method in ("NRTL", "UNIQUAC"):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(components, method)
                 backend = thermo._compiled_lle_backend(298.15)
                 if backend is None:
-                    self.skipTest(f'Compiled {method} LLE backend is unavailable')
+                    self.skipTest(f"Compiled {method} LLE backend is unavailable")
 
                 result = backend.split(
                     composition,
@@ -820,34 +812,30 @@ class CompiledBackendTests(unittest.TestCase):
                 self.assertIsNone(result)
 
     def test_compiled_binary_lle_caches_successful_refinement(self):
-        thermo = create_thermodynamics(['1-butanol', 'water'], 'NRTL')
+        thermo = create_thermodynamics(["1-butanol", "water"], "NRTL")
         backend = thermo._compiled_lle_backend(399.2)
         if backend is None:
-            self.skipTest('Compiled NRTL LLE backend is unavailable')
-        composition = {'1-butanol': 0.0987, 'water': 0.9013}
+            self.skipTest("Compiled NRTL LLE backend is unavailable")
+        composition = {"1-butanol": 0.0987, "water": 0.9013}
 
         with patch.object(
             compiled_lle,
-            'least_squares',
+            "least_squares",
             wraps=compiled_lle.least_squares,
         ) as mocked_solver:
-            first = backend.split(
-                composition, 399.2, max_iter=100, tol=1e-6
-            )
-            second = backend.split(
-                composition, 399.2, max_iter=100, tol=1e-6
-            )
+            first = backend.split(composition, 399.2, max_iter=100, tol=1e-6)
+            second = backend.split(composition, 399.2, max_iter=100, tol=1e-6)
 
         self.assertTrue(first[0])
         self.assertEqual(first, second)
         self.assertEqual(mocked_solver.call_count, 1)
 
     def test_compiled_unifac_vlle_matches_reference_ternary_tp(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.30, 'ethanol': 0.20, 'cyclohexane': 0.50}
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.30, "ethanol": 0.20, "cyclohexane": 0.50}
         thermo = create_thermodynamics(
             components,
-            'UNIFNIST',
+            "UNIFNIST",
         )
         backend = thermo.compiled_vlle_backend()
         if backend is None:
@@ -859,20 +847,26 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertEqual(compiled.status, reference.status)
         self.assertEqual(compiled.phase_count, reference.phase_count)
         self.assertLess(compiled.iterations, 25)
-        self.assertAlmostEqual(compiled.vapor_fraction, reference.vapor_fraction, delta=2e-3)
-        self.assertAlmostEqual(compiled.liquid1_fraction, reference.liquid1_fraction, delta=2e-3)
-        self.assertAlmostEqual(compiled.liquid2_fraction, reference.liquid2_fraction, delta=2e-3)
+        self.assertAlmostEqual(
+            compiled.vapor_fraction, reference.vapor_fraction, delta=2e-3
+        )
+        self.assertAlmostEqual(
+            compiled.liquid1_fraction, reference.liquid1_fraction, delta=2e-3
+        )
+        self.assertAlmostEqual(
+            compiled.liquid2_fraction, reference.liquid2_fraction, delta=2e-3
+        )
         for index, comp in enumerate(components):
             self.assertAlmostEqual(compiled.y[index], reference.y[comp], delta=1e-3)
             self.assertAlmostEqual(compiled.x1[index], reference.x1[comp], delta=1e-3)
             self.assertAlmostEqual(compiled.x2[index], reference.x2[comp], delta=1e-3)
 
     def test_compiled_unifac_vlle_matches_reference_binary_invariant(self):
-        components = ['water', 'chloroform']
-        z = {'water': 0.5, 'chloroform': 0.5}
+        components = ["water", "chloroform"]
+        z = {"water": 0.5, "chloroform": 0.5}
         T = 329.1264566618235
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -880,19 +874,21 @@ class CompiledBackendTests(unittest.TestCase):
         reference = thermo.flash3_TP(z, T, P, max_iter=200)
         compiled = backend.flash_TP(z, T, P, max_iter=200)
 
-        self.assertEqual(reference.status, 'binary_invariant_vlle')
-        self.assertEqual(compiled.status, 'binary_invariant_vlle')
+        self.assertEqual(reference.status, "binary_invariant_vlle")
+        self.assertEqual(compiled.status, "binary_invariant_vlle")
         self.assertEqual(compiled.phase_count, 3)
-        self.assertAlmostEqual(compiled.vapor_fraction, reference.vapor_fraction, delta=2e-5)
+        self.assertAlmostEqual(
+            compiled.vapor_fraction, reference.vapor_fraction, delta=2e-5
+        )
         for index, comp in enumerate(components):
             self.assertAlmostEqual(compiled.x1[index], reference.x1[comp], delta=1e-7)
             self.assertAlmostEqual(compiled.x2[index], reference.x2[comp], delta=1e-7)
             self.assertAlmostEqual(compiled.y[index], reference.y[comp], delta=2e-5)
 
     def test_compiled_unifac_vlle_pv_uses_compiled_tp(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.30, 'ethanol': 0.20, 'cyclohexane': 0.50}
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.30, "ethanol": 0.20, "cyclohexane": 0.50}
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -906,7 +902,9 @@ class CompiledBackendTests(unittest.TestCase):
             T_guess=342.0,
             max_iter=200,
         )
-        reference_bubble = thermo.bubble_point_T_vlle(z, 1.01325, T_guess=337.0, max_iter=200)
+        reference_bubble = thermo.bubble_point_T_vlle(
+            z, 1.01325, T_guess=337.0, max_iter=200
+        )
         bubble_T, bubble_result = backend.flash_PV(
             z,
             1.01325,
@@ -914,7 +912,9 @@ class CompiledBackendTests(unittest.TestCase):
             T_guess=337.0,
             max_iter=200,
         )
-        reference_dew = thermo.dew_point_T_vlle(reference.y, 1.01325, T_guess=337.0, max_iter=200)
+        reference_dew = thermo.dew_point_T_vlle(
+            reference.y, 1.01325, T_guess=337.0, max_iter=200
+        )
         dew_T, dew_result = backend.flash_PV(
             reference.y,
             1.01325,
@@ -923,11 +923,13 @@ class CompiledBackendTests(unittest.TestCase):
             max_iter=200,
         )
 
-        self.assertFalse(hasattr(backend, 'bubble_point_T_vlle'))
-        self.assertFalse(hasattr(backend, 'dew_point_T_vlle'))
-        self.assertEqual(compiled.status, 'structured_vlle_feed_lle_seed')
+        self.assertFalse(hasattr(backend, "bubble_point_T_vlle"))
+        self.assertFalse(hasattr(backend, "dew_point_T_vlle"))
+        self.assertEqual(compiled.status, "structured_vlle_feed_lle_seed")
         self.assertAlmostEqual(T, 337.0, delta=0.02)
-        self.assertAlmostEqual(compiled.vapor_fraction, compiled_reference.vapor_fraction, delta=2e-5)
+        self.assertAlmostEqual(
+            compiled.vapor_fraction, compiled_reference.vapor_fraction, delta=2e-5
+        )
         self.assertAlmostEqual(bubble_T, reference_bubble, delta=0.02)
         self.assertEqual(
             bubble_result.status,
@@ -940,11 +942,11 @@ class CompiledBackendTests(unittest.TestCase):
         )
 
     def test_vlle_tv_uses_compiled_tp_for_ternary_activity_models(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.30, 'ethanol': 0.20, 'cyclohexane': 0.50}
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.30, "ethanol": 0.20, "cyclohexane": 0.50}
         T = 337.0
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -973,11 +975,11 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertAlmostEqual(tv.vapor_fraction, reference.vapor_fraction, delta=2e-3)
 
     def test_vlle_tv_skips_compiled_tp_for_binary_invariant_case(self):
-        components = ['water', 'chloroform']
-        z = {'water': 0.5, 'chloroform': 0.5}
+        components = ["water", "chloroform"]
+        z = {"water": 0.5, "chloroform": 0.5}
         T = 329.1264566618235
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -1005,11 +1007,11 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertEqual(tv.phase_count, 3)
 
     def test_vlle_ph_uses_compiled_tp_for_ternary_vlle_branch_probe(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.30, 'ethanol': 0.20, 'cyclohexane': 0.50}
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.30, "ethanol": 0.20, "cyclohexane": 0.50}
         T = 337.0
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -1039,11 +1041,11 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertLess(abs(residual), 20.0)
 
     def test_vlle_ph_skips_compiled_tp_for_non_vlle_fallback(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.20, 'ethanol': 0.60, 'cyclohexane': 0.20}
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.20, "ethanol": 0.60, "cyclohexane": 0.20}
         T = 337.0
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -1073,11 +1075,11 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertLess(abs(residual), 1e-5)
 
     def test_vlle_ps_uses_compiled_tp_for_ternary_vlle_branch_probe(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.30, 'ethanol': 0.20, 'cyclohexane': 0.50}
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.30, "ethanol": 0.20, "cyclohexane": 0.50}
         T = 337.0
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -1107,11 +1109,11 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertLess(abs(residual), 0.1)
 
     def test_vlle_ps_skips_compiled_tp_for_non_vlle_fallback(self):
-        components = ['water', 'ethanol', 'cyclohexane']
-        z = {'water': 0.20, 'ethanol': 0.60, 'cyclohexane': 0.20}
+        components = ["water", "ethanol", "cyclohexane"]
+        z = {"water": 0.20, "ethanol": 0.60, "cyclohexane": 0.20}
         T = 337.0
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -1141,11 +1143,11 @@ class CompiledBackendTests(unittest.TestCase):
         self.assertLess(abs(residual), 1e-6)
 
     def test_vlle_ps_skips_compiled_tp_for_binary_invariant_case(self):
-        components = ['water', 'chloroform']
-        z = {'water': 0.5, 'chloroform': 0.5}
+        components = ["water", "chloroform"]
+        z = {"water": 0.5, "chloroform": 0.5}
         T = 329.1264566618235
         P = 1.01325
-        thermo = create_thermodynamics(components, 'UNIFNIST')
+        thermo = create_thermodynamics(components, "UNIFNIST")
         backend = thermo.compiled_vlle_backend()
         if backend is None:
             self.skipTest("Compiled UNIFNIST VLLE backend is unavailable")
@@ -1177,22 +1179,22 @@ class CompiledBackendTests(unittest.TestCase):
 
         self.assertEqual(calls, [])
         self.assertAlmostEqual(T_ps, T, delta=1e-6)
-        self.assertEqual(ps.status, 'binary_invariant_vlle')
+        self.assertEqual(ps.status, "binary_invariant_vlle")
         self.assertAlmostEqual(ps.vapor_fraction, 0.2, delta=1e-8)
         self.assertLess(abs(residual), 1e-7)
 
     def test_compiled_nrtl_and_uniquac_vlle_match_reference_tp(self):
         cases = [
             (
-                'NRTL',
-                ['water', 'methanol', 'benzene'],
-                {'water': 0.20, 'methanol': 0.30, 'benzene': 0.50},
+                "NRTL",
+                ["water", "methanol", "benzene"],
+                {"water": 0.20, "methanol": 0.30, "benzene": 0.50},
                 333.0,
             ),
             (
-                'UNIQUAC',
-                ['water', 'ethanol', 'benzene'],
-                {'water': 0.30, 'ethanol': 0.10, 'benzene': 0.60},
+                "UNIQUAC",
+                ["water", "ethanol", "benzene"],
+                {"water": 0.30, "ethanol": 0.10, "benzene": 0.60},
                 339.0,
             ),
         ]
@@ -1213,21 +1215,29 @@ class CompiledBackendTests(unittest.TestCase):
                 self.assertEqual(compiled.status, reference.status)
                 self.assertEqual(compiled.phase_count, reference.phase_count)
                 self.assertLess(compiled.iterations, 25)
-                self.assertAlmostEqual(compiled.vapor_fraction, reference.vapor_fraction, delta=2e-3)
+                self.assertAlmostEqual(
+                    compiled.vapor_fraction, reference.vapor_fraction, delta=2e-3
+                )
                 for index, comp in enumerate(components):
-                    self.assertAlmostEqual(compiled.y[index], reference.y[comp], delta=1e-3)
-                    self.assertAlmostEqual(compiled.x1[index], reference.x1[comp], delta=1e-3)
-                    self.assertAlmostEqual(compiled.x2[index], reference.x2[comp], delta=1e-3)
+                    self.assertAlmostEqual(
+                        compiled.y[index], reference.y[comp], delta=1e-3
+                    )
+                    self.assertAlmostEqual(
+                        compiled.x1[index], reference.x1[comp], delta=1e-3
+                    )
+                    self.assertAlmostEqual(
+                        compiled.x2[index], reference.x2[comp], delta=1e-3
+                    )
 
     def test_compiled_vlle_tpd_reseeds_missed_vle_branch(self):
-        components = ['water', 'benzene', 'toluene']
+        components = ["water", "benzene", "toluene"]
         z = {
-            'water': 0.5398628992077538,
-            'benzene': 0.2490280908487376,
-            'toluene': 0.2111090099435087,
+            "water": 0.5398628992077538,
+            "benzene": 0.2490280908487376,
+            "toluene": 0.2111090099435087,
         }
 
-        for method in ('UNIFAC', 'NRTL', 'UNIQUAC'):
+        for method in ("UNIFAC", "NRTL", "UNIQUAC"):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(components, method)
                 backend = thermo.compiled_vlle_backend()
@@ -1239,7 +1249,7 @@ class CompiledBackendTests(unittest.TestCase):
                         reference = thermo.flash3_TP(z, T, 1.0, max_iter=200)
                         compiled = backend.flash_TP(z, T, 1.0, max_iter=200)
 
-                        self.assertEqual(reference.status, 'ordinary_vle')
+                        self.assertEqual(reference.status, "ordinary_vle")
                         self.assertEqual(compiled.status, reference.status)
                         self.assertEqual(compiled.phase_count, 2)
                         self.assertAlmostEqual(
@@ -1261,8 +1271,8 @@ class CompiledBackendTests(unittest.TestCase):
 
                 vapor_reference = thermo.flash3_TP(z, 357.0, 1.0, max_iter=200)
                 vapor_compiled = backend.flash_TP(z, 357.0, 1.0, max_iter=200)
-                self.assertEqual(vapor_reference.status, 'single_vapor')
-                self.assertEqual(vapor_compiled.status, 'single_vapor')
+                self.assertEqual(vapor_reference.status, "single_vapor")
+                self.assertEqual(vapor_compiled.status, "single_vapor")
 
                 target = thermo.flash3_TP(z, 354.0, 1.0, max_iter=200)
                 T_pv, pv = backend.flash_PV(
@@ -1273,7 +1283,7 @@ class CompiledBackendTests(unittest.TestCase):
                     max_iter=200,
                 )
                 self.assertAlmostEqual(T_pv, 354.0, delta=5e-4)
-                self.assertEqual(pv.status, 'ordinary_vle')
+                self.assertEqual(pv.status, "ordinary_vle")
                 self.assertAlmostEqual(
                     pv.vapor_fraction,
                     target.vapor_fraction,
@@ -1282,21 +1292,20 @@ class CompiledBackendTests(unittest.TestCase):
 
     def test_gamma_phi_models_do_not_attach_ideal_vapor_compiled_vlle(self):
         for method in (
-            'NRTL-RK', 'UNIQUAC-PR', 'UNIFNIST-RK',
-            'NRTL-VDM',
-            'UNIQUAC-VDM', 'UNIFNIST-VDM',
+            "NRTL-RK",
+            "UNIQUAC-PR",
+            "UNIFNIST-RK",
+            "NRTL-VDM",
+            "UNIQUAC-VDM",
+            "UNIFNIST-VDM",
         ):
             with self.subTest(method=method):
                 thermo = create_thermodynamics(
-                    ['water', 'methanol', 'benzene'],
+                    ["water", "methanol", "benzene"],
                     method,
                 )
                 self.assertIsNone(thermo.compiled_vlle_backend())
 
 
-
-
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -318,6 +318,28 @@ class UniquacQPrimeTests(unittest.TestCase):
             for comp in pure:
                 self.assertAlmostEqual(compiled[comp], pure[comp], places=10)
 
+
+    def test_submixture_retains_package_structure_across_scalar_and_compiled_paths(self):
+        from unittest.mock import patch
+        from compiled_activity import CompiledUNIQUACBackend
+
+        thermo = UNIQUACThermodynamics(['ethanol', 'water', '1-octanol'])
+        composition = {'ethanol': 0.4, 'water': 0.6}
+        components = ['ethanol', 'water']
+        with patch.object(thermo, '_compiled_activity_backend', return_value=None):
+            full = thermo.activity_coefficients(350.0, composition)
+            subset = thermo._activity_coefficients_for_components(350.0, composition, components)
+        for component in components:
+            self.assertAlmostEqual(subset[component], full[component], places=12)
+
+        backend = CompiledUNIQUACBackend.from_thermo(thermo, components)
+        if backend is None:
+            self.skipTest('Compiled UNIQUAC backend is unavailable')
+        values = backend.activity_coefficients([0.4, 0.6], 350.0)
+        for index, component in enumerate(components):
+            self.assertAlmostEqual(values[index], subset[component], places=12)
+
+
     def test_q_prime_model_satisfies_gibbs_duhem(self):
         thermo = self._with_q_prime()
         T, h = 350.0, 1e-6

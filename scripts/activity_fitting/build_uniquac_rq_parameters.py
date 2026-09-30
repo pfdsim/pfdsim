@@ -11,9 +11,9 @@ from pathlib import Path
 from typing import Any, Optional
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
-SOURCE_DATA = DATA / "source"
+SOURCE_DATA = DATA / "source" / "activity_fitting"
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 
 ASSORTED_ALCOHOL_ETHER_CAS = {
@@ -77,6 +77,8 @@ def valid_cas(value: Any) -> Optional[str]:
 
 
 def source_priority(source: str) -> tuple[int, str]:
+    if "water_nonwater_binary_parameters_curated" in source:
+        return (-3, source)
     if "ethanol_water_interactions" in source:
         return (-2, source)
     if "in this work" in source or "ester_uniquac_combinatorial" in source:
@@ -90,7 +92,9 @@ def source_priority(source: str) -> tuple[int, str]:
     return (1, source)
 
 
-def add_alias(aliases: dict[str, Optional[str]], alias: Optional[str], cas: str) -> None:
+def add_alias(
+    aliases: dict[str, Optional[str]], alias: Optional[str], cas: str
+) -> None:
     if not alias:
         return
     for key in {normalize_name(str(alias)), normalize_name(cas)}:
@@ -105,7 +109,9 @@ def add_alias(aliases: dict[str, Optional[str]], alias: Optional[str], cas: str)
             aliases[key] = cas
 
 
-def add_record(components: dict[str, dict], aliases: dict[str, Optional[str]], record: dict) -> None:
+def add_record(
+    components: dict[str, dict], aliases: dict[str, Optional[str]], record: dict
+) -> None:
     cas = valid_cas(record.get("cas"))
     r = parse_float(record.get("r"))
     q = parse_float(record.get("q"))
@@ -137,16 +143,27 @@ def add_record(components: dict[str, dict], aliases: dict[str, Optional[str]], r
         source_record["dwsim_id"] = str(record["dwsim_id"])
     entry["records"].append(source_record)
     if source_priority(source) < source_priority(entry["source"]):
-        entry.update({
-            "name": name,
-            "formula": str(record.get("formula", "") or ""),
-            "r": r,
-            "q": q,
-            "source": source,
-        })
+        entry.update(
+            {
+                "name": name,
+                "formula": str(record.get("formula", "") or ""),
+                "r": r,
+                "q": q,
+                "source": source,
+            }
+        )
+    q_prime = parse_float(record.get("q_prime"))
+    if record.get("q_prime") is not None:
+        if q_prime is None or q_prime <= 0.0:
+            raise ValueError(f"Invalid q_prime metadata for CAS {cas}")
+        entry["q_prime"] = q_prime
     entry["aliases"] = sorted(
         set(entry.get("aliases", []))
-        | {value for value in (name, record.get("formula"), record.get("dwsim_id")) if value}
+        | {
+            value
+            for value in (name, record.get("formula"), record.get("dwsim_id"))
+            if value
+        }
     )
     for alias in (name, cas, record.get("dwsim_id")):
         add_alias(aliases, alias, cas)
@@ -157,15 +174,17 @@ def csv_records() -> list[dict]:
     records = []
     with open(path, newline="", encoding="utf-8") as handle:
         for row in csv.DictReader(handle):
-            records.append({
-                "cas": row.get("cas"),
-                "name": row.get("name"),
-                "formula": row.get("formula"),
-                "dwsim_id": row.get("dwsim_id"),
-                "r": row.get("UNIQUAC_r"),
-                "q": row.get("UNIQUAC_q"),
-                "source": row.get("source") or "DWSIM UNIQUAC parameters",
-            })
+            records.append(
+                {
+                    "cas": row.get("cas"),
+                    "name": row.get("name"),
+                    "formula": row.get("formula"),
+                    "dwsim_id": row.get("dwsim_id"),
+                    "r": row.get("UNIQUAC_r"),
+                    "q": row.get("UNIQUAC_q"),
+                    "source": row.get("source") or "DWSIM UNIQUAC parameters",
+                }
+            )
     return records
 
 
@@ -178,7 +197,7 @@ def nagata_records() -> list[dict]:
         q_prime = item.get("q_prime")
         q_prime_expression = item.get("q_prime_expression")
         if q_prime is None and q_prime_expression == "q^0.1":
-            q_prime = q ** 0.1
+            q_prime = q**0.1
         record = {
             "cas": item["cas"],
             "name": item["name"],
@@ -207,14 +226,16 @@ def water_ethylene_oxide_records() -> list[dict]:
     payload = load_json(path)
     metadata = payload["metadata"]
     parameters = payload["fitted_parameters"]["UNIQUAC"]
-    return [{
-        "cas": metadata["cas"][1],
-        "name": metadata["components"][1],
-        "formula": "C2H4O",
-        "r": parameters["component2_r"],
-        "q": parameters["component2_q"],
-        "source": metadata["source"],
-    }]
+    return [
+        {
+            "cas": metadata["cas"][1],
+            "name": metadata["components"][1],
+            "formula": "C2H4O",
+            "r": parameters["component2_r"],
+            "q": parameters["component2_q"],
+            "source": metadata["source"],
+        }
+    ]
 
 
 def water_organic_binary_fit_records() -> list[dict]:
@@ -233,7 +254,8 @@ def water_organic_binary_fit_records() -> list[dict]:
             }
             parameters = next(
                 (
-                    values for structural_name, values in structural.items()
+                    values
+                    for structural_name, values in structural.items()
                     if normalize_name(structural_name) in keys
                 ),
                 None,
@@ -268,21 +290,22 @@ def mibk_vle_rq_records() -> list[dict]:
     if not path.exists():
         return []
     payload = load_json(path)
-    parameters = (
-        payload["H2O_MIBK"]["recommended_parameters"]["UNIQUAC"]
-        ["structural_parameters_used_in_fit"]["MIBK"]
-    )
-    return [{
-        "cas": payload["H2O_MIBK"]["system"]["cas"]["MIBK"],
-        "name": "methyl isobutyl ketone",
-        "formula": "C6H12O",
-        "r": parameters["r"],
-        "q": parameters["q"],
-        "source": (
-            "mibk_water_acids_vle.json; structural parameters used in the "
-            "recommended Water/MIBK UNIQUAC regression"
-        ),
-    }]
+    parameters = payload["H2O_MIBK"]["recommended_parameters"]["UNIQUAC"][
+        "structural_parameters_used_in_fit"
+    ]["MIBK"]
+    return [
+        {
+            "cas": payload["H2O_MIBK"]["system"]["cas"]["MIBK"],
+            "name": "methyl isobutyl ketone",
+            "formula": "C6H12O",
+            "r": parameters["r"],
+            "q": parameters["q"],
+            "source": (
+                "mibk_water_acids_vle.json; structural parameters used in the "
+                "recommended Water/MIBK UNIQUAC regression"
+            ),
+        }
+    ]
 
 
 def ethanol_water_rq_records() -> list[dict]:
@@ -290,21 +313,22 @@ def ethanol_water_rq_records() -> list[dict]:
     if not path.exists():
         return []
     payload = load_json(path)
-    parameters = (
-        payload["parameters"]["activity_models"]["UNIQUAC"]
-        ["structural_parameters_reconstruction_recommended"]["ethanol"]
-    )
-    return [{
-        "cas": "64-17-5",
-        "name": "Ethanol",
-        "formula": "C2H6O",
-        "r": parameters["R"],
-        "q": parameters["Q"],
-        "source": (
-            "ethanol_water_interactions.json; Voutsas et al. (2011) "
-            "UNIQUAC structural basis"
-        ),
-    }]
+    parameters = payload["parameters"]["activity_models"]["UNIQUAC"][
+        "structural_parameters_reconstruction_recommended"
+    ]["ethanol"]
+    return [
+        {
+            "cas": "64-17-5",
+            "name": "Ethanol",
+            "formula": "C2H6O",
+            "r": parameters["R"],
+            "q": parameters["Q"],
+            "source": (
+                "ethanol_water_interactions.json; Voutsas et al. (2011) "
+                "UNIQUAC structural basis"
+            ),
+        }
+    ]
 
 
 def ester_combinatorial_records() -> list[dict]:
@@ -388,7 +412,8 @@ def assorted_alcohol_ether_rq_records(existing_cas: set[str]) -> list[dict]:
             continue
         for name in entry["components"]:
             candidates = [
-                item for item in registry.values()
+                item
+                for item in registry.values()
                 if item["component"] == name
                 and item.get("active_database_standard", True)
             ]
@@ -401,7 +426,27 @@ def assorted_alcohol_ether_rq_records(existing_cas: set[str]) -> list[dict]:
     return list(records_by_cas.values())
 
 
-def apply_extended_metadata(components: dict[str, dict], aliases: dict[str, Optional[str]], records: list[dict]) -> None:
+def curated_water_nonwater_rq_records() -> list[dict]:
+    records = []
+    for filename in (
+        "water_nonwater_binary_parameters_curated.json",
+        "eg_glycerol_activity_parameters.json",
+    ):
+        path = SOURCE_DATA / filename
+        if not path.exists():
+            continue
+        for item in load_json(path).get("uniquac_components", []):
+            record = dict(item)
+            record["source"] = f"{filename}; " + str(
+                record.get("source", "reviewed staged collection")
+            )
+            records.append(record)
+    return records
+
+
+def apply_extended_metadata(
+    components: dict[str, dict], aliases: dict[str, Optional[str]], records: list[dict]
+) -> None:
     for record in records:
         add_record(components, aliases, record)
         cas = valid_cas(record.get("cas"))
@@ -435,6 +480,8 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
         add_record(components, aliases, record)
     for record in ester_combinatorial_records():
         add_record(components, aliases, record)
+    for record in curated_water_nonwater_rq_records():
+        add_record(components, aliases, record)
     apply_extended_metadata(components, aliases, nagata_records())
     assorted_records = assorted_alcohol_ether_rq_records(set(components))
     for record in assorted_records:
@@ -446,21 +493,25 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
             "key_basis": "CAS",
             "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
             "source_files": [
-                "data/source/dwsim_uniquac_combinatorial_parameters.csv",
-                "data/source/water_ethylene_oxide_interactions.json",
-                "data/source/water_organic_binary_fits.json",
-                "data/source/mibk_water_acids_vle.json",
-                "data/source/ethanol_water_interactions.json",
-                "data/source/nagata_gmehling_extended_uniquac_rq.json",
-                "data/source/ester_uniquac_combinatorial_parameters.json",
-                "data/source/assorted_alcohols_ethers.json",
+                "data/source/activity_fitting/dwsim_uniquac_combinatorial_parameters.csv",
+                "data/source/activity_fitting/water_ethylene_oxide_interactions.json",
+                "data/source/activity_fitting/water_organic_binary_fits.json",
+                "data/source/activity_fitting/mibk_water_acids_vle.json",
+                "data/source/activity_fitting/ethanol_water_interactions.json",
+                "data/source/activity_fitting/nagata_gmehling_extended_uniquac_rq.json",
+                "data/source/activity_fitting/ester_uniquac_combinatorial_parameters.json",
+                "data/source/activity_fitting/assorted_alcohols_ethers.json",
+                "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
+                "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
             ],
             "component_count": len(components),
             "ambiguous_alias_count": len(ambiguous_aliases),
             "ambiguous_aliases": ambiguous_aliases,
         },
         "components": dict(sorted(components.items())),
-        "aliases": dict(sorted((key, cas) for key, cas in aliases.items() if cas is not None)),
+        "aliases": dict(
+            sorted((key, cas) for key, cas in aliases.items() if cas is not None)
+        ),
     }
     return payload
 

@@ -91,7 +91,7 @@
       },
       "source": "data/uniquac_rq_cas.json"
     },
-    "regression_script": "scripts/fit_water_acrylic_activity_vdm.py"
+    "regression_script": "scripts/activity_fitting/fit_water_acrylic_activity_vdm.py"
   },
   "recommended_fit": "UNIQUAC-VDM",
   "selection_reason": "Temperature-dependent UNIQUAC-VDM gives the lowest measured-temperature RMSE and maximum absolute temperature error. NRTL alpha=0.5 is the best of the four tested fixed-alpha candidates but remains less accurate on measured bubble temperatures; values above the physical ceiling of 0.5 were not tested.",
@@ -386,7 +386,7 @@
             "support": "Consistent with the Olson dilute atmospheric temperature minimum near x_propionic_acid=0.05 and established minimum-boiling azeotropy."
           },
           "parallelism": "Five worker processes: one UNIQUAC-VDM fit and four NRTL-VDM fits with alpha fixed at 0.2, 0.3, 0.4, or 0.5.",
-          "regression_script": "scripts/fit_water_propionic_activity_vdm.py"
+          "regression_script": "scripts/activity_fitting/fit_water_propionic_activity_vdm.py"
         },
         "fixed_vapor_model": {
           "model": "VDM",
@@ -554,7 +554,7 @@
         },
         "UNIQUAC-VDM": {
           "recommended": false,
-          "do_not_extrapolate": true,
+          "extrapolation": "clamp",
           "model_variant": "standard_uniquac",
           "use_q_prime": false,
           "functional_form": {

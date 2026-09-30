@@ -1,0 +1,1157 @@
+{
+  "interactions": [
+    {
+      "Tmax_K": 313.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.5,
+      "cas1": "71-41-0",
+      "cas2": "108-88-3",
+      "comment": "1-pentanol + toluene joint Moreau total-pressure VLE and excess-enthalpy fit; tangent M/T^2+N/T^3 continuation outside the 298.15-313.15 K evidence range",
+      "component1": "1-pentanol",
+      "component2": "toluene",
+      "extrapolation": "inverse_square_cubic",
+      "fit_evidence": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 37.055523783448,
+            "ME": -4.551705178054,
+            "MaxAE": 77.498450204189,
+            "RMSE": 44.539814950262
+          },
+          "313.15": {
+            "MAE": 34.082980576849,
+            "ME": 1.440854671576,
+            "MaxAE": 81.073444159323,
+            "RMSE": 40.801376842482
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.02461656915,
+          "ME": -0.008159799102,
+          "MaxAE": 0.064566663209,
+          "RMSE": 0.030725615905
+        },
+        "interaction_values_313_15K": [
+          0.361238625934,
+          1.577483714252
+        ]
+      },
+      "fit_status": "recommended_joint_vle_excess_enthalpy_interaction",
+      "model": "NRTL",
+      "source": "Moreau et al. 2012",
+      "source_doi": "10.1016/j.fluid.2012.01.007",
+      "source_file": "data/source/activity_fitting/nonwater_binary_parameters_v2.json",
+      "tau12_c": -0.336652655394,
+      "tau12_d": 218.544654747829,
+      "tau12_e": -0.02575997382,
+      "tau21_c": -2.587001276176,
+      "tau21_d": 1304.108474752313,
+      "tau21_e": -5.001236942972,
+      "tau_tref": 313.15
+    },
+    {
+      "Tmax_K": 313.15,
+      "Tmin_K": 298.15,
+      "cas1": "71-41-0",
+      "cas2": "108-88-3",
+      "comment": "1-pentanol + toluene joint Moreau total-pressure VLE and excess-enthalpy fit; tangent M/T^2+N/T^3 continuation outside the 298.15-313.15 K evidence range",
+      "component1": "1-pentanol",
+      "component2": "toluene",
+      "extrapolation": "inverse_square_cubic",
+      "fit_evidence": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 32.324415910234,
+            "ME": 5.034341202652,
+            "MaxAE": 116.339145648892,
+            "RMSE": 44.849824243387
+          },
+          "313.15": {
+            "MAE": 39.740476505719,
+            "ME": 8.594177317593,
+            "MaxAE": 117.894632892442,
+            "RMSE": 52.706883918643
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.041671091239,
+          "ME": -0.010830167584,
+          "MaxAE": 0.074644750869,
+          "RMSE": 0.048085324269
+        },
+        "interaction_values_313_15K": [
+          1.237289693658,
+          0.493283022327
+        ]
+      },
+      "fit_status": "recommended_joint_vle_excess_enthalpy_interaction",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "Moreau et al. 2012",
+      "source_doi": "10.1016/j.fluid.2012.01.007",
+      "source_file": "data/source/activity_fitting/nonwater_binary_parameters_v2.json",
+      "tau12_a": -0.397455210017,
+      "tau12_b": 191.140016789684,
+      "tau12_c": -2.352784922037,
+      "tau21_a": 1.21806146081,
+      "tau21_b": -602.730342081742,
+      "tau21_c": 5.06120380226,
+      "tau_tref": 313.15,
+      "use_q_prime": false
+    }
+  ],
+  "metadata": {
+    "description": "PFDSim joint regression of Moreau 2012 1-pentanol + toluene total-pressure VLE and excess enthalpy",
+    "objective": {
+      "HE_relative_sigma": 0.005,
+      "pressure_sigma_kPa": 0.005,
+      "vapor": "source second-virial property basis"
+    },
+    "script": "scripts/activity_fitting/fit_moreau_2012_pentanol_toluene_activity.py",
+    "selection": "NRTL alpha=0.5 selected for the best joint objective and pressure/calorimetry balance; standard UNIQUAC retained as the companion raw-data refit.",
+    "source": {
+      "authors": [
+        "A. Moreau",
+        "M. C. Martin",
+        "C. R. Chamorro",
+        "J. J. Segovia"
+      ],
+      "doi": "10.1016/j.fluid.2012.01.007",
+      "tables": [
+        3,
+        5,
+        6
+      ],
+      "year": 2012
+    }
+  },
+  "model_selection": [
+    {
+      "alpha": 0.2,
+      "chi_square": 17263.86304495167,
+      "form": "AB",
+      "model": "NRTL",
+      "parameters": [
+        0.243957984666,
+        -204.830188215293,
+        -2.15909703137,
+        1371.376632474837
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 66.25031987646,
+            "ME": 47.606353847793,
+            "MaxAE": 158.876618961784,
+            "RMSE": 86.78574506295
+          },
+          "313.15": {
+            "MAE": 47.087012837777,
+            "ME": -31.731970890759,
+            "MaxAE": 173.523967398268,
+            "RMSE": 64.410457211662
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.051302534443,
+          "ME": -0.018103498477,
+          "MaxAE": 0.113819245459,
+          "RMSE": 0.059738525338
+        },
+        "interaction_values_313_15K": [
+          -0.410138097771,
+          2.220199256271
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.2,
+      "chi_square": 13360.754643464472,
+      "form": "ABH",
+      "model": "NRTL",
+      "parameters": [
+        0.167443785836,
+        -189.600828561823,
+        2.888683496276,
+        -2.244786205525,
+        1412.781244720083,
+        -12.819723248761
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 39.754226028634,
+            "ME": 7.045394878578,
+            "MaxAE": 152.095778269335,
+            "RMSE": 56.395988449192
+          },
+          "313.15": {
+            "MAE": 50.861914067983,
+            "ME": 10.3482761182,
+            "MaxAE": 152.561876655285,
+            "RMSE": 67.253399087218
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.052881727726,
+          "ME": -0.015841358477,
+          "MaxAE": 0.105034181464,
+          "RMSE": 0.06078671371
+        },
+        "interaction_values_313_15K": [
+          -0.438019501923,
+          2.266729824237
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.3,
+      "chi_square": 13907.802710571981,
+      "form": "AB",
+      "model": "NRTL",
+      "parameters": [
+        0.023969372732,
+        -19.042028514327,
+        -2.0224937942,
+        1209.992552700146
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 58.28857451065,
+            "ME": 44.322713491977,
+            "MaxAE": 150.439360287057,
+            "RMSE": 79.258740135725
+          },
+          "313.15": {
+            "MAE": 43.870270622143,
+            "ME": -30.201581636292,
+            "MaxAE": 156.356693125777,
+            "RMSE": 57.863522368592
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.045954008003,
+          "ME": -0.013988186771,
+          "MaxAE": 0.098493512873,
+          "RMSE": 0.05337813856
+        },
+        "interaction_values_313_15K": [
+          -0.036838637852,
+          1.841445380956
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.3,
+      "chi_square": 10450.739799416264,
+      "form": "ABH",
+      "model": "NRTL",
+      "parameters": [
+        -0.03326292014,
+        -5.18247020913,
+        0.936399918188,
+        -2.126204581897,
+        1249.535981232239,
+        -9.991880517173
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 34.571312674261,
+            "ME": 5.940495493387,
+            "MaxAE": 134.479652350717,
+            "RMSE": 49.961674053221
+          },
+          "313.15": {
+            "MAE": 44.855920272703,
+            "ME": 9.432566856209,
+            "MaxAE": 136.723400669388,
+            "RMSE": 59.80301991081
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.047333429713,
+          "ME": -0.012534650546,
+          "MaxAE": 0.092638245492,
+          "RMSE": 0.05431706382
+        },
+        "interaction_values_313_15K": [
+          -0.049812401888,
+          1.864010909823
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.4,
+      "chi_square": 9515.577667009555,
+      "form": "AB",
+      "model": "NRTL",
+      "parameters": [
+        -0.150960739461,
+        105.531543923356,
+        -2.140546263732,
+        1192.649160287235
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 45.103006309845,
+            "ME": 34.085530674379,
+            "MaxAE": 134.792314850128,
+            "RMSE": 65.882080223558
+          },
+          "313.15": {
+            "MAE": 37.862338042269,
+            "ME": -23.768819399728,
+            "MaxAE": 130.037663854862,
+            "RMSE": 48.607214649951
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.037913275272,
+          "ME": -0.00919044009,
+          "MaxAE": 0.080636255767,
+          "RMSE": 0.044162189962
+        },
+        "interaction_values_313_15K": [
+          0.186039241134,
+          1.668009253711
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.4,
+      "chi_square": 7330.161114175347,
+      "form": "ABH",
+      "model": "NRTL",
+      "parameters": [
+        -0.189158237868,
+        115.929730679588,
+        0.034520493868,
+        -2.242643724903,
+        1227.31438124166,
+        -7.873781070969
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 32.30426287809,
+            "ME": 3.090583600039,
+            "MaxAE": 108.041442056139,
+            "RMSE": 43.135132710629
+          },
+          "313.15": {
+            "MAE": 37.498524129193,
+            "ME": 7.045879286324,
+            "MaxAE": 114.156236391529,
+            "RMSE": 50.025231663691
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.038598247919,
+          "ME": -0.008848160313,
+          "MaxAE": 0.077968644019,
+          "RMSE": 0.044614922645
+        },
+        "interaction_values_313_15K": [
+          0.181046873674,
+          1.676610246809
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.5,
+      "chi_square": 6238.603541294088,
+      "form": "AB",
+      "model": "NRTL",
+      "parameters": [
+        -0.329301027844,
+        216.383693195259,
+        -2.506794224152,
+        1279.069909804639
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 41.18951410118,
+            "ME": 11.164503960839,
+            "MaxAE": 108.743246073713,
+            "RMSE": 52.058507180065
+          },
+          "313.15": {
+            "MAE": 32.839280868642,
+            "ME": -13.400031310005,
+            "MaxAE": 90.442212038641,
+            "RMSE": 39.746599107553
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.02453493592,
+          "ME": -0.007509576165,
+          "MaxAE": 0.064258236312,
+          "RMSE": 0.030699097641
+        },
+        "interaction_values_313_15K": [
+          0.36168953002,
+          1.577733669205
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.5,
+      "chi_square": 5697.666028630176,
+      "form": "ABH",
+      "model": "NRTL",
+      "parameters": [
+        -0.336652655394,
+        218.544654747829,
+        -0.02575997382,
+        -2.587001276176,
+        1304.108474752313,
+        -5.001236942972
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 37.055523783448,
+            "ME": -4.551705178054,
+            "MaxAE": 77.498450204189,
+            "RMSE": 44.539814950262
+          },
+          "313.15": {
+            "MAE": 34.082980576849,
+            "ME": 1.440854671576,
+            "MaxAE": 81.073444159323,
+            "RMSE": 40.801376842482
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.02461656915,
+          "ME": -0.008159799102,
+          "MaxAE": 0.064566663209,
+          "RMSE": 0.030725615905
+        },
+        "interaction_values_313_15K": [
+          0.361238625934,
+          1.577483714252
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.6,
+      "chi_square": 14040.315610513326,
+      "form": "AB",
+      "model": "NRTL",
+      "parameters": [
+        -0.502420821798,
+        326.382891019983,
+        -3.125562895474,
+        1444.183743363634
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 66.367280902158,
+            "ME": -36.497326600128,
+            "MaxAE": 140.270586873521,
+            "RMSE": 80.264105195123
+          },
+          "313.15": {
+            "MAE": 37.638129679135,
+            "ME": -4.463212332754,
+            "MaxAE": 66.503423505118,
+            "RMSE": 42.390924151751
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.042043877313,
+          "ME": -0.03071009532,
+          "MaxAE": 0.075364880271,
+          "RMSE": 0.046604331899
+        },
+        "interaction_values_313_15K": [
+          0.539836534166,
+          1.486232548766
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.6,
+      "chi_square": 13603.681023121571,
+      "form": "ABH",
+      "model": "NRTL",
+      "parameters": [
+        -0.45464329406,
+        311.987551904782,
+        1.416437702421,
+        -3.192055636973,
+        1464.904960282936,
+        0.525376147805
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 63.592000001805,
+            "ME": -25.245490236277,
+            "MaxAE": 127.915362934416,
+            "RMSE": 76.288395865427
+          },
+          "313.15": {
+            "MAE": 42.610019987844,
+            "ME": -11.249694084726,
+            "MaxAE": 80.205379782825,
+            "RMSE": 48.615979931555
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.041550640412,
+          "ME": -0.029389244005,
+          "MaxAE": 0.075096845608,
+          "RMSE": 0.046221154001
+        },
+        "interaction_values_313_15K": [
+          0.54164459323,
+          1.485910067268
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.7,
+      "chi_square": 62301.625920488135,
+      "form": "AB",
+      "model": "NRTL",
+      "parameters": [
+        -0.606962017894,
+        411.245492242005,
+        -3.69412292093,
+        1572.750440341646
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 121.217998503688,
+            "ME": -105.859375865524,
+            "MaxAE": 273.459323739999,
+            "RMSE": 156.074485310958
+          },
+          "313.15": {
+            "MAE": 49.961282042965,
+            "ME": -9.603661202103,
+            "MaxAE": 99.15173320554,
+            "RMSE": 56.818661940308
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.150865590519,
+          "ME": -0.129713903493,
+          "MaxAE": 0.226551607664,
+          "RMSE": 0.162984632943
+        },
+        "interaction_values_313_15K": [
+          0.706291988946,
+          1.328231989949
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": 0.7,
+      "chi_square": 57561.316860131934,
+      "form": "ABH",
+      "model": "NRTL",
+      "parameters": [
+        -0.465072870749,
+        369.956931778139,
+        4.828248188692,
+        -3.801013557811,
+        1605.616979358982,
+        8.4415429581
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 111.856305220054,
+            "ME": -65.947772979206,
+            "MaxAE": 238.181075322705,
+            "RMSE": 136.008230817994
+          },
+          "313.15": {
+            "MAE": 62.089237446643,
+            "ME": -32.301367442816,
+            "MaxAE": 137.447220642034,
+            "RMSE": 75.254278174465
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.149133266599,
+          "ME": -0.125048265115,
+          "MaxAE": 0.223370334897,
+          "RMSE": 0.161087780791
+        },
+        "interaction_values_313_15K": [
+          0.716331988833,
+          1.326295972315
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": null,
+      "chi_square": 9106.68843277236,
+      "form": "AB",
+      "model": "UNIQUAC",
+      "parameters": [
+        -0.388027961939,
+        185.192729142455,
+        1.16063981094,
+        -580.016156646987
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 44.234336827106,
+            "ME": 24.930366178035,
+            "MaxAE": 121.161657429044,
+            "RMSE": 60.892318580672
+          },
+          "313.15": {
+            "MAE": 35.891713828928,
+            "ME": -10.171933625846,
+            "MaxAE": 133.898341221273,
+            "RMSE": 48.331500761005
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.040597355873,
+          "ME": -0.012555732766,
+          "MaxAE": 0.081056789573,
+          "RMSE": 0.046901231166
+        },
+        "interaction_values_313_15K": [
+          1.225511964739,
+          0.500794562869
+        ]
+      },
+      "success": true
+    },
+    {
+      "alpha": null,
+      "chi_square": 8084.600090248017,
+      "form": "ABH",
+      "model": "UNIQUAC",
+      "parameters": [
+        -0.397455210017,
+        191.140016789684,
+        -2.352784922037,
+        1.21806146081,
+        -602.730342081742,
+        5.06120380226
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 32.324415910234,
+            "ME": 5.034341202652,
+            "MaxAE": 116.339145648892,
+            "RMSE": 44.849824243387
+          },
+          "313.15": {
+            "MAE": 39.740476505719,
+            "ME": 8.594177317593,
+            "MaxAE": 117.894632892442,
+            "RMSE": 52.706883918643
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.041671091239,
+          "ME": -0.010830167584,
+          "MaxAE": 0.074644750869,
+          "RMSE": 0.048085324269
+        },
+        "interaction_values_313_15K": [
+          1.237289693658,
+          0.493283022327
+        ]
+      },
+      "success": true
+    }
+  ],
+  "published_parameter_reproduction": {
+    "NRTL": {
+      "alpha12": 0.6024,
+      "parameters": [
+        0.5156,
+        0.0,
+        1.5908,
+        0.0
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 733.247368421053,
+            "ME": -733.247368421053,
+            "MaxAE": 1062.7,
+            "RMSE": 791.1041354701
+          },
+          "313.15": {
+            "MAE": 887.131578947368,
+            "ME": -887.131578947368,
+            "MaxAE": 1253.6,
+            "RMSE": 952.860320851189
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.016163967184,
+          "ME": -0.000329649493,
+          "MaxAE": 0.029499774071,
+          "RMSE": 0.018192642047
+        },
+        "interaction_values_313_15K": [
+          0.5156,
+          1.5908
+        ]
+      },
+      "status": "reproduced on the paper property basis"
+    },
+    "UNIQUAC": {
+      "parameters": [
+        0.138979027281,
+        0.0,
+        -0.502526820951,
+        0.0
+      ],
+      "score": {
+        "Moreau_HE_J_mol": {
+          "298.15": {
+            "MAE": 733.247368421053,
+            "ME": -733.247368421053,
+            "MaxAE": 1062.7,
+            "RMSE": 791.1041354701
+          },
+          "313.15": {
+            "MAE": 887.131578947368,
+            "ME": -887.131578947368,
+            "MaxAE": 1253.6,
+            "RMSE": 952.860320851189
+          }
+        },
+        "Moreau_pressure_kPa": {
+          "MAE": 0.367721049764,
+          "ME": -0.367721049764,
+          "MaxAE": 0.470269322632,
+          "RMSE": 0.381392128664
+        },
+        "interaction_values_313_15K": [
+          1.1491,
+          0.605
+        ]
+      },
+      "status": "not reproduced under PFDSim standard r/q or obvious direction/sign alternatives"
+    }
+  },
+  "raw_data": {
+    "excess_enthalpy": {
+      "298.15": [
+        {
+          "HE_J_mol": 0.0,
+          "x1": 0.0
+        },
+        {
+          "HE_J_mol": 539.3,
+          "x1": 0.0511
+        },
+        {
+          "HE_J_mol": 760.3,
+          "x1": 0.1004
+        },
+        {
+          "HE_J_mol": 883.9,
+          "x1": 0.1497
+        },
+        {
+          "HE_J_mol": 972.6,
+          "x1": 0.2012
+        },
+        {
+          "HE_J_mol": 1021.2,
+          "x1": 0.2507
+        },
+        {
+          "HE_J_mol": 1048.1,
+          "x1": 0.3003
+        },
+        {
+          "HE_J_mol": 1062.7,
+          "x1": 0.35
+        },
+        {
+          "HE_J_mol": 1042.3,
+          "x1": 0.4018
+        },
+        {
+          "HE_J_mol": 1010.7,
+          "x1": 0.4516
+        },
+        {
+          "HE_J_mol": 959.5,
+          "x1": 0.5016
+        },
+        {
+          "HE_J_mol": 893.7,
+          "x1": 0.5517
+        },
+        {
+          "HE_J_mol": 816.0,
+          "x1": 0.6018
+        },
+        {
+          "HE_J_mol": 728.1,
+          "x1": 0.65
+        },
+        {
+          "HE_J_mol": 632.4,
+          "x1": 0.7003
+        },
+        {
+          "HE_J_mol": 528.9,
+          "x1": 0.7507
+        },
+        {
+          "HE_J_mol": 414.9,
+          "x1": 0.8012
+        },
+        {
+          "HE_J_mol": 312.5,
+          "x1": 0.8497
+        },
+        {
+          "HE_J_mol": 203.1,
+          "x1": 0.9004
+        },
+        {
+          "HE_J_mol": 101.5,
+          "x1": 0.9491
+        },
+        {
+          "HE_J_mol": 0.0,
+          "x1": 1.0
+        }
+      ],
+      "313.15": [
+        {
+          "HE_J_mol": 0.0,
+          "x1": 0.0
+        },
+        {
+          "HE_J_mol": 596.4,
+          "x1": 0.0511
+        },
+        {
+          "HE_J_mol": 883.7,
+          "x1": 0.1004
+        },
+        {
+          "HE_J_mol": 1053.3,
+          "x1": 0.1498
+        },
+        {
+          "HE_J_mol": 1168.8,
+          "x1": 0.2013
+        },
+        {
+          "HE_J_mol": 1231.4,
+          "x1": 0.2508
+        },
+        {
+          "HE_J_mol": 1251.1,
+          "x1": 0.3003
+        },
+        {
+          "HE_J_mol": 1252.4,
+          "x1": 0.35
+        },
+        {
+          "HE_J_mol": 1253.6,
+          "x1": 0.3999
+        },
+        {
+          "HE_J_mol": 1202.6,
+          "x1": 0.4518
+        },
+        {
+          "HE_J_mol": 1157.0,
+          "x1": 0.5016
+        },
+        {
+          "HE_J_mol": 1089.3,
+          "x1": 0.5517
+        },
+        {
+          "HE_J_mol": 1002.7,
+          "x1": 0.6019
+        },
+        {
+          "HE_J_mol": 904.2,
+          "x1": 0.6501
+        },
+        {
+          "HE_J_mol": 793.7,
+          "x1": 0.7004
+        },
+        {
+          "HE_J_mol": 666.9,
+          "x1": 0.7508
+        },
+        {
+          "HE_J_mol": 540.2,
+          "x1": 0.8013
+        },
+        {
+          "HE_J_mol": 409.2,
+          "x1": 0.8498
+        },
+        {
+          "HE_J_mol": 267.0,
+          "x1": 0.9005
+        },
+        {
+          "HE_J_mol": 132.0,
+          "x1": 0.9492
+        },
+        {
+          "HE_J_mol": 0.0,
+          "x1": 1.0
+        }
+      ]
+    },
+    "pressure_313_15K": [
+      {
+        "P_kPa": 7.864,
+        "reported_y1_calculated": 0.0,
+        "x1": 0.0
+      },
+      {
+        "P_kPa": 7.789,
+        "reported_y1_calculated": 0.0283,
+        "x1": 0.0493
+      },
+      {
+        "P_kPa": 7.698,
+        "reported_y1_calculated": 0.0428,
+        "x1": 0.0991
+      },
+      {
+        "P_kPa": 7.595,
+        "reported_y1_calculated": 0.0513,
+        "x1": 0.1495
+      },
+      {
+        "P_kPa": 7.485,
+        "reported_y1_calculated": 0.0571,
+        "x1": 0.1997
+      },
+      {
+        "P_kPa": 7.365,
+        "reported_y1_calculated": 0.062,
+        "x1": 0.2495
+      },
+      {
+        "P_kPa": 7.232,
+        "reported_y1_calculated": 0.0667,
+        "x1": 0.2995
+      },
+      {
+        "P_kPa": 7.082,
+        "reported_y1_calculated": 0.0716,
+        "x1": 0.3497
+      },
+      {
+        "P_kPa": 6.918,
+        "reported_y1_calculated": 0.077,
+        "x1": 0.3997
+      },
+      {
+        "P_kPa": 6.922,
+        "reported_y1_calculated": 0.0776,
+        "x1": 0.4049
+      },
+      {
+        "P_kPa": 6.723,
+        "reported_y1_calculated": 0.0829,
+        "x1": 0.4497
+      },
+      {
+        "P_kPa": 6.725,
+        "reported_y1_calculated": 0.0836,
+        "x1": 0.4551
+      },
+      {
+        "P_kPa": 6.508,
+        "reported_y1_calculated": 0.0896,
+        "x1": 0.4996
+      },
+      {
+        "P_kPa": 6.516,
+        "reported_y1_calculated": 0.0904,
+        "x1": 0.5052
+      },
+      {
+        "P_kPa": 6.268,
+        "reported_y1_calculated": 0.0972,
+        "x1": 0.5497
+      },
+      {
+        "P_kPa": 6.269,
+        "reported_y1_calculated": 0.0981,
+        "x1": 0.5551
+      },
+      {
+        "P_kPa": 5.968,
+        "reported_y1_calculated": 0.1062,
+        "x1": 0.5997
+      },
+      {
+        "P_kPa": 5.966,
+        "reported_y1_calculated": 0.1073,
+        "x1": 0.605
+      },
+      {
+        "P_kPa": 5.638,
+        "reported_y1_calculated": 0.1184,
+        "x1": 0.6548
+      },
+      {
+        "P_kPa": 5.23,
+        "reported_y1_calculated": 0.1326,
+        "x1": 0.7046
+      },
+      {
+        "P_kPa": 4.76,
+        "reported_y1_calculated": 0.1514,
+        "x1": 0.7539
+      },
+      {
+        "P_kPa": 4.203,
+        "reported_y1_calculated": 0.1788,
+        "x1": 0.804
+      },
+      {
+        "P_kPa": 3.555,
+        "reported_y1_calculated": 0.2211,
+        "x1": 0.8532
+      },
+      {
+        "P_kPa": 2.799,
+        "reported_y1_calculated": 0.2953,
+        "x1": 0.9023
+      },
+      {
+        "P_kPa": 1.917,
+        "reported_y1_calculated": 0.4571,
+        "x1": 0.9517
+      },
+      {
+        "P_kPa": 0.901,
+        "reported_y1_calculated": 1.0,
+        "x1": 1.0
+      }
+    ]
+  },
+  "regularized_extrapolation_stress_test": {
+    "NRTL": {
+      "1000.0": {
+        "equimolar_HE_J_mol": 556.199604157785,
+        "gamma1_infinite_dilution": 1.130993050652,
+        "gamma2_infinite_dilution": 1.12760879992
+      },
+      "10000.0": {
+        "equimolar_HE_J_mol": 40.758949658083,
+        "gamma1_infinite_dilution": 1.000965955712,
+        "gamma2_infinite_dilution": 1.000965854071
+      },
+      "313.15": {
+        "equimolar_HE_J_mol": 1147.933286684745,
+        "gamma1_infinite_dilution": 6.547142980833,
+        "gamma2_infinite_dilution": 2.939009770104
+      },
+      "354.7": {
+        "equimolar_HE_J_mol": 1356.867610250663,
+        "gamma1_infinite_dilution": 3.989402948161,
+        "gamma2_infinite_dilution": 2.529113675217
+      },
+      "500.0": {
+        "equimolar_HE_J_mol": 1222.261590234537,
+        "gamma1_infinite_dilution": 1.832918826245,
+        "gamma2_infinite_dilution": 1.677570963402
+      },
+      "591.75": {
+        "equimolar_HE_J_mol": 1037.526927301039,
+        "gamma1_infinite_dilution": 1.503445064738,
+        "gamma2_infinite_dilution": 1.446181323276
+      }
+    },
+    "UNIQUAC": {
+      "1000.0": {
+        "equimolar_HE_J_mol": 413.005413468875,
+        "gamma1_infinite_dilution": 1.297794908393,
+        "gamma2_infinite_dilution": 1.254843319263
+      },
+      "10000.0": {
+        "equimolar_HE_J_mol": 24.1451645865,
+        "gamma1_infinite_dilution": 1.181256898624,
+        "gamma2_infinite_dilution": 1.162931121338
+      },
+      "313.15": {
+        "equimolar_HE_J_mol": 1192.138532408688,
+        "gamma1_infinite_dilution": 6.372405604469,
+        "gamma2_infinite_dilution": 2.779880510521
+      },
+      "354.7": {
+        "equimolar_HE_J_mol": 1311.420702054837,
+        "gamma1_infinite_dilution": 4.05169372,
+        "gamma2_infinite_dilution": 2.418323853134
+      },
+      "500.0": {
+        "equimolar_HE_J_mol": 1046.681564102877,
+        "gamma1_infinite_dilution": 1.981183585685,
+        "gamma2_infinite_dilution": 1.692571885547
+      },
+      "591.75": {
+        "equimolar_HE_J_mol": 852.991141709011,
+        "gamma1_infinite_dilution": 1.657923605848,
+        "gamma2_infinite_dilution": 1.504880695288
+      }
+    }
+  },
+  "source_property_basis": {
+    "Psat_kPa_at_313_15K": {
+      "1-pentanol": 0.908,
+      "toluene": 7.897
+    },
+    "liquid_molar_volume_L_mol": {
+      "1-pentanol": 0.11,
+      "toluene": 0.109
+    },
+    "second_virial_L_mol": [
+      [
+        -3.001,
+        -2.25
+      ],
+      [
+        -2.25,
+        -2.043
+      ]
+    ]
+  }
+}

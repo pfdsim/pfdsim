@@ -899,8 +899,8 @@ INTERACTION_ESTIMATION:
 Global rows begin with the destination molecular activity model (`UNIQUAC` or
 `NRTL`). Pair-specific rows begin with a PFD component pair and require
 `model=UNIQUAC` or `model=NRTL`. Pair rows inherit the global rule and may
-override `source`, `Tmin`, `Tmax`, `T_ref`, `do_not_extrapolate`, and, for
-NRTL, `alpha`.
+override `source`, `Tmin`, `Tmax`, `T_ref`, `extrapolation`, and, for NRTL,
+`alpha`.
 Without `scope=...`, a rule belongs to the global thermodynamic context.
 Records in different scopes may repeat the same model and component pair.
 Within one scope, duplicate global rules or duplicate pair rules are errors.
@@ -940,9 +940,13 @@ INTERACTION_ESTIMATION:
 ```
 
 `Tmin` and `Tmax` define the regression/calibration domain. Frozen parameters
-continue to evaluate outside that range by default. With
-`do_not_extrapolate=true`, each generated binary record instead clamps its
-interaction evaluation temperature to the inherited or pair-specific range.
+continue to evaluate outside that range with `extrapolation=unrestricted`.
+Other supported policies are `clamp`, `constant_inverse`,
+`inverse_linear_quadratic`, and `inverse_square_cubic`. Each non-unrestricted
+policy requires `Tmin` and `Tmax`. `clamp` evaluates at the nearest boundary.
+The other policies preserve the fitted law inside the range and use a tangent
+continuation outside it, matching both the boundary value and first
+temperature derivative.
 Fit source, range, sample count, and
 `ln(gamma)` error metrics are retained as thermodynamic provenance.
 
@@ -979,16 +983,28 @@ Supported models and fields:
   `tau_tref`/`tref`. The direct form is
   `tau = c + d/T + e*((Tref-T)/T + ln(T/Tref)) + f*T + g*T^2`; omitted
   `d`, `e`, `f`, and `g` coefficients default to zero. Optional
-  `do_not_extrapolate=true` requires `Tmin_K` and `Tmax_K` and clamps only this
-  pair's interaction evaluation temperature to that range
+  `extrapolation` optionally selects `unrestricted`, `clamp`,
+  `constant_inverse`, `inverse_linear_quadratic`, or `inverse_square_cubic`.
+  The continuation forms are respectively `A+B/T`, `M/T+N/T^2`, and
+  `M/T^2+N/T^3`, with their constants determined by the boundary value and
+  slope. They preserve continuity of the interaction parameters, activity
+  coefficients, excess Gibbs energy, and excess enthalpy. The second
+  derivative is not matched, so excess heat capacity may have a finite step
 - `UNIQUAC` - either scalar energy fields `a12`/`a21` [cal/mol] or direct tau
   fields `tau12_a`, `tau12_b`, `tau12_c`, `tau12_d`, `tau12_e`, `tau21_a`,
   `tau21_b`, `tau21_c`, `tau21_d`, `tau21_e`, and optional
-  `tau_tref`/`tref`, `use_q_prime`, and `model_variant`. The direct form is
+  `tau_tref`/`tref`, `use_q_prime`, and `model_variant`.
+  The combinatorial term uses the database's ordinary `r`/`q` values.
+  `use_q_prime=true` selects the stored modified-UNIQUAC residual-area
+  parameter once per component for the entire thermodynamic package,
+  including liquid submixtures. Interactions must be compatible with those
+  residual-area values when combined in a package.
+  The direct form is
   `ln(tau) = a + b/T + c*((Tref-T)/T + ln(T/Tref)) + d*T + e*T^2`;
   omitted `b`, `c`, `d`, and `e` coefficients default to zero. Optional
-  `do_not_extrapolate=true` requires `Tmin_K` and `Tmax_K` and clamps only this
-  pair's interaction evaluation temperature to that range
+  `extrapolation` accepts the same enum and applies the selected continuation
+  to `ln(tau_ij)`. Every value other than `unrestricted` requires `Tmin_K` and
+  `Tmax_K`
 - `PR` or `SRK` - constant `kij`/`k_ij`, optionally with `Tmin_K`/`Tmax_K`, or
   temperature-dependent `kij_a`, `kij_b`, `kij_c` using
   `k_ij = kij_a + kij_b/T + kij_c*T`; `T_ref_K` is accepted as provenance

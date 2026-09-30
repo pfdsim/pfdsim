@@ -24,6 +24,7 @@ from property_resolution import (
     PsatHandoffCoordinator,
     PsatHandoffRequirement,
     PsatJunctionPolicy,
+    PsatHandoffPolicy,
     PsatPriority,
     PsatSample,
     PsatSegment,
@@ -402,6 +403,40 @@ class VaporPressureCanonicalArchitectureTests(unittest.TestCase):
         self.assertGreater(boundary, 350.0)
         self.assertAlmostEqual(result.assembly.slices[1].T_min, boundary)
         self.assertTrue(result.assembly.assess_junctions()[0].accepted)
+
+    def test_direct_handoff_budget_rejects_large_relocation_in_either_direction(self):
+        for high_on_left in (True, False):
+            with self.subTest(high_on_left=high_on_left):
+                left = PsatSegment(
+                    source="left", method="left_source",
+                    segment_type=PsatSegmentType.PINNED,
+                    priority=700 if high_on_left else 600,
+                    T_min=200.0, T_max=400.0,
+                    ln_pressure_function=lambda T: 0.01 * T,
+                    derivative_function=lambda _T: 0.01,
+                    quality=0.98,
+                )
+                right = PsatSegment(
+                    source="right", method="right_source",
+                    segment_type=PsatSegmentType.PINNED,
+                    priority=600 if high_on_left else 700,
+                    T_min=300.0, T_max=500.0,
+                    ln_pressure_function=lambda T: 0.01 * T + 4.0e-5 * (T - 350.0) ** 2,
+                    derivative_function=lambda T: 0.01 + 8.0e-5 * (T - 350.0),
+                    quality=0.95,
+                )
+                accepted = PsatHandoffCoordinator(200.0, 500.0).coordinate((left, right))
+                self.assertEqual(accepted.rejected_segments, ())
+                self.assertEqual(accepted.decisions[-1].action, PsatHandoffAction.DIRECT)
+                # Relocation costs approximately 0.1 K in either direction:
+                # integral of (4e-5 * (T - 350)^2)^2 over a 50 K interval.
+                rejected = PsatHandoffCoordinator(
+                    200.0, 500.0,
+                    PsatHandoffPolicy(max_direct_handoff_compensation_integral_K=0.05),
+                ).coordinate((left, right))
+                self.assertEqual(rejected.rejected_segments, (right if high_on_left else left,))
+                self.assertEqual(rejected.decisions[0].action, PsatHandoffAction.REJECT)
+                self.assertIn("compensation budget", rejected.decisions[0].reason)
 
     def test_handoff_coordinator_builds_narrow_monotonic_c1_bridge(self):
         left = PsatSegment(
@@ -1231,6 +1266,10 @@ class VaporPressureCanonicalArchitectureTests(unittest.TestCase):
         )
         result = canonicalized.completion
 
+        self.assertEqual(
+            canonicalized.curve.metadata["handoff_decisions"],
+            result.handoffs.cache_metadata["handoff_decisions"],
+        )
         self.assertTrue(result.assembly.covers_target())
         self.assertEqual(
             [item.segment.method for item in result.assembly.slices],

@@ -16,10 +16,14 @@ from .common import (
 from .base import FluidPhaseEquilibrium, IdealThermodynamics, StreamState
 from .henry import AqueousEquilibriumContext
 
-if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-    from ..temperature_target import solve_temperature_residual as _solve_temperature_target
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+    from ..temperature_target import (
+        solve_temperature_residual as _solve_temperature_target,
+    )
 else:
-    from temperature_target import solve_temperature_residual as _solve_temperature_target
+    from temperature_target import (
+        solve_temperature_residual as _solve_temperature_target,
+    )
 
 
 @dataclass
@@ -42,6 +46,14 @@ class VLLEFlashResult:
 class ActivityCoefficientThermodynamics(IdealThermodynamics):
     """Shared VLE/LLE machinery for liquid activity-coefficient models."""
 
+    ACTIVITY_EXTRAPOLATION_MODES = {
+        "unrestricted": 0,
+        "clamp": 1,
+        "constant_inverse": 2,
+        "inverse_linear_quadratic": 3,
+        "inverse_square_cubic": 4,
+    }
+
     def __init__(
         self,
         components: list[str],
@@ -51,44 +63,68 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         super().__init__(components, db, interaction_overrides)
         self._activity_interaction_extrapolation_warning_keys: set[tuple] = set()
         self._activity_interaction_bounds: dict[
-            tuple[str, str], tuple[float, float]
+            tuple[str, str], tuple[float, float, int]
         ] = {}
         self._activity_interaction_pending_lower: dict[
-            tuple[str, str], tuple[float, float]
+            tuple[str, str], tuple[float, float, int]
         ] = {}
         self._activity_interaction_pending_upper: dict[
-            tuple[str, str], tuple[float, float]
+            tuple[str, str], tuple[float, float, int]
         ] = {}
         self._activity_interaction_lower_safe_temperature = -math.inf
         self._activity_interaction_upper_safe_temperature = math.inf
 
     @staticmethod
-    def _activity_interaction_temperature_bounds(record: dict) -> tuple[float, float]:
-        policy = record.get('do_not_extrapolate', False)
-        if not isinstance(policy, bool):
+    def _activity_interaction_extrapolation_policy(
+        record: dict,
+    ) -> tuple[int, float, float]:
+        policy = record.get("extrapolation", "unrestricted")
+        if not isinstance(policy, str):
             raise ThermodynamicsError(
-                "Activity interaction do_not_extrapolate must be boolean"
+                "Activity interaction extrapolation must be a string"
             )
-        if not policy:
-            return -math.inf, math.inf
-        if record.get('Tmin_K') is None or record.get('Tmax_K') is None:
+        policy = policy.strip().lower().replace("-", "_")
+        modes = ActivityCoefficientThermodynamics.ACTIVITY_EXTRAPOLATION_MODES
+        if policy not in modes:
             raise ThermodynamicsError(
-                "Activity interaction do_not_extrapolate=true requires "
+                "Activity interaction extrapolation must be one of "
+                + ", ".join(sorted(modes))
+            )
+        mode = modes[policy]
+        if mode == 0:
+            return mode, -math.inf, math.inf
+        if record.get("Tmin_K") is None or record.get("Tmax_K") is None:
+            raise ThermodynamicsError(
+                f"Activity interaction extrapolation={policy} requires "
                 "Tmin_K and Tmax_K"
             )
         try:
-            low = float(record['Tmin_K'])
-            high = float(record['Tmax_K'])
+            low = float(record["Tmin_K"])
+            high = float(record["Tmax_K"])
         except (TypeError, ValueError) as error:
             raise ThermodynamicsError(
                 "Activity interaction Tmin_K and Tmax_K must be numeric"
             ) from error
-        if not math.isfinite(low) or not math.isfinite(high) or low <= 0.0 or high <= low:
+        if (
+            not math.isfinite(low)
+            or not math.isfinite(high)
+            or low <= 0.0
+            or high <= low
+        ):
             raise ThermodynamicsError(
-                "Activity interaction do_not_extrapolate=true requires finite "
+                f"Activity interaction extrapolation={policy} requires finite "
                 "0 < Tmin_K < Tmax_K"
             )
-        return low, high
+        return mode, low, high
+
+    @staticmethod
+    def _activity_interaction_temperature_bounds(record: dict) -> tuple[float, float]:
+        mode, low, high = (
+            ActivityCoefficientThermodynamics._activity_interaction_extrapolation_policy(
+                record
+            )
+        )
+        return (low, high) if mode == 1 else (-math.inf, math.inf)
 
     def _activity_interaction_temperature(
         self,
@@ -97,12 +133,29 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         component2: str,
         T: float,
     ) -> float:
-        low, high = self._activity_interaction_temperature_bounds(record)
+        mode, low, high = self._activity_interaction_extrapolation_policy(record)
         requested = float(T)
+        if mode >= 2:
+            if requested < low or requested > high:
+                boundary = "Tmin_K" if requested < low else "Tmax_K"
+                effective = low if requested < low else high
+                self._record_activity_interaction_extrapolation(
+                    component1,
+                    component2,
+                    boundary,
+                    requested,
+                    effective,
+                    low,
+                    high,
+                    mode=mode,
+                )
+            return requested
+        if mode != 1:
+            return requested
         effective = min(max(requested, low), high)
         if effective == requested:
             return requested
-        boundary = 'Tmin_K' if requested < low else 'Tmax_K'
+        boundary = "Tmin_K" if requested < low else "Tmax_K"
         self._record_activity_interaction_extrapolation(
             component1,
             component2,
@@ -123,28 +176,46 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         effective: float,
         low: float,
         high: float,
+        *,
+        mode: int = 1,
     ) -> None:
         key = (tuple(sorted((component1, component2))), boundary)
         if key not in self._activity_interaction_extrapolation_warning_keys:
             self._activity_interaction_extrapolation_warning_keys.add(key)
-            self.add_warning(
-                f"Activity interaction parameters for {component1}/{component2} "
-                f"were evaluated at {effective:g} K instead of {requested:g} K: "
-                f"do_not_extrapolate=true and the declared range is "
-                f"{low:g}-{high:g} K."
-            )
+            if mode >= 2:
+                policy = next(
+                    name
+                    for name, value in self.ACTIVITY_EXTRAPOLATION_MODES.items()
+                    if value == mode
+                )
+                self.add_warning(
+                    f"Activity interaction parameters for "
+                    f"{component1}/{component2} used the {policy} "
+                    f"continuation at {requested:g} K; the declared range is "
+                    f"{low:g}-{high:g} K."
+                )
+            else:
+                self.add_warning(
+                    f"Activity interaction parameters for "
+                    f"{component1}/{component2} were evaluated at "
+                    f"{effective:g} K instead of {requested:g} K: "
+                    f"extrapolation=clamp and the declared range is "
+                    f"{low:g}-{high:g} K."
+                )
 
     def _prepare_activity_interaction_extrapolation(self, resolver) -> None:
-        """Resolve immutable clamp-warning metadata once during initialization."""
+        """Resolve immutable extrapolation-warning metadata during initialization."""
         bounds = {}
         for index, component1 in enumerate(self.components):
-            for component2 in self.components[index + 1:]:
+            for component2 in self.components[index + 1 :]:
                 record = resolver(component1, component2)
                 if record is None:
                     continue
-                low, high = self._activity_interaction_temperature_bounds(record)
-                if math.isfinite(low) or math.isfinite(high):
-                    bounds[(component1, component2)] = (low, high)
+                mode, low, high = self._activity_interaction_extrapolation_policy(
+                    record
+                )
+                if mode != 0:
+                    bounds[(component1, component2)] = (low, high, mode)
 
         self._activity_interaction_bounds = bounds
         self._activity_interaction_pending_lower = dict(bounds)
@@ -174,10 +245,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         changed = False
 
         if requested < self._activity_interaction_lower_safe_temperature:
-            for pair, (low, high) in tuple(
+            for pair, (low, high, mode) in tuple(
                 self._activity_interaction_pending_lower.items()
             ):
-                key = (tuple(sorted(pair)), 'Tmin_K')
+                key = (tuple(sorted(pair)), "Tmin_K")
                 if key in self._activity_interaction_extrapolation_warning_keys:
                     del self._activity_interaction_pending_lower[pair]
                     changed = True
@@ -188,16 +259,23 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     continue
                 if requested < low:
                     self._record_activity_interaction_extrapolation(
-                        pair[0], pair[1], 'Tmin_K', requested, low, low, high
+                        pair[0],
+                        pair[1],
+                        "Tmin_K",
+                        requested,
+                        low,
+                        low,
+                        high,
+                        mode=mode,
                     )
                     del self._activity_interaction_pending_lower[pair]
                     changed = True
 
         if requested > self._activity_interaction_upper_safe_temperature:
-            for pair, (low, high) in tuple(
+            for pair, (low, high, mode) in tuple(
                 self._activity_interaction_pending_upper.items()
             ):
-                key = (tuple(sorted(pair)), 'Tmax_K')
+                key = (tuple(sorted(pair)), "Tmax_K")
                 if key in self._activity_interaction_extrapolation_warning_keys:
                     del self._activity_interaction_pending_upper[pair]
                     changed = True
@@ -208,7 +286,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     continue
                 if requested > high:
                     self._record_activity_interaction_extrapolation(
-                        pair[0], pair[1], 'Tmax_K', requested, high, low, high
+                        pair[0],
+                        pair[1],
+                        "Tmax_K",
+                        requested,
+                        high,
+                        low,
+                        high,
+                        mode=mode,
                     )
                     del self._activity_interaction_pending_upper[pair]
                     changed = True
@@ -218,22 +303,22 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def _validate_activity_interactions(self, resolver) -> None:
         for index, component1 in enumerate(self.components):
-            for component2 in self.components[index + 1:]:
+            for component2 in self.components[index + 1 :]:
                 record = resolver(component1, component2)
                 if record is not None:
                     self._activity_interaction_temperature_bounds(record)
 
-    def initialize(self) -> 'ActivityCoefficientThermodynamics':
+    def initialize(self) -> "ActivityCoefficientThermodynamics":
         """Prepare persistent providers and the selected activity kernel."""
         super().initialize()
-        if getattr(self, '_activity_runtime_initialized', False):
+        if getattr(self, "_activity_runtime_initialized", False):
             return self
         try:
-            compiled = getattr(self, '_compiled_unifac', None)
-            backend_factory = getattr(self, '_compiled_activity_backend', None)
+            compiled = getattr(self, "_compiled_unifac", None)
+            backend_factory = getattr(self, "_compiled_activity_backend", None)
             if compiled is None and callable(backend_factory):
                 compiled = backend_factory()
-            compile_kernels = getattr(compiled, 'compile_kernels', None)
+            compile_kernels = getattr(compiled, "compile_kernels", None)
             if callable(compile_kernels):
                 compile_kernels()
         except ThermodynamicsError:
@@ -249,7 +334,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     @property
     def vapor_eos(self):
         """Vapor-fugacity EOS backend for gamma-phi variants (None when unused)."""
-        return getattr(self, '_vapor_eos_backend', None)
+        return getattr(self, "_vapor_eos_backend", None)
 
     @vapor_eos.setter
     def vapor_eos(self, backend) -> None:
@@ -274,7 +359,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         backend = self.vapor_eos
         if backend is None:
             return {comp: 1.0 for comp in self.components}
-        return backend.fugacity_coefficients(T, P, composition, 'vapor')
+        return backend.fugacity_coefficients(T, P, composition, "vapor")
 
     def _liquid_fugacity_reference_factors(
         self,
@@ -288,14 +373,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def compiled_vlle_backend(self):
         """Return the optional compiled ideal-vapor VLLE backend, built lazily."""
-        if getattr(self, '_compiled_vlle_initialized', False):
-            return getattr(self, '_compiled_vlle', None)
+        if getattr(self, "_compiled_vlle_initialized", False):
+            return getattr(self, "_compiled_vlle", None)
         self._compiled_vlle_initialized = True
         self._compiled_vlle = None
-        if hasattr(self, '_initialize_gamma_phi_backend') or hasattr(self, '_initialize_vdm'):
+        if hasattr(self, "_initialize_gamma_phi_backend") or hasattr(
+            self, "_initialize_vdm"
+        ):
             return None
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..compiled_vlle import CompiledActivityVLLEBackend
             else:
                 from compiled_vlle import CompiledActivityVLLEBackend
@@ -311,9 +398,18 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             vapor_fraction=result.vapor_fraction,
             liquid1_fraction=result.liquid1_fraction,
             liquid2_fraction=result.liquid2_fraction,
-            y={comp: float(result.y[index]) for index, comp in enumerate(self.components)},
-            x1={comp: float(result.x1[index]) for index, comp in enumerate(self.components)},
-            x2={comp: float(result.x2[index]) for index, comp in enumerate(self.components)},
+            y={
+                comp: float(result.y[index])
+                for index, comp in enumerate(self.components)
+            },
+            x1={
+                comp: float(result.x1[index])
+                for index, comp in enumerate(self.components)
+            },
+            x2={
+                comp: float(result.x2[index])
+                for index, comp in enumerate(self.components)
+            },
             residual=result.residual,
             iterations=result.iterations,
         )
@@ -333,15 +429,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         """
         normalized = self._normalize_phase_composition(composition)
         active = [
-            component for component in self.components
+            component
+            for component in self.components
             if normalized.get(component, 0.0) > mole_fraction_floor
         ]
         if len(active) < 2:
             return {
-                'locally_stable': True,
-                'minimum_eigenvalue': math.inf,
-                'active_components': tuple(active),
-                'reason': 'fewer_than_two_active_liquid_components',
+                "locally_stable": True,
+                "minimum_eigenvalue": math.inf,
+                "active_components": tuple(active),
+                "reason": "fewer_than_two_active_liquid_components",
             }
         active_total = sum(normalized[component] for component in active)
         base = [normalized[component] / active_total for component in active]
@@ -352,20 +449,17 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if minimum_fraction <= 2.5 * step:
             step = max(minimum_fraction / 4.0, 1.0e-10)
 
-        compiled_activity = getattr(self, '_compiled_unifac', None)
+        compiled_activity = getattr(self, "_compiled_unifac", None)
         if compiled_activity is None:
-            backend_factory = getattr(self, '_compiled_activity_backend', None)
+            backend_factory = getattr(self, "_compiled_activity_backend", None)
             if callable(backend_factory):
                 try:
                     compiled_activity = backend_factory(float(T))
                 except Exception:
                     compiled_activity = None
-        compiled_components = tuple(
-            getattr(compiled_activity, 'components', ()) or ()
-        )
+        compiled_components = tuple(getattr(compiled_activity, "components", ()) or ())
         compiled_index = {
-            component: index
-            for index, component in enumerate(compiled_components)
+            component: index for index, component in enumerate(compiled_components)
         }
         if not all(component in compiled_index for component in active):
             compiled_activity = None
@@ -385,8 +479,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 trial[component] = float(value)
             gamma = self.activity_coefficients(float(T), trial)
             return [
-                max(float(gamma.get(component, 1.0)), 1.0e-300)
-                for component in active
+                max(float(gamma.get(component, 1.0)), 1.0e-300) for component in active
             ]
 
         def reduced_gradient(coordinates):
@@ -414,9 +507,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             gradient_plus = reduced_gradient(plus)
             gradient_minus = reduced_gradient(minus)
             for row in range(dimension):
-                hessian[row][column] = (
-                    gradient_plus[row] - gradient_minus[row]
-                ) / (2.0 * step)
+                hessian[row][column] = (gradient_plus[row] - gradient_minus[row]) / (
+                    2.0 * step
+                )
 
         # Thermodynamically consistent activity models produce a symmetric
         # Hessian; averaging suppresses harmless finite-difference asymmetry.
@@ -446,25 +539,22 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         else:
             import numpy as np
 
-            eigenvalues, eigenvectors = np.linalg.eigh(
-                np.asarray(hessian, dtype=float)
-            )
+            eigenvalues, eigenvectors = np.linalg.eigh(np.asarray(hessian, dtype=float))
             minimum_index = int(np.argmin(eigenvalues))
             minimum = float(eigenvalues[minimum_index])
-            direction = tuple(
-                float(value) for value in eigenvectors[:, minimum_index]
-            )
+            direction = tuple(float(value) for value in eigenvectors[:, minimum_index])
         return {
-            'locally_stable': minimum >= -abs(float(eigenvalue_tolerance)),
-            'minimum_eigenvalue': minimum,
-            'active_components': tuple(active),
-            'unstable_direction': direction,
-            'finite_difference_step': float(step),
-            'activity_backend': (
+            "locally_stable": minimum >= -abs(float(eigenvalue_tolerance)),
+            "minimum_eigenvalue": minimum,
+            "active_components": tuple(active),
+            "unstable_direction": direction,
+            "finite_difference_step": float(step),
+            "activity_backend": (
                 type(compiled_activity).__name__
-                if compiled_activity is not None else 'python_dictionary'
+                if compiled_activity is not None
+                else "python_dictionary"
             ),
-            'reason': 'reduced_gibbs_hessian',
+            "reason": "reduced_gibbs_hessian",
         }
 
     def _robust_vlle_result(
@@ -474,6 +564,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         P: float,
     ) -> VLLEFlashResult:
         """Use the compiled global-search splitter when eligible, then reference."""
+
         def admissible(result: VLLEFlashResult) -> bool:
             fractions = (
                 result.vapor_fraction,
@@ -481,9 +572,11 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 result.liquid2_fraction,
             )
             return (
-                result.status != 'not_converged'
-                and all(math.isfinite(float(value)) and float(value) >= -1.0e-10
-                        for value in fractions)
+                result.status != "not_converged"
+                and all(
+                    math.isfinite(float(value)) and float(value) >= -1.0e-10
+                    for value in fractions
+                )
                 and abs(sum(float(value) for value in fractions) - 1.0) <= 1.0e-7
                 and math.isfinite(float(result.residual))
             )
@@ -533,7 +626,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     ) -> FluidPhaseEquilibrium:
         """Fast constrained VLE seed used only by local-spinodal mode."""
         backend = self.compiled_vlle_backend() if len(self.components) > 2 else None
-        compiled_vle = getattr(backend, 'flash_VLE_TP', None)
+        compiled_vle = getattr(backend, "flash_VLE_TP", None)
         if callable(compiled_vle):
             try:
                 V, x_values, y_values = compiled_vle(
@@ -559,12 +652,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     x1=x,
                     x2={},
                     status=(
-                        'single_vapor' if V >= 1.0 - 1.0e-10
-                        else 'single_liquid' if V <= 1.0e-10
-                        else 'ordinary_vle'
+                        "single_vapor"
+                        if V >= 1.0 - 1.0e-10
+                        else "single_liquid"
+                        if V <= 1.0e-10
+                        else "ordinary_vle"
                     ),
-                    stability='vle_candidate_for_spinodal',
-                    extra={'vle_backend': type(backend).__name__},
+                    stability="vle_candidate_for_spinodal",
+                    extra={"vle_backend": type(backend).__name__},
                 )
             except Exception:
                 pass
@@ -577,13 +672,13 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         P: float,
     ) -> FluidPhaseEquilibrium:
         mode = self.fluid_phase_model
-        if mode == 'VLE':
+        if mode == "VLE":
             return super()._fluid_phase_equilibrium_TP(composition, T, P)
-        if mode == 'VLLE':
+        if mode == "VLLE":
             result = self._robust_vlle_result(composition, T, P)
             return self._fluid_result_from_vlle(
                 result,
-                stability='global_vlle_search',
+                stability="global_vlle_search",
             )
 
         ordinary = self._adaptive_vle_candidate(composition, T, P)
@@ -591,23 +686,23 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return FluidPhaseEquilibrium(
                 **{
                     **ordinary.__dict__,
-                    'stability': 'spinodal_not_applicable_no_liquid',
+                    "stability": "spinodal_not_applicable_no_liquid",
                 }
             )
         spinodal = self.liquid_spinodal_stability(T, ordinary.x1)
-        if spinodal['locally_stable']:
+        if spinodal["locally_stable"]:
             return FluidPhaseEquilibrium(
                 **{
                     **ordinary.__dict__,
-                    'stability': 'locally_stable_spinodal_only',
-                    'extra': {'spinodal': spinodal},
+                    "stability": "locally_stable_spinodal_only",
+                    "extra": {"spinodal": spinodal},
                 }
             )
         result = self._robust_vlle_result(composition, T, P)
         return self._fluid_result_from_vlle(
             result,
-            stability='spinodal_unstable_vlle_selected',
-            extra={'spinodal': spinodal},
+            stability="spinodal_unstable_vlle_selected",
+            extra={"spinodal": spinodal},
         )
 
     def calculate_state_PQ(
@@ -628,7 +723,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         )
         if solid_state is not None:
             return solid_state
-        if self.fluid_phase_model == 'VLE':
+        if self.fluid_phase_model == "VLE":
             return super().calculate_state_PQ(
                 P,
                 vapor_fraction,
@@ -638,9 +733,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             )
 
         target = max(0.0, min(1.0, float(vapor_fraction)))
-        stability = 'global_vlle_search'
+        stability = "global_vlle_search"
         spinodal = None
-        if self.fluid_phase_model == 'VL(L)E':
+        if self.fluid_phase_model == "VL(L)E":
             ordinary = super().calculate_state_PQ(
                 P,
                 target,
@@ -648,6 +743,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 composition,
                 include=(),
             )
+
             def finish_ordinary(stability_label: str, details=None):
                 return self._apply_fluid_equilibrium_to_state(
                     ordinary,
@@ -666,19 +762,17 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 )
 
             if ordinary.effective_liquid1_fraction <= 1.0e-10:
-                return finish_ordinary(
-                    'spinodal_not_applicable_no_liquid'
-                )
+                return finish_ordinary("spinodal_not_applicable_no_liquid")
             spinodal = self.liquid_spinodal_stability(
                 ordinary.T,
                 ordinary.x1 or ordinary.x or ordinary.composition,
             )
-            if spinodal['locally_stable']:
+            if spinodal["locally_stable"]:
                 return finish_ordinary(
-                    'locally_stable_spinodal_only',
-                    {'spinodal': spinodal},
+                    "locally_stable_spinodal_only",
+                    {"spinodal": spinodal},
                 )
-            stability = 'spinodal_unstable_vlle_selected'
+            stability = "spinodal_unstable_vlle_selected"
 
         T, result = self.flash3_PV(
             composition,
@@ -689,12 +783,13 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         equilibrium = self._fluid_result_from_vlle(
             result,
             stability=stability,
-            extra={'spinodal': spinodal} if spinodal is not None else None,
+            extra={"spinodal": spinodal} if spinodal is not None else None,
         )
         total = sum(composition.values())
         normalized = (
             {component: value / total for component, value in composition.items()}
-            if total > 0.0 else dict(composition)
+            if total > 0.0
+            else dict(composition)
         )
         state = StreamState(
             T=float(T),
@@ -709,7 +804,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             self._normalize_state_include(include),
         )
 
-    def activity_coefficients(self, T: float, composition: dict[str, float]) -> dict[str, float]:
+    def activity_coefficients(
+        self, T: float, composition: dict[str, float]
+    ) -> dict[str, float]:
         raise NotImplementedError
 
     def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
@@ -749,23 +846,31 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             for comp in self.components
         }
         gamma = self.activity_coefficients(T, x)
-        return R * T * sum(
-            x[comp] * math.log(max(gamma.get(comp, 1.0), 1e-300))
-            for comp in self.components
-            if x.get(comp, 0.0) > 0.0
+        return (
+            R
+            * T
+            * sum(
+                x[comp] * math.log(max(gamma.get(comp, 1.0), 1e-300))
+                for comp in self.components
+                if x.get(comp, 0.0) > 0.0
+            )
         )
 
     def excess_entropy(self, composition: dict[str, float], T: float) -> float:
         """Liquid excess entropy [kJ/kmol-K] from S^E = (H^E - G^E) / T."""
-        return (self.excess_enthalpy(composition, T) - self.excess_gibbs(composition, T)) / max(T, 1e-12)
+        return (
+            self.excess_enthalpy(composition, T) - self.excess_gibbs(composition, T)
+        ) / max(T, 1e-12)
 
-    def _vapor_residual_enthalpy(self, composition: dict[str, float], T: float, P: float) -> float:
+    def _vapor_residual_enthalpy(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> float:
         """Vapor residual enthalpy from the gamma-phi vapor backend [kJ/kmol]."""
         backend = self.vapor_eos
         if backend is None:
             return 0.0
         try:
-            return backend.departure_enthalpy(T, P, composition, 'vapor')
+            return backend.departure_enthalpy(T, P, composition, "vapor")
         except Exception as exc:
             self.add_warning(
                 f"Could not calculate vapor residual enthalpy with "
@@ -775,14 +880,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             )
             return 0.0
 
-    def _vapor_residual_entropy(self, composition: dict[str, float], T: float,
-                                P: float) -> float:
+    def _vapor_residual_entropy(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> float:
         """Vapor residual entropy from the gamma-phi vapor backend [kJ/kmol-K]."""
         backend = self.vapor_eos
-        if backend is None or not hasattr(backend, 'departure_entropy'):
+        if backend is None or not hasattr(backend, "departure_entropy"):
             return 0.0
         try:
-            return backend.departure_entropy(T, P, composition, 'vapor')
+            return backend.departure_entropy(T, P, composition, "vapor")
         except Exception as exc:
             self.add_warning(
                 f"Could not calculate vapor residual entropy with "
@@ -792,15 +898,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             )
             return 0.0
 
-    def _vapor_residual_cp(self, composition: dict[str, float], T: float,
-                           P: float) -> float:
+    def _vapor_residual_cp(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> float:
         """Vapor residual Cp [kJ/kmol-K] as d(H_residual)/dT at constant P.
 
         Differentiates the polymorphic vapor residual enthalpy, so gamma-phi
         models get the RK/PR departure slope and VDM models get the
         association-enthalpy slope with the same code path.
         """
-        cache = getattr(self, '_vapor_residual_cp_cache', None)
+        cache = getattr(self, "_vapor_residual_cp_cache", None)
         if cache is None:
             cache = self._vapor_residual_cp_cache = {}
         cache_key = (float(T), float(P), self._composition_cache_key(composition))
@@ -822,7 +929,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def _excess_cp(self, composition: dict[str, float], T: float) -> float:
         """Liquid excess heat capacity [kJ/kmol-K] as d(H^E)/dT."""
-        cache = getattr(self, '_excess_cp_cache', None)
+        cache = getattr(self, "_excess_cp_cache", None)
         if cache is None:
             cache = self._excess_cp_cache = {}
         cache_key = (float(T), self._composition_cache_key(composition))
@@ -843,9 +950,13 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             value = 0.0
         return self._set_limited_cache(cache, cache_key, value)
 
-    def mixture_Cp(self, composition: dict[str, float], T: float,
-                   vapor_fraction: float = 1.0,
-                   P: Optional[float] = None) -> float:
+    def mixture_Cp(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float = 1.0,
+        P: Optional[float] = None,
+    ) -> float:
         """Mixture Cp [kJ/kmol-K] consistent with this model's enthalpy.
 
         Adds the liquid excess Cp d(H^E)/dT and, for gamma-phi/VDM variants,
@@ -856,7 +967,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if V < 0.999:
             cp += (1.0 - V) * self._excess_cp(composition, T)
         if (
-            P is not None and P > 0.0 and V > 0.001
+            P is not None
+            and P > 0.0
+            and V > 0.001
             and self._vapor_phase_correction_active()
         ):
             cp += V * self._vapor_residual_cp(composition, T, float(P))
@@ -876,7 +989,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             self._phi_sat_cache[cache_key] = value
             return value
         try:
-            phi_sat = self.vapor_eos.fugacity_coefficients(T, Psat, {comp: 1.0}, 'vapor')
+            phi_sat = self.vapor_eos.fugacity_coefficients(
+                T, Psat, {comp: 1.0}, "vapor"
+            )
             value = max(float(phi_sat.get(comp, 1.0)), 1e-12)
         except Exception:
             self.add_warning(
@@ -890,7 +1005,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         self._phi_sat_cache[cache_key] = value
         return value
 
-    def _gamma_phi_poynting_factor(self, comp: str, T: float, P: float, Psat: float) -> float:
+    def _gamma_phi_poynting_factor(
+        self, comp: str, T: float, P: float, Psat: float
+    ) -> float:
         """Poynting correction using pure liquid molar volume at T."""
         cache_key = (comp, float(T), float(P))
         cached = self._poynting_cache.get(cache_key)
@@ -898,7 +1015,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return cached
 
         value = 1.0
-        volume_m3_per_kmol, endpoint_note = self._liquid_molar_volume_for_poynting(comp, T)
+        volume_m3_per_kmol, endpoint_note = self._liquid_molar_volume_for_poynting(
+            comp, T
+        )
         if endpoint_note is not None:
             warning_key = (comp, endpoint_note)
             if warning_key not in self._poynting_endpoint_warning_keys:
@@ -943,9 +1062,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         # Keep association and custom caloric models on their authoritative
         # property methods whenever the pure reference curves are overridden.
         if (
-            getattr(self.mixture_enthalpy, '__func__', None)
+            getattr(self.mixture_enthalpy, "__func__", None)
             is not ActivityCoefficientThermodynamics.mixture_enthalpy
-            or getattr(self.mixture_Cp, '__func__', None)
+            or getattr(self.mixture_Cp, "__func__", None)
             is not ActivityCoefficientThermodynamics.mixture_Cp
         ):
             return super()._ph_caloric_evaluator(P, composition, phase)
@@ -953,24 +1072,25 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if backend is None:
             return super()._ph_caloric_evaluator(P, composition, phase)
         if (
-            phase == 'vapor' and not self._vapor_phase_correction_active()
-            and getattr(self._vapor_residual_enthalpy, '__func__', None)
+            phase == "vapor"
+            and not self._vapor_phase_correction_active()
+            and getattr(self._vapor_residual_enthalpy, "__func__", None)
             is ActivityCoefficientThermodynamics._vapor_residual_enthalpy
         ):
             return backend, None
-        if phase == 'liquid':
+        if phase == "liquid":
             compiled = self._compiled_liquid_ph_backend(backend)
             if compiled is not None:
                 return compiled, None
         elif (
-            getattr(self._vapor_residual_enthalpy, '__func__', None)
+            getattr(self._vapor_residual_enthalpy, "__func__", None)
             is ActivityCoefficientThermodynamics._vapor_residual_enthalpy
-            and getattr(self._vapor_residual_cp, '__func__', None)
+            and getattr(self._vapor_residual_cp, "__func__", None)
             is ActivityCoefficientThermodynamics._vapor_residual_cp
         ):
-            cubic = getattr(self.vapor_eos, '_compiled_backend', None)
+            cubic = getattr(self.vapor_eos, "_compiled_backend", None)
             if cubic is not None:
-                cached = getattr(self, '_compiled_vapor_ph_state', None)
+                cached = getattr(self, "_compiled_vapor_ph_state", None)
                 if cached is None or cached[0] is not backend or cached[1] is not cubic:
                     try:
                         compiled = backend.with_cubic_departure(cubic)
@@ -979,27 +1099,39 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     cached = self._compiled_vapor_ph_state = backend, cubic, compiled
                 if cached[2] is not None:
                     return cached[2], None
-        pure = backend.bind(P, [composition.get(c, 0.0) for c in self.components], phase)
+        pure = backend.bind(
+            P, [composition.get(c, 0.0) for c in self.components], phase
+        )
 
         def evaluate(T):
             enthalpy, cp = pure(T)
-            if phase == 'liquid':
-                return (enthalpy + self.excess_enthalpy(composition, T),
-                        cp + self._excess_cp(composition, T))
-            return (enthalpy + self._vapor_residual_enthalpy(composition, T, P),
-                    cp + self._vapor_residual_cp(composition, T, P))
+            if phase == "liquid":
+                return (
+                    enthalpy + self.excess_enthalpy(composition, T),
+                    cp + self._excess_cp(composition, T),
+                )
+            return (
+                enthalpy + self._vapor_residual_enthalpy(composition, T, P),
+                cp + self._vapor_residual_cp(composition, T, P),
+            )
 
         return None, evaluate
 
     def _compiled_liquid_ph_backend(self, pure):
         """Fuse only the standard excess models; preserve custom overrides."""
-        if getattr(self._excess_cp, '__func__', None) is not ActivityCoefficientThermodynamics._excess_cp:
+        if (
+            getattr(self._excess_cp, "__func__", None)
+            is not ActivityCoefficientThermodynamics._excess_cp
+        ):
             return None
         from .nrtl_uniquac import NRTLThermodynamics, UNIQUACThermodynamics
         from .unifac_models import UNIFACThermodynamics
 
-        method = getattr(self.excess_enthalpy, '__func__', None)
-        if method in (NRTLThermodynamics.excess_enthalpy, UNIQUACThermodynamics.excess_enthalpy):
+        method = getattr(self.excess_enthalpy, "__func__", None)
+        if method in (
+            NRTLThermodynamics.excess_enthalpy,
+            UNIQUACThermodynamics.excess_enthalpy,
+        ):
             activity = self._compiled_activity_backend()
         elif method is UNIFACThermodynamics.excess_enthalpy:
             activity = self._compiled_unifac
@@ -1007,11 +1139,11 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return None
         if activity is None:
             return None
-        cached = getattr(self, '_compiled_liquid_ph_state', None)
+        cached = getattr(self, "_compiled_liquid_ph_state", None)
         if cached is not None and cached[0] is pure and cached[1] is activity:
             return cached[2]
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..compiled_ph import CompiledActivityPHBackend
             else:
                 from compiled_ph import CompiledActivityPHBackend
@@ -1023,24 +1155,32 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def temperature_at_PH(self, P, H, composition, *, phase=None, T_guess=None):
         temperature, residual = super().temperature_at_PH(
-            P, H, composition, phase=phase, T_guess=T_guess,
+            P,
+            H,
+            composition,
+            phase=phase,
+            T_guess=T_guess,
         )
-        if str(phase).strip().lower() == 'liquid':
-            warn = getattr(self, '_warn_activity_interaction_extrapolation', None)
+        if str(phase).strip().lower() == "liquid":
+            warn = getattr(self, "_warn_activity_interaction_extrapolation", None)
             if callable(warn):
                 warn(temperature)
         else:
-            warn = getattr(self.vapor_eos, '_compiled_temperature_warnings', None)
+            warn = getattr(self.vapor_eos, "_compiled_temperature_warnings", None)
             if callable(warn):
                 warn(temperature)
-                self.extend_warnings(getattr(self.vapor_eos, 'warnings', []))
+                self.extend_warnings(getattr(self.vapor_eos, "warnings", []))
         return temperature, residual
 
-    def mixture_enthalpy(self, composition: dict[str, float], T: float,
-                        vapor_fraction: float = 1.0,
-                        x: Optional[dict] = None,
-                        y: Optional[dict] = None,
-                        P: float = P_REF) -> float:
+    def mixture_enthalpy(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float = 1.0,
+        x: Optional[dict] = None,
+        y: Optional[dict] = None,
+        P: float = P_REF,
+    ) -> float:
         """
         Mixture molar enthalpy [kJ/kmol] with liquid excess enthalpy and,
         for gamma-phi variants, vapor residual enthalpy.
@@ -1058,11 +1198,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
         return H
 
-    def mixture_entropy(self, composition: dict[str, float], T: float,
-                        vapor_fraction: float = 1.0,
-                        x: Optional[dict] = None,
-                        y: Optional[dict] = None,
-                        P: float = P_REF) -> float:
+    def mixture_entropy(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float = 1.0,
+        x: Optional[dict] = None,
+        y: Optional[dict] = None,
+        P: float = P_REF,
+    ) -> float:
         """
         Mixture molar entropy [kJ/kmol-K] with liquid excess entropy and,
         for gamma-phi variants, vapor residual entropy.
@@ -1080,14 +1224,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
         return S
 
-    def K_value(self, comp: str, T: float, P: float,
-                x: Optional[dict[str, float]] = None) -> float:
+    def K_value(
+        self, comp: str, T: float, P: float, x: Optional[dict[str, float]] = None
+    ) -> float:
         composition = x if x is not None else {comp: 1.0}
         return self.K_values(T, P, composition).get(comp, 1.0)
 
-    def K_values(self, T: float, P: float,
-                 composition: dict[str, float]) -> dict[str, float]:
-        cache_key = self._k_values_cache_key('gamma_raoult', T, P, composition)
+    def K_values(
+        self, T: float, P: float, composition: dict[str, float]
+    ) -> dict[str, float]:
+        cache_key = self._k_values_cache_key("gamma_raoult", T, P, composition)
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached
@@ -1102,13 +1248,19 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         }
         return self._set_cached_k_values(cache_key, K)
 
-    def aqueous_K_values(self, T: float, P: float,
-                         composition: dict[str, float],
-                         context: AqueousEquilibriumContext) -> dict[str, float]:
+    def aqueous_K_values(
+        self,
+        T: float,
+        P: float,
+        composition: dict[str, float],
+        context: AqueousEquilibriumContext,
+    ) -> dict[str, float]:
         """Ideal-vapor gamma/Henry K-values without evaluating Psat for Henry solutes."""
         self._warn_aqueous_henry_pressure(P, context)
         x = self._normalized_aqueous_composition(composition, self.components)
-        cache_key = self._k_values_cache_key('aqueous_gamma', T, P, x) + (context.cache_key(),)
+        cache_key = self._k_values_cache_key("aqueous_gamma", T, P, x) + (
+            context.cache_key(),
+        )
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached
@@ -1146,8 +1298,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         normalized.update({comp: 0.0 for comp in context.component_data})
         return normalized
 
-    def _gamma_phi_K_values(self, T: float, P: float,
-                            composition: dict[str, float]) -> dict[str, float]:
+    def _gamma_phi_K_values(
+        self, T: float, P: float, composition: dict[str, float]
+    ) -> dict[str, float]:
         cache_key = self._k_values_cache_key(
             f"gamma_phi_{getattr(self, 'vapor_backend_model', 'unknown').lower()}",
             T,
@@ -1171,16 +1324,23 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         gamma = self.activity_coefficients(T, x)
         reference = self._gamma_phi_reference_factors(T, P)
         y = {
-            comp: x.get(comp, 0.0) * gamma.get(comp, 1.0) * reference[comp] / max(P, 1e-12)
+            comp: x.get(comp, 0.0)
+            * gamma.get(comp, 1.0)
+            * reference[comp]
+            / max(P, 1e-12)
             for comp in self.components
         }
         y_sum = sum(max(value, 0.0) for value in y.values())
-        y = {comp: max(value, 0.0) / y_sum for comp, value in y.items()} if y_sum > 0 else dict(x)
+        y = (
+            {comp: max(value, 0.0) / y_sum for comp, value in y.items()}
+            if y_sum > 0
+            else dict(x)
+        )
 
         K = {}
         for _ in range(8):
             try:
-                phi_v = self.vapor_eos.fugacity_coefficients(T, P, y, 'vapor')
+                phi_v = self.vapor_eos.fugacity_coefficients(T, P, y, "vapor")
             except Exception:
                 phi_v = {comp: 1.0 for comp in self.components}
             K = {}
@@ -1193,13 +1353,18 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             if y_sum <= 0.0:
                 break
             y_new = {comp: max(value, 0.0) / y_sum for comp, value in y_new.items()}
-            if max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components) < 1e-8:
+            if (
+                max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components)
+                < 1e-8
+            ):
                 y = y_new
                 break
             y = y_new
         return self._set_cached_k_values(cache_key, K)
 
-    def _rachford_rice(self, z: dict[str, float], K: dict[str, float], V_guess: float) -> float:
+    def _rachford_rice(
+        self, z: dict[str, float], K: dict[str, float], V_guess: float
+    ) -> float:
         V = V_guess
         for _ in range(50):
             f = 0.0
@@ -1227,32 +1392,36 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             V = V_new
         return max(0.0, min(1.0, V))
 
-    def flash_TP(self, composition: dict[str, float], T: float, P: float) -> tuple[float, dict, dict]:
+    def flash_TP(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> tuple[float, dict, dict]:
         return self.flash(T, P, composition)
 
-    def bubble_point_T(self, composition: dict[str, float], P: float,
-                       T_guess: float = 350.0) -> float:
+    def bubble_point_T(
+        self, composition: dict[str, float], P: float, T_guess: float = 350.0
+    ) -> float:
         T = _solve_bubble_point_temperature(self, composition, P, T_guess)
-        self._record_estimated_interaction_extrapolation(
-            T, ((1.0, composition),)
-        )
+        self._record_estimated_interaction_extrapolation(T, ((1.0, composition),))
         return T
 
-    def dew_point_T(self, composition: dict[str, float], P: float,
-                    T_guess: float = 350.0) -> float:
+    def dew_point_T(
+        self, composition: dict[str, float], P: float, T_guess: float = 350.0
+    ) -> float:
         T = _solve_dew_point_temperature(self, composition, P, T_guess)
         # The converged dew calculation necessarily exercised a liquid
         # activity model for every represented condensable pair. The vapor
         # composition is sufficient for relevance filtering here; warning
         # generation must not trigger another equilibrium iteration.
-        self._record_estimated_interaction_extrapolation(
-            T, ((1.0, composition),)
-        )
+        self._record_estimated_interaction_extrapolation(T, ((1.0, composition),))
         return T
 
-    def bubble_point_T_vlle(self, composition: dict[str, float], P: float,
-                            T_guess: float = 350.0,
-                            max_iter: int = 100) -> float:
+    def bubble_point_T_vlle(
+        self,
+        composition: dict[str, float],
+        P: float,
+        T_guess: float = 350.0,
+        max_iter: int = 100,
+    ) -> float:
         """
         LLE-aware bubble temperature at fixed pressure.
 
@@ -1278,12 +1447,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             residual,
             T_guess=ordinary,
             centers=(ordinary, T_guess),
-            label='VLLE bubble point',
+            label="VLLE bubble point",
         )
 
-    def dew_point_T_vlle(self, composition: dict[str, float], P: float,
-                         T_guess: float = 350.0,
-                         max_iter: int = 100) -> float:
+    def dew_point_T_vlle(
+        self,
+        composition: dict[str, float],
+        P: float,
+        T_guess: float = 350.0,
+        max_iter: int = 100,
+    ) -> float:
         """
         VLLE-aware dew temperature at fixed pressure.
 
@@ -1304,21 +1477,32 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             residual,
             T_guess=ordinary,
             centers=(ordinary, T_guess),
-            label='VLLE dew point',
+            label="VLLE dew point",
             exact_tolerance=2e-8,
         )
 
-    def flash3_PV(self, composition: dict[str, float], P: float,
-                  vapor_fraction: float, T_guess: float = 350.0,
-                  max_iter: int = 100) -> tuple[float, VLLEFlashResult]:
+    def flash3_PV(
+        self,
+        composition: dict[str, float],
+        P: float,
+        vapor_fraction: float,
+        T_guess: float = 350.0,
+        max_iter: int = 100,
+    ) -> tuple[float, VLLEFlashResult]:
         z = self._normalize_phase_composition(composition)
         target = max(0.0, min(1.0, float(vapor_fraction)))
         binary_invariant = self._binary_invariant_at_pressure(z, P, T_guess, max_iter)
         if binary_invariant is not None:
             T_binary, binary_result = binary_invariant
-            bounds = binary_result.extra.get('vapor_fraction_bounds') if binary_result.extra else None
+            bounds = (
+                binary_result.extra.get("vapor_fraction_bounds")
+                if binary_result.extra
+                else None
+            )
             if self._bounds_contain(bounds, target):
-                return T_binary, self._with_binary_vapor_fraction(binary_result, z, target)
+                return T_binary, self._with_binary_vapor_fraction(
+                    binary_result, z, target
+                )
 
         if target <= 1e-10:
             T = self.bubble_point_T_vlle(z, P, T_guess, max_iter=max_iter)
@@ -1354,16 +1538,23 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
         prefer_vlle_branch = feed_has_lle_near_guess()
 
-        def try_local_temperature_solve() -> tuple[Optional[tuple[float, VLLEFlashResult]], Optional[tuple[float, VLLEFlashResult]]]:
+        def try_local_temperature_solve() -> tuple[
+            Optional[tuple[float, VLLEFlashResult]],
+            Optional[tuple[float, VLLEFlashResult]],
+        ]:
             samples: list[tuple[float, float, VLLEFlashResult]] = []
             fallback_match: tuple[float, VLLEFlashResult] | None = None
             guess = max(1.0, min(5000.0, float(T_guess)))
 
             for width in (0.0, 2.0, 5.0, 10.0, 20.0, 40.0):
-                points = [guess] if width <= 0.0 else [
-                    max(1.0, guess - width),
-                    min(5000.0, guess + width),
-                ]
+                points = (
+                    [guess]
+                    if width <= 0.0
+                    else [
+                        max(1.0, guess - width),
+                        min(5000.0, guess + width),
+                    ]
+                )
                 for point in points:
                     try:
                         result = result_at(point)
@@ -1392,7 +1583,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 if prefer_vlle_branch:
                     continue
 
-                all_samples = sorted((point, f_value) for point, f_value, _result in samples)
+                all_samples = sorted(
+                    (point, f_value) for point, f_value, _result in samples
+                )
                 for (T1, f1), (T2, f2) in zip(all_samples, all_samples[1:]):
                     if f1 * f2 < 0.0:
                         T = brentq(residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80)
@@ -1414,7 +1607,11 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         T_low, T_high = sorted((bubble, dew))
 
         binary_candidate = result_at(0.5 * (T_low + T_high))
-        bounds = binary_candidate.extra.get('vapor_fraction_bounds') if binary_candidate.extra else None
+        bounds = (
+            binary_candidate.extra.get("vapor_fraction_bounds")
+            if binary_candidate.extra
+            else None
+        )
         if bounds is not None and bounds[0] - 1e-10 <= target <= bounds[1] + 1e-10:
             adjusted = self._with_binary_vapor_fraction(binary_candidate, z, target)
             return 0.5 * (T_low + T_high), adjusted
@@ -1437,7 +1634,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             T_low,
             T_high,
             preferred=0.5 * (T_low + T_high),
-            label=f'VLLE PV vapor fraction {target:g}',
+            label=f"VLLE PV vapor fraction {target:g}",
             exact_tolerance=1e-8,
         )
         result = result_at(T)
@@ -1445,19 +1642,32 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return T, result
         return local_fallback
 
-    def flash3_TV(self, composition: dict[str, float], T: float,
-                  vapor_fraction: float, P_guess: float = P_REF,
-                  max_iter: int = 100) -> tuple[float, VLLEFlashResult]:
+    def flash3_TV(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float,
+        P_guess: float = P_REF,
+        max_iter: int = 100,
+    ) -> tuple[float, VLLEFlashResult]:
         z = self._normalize_phase_composition(composition)
         target = max(0.0, min(1.0, float(vapor_fraction)))
         trials: dict[float, VLLEFlashResult] = {}
-        compiled_backend = self.compiled_vlle_backend() if len(self.components) > 2 else None
+        compiled_backend = (
+            self.compiled_vlle_backend() if len(self.components) > 2 else None
+        )
         binary_invariant = self._binary_invariant_at_temperature(z, T, max_iter)
         if binary_invariant is not None:
             P_binary, binary_result = binary_invariant
-            bounds = binary_result.extra.get('vapor_fraction_bounds') if binary_result.extra else None
+            bounds = (
+                binary_result.extra.get("vapor_fraction_bounds")
+                if binary_result.extra
+                else None
+            )
             if self._bounds_contain(bounds, target):
-                return P_binary, self._with_binary_vapor_fraction(binary_result, z, target)
+                return P_binary, self._with_binary_vapor_fraction(
+                    binary_result, z, target
+                )
 
         def result_at(P_value: float) -> VLLEFlashResult:
             key = round(float(P_value), 10)
@@ -1509,12 +1719,30 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     phase = result.phase_count
                     if phase == 3 and abs(f_value) <= 1e-8:
                         return P_value, result
-                    if phase == 3 and phase_previous == 3 and f_value * f_previous < 0.0:
-                        P = brentq(residual, P_value, P_previous, xtol=1e-7, rtol=1e-9, maxiter=80)
+                    if (
+                        phase == 3
+                        and phase_previous == 3
+                        and f_value * f_previous < 0.0
+                    ):
+                        P = brentq(
+                            residual,
+                            P_value,
+                            P_previous,
+                            xtol=1e-7,
+                            rtol=1e-9,
+                            maxiter=80,
+                        )
                         return P, result_at(P)
                     if phase != 3 and phase_previous == 3:
                         if f_value * f_previous < 0.0:
-                            P = brentq(residual, P_value, P_previous, xtol=1e-7, rtol=1e-9, maxiter=80)
+                            P = brentq(
+                                residual,
+                                P_value,
+                                P_previous,
+                                xtol=1e-7,
+                                rtol=1e-9,
+                                maxiter=80,
+                            )
                             root_result = result_at(P)
                             if root_result.phase_count == 3:
                                 return P, root_result
@@ -1567,8 +1795,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     f_high = residual(high)
                     if math.isfinite(f_high) and abs(f_high) <= 1e-8:
                         return high, result_at(high)
-                    if math.isfinite(f_low) and math.isfinite(f_high) and f_low * f_high < 0.0:
-                        P = brentq(residual, low, high, xtol=1e-7, rtol=1e-9, maxiter=80)
+                    if (
+                        math.isfinite(f_low)
+                        and math.isfinite(f_high)
+                        and f_low * f_high < 0.0
+                    ):
+                        P = brentq(
+                            residual, low, high, xtol=1e-7, rtol=1e-9, maxiter=80
+                        )
                         return P, result_at(P)
                 except Exception:
                     continue
@@ -1588,7 +1822,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             residual,
             grid,
             preferred=max(1e-6, float(P_guess)),
-            label=f'VLLE TV vapor fraction {target:g}',
+            label=f"VLLE TV vapor fraction {target:g}",
             exact_tolerance=1e-8,
         )
         return P, result_at(P)
@@ -1616,7 +1850,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         z = self._normalize_phase_composition(composition)
         trials: dict[float, VLLEFlashResult] = {}
         properties: dict[float, float] = {}
-        compiled_backend = self.compiled_vlle_backend() if len(self.components) > 2 else None
+        compiled_backend = (
+            self.compiled_vlle_backend() if len(self.components) > 2 else None
+        )
         compiled_trials: dict[float, VLLEFlashResult] = {}
         compiled_properties: dict[float, float] = {}
 
@@ -1700,7 +1936,19 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
                 previous_compiled_T: float | None = None
                 previous_compiled_f: float | None = None
-                for offset in (1e-5, 1e-4, 1e-3, 0.005, 0.01, 0.025, 0.05, 0.1, 0.15, 0.2, 0.25):
+                for offset in (
+                    1e-5,
+                    1e-4,
+                    1e-3,
+                    0.005,
+                    0.01,
+                    0.025,
+                    0.05,
+                    0.1,
+                    0.15,
+                    0.2,
+                    0.25,
+                ):
                     point = bubble + offset
                     try:
                         f_value = compiled_residual(point)
@@ -1721,10 +1969,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 max_span = 8.0
                 refinement_points = 5
 
-                def bracket_compiled_phase3(T1: float, f1: float, T2: float, f2: float) -> float | None:
+                def bracket_compiled_phase3(
+                    T1: float, f1: float, T2: float, f2: float
+                ) -> float | None:
                     if f1 * f2 >= 0.0:
                         return None
-                    T = brentq(compiled_residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80)
+                    T = brentq(
+                        compiled_residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80
+                    )
                     try:
                         result = compiled_result_at(T)
                     except Exception:
@@ -1757,16 +2009,17 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                         continue
 
                     for refinement_index in range(1, refinement_points + 1):
-                        refined = (
-                            previous_compiled_T
-                            + (point - previous_compiled_T) * refinement_index / (refinement_points + 1)
-                        )
+                        refined = previous_compiled_T + (
+                            point - previous_compiled_T
+                        ) * refinement_index / (refinement_points + 1)
                         try:
                             f_refined = compiled_residual(refined)
                             refined_result = compiled_result_at(refined)
                         except Exception:
                             continue
-                        if refined_result.phase_count != 3 or not math.isfinite(f_refined):
+                        if refined_result.phase_count != 3 or not math.isfinite(
+                            f_refined
+                        ):
                             continue
                         if abs(f_refined) <= exact_tolerance:
                             return refined
@@ -1792,7 +2045,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             max_span = 8.0
             refinement_points = 5
 
-            def bracket_phase3(T1: float, f1: float, T2: float, f2: float) -> float | None:
+            def bracket_phase3(
+                T1: float, f1: float, T2: float, f2: float
+            ) -> float | None:
                 if f1 * f2 >= 0.0:
                     return None
                 T = brentq(residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80)
@@ -1821,7 +2076,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     continue
 
                 for refinement_index in range(1, refinement_points + 1):
-                    refined = previous_T + (point - previous_T) * refinement_index / (refinement_points + 1)
+                    refined = previous_T + (point - previous_T) * refinement_index / (
+                        refinement_points + 1
+                    )
                     try:
                         f_refined, refined_result = sample(refined)
                     except Exception:
@@ -1830,7 +2087,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                         continue
                     if abs(f_refined) <= exact_tolerance:
                         return refined
-                    bracketed = bracket_phase3(previous_T, f_previous, refined, f_refined)
+                    bracketed = bracket_phase3(
+                        previous_T, f_previous, refined, f_refined
+                    )
                     if bracketed is not None:
                         return bracketed
                     previous_T = refined
@@ -1843,10 +2102,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             exact_match: float | None = None
             guess = max(1.0, min(5000.0, float(T_guess)))
             for width in (0.0, 2.0, 5.0, 10.0, 20.0, 40.0, 80.0):
-                points = [guess] if width <= 0.0 else [
-                    max(1.0, guess - width),
-                    min(5000.0, guess + width),
-                ]
+                points = (
+                    [guess]
+                    if width <= 0.0
+                    else [
+                        max(1.0, guess - width),
+                        min(5000.0, guess + width),
+                    ]
+                )
                 for point in points:
                     try:
                         f_value, result = sample(point)
@@ -1868,11 +2131,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 )
                 for (T1, f1), (T2, f2) in zip(phase3_samples, phase3_samples[1:]):
                     if f1 * f2 < 0.0:
-                        return brentq(residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80)
+                        return brentq(
+                            residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80
+                        )
                 if exact_match is not None:
                     return exact_match
 
-            all_samples = sorted((point, f_value) for point, f_value, _result in samples)
+            all_samples = sorted(
+                (point, f_value) for point, f_value, _result in samples
+            )
             for (T1, f1), (T2, f2) in zip(all_samples, all_samples[1:]):
                 if f1 * f2 < 0.0:
                     return brentq(residual, T1, T2, xtol=1e-7, rtol=1e-9, maxiter=80)
@@ -1911,38 +2178,53 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             )
         return T, result, residual_value
 
-    def flash3_PH(self, composition: dict[str, float], P: float,
-                  H_target: float, T_guess: float = 350.0,
-                  max_iter: int = 100) -> tuple[float, VLLEFlashResult, float]:
+    def flash3_PH(
+        self,
+        composition: dict[str, float],
+        P: float,
+        H_target: float,
+        T_guess: float = 350.0,
+        max_iter: int = 100,
+    ) -> tuple[float, VLLEFlashResult, float]:
         return self._flash3_property_target_solve(
-            composition, P, float(H_target), T_guess, max_iter,
+            composition,
+            P,
+            float(H_target),
+            T_guess,
+            max_iter,
             property_of_result=self._flash3_mixture_enthalpy,
             binary_adjuster=self._with_binary_enthalpy,
             exact_floor=1e-5,
             solution_floor=20.0,
-            label='VLLE PH flash',
-            residual_units='kJ/kmol',
+            label="VLLE PH flash",
+            residual_units="kJ/kmol",
         )
 
-    def flash3_PS(self, composition: dict[str, float], P: float,
-                  S_target: float, T_guess: float = 350.0,
-                  max_iter: int = 100) -> tuple[float, VLLEFlashResult, float]:
+    def flash3_PS(
+        self,
+        composition: dict[str, float],
+        P: float,
+        S_target: float,
+        T_guess: float = 350.0,
+        max_iter: int = 100,
+    ) -> tuple[float, VLLEFlashResult, float]:
         return self._flash3_property_target_solve(
-            composition, P, float(S_target), T_guess, max_iter,
+            composition,
+            P,
+            float(S_target),
+            T_guess,
+            max_iter,
             property_of_result=self._flash3_mixture_entropy,
             binary_adjuster=self._with_binary_entropy,
             exact_floor=1e-7,
             solution_floor=0.1,
-            label='VLLE PS flash',
-            residual_units='kJ/kmol-K',
+            label="VLLE PS flash",
+            residual_units="kJ/kmol-K",
         )
 
     def _vapor_phase_correction_active(self) -> bool:
         """True when K-values include vapor-phase corrections (phi or VDM)."""
-        return (
-            self.vapor_eos is not None
-            or bool(getattr(self, '_vdm_models', None))
-        )
+        return self.vapor_eos is not None or bool(getattr(self, "_vdm_models", None))
 
     def bubble_point_P(self, composition: dict[str, float], T: float) -> float:
         gamma = self.activity_coefficients(T, composition)
@@ -1954,20 +2236,38 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return ideal
         return self._bubble_point_P_from_K_values(composition, T, ideal)
 
-    def _bubble_point_P_from_K_values(self, composition: dict[str, float],
-                                      T: float, P_estimate: float) -> float:
+    def _bubble_point_P_from_K_values(
+        self, composition: dict[str, float], T: float, P_estimate: float
+    ) -> float:
         """Solve sum(x_i K_i(T, P)) = 1 so bubble P includes vapor corrections."""
+
         def residual(P_value: float) -> float:
             K = self.K_values(T, P_value, composition)
-            return sum(
-                composition.get(comp, 0.0) * K.get(comp, 1.0)
-                for comp in self.components
-            ) - 1.0
+            return (
+                sum(
+                    composition.get(comp, 0.0) * K.get(comp, 1.0)
+                    for comp in self.components
+                )
+                - 1.0
+            )
 
         P_center = max(float(P_estimate), 1e-8)
         values = []
-        for factor in (1.0, 0.8, 1.25, 0.5, 2.0, 0.25, 4.0,
-                       0.1, 10.0, 0.03, 30.0, 0.01, 100.0):
+        for factor in (
+            1.0,
+            0.8,
+            1.25,
+            0.5,
+            2.0,
+            0.25,
+            4.0,
+            0.1,
+            10.0,
+            0.03,
+            30.0,
+            0.01,
+            100.0,
+        ):
             P_try = P_center * factor
             try:
                 f_try = residual(P_try)
@@ -1999,8 +2299,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             if correction:
                 K = self.K_values(T, max(P_dew, 1e-8), x)
                 volatility = {
-                    comp: max(K.get(comp, 1.0) * max(P_dew, 1e-8), 1e-30)
-                    for comp in y
+                    comp: max(K.get(comp, 1.0) * max(P_dew, 1e-8), 1e-30) for comp in y
                 }
             else:
                 gamma = self.activity_coefficients(T, x)
@@ -2021,17 +2320,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     if math.isfinite(accelerated) and 0.2 * p3 < accelerated < 5.0 * p3:
                         P_new = accelerated
                         history.clear()
-            x_new = {
-                comp: y_i * P_new / volatility[comp]
-                for comp, y_i in y.items()
-            }
+            x_new = {comp: y_i * P_new / volatility[comp] for comp, y_i in y.items()}
             x_sum = sum(x_new.values())
             if x_sum > 0:
                 x_new = {comp: value / x_sum for comp, value in x_new.items()}
-            x_change = max(
-                abs(x_new.get(comp, 0.0) - x.get(comp, 0.0))
-                for comp in x_new
-            ) if x_new else 0.0
+            x_change = (
+                max(abs(x_new.get(comp, 0.0) - x.get(comp, 0.0)) for comp in x_new)
+                if x_new
+                else 0.0
+            )
             P_change = abs(P_new - P_dew)
             P_dew = P_new
             x = x_new
@@ -2044,10 +2341,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             # residual directly with the incipient liquid held fixed.
             def frozen_residual(P_value: float) -> float:
                 K = self.K_values(T, max(P_value, 1e-8), x)
-                return sum(
-                    y_i / max(K.get(comp, 1.0), 1e-30)
-                    for comp, y_i in y.items()
-                ) - 1.0
+                return (
+                    sum(y_i / max(K.get(comp, 1.0), 1e-30) for comp, y_i in y.items())
+                    - 1.0
+                )
 
             try:
                 f_final = frozen_residual(P_dew)
@@ -2057,8 +2354,12 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     for _ in range(60):
                         if f_low <= 0.0 <= f_high:
                             P_dew = brentq(
-                                frozen_residual, low, high,
-                                xtol=1e-12, rtol=1e-10, maxiter=100,
+                                frozen_residual,
+                                low,
+                                high,
+                                xtol=1e-12,
+                                rtol=1e-10,
+                                maxiter=100,
                             )
                             break
                         if f_low > 0.0:
@@ -2071,12 +2372,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 pass
         return P_dew
 
-    def flash(self, T: float, P: float, z: dict[str, float],
-              max_iter: int = 50, tol: float = 1e-6) -> tuple[float, dict, dict]:
-        z = {
-            comp: max(float(z.get(comp, 0.0)), 0.0)
-            for comp in self.components
-        }
+    def flash(
+        self,
+        T: float,
+        P: float,
+        z: dict[str, float],
+        max_iter: int = 50,
+        tol: float = 1e-6,
+    ) -> tuple[float, dict, dict]:
+        z = {comp: max(float(z.get(comp, 0.0)), 0.0) for comp in self.components}
         z_total = sum(z.values())
         if z_total <= 0.0:
             z = {comp: 1.0 / len(self.components) for comp in self.components}
@@ -2096,7 +2400,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             max_change = 0.0
             for comp in self.components:
                 if K.get(comp, 1.0) > 1e-10:
-                    max_change = max(max_change, abs(K_new.get(comp, 1.0) - K[comp]) / K[comp])
+                    max_change = max(
+                        max_change, abs(K_new.get(comp, 1.0) - K[comp]) / K[comp]
+                    )
             K = K_new
             if max_change < tol:
                 break
@@ -2113,8 +2419,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         unknown = [comp for comp in composition if comp not in self.components]
         if unknown:
             raise ThermodynamicsError(
-                "LLE composition contains unknown component(s): "
-                + ", ".join(unknown)
+                "LLE composition contains unknown component(s): " + ", ".join(unknown)
             )
         normalized = {}
         for comp, raw_value in composition.items():
@@ -2145,9 +2450,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if not math.isfinite(float(tol)) or tol <= 0.0:
             raise ThermodynamicsError("LLE tolerance must be positive and finite")
 
-    def liquid_liquid_equilibrium(self, composition: dict[str, float], T: float,
-                                  max_iter: int = 100, tol: float = 1e-6,
-                                  *, allow_unconverged_candidate: bool = False) -> tuple[bool, dict, dict, float]:
+    def liquid_liquid_equilibrium(
+        self,
+        composition: dict[str, float],
+        T: float,
+        max_iter: int = 100,
+        tol: float = 1e-6,
+        *,
+        allow_unconverged_candidate: bool = False,
+    ) -> tuple[bool, dict, dict, float]:
         self._validate_lle_solver_controls(max_iter, tol)
         z = self._normalize_lle_composition(composition)
         comps = list(z.keys())
@@ -2155,9 +2466,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if n_comp < 2:
             return False, dict(z), dict(z), 0.0
         if n_comp == 2:
-            binary_split = self._binary_liquid_liquid_equilibrium(
-                z, T, max_iter, tol
-            )
+            binary_split = self._binary_liquid_liquid_equilibrium(z, T, max_iter, tol)
             if binary_split is not None:
                 return binary_split
             return False, dict(z), dict(z), 0.0
@@ -2195,21 +2504,25 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 phase_diff = sum(abs(x1[comp] - x2[comp]) for comp in comps) / n_comp
                 if phase_diff < phase_tolerance:
                     return False, dict(z), dict(z), 0.0
-                lever_denominator = sum(
-                    (x2[comp] - x1[comp]) ** 2 for comp in comps
-                )
+                lever_denominator = sum((x2[comp] - x1[comp]) ** 2 for comp in comps)
                 if lever_denominator > 1e-30:
-                    beta = sum(
-                        (x2[comp] - x1[comp]) * (z[comp] - x1[comp])
-                        for comp in comps
-                    ) / lever_denominator
+                    beta = (
+                        sum(
+                            (x2[comp] - x1[comp]) * (z[comp] - x1[comp])
+                            for comp in comps
+                        )
+                        / lever_denominator
+                    )
                     beta = max(0.0, min(1.0, beta))
                 if beta <= 1e-10 or beta >= 1.0 - 1e-10:
                     return False, dict(z), dict(z), 0.0
                 return True, x1, x2, beta
 
             for _inner in range(20):
-                f = sum(z[comp] * (K[comp] - 1.0) / (1.0 + beta * (K[comp] - 1.0)) for comp in comps)
+                f = sum(
+                    z[comp] * (K[comp] - 1.0) / (1.0 + beta * (K[comp] - 1.0))
+                    for comp in comps
+                )
                 df = -sum(
                     z[comp] * (K[comp] - 1.0) ** 2 / (1.0 + beta * (K[comp] - 1.0)) ** 2
                     for comp in comps
@@ -2232,13 +2545,8 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 x2 = {comp: value / s2 for comp, value in x2.items()}
 
         if allow_unconverged_candidate:
-            phase_diff = sum(
-                abs(x1[comp] - x2[comp]) for comp in comps
-            ) / n_comp
-            if (
-                phase_diff >= phase_tolerance
-                and 1e-10 < beta < 1.0 - 1e-10
-            ):
+            phase_diff = sum(abs(x1[comp] - x2[comp]) for comp in comps) / n_comp
+            if phase_diff >= phase_tolerance and 1e-10 < beta < 1.0 - 1e-10:
                 return True, x1, x2, beta
         return False, dict(z), dict(z), 0.0
 
@@ -2282,12 +2590,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             x2 = phase(x_a_2)
             gamma1 = self.activity_coefficients(T, x1)
             gamma2 = self.activity_coefficients(T, x2)
-            return np.array([
-                math.log(max(x1[comp_a] * gamma1.get(comp_a, 1.0), 1e-300))
-                - math.log(max(x2[comp_a] * gamma2.get(comp_a, 1.0), 1e-300)),
-                math.log(max(x1[comp_b] * gamma1.get(comp_b, 1.0), 1e-300))
-                - math.log(max(x2[comp_b] * gamma2.get(comp_b, 1.0), 1e-300)),
-            ])
+            return np.array(
+                [
+                    math.log(max(x1[comp_a] * gamma1.get(comp_a, 1.0), 1e-300))
+                    - math.log(max(x2[comp_a] * gamma2.get(comp_a, 1.0), 1e-300)),
+                    math.log(max(x1[comp_b] * gamma1.get(comp_b, 1.0), 1e-300))
+                    - math.log(max(x2[comp_b] * gamma2.get(comp_b, 1.0), 1e-300)),
+                ]
+            )
 
         primary_starts = [
             (1e-5, 1.0 - 1e-5),
@@ -2319,14 +2629,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 x_low_start, x_high_start = sorted((start_1, start_2))
                 solved = least_squares(
                     residual,
-                    np.array([
-                        logit(x_low_start),
-                        logit(
-                            (x_high_start - x_low_start)
-                            / (1.0 - x_low_start)
-                        ),
-                    ], dtype=float),
-                    method='trf',
+                    np.array(
+                        [
+                            logit(x_low_start),
+                            logit((x_high_start - x_low_start) / (1.0 - x_low_start)),
+                        ],
+                        dtype=float,
+                    ),
+                    method="trf",
                     ftol=1e-12,
                     xtol=1e-12,
                     gtol=1e-12,
@@ -2346,36 +2656,25 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 best_contains_feed = False
                 if best_local is not None:
                     best_low, best_high = sorted((best_local[1], best_local[2]))
-                    best_contains_feed = (
-                        best_low - 1e-9 <= z_a <= best_high + 1e-9
-                    )
-                if best_local is None or (
-                    contains_feed and not best_contains_feed
-                ) or (
-                    contains_feed == best_contains_feed and norm < best_local[0]
+                    best_contains_feed = best_low - 1e-9 <= z_a <= best_high + 1e-9
+                if (
+                    best_local is None
+                    or (contains_feed and not best_contains_feed)
+                    or (contains_feed == best_contains_feed and norm < best_local[0])
                 ):
                     best_local = (norm, x_a_1, x_a_2)
-                    if (
-                        contains_feed
-                        and norm <= min(residual_limit, 1.0e-9)
-                    ):
+                    if contains_feed and norm <= min(residual_limit, 1.0e-9):
                         break
             return best_local
 
-        first_starts = (
-            adaptive_starts if prefer_adaptive_starts else primary_starts
-        )
-        retry_starts = (
-            primary_starts if prefer_adaptive_starts else adaptive_starts
-        )
+        first_starts = adaptive_starts if prefer_adaptive_starts else primary_starts
+        retry_starts = primary_starts if prefer_adaptive_starts else adaptive_starts
         best = solve_from_starts(first_starts)
         retry_attempted = False
         if best is None or best[0] > residual_limit:
             retry_best = solve_from_starts(retry_starts)
             retry_attempted = True
-            if retry_best is not None and (
-                best is None or retry_best[0] < best[0]
-            ):
+            if retry_best is not None and (best is None or retry_best[0] < best[0]):
                 best = retry_best
 
         def split_from_candidate(candidate):
@@ -2387,9 +2686,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 return None
             phase1 = phase(x_high)
             phase2 = phase(x_low)
-            beta = min(max(
-                (z_a - x_high) / (x_low - x_high), 0.0
-            ), 1.0)
+            beta = min(max((z_a - x_high) / (x_low - x_high), 0.0), 1.0)
             if beta <= 1e-10 or beta >= 1.0 - 1e-10:
                 return None
             return True, phase1, phase2, beta
@@ -2403,8 +2700,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 return split
         return False, dict(composition), dict(composition), 0.0
 
-    def flash3_TP(self, composition: dict[str, float], T: float, P: float,
-                  max_iter: int = 100, tol: float = 1e-9) -> VLLEFlashResult:
+    def flash3_TP(
+        self,
+        composition: dict[str, float],
+        T: float,
+        P: float,
+        max_iter: int = 100,
+        tol: float = 1e-9,
+    ) -> VLLEFlashResult:
         """
         Reference TP flash over vapor, one liquid, and two liquid phases.
 
@@ -2430,8 +2733,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     return binary
             else:
                 structured = self._structured_vlle_from_seeds(
-                    z, T, P, feed_x1, feed_x2, feed_beta, V,
-                    status='structured_vlle_feed_lle_seed',
+                    z,
+                    T,
+                    P,
+                    feed_x1,
+                    feed_x2,
+                    feed_beta,
+                    V,
+                    status="structured_vlle_feed_lle_seed",
                     max_iter=max_iter,
                     tol=tol,
                 )
@@ -2448,7 +2757,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     l2 /= total
                 return VLLEFlashResult(
                     phase_count=2,
-                    status='lle_only',
+                    status="lle_only",
                     vapor_fraction=0.0,
                     liquid1_fraction=l1,
                     liquid2_fraction=l2,
@@ -2458,7 +2767,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     residual=self._lle_residual(T, feed_x1, feed_x2),
                     iterations=0,
                 )
-            return self._ordinary_vlle_result(z, V, x_vle, y_vle, 'single_liquid')
+            return self._ordinary_vlle_result(z, V, x_vle, y_vle, "single_liquid")
 
         if V >= 1.0 - 1e-10:
             if has_feed_lle:
@@ -2473,48 +2782,66 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 if stable_vle is not None:
                     V, x_vle, y_vle, tpd, gibbs_delta = stable_vle
                     result = self._ordinary_vlle_result(
-                        z, V, x_vle, y_vle, 'ordinary_vle'
+                        z, V, x_vle, y_vle, "ordinary_vle"
                     )
-                    result.extra.update({
-                        'stability_seed': 'feed_lle_tpd',
-                        'liquid_tpd': tpd,
-                        'reduced_gibbs_delta': gibbs_delta,
-                    })
+                    result.extra.update(
+                        {
+                            "stability_seed": "feed_lle_tpd",
+                            "liquid_tpd": tpd,
+                            "reduced_gibbs_delta": gibbs_delta,
+                        }
+                    )
                     return result
-            return self._ordinary_vlle_result(z, V, x_vle, y_vle, 'single_vapor')
+            return self._ordinary_vlle_result(z, V, x_vle, y_vle, "single_vapor")
 
         liquid_seed = self._normalize_phase_composition(x_vle)
-        has_liquid_lle, liquid_x1, liquid_x2, liquid_beta = self.liquid_liquid_equilibrium(
-            liquid_seed, T, max_iter=max_iter, tol=max(tol, 1e-9)
+        has_liquid_lle, liquid_x1, liquid_x2, liquid_beta = (
+            self.liquid_liquid_equilibrium(
+                liquid_seed, T, max_iter=max_iter, tol=max(tol, 1e-9)
+            )
         )
         if has_liquid_lle:
             liquid_x1 = self._normalize_phase_composition(liquid_x1)
             liquid_x2 = self._normalize_phase_composition(liquid_x2)
             if len(self.components) == 2:
-                binary = self._binary_invariant_vlle_result(z, T, P, liquid_x1, liquid_x2)
+                binary = self._binary_invariant_vlle_result(
+                    z, T, P, liquid_x1, liquid_x2
+                )
                 if binary is not None:
                     return binary
             else:
                 structured = self._structured_vlle_from_seeds(
-                    z, T, P, liquid_x1, liquid_x2, liquid_beta, V,
-                    status='structured_vlle_vle_liquid_seed',
+                    z,
+                    T,
+                    P,
+                    liquid_x1,
+                    liquid_x2,
+                    liquid_beta,
+                    V,
+                    status="structured_vlle_vle_liquid_seed",
                     max_iter=max_iter,
                     tol=tol,
                 )
                 if structured is not None:
                     return structured
 
-        return self._ordinary_vlle_result(z, V, x_vle, y_vle, 'ordinary_vle')
+        return self._ordinary_vlle_result(z, V, x_vle, y_vle, "ordinary_vle")
 
-    def vlle_flash(self, composition: dict[str, float], T: float, P: float,
-                   max_iter: int = 100) -> tuple[float, float, dict, dict, dict]:
+    def vlle_flash(
+        self, composition: dict[str, float], T: float, P: float, max_iter: int = 100
+    ) -> tuple[float, float, dict, dict, dict]:
         result = self.flash3_TP(composition, T, P, max_iter=max_iter)
         liquid2_fraction = result.liquid2_fraction
         return result.vapor_fraction, liquid2_fraction, result.y, result.x1, result.x2
 
-    def _ordinary_vlle_result(self, z: dict[str, float], V: float,
-                              x: dict[str, float], y: dict[str, float],
-                              status: str) -> VLLEFlashResult:
+    def _ordinary_vlle_result(
+        self,
+        z: dict[str, float],
+        V: float,
+        x: dict[str, float],
+        y: dict[str, float],
+        status: str,
+    ) -> VLLEFlashResult:
         V = max(0.0, min(1.0, float(V)))
         phase_count = 1 if V <= 1e-10 or V >= 1.0 - 1e-10 else 2
         x = self._normalize_phase_composition(x)
@@ -2530,10 +2857,12 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             x2=x,
             residual=0.0,
             iterations=0,
-            extra={'overall_composition': dict(z)},
+            extra={"overall_composition": dict(z)},
         )
 
-    def _normalize_phase_composition(self, composition: dict[str, float]) -> dict[str, float]:
+    def _normalize_phase_composition(
+        self, composition: dict[str, float]
+    ) -> dict[str, float]:
         raw = {
             comp: max(float(composition.get(comp, 0.0)), 0.0)
             for comp in self.components
@@ -2598,10 +2927,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             ]
             composition_delta = max(abs(value) for value in residual_vector)
             if composition_delta < tol and rr_residual < max(1e-9, tol):
-                phase_distance = sum(abs(x1_new[comp] - x2_new[comp]) for comp in self.components) / len(self.components)
+                phase_distance = sum(
+                    abs(x1_new[comp] - x2_new[comp]) for comp in self.components
+                ) / len(self.components)
                 if phase_distance < 1e-4:
                     return None
-                equilibrium_residual = self._vlle_equilibrium_residual(T, P, y, x1_new, x2_new)
+                equilibrium_residual = self._vlle_equilibrium_residual(
+                    T, P, y, x1_new, x2_new
+                )
                 return VLLEFlashResult(
                     phase_count=3,
                     status=status,
@@ -2614,18 +2947,24 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     residual=max(composition_delta, rr_residual, equilibrium_residual),
                     iterations=iteration,
                     extra={
-                        'rr_residual': rr_residual,
-                        'equilibrium_residual': equilibrium_residual,
-                        'acceleration_attempts': acceleration_attempts,
-                        'acceleration_accepts': acceleration_accepts,
+                        "rr_residual": rr_residual,
+                        "equilibrium_residual": equilibrium_residual,
+                        "acceleration_attempts": acceleration_attempts,
+                        "acceleration_accepts": acceleration_accepts,
                     },
                 )
 
             next_vector = mapped_vector
             if cooldown > 0:
                 cooldown -= 1
-            elif iteration >= 3 and previous_vector is not None and previous_residual is not None:
-                if last_delta is not None and composition_delta > 2.5 * max(last_delta, 1e-16):
+            elif (
+                iteration >= 3
+                and previous_vector is not None
+                and previous_residual is not None
+            ):
+                if last_delta is not None and composition_delta > 2.5 * max(
+                    last_delta, 1e-16
+                ):
                     cooldown = 2
                 else:
                     acceleration_attempts += 1
@@ -2641,10 +2980,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                         abs(trial_vector[index] - current_vector[index])
                         for index in range(vector_size)
                     )
-                    if (
-                        trial_step <= 4.0 * max(ordinary_step, 1e-14)
-                        and self._valid_vlle_phase_pair_vector(trial_vector)
-                    ):
+                    if trial_step <= 4.0 * max(
+                        ordinary_step, 1e-14
+                    ) and self._valid_vlle_phase_pair_vector(trial_vector):
                         next_vector = trial_vector
                         acceleration_accepts += 1
 
@@ -2659,12 +2997,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return None
         return None
 
-    def _vlle_phase_pair_vector(self, x1: dict[str, float], x2: dict[str, float]) -> list[float]:
+    def _vlle_phase_pair_vector(
+        self, x1: dict[str, float], x2: dict[str, float]
+    ) -> list[float]:
         return [float(x1[comp]) for comp in self.components] + [
             float(x2[comp]) for comp in self.components
         ]
 
-    def _vlle_phase_pair_from_vector(self, vector: list[float]) -> tuple[dict[str, float], dict[str, float]]:
+    def _vlle_phase_pair_from_vector(
+        self, vector: list[float]
+    ) -> tuple[dict[str, float], dict[str, float]]:
         split = len(self.components)
         x1 = {
             comp: max(float(vector[index]), 0.0)
@@ -2674,7 +3016,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             comp: max(float(vector[split + index]), 0.0)
             for index, comp in enumerate(self.components)
         }
-        return self._normalize_phase_composition(x1), self._normalize_phase_composition(x2)
+        return self._normalize_phase_composition(x1), self._normalize_phase_composition(
+            x2
+        )
 
     def _valid_vlle_phase_pair_vector(self, vector: list[float]) -> bool:
         if any(not math.isfinite(value) for value in vector):
@@ -2682,7 +3026,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         x1, x2 = self._vlle_phase_pair_from_vector(vector)
         if min(min(x1.values()), min(x2.values())) <= 1e-12:
             return False
-        phase_distance = sum(abs(x1[comp] - x2[comp]) for comp in self.components) / len(self.components)
+        phase_distance = sum(
+            abs(x1[comp] - x2[comp]) for comp in self.components
+        ) / len(self.components)
         return phase_distance > 1e-5
 
     def _broyden_vlle_phase_pair(
@@ -2694,23 +3040,21 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         inverse_jacobian: list[list[float]],
     ) -> list[float]:
         size = len(current_vector)
-        step = [
-            current_vector[index] - previous_vector[index]
-            for index in range(size)
-        ]
+        step = [current_vector[index] - previous_vector[index] for index in range(size)]
         residual_change = [
-            residual_vector[index] - previous_residual[index]
-            for index in range(size)
+            residual_vector[index] - previous_residual[index] for index in range(size)
         ]
         denominator = sum(value * value for value in residual_change)
         if denominator > 1e-20:
             jacobian_times_change = [
-                sum(inverse_jacobian[row][col] * residual_change[col] for col in range(size))
+                sum(
+                    inverse_jacobian[row][col] * residual_change[col]
+                    for col in range(size)
+                )
                 for row in range(size)
             ]
             correction = [
-                step[index] - jacobian_times_change[index]
-                for index in range(size)
+                step[index] - jacobian_times_change[index] for index in range(size)
             ]
             for row in range(size):
                 scale = correction[row] / denominator
@@ -2718,13 +3062,12 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     inverse_jacobian[row][col] += scale * residual_change[col]
 
         broyden_step = [
-            -sum(inverse_jacobian[row][col] * residual_vector[col] for col in range(size))
+            -sum(
+                inverse_jacobian[row][col] * residual_vector[col] for col in range(size)
+            )
             for row in range(size)
         ]
-        return [
-            current_vector[index] + broyden_step[index]
-            for index in range(size)
-        ]
+        return [current_vector[index] + broyden_step[index] for index in range(size)]
 
     def _solve_three_phase_rr(
         self,
@@ -2733,7 +3076,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         k2: dict[str, float],
         seed_l1: float,
         seed_l2: float,
-    ) -> tuple[bool, float, float, dict[str, float], dict[str, float], dict[str, float], float]:
+    ) -> tuple[
+        bool, float, float, dict[str, float], dict[str, float], dict[str, float], float
+    ]:
         components = self.components
         l1 = max(1e-12, float(seed_l1))
         l2 = max(1e-12, float(seed_l2))
@@ -2757,7 +3102,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 sum_x2 += y_i / k2_i
             return sum_x1 - 1.0, sum_x2 - 1.0
 
-        best = (float('inf'), l1, l2)
+        best = (float("inf"), l1, l2)
         for _ in range(50):
             f = residual(l1, l2)
             if f is None:
@@ -2814,7 +3159,13 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
         norm, l1, l2 = best
         V = 1.0 - l1 - l2
-        if not math.isfinite(norm) or norm > 1e-8 or V <= 1e-10 or l1 <= 1e-10 or l2 <= 1e-10:
+        if (
+            not math.isfinite(norm)
+            or norm > 1e-8
+            or V <= 1e-10
+            or l1 <= 1e-10
+            or l2 <= 1e-10
+        ):
             empty = {comp: 0.0 for comp in components}
             return False, V, l1, empty, empty, empty, norm
 
@@ -2856,21 +3207,18 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
         k1 = self.K_values(T, P, x1)
         k2 = self.K_values(T, P, x2)
-        y1 = self._normalize_phase_composition({
-            comp: x1[comp] * k1.get(comp, 1.0)
-            for comp in self.components
-        })
-        y2 = self._normalize_phase_composition({
-            comp: x2[comp] * k2.get(comp, 1.0)
-            for comp in self.components
-        })
+        y1 = self._normalize_phase_composition(
+            {comp: x1[comp] * k1.get(comp, 1.0) for comp in self.components}
+        )
+        y2 = self._normalize_phase_composition(
+            {comp: x2[comp] * k2.get(comp, 1.0) for comp in self.components}
+        )
         vapor_residual = max(abs(y1[comp] - y2[comp]) for comp in self.components)
         if vapor_residual > 2e-4:
             return None
-        y = self._normalize_phase_composition({
-            comp: 0.5 * (y1[comp] + y2[comp])
-            for comp in self.components
-        })
+        y = self._normalize_phase_composition(
+            {comp: 0.5 * (y1[comp] + y2[comp]) for comp in self.components}
+        )
 
         key = self.components[0]
         denom = x1[key] - x2[key]
@@ -2910,7 +3258,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
         return VLLEFlashResult(
             phase_count=3,
-            status='binary_invariant_vlle',
+            status="binary_invariant_vlle",
             vapor_fraction=V,
             liquid1_fraction=L1,
             liquid2_fraction=L2,
@@ -2920,10 +3268,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             residual=max(pressure_residual, vapor_residual),
             iterations=1,
             extra={
-                'pressure_residual_bar': pressure_residual,
-                'vapor_composition_residual': vapor_residual,
-                'vapor_fraction_bounds': (v_low, v_high),
-                'phase_amounts_underdetermined': True,
+                "pressure_residual_bar": pressure_residual,
+                "vapor_composition_residual": vapor_residual,
+                "vapor_fraction_bounds": (v_low, v_high),
+                "phase_amounts_underdetermined": True,
             },
         )
 
@@ -2935,30 +3283,34 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         phase: str,
     ) -> dict[str, float]:
         comp = self._normalize_phase_composition(composition)
-        if phase == 'vapor':
+        if phase == "vapor":
             try:
                 phi = self.vapor_fugacity_coefficients(T, P, comp)
             except Exception:
                 phi = {component: 1.0 for component in self.components}
             return {
-                component: math.log(max(
-                    comp.get(component, 0.0)
-                    * max(float(phi.get(component, 1.0)), 1e-300)
-                    * max(float(P), 1e-300),
-                    1e-300,
-                ))
+                component: math.log(
+                    max(
+                        comp.get(component, 0.0)
+                        * max(float(phi.get(component, 1.0)), 1e-300)
+                        * max(float(P), 1e-300),
+                        1e-300,
+                    )
+                )
                 for component in self.components
             }
 
         gamma = self.activity_coefficients(T, comp)
         reference = self._liquid_fugacity_reference_factors(T, P)
         return {
-            component: math.log(max(
-                comp.get(component, 0.0)
-                * max(float(gamma.get(component, 1.0)), 1e-300)
-                * max(float(reference.get(component, 1.0)), 1e-300),
-                1e-300,
-            ))
+            component: math.log(
+                max(
+                    comp.get(component, 0.0)
+                    * max(float(gamma.get(component, 1.0)), 1e-300)
+                    * max(float(reference.get(component, 1.0)), 1e-300),
+                    1e-300,
+                )
+            )
             for component in self.components
         }
 
@@ -2970,13 +3322,10 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         liquid_seed: dict[str, float],
     ) -> float:
         x = self._normalize_phase_composition(liquid_seed)
-        liquid_log_f = self._phase_log_fugacities(T, P, x, 'liquid')
-        vapor_log_f = self._phase_log_fugacities(
-            T, P, vapor_composition, 'vapor'
-        )
+        liquid_log_f = self._phase_log_fugacities(T, P, x, "liquid")
+        vapor_log_f = self._phase_log_fugacities(T, P, vapor_composition, "vapor")
         return sum(
-            x.get(component, 0.0)
-            * (liquid_log_f[component] - vapor_log_f[component])
+            x.get(component, 0.0) * (liquid_log_f[component] - vapor_log_f[component])
             for component in self.components
         )
 
@@ -2990,7 +3339,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
     ) -> float:
         V = max(0.0, min(1.0, float(vapor_fraction)))
         y = self._normalize_phase_composition(vapor_composition)
-        vapor_log_f = self._phase_log_fugacities(T, P, y, 'vapor')
+        vapor_log_f = self._phase_log_fugacities(T, P, y, "vapor")
         value = V * sum(
             y.get(component, 0.0) * vapor_log_f[component]
             for component in self.components
@@ -2998,7 +3347,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         if V >= 1.0 - 1e-12:
             return value
         x = self._normalize_phase_composition(liquid_composition)
-        liquid_log_f = self._phase_log_fugacities(T, P, x, 'liquid')
+        liquid_log_f = self._phase_log_fugacities(T, P, x, "liquid")
         return value + (1.0 - V) * sum(
             x.get(component, 0.0) * liquid_log_f[component]
             for component in self.components
@@ -3022,10 +3371,12 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             x, y = self._flash_phase_compositions(z, K, V)
             K_new = self.K_values(T, P, x)
             error = max(
-                abs(math.log(
-                    max(float(K_new.get(component, 1.0)), 1e-300)
-                    / max(float(K.get(component, 1.0)), 1e-300)
-                ))
+                abs(
+                    math.log(
+                        max(float(K_new.get(component, 1.0)), 1e-300)
+                        / max(float(K.get(component, 1.0)), 1e-300)
+                    )
+                )
                 for component in self.components
             )
             K = {
@@ -3046,14 +3397,15 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         x, y = self._flash_phase_compositions(z, K, V)
         K_check = self.K_values(T, P, x)
         equilibrium_residual = max(
-            abs(math.log(
-                max(y.get(component, 0.0), 1e-300)
-                / max(
-                    x.get(component, 0.0)
-                    * float(K_check.get(component, 1.0)),
-                    1e-300,
+            abs(
+                math.log(
+                    max(y.get(component, 0.0), 1e-300)
+                    / max(
+                        x.get(component, 0.0) * float(K_check.get(component, 1.0)),
+                        1e-300,
+                    )
                 )
-            ))
+            )
             for component in self.components
         )
         if equilibrium_residual > max(1e-7, 100.0 * convergence_tolerance):
@@ -3069,7 +3421,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         max_iter: int,
         tol: float,
     ) -> tuple[float, dict[str, float], dict[str, float], float, float] | None:
-        if hasattr(self, '_initialize_vdm'):
+        if hasattr(self, "_initialize_vdm"):
             return None
 
         scored_seeds = []
@@ -3100,8 +3452,14 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             return None
         return V, x, y, tpd, gibbs_delta
 
-    def _vlle_equilibrium_residual(self, T: float, P: float, y: dict[str, float],
-                                   x1: dict[str, float], x2: dict[str, float]) -> float:
+    def _vlle_equilibrium_residual(
+        self,
+        T: float,
+        P: float,
+        y: dict[str, float],
+        x1: dict[str, float],
+        x2: dict[str, float],
+    ) -> float:
         k1 = self.K_values(T, P, x1)
         k2 = self.K_values(T, P, x2)
         residual = 0.0
@@ -3116,7 +3474,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             )
         return residual
 
-    def _lle_residual(self, T: float, x1: dict[str, float], x2: dict[str, float]) -> float:
+    def _lle_residual(
+        self, T: float, x1: dict[str, float], x2: dict[str, float]
+    ) -> float:
         gamma1 = self.activity_coefficients(T, x1)
         gamma2 = self.activity_coefficients(T, x2)
         residual = 0.0
@@ -3126,8 +3486,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             residual = max(residual, abs(math.log(a1 / a2)))
         return residual
 
-    def _flash3_mixture_enthalpy(self, T: float, P: float,
-                                 result: VLLEFlashResult) -> float:
+    def _flash3_mixture_enthalpy(
+        self, T: float, P: float, result: VLLEFlashResult
+    ) -> float:
         V = max(0.0, min(1.0, result.vapor_fraction))
         L1 = max(0.0, result.liquid1_fraction)
         L2 = max(0.0, result.liquid2_fraction)
@@ -3142,8 +3503,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         h_liquid2 = self.mixture_enthalpy(result.x2, T, 0.0, result.x2, None, P)
         return V * h_vapor + L1 * h_liquid1 + L2 * h_liquid2
 
-    def _flash3_mixture_entropy(self, T: float, P: float,
-                                result: VLLEFlashResult) -> float:
+    def _flash3_mixture_entropy(
+        self, T: float, P: float, result: VLLEFlashResult
+    ) -> float:
         V = max(0.0, min(1.0, result.vapor_fraction))
         L1 = max(0.0, result.liquid1_fraction)
         L2 = max(0.0, result.liquid2_fraction)
@@ -3164,7 +3526,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         z: dict[str, float],
         vapor_fraction: float,
     ) -> VLLEFlashResult:
-        bounds = result.extra.get('vapor_fraction_bounds') if result.extra else None
+        bounds = result.extra.get("vapor_fraction_bounds") if result.extra else None
         if bounds is None:
             return result
         V = max(bounds[0], min(bounds[1], float(vapor_fraction)))
@@ -3175,7 +3537,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         L1 = (z[key] - V * result.y[key] - (1.0 - V) * result.x2[key]) / denom
         L2 = 1.0 - V - L1
         extra = dict(result.extra)
-        extra['selected_vapor_fraction'] = V
+        extra["selected_vapor_fraction"] = V
         return VLLEFlashResult(
             phase_count=result.phase_count,
             status=result.status,
@@ -3204,7 +3566,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             result = self.flash3_TP(z, T, P, max_iter=max_iter)
         except Exception:
             return None
-        if result.status != 'binary_invariant_vlle':
+        if result.status != "binary_invariant_vlle":
             return None
         return T, result
 
@@ -3234,7 +3596,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             result = self.flash3_TP(z, T, P, max_iter=max_iter)
         except Exception:
             return None
-        if result.status != 'binary_invariant_vlle':
+        if result.status != "binary_invariant_vlle":
             return None
         return P, result
 
@@ -3253,7 +3615,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         P: float,
         H_target: float,
     ) -> VLLEFlashResult | None:
-        bounds = result.extra.get('vapor_fraction_bounds') if result.extra else None
+        bounds = result.extra.get("vapor_fraction_bounds") if result.extra else None
         if bounds is None:
             return None
 
@@ -3283,7 +3645,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         P: float,
         S_target: float,
     ) -> VLLEFlashResult | None:
-        bounds = result.extra.get('vapor_fraction_bounds') if result.extra else None
+        bounds = result.extra.get("vapor_fraction_bounds") if result.extra else None
         if bounds is None:
             return None
 
@@ -3344,12 +3706,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         high = float(high)
         if high < low:
             low, high = high, low
-        points = sorted(set([
-            low,
-            high,
-            max(low, min(high, float(preferred))),
-            *[low + (high - low) * index / 12.0 for index in range(1, 12)],
-        ]))
+        points = sorted(
+            set(
+                [
+                    low,
+                    high,
+                    max(low, min(high, float(preferred))),
+                    *[low + (high - low) * index / 12.0 for index in range(1, 12)],
+                ]
+            )
+        )
         return self._solve_grid_scalar_residual(
             residual,
             points,
@@ -3367,7 +3733,9 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         exact_tolerance: float = 1e-8,
     ) -> float:
         evaluated = []
-        for value in sorted(set(float(item) for item in grid if math.isfinite(float(item)))):
+        for value in sorted(
+            set(float(item) for item in grid if math.isfinite(float(item)))
+        ):
             if value <= 0.0:
                 continue
             try:
@@ -3398,29 +3766,59 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
 
     def _temperature_grid(self, centers: list[float]) -> list[float]:
         grid = [
-            80.0, 120.0, 150.0, 200.0, 250.0, 298.15, 350.0,
-            400.0, 500.0, 650.0, 800.0, 1000.0, 1500.0,
+            80.0,
+            120.0,
+            150.0,
+            200.0,
+            250.0,
+            298.15,
+            350.0,
+            400.0,
+            500.0,
+            650.0,
+            800.0,
+            1000.0,
+            1500.0,
         ]
         for center in centers:
-            grid.extend([
-                center,
-                center - 80.0,
-                center - 40.0,
-                center - 20.0,
-                center - 10.0,
-                center + 10.0,
-                center + 20.0,
-                center + 40.0,
-                center + 80.0,
-            ])
-        for props in getattr(self, 'props', {}).values():
-            for value in (getattr(props, 'Tb', None), getattr(props, 'Tc', None)):
+            grid.extend(
+                [
+                    center,
+                    center - 80.0,
+                    center - 40.0,
+                    center - 20.0,
+                    center - 10.0,
+                    center + 10.0,
+                    center + 20.0,
+                    center + 40.0,
+                    center + 80.0,
+                ]
+            )
+        for props in getattr(self, "props", {}).values():
+            for value in (getattr(props, "Tb", None), getattr(props, "Tc", None)):
                 if value:
-                    grid.extend([0.55 * float(value), float(value), 1.25 * float(value)])
+                    grid.extend(
+                        [0.55 * float(value), float(value), 1.25 * float(value)]
+                    )
         return sorted(set(max(1.0, min(5000.0, float(T))) for T in grid))
 
     def _pressure_grid(self, centers: list[float]) -> list[float]:
-        grid = [1e-4, 1e-3, 0.01, 0.05, 0.1, 0.5, 1.0, P_REF, 2.0, 5.0, 10.0, 25.0, 50.0, 100.0]
+        grid = [
+            1e-4,
+            1e-3,
+            0.01,
+            0.05,
+            0.1,
+            0.5,
+            1.0,
+            P_REF,
+            2.0,
+            5.0,
+            10.0,
+            25.0,
+            50.0,
+            100.0,
+        ]
         for center in centers:
             if center <= 0.0 or not math.isfinite(center):
                 continue
@@ -3428,22 +3826,23 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 grid.append(max(1e-8, center * factor))
         return sorted(set(float(P) for P in grid if P > 0.0 and math.isfinite(P)))
 
-    def generate_Txy_data(self, comp1: str, comp2: str, P: float,
-                          n_points: int = 50) -> dict:
+    def generate_Txy_data(
+        self, comp1: str, comp2: str, P: float, n_points: int = 50
+    ) -> dict:
         """
         Generate T-x-y diagram data for a binary system (VLLE capable).
-        
+
         Checks for liquid-liquid equilibrium and includes three-phase
         (VLLE) region if present.
-        
+
         Args:
             comp1: First component (more volatile)
             comp2: Second component (less volatile)
             P: Pressure [bar]
             n_points: Number of points
-            
+
         Returns:
-            Dict with 'x', 'y', 'T_bubble', 'T_dew', 'azeotrope', 
+            Dict with 'x', 'y', 'T_bubble', 'T_dew', 'azeotrope',
             and optionally 'lle_region' data
         """
         x_data = []
@@ -3452,7 +3851,7 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         T_dew = []
         azeotrope = None
         lle_region = None
-        
+
         # First check if system has LLE at a reference temperature
         # (use midpoint temperature estimate)
         T_ref = 298.15  # 25°C
@@ -3464,34 +3863,34 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 # System has LLE - find the VLLE temperature
                 # (where LLE phases are in equilibrium with vapor)
                 lle_region = {
-                    'exists': True,
-                    'x1_phase1': x1_lle.get(comp1, 0),
-                    'x1_phase2': x2_lle.get(comp1, 0),
-                    'T_': None  # Will be found if VLLE exists
+                    "exists": True,
+                    "x1_phase1": x1_lle.get(comp1, 0),
+                    "x1_phase2": x2_lle.get(comp1, 0),
+                    "T_": None,  # Will be found if VLLE exists
                 }
         except Exception:
             has_lle = False
-        
+
         for i in range(n_points + 1):
             x1 = i / n_points
             x2 = 1 - x1
-            
+
             if x1 < 0.001:
                 x1 = 0.001
                 x2 = 0.999
             if x1 > 0.999:
                 x1 = 0.999
                 x2 = 0.001
-            
+
             composition = {comp1: x1, comp2: x2}
-            
+
             # Bubble point
             try:
                 T_bub = self.bubble_point_T(composition, P)
             except Exception:
                 # Skip this point if bubble point fails
                 continue
-            
+
             # Vapor composition at bubble point. Use the model-level K-values
             # so gamma-phi methods include vapor fugacity corrections.
             K = self.K_values(T_bub, P, composition)
@@ -3500,19 +3899,19 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             y_sum = y1 + y2
             if y_sum > 0:
                 y1 /= y_sum
-            
+
             # Dew point for same vapor composition
             y_comp = {comp1: y1, comp2: 1 - y1}
             try:
                 T_dw = self.dew_point_T(y_comp, P)
             except Exception:
                 T_dw = T_bub  # Fallback
-            
+
             x_data.append(x1)
             y_data.append(y1)
             T_bubble.append(T_bub - 273.15)  # Convert to °C
             T_dew.append(T_dw - 273.15)
-            
+
             # Check for azeotrope (x ≈ y)
             if i > 0 and azeotrope is None and len(x_data) >= 2:
                 prev_diff = x_data[-2] - y_data[-2]
@@ -3523,41 +3922,42 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                     x_az = x_data[-2] + frac * (x1 - x_data[-2])
                     T_az = T_bubble[-2] + frac * (T_bubble[-1] - T_bubble[-2])
                     azeotrope = {
-                        'x': round(x_az, 4),
-                        'T': round(T_az, 2),
+                        "x": round(x_az, 4),
+                        "T": round(T_az, 2),
                     }
-        
+
         # Classify azeotrope type using the full T_bubble endpoints
         if azeotrope is not None and len(T_bubble) >= 2:
             T_pure_comp1 = T_bubble[-1]  # x → 1 (nearly pure component 1)
-            T_pure_comp2 = T_bubble[0]   # x → 0 (nearly pure component 2)
+            T_pure_comp2 = T_bubble[0]  # x → 0 (nearly pure component 2)
             T_min_pure = min(T_pure_comp1, T_pure_comp2)
             T_max_pure = max(T_pure_comp1, T_pure_comp2)
-            if azeotrope['T'] < T_min_pure:
-                azeotrope['type'] = 'minimum'
-            elif azeotrope['T'] > T_max_pure:
-                azeotrope['type'] = 'maximum'
+            if azeotrope["T"] < T_min_pure:
+                azeotrope["type"] = "minimum"
+            elif azeotrope["T"] > T_max_pure:
+                azeotrope["type"] = "maximum"
             else:
-                azeotrope['type'] = 'none'  # Should not happen
+                azeotrope["type"] = "none"  # Should not happen
 
         result = {
-            'x': x_data,
-            'y': y_data,
-            'T_bubble': T_bubble,
-            'T_dew': T_dew,
-            'azeotrope': azeotrope,
-            'components': [comp1, comp2],
-            'pressure_bar': P
+            "x": x_data,
+            "y": y_data,
+            "T_bubble": T_bubble,
+            "T_dew": T_dew,
+            "azeotrope": azeotrope,
+            "components": [comp1, comp2],
+            "pressure_bar": P,
         }
-        
+
         # Include LLE information if detected
         if lle_region:
-            result['lle_region'] = lle_region
-        
+            result["lle_region"] = lle_region
+
         return result
-    
-    def generate_Pxy_data(self, comp1: str, comp2: str, T: float,
-                          n_points: int = 50) -> dict:
+
+    def generate_Pxy_data(
+        self, comp1: str, comp2: str, T: float, n_points: int = 50
+    ) -> dict:
         """
         Generate P-x-y diagram data for a binary system at constant T.
         """
@@ -3565,16 +3965,16 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         y_data = []
         P_bubble = []
         P_dew = []
-        
+
         for i in range(n_points + 1):
             x1 = i / n_points
             if x1 < 0.001:
                 x1 = 0.001
             if x1 > 0.999:
                 x1 = 0.999
-            
+
             composition = {comp1: x1, comp2: 1 - x1}
-            
+
             # Bubble point pressure
             P_bub = self.bubble_point_P(composition, T)
 
@@ -3582,54 +3982,60 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
             # vapor corrections stay consistent with the bubble curve.
             K = self.K_values(T, P_bub, composition)
             y1 = x1 * K.get(comp1, 1.0)
-            
+
             # Dew point pressure
             y_comp = {comp1: y1, comp2: 1 - y1}
             P_dw = self.dew_point_P(y_comp, T)
-            
+
             x_data.append(x1)
             y_data.append(y1)
             P_bubble.append(P_bub)
             P_dew.append(P_dw)
-        
+
         return {
-            'x': x_data,
-            'y': y_data,
-            'P_bubble': P_bubble,
-            'P_dew': P_dew,
-            'components': [comp1, comp2],
-            'temperature_C': T - 273.15
+            "x": x_data,
+            "y": y_data,
+            "P_bubble": P_bubble,
+            "P_dew": P_dew,
+            "components": [comp1, comp2],
+            "temperature_C": T - 273.15,
         }
-    
-    def generate_xy_data(self, comp1: str, comp2: str, T: float = None, P: float = None,
-                         n_points: int = 50) -> dict:
+
+    def generate_xy_data(
+        self,
+        comp1: str,
+        comp2: str,
+        T: float = None,
+        P: float = None,
+        n_points: int = 50,
+    ) -> dict:
         """
         Generate x-y diagram data (equilibrium curve).
-        
+
         Specify either T (isobaric) or P (isothermal).
         Returns equilibrium curve y vs x, plus diagonal y=x line.
         """
         if T is None and P is None:
             raise ValueError("Must specify either T or P")
-        
+
         x_data = []
         y_data = []
-        
+
         for i in range(n_points + 1):
             x1 = i / n_points
             if x1 < 0.001:
                 x1 = 0.001
             if x1 > 0.999:
                 x1 = 0.999
-            
+
             composition = {comp1: x1, comp2: 1 - x1}
-            
+
             if P is not None:
                 # Isobaric - find bubble point T
                 T_calc = self.bubble_point_T(composition, P)
             else:
                 T_calc = T
-            
+
             if P is not None:
                 K = self.K_values(T_calc, P, composition)
                 y1 = x1 * K.get(comp1, 1.0)
@@ -3637,22 +4043,22 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 P_bub = self.bubble_point_P(composition, T)
                 K = self.K_values(T_calc, P_bub, composition)
                 y1 = x1 * K.get(comp1, 1.0)
-            
+
             x_data.append(x1)
             y_data.append(min(1.0, max(0.0, y1)))
-        
+
         # Generate diagonal (y=x) line for reference
         diagonal_x = [0.0, 1.0]
         diagonal_y = [0.0, 1.0]
-        
+
         return {
-            'x': x_data,
-            'y': y_data,
-            'diagonal_x': diagonal_x,
-            'diagonal_y': diagonal_y,
-            'components': [comp1, comp2],
-            'pressure_bar': P,
-            'temperature_C': (T - 273.15) if T else None
+            "x": x_data,
+            "y": y_data,
+            "diagonal_x": diagonal_x,
+            "diagonal_y": diagonal_y,
+            "components": [comp1, comp2],
+            "pressure_bar": P,
+            "temperature_C": (T - 273.15) if T else None,
         }
 
 
@@ -3660,7 +4066,7 @@ class VaporDimerizationActivityMixin:
     """Gamma-VDM VLE correction for user-declared or recognized associators."""
 
     def _initialize_vdm(self) -> None:
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from ..vapor_dimerization import (
                 GENERIC_MONOCARBOXYLIC_DELTA_H_J_MOL,
                 GENERIC_MONOCARBOXYLIC_DELTA_S_J_MOL_K,
@@ -3676,7 +4082,7 @@ class VaporDimerizationActivityMixin:
             )
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..compiled_vdm import compile_vdm_kernels
             else:
                 from compiled_vdm import compile_vdm_kernels
@@ -3688,23 +4094,23 @@ class VaporDimerizationActivityMixin:
         self._vdm_models = {}
         self._vdm_multi_model_cache = {}
         self._vdm_cross_residual_overrides = {}
-        for record in getattr(self, 'interaction_overrides', ()):
-            if str(record.get('model', '')).upper() != 'VDM':
+        for record in getattr(self, "interaction_overrides", ()):
+            if str(record.get("model", "")).upper() != "VDM":
                 continue
-            comp1 = record.get('component1')
-            comp2 = record.get('component2')
+            comp1 = record.get("component1")
+            comp2 = record.get("component2")
             if not comp1 or not comp2 or comp1 == comp2:
                 continue
             self._vdm_cross_residual_overrides[
                 tuple(sorted((str(comp1), str(comp2))))
             ] = {
-                'delta_H_residual_J_per_mol': float(
-                    record['delta_H_residual_J_per_mol']
+                "delta_H_residual_J_per_mol": float(
+                    record["delta_H_residual_J_per_mol"]
                 ),
-                'delta_S_residual_J_per_mol_K': float(
-                    record['delta_S_residual_J_per_mol_K']
+                "delta_S_residual_J_per_mol_K": float(
+                    record["delta_S_residual_J_per_mol_K"]
                 ),
-                'source': record.get('comment') or 'PFD VDM cross override',
+                "source": record.get("comment") or "PFD VDM cross override",
             }
         for comp in self.components:
             identifiers = []
@@ -3714,8 +4120,9 @@ class VaporDimerizationActivityMixin:
                 # aliases, never chemical identity inputs.
                 identifiers.extend([props.CAS, props.formula])
             params = (
-                getattr(props, 'vapor_dimerization', None)
-                if props is not None else None
+                getattr(props, "vapor_dimerization", None)
+                if props is not None
+                else None
             )
             if params is None:
                 for identifier in identifiers:
@@ -3726,23 +4133,21 @@ class VaporDimerizationActivityMixin:
                         break
             if params is None and props is not None:
                 try:
-                    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                         from ..vapor_dimerization import is_monocarboxylic_acid
                     else:
                         from vapor_dimerization import is_monocarboxylic_acid
-                    structural_identifier = props.CAS or props.formula or ''
+                    structural_identifier = props.CAS or props.formula or ""
                     if is_monocarboxylic_acid(
                         structural_identifier,
-                        smiles=getattr(props, 'smiles', None),
+                        smiles=getattr(props, "smiles", None),
                     ):
                         params = {
-                            'delta_H_J_per_mol': (
-                                GENERIC_MONOCARBOXYLIC_DELTA_H_J_MOL
-                            ),
-                            'delta_S_J_per_mol_K': (
+                            "delta_H_J_per_mol": (GENERIC_MONOCARBOXYLIC_DELTA_H_J_MOL),
+                            "delta_S_J_per_mol_K": (
                                 GENERIC_MONOCARBOXYLIC_DELTA_S_J_MOL_K
                             ),
-                            'source': 'estimated (monocarboxylic acid default)',
+                            "source": "estimated (monocarboxylic acid default)",
                         }
                 except Exception:
                     params = None
@@ -3755,15 +4160,12 @@ class VaporDimerizationActivityMixin:
                 delta_S=float(params["delta_S_J_per_mol_K"]),
             )
         for comp1, comp2 in self._vdm_cross_residual_overrides:
-            missing = [
-                comp for comp in (comp1, comp2)
-                if comp not in self._vdm_models
-            ]
+            missing = [comp for comp in (comp1, comp2) if comp not in self._vdm_models]
             if missing:
                 raise ThermodynamicsError(
                     f"VDM cross override for {comp1}/{comp2} requires active "
                     "homodimer parameters for both components; missing "
-                    + ', '.join(missing)
+                    + ", ".join(missing)
                     + ". Add component VDM bundles or use recognized associators."
                 )
         self._vdm_phi_sat_cache = {}
@@ -3790,8 +4192,7 @@ class VaporDimerizationActivityMixin:
         if state is None:
             return 1.0
         extent = sum(
-            max(float(value), 0.0)
-            for value in (state.get('extents') or {}).values()
+            max(float(value), 0.0) for value in (state.get("extents") or {}).values()
         )
         factor = 1.0 - extent
         if not math.isfinite(factor) or factor <= 0.0 or factor > 1.0 + 1.0e-10:
@@ -3813,10 +4214,7 @@ class VaporDimerizationActivityMixin:
             composition,
         )
         state = self._vdm_vapor_association_state(T, P, composition)
-        return (
-            self._vdm_physical_moles_per_nominal(state)
-            * ideal_physical_volume
-        )
+        return self._vdm_physical_moles_per_nominal(state) * ideal_physical_volume
 
     def mixture_viscosity(
         self,
@@ -3850,22 +4248,23 @@ class VaporDimerizationActivityMixin:
 
     def _active_vdm_model(self, composition: dict[str, float]):
         active = [
-            comp for comp in self._vdm_models
+            comp
+            for comp in self._vdm_models
             if max(float(composition.get(comp, 0.0)), 0.0) > 1e-12
         ]
         if not active:
             return None, None
         if len(active) > 1:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..vapor_dimerization import (
-                                MultiVaporDimerizationModel,
-                                get_cross_dimerization_residual,
-                            )
+                    MultiVaporDimerizationModel,
+                    get_cross_dimerization_residual,
+                )
             else:
                 from vapor_dimerization import (
-                                MultiVaporDimerizationModel,
-                                get_cross_dimerization_residual,
-                            )
+                    MultiVaporDimerizationModel,
+                    get_cross_dimerization_residual,
+                )
 
             key = tuple(active)
             cached = self._vdm_multi_model_cache.get(key)
@@ -3873,7 +4272,7 @@ class VaporDimerizationActivityMixin:
                 return None, cached
             residuals = {}
             for index, comp_i in enumerate(active):
-                for comp_j in active[index + 1:]:
+                for comp_j in active[index + 1 :]:
                     residual = self._vdm_cross_residual_overrides.get(
                         tuple(sorted((comp_i, comp_j)))
                     )
@@ -3925,10 +4324,10 @@ class VaporDimerizationActivityMixin:
         self._vdm_phi_sat_cache[key] = value
         return value
 
-    def fugacity_coefficients(self, T: float, P: float,
-                               composition: dict[str, float],
-                               phase: str = 'vapor') -> dict[str, float]:
-        if phase.lower().startswith('l'):
+    def fugacity_coefficients(
+        self, T: float, P: float, composition: dict[str, float], phase: str = "vapor"
+    ) -> dict[str, float]:
+        if phase.lower().startswith("l"):
             return {comp: 1.0 for comp in self.components}
         _, model = self._active_vdm_model(composition)
         if model is None:
@@ -3942,7 +4341,7 @@ class VaporDimerizationActivityMixin:
         composition: dict[str, float],
     ) -> dict[str, float]:
         """VDM nominal-component fugacity coefficients for equilibrium audits."""
-        return self.fugacity_coefficients(T, P, composition, phase='vapor')
+        return self.fugacity_coefficients(T, P, composition, phase="vapor")
 
     def _vdm_vapor_terms_closure(
         self,
@@ -3952,7 +4351,9 @@ class VaporDimerizationActivityMixin:
         components,
     ) -> Optional[dict]:
         """Return a fused multi-acid shared-vapor closure when available."""
-        total = sum(max(float(target_fugacity.get(comp, 0.0)), 0.0) for comp in components)
+        total = sum(
+            max(float(target_fugacity.get(comp, 0.0)), 0.0) for comp in components
+        )
         if total <= 0.0:
             return None
         initial_vapor = {
@@ -3960,7 +4361,7 @@ class VaporDimerizationActivityMixin:
             for comp in components
         }
         _acid, model = self._active_vdm_model(initial_vapor)
-        compiled_closure = getattr(model, 'compiled_vapor_closure', None)
+        compiled_closure = getattr(model, "compiled_vapor_closure", None)
         if not callable(compiled_closure):
             return None
         return compiled_closure(
@@ -3984,11 +4385,14 @@ class VaporDimerizationActivityMixin:
         association_state: dict,
     ) -> float:
         """Use an existing VDM closure state for nominal vapor enthalpy."""
-        ideal = sum(
-            fraction * self.enthalpy_ideal_gas(comp, T)
-            for comp, fraction in composition.items()
-        ) * 1000.0
-        return ideal + float(association_state.get('association_enthalpy', 0.0))
+        ideal = (
+            sum(
+                fraction * self.enthalpy_ideal_gas(comp, T)
+                for comp, fraction in composition.items()
+            )
+            * 1000.0
+        )
+        return ideal + float(association_state.get("association_enthalpy", 0.0))
 
     def _liquid_fugacity_reference_factors(
         self,
@@ -4055,10 +4459,7 @@ class VaporDimerizationActivityMixin:
         """Liquid enthalpy with the apparent-Hvap association reference."""
         value = super().enthalpy_liquid(comp, T)
         if comp in self._vdm_models:
-            value += (
-                self._vdm_pure_saturated_association_enthalpy(comp, T)
-                / 1000.0
-            )
+            value += self._vdm_pure_saturated_association_enthalpy(comp, T) / 1000.0
         return value
 
     def Cp_liquid(self, comp: str, T: float) -> float:
@@ -4069,7 +4470,9 @@ class VaporDimerizationActivityMixin:
             value += self._vdm_pure_saturated_association_cp(comp, T)
         return value
 
-    def _vapor_residual_enthalpy(self, composition: dict[str, float], T: float, P: float) -> float:
+    def _vapor_residual_enthalpy(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> float:
         """
         Actual VDM vapor association enthalpy [kJ/kmol nominal mixture].
 
@@ -4092,9 +4495,7 @@ class VaporDimerizationActivityMixin:
         nominal = {comp: value / total for comp, value in nominal.items()}
 
         try:
-            scalar_enthalpy = getattr(
-                model, 'compiled_association_enthalpy', None
-            )
+            scalar_enthalpy = getattr(model, "compiled_association_enthalpy", None)
             if callable(scalar_enthalpy):
                 value = scalar_enthalpy(
                     T,
@@ -4123,7 +4524,7 @@ class VaporDimerizationActivityMixin:
         x: dict[str, float],
     ) -> dict[str, float]:
         """Scalar K-value solve for one VDM associator with ideal physical fugacities."""
-        cache_key = self._k_values_cache_key('gamma_vdm_single_ideal', T, P, x)
+        cache_key = self._k_values_cache_key("gamma_vdm_single_ideal", T, P, x)
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached
@@ -4181,7 +4582,7 @@ class VaporDimerizationActivityMixin:
         P: float,
         composition: dict[str, float],
     ) -> tuple[dict[str, float], Optional[dict]]:
-        cache_key = self._k_values_cache_key('gamma_vdm', T, P, composition)
+        cache_key = self._k_values_cache_key("gamma_vdm", T, P, composition)
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached, None
@@ -4214,11 +4615,8 @@ class VaporDimerizationActivityMixin:
             )
             for comp in self.components
         }
-        K = {
-            comp: float(max(1e-6, min(1e6, base_K[comp])))
-            for comp in self.components
-        }
-        compiled_closure = getattr(model, 'compiled_vapor_closure', None)
+        K = {comp: float(max(1e-6, min(1e6, base_K[comp]))) for comp in self.components}
+        compiled_closure = getattr(model, "compiled_vapor_closure", None)
         if callable(compiled_closure):
             closure = compiled_closure(
                 T,
@@ -4232,22 +4630,28 @@ class VaporDimerizationActivityMixin:
             )
             if closure is not None:
                 K = {
-                    comp: float(closure['values'].get(comp, K[comp]))
+                    comp: float(closure["values"].get(comp, K[comp]))
                     for comp in self.components
                 }
                 return self._set_cached_k_values(cache_key, K), closure
         y_sum = sum(x[comp] * K[comp] for comp in self.components)
-        y = {
-            comp: x[comp] * K[comp] / y_sum
-            for comp in self.components
-        } if y_sum > 0.0 else dict(x)
+        y = (
+            {comp: x[comp] * K[comp] / y_sum for comp in self.components}
+            if y_sum > 0.0
+            else dict(x)
+        )
 
         for _ in range(15):
             phi_v = model.fugacity_coefficients(T, P, y, rk_model=None)
             K_new = {}
             for comp in self.components:
                 phi = max(phi_v.get(comp, 1.0), 1e-12)
-                value = gamma.get(comp, 1.0) * phi_sat[comp] * self.Psat(comp, T) / (phi * max(P, 1e-12))
+                value = (
+                    gamma.get(comp, 1.0)
+                    * phi_sat[comp]
+                    * self.Psat(comp, T)
+                    / (phi * max(P, 1e-12))
+                )
                 K_new[comp] = float(max(1e-6, min(1e6, value)))
             y_new = {comp: x[comp] * K_new[comp] for comp in self.components}
             y_sum = sum(max(value, 0.0) for value in y_new.values())
@@ -4255,7 +4659,10 @@ class VaporDimerizationActivityMixin:
                 K = K_new
                 break
             y_new = {comp: max(value, 0.0) / y_sum for comp, value in y_new.items()}
-            if max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components) < 1e-9:
+            if (
+                max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components)
+                < 1e-9
+            ):
                 K = K_new
                 break
             y = y_new
@@ -4263,13 +4670,18 @@ class VaporDimerizationActivityMixin:
 
         return self._set_cached_k_values(cache_key, K), None
 
-    def K_values(self, T: float, P: float,
-                 composition: dict[str, float]) -> dict[str, float]:
+    def K_values(
+        self, T: float, P: float, composition: dict[str, float]
+    ) -> dict[str, float]:
         return self._K_values_with_vapor_state(T, P, composition)[0]
 
-    def aqueous_K_values(self, T: float, P: float,
-                         composition: dict[str, float],
-                         context: AqueousEquilibriumContext) -> dict[str, float]:
+    def aqueous_K_values(
+        self,
+        T: float,
+        P: float,
+        composition: dict[str, float],
+        context: AqueousEquilibriumContext,
+    ) -> dict[str, float]:
         """VDM vapor association with frozen Henry liquid standard states."""
         self._warn_aqueous_henry_pressure(P, context)
         x = self._normalized_aqueous_composition(composition, self.components)
@@ -4277,7 +4689,7 @@ class VaporDimerizationActivityMixin:
         if model is None:
             return super().aqueous_K_values(T, P, x, context)
 
-        cache_key = self._k_values_cache_key('aqueous_gamma_vdm', T, P, x) + (
+        cache_key = self._k_values_cache_key("aqueous_gamma_vdm", T, P, x) + (
             context.cache_key(),
         )
         cached = self._get_cached_k_values(cache_key)
@@ -4295,11 +4707,11 @@ class VaporDimerizationActivityMixin:
             else:
                 phi_sat = (
                     self._vdm_single_acid_phi_sat(comp, T)
-                    if acid is not None else self._vdm_phi_sat(comp, T)
+                    if acid is not None
+                    else self._vdm_phi_sat(comp, T)
                 )
                 value = (
-                    gamma.get(comp, 1.0) * phi_sat * self.Psat(comp, T)
-                    / max(P, 1e-12)
+                    gamma.get(comp, 1.0) * phi_sat * self.Psat(comp, T) / max(P, 1e-12)
                 )
             reference_K[comp] = max(1e-12, min(1e12, float(value)))
 
@@ -4307,7 +4719,8 @@ class VaporDimerizationActivityMixin:
         y_total = sum(y.values())
         y = (
             {comp: value / y_total for comp, value in y.items()}
-            if y_total > 0.0 else dict(x)
+            if y_total > 0.0
+            else dict(x)
         )
         K = dict(reference_K)
         for _ in range(15):
@@ -4324,20 +4737,26 @@ class VaporDimerizationActivityMixin:
             if y_total <= 0.0:
                 break
             y_new = {comp: value / y_total for comp, value in y_new.items()}
-            if max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components) < 1e-9:
+            if (
+                max(abs(y_new[comp] - y.get(comp, 0.0)) for comp in self.components)
+                < 1e-9
+            ):
                 break
             y = y_new
         return self._set_cached_k_values(cache_key, K)
 
-    def _rk_gamma_phi_K_values(self, T: float, P: float,
-                               composition: dict[str, float]) -> dict[str, float]:
+    def _rk_gamma_phi_K_values(
+        self, T: float, P: float, composition: dict[str, float]
+    ) -> dict[str, float]:
         return self._gamma_phi_K_values(T, P, composition)
 
-    def K_value(self, comp: str, T: float, P: float,
-                x: Optional[dict[str, float]] = None) -> float:
+    def K_value(
+        self, comp: str, T: float, P: float, x: Optional[dict[str, float]] = None
+    ) -> float:
         composition = x if x is not None else {comp: 1.0}
         return self.K_values(T, P, composition).get(comp, 1.0)
 
-    def bubble_point_T(self, composition: dict[str, float], P: float,
-                       T_guess: float = 350.0) -> float:
+    def bubble_point_T(
+        self, composition: dict[str, float], P: float, T_guess: float = 350.0
+    ) -> float:
         return _solve_bubble_point_temperature(self, composition, P, T_guess)

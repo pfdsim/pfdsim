@@ -9,7 +9,7 @@ from pathlib import Path
 from statistics import median
 from typing import Optional
 
-if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .chemical_properties import ChemicalProperties
 else:
     from chemical_properties import ChemicalProperties
@@ -22,7 +22,11 @@ EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K = 10.0
 
 def canonical_eos_model_key(model: str) -> str:
     """Return the CAS-table EOS family key for a cubic model name."""
-    return "SRK" if str(model).upper().replace("_", "-") in ("SRK", "RKS", "RKS-BM", "SRK-BM") else "PR"
+    return (
+        "SRK"
+        if str(model).upper().replace("_", "-") in ("SRK", "RKS", "RKS-BM", "SRK-BM")
+        else "PR"
+    )
 
 
 def _normalize_name(value: str) -> str:
@@ -74,10 +78,12 @@ def _canonical_cas(value: Optional[str]) -> Optional[str]:
     return text if CAS_RE.match(text) else None
 
 
-def cas_for_component(name: str, props: Optional[ChemicalProperties] = None) -> Optional[str]:
+def cas_for_component(
+    name: str, props: Optional[ChemicalProperties] = None
+) -> Optional[str]:
     """Return a CAS number for interaction-parameter lookup."""
     try:
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from .compound_identity import get_compound_identity_resolver
         else:
             from compound_identity import get_compound_identity_resolver
@@ -119,7 +125,9 @@ def _eos_interactions() -> dict[str, dict[tuple[str, str], list[dict]]]:
                 float(record["Tmax_K"]),
             )
         else:
-            normalized["temperature_range"] = _temperature_range(record.get("comment", ""))
+            normalized["temperature_range"] = _temperature_range(
+                record.get("comment", "")
+            )
         grouped.setdefault(model, {}).setdefault(key, []).append(normalized)
 
     return grouped
@@ -174,7 +182,9 @@ def _median_kij_record(records: list[dict], T: Optional[float] = None) -> dict:
 def eos_record_kij(record: dict, T: Optional[float] = None) -> float:
     """Evaluate a constant or simple temperature-dependent k_ij record."""
     if any(key in record for key in ("kij_a", "kij_b", "kij_c")):
-        T_eval = float(T if T is not None else record.get("T_ref_K", record.get("Tref_K", 298.15)))
+        T_eval = float(
+            T if T is not None else record.get("T_ref_K", record.get("Tref_K", 298.15))
+        )
         return (
             float(record.get("kij_a", 0.0))
             + float(record.get("kij_b", 0.0)) / T_eval
@@ -190,22 +200,23 @@ def _select_eos_record(records: list[dict], T: Optional[float] = None) -> dict:
 
 def _select_eos_kij(records: list[dict], T: Optional[float] = None) -> float:
     static_records = [
-        record for record in records
-        if record.get("temperature_range") is None
+        record for record in records if record.get("temperature_range") is None
     ]
     ranged_records = [
-        record for record in records
-        if record.get("temperature_range") is not None
+        record for record in records if record.get("temperature_range") is not None
     ]
     if T is None:
         candidates = static_records or records
         return float(eos_record_kij(_median_kij_record(candidates, T), T))
     in_range = [
-        record for record in ranged_records
-        if _temperature_score(record, T)[0] is False
+        record for record in ranged_records if _temperature_score(record, T)[0] is False
     ]
     if in_range:
-        return float(eos_record_kij(min(in_range, key=lambda record: _temperature_score(record, T)), T))
+        return float(
+            eos_record_kij(
+                min(in_range, key=lambda record: _temperature_score(record, T)), T
+            )
+        )
     nearest_ranged = (
         min(ranged_records, key=lambda record: _temperature_score(record, T))
         if ranged_records
@@ -225,7 +236,9 @@ def _eos_model_key(model: str) -> str:
     return canonical_eos_model_key(model)
 
 
-def eos_binary_interaction_records(model: str, cas1: Optional[str], cas2: Optional[str]) -> list[dict]:
+def eos_binary_interaction_records(
+    model: str, cas1: Optional[str], cas2: Optional[str]
+) -> list[dict]:
     if not cas1 or not cas2 or cas1 == cas2:
         return []
     model_key = _eos_model_key(model)
@@ -263,28 +276,32 @@ def _nrtl_interactions() -> dict[tuple[str, str], dict]:
             "alpha12": float(record["alpha12"]),
             "comment": record.get("comment", ""),
         }
-        for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+        for field in ("extrapolation", "Tmin_K", "Tmax_K"):
             if field in record:
                 interaction[field] = record[field]
         if "tau12_c" in record and "tau21_c" in record:
-            interaction.update({
-                "tau12_c": float(record["tau12_c"]),
-                "tau12_d": float(record.get("tau12_d", 0.0)),
-                "tau12_e": float(record.get("tau12_e", 0.0)),
-                "tau12_f": float(record.get("tau12_f", 0.0)),
-                "tau12_g": float(record.get("tau12_g", 0.0)),
-                "tau21_c": float(record["tau21_c"]),
-                "tau21_d": float(record.get("tau21_d", 0.0)),
-                "tau21_e": float(record.get("tau21_e", 0.0)),
-                "tau21_f": float(record.get("tau21_f", 0.0)),
-                "tau21_g": float(record.get("tau21_g", 0.0)),
-                "tau_tref": float(record.get("tau_tref", 298.15)),
-            })
+            interaction.update(
+                {
+                    "tau12_c": float(record["tau12_c"]),
+                    "tau12_d": float(record.get("tau12_d", 0.0)),
+                    "tau12_e": float(record.get("tau12_e", 0.0)),
+                    "tau12_f": float(record.get("tau12_f", 0.0)),
+                    "tau12_g": float(record.get("tau12_g", 0.0)),
+                    "tau21_c": float(record["tau21_c"]),
+                    "tau21_d": float(record.get("tau21_d", 0.0)),
+                    "tau21_e": float(record.get("tau21_e", 0.0)),
+                    "tau21_f": float(record.get("tau21_f", 0.0)),
+                    "tau21_g": float(record.get("tau21_g", 0.0)),
+                    "tau_tref": float(record.get("tau_tref", 298.15)),
+                }
+            )
         else:
-            interaction.update({
-                "a12_cal_per_mol": float(record["a12_cal_per_mol"]),
-                "a21_cal_per_mol": float(record["a21_cal_per_mol"]),
-            })
+            interaction.update(
+                {
+                    "a12_cal_per_mol": float(record["a12_cal_per_mol"]),
+                    "a21_cal_per_mol": float(record["a21_cal_per_mol"]),
+                }
+            )
         key = tuple(sorted((cas1, cas2)))
         existing = interactions.get(key)
         if existing is not None:
@@ -300,50 +317,58 @@ def _nrtl_oriented_record(data: dict, reverse: bool = False) -> dict:
         "alpha12": data["alpha12"],
         "comment": data.get("comment", ""),
     }
-    for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+    for field in ("extrapolation", "Tmin_K", "Tmax_K"):
         if field in data:
             result[field] = data[field]
     if "tau12_c" in data:
         if not reverse:
-            result.update({
-                "tau12_c": data["tau12_c"],
-                "tau12_d": data["tau12_d"],
-                "tau12_e": data.get("tau12_e", 0.0),
-                "tau12_f": data.get("tau12_f", 0.0),
-                "tau12_g": data.get("tau12_g", 0.0),
-                "tau21_c": data["tau21_c"],
-                "tau21_d": data["tau21_d"],
-                "tau21_e": data.get("tau21_e", 0.0),
-                "tau21_f": data.get("tau21_f", 0.0),
-                "tau21_g": data.get("tau21_g", 0.0),
-                "tau_tref": data.get("tau_tref", 298.15),
-            })
+            result.update(
+                {
+                    "tau12_c": data["tau12_c"],
+                    "tau12_d": data["tau12_d"],
+                    "tau12_e": data.get("tau12_e", 0.0),
+                    "tau12_f": data.get("tau12_f", 0.0),
+                    "tau12_g": data.get("tau12_g", 0.0),
+                    "tau21_c": data["tau21_c"],
+                    "tau21_d": data["tau21_d"],
+                    "tau21_e": data.get("tau21_e", 0.0),
+                    "tau21_f": data.get("tau21_f", 0.0),
+                    "tau21_g": data.get("tau21_g", 0.0),
+                    "tau_tref": data.get("tau_tref", 298.15),
+                }
+            )
         else:
-            result.update({
-                "tau12_c": data["tau21_c"],
-                "tau12_d": data["tau21_d"],
-                "tau12_e": data.get("tau21_e", 0.0),
-                "tau12_f": data.get("tau21_f", 0.0),
-                "tau12_g": data.get("tau21_g", 0.0),
-                "tau21_c": data["tau12_c"],
-                "tau21_d": data["tau12_d"],
-                "tau21_e": data.get("tau12_e", 0.0),
-                "tau21_f": data.get("tau12_f", 0.0),
-                "tau21_g": data.get("tau12_g", 0.0),
-                "tau_tref": data.get("tau_tref", 298.15),
-            })
+            result.update(
+                {
+                    "tau12_c": data["tau21_c"],
+                    "tau12_d": data["tau21_d"],
+                    "tau12_e": data.get("tau21_e", 0.0),
+                    "tau12_f": data.get("tau21_f", 0.0),
+                    "tau12_g": data.get("tau21_g", 0.0),
+                    "tau21_c": data["tau12_c"],
+                    "tau21_d": data["tau12_d"],
+                    "tau21_e": data.get("tau12_e", 0.0),
+                    "tau21_f": data.get("tau12_f", 0.0),
+                    "tau21_g": data.get("tau12_g", 0.0),
+                    "tau_tref": data.get("tau_tref", 298.15),
+                }
+            )
         return result
 
     if not reverse:
-        result.update({
-            "a12_cal_per_mol": data["a12_cal_per_mol"],
-            "a21_cal_per_mol": data["a21_cal_per_mol"],
-        })
+        result.update(
+            {
+                "a12_cal_per_mol": data["a12_cal_per_mol"],
+                "a21_cal_per_mol": data["a21_cal_per_mol"],
+            }
+        )
     else:
-        result.update({
-            "a12_cal_per_mol": data["a21_cal_per_mol"],
-            "a21_cal_per_mol": data["a12_cal_per_mol"],
-        })
+        result.update(
+            {
+                "a12_cal_per_mol": data["a21_cal_per_mol"],
+                "a21_cal_per_mol": data["a12_cal_per_mol"],
+            }
+        )
     return result
 
 
@@ -380,28 +405,32 @@ def _uniquac_interactions() -> dict[tuple[str, str], dict]:
             "model_variant": record.get("model_variant", "standard_uniquac"),
             "use_q_prime": bool(record.get("use_q_prime", False)),
         }
-        for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+        for field in ("extrapolation", "Tmin_K", "Tmax_K"):
             if field in record:
                 interaction[field] = record[field]
         if "tau12_a" in record and "tau21_a" in record:
-            interaction.update({
-                "tau12_a": float(record["tau12_a"]),
-                "tau12_b": float(record.get("tau12_b", 0.0)),
-                "tau12_c": float(record.get("tau12_c", 0.0)),
-                "tau12_d": float(record.get("tau12_d", 0.0)),
-                "tau12_e": float(record.get("tau12_e", 0.0)),
-                "tau21_a": float(record["tau21_a"]),
-                "tau21_b": float(record.get("tau21_b", 0.0)),
-                "tau21_c": float(record.get("tau21_c", 0.0)),
-                "tau21_d": float(record.get("tau21_d", 0.0)),
-                "tau21_e": float(record.get("tau21_e", 0.0)),
-                "tau_tref": float(record.get("tau_tref", 298.15)),
-            })
+            interaction.update(
+                {
+                    "tau12_a": float(record["tau12_a"]),
+                    "tau12_b": float(record.get("tau12_b", 0.0)),
+                    "tau12_c": float(record.get("tau12_c", 0.0)),
+                    "tau12_d": float(record.get("tau12_d", 0.0)),
+                    "tau12_e": float(record.get("tau12_e", 0.0)),
+                    "tau21_a": float(record["tau21_a"]),
+                    "tau21_b": float(record.get("tau21_b", 0.0)),
+                    "tau21_c": float(record.get("tau21_c", 0.0)),
+                    "tau21_d": float(record.get("tau21_d", 0.0)),
+                    "tau21_e": float(record.get("tau21_e", 0.0)),
+                    "tau_tref": float(record.get("tau_tref", 298.15)),
+                }
+            )
         else:
-            interaction.update({
-                "a12_cal_per_mol": float(record["a12_cal_per_mol"]),
-                "a21_cal_per_mol": float(record["a21_cal_per_mol"]),
-            })
+            interaction.update(
+                {
+                    "a12_cal_per_mol": float(record["a12_cal_per_mol"]),
+                    "a21_cal_per_mol": float(record["a21_cal_per_mol"]),
+                }
+            )
         key = tuple(sorted((cas1, cas2)))
         existing = interactions.get(key)
         if existing is not None:
@@ -418,50 +447,58 @@ def _uniquac_oriented_record(data: dict, reverse: bool = False) -> dict:
         "model_variant": data.get("model_variant", "standard_uniquac"),
         "use_q_prime": bool(data.get("use_q_prime", False)),
     }
-    for field in ("do_not_extrapolate", "Tmin_K", "Tmax_K"):
+    for field in ("extrapolation", "Tmin_K", "Tmax_K"):
         if field in data:
             result[field] = data[field]
     if "tau12_a" in data:
         if not reverse:
-            result.update({
-                "tau12_a": data["tau12_a"],
-                "tau12_b": data["tau12_b"],
-                "tau12_c": data.get("tau12_c", 0.0),
-                "tau12_d": data.get("tau12_d", 0.0),
-                "tau12_e": data.get("tau12_e", 0.0),
-                "tau21_a": data["tau21_a"],
-                "tau21_b": data["tau21_b"],
-                "tau21_c": data.get("tau21_c", 0.0),
-                "tau21_d": data.get("tau21_d", 0.0),
-                "tau21_e": data.get("tau21_e", 0.0),
-                "tau_tref": data.get("tau_tref", 298.15),
-            })
+            result.update(
+                {
+                    "tau12_a": data["tau12_a"],
+                    "tau12_b": data["tau12_b"],
+                    "tau12_c": data.get("tau12_c", 0.0),
+                    "tau12_d": data.get("tau12_d", 0.0),
+                    "tau12_e": data.get("tau12_e", 0.0),
+                    "tau21_a": data["tau21_a"],
+                    "tau21_b": data["tau21_b"],
+                    "tau21_c": data.get("tau21_c", 0.0),
+                    "tau21_d": data.get("tau21_d", 0.0),
+                    "tau21_e": data.get("tau21_e", 0.0),
+                    "tau_tref": data.get("tau_tref", 298.15),
+                }
+            )
         else:
-            result.update({
-                "tau12_a": data["tau21_a"],
-                "tau12_b": data["tau21_b"],
-                "tau12_c": data.get("tau21_c", 0.0),
-                "tau12_d": data.get("tau21_d", 0.0),
-                "tau12_e": data.get("tau21_e", 0.0),
-                "tau21_a": data["tau12_a"],
-                "tau21_b": data["tau12_b"],
-                "tau21_c": data.get("tau12_c", 0.0),
-                "tau21_d": data.get("tau12_d", 0.0),
-                "tau21_e": data.get("tau12_e", 0.0),
-                "tau_tref": data.get("tau_tref", 298.15),
-            })
+            result.update(
+                {
+                    "tau12_a": data["tau21_a"],
+                    "tau12_b": data["tau21_b"],
+                    "tau12_c": data.get("tau21_c", 0.0),
+                    "tau12_d": data.get("tau21_d", 0.0),
+                    "tau12_e": data.get("tau21_e", 0.0),
+                    "tau21_a": data["tau12_a"],
+                    "tau21_b": data["tau12_b"],
+                    "tau21_c": data.get("tau12_c", 0.0),
+                    "tau21_d": data.get("tau12_d", 0.0),
+                    "tau21_e": data.get("tau12_e", 0.0),
+                    "tau_tref": data.get("tau_tref", 298.15),
+                }
+            )
         return result
 
     if not reverse:
-        result.update({
-            "a12_cal_per_mol": data["a12_cal_per_mol"],
-            "a21_cal_per_mol": data["a21_cal_per_mol"],
-        })
+        result.update(
+            {
+                "a12_cal_per_mol": data["a12_cal_per_mol"],
+                "a21_cal_per_mol": data["a21_cal_per_mol"],
+            }
+        )
     else:
-        result.update({
-            "a12_cal_per_mol": data["a21_cal_per_mol"],
-            "a21_cal_per_mol": data["a12_cal_per_mol"],
-        })
+        result.update(
+            {
+                "a12_cal_per_mol": data["a21_cal_per_mol"],
+                "a21_cal_per_mol": data["a12_cal_per_mol"],
+            }
+        )
     return result
 
 
@@ -469,7 +506,9 @@ def orient_uniquac_interaction(data: dict, reverse: bool = False) -> dict:
     return _uniquac_oriented_record(data, reverse=reverse)
 
 
-def uniquac_binary_interaction(cas1: Optional[str], cas2: Optional[str]) -> Optional[dict]:
+def uniquac_binary_interaction(
+    cas1: Optional[str], cas2: Optional[str]
+) -> Optional[dict]:
     if not cas1 or not cas2 or cas1 == cas2:
         return None
     data = _uniquac_interactions().get(tuple(sorted((cas1, cas2))))
@@ -506,6 +545,8 @@ def _public_uniquac_rq_entry(entry: dict) -> dict:
     }
     if "extended_uniquac" in entry:
         result["extended_uniquac"] = dict(entry["extended_uniquac"])
+    if "q_prime" in entry:
+        result["q_prime"] = float(entry["q_prime"])
     return result
 
 
@@ -536,7 +577,7 @@ def uniquac_rq_for_component(
         if not value:
             return False
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from .compound_identity import looks_like_formula
             else:
                 from compound_identity import looks_like_formula
@@ -553,7 +594,7 @@ def uniquac_rq_for_component(
         add_candidate(candidates, props.symbol)
 
     try:
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from .compound_identity import get_compound_identity_resolver
         else:
             from compound_identity import get_compound_identity_resolver

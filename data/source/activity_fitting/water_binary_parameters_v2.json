@@ -1,0 +1,1193 @@
+{
+  "metadata": {
+    "title": "Water binary NRTL/UNIQUAC parameter collection",
+    "Tref_K": 298.15,
+    "component_order_for_refits": "component 1 = water; component 2 = organic",
+    "NRTL_form": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+    "UNIQUAC_form": "ln(tau_ij(T))=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+    "selection_rule": "Start from constant+1/T in each direction. Add the heat-capacity-like F(T) term only when AICc and alternating-temperature cross-validation both improve. Prefer the sparsest such model.",
+    "excluded": [
+      "water + ethanol (user already has a working 20-180 C record)"
+    ],
+    "fit_notes": "Final NRTL parameters were stability-conditioned to preserve the measured single miscibility gap. Final UNIQUAC parameters are direct sparse joint fits. All omitted higher-order coefficients are exactly zero.",
+    "revision": "v2",
+    "revision_notes": [
+      "Added exact CAS numbers for all components.",
+      "Added the exact UNIQUAC r/q values used by each new water refit.",
+      "Documented the vapor-phase treatment and pure-component vapor-pressure correlations used in fitting.",
+      "Added recommended temperature ranges based on the actual LLE/VLLE calibration/validation envelope.",
+      "r/q values are source/convention dependent; source-specific variants are not silently replaced by database defaults."
+    ],
+    "UNIQUAC_rq_policy": "The five preferred water refits store the exact r/q used in each fit. Do not substitute alternative structural-parameter conventions without refitting UNIQUAC."
+  },
+  "refit_pairs": [
+    {
+      "pair": [
+        "water",
+        "1-pentanol"
+      ],
+      "sources": [
+        {
+          "source": "Stephenson, Stuart & Tabak 1984",
+          "doi": "10.1021/je00037a019",
+          "type": "binary LLE",
+          "range": "273.15-363.85 K"
+        },
+        {
+          "source": "Separations 2025, 12, 273",
+          "type": "binary VLE/heteroazeotrope",
+          "azeotrope": "95.9 C; 56 wt% water"
+        }
+      ],
+      "NRTL": {
+        "parameters": {
+          "c12": 8.784473013764421,
+          "d12_K": -1117.4512906546886,
+          "e12": -30.295544329768497,
+          "f12_per_K": 0.0,
+          "g12_per_K2": 0.0,
+          "c21": -1.2917017492680196,
+          "d21_K": 457.2702678755307,
+          "e21": 0.0,
+          "f21_per_K": 0.0,
+          "g21_per_K2": 0.0,
+          "alpha": 0.2924407528346019
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -70.986060649779,
+          "alternating_temperature_CV_RMS_two_term": 0.04419025422842845,
+          "alternating_temperature_CV_RMS_selected": 0.013825487188085428,
+          "CV_ratio_selected_over_two_term": 0.31286281170999064,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 1975.4916624279388,
+          "corr_c12_e12": -0.8230840357633067
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.37670895256099945,
+          "P_at_reported_azeotrope_kPa": 99.77227765450772,
+          "predicted_y_water_at_reported_azeotrope": 0.8714229274537043,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9951317289598777,
+          "predicted_x_water_organic_at_azeotrope": 0.4436
+        }
+      },
+      "UNIQUAC": {
+        "parameters": {
+          "a12": -2.8707660318995982,
+          "b12_K": 602.7584210553713,
+          "c12": 6.325485742310511,
+          "d12_per_K": 0.0,
+          "e12_per_K2": 0.0,
+          "a21": 1.454238368525731,
+          "b21_K": -504.3476801524032,
+          "c21": 0.0,
+          "d21_per_K": 0.0,
+          "e21_per_K2": 0.0
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -31.03752245715549,
+          "alternating_temperature_CV_RMS_two_term": 0.04964756174058499,
+          "alternating_temperature_CV_RMS_selected": 0.02012831171162355,
+          "CV_ratio_selected_over_two_term": 0.40542397261715724,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 648.9166164871745,
+          "corr_a12_c12": 0.45124100020509267
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.13103120807669352,
+          "P_at_reported_azeotrope_kPa": 99.31161818226114,
+          "predicted_y_water_at_reported_azeotrope": 0.8755890807962027,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9952646650770829,
+          "predicted_x_water_organic_at_azeotrope": 0.4696
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "water",
+            "CAS": "7732-18-5",
+            "r": 0.92,
+            "q": 1.4
+          },
+          "component_2": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "status": "exact values used in this refit"
+        }
+      },
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        273.15,
+        369.05
+      ],
+      "temperature_range_basis": "joint LLE calibration from 0-90.7 °C plus atmospheric heteroazeotrope at 95.9 °C",
+      "range_policy": "recommended for process-simulator use; extrapolation outside this range is not validated by this fit",
+      "phase_equilibrium_treatment": {
+        "liquid": "NRTL or UNIQUAC activity coefficients; LLE fitted by equality of component activities between the two liquid phases",
+        "vapor": "ideal-gas vapor phase (phi_i = 1)",
+        "VLE_equation": "y_i*P = x_i*gamma_i*Psat_i(T)",
+        "Poynting_correction": "not included",
+        "vapor_fugacity_correction": "not included",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "1-pentanol_user_DIPPR101"
+        ]
+      }
+    },
+    {
+      "pair": [
+        "water",
+        "1-hexanol"
+      ],
+      "sources": [
+        {
+          "source": "Stephenson, Stuart & Tabak 1984",
+          "doi": "10.1021/je00037a019",
+          "type": "binary LLE",
+          "range": "273.15-363.45 K"
+        },
+        {
+          "source": "Schmitt & Hasse 2005",
+          "doi": "10.1021/je050141m",
+          "type": "binary LLE + azeotrope validation"
+        },
+        {
+          "source": "Separations 2025, 12, 273",
+          "type": "binary VLE/heteroazeotrope",
+          "azeotrope": "97.9 C; 68 wt% water"
+        }
+      ],
+      "NRTL": {
+        "parameters": {
+          "c12": 10.57108448674089,
+          "d12_K": -1241.1592567392975,
+          "e12": -37.34310882723929,
+          "f12_per_K": 0.0,
+          "g12_per_K2": 0.0,
+          "c21": -1.1288208800355872,
+          "d21_K": 402.9942491264742,
+          "e21": 0.0,
+          "f21_per_K": 0.0,
+          "g21_per_K2": 0.0,
+          "alpha": 0.2517395561438972
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -48.87048388421778,
+          "alternating_temperature_CV_RMS_two_term": 0.07634643059360985,
+          "alternating_temperature_CV_RMS_selected": 0.024984868285264705,
+          "CV_ratio_selected_over_two_term": 0.3272565343396149,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 2143.7497982130794,
+          "corr_c12_e12": -0.8355324891558598
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.27039202210851165,
+          "P_at_reported_azeotrope_kPa": 100.95814586355017,
+          "predicted_y_water_at_reported_azeotrope": 0.9290225072854634,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9987110963876091,
+          "predicted_x_water_organic_at_azeotrope": 0.36260000000000003
+        }
+      },
+      "UNIQUAC": {
+        "parameters": {
+          "a12": -2.6689381481994032,
+          "b12_K": 517.8910203423211,
+          "c12": 7.908814740197092,
+          "d12_per_K": 0.0,
+          "e12_per_K2": 0.0,
+          "a21": 1.0791385727753013,
+          "b21_K": -426.16994698939834,
+          "c21": 0.0,
+          "d21_per_K": 0.0,
+          "e21_per_K2": 0.0
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -41.58876937649691,
+          "alternating_temperature_CV_RMS_two_term": 0.08523496568960749,
+          "alternating_temperature_CV_RMS_selected": 0.02980780348153511,
+          "CV_ratio_selected_over_two_term": 0.34971332762757845,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 507.0989468534096,
+          "corr_a12_c12": 0.1996987414456378
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.07092764891335467,
+          "P_at_reported_azeotrope_kPa": 100.69072709205743,
+          "predicted_y_water_at_reported_azeotrope": 0.9315233141407451,
+          "predicted_x_water_aqueous_at_azeotrope": 0.998746292012559,
+          "predicted_x_water_organic_at_azeotrope": 0.388
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "water",
+            "CAS": "7732-18-5",
+            "r": 0.92,
+            "q": 1.4
+          },
+          "component_2": {
+            "name": "1-hexanol",
+            "CAS": "111-27-3",
+            "r": 4.8031,
+            "q": 4.132
+          },
+          "status": "exact values used in this refit"
+        }
+      },
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "1-hexanol",
+          "CAS": "111-27-3",
+          "UNIQUAC_rq": {
+            "r": 4.8031,
+            "q": 4.132,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 5.2731,
+              "q": 4.748
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        273.15,
+        371.05
+      ],
+      "temperature_range_basis": "joint LLE calibration/validation through ~90 °C plus atmospheric heteroazeotrope at 97.9 °C",
+      "range_policy": "recommended for process-simulator use; extrapolation outside this range is not validated by this fit",
+      "phase_equilibrium_treatment": {
+        "liquid": "NRTL or UNIQUAC activity coefficients; LLE fitted by equality of component activities between the two liquid phases",
+        "vapor": "ideal-gas vapor phase (phi_i = 1)",
+        "VLE_equation": "y_i*P = x_i*gamma_i*Psat_i(T)",
+        "Poynting_correction": "not included",
+        "vapor_fugacity_correction": "not included",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "1-hexanol_user_DIPPR101"
+        ]
+      }
+    },
+    {
+      "pair": [
+        "water",
+        "1-octanol"
+      ],
+      "sources": [
+        {
+          "source": "Stephenson, Stuart & Tabak 1984",
+          "doi": "10.1021/je00037a019",
+          "type": "aqueous-rich LLE branch"
+        },
+        {
+          "source": "Lang 2012",
+          "doi": "10.1021/je3001427",
+          "type": "organic-rich water solubility",
+          "range": "275-369 K"
+        },
+        {
+          "source": "CRC/HSDB via PubChem",
+          "type": "heterogeneous azeotrope",
+          "azeotrope": "99.4 C; 90 wt% water"
+        }
+      ],
+      "NRTL": {
+        "parameters": {
+          "c12": 4.2288700750152115,
+          "d12_K": 1487.4377338011184,
+          "e12": 38.68325604346072,
+          "f12_per_K": 0.0,
+          "g12_per_K2": 0.0,
+          "c21": -1.7622873779694919,
+          "d21_K": 516.7452765439898,
+          "e21": 0.0,
+          "f21_per_K": 0.0,
+          "g21_per_K2": 0.0,
+          "alpha": 0.19801446480828733
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -9.588478673316814,
+          "alternating_temperature_CV_RMS_two_term": 0.14958007728861786,
+          "alternating_temperature_CV_RMS_selected": 0.1049194287248642,
+          "CV_ratio_selected_over_two_term": 0.701426490925125,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 10596.712906199105,
+          "corr_c12_e12": -0.10633261765340767
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.017566397567251674,
+          "P_at_reported_azeotrope_kPa": 100.80558444098439,
+          "predicted_y_water_at_reported_azeotrope": 0.9830988191039035,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9998872532041755,
+          "predicted_x_water_organic_at_azeotrope": 0.33080000000000004
+        }
+      },
+      "UNIQUAC": {
+        "parameters": {
+          "a12": -0.3413194245876999,
+          "b12_K": -225.48206289537674,
+          "c12": -7.516195093222029,
+          "d12_per_K": 0.0,
+          "e12_per_K2": 0.0,
+          "a21": 0.36316172683542763,
+          "b21_K": -231.65235391092085,
+          "c21": 0.0,
+          "d21_per_K": 0.0,
+          "e21_per_K2": 0.0
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -8.412600931889372,
+          "alternating_temperature_CV_RMS_two_term": 0.14932707995753922,
+          "alternating_temperature_CV_RMS_selected": 0.10779850387402522,
+          "CV_ratio_selected_over_two_term": 0.7218952108664916,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 680.9841099071592,
+          "corr_a12_c12": -0.3658932634207068
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.09789223143091641,
+          "P_at_reported_azeotrope_kPa": 100.87658700243267,
+          "predicted_y_water_at_reported_azeotrope": 0.9824038358615657,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9998840880381401,
+          "predicted_x_water_organic_at_azeotrope": 0.32120000000000004
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "water",
+            "CAS": "7732-18-5",
+            "r": 0.92,
+            "q": 1.4
+          },
+          "component_2": {
+            "name": "1-octanol",
+            "CAS": "111-87-5",
+            "r": 6.1519,
+            "q": 5.212
+          },
+          "status": "exact values used in this refit"
+        }
+      },
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "1-octanol",
+          "CAS": "111-87-5",
+          "UNIQUAC_rq": {
+            "r": 6.1519,
+            "q": 5.212,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Gmehling-style group-contribution set used by Arce-family work",
+              "r": 6.6219,
+              "q": 5.828,
+              "note": "Arce et al. additionally optimized modified-UNIQUAC q' for 1-octanol to 5.50."
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        275.56,
+        372.55
+      ],
+      "temperature_range_basis": "Lang water-in-octanol data from 275.56-369.7 K plus atmospheric heteroazeotrope at 99.4 °C",
+      "range_policy": "recommended for process-simulator use; extrapolation outside this range is not validated by this fit",
+      "phase_equilibrium_treatment": {
+        "liquid": "NRTL or UNIQUAC activity coefficients; LLE fitted by equality of component activities between the two liquid phases",
+        "vapor": "ideal-gas vapor phase (phi_i = 1)",
+        "VLE_equation": "y_i*P = x_i*gamma_i*Psat_i(T)",
+        "Poynting_correction": "not included",
+        "vapor_fugacity_correction": "not included",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "1-octanol_user_DIPPR101"
+        ]
+      }
+    },
+    {
+      "pair": [
+        "water",
+        "2-ethyl-1-hexanol"
+      ],
+      "sources": [
+        {
+          "source": "Stephenson, Stuart & Tabak 1984",
+          "doi": "10.1021/je00037a019",
+          "type": "binary LLE",
+          "range": "~283-363 K"
+        },
+        {
+          "source": "Omota, Dimian & Bliek 2003",
+          "doi": "10.1016/S0009-2509(03)00165-9",
+          "type": "binary VLLE/heteroazeotrope",
+          "azeotrope": "372.25 K; y_water=0.9679; x_water_aq=0.9996; x_water_org=0.2411"
+        }
+      ],
+      "NRTL": {
+        "parameters": {
+          "c12": 15.209886246652227,
+          "d12_K": -2074.65652818557,
+          "e12": -82.12044321137707,
+          "f12_per_K": 0.0,
+          "g12_per_K2": 0.0,
+          "c21": 0.12224481387610751,
+          "d21_K": 135.4766223357486,
+          "e21": -23.582063838260833,
+          "f21_per_K": 0.0,
+          "g21_per_K2": 0.0,
+          "alpha": 0.20026313854455152
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": true,
+          "delta_AICc_selected_minus_two_term": -26.530574819581382,
+          "alternating_temperature_CV_RMS_two_term": 0.2893394049882088,
+          "alternating_temperature_CV_RMS_selected": 0.1785652528391983,
+          "CV_ratio_selected_over_two_term": 0.6171480612759096,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 17461.33669589916,
+          "corr_c12_e12": -0.9533621676957993,
+          "corr_c21_e21": -0.8984002320797988
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.07732828470003413,
+          "P_at_reported_azeotrope_kPa": 101.16300753457178,
+          "predicted_y_water_at_reported_azeotrope": 0.9689163102138113,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9996393265048426,
+          "predicted_x_water_organic_at_azeotrope": 0.24500000000000002
+        }
+      },
+      "UNIQUAC": {
+        "parameters": {
+          "a12": -2.536727042559869,
+          "b12_K": 541.4464687935983,
+          "c12": 18.916800773878016,
+          "d12_per_K": 0.0,
+          "e12_per_K2": 0.0,
+          "a21": 0.5254686799138925,
+          "b21_K": -456.27684119852796,
+          "c21": 0.0,
+          "d21_per_K": 0.0,
+          "e21_per_K2": 0.0
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -28.368080049107505,
+          "alternating_temperature_CV_RMS_two_term": 0.31612874680815645,
+          "alternating_temperature_CV_RMS_selected": 0.21010460517624557,
+          "CV_ratio_selected_over_two_term": 0.6646172083292005,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 455.81365546112215,
+          "corr_a12_c12": -0.6057344561473746
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.12197809805194358,
+          "P_at_reported_azeotrope_kPa": 101.18736228418196,
+          "predicted_y_water_at_reported_azeotrope": 0.9686834792851584,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9996393265048426,
+          "predicted_x_water_organic_at_azeotrope": 0.24860000000000002
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "water",
+            "CAS": "7732-18-5",
+            "r": 0.92,
+            "q": 1.4
+          },
+          "component_2": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.1511,
+            "q": 5.208
+          },
+          "status": "exact values used in this refit"
+        }
+      },
+      "literature_reference_parameters": [
+        {
+          "model": "UNIQUAC",
+          "source": {
+            "file": "main 23.pdf",
+            "title": "Fatty acid esterification by reactive distillation. Part 1: equilibrium-based design",
+            "doi": "10.1016/S0009-2509(03)00165-9",
+            "table": "Table 5",
+            "equation": "tau_ij = exp(Aij + Bij/T + Cij*T)",
+            "citation": "uploaded file main 23.pdf, Table 5 / thermodynamic-experiments discussion"
+          },
+          "source_component_order": [
+            "2-ethyl-1-hexanol",
+            "water"
+          ],
+          "source_original": {
+            "A12": 11.517,
+            "B12_K": -785.57,
+            "C12_per_K": -1.7187,
+            "A21": -10.0,
+            "B21_K": -2.807,
+            "C21_per_K": 1.5911
+          },
+          "converted_water_first": {
+            "a12": -10.0,
+            "b12_K": -2.807,
+            "c12": 0.0,
+            "d12_per_K": 1.5911,
+            "e12_per_K2": 0.0,
+            "a21": 11.517,
+            "b21_K": -785.57,
+            "c21": 0.0,
+            "d21_per_K": -1.7187,
+            "e21_per_K2": 0.0
+          },
+          "note": "Published joint LLE+azeotrope UNIQUAC fit; retained for provenance, while the preferred record is the new refit above."
+        }
+      ],
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        283.35,
+        372.25
+      ],
+      "temperature_range_basis": "two-sided Stephenson LLE data begin near 10.2 °C; upper anchor is Omota binary heteroazeotrope at 372.25 K",
+      "range_policy": "recommended for process-simulator use; extrapolation outside this range is not validated by this fit",
+      "phase_equilibrium_treatment": {
+        "liquid": "NRTL or UNIQUAC activity coefficients; LLE fitted by equality of component activities between the two liquid phases",
+        "vapor": "ideal-gas vapor phase (phi_i = 1)",
+        "VLE_equation": "y_i*P = x_i*gamma_i*Psat_i(T)",
+        "Poynting_correction": "not included",
+        "vapor_fugacity_correction": "not included",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "2-ethyl-1-hexanol_omota"
+        ],
+        "Psat_extrapolation_note": "The Omota 2-EH correlation was used at the 372.25 K heteroazeotrope although Table 4's common caption states 450-608 K. It was independently checked against the Ghanadzadeh Antoine correlation near this temperature and is consistent there."
+      }
+    },
+    {
+      "pair": [
+        "water",
+        "hexyl acetate"
+      ],
+      "sources": [
+        {
+          "source": "Stephenson & Stuart 1986",
+          "doi": "10.1021/je00043a019",
+          "type": "binary LLE",
+          "range": "273.15-363.35 K"
+        },
+        {
+          "source": "Schmitt & Hasse 2005",
+          "doi": "10.1021/je050141m",
+          "type": "binary LLE + azeotrope validation",
+          "azeotrope": "97.4 C; y_water about 0.926"
+        }
+      ],
+      "NRTL": {
+        "parameters": {
+          "c12": 11.717335907456603,
+          "d12_K": -987.6325717680777,
+          "e12": -39.0681545802415,
+          "f12_per_K": 0.0,
+          "g12_per_K2": 0.0,
+          "c21": 0.17760575095046133,
+          "d21_K": 420.1931798788895,
+          "e21": 0.0,
+          "f21_per_K": 0.0,
+          "g21_per_K2": 0.0,
+          "alpha": 0.1898980619016925
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -28.472208034266387,
+          "alternating_temperature_CV_RMS_two_term": 0.13305883129024293,
+          "alternating_temperature_CV_RMS_selected": 0.08286382737822606,
+          "CV_ratio_selected_over_two_term": 0.6227608237252147,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 2029.8876914574157,
+          "corr_c12_e12": -0.5843359191239293
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.03543895298604033,
+          "P_at_reported_azeotrope_kPa": 100.60598731082631,
+          "predicted_y_water_at_reported_azeotrope": 0.9166067298404013,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9999045095544248,
+          "predicted_x_water_organic_at_azeotrope": 0.0608
+        }
+      },
+      "UNIQUAC": {
+        "parameters": {
+          "a12": -1.3162321549679663,
+          "b12_K": 194.81610181706037,
+          "c12": 6.918818017405972,
+          "d12_per_K": 0.0,
+          "e12_per_K2": 0.0,
+          "a21": -0.6518592227344184,
+          "b21_K": -378.6986562347846,
+          "c21": 0.0,
+          "d21_per_K": 0.0,
+          "e21_per_K2": 0.0
+        },
+        "term_selection": {
+          "extra_term_12_retained": true,
+          "extra_term_21_retained": false,
+          "delta_AICc_selected_minus_two_term": -19.632537472281427,
+          "alternating_temperature_CV_RMS_two_term": 0.14015267241381069,
+          "alternating_temperature_CV_RMS_selected": 0.09954661844116235,
+          "CV_ratio_selected_over_two_term": 0.7102727099433674,
+          "scaled_Jacobian_condition_number_selected_direct_fit": 345.54352989678966,
+          "corr_a12_c12": -0.7353866773544915
+        },
+        "validation": {
+          "LLE_endpoint_RMSE_wt_percent": 0.044382895714098695,
+          "P_at_reported_azeotrope_kPa": 100.46930591415723,
+          "predicted_y_water_at_reported_azeotrope": 0.9178560982037197,
+          "predicted_x_water_aqueous_at_azeotrope": 0.9999071170774982,
+          "predicted_x_water_organic_at_azeotrope": 0.066
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "water",
+            "CAS": "7732-18-5",
+            "r": 0.92,
+            "q": 1.4
+          },
+          "component_2": {
+            "name": "hexyl acetate",
+            "CAS": "142-92-7",
+            "r": 6.1762,
+            "q": 5.276
+          },
+          "status": "exact values used in this refit"
+        }
+      },
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "hexyl acetate",
+          "CAS": "142-92-7",
+          "UNIQUAC_rq": {
+            "r": 6.1762,
+            "q": 5.276,
+            "basis": "Gmehling-style group contribution; exact values used in new water refit"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        273.15,
+        370.55
+      ],
+      "temperature_range_basis": "Stephenson & Stuart LLE from 0-90.2 °C plus Schmitt-Hasse atmospheric heteroazeotrope at 97.4 °C",
+      "range_policy": "recommended for process-simulator use; extrapolation outside this range is not validated by this fit",
+      "phase_equilibrium_treatment": {
+        "liquid": "NRTL or UNIQUAC activity coefficients; LLE fitted by equality of component activities between the two liquid phases",
+        "vapor": "ideal-gas vapor phase (phi_i = 1)",
+        "VLE_equation": "y_i*P = x_i*gamma_i*Psat_i(T)",
+        "Poynting_correction": "not included",
+        "vapor_fugacity_correction": "not included",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "hexyl_acetate_arce1995"
+        ]
+      }
+    }
+  ],
+  "additional_direct_water_pairs": [
+    {
+      "pair": [
+        "water",
+        "dodecanoic acid"
+      ],
+      "model": "UNIQUAC",
+      "source": {
+        "file": "main 23.pdf",
+        "title": "Fatty acid esterification by reactive distillation. Part 1: equilibrium-based design",
+        "doi": "10.1016/S0009-2509(03)00165-9",
+        "table": "Table 5",
+        "equation": "tau_ij = exp(Aij + Bij/T + Cij*T)",
+        "citation": "uploaded file main 23.pdf, Table 5 / thermodynamic-experiments discussion"
+      },
+      "quality": "good direct binary phase-equilibrium regression: paper states water/acid parameters identified from LLE + azeotropic point",
+      "original_component_order": [
+        "dodecanoic acid",
+        "water"
+      ],
+      "original": {
+        "A12": -0.29924,
+        "B12_K": -195.44,
+        "C12_per_K": 0.0,
+        "A21": -0.38437,
+        "B21_K": -107.62,
+        "C21_per_K": 0.0
+      },
+      "converted_component_order": [
+        "water",
+        "dodecanoic acid"
+      ],
+      "converted_to_user_format": {
+        "a12": -0.38437,
+        "b12_K": -107.62,
+        "c12": 0.0,
+        "d12_per_K": 0.0,
+        "e12_per_K2": 0.0,
+        "a21": -0.29924,
+        "b21_K": -195.44,
+        "c21": 0.0,
+        "d21_per_K": 0.0,
+        "e21_per_K2": 0.0
+      },
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "dodecanoic acid",
+          "CAS": "143-07-7",
+          "UNIQUAC_rq": {
+            "r": 8.931,
+            "q": 7.472,
+            "basis": "Omota et al. 2003 Table 7"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        350.0,
+        373.147
+      ],
+      "temperature_range_basis": "conservative atmospheric VLLE-use envelope ending at the reported 373.147 K heteroazeotrope; the paper does not publish a clean standalone binary-LLE temperature span for this parameter set",
+      "range_policy": "conservative; do not extrapolate as a validated binary fit outside this range",
+      "phase_equilibrium_treatment": {
+        "liquid": "published UNIQUAC activity model",
+        "vapor": "source uses phase-equilibrium/CPE calculations; no separate vapor EOS correction is specified for these tabulated UNIQUAC BIPs",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "dodecanoic_acid_omota"
+        ]
+      },
+      "UNIQUAC_structural_parameters_used": {
+        "component_1": {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "r": 0.92,
+          "q": 1.4
+        },
+        "component_2": {
+          "name": "dodecanoic acid",
+          "CAS": "143-07-7",
+          "r": 8.931,
+          "q": 7.472
+        },
+        "status": "exact Omota et al. Table 7 values"
+      }
+    },
+    {
+      "pair": [
+        "water",
+        "2-ethylhexyl dodecanoate"
+      ],
+      "model": "UNIQUAC",
+      "source": {
+        "file": "main 23.pdf",
+        "title": "Fatty acid esterification by reactive distillation. Part 1: equilibrium-based design",
+        "doi": "10.1016/S0009-2509(03)00165-9",
+        "table": "Table 5",
+        "equation": "tau_ij = exp(Aij + Bij/T + Cij*T)",
+        "citation": "uploaded file main 23.pdf, Table 5 / thermodynamic-experiments discussion"
+      },
+      "quality": "retain with caution: interaction parameters are from the authors' experimental/CPE regression set; binary water-solubility data were measured, but no water/ester azeotrope was available",
+      "original_component_order": [
+        "water",
+        "2-ethylhexyl dodecanoate"
+      ],
+      "original": {
+        "A12": -0.04839,
+        "B12_K": -203.49,
+        "C12_per_K": 0.0,
+        "A21": -0.44196,
+        "B21_K": -738.1,
+        "C21_per_K": 0.0
+      },
+      "converted_to_user_format": {
+        "a12": -0.04839,
+        "b12_K": -203.49,
+        "c12": 0.0,
+        "d12_per_K": 0.0,
+        "e12_per_K2": 0.0,
+        "a21": -0.44196,
+        "b21_K": -738.1,
+        "c21": 0.0,
+        "d21_per_K": 0.0,
+        "e21_per_K2": 0.0
+      },
+      "components": [
+        {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "UNIQUAC_rq": {
+            "r": 0.92,
+            "q": 1.4,
+            "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+          }
+        },
+        {
+          "name": "2-ethylhexyl dodecanoate",
+          "CAS": "20292-08-4",
+          "UNIQUAC_rq": {
+            "r": 14.239,
+            "q": 11.752,
+            "basis": "Omota et al. 2003 Table 7"
+          },
+          "aliases": [
+            "2-ethylhexyl laurate"
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        300.0,
+        360.0
+      ],
+      "temperature_range_basis": "direct measured water-solubility range reported by Omota et al.; no water/ester azeotrope was available",
+      "range_policy": "conservative; do not extrapolate as a validated binary fit outside this range",
+      "phase_equilibrium_treatment": {
+        "liquid": "published UNIQUAC activity model",
+        "vapor": "source uses phase-equilibrium/CPE calculations; no separate vapor EOS correction is specified for these tabulated UNIQUAC BIPs",
+        "pure_component_correlation_ids": [
+          "water_omota",
+          "2-ethylhexyl_dodecanoate_omota"
+        ]
+      },
+      "UNIQUAC_structural_parameters_used": {
+        "component_1": {
+          "name": "water",
+          "CAS": "7732-18-5",
+          "r": 0.92,
+          "q": 1.4
+        },
+        "component_2": {
+          "name": "2-ethylhexyl dodecanoate",
+          "CAS": "20292-08-4",
+          "r": 14.239,
+          "q": 11.752
+        },
+        "status": "exact Omota et al. Table 7 values"
+      }
+    }
+  ],
+  "component_registry": {
+    "water": {
+      "CAS": "7732-18-5",
+      "UNIQUAC_rq": {
+        "r": 0.92,
+        "q": 1.4,
+        "basis": "standard Abrams-Prausnitz / Poling-style set; also explicitly used by Omota et al."
+      }
+    },
+    "1-pentanol": {
+      "CAS": "71-41-0",
+      "UNIQUAC_rq": {
+        "r": 4.1287,
+        "q": 3.592,
+        "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+      }
+    },
+    "1-hexanol": {
+      "CAS": "111-27-3",
+      "UNIQUAC_rq": {
+        "r": 4.8031,
+        "q": 4.132,
+        "basis": "exact values used in the new water refit"
+      },
+      "known_source_variants": [
+        {
+          "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+          "r": 5.2731,
+          "q": 4.748
+        }
+      ]
+    },
+    "1-octanol": {
+      "CAS": "111-87-5",
+      "UNIQUAC_rq": {
+        "r": 6.1519,
+        "q": 5.212,
+        "basis": "exact values used in the new water refit"
+      },
+      "known_source_variants": [
+        {
+          "source": "Gmehling-style group-contribution set used by Arce-family work",
+          "r": 6.6219,
+          "q": 5.828,
+          "note": "Arce et al. additionally optimized modified-UNIQUAC q' for 1-octanol to 5.50."
+        }
+      ]
+    },
+    "2-ethyl-1-hexanol": {
+      "CAS": "104-76-7",
+      "UNIQUAC_rq": {
+        "r": 6.1511,
+        "q": 5.208,
+        "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+      },
+      "known_source_variants": [
+        {
+          "source": "Ghanadzadeh et al. 2005",
+          "r": 6.15,
+          "q": 5.02
+        }
+      ]
+    },
+    "hexyl acetate": {
+      "CAS": "142-92-7",
+      "UNIQUAC_rq": {
+        "r": 6.1762,
+        "q": 5.276,
+        "basis": "Gmehling-style group contribution; exact values used in new water refit"
+      }
+    },
+    "dodecanoic acid": {
+      "CAS": "143-07-7",
+      "UNIQUAC_rq": {
+        "r": 8.931,
+        "q": 7.472,
+        "basis": "Omota et al. 2003 Table 7"
+      }
+    },
+    "2-ethylhexyl dodecanoate": {
+      "CAS": "20292-08-4",
+      "UNIQUAC_rq": {
+        "r": 14.239,
+        "q": 11.752,
+        "basis": "Omota et al. 2003 Table 7"
+      },
+      "aliases": [
+        "2-ethylhexyl laurate"
+      ]
+    }
+  },
+  "pure_component_correlations": {
+    "water_omota": {
+      "component": "water",
+      "type": "extended_Antoine_equivalent_DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 73.649,
+        "C2_K": -7258.2,
+        "C3": -7.3037,
+        "C4": 4.17e-06,
+        "C5": 2.0
+      },
+      "temperature_unit": "K",
+      "pressure_unit": "Pa",
+      "source": "Omota, Dimian & Bliek 2003, Table 4",
+      "note": "Omota writes A-B/(T+C)+D ln(T)+E*T^F; C=0 for water."
+    },
+    "1-pentanol_user_DIPPR101": {
+      "component": "1-pentanol",
+      "type": "DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 114.74801,
+        "C2_K": -10643.3,
+        "C3": -12.85754,
+        "C4": 1.25e-17,
+        "C5": 6.0
+      },
+      "valid_temperature_range_K": [
+        195.56,
+        588.1
+      ],
+      "source": "user-supplied DIPPR correlation"
+    },
+    "1-hexanol_user_DIPPR101": {
+      "component": "1-hexanol",
+      "type": "DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 135.42149,
+        "C2_K": -12288.40621,
+        "C3": -15.73191,
+        "C4": 1.27e-17,
+        "C5": 6.0
+      },
+      "valid_temperature_range_K": [
+        228.55,
+        611.3
+      ],
+      "source": "user-supplied DIPPR correlation"
+    },
+    "1-octanol_user_DIPPR101": {
+      "component": "1-octanol",
+      "type": "DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 144.11083,
+        "C2_K": -13667.15667,
+        "C3": -16.82611,
+        "C4": 9.37e-18,
+        "C5": 6.0
+      },
+      "valid_temperature_range_K": [
+        257.65,
+        652.3
+      ],
+      "source": "user-supplied DIPPR correlation"
+    },
+    "2-ethyl-1-hexanol_omota": {
+      "component": "2-ethyl-1-hexanol",
+      "type": "extended_Antoine",
+      "equation": "ln(Psat/Pa) = A - B/(T+C) + D*ln(T) + E*T^F",
+      "coefficients": {
+        "A": 273.62,
+        "B_K": 18766.0,
+        "C_K": 0.0,
+        "D": -36.767,
+        "E": 1.98e-05,
+        "F": 2.0
+      },
+      "reported_table_range_K": [
+        450.0,
+        608.0
+      ],
+      "source": "Omota et al. 2003, Table 4"
+    },
+    "2-ethyl-1-hexanol_ghanadzadeh": {
+      "component": "2-ethyl-1-hexanol",
+      "type": "Antoine",
+      "equation": "ln(Psat/mmHg) = A - B/(T+C)",
+      "coefficients": {
+        "A": 15.3614,
+        "B_K": 2773.46,
+        "C_K": -140.0
+      },
+      "temperature_unit": "K",
+      "pressure_unit": "mmHg",
+      "source": "Ghanadzadeh et al. 2005, Table 5"
+    },
+    "hexyl_acetate_arce1995": {
+      "component": "hexyl acetate",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 6.4606,
+        "B_degC": 1688.63,
+        "C_degC": 208.766
+      },
+      "temperature_unit": "degC",
+      "pressure_unit": "kPa",
+      "source": "Arce et al. 1995, JCED 40, Table 2"
+    },
+    "dodecanoic_acid_omota": {
+      "component": "dodecanoic acid",
+      "type": "extended_Antoine",
+      "equation": "ln(Psat/Pa) = A - B/(T+C) + D*ln(T) + E*T^F",
+      "coefficients": {
+        "A": 201.56,
+        "B_K": 20484.0,
+        "C_K": 0.0,
+        "D": -24.334,
+        "E": 8.06e-18,
+        "F": 6.0
+      },
+      "reported_table_range_K": [
+        450.0,
+        608.0
+      ],
+      "source": "Omota et al. 2003, Table 4"
+    },
+    "2-ethylhexyl_dodecanoate_omota": {
+      "component": "2-ethylhexyl dodecanoate",
+      "type": "extended_Antoine",
+      "equation": "ln(Psat/Pa) = A - B/(T+C)",
+      "coefficients": {
+        "A": 23.578,
+        "B_K": 6247.3,
+        "C_K": -89.281
+      },
+      "validated_temperature_range_K": [
+        450.0,
+        600.0
+      ],
+      "source": "Omota et al. 2003, Table 4 / Fig. 8"
+    }
+  }
+}

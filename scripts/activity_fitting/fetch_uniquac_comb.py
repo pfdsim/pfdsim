@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import os
+from pathlib import Path
 import urllib.request
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -13,7 +14,10 @@ OWNER = "DanWBR"
 REPO = "dwsim"
 REF = "windows"  # DWSIM branch used earlier
 
-OUTPUT_CSV = "data/source/dwsim_uniquac_combinatorial_parameters.csv"
+OUTPUT_CSV = (
+    Path(__file__).resolve().parents[2]
+    / "data/source/activity_fitting/dwsim_uniquac_combinatorial_parameters.csv"
+)
 
 XML_FILES = [
     "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml",

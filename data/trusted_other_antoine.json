@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "metadata": {
+    "description": "Trusted literature Antoine correlations normalized for PFDSim's high-quality Antoine layer.",
+    "priority": 550,
+    "normalized_equation": "log10(P_bar) = A - B / (T_degC + C)"
+  },
+  "correlations": [
+    {
+      "record_id": "ghanadzadeh_2005_2_ethyl_1_hexanol",
+      "identity": {
+        "cas": "104-76-7",
+        "name": "2-ethyl-1-hexanol",
+        "formula": "C8H18O",
+        "aliases": ["2-ethylhexanol"]
+      },
+      "correlation": {
+        "equation": "antoine_log10_bar_degC",
+        "A": 3.7962742743729727,
+        "B": 1204.4983737793928,
+        "C": 133.15,
+        "Tmin_K": 353.2,
+        "Tmax_K": 458.2
+      },
+      "source": {
+        "authors": ["H. Ghanadzadeh", "A. Ghanadzadeh", "R. Sariri", "A. Boshra"],
+        "title": "Isobaric vapor-liquid phase equilibria for the binary systems of tert-butanol + 2-ethyl-1-hexanol and n-butanol + 2-ethyl-1-hexanol",
+        "journal": "Fluid Phase Equilibria",
+        "volume": 233,
+        "pages": "123-128",
+        "year": 2005,
+        "doi": "10.1016/j.fluid.2005.03.034",
+        "table": "Table 5"
+      },
+      "provenance": {
+        "original_equation": "ln(P_mmHg) = A - B / (T_K + C)",
+        "original_coefficients": {"A": 15.3614, "B": 2773.46, "C": -140.0},
+        "normalization": {
+          "A": "A_original / ln(10) + log10(0.001333223684 bar/mmHg)",
+          "B": "B_original / ln(10)",
+          "C": "C_original + 273.15"
+        },
+        "reported_system_temperature_range_K": [353.2, 458.2]
+      }
+    }
+  ]
+}

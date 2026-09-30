@@ -5,10 +5,16 @@ only for post-fit diagnostics; they are not included in the objective.
 """
 
 import math
+from pathlib import Path
+import sys
 import warnings
 
 import numpy as np
 from scipy.optimize import least_squares
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics
 from vapor_dimerization import VaporDimerizationModel

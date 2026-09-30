@@ -1,0 +1,3651 @@
+{
+  "metadata": {
+    "description": "Non-water binary NRTL/UNIQUAC parameter collection.",
+    "component_order_rule": "Directions 12 and 21 follow the component numbering stated in each source record.",
+    "user_NRTL_form": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+    "user_UNIQUAC_form": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+    "Tref_K": 298.15,
+    "gas_constant_J_mol_K": 8.31446261815324,
+    "scope_note": "Only NRTL and UNIQUAC parameters are included. Other binary pairs present in the papers were retained even when they do not contain one of the originally requested alcohols.",
+    "revision_note": "Split from the former combined v3 collection. All records containing water were removed. Three non-water UNIQUAC pairs from Omota et al. (2003) encountered during the water-data round were added.",
+    "record_count": 25,
+    "revision": "v2",
+    "revision_notes": [
+      "Added exact CAS numbers and UNIQUAC structural parameters.",
+      "Attached source-specific r/q overrides wherever the paper explicitly used a different structural-parameter set.",
+      "Documented vapor treatment and pure-component correlations used by each source where recoverable.",
+      "Added conservative recommended T ranges for every stored parameter record.",
+      "When a paper does not disclose the exact vapor/property-package configuration, that limitation is stated rather than guessed."
+    ],
+    "UNIQUAC_rq_policy": "Use record-level UNIQUAC.structural_parameters_used in preference to component_registry defaults. Published UNIQUAC BIPs are not invariant to r/q convention."
+  },
+  "records": [
+    {
+      "pair": "1-octanol + cyclohexane",
+      "component_1": "1-octanol",
+      "component_2": "cyclohexane",
+      "condition": {
+        "P_kPa": 101.32,
+        "scope": "low 1-octanol mole fraction"
+      },
+      "source": {
+        "file": "main 19.pdf",
+        "title": "Evaluation of (vapor + liquid) equilibria for the binary systems (1-octanol + cyclohexane) and (1-octanol + n-hexane), at low alcohol compositions",
+        "doi": "10.1016/j.jct.2008.06.005",
+        "table": "Tables 4-5; model definitions Eqs. (7) and (9)",
+        "citation_marker": "fileciteturn4file0L96-L123 and fileciteturn4file0L145-L160"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij = a_ij + b_ij/T; only b_ij adjusted",
+          "b12_K": -303.1,
+          "b21_K": 1204.6,
+          "alpha": "not printed numerically; source states NRTL alpha lies in 0.2-0.47"
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": -303.1,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 1204.6,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.47
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij = exp(a_ij + b_ij/T + c_ij ln T + d_ij T); only b_ij adjusted",
+          "b12_K": 265.7,
+          "b21_K": -545.3
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 265.7,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -545.3,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-octanol",
+            "CAS": "111-87-5",
+            "r": 6.1519,
+            "q": 5.212
+          },
+          "component_2": {
+            "name": "cyclohexane",
+            "CAS": "110-82-7",
+            "r": 4.0464,
+            "q": 3.24
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Alpha was omitted numerically by the paper and has now been adjudicated from its own binary activity-coefficient data.",
+        "Recommended usable set: b12=-303.1 K, b21=1204.6 K, alpha=0.47."
+      ],
+      "validation": {
+        "method": "Held the published b12=-303.1 K and b21=1204.6 K fixed and fit alpha to the paper's tabulated experimental gamma1,gamma2 using the paper's NRTL equation.",
+        "unconstrained_best_alpha": 0.48452082894570503,
+        "unconstrained_ln_gamma_RMSE": 0.03439194916099258,
+        "source_stated_alpha_range": [
+          0.2,
+          0.47
+        ],
+        "adjudicated_alpha": 0.47,
+        "ln_gamma_RMSE_at_adjudicated_alpha": 0.04798320929917425,
+        "decision": "Use alpha=0.47. The optimum is ~0.485, just above the source-stated upper range; 0.47 is the closest source-consistent value and reproduces the activity data closely."
+      },
+      "components": [
+        {
+          "name": "1-octanol",
+          "CAS": "111-87-5",
+          "UNIQUAC_rq": {
+            "r": 6.1519,
+            "q": 5.212,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Gmehling-style group-contribution set used by Arce-family work",
+              "r": 6.6219,
+              "q": 5.828,
+              "note": "Arce et al. additionally optimized modified-UNIQUAC q' for 1-octanol to 5.50."
+            }
+          ]
+        },
+        {
+          "name": "cyclohexane",
+          "CAS": "110-82-7",
+          "UNIQUAC_rq": {
+            "r": 4.0464,
+            "q": 3.24,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        354.1,
+        354.9
+      ],
+      "temperature_range_basis": "measured low-octanol VLE temperature span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "second-virial vapor fugacity correction; virial coefficients from Tsonopoulos",
+        "liquid_pressure_correction": "Poynting correction included with pure-liquid molar volume",
+        "pure_component_correlation_ids": [
+          "1-octanol_ovejero2008",
+          "cyclohexane_ovejero2008"
+        ],
+        "source_note": "Ovejero et al. explicitly report Tsonopoulos virial coefficients, Antoine Psat, and near-unity vapor fugacity coefficients."
+      }
+    },
+    {
+      "pair": "1-octanol + n-hexane",
+      "component_1": "1-octanol",
+      "component_2": "n-hexane",
+      "condition": {
+        "P_kPa": 101.32,
+        "scope": "low 1-octanol mole fraction"
+      },
+      "source": {
+        "file": "main 19.pdf",
+        "title": "Evaluation of (vapor + liquid) equilibria for the binary systems (1-octanol + cyclohexane) and (1-octanol + n-hexane), at low alcohol compositions",
+        "doi": "10.1016/j.jct.2008.06.005",
+        "table": "Tables 4-5; model definitions Eqs. (7) and (9)",
+        "citation_marker": "fileciteturn4file0L96-L123 and fileciteturn4file0L145-L160"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij = a_ij + b_ij/T; only b_ij adjusted",
+          "b12_K": 561.6,
+          "b21_K": 1686.9,
+          "alpha": "not printed numerically; source states NRTL alpha lies in 0.2-0.47"
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": -561.6,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 1686.9,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.2735735681550572
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij = exp(a_ij + b_ij/T + c_ij ln T + d_ij T); only b_ij adjusted",
+          "b12_K": 266.6,
+          "b21_K": -567.2
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 266.6,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -567.2,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-octanol",
+            "CAS": "111-87-5",
+            "r": 6.1519,
+            "q": 5.212
+          },
+          "component_2": {
+            "name": "n-hexane",
+            "CAS": "110-54-3",
+            "r": 4.4998,
+            "q": 3.856
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "The published Table 5 prints b12=+561.6 K, but that sign fails against the paper's own data.",
+        "Data-adjudicated usable set: b12=-561.6 K, b21=1686.9 K, alpha=0.273574.",
+        "Treat the b12 sign correction as an inferred erratum."
+      ],
+      "validation": {
+        "method": "Held b21=1686.9 K fixed and tested the printed b12 sign plus alpha against the paper's tabulated experimental gamma1,gamma2.",
+        "printed_table_b12_K": 561.6,
+        "best_alpha_with_printed_sign": 0.46999652263912606,
+        "ln_gamma_RMSE_with_printed_sign": 1.4130540466446035,
+        "corrected_b12_K": -561.6,
+        "adjudicated_alpha": 0.2735735681550572,
+        "ln_gamma_RMSE_after_sign_correction": 0.04142705514702816,
+        "decision": "The printed +561.6 K is incompatible with the paper's own activity data over alpha=0.2-0.47. Changing only its sign gives a strong fit with alpha≈0.274; use b12=-561.6 K, b21=1686.9 K, alpha≈0.274. This is flagged as a likely table sign error, not silently treated as published."
+      },
+      "components": [
+        {
+          "name": "1-octanol",
+          "CAS": "111-87-5",
+          "UNIQUAC_rq": {
+            "r": 6.1519,
+            "q": 5.212,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Gmehling-style group-contribution set used by Arce-family work",
+              "r": 6.6219,
+              "q": 5.828,
+              "note": "Arce et al. additionally optimized modified-UNIQUAC q' for 1-octanol to 5.50."
+            }
+          ]
+        },
+        {
+          "name": "n-hexane",
+          "CAS": "110-54-3",
+          "UNIQUAC_rq": {
+            "r": 4.4998,
+            "q": 3.856,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        342.2,
+        342.6
+      ],
+      "temperature_range_basis": "measured low-octanol VLE temperature span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "second-virial vapor fugacity correction; virial coefficients from Tsonopoulos",
+        "liquid_pressure_correction": "Poynting correction included with pure-liquid molar volume",
+        "pure_component_correlation_ids": [
+          "1-octanol_ovejero2008",
+          "n-hexane_ovejero2008"
+        ],
+        "source_note": "Ovejero et al. explicitly report Tsonopoulos virial coefficients, Antoine Psat, and near-unity vapor fugacity coefficients."
+      }
+    },
+    {
+      "pair": "tert-butanol + 2-ethyl-1-hexanol",
+      "component_1": "tert-butanol",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "main 20.pdf",
+        "title": "Isobaric vapor-liquid phase equilibria for the binary systems of tert-butanol + 2-ethyl-1-hexanol and n-butanol + 2-ethyl-1-hexanol",
+        "doi": "10.1016/j.fluid.2005.03.034",
+        "table": "Table 6; alpha statement below Table 6",
+        "citation_marker": "fileciteturn3file0L13-L35"
+      },
+      "NRTL": {
+        "original": {
+          "paper_table": {
+            "Delta_g12_over_R_K_interpreted": 511.769,
+            "Delta_g21_over_R_K_interpreted": 480.0741,
+            "alpha12": 0.3
+          },
+          "paper_note": "Table labels Δg12 and Δg21 without an explicit unit; converted as conventional Kelvin energy-over-R NRTL parameters."
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 511.769,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 480.0741,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_table": {
+            "U12_K": -55.4544,
+            "U21_K": 215.778
+          },
+          "paper_form_interpreted": "tau_ij = exp(-U_ij/T)"
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 55.4544,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -215.778,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "tert-butanol",
+            "CAS": "75-65-0",
+            "r": 3.45,
+            "q": 3.05
+          },
+          "component_2": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.15,
+            "q": 5.02
+          },
+          "status": "exact values explicitly used by Ghanadzadeh et al. 2005"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Ambiguous NRTL units/sign adjudicated numerically against the paper's own T-x-y VLE: use the printed values as K-valued d coefficients with positive sign.",
+        "UNIQUAC sign adjudicated against the same VLE: ln(tau)=-U/T."
+      ],
+      "validation": {
+        "unit_sign_test": "Using the paper's raw T-x-y VLE and its Antoine constants, interpreting NRTL Delta-g values as K-valued d/T parameters with the printed positive sign gives much lower vapor-composition RMSE than treating them as J/mol or reversing the sign.",
+        "TBA_plus_2EH_RMSE_y": {
+          "K_positive": 0.0533,
+          "Jmol_positive": 0.134,
+          "K_negative": 0.348
+        },
+        "NBA_plus_2EH_RMSE_y": {
+          "K_positive": 0.055,
+          "Jmol_positive": 0.1461,
+          "K_negative": 0.3481
+        },
+        "UNIQUAC_sign_test": "Using tau=exp(-U/T) reproduces the VLE much better than exp(+U/T).",
+        "UNIQUAC_RMSE_y": {
+          "TBA_tau_exp_minus_U_over_T": 0.0526,
+          "TBA_plus_sign": 0.2652,
+          "NBA_minus_sign": 0.0844,
+          "NBA_plus_sign": 0.2956
+        }
+      },
+      "components": [
+        {
+          "name": "tert-butanol",
+          "CAS": "75-65-0",
+          "UNIQUAC_rq": {
+            "r": 3.45,
+            "q": 3.05,
+            "basis": "source-specific values explicitly used by Ghanadzadeh et al. 2005"
+          }
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        355.57,
+        459.73
+      ],
+      "temperature_range_basis": "full measured isobaric T-x-y span in Ghanadzadeh et al.",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "second-virial fugacity formulation was used in derivation; exponential virial corrections were found close enough to unity that the activity-coefficient expression simplifies accordingly",
+        "pure_component_correlation_ids": [
+          "tert-butanol_ghanadzadeh",
+          "2-ethyl-1-hexanol_ghanadzadeh"
+        ]
+      }
+    },
+    {
+      "pair": "1-butanol + 2-ethyl-1-hexanol",
+      "component_1": "1-butanol",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "main 20.pdf",
+        "title": "Isobaric vapor-liquid phase equilibria for the binary systems of tert-butanol + 2-ethyl-1-hexanol and n-butanol + 2-ethyl-1-hexanol",
+        "doi": "10.1016/j.fluid.2005.03.034",
+        "table": "Table 6; alpha statement below Table 6",
+        "citation_marker": "fileciteturn3file0L13-L35"
+      },
+      "NRTL": {
+        "original": {
+          "paper_table": {
+            "Delta_g12_over_R_K_interpreted": 384.4047,
+            "Delta_g21_over_R_K_interpreted": 578.242,
+            "alpha12": 0.3
+          },
+          "paper_note": "The paper calls 1-butanol 'NBA' (n-butanol)."
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 384.4047,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 578.242,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_table": {
+            "U12_K": -78.303,
+            "U21_K": 247.1739
+          },
+          "paper_form_interpreted": "tau_ij = exp(-U_ij/T)"
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 78.303,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -247.1739,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-butanol",
+            "CAS": "71-36-3",
+            "r": 3.45,
+            "q": 3.05
+          },
+          "component_2": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.15,
+            "q": 5.02
+          },
+          "status": "exact values explicitly used by Ghanadzadeh et al. 2005"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Strong conflict with the 2025 Matsuda et al. dataset, which treats this binary as essentially ideal; keep the two sources separate.",
+        "Ambiguous NRTL units/sign adjudicated numerically against the paper's own T-x-y VLE: use the printed values as K-valued d coefficients with positive sign.",
+        "UNIQUAC sign adjudicated against the same VLE: ln(tau)=-U/T."
+      ],
+      "validation": {
+        "unit_sign_test": "Using the paper's raw T-x-y VLE and its Antoine constants, interpreting NRTL Delta-g values as K-valued d/T parameters with the printed positive sign gives much lower vapor-composition RMSE than treating them as J/mol or reversing the sign.",
+        "TBA_plus_2EH_RMSE_y": {
+          "K_positive": 0.0533,
+          "Jmol_positive": 0.134,
+          "K_negative": 0.348
+        },
+        "NBA_plus_2EH_RMSE_y": {
+          "K_positive": 0.055,
+          "Jmol_positive": 0.1461,
+          "K_negative": 0.3481
+        },
+        "UNIQUAC_sign_test": "Using tau=exp(-U/T) reproduces the VLE much better than exp(+U/T).",
+        "UNIQUAC_RMSE_y": {
+          "TBA_tau_exp_minus_U_over_T": 0.0526,
+          "TBA_plus_sign": 0.2652,
+          "NBA_minus_sign": 0.0844,
+          "NBA_plus_sign": 0.2956
+        }
+      },
+      "components": [
+        {
+          "name": "1-butanol",
+          "CAS": "71-36-3",
+          "UNIQUAC_rq": {
+            "r": 3.4543,
+            "q": 3.052,
+            "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005 (rounded)",
+              "r": 3.45,
+              "q": 3.05
+            }
+          ]
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        392.0,
+        458.15
+      ],
+      "temperature_range_basis": "full measured isobaric T-x-y span in Ghanadzadeh et al.",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "second-virial fugacity formulation was used in derivation; exponential virial corrections were found close enough to unity that the activity-coefficient expression simplifies accordingly",
+        "pure_component_correlation_ids": [
+          "1-butanol_ghanadzadeh",
+          "2-ethyl-1-hexanol_ghanadzadeh"
+        ]
+      }
+    },
+    {
+      "pair": "1-pentanol + propionic acid",
+      "component_1": "1-pentanol",
+      "component_2": "propionic acid",
+      "condition": {
+        "P_kPa": 53.3
+      },
+      "source": {
+        "file": "main 21.pdf",
+        "title": "Isobaric (vapour + liquid) equilibria for the (1-pentanol + propionic acid) binary mixture at (53.3 and 91.3) kPa",
+        "doi": "10.1016/j.jct.2010.05.014",
+        "table": "Table 6",
+        "citation_marker": "fileciteturn2file0L224-L248"
+      },
+      "NRTL": {
+        "original": {
+          "paper_table": {
+            "X12": -750.82,
+            "X21": 351.009,
+            "alpha12": 0.101
+          },
+          "paper_definition": "X_ij = (g_ij - g_jj), interpreted as J/mol from the model definition and validated against the paper's VLE/activity-coefficient data."
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": -90.30288961317957,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 42.21667907119223,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.101
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_table": {
+            "A12": 856.227,
+            "A21": -639.845
+          },
+          "paper_definition": "A_ij = (u_ij - u_jj), interpreted as J/mol; standard UNIQUAC uses ln(tau_ij)=-(u_ij-u_jj)/(RT)."
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": -102.98043774116819,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": 76.95566501231305,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "component_2": {
+            "name": "propionic acid",
+            "CAS": "79-09-4",
+            "r": 2.8768,
+            "q": 2.612
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "CORRECTED from the first JSON: these table values are energy differences, not already divided by R.",
+        "The sign pattern on the rendered Table 6 page was used because plain-text extraction drops some minus glyphs.",
+        "Validation against the reported 53.3/91.3 kPa VLE activity coefficients favors the energy/J-mol interpretation over treating the numbers directly as kelvin parameters."
+      ],
+      "components": [
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        },
+        {
+          "name": "propionic acid",
+          "CAS": "79-09-4",
+          "UNIQUAC_rq": {
+            "r": 2.8768,
+            "q": 2.612,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        393.15,
+        397.25
+      ],
+      "temperature_range_basis": "53.3 kPa measured VLE temperature span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed because reduced pressure Pr < 0.02",
+        "VLE_equation": "gamma_i = y_i*P/(x_i*Psat_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "1-pentanol_mohsen",
+          "propionic_acid_mohsen"
+        ]
+      }
+    },
+    {
+      "pair": "1-pentanol + propionic acid",
+      "component_1": "1-pentanol",
+      "component_2": "propionic acid",
+      "condition": {
+        "P_kPa": 91.3
+      },
+      "source": {
+        "file": "main 21.pdf",
+        "title": "Isobaric (vapour + liquid) equilibria for the (1-pentanol + propionic acid) binary mixture at (53.3 and 91.3) kPa",
+        "doi": "10.1016/j.jct.2010.05.014",
+        "table": "Table 6",
+        "citation_marker": "fileciteturn2file0L224-L248"
+      },
+      "NRTL": {
+        "original": {
+          "paper_table": {
+            "X12": -796.524,
+            "X21": 425.33,
+            "alpha12": 0.079
+          },
+          "paper_definition": "X_ij = (g_ij - g_jj), interpreted as J/mol from the model definition and validated against the paper's VLE/activity-coefficient data."
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": -95.79981732805233,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 51.15544077032267,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.079
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_table": {
+            "A12": 884.11,
+            "A21": -650.8
+          },
+          "paper_definition": "A_ij = (u_ij - u_jj), interpreted as J/mol; standard UNIQUAC uses ln(tau_ij)=-(u_ij-u_jj)/(RT)."
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": -106.33399181682452,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": 78.27324866180611,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "component_2": {
+            "name": "propionic acid",
+            "CAS": "79-09-4",
+            "r": 2.8768,
+            "q": 2.612
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "CORRECTED from the first JSON: these table values are energy differences, not already divided by R.",
+        "The sign pattern on the rendered Table 6 page was used because plain-text extraction drops some minus glyphs.",
+        "Validation against the reported 53.3/91.3 kPa VLE activity coefficients favors the energy/J-mol interpretation over treating the numbers directly as kelvin parameters."
+      ],
+      "components": [
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        },
+        {
+          "name": "propionic acid",
+          "CAS": "79-09-4",
+          "UNIQUAC_rq": {
+            "r": 2.8768,
+            "q": 2.612,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        408.05,
+        413.25
+      ],
+      "temperature_range_basis": "91.3 kPa measured VLE temperature span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed because reduced pressure Pr < 0.02",
+        "VLE_equation": "gamma_i = y_i*P/(x_i*Psat_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "1-pentanol_mohsen",
+          "propionic_acid_mohsen"
+        ]
+      }
+    },
+    {
+      "pair": "1-pentanol + cyclohexane",
+      "component_1": "1-pentanol",
+      "component_2": "cyclohexane",
+      "condition": {
+        "T_K": 313.15,
+        "data_type": "isothermal total-pressure VLE"
+      },
+      "source": {
+        "file": "main 22.pdf",
+        "title": "Thermodynamic characterization of second generation biofuels: Vapour-liquid equilibria and excess enthalpies of the binary mixtures 1-pentanol and cyclohexane or toluene",
+        "doi": "10.1016/j.fluid.2012.01.007",
+        "table": "Table 5; Eqs. (3)-(4)",
+        "citation_marker": "fileciteturn3file2L81-L90 and fileciteturn4file1L184-L205"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "G_ji = exp(-alpha_ji A_ji); thus A_ij is the dimensionless NRTL tau_ij used in the fit",
+          "A12": 0.6461,
+          "A21": 2.1906,
+          "alpha12": 0.563
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.6461,
+            "d_K": 0.0,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 2.1906,
+            "d_K": 0.0,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.563
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "A_ji appears directly as the UNIQUAC interaction factor tau_ji",
+          "A12": 1.2705,
+          "A21": 0.4583
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.2394105237780817,
+            "b_K": 0.0,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": -0.7802312874670587,
+            "b_K": 0.0,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "component_2": {
+            "name": "cyclohexane",
+            "CAS": "110-82-7",
+            "r": 4.0464,
+            "q": 3.24
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Single-temperature fit at 313.15 K; constant-term conversion reproduces the published model exactly but extrapolation in temperature is not validated."
+      ],
+      "components": [
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        },
+        {
+          "name": "cyclohexane",
+          "CAS": "110-82-7",
+          "UNIQUAC_rq": {
+            "r": 4.0464,
+            "q": 3.24,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        313.15,
+        313.15
+      ],
+      "temperature_range_basis": "single-temperature total-pressure VLE regression",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "nonideal vapor described by second-virial EOS truncated after the second term",
+        "virial_method": "Hayden-O'Connell; Dymond-Smith parameters",
+        "pure_component_treatment": {
+          "type": "experimental Psat at 313.15 K used in regression",
+          "Psat_kPa_at_313_15K": {
+            "1-pentanol": 0.908,
+            "cyclohexane": 24.63,
+            "toluene": 7.897
+          }
+        }
+      }
+    },
+    {
+      "pair": "1-pentanol + toluene",
+      "component_1": "1-pentanol",
+      "component_2": "toluene",
+      "condition": {
+        "T_K": 313.15,
+        "data_type": "isothermal total-pressure VLE"
+      },
+      "source": {
+        "file": "main 22.pdf",
+        "title": "Thermodynamic characterization of second generation biofuels: Vapour-liquid equilibria and excess enthalpies of the binary mixtures 1-pentanol and cyclohexane or toluene",
+        "doi": "10.1016/j.fluid.2012.01.007",
+        "table": "Table 5; Eqs. (3)-(4)",
+        "citation_marker": "fileciteturn3file2L81-L90 and fileciteturn4file1L184-L205"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "G_ji = exp(-alpha_ji A_ji); thus A_ij is the dimensionless NRTL tau_ij used in the fit",
+          "A12": 0.5156,
+          "A21": 1.5908,
+          "alpha12": 0.6024
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.5156,
+            "d_K": 0.0,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 1.5908,
+            "d_K": 0.0,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.6024
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "A_ji appears directly as the UNIQUAC interaction factor tau_ji",
+          "A12": 1.1491,
+          "A21": 0.605
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.13897902728145098,
+            "b_K": 0.0,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": -0.5025268209512956,
+            "b_K": 0.0,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "component_2": {
+            "name": "toluene",
+            "CAS": "108-88-3",
+            "r": 3.9228,
+            "q": 2.968
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Single-temperature fit at 313.15 K; constant-term conversion reproduces the published model exactly but extrapolation in temperature is not validated."
+      ],
+      "components": [
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        },
+        {
+          "name": "toluene",
+          "CAS": "108-88-3",
+          "UNIQUAC_rq": {
+            "r": 3.9228,
+            "q": 2.968,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        313.15,
+        313.15
+      ],
+      "temperature_range_basis": "single-temperature total-pressure VLE regression",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "nonideal vapor described by second-virial EOS truncated after the second term",
+        "virial_method": "Hayden-O'Connell; Dymond-Smith parameters",
+        "pure_component_treatment": {
+          "type": "experimental Psat at 313.15 K used in regression",
+          "Psat_kPa_at_313_15K": {
+            "1-pentanol": 0.908,
+            "cyclohexane": 24.63,
+            "toluene": 7.897
+          }
+        }
+      }
+    },
+    {
+      "pair": "acetone + ethanol",
+      "component_1": "acetone",
+      "component_2": "ethanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "je4c00374.pdf",
+        "title": "Isobaric Vapor-Liquid Equilibria for Ternary Systems Acetone + Ethanol + 1-Butanol and Ethanol + 1-Butanol + 2-Ethyl-1-hexanol and Their Constituent Binary Systems",
+        "doi": "10.1021/acs.jced.4c00374",
+        "table": "Table 15",
+        "citation_marker": "fileciteturn2file1L474-L517"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "constant NRTL energy parameters",
+          "g12_minus_g22_J_per_mol": 1280.287,
+          "g21_minus_g11_J_per_mol": 534.074,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 153.98313262058662,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 64.23433774708887,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "constant UNIQUAC energy parameters",
+          "u12_minus_u22_J_per_mol": 1094.492,
+          "u21_minus_u11_J_per_mol": -177.347
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": -131.63713041542331,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": 21.329941349762336,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "acetone",
+            "CAS": "67-64-1",
+            "r": 2.5735,
+            "q": 2.336
+          },
+          "component_2": {
+            "name": "ethanol",
+            "CAS": "64-17-5",
+            "r": 2.1055,
+            "q": 1.972
+          },
+          "status": "exact Matsuda et al. 2025 Table 14 / DDB 2023 values used in regression"
+        }
+      },
+      "notes": [
+        "Converted using R = 8.3144626181532 J mol^-1 K^-1."
+      ],
+      "quality_flags": [],
+      "components": [
+        {
+          "name": "acetone",
+          "CAS": "67-64-1",
+          "UNIQUAC_rq": {
+            "r": 2.5735,
+            "q": 2.336,
+            "basis": "Dortmund Data Bank 2023; Matsuda et al. 2025 Table 14"
+          }
+        },
+        {
+          "name": "ethanol",
+          "CAS": "64-17-5",
+          "UNIQUAC_rq": {
+            "r": 2.1055,
+            "q": 1.972,
+            "basis": "Dortmund/Gmehling-style structural set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 2.5755,
+              "q": 2.588
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        329.94,
+        349.98
+      ],
+      "temperature_range_basis": "Matsuda et al. binary VLE data span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed",
+        "VLE_equation": "gamma_i = P*y_i/(Psat_i*x_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "acetone_matsuda",
+          "ethanol_matsuda"
+        ]
+      }
+    },
+    {
+      "pair": "acetone + 1-butanol",
+      "component_1": "acetone",
+      "component_2": "1-butanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "je4c00374.pdf",
+        "title": "Isobaric Vapor-Liquid Equilibria for Ternary Systems Acetone + Ethanol + 1-Butanol and Ethanol + 1-Butanol + 2-Ethyl-1-hexanol and Their Constituent Binary Systems",
+        "doi": "10.1021/acs.jced.4c00374",
+        "table": "Table 15",
+        "citation_marker": "fileciteturn2file1L474-L517"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "constant NRTL energy parameters",
+          "g12_minus_g22_J_per_mol": 1198.552,
+          "g21_minus_g11_J_per_mol": 475.502,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 144.15267168116938,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 57.18974536752632,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "constant UNIQUAC energy parameters",
+          "u12_minus_u22_J_per_mol": -101.484,
+          "u21_minus_u11_J_per_mol": 792.818
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 12.20571967915601,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -95.35408798026398,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "acetone",
+            "CAS": "67-64-1",
+            "r": 2.5735,
+            "q": 2.336
+          },
+          "component_2": {
+            "name": "1-butanol",
+            "CAS": "71-36-3",
+            "r": 3.4543,
+            "q": 3.052
+          },
+          "status": "exact Matsuda et al. 2025 Table 14 / DDB 2023 values used in regression"
+        }
+      },
+      "notes": [
+        "Converted using R = 8.3144626181532 J mol^-1 K^-1."
+      ],
+      "quality_flags": [],
+      "components": [
+        {
+          "name": "acetone",
+          "CAS": "67-64-1",
+          "UNIQUAC_rq": {
+            "r": 2.5735,
+            "q": 2.336,
+            "basis": "Dortmund Data Bank 2023; Matsuda et al. 2025 Table 14"
+          }
+        },
+        {
+          "name": "1-butanol",
+          "CAS": "71-36-3",
+          "UNIQUAC_rq": {
+            "r": 3.4543,
+            "q": 3.052,
+            "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005 (rounded)",
+              "r": 3.45,
+              "q": 3.05
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        331.45,
+        371.71
+      ],
+      "temperature_range_basis": "Matsuda et al. binary VLE data span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed",
+        "VLE_equation": "gamma_i = P*y_i/(Psat_i*x_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "acetone_matsuda",
+          "1-butanol_matsuda"
+        ]
+      }
+    },
+    {
+      "pair": "ethanol + 1-butanol",
+      "component_1": "ethanol",
+      "component_2": "1-butanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "je4c00374.pdf",
+        "title": "Isobaric Vapor-Liquid Equilibria for Ternary Systems Acetone + Ethanol + 1-Butanol and Ethanol + 1-Butanol + 2-Ethyl-1-hexanol and Their Constituent Binary Systems",
+        "doi": "10.1021/acs.jced.4c00374",
+        "table": "Table 15",
+        "citation_marker": "fileciteturn2file1L474-L517"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "constant NRTL energy parameters",
+          "g12_minus_g22_J_per_mol": 4193.718,
+          "g21_minus_g11_J_per_mol": -2756.582,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 504.388340245071,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": -331.54060900838783,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "constant UNIQUAC energy parameters",
+          "u12_minus_u22_J_per_mol": 1189.679,
+          "u21_minus_u11_J_per_mol": -793.533
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": -143.0854950748753,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": 95.44008271411953,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "ethanol",
+            "CAS": "64-17-5",
+            "r": 2.1055,
+            "q": 1.972
+          },
+          "component_2": {
+            "name": "1-butanol",
+            "CAS": "71-36-3",
+            "r": 3.4543,
+            "q": 3.052
+          },
+          "status": "exact Matsuda et al. 2025 Table 14 / DDB 2023 values used in regression"
+        }
+      },
+      "notes": [
+        "Converted using R = 8.3144626181532 J mol^-1 K^-1."
+      ],
+      "quality_flags": [],
+      "components": [
+        {
+          "name": "ethanol",
+          "CAS": "64-17-5",
+          "UNIQUAC_rq": {
+            "r": 2.1055,
+            "q": 1.972,
+            "basis": "Dortmund/Gmehling-style structural set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 2.5755,
+              "q": 2.588
+            }
+          ]
+        },
+        {
+          "name": "1-butanol",
+          "CAS": "71-36-3",
+          "UNIQUAC_rq": {
+            "r": 3.4543,
+            "q": 3.052,
+            "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005 (rounded)",
+              "r": 3.45,
+              "q": 3.05
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        352.92,
+        385.13
+      ],
+      "temperature_range_basis": "Matsuda et al. binary VLE data span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed",
+        "VLE_equation": "gamma_i = P*y_i/(Psat_i*x_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "ethanol_matsuda",
+          "1-butanol_matsuda"
+        ]
+      }
+    },
+    {
+      "pair": "acetone + 2-ethyl-1-hexanol",
+      "component_1": "acetone",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "je4c00374.pdf",
+        "title": "Isobaric Vapor-Liquid Equilibria for Ternary Systems Acetone + Ethanol + 1-Butanol and Ethanol + 1-Butanol + 2-Ethyl-1-hexanol and Their Constituent Binary Systems",
+        "doi": "10.1021/acs.jced.4c00374",
+        "table": "Table 16",
+        "citation_marker": "fileciteturn2file1L579-L637"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "constant NRTL energy parameters",
+          "g12_minus_g22_J_per_mol": 1985.986,
+          "g21_minus_g11_J_per_mol": -388.6,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 238.85921330188336,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": -46.737837169603345,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "constant UNIQUAC energy parameters",
+          "u12_minus_u22_J_per_mol": -377.202,
+          "u21_minus_u11_J_per_mol": 1176.247
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 45.36697286682635,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -141.4699968019414,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "acetone",
+            "CAS": "67-64-1",
+            "r": 2.5735,
+            "q": 2.336
+          },
+          "component_2": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.1511,
+            "q": 5.208
+          },
+          "status": "exact Matsuda et al. 2025 Table 14 / DDB 2023 values used in regression"
+        }
+      },
+      "notes": [
+        "Converted using R = 8.3144626181532 J mol^-1 K^-1."
+      ],
+      "quality_flags": [],
+      "components": [
+        {
+          "name": "acetone",
+          "CAS": "67-64-1",
+          "UNIQUAC_rq": {
+            "r": 2.5735,
+            "q": 2.336,
+            "basis": "Dortmund Data Bank 2023; Matsuda et al. 2025 Table 14"
+          }
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        331.47,
+        367.04
+      ],
+      "temperature_range_basis": "Matsuda et al. binary VLE data span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed",
+        "VLE_equation": "gamma_i = P*y_i/(Psat_i*x_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "acetone_matsuda",
+          "2-ethyl-1-hexanol_matsuda"
+        ]
+      }
+    },
+    {
+      "pair": "ethanol + 2-ethyl-1-hexanol",
+      "component_1": "ethanol",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "je4c00374.pdf",
+        "title": "Isobaric Vapor-Liquid Equilibria for Ternary Systems Acetone + Ethanol + 1-Butanol and Ethanol + 1-Butanol + 2-Ethyl-1-hexanol and Their Constituent Binary Systems",
+        "doi": "10.1021/acs.jced.4c00374",
+        "table": "Table 16",
+        "citation_marker": "fileciteturn2file1L579-L637"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "constant NRTL energy parameters",
+          "g12_minus_g22_J_per_mol": 5605.956,
+          "g21_minus_g11_J_per_mol": -3105.46,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 674.2415303859003,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": -373.50098769098406,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "constant UNIQUAC energy parameters",
+          "u12_minus_u22_J_per_mol": 243.434,
+          "u21_minus_u11_J_per_mol": 472.084
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": -29.27838047747097,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -56.778654457990285,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "ethanol",
+            "CAS": "64-17-5",
+            "r": 2.1055,
+            "q": 1.972
+          },
+          "component_2": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.1511,
+            "q": 5.208
+          },
+          "status": "exact Matsuda et al. 2025 Table 14 / DDB 2023 values used in regression"
+        }
+      },
+      "notes": [
+        "Converted using R = 8.3144626181532 J mol^-1 K^-1."
+      ],
+      "quality_flags": [],
+      "components": [
+        {
+          "name": "ethanol",
+          "CAS": "64-17-5",
+          "UNIQUAC_rq": {
+            "r": 2.1055,
+            "q": 1.972,
+            "basis": "Dortmund/Gmehling-style structural set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 2.5755,
+              "q": 2.588
+            }
+          ]
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        354.21,
+        395.71
+      ],
+      "temperature_range_basis": "Matsuda et al. binary VLE data span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed",
+        "VLE_equation": "gamma_i = P*y_i/(Psat_i*x_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "ethanol_matsuda",
+          "2-ethyl-1-hexanol_matsuda"
+        ]
+      }
+    },
+    {
+      "pair": "1-butanol + 2-ethyl-1-hexanol",
+      "component_1": "1-butanol",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "P_kPa": 101.3
+      },
+      "source": {
+        "file": "je4c00374.pdf",
+        "title": "Isobaric Vapor-Liquid Equilibria for Ternary Systems Acetone + Ethanol + 1-Butanol and Ethanol + 1-Butanol + 2-Ethyl-1-hexanol and Their Constituent Binary Systems",
+        "doi": "10.1021/acs.jced.4c00374",
+        "table": "Table 16",
+        "citation_marker": "fileciteturn2file1L579-L637"
+      },
+      "NRTL": {
+        "original": {
+          "paper_table": "Ideal behavior; no fitted NRTL BIPs reported",
+          "alpha12": null
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T) = c_ij + d_ij/T + e_ij*((Tref-T)/T + ln(T/Tref)) + f_ij*T + g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0.0,
+            "d_K": 0.0,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.0,
+            "d_K": 0.0,
+            "e": 0.0,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": null
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_table": "Ideal behavior; no fitted UNIQUAC BIPs reported"
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T)) = a_ij + b_ij/T + c_ij*((Tref-T)/T + ln(T/Tref)) + d_ij*T + e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 0.0,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": 0.0,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-butanol",
+            "CAS": "71-36-3",
+            "r": 3.4543,
+            "q": 3.052
+          },
+          "component_2": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.1511,
+            "q": 5.208
+          },
+          "status": "exact Matsuda et al. 2025 Table 14 / DDB 2023 values used in regression"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "These zero coefficients are an ideal-solution equivalent, not a fitted NRTL/UNIQUAC parameter set.",
+        "Strong conflict with Ghanadzadeh et al. (2005), which reports substantial nonideality."
+      ],
+      "components": [
+        {
+          "name": "1-butanol",
+          "CAS": "71-36-3",
+          "UNIQUAC_rq": {
+            "r": 3.4543,
+            "q": 3.052,
+            "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005 (rounded)",
+              "r": 3.45,
+              "q": 3.05
+            }
+          ]
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        393.82,
+        442.78
+      ],
+      "temperature_range_basis": "Matsuda et al. measured binary VLE span; ideal behavior was selected",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal gas explicitly assumed",
+        "VLE_equation": "gamma_i = P*y_i/(Psat_i*x_i)",
+        "Poynting_correction": "not included",
+        "pure_component_correlation_ids": [
+          "1-butanol_matsuda",
+          "2-ethyl-1-hexanol_matsuda"
+        ]
+      }
+    },
+    {
+      "pair": "1-hexanol + hexyl acetate",
+      "component_1": "1-hexanol",
+      "component_2": "hexyl acetate",
+      "condition": {
+        "basis": "binary VLE"
+      },
+      "source": {
+        "title": "Liquid-Liquid Equilibrium and Interfacial Properties of the System Water + Hexylacetate + 1-Hexanol",
+        "doi": "10.1002/cite.201900013",
+        "url": "https://onlinelibrary.wiley.com/doi/full/10.1002/cite.201900013",
+        "table": "Table 1",
+        "source_type": "public full text",
+        "citation": "Wiley full text, Table 1; states all parameters were adjusted to binary data alone."
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=a_ij+b_ij/T",
+          "a12": 2.1656,
+          "a21": -1.1818,
+          "b12_K": -174.4,
+          "b21_K": 236.42,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 2.1656,
+            "d_K": -174.4,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "21": {
+            "c": -1.1818,
+            "d_K": 236.42,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": null,
+      "notes": [],
+      "quality_flags": [
+        "Exact algebraic conversion to the user's NRTL form."
+      ],
+      "components": [
+        {
+          "name": "1-hexanol",
+          "CAS": "111-27-3",
+          "UNIQUAC_rq": {
+            "r": 4.8031,
+            "q": 4.132,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 5.2731,
+              "q": 4.748
+            }
+          ]
+        },
+        {
+          "name": "hexyl acetate",
+          "CAS": "142-92-7",
+          "UNIQUAC_rq": {
+            "r": 6.1762,
+            "q": 5.276,
+            "basis": "Gmehling-style group contribution; exact values used in new water refit"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        355.0,
+        440.0
+      ],
+      "temperature_range_basis": "Schmitt-Hasse binary VLE source envelope; conservative range for the reproduced binary-VLE fit",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "binary VLE fit reproduced from Schmitt-Hasse; source spans 30-90 kPa / 355-440 K",
+        "pure_component_treatment": "source high-quality phase-equilibrium database; exact pure-component Psat equation is not reproduced in the currently stored secondary table",
+        "reproduction_note": "For exact original VLE regression reproduction, use the Schmitt-Hasse source property correlations; the BIP itself is retained exactly."
+      }
+    },
+    {
+      "pair": "1-pentanol + cyclohexane",
+      "component_1": "1-pentanol",
+      "component_2": "cyclohexane",
+      "condition": {
+        "P_kPa": 101.3,
+        "scope": "low 1-pentanol mole fraction"
+      },
+      "source": {
+        "title": "Isobaric Vapor-Liquid Equilibrium for the Binary Systems 1-Pentanol + Cyclohexane and 1-Pentanol + n-Hexane at Low Alcohol Compositions",
+        "doi": "10.1021/je700285j",
+        "url": "https://trc.nist.gov/ThermoML/10.1021/je700285j.html",
+        "table": "Tables 5-6",
+        "source_type": "public paper mirror + NIST ThermoML"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=a_ij+b_ij/T; only b adjusted",
+          "b12_K": 359.25,
+          "b21_K": 663.43,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0,
+            "d_K": 359.25,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "21": {
+            "c": 0,
+            "d_K": 663.43,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij=exp(a_ij+b_ij/T+c_ij ln T+d_ij T); only b adjusted",
+          "b12_K": 227.58,
+          "b21_K": -536.59
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T))=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0,
+            "b_K": 227.58,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          },
+          "21": {
+            "a": 0,
+            "b_K": -536.59,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "component_2": {
+            "name": "cyclohexane",
+            "CAS": "110-82-7",
+            "r": 4.0464,
+            "q": 3.24
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Alpha corrected from 'unknown' to 0.3; explicitly stated in the source."
+      ],
+      "validation": {
+        "method": "No inference required: the full paper explicitly states that a constant NRTL nonrandomness factor alpha=0.3 was used.",
+        "adjudicated_alpha": 0.3
+      },
+      "components": [
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        },
+        {
+          "name": "cyclohexane",
+          "CAS": "110-82-7",
+          "UNIQUAC_rq": {
+            "r": 4.0464,
+            "q": 3.24,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        353.8,
+        354.7
+      ],
+      "temperature_range_basis": "Ovejero et al. 2007 measured low-pentanol VLE span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "regression performed in ASPEN PLUS; the accessible article extract does not print the exact vapor EOS/fugacity or pure-Psat property-method configuration",
+        "pure_component_treatment": "ASPEN PLUS databank/property method (exact configuration not disclosed in the article extract)",
+        "scope_note": "authors recommend these parameters only for x(1-pentanol) < 0.1"
+      }
+    },
+    {
+      "pair": "1-pentanol + n-hexane",
+      "component_1": "1-pentanol",
+      "component_2": "n-hexane",
+      "condition": {
+        "P_kPa": 101.3,
+        "scope": "low 1-pentanol mole fraction"
+      },
+      "source": {
+        "title": "Isobaric Vapor-Liquid Equilibrium for the Binary Systems 1-Pentanol + Cyclohexane and 1-Pentanol + n-Hexane at Low Alcohol Compositions",
+        "doi": "10.1021/je700285j",
+        "url": "https://trc.nist.gov/ThermoML/10.1021/je700285j.html",
+        "table": "Tables 5-6",
+        "source_type": "public paper mirror + NIST ThermoML"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=a_ij+b_ij/T; only b adjusted",
+          "b12_K": 303.67,
+          "b21_K": -304.32,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0,
+            "d_K": 303.67,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "21": {
+            "c": 0,
+            "d_K": -304.32,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij=exp(a_ij+b_ij/T+c_ij ln T+d_ij T); only b adjusted",
+          "b12_K": 230.36,
+          "b21_K": -571.31
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T))=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0,
+            "b_K": 230.36,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          },
+          "21": {
+            "a": 0,
+            "b_K": -571.31,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "1-pentanol",
+            "CAS": "71-41-0",
+            "r": 4.1287,
+            "q": 3.592
+          },
+          "component_2": {
+            "name": "n-hexane",
+            "CAS": "110-54-3",
+            "r": 4.4998,
+            "q": 3.856
+          },
+          "status": "recommended exact database r/q values; the source paper does not numerically report its r/q in the accessible parameter table, so source-specific reproduction is not guaranteed"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Alpha corrected from 'unknown' to 0.3; explicitly stated in the source."
+      ],
+      "validation": {
+        "method": "No inference required: the full paper explicitly states that a constant NRTL nonrandomness factor alpha=0.3 was used.",
+        "adjudicated_alpha": 0.3
+      },
+      "components": [
+        {
+          "name": "1-pentanol",
+          "CAS": "71-41-0",
+          "UNIQUAC_rq": {
+            "r": 4.1287,
+            "q": 3.592,
+            "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+          }
+        },
+        {
+          "name": "n-hexane",
+          "CAS": "110-54-3",
+          "UNIQUAC_rq": {
+            "r": 4.4998,
+            "q": 3.856,
+            "basis": "standard group-contribution structural parameters"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        341.9,
+        342.9
+      ],
+      "temperature_range_basis": "Ovejero et al. 2007 measured low-pentanol VLE span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "regression performed in ASPEN PLUS; the accessible article extract does not print the exact vapor EOS/fugacity or pure-Psat property-method configuration",
+        "pure_component_treatment": "ASPEN PLUS databank/property method (exact configuration not disclosed in the article extract)",
+        "scope_note": "authors recommend these parameters only for x(1-pentanol) < 0.1"
+      }
+    },
+    {
+      "pair": "ethanol + 1-hexanol",
+      "component_1": "ethanol",
+      "component_2": "1-hexanol",
+      "condition": {
+        "P_kPa": 100.0
+      },
+      "source": {
+        "title": "Isobaric Vapor-Liquid Equilibrium for the Binary Mixture of Ethanol (1) + 1-Hexanol (2) at 100 kPa",
+        "doi": "10.13140/RG.2.1.4542.3766",
+        "url": "https://paperzz.com/doc/8951370/isobaric-vapor-liquid-equilibrium-for-the-binary-mixture-...",
+        "table": "Table 5",
+        "source_type": "public full text mirror"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=A_ij/T",
+          "A12_K": 513.665,
+          "A21_K": -331.956,
+          "alpha12": 0.3
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0,
+            "d_K": 513.665,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "21": {
+            "c": 0,
+            "d_K": -331.956,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "alpha12": 0.3
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij=exp(A_ij/T)",
+          "A12_K": -11.287,
+          "A21_K": -17.367
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T))=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0,
+            "b_K": -11.287,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          },
+          "21": {
+            "a": 0,
+            "b_K": -17.367,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "ethanol",
+            "CAS": "64-17-5",
+            "r": 2.5755,
+            "q": 2.588
+          },
+          "component_2": {
+            "name": "1-hexanol",
+            "CAS": "111-27-3",
+            "r": 5.2731,
+            "q": 4.748
+          },
+          "status": "exact source-specific Hartanto et al. Table 4 values"
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Exact conversion. Note that this paper's UNIQUAC definition uses +A/T, unlike the energy-difference convention used by several other papers."
+      ],
+      "components": [
+        {
+          "name": "ethanol",
+          "CAS": "64-17-5",
+          "UNIQUAC_rq": {
+            "r": 2.1055,
+            "q": 1.972,
+            "basis": "Dortmund/Gmehling-style structural set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 2.5755,
+              "q": 2.588
+            }
+          ]
+        },
+        {
+          "name": "1-hexanol",
+          "CAS": "111-27-3",
+          "UNIQUAC_rq": {
+            "r": 4.8031,
+            "q": 4.132,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 5.2731,
+              "q": 4.748
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        351.6,
+        429.2
+      ],
+      "temperature_range_basis": "Hartanto et al. measured 100 kPa VLE span",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "ideal vapor; source explicitly sets vapor correction factor Phi_i = 1",
+        "VLE_equation": "y_i*Phi_i*P = x_i*gamma_i*Psat_i, with Phi_i=1",
+        "pure_component_correlation_ids": [
+          "ethanol_hartanto",
+          "1-hexanol_hartanto"
+        ]
+      }
+    },
+    {
+      "pair": "ethanol + 1-octanol",
+      "component_1": "ethanol",
+      "component_2": "1-octanol",
+      "condition": {
+        "basis": "binary subsystem GE/RT data; 101.32 kPa VLE context"
+      },
+      "source": {
+        "title": "VLE for water + ethanol + 1-octanol mixtures. Experimental measurements and correlations",
+        "doi": "10.1016/0378-3812(96)03041-5",
+        "url": "https://www.scribd.com/document/404251317/arce1996-pdf",
+        "table": "Table 6",
+        "source_type": "public readable copy"
+      },
+      "NRTL": {
+        "original": {
+          "paper_definition": "Delta g_ij/R in K; alpha=0.1 for the miscible binary-subsystem correlations",
+          "Delta_g12_over_R_K": 2816.3,
+          "Delta_g21_over_R_K": -1530.8,
+          "alpha12": 0.1
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0,
+            "d_K": 2816.3,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "21": {
+            "c": 0,
+            "d_K": -1530.8,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "alpha12": 0.1
+        }
+      },
+      "UNIQUAC": {
+        "original": {
+          "paper_definition": "Delta u_ij/R in K; standard UNIQUAC tau=exp(-Delta u_ij/(RT))",
+          "Delta_u12_over_R_K": 445.3,
+          "Delta_u21_over_R_K": -202.96
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij(T))=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0,
+            "b_K": -445.3,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          },
+          "21": {
+            "a": 0,
+            "b_K": 202.96,
+            "c": 0,
+            "d_per_K": 0,
+            "e_per_K2": 0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "ethanol",
+            "CAS": "64-17-5",
+            "r": 2.1055,
+            "q": 1.972
+          },
+          "component_2": {
+            "name": "1-octanol",
+            "CAS": "111-87-5",
+            "r": 6.6219,
+            "q": 5.828,
+            "q_prime": 5.5
+          },
+          "status": "Gmehling-style group-contribution r/q used by Arce-family work; q'=5.50 for 1-octanol explicitly optimized/reported by Arce et al.",
+          "warning": "This published UNIQUAC BIP should not be paired with the water-refit default r/q for 1-octanol."
+        }
+      },
+      "notes": [],
+      "quality_flags": [
+        "Retained because Table 6 explicitly uses parameters obtained from the corresponding binary subsystem, not a ternary-only regression."
+      ],
+      "components": [
+        {
+          "name": "ethanol",
+          "CAS": "64-17-5",
+          "UNIQUAC_rq": {
+            "r": 2.1055,
+            "q": 1.972,
+            "basis": "Dortmund/Gmehling-style structural set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+              "r": 2.5755,
+              "q": 2.588
+            }
+          ]
+        },
+        {
+          "name": "1-octanol",
+          "CAS": "111-87-5",
+          "UNIQUAC_rq": {
+            "r": 6.1519,
+            "q": 5.212,
+            "basis": "exact values used in the new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Gmehling-style group-contribution set used by Arce-family work",
+              "r": 6.6219,
+              "q": 5.828,
+              "note": "Arce et al. additionally optimized modified-UNIQUAC q' for 1-octanol to 5.50."
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        351.56,
+        467.85
+      ],
+      "temperature_range_basis": "conservative full-composition 101.32 kPa binary envelope from pure ethanol to pure 1-octanol boiling endpoints",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "nonideal vapor fugacity coefficients at system and saturation pressure calculated by Hayden-O'Connell",
+        "liquid_pressure_correction": "Poynting correction using liquid molar volume (Yen-Woods correlation)",
+        "pure_component_correlation_ids": [
+          "ethanol_arce",
+          "1-octanol_arce"
+        ],
+        "source_note": "binary GE/RT parameters retained from the miscible ethanol+1-octanol subsystem used by Arce et al."
+      }
+    },
+    {
+      "pair": "isobutanol + 1-butanol",
+      "component_1": "isobutanol",
+      "component_2": "1-butanol",
+      "condition": {
+        "T_range_K": [
+          305.15,
+          388.15
+        ],
+        "basis": "p-T-x VLE"
+      },
+      "source": {
+        "title": "Experimental and Regression VLE Data for Isobutanol + 1-Butanol, Isobutanol + 2-Ethyl-1-hexanol, and 1-Butanol + 2-Ethyl-1-hexanol Binary Systems",
+        "doi": "10.3390/pr13072034",
+        "url": "https://www.mdpi.com/2227-9717/13/7/2034",
+        "table": "Tables 6 and 8",
+        "source_type": "open access"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=b_ij/T; constant alpha' (3-parameter fit)",
+          "b12_K": -2352.3672,
+          "b21_K": 2143.2572,
+          "alpha_prime": -0.01532
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": 0,
+            "d_K": -2352.3672,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "21": {
+            "c": 0,
+            "d_K": 2143.2572,
+            "e": 0,
+            "f_per_K": 0,
+            "g_per_K2": 0
+          },
+          "alpha12": -0.01532
+        }
+      },
+      "UNIQUAC": null,
+      "notes": [],
+      "quality_flags": [
+        "Exact mapping of the paper's three-parameter form. The fitted alpha is negative; preserve as published rather than sanitizing it."
+      ],
+      "components": [
+        {
+          "name": "isobutanol",
+          "CAS": "78-83-1",
+          "UNIQUAC_rq": {
+            "r": 3.4535,
+            "q": 3.048,
+            "basis": "Poling et al. structural parameters"
+          }
+        },
+        {
+          "name": "1-butanol",
+          "CAS": "71-36-3",
+          "UNIQUAC_rq": {
+            "r": 3.4543,
+            "q": 3.052,
+            "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005 (rounded)",
+              "r": 3.45,
+              "q": 3.05
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        305.15,
+        388.15
+      ],
+      "temperature_range_basis": "Fendu et al. p-T-x experimental/regression range",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "VLE regression carried out in PRO/II 2024; exact vapor EOS/fugacity and pure-component Psat correlations are not explicitly disclosed in the paper",
+        "pure_component_treatment": "PRO/II property database/configuration not numerically documented by source",
+        "reproduction_note": "Do not claim exact reproduction of source p-T-x regression without the original PRO/II property-method settings."
+      }
+    },
+    {
+      "pair": "isobutanol + 2-ethyl-1-hexanol",
+      "component_1": "isobutanol",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "T_range_K": [
+          305.15,
+          455.15
+        ],
+        "basis": "p-T-x VLE"
+      },
+      "source": {
+        "title": "Experimental and Regression VLE Data for Isobutanol + 1-Butanol, Isobutanol + 2-Ethyl-1-hexanol, and 1-Butanol + 2-Ethyl-1-hexanol Binary Systems",
+        "doi": "10.3390/pr13072034",
+        "url": "https://www.mdpi.com/2227-9717/13/7/2034",
+        "table": "Tables 6 and 8",
+        "source_type": "open access"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=a_ij+b_ij/T+c_ij/T^2; alpha_ij=alpha'_ij+beta'_ij*T",
+          "12": {
+            "a": -0.31998,
+            "b_K": -141.92441,
+            "c_K2": 60605.14069
+          },
+          "21": {
+            "a": 0.00301,
+            "b_K": -75.28924,
+            "c_K2": 62224.75031
+          },
+          "alpha_prime": -0.87252,
+          "beta_prime_per_K": 0.00574
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": -0.9589533811162408,
+            "d_K": 251.26613797707438,
+            "e": 0.876725077948928,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": -0.653039282981948,
+            "d_K": 328.4089181689901,
+            "e": 0.900154647687912,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": null,
+          "alpha_law": {
+            "paper_form": "alpha_ij(T)=alpha_prime+beta_prime*T",
+            "alpha_prime": -0.87252,
+            "beta_prime_per_K": 0.00574
+          }
+        }
+      },
+      "UNIQUAC": null,
+      "notes": [
+        "Projected the source a+b/T+c/T^2 law into the user's preferred c+d/T+e*F(T) form over 305.15-455.15 K.",
+        "Max |Δtau|: 12=0.00107618, 21=0.00110494; RMS |Δtau|: 12=0.000352261, 21=0.000361675.",
+        "f and g were kept at zero to avoid an ill-conditioned five-term projection."
+      ],
+      "quality_flags": [
+        "The source's 1/T^2 term is not algebraically present in the user's basis, so the converted tau coefficients are a numerical projection over the measured temperature range.",
+        "The source's temperature-dependent alpha law is retained verbatim."
+      ],
+      "components": [
+        {
+          "name": "isobutanol",
+          "CAS": "78-83-1",
+          "UNIQUAC_rq": {
+            "r": 3.4535,
+            "q": 3.048,
+            "basis": "Poling et al. structural parameters"
+          }
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        305.15,
+        455.15
+      ],
+      "temperature_range_basis": "Fendu et al. p-T-x experimental/regression range",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "VLE regression carried out in PRO/II 2024; exact vapor EOS/fugacity and pure-component Psat correlations are not explicitly disclosed in the paper",
+        "pure_component_treatment": "PRO/II property database/configuration not numerically documented by source",
+        "reproduction_note": "Do not claim exact reproduction of source p-T-x regression without the original PRO/II property-method settings."
+      }
+    },
+    {
+      "pair": "1-butanol + 2-ethyl-1-hexanol",
+      "component_1": "1-butanol",
+      "component_2": "2-ethyl-1-hexanol",
+      "condition": {
+        "T_range_K": [
+          320.15,
+          455.15
+        ],
+        "basis": "p-T-x VLE"
+      },
+      "source": {
+        "title": "Experimental and Regression VLE Data for Isobutanol + 1-Butanol, Isobutanol + 2-Ethyl-1-hexanol, and 1-Butanol + 2-Ethyl-1-hexanol Binary Systems",
+        "doi": "10.3390/pr13072034",
+        "url": "https://www.mdpi.com/2227-9717/13/7/2034",
+        "table": "Tables 6 and 8",
+        "source_type": "open access"
+      },
+      "NRTL": {
+        "original": {
+          "paper_form": "tau_ij=a_ij+b_ij/T+c_ij/T^2; alpha_ij=alpha'_ij+beta'_ij*T",
+          "12": {
+            "a": -0.62742,
+            "b_K": -9.80658,
+            "c_K2": 98335.43425
+          },
+          "21": {
+            "a": -0.07301,
+            "b_K": 153.21176,
+            "c_K2": -65532.18635
+          },
+          "alpha_prime": 1.0,
+          "beta_prime_per_K": 0.009
+        },
+        "converted_to_user_format": {
+          "equation": "tau_ij(T)=c_ij+d_ij/T+e_ij*((Tref-T)/T+ln(T/Tref))+f_ij*T+g_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "c": -1.645351562910571,
+            "d_K": 621.8085823822246,
+            "e": 1.3544864892251673,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "21": {
+            "c": 0.6053546340810535,
+            "d_K": -267.70591670937546,
+            "e": -0.9026498097806531,
+            "f_per_K": 0.0,
+            "g_per_K2": 0.0
+          },
+          "alpha12": null,
+          "alpha_law": {
+            "paper_form": "alpha_ij(T)=alpha_prime+beta_prime*T",
+            "alpha_prime": 1.0,
+            "beta_prime_per_K": 0.009
+          }
+        }
+      },
+      "UNIQUAC": null,
+      "notes": [
+        "Projected the source a+b/T+c/T^2 law into the user's preferred c+d/T+e*F(T) form over 320.15-455.15 K.",
+        "Max |Δtau|: 12=0.00111375, 21=0.000742221; RMS |Δtau|: 12=0.000371085, 21=0.000247297.",
+        "f and g were kept at zero to avoid an ill-conditioned five-term projection."
+      ],
+      "quality_flags": [
+        "The source's 1/T^2 term is not algebraically present in the user's basis, so the converted tau coefficients are a numerical projection over the measured temperature range.",
+        "The source's temperature-dependent alpha law is retained verbatim."
+      ],
+      "components": [
+        {
+          "name": "1-butanol",
+          "CAS": "71-36-3",
+          "UNIQUAC_rq": {
+            "r": 3.4543,
+            "q": 3.052,
+            "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005 (rounded)",
+              "r": 3.45,
+              "q": 3.05
+            }
+          ]
+        },
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        320.15,
+        455.15
+      ],
+      "temperature_range_basis": "Fendu et al. p-T-x experimental/regression range",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "VLE regression carried out in PRO/II 2024; exact vapor EOS/fugacity and pure-component Psat correlations are not explicitly disclosed in the paper",
+        "pure_component_treatment": "PRO/II property database/configuration not numerically documented by source",
+        "reproduction_note": "Do not claim exact reproduction of source p-T-x regression without the original PRO/II property-method settings."
+      }
+    },
+    {
+      "pair": "2-ethyl-1-hexanol + dodecanoic acid",
+      "component_1": "2-ethyl-1-hexanol",
+      "component_2": "dodecanoic acid",
+      "condition": {
+        "source_context": "reactive-system thermodynamic regression; see quality note"
+      },
+      "source": {
+        "file": "main 23.pdf",
+        "title": "Fatty acid esterification by reactive distillation. Part 1: equilibrium-based design",
+        "doi": "10.1016/S0009-2509(03)00165-9",
+        "table": "Table 5",
+        "equation": "tau_ij = exp(Aij + Bij/T + Cij*T)",
+        "citation": "uploaded file main 23.pdf, Table 5 / thermodynamic-experiments discussion"
+      },
+      "NRTL": null,
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij=exp(Aij+Bij/T+Cij*T)",
+          "A12": 0.0,
+          "B12_K": 49.44,
+          "C12_per_K": 0.0,
+          "A21": 0.0,
+          "B21_K": -52.77,
+          "C21_per_K": 0.0
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij)=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 49.44,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -52.77,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.1511,
+            "q": 5.208
+          },
+          "component_2": {
+            "name": "dodecanoic acid",
+            "CAS": "143-07-7",
+            "r": 8.931,
+            "q": 7.472
+          },
+          "status": "exact Omota et al. 2003 Table 7 values"
+        }
+      },
+      "notes": [
+        "Medium quality: acid/alcohol activities were inferred by regression of the authors' chemical-phase-equilibrium experiments rather than a clean standalone binary VLE experiment."
+      ],
+      "quality_flags": [
+        "Do not interpret every Omota pair as an independent binary regression: provenance differs by pair.",
+        "Equation conversion is exact."
+      ],
+      "components": [
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        },
+        {
+          "name": "dodecanoic acid",
+          "CAS": "143-07-7",
+          "UNIQUAC_rq": {
+            "r": 8.931,
+            "q": 7.472,
+            "basis": "Omota et al. 2003 Table 7"
+          }
+        }
+      ],
+      "recommended_temperature_range_K": [
+        423.0,
+        473.0
+      ],
+      "temperature_range_basis": "reactive-CPE calibration/check temperatures in Omota et al.; not an independently validated standalone binary VLE range",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "Omota phase/CPE framework; no separate vapor EOS correction is specified for these tabulated UNIQUAC BIPs",
+        "pure_component_correlation_ids": [
+          "2-ethyl-1-hexanol_omota",
+          "dodecanoic_acid_omota"
+        ],
+        "source_note": "extended Antoine correlations are documented explicitly; interaction parameters are tied to the authors' reactive/CPE thermodynamic regression."
+      }
+    },
+    {
+      "pair": "2-ethyl-1-hexanol + 2-ethylhexyl dodecanoate",
+      "component_1": "2-ethyl-1-hexanol",
+      "component_2": "2-ethylhexyl dodecanoate",
+      "condition": {
+        "source_context": "reactive-system thermodynamic regression; see quality note"
+      },
+      "source": {
+        "file": "main 23.pdf",
+        "title": "Fatty acid esterification by reactive distillation. Part 1: equilibrium-based design",
+        "doi": "10.1016/S0009-2509(03)00165-9",
+        "table": "Table 5",
+        "equation": "tau_ij = exp(Aij + Bij/T + Cij*T)",
+        "citation": "uploaded file main 23.pdf, Table 5 / thermodynamic-experiments discussion"
+      },
+      "NRTL": null,
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij=exp(Aij+Bij/T+Cij*T)",
+          "A12": 0.0,
+          "B12_K": 90.824,
+          "C12_per_K": 0.0,
+          "A21": 0.0,
+          "B21_K": -183.25,
+          "C21_per_K": 0.0
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij)=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 90.824,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -183.25,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "2-ethyl-1-hexanol",
+            "CAS": "104-76-7",
+            "r": 6.1511,
+            "q": 5.208
+          },
+          "component_2": {
+            "name": "2-ethylhexyl dodecanoate",
+            "CAS": "20292-08-4",
+            "r": 14.239,
+            "q": 11.752
+          },
+          "status": "exact Omota et al. 2003 Table 7 values"
+        }
+      },
+      "notes": [
+        "Good/medium quality: the paper reports binary ester/alcohol VLE and uses the experimental-regression parameter set in the final thermodynamic model."
+      ],
+      "quality_flags": [
+        "Do not interpret every Omota pair as an independent binary regression: provenance differs by pair.",
+        "Equation conversion is exact."
+      ],
+      "components": [
+        {
+          "name": "2-ethyl-1-hexanol",
+          "CAS": "104-76-7",
+          "UNIQUAC_rq": {
+            "r": 6.1511,
+            "q": 5.208,
+            "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+          },
+          "known_source_variants": [
+            {
+              "source": "Ghanadzadeh et al. 2005",
+              "r": 6.15,
+              "q": 5.02
+            }
+          ]
+        },
+        {
+          "name": "2-ethylhexyl dodecanoate",
+          "CAS": "20292-08-4",
+          "UNIQUAC_rq": {
+            "r": 14.239,
+            "q": 11.752,
+            "basis": "Omota et al. 2003 Table 7"
+          },
+          "aliases": [
+            "2-ethylhexyl laurate"
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        423.0,
+        473.0
+      ],
+      "temperature_range_basis": "reactive-CPE/binary-separation process envelope in Omota et al.; use cautiously outside measured ester/alcohol VLE conditions",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "Omota phase/CPE framework; no separate vapor EOS correction is specified for these tabulated UNIQUAC BIPs",
+        "pure_component_correlation_ids": [
+          "2-ethyl-1-hexanol_omota",
+          "2-ethylhexyl_dodecanoate_omota"
+        ],
+        "source_note": "extended Antoine correlations are documented explicitly; interaction parameters are tied to the authors' reactive/CPE thermodynamic regression."
+      }
+    },
+    {
+      "pair": "dodecanoic acid + 2-ethylhexyl dodecanoate",
+      "component_1": "dodecanoic acid",
+      "component_2": "2-ethylhexyl dodecanoate",
+      "condition": {
+        "source_context": "reactive-system thermodynamic regression; see quality note"
+      },
+      "source": {
+        "file": "main 23.pdf",
+        "title": "Fatty acid esterification by reactive distillation. Part 1: equilibrium-based design",
+        "doi": "10.1016/S0009-2509(03)00165-9",
+        "table": "Table 5",
+        "equation": "tau_ij = exp(Aij + Bij/T + Cij*T)",
+        "citation": "uploaded file main 23.pdf, Table 5 / thermodynamic-experiments discussion"
+      },
+      "NRTL": null,
+      "UNIQUAC": {
+        "original": {
+          "paper_form": "tau_ij=exp(Aij+Bij/T+Cij*T)",
+          "A12": 0.0,
+          "B12_K": 97.72,
+          "C12_per_K": 0.0,
+          "A21": 0.0,
+          "B21_K": -140.7,
+          "C21_per_K": 0.0
+        },
+        "converted_to_user_format": {
+          "equation": "ln(tau_ij)=a_ij+b_ij/T+c_ij*((Tref-T)/T+ln(T/Tref))+d_ij*T+e_ij*T^2",
+          "Tref_K": 298.15,
+          "12": {
+            "a": 0.0,
+            "b_K": 97.72,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          },
+          "21": {
+            "a": 0.0,
+            "b_K": -140.7,
+            "c": 0.0,
+            "d_per_K": 0.0,
+            "e_per_K2": 0.0
+          }
+        },
+        "structural_parameters_used": {
+          "component_1": {
+            "name": "dodecanoic acid",
+            "CAS": "143-07-7",
+            "r": 8.931,
+            "q": 7.472
+          },
+          "component_2": {
+            "name": "2-ethylhexyl dodecanoate",
+            "CAS": "20292-08-4",
+            "r": 14.239,
+            "q": 11.752
+          },
+          "status": "exact Omota et al. 2003 Table 7 values"
+        }
+      },
+      "notes": [
+        "Medium quality: retained from the authors' experimentally regressed reactive-system UNIQUAC parameter set; not presented as an isolated standalone binary VLE fit."
+      ],
+      "quality_flags": [
+        "Do not interpret every Omota pair as an independent binary regression: provenance differs by pair.",
+        "Equation conversion is exact."
+      ],
+      "components": [
+        {
+          "name": "dodecanoic acid",
+          "CAS": "143-07-7",
+          "UNIQUAC_rq": {
+            "r": 8.931,
+            "q": 7.472,
+            "basis": "Omota et al. 2003 Table 7"
+          }
+        },
+        {
+          "name": "2-ethylhexyl dodecanoate",
+          "CAS": "20292-08-4",
+          "UNIQUAC_rq": {
+            "r": 14.239,
+            "q": 11.752,
+            "basis": "Omota et al. 2003 Table 7"
+          },
+          "aliases": [
+            "2-ethylhexyl laurate"
+          ]
+        }
+      ],
+      "recommended_temperature_range_K": [
+        423.0,
+        473.0
+      ],
+      "temperature_range_basis": "reactive-CPE calibration/check temperatures in Omota et al.; not an independently validated standalone binary VLE range",
+      "range_policy": "stay within this source/calibration envelope unless independently validated",
+      "phase_equilibrium_treatment": {
+        "vapor": "Omota phase/CPE framework; no separate vapor EOS correction is specified for these tabulated UNIQUAC BIPs",
+        "pure_component_correlation_ids": [
+          "dodecanoic_acid_omota",
+          "2-ethylhexyl_dodecanoate_omota"
+        ],
+        "source_note": "extended Antoine correlations are documented explicitly; interaction parameters are tied to the authors' reactive/CPE thermodynamic regression."
+      }
+    }
+  ],
+  "component_registry": {
+    "1-pentanol": {
+      "CAS": "71-41-0",
+      "UNIQUAC_rq": {
+        "r": 4.1287,
+        "q": 3.592,
+        "basis": "Poling et al. structural parameters; exact values used in the new water refit"
+      }
+    },
+    "1-hexanol": {
+      "CAS": "111-27-3",
+      "UNIQUAC_rq": {
+        "r": 4.8031,
+        "q": 4.132,
+        "basis": "exact values used in the new water refit"
+      },
+      "known_source_variants": [
+        {
+          "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+          "r": 5.2731,
+          "q": 4.748
+        }
+      ]
+    },
+    "1-octanol": {
+      "CAS": "111-87-5",
+      "UNIQUAC_rq": {
+        "r": 6.1519,
+        "q": 5.212,
+        "basis": "exact values used in the new water refit"
+      },
+      "known_source_variants": [
+        {
+          "source": "Gmehling-style group-contribution set used by Arce-family work",
+          "r": 6.6219,
+          "q": 5.828,
+          "note": "Arce et al. additionally optimized modified-UNIQUAC q' for 1-octanol to 5.50."
+        }
+      ]
+    },
+    "2-ethyl-1-hexanol": {
+      "CAS": "104-76-7",
+      "UNIQUAC_rq": {
+        "r": 6.1511,
+        "q": 5.208,
+        "basis": "Dortmund Data Bank 2023 / Matsuda et al.; also essentially Omota r=6.151 q=5.208; exact values used in new water refit"
+      },
+      "known_source_variants": [
+        {
+          "source": "Ghanadzadeh et al. 2005",
+          "r": 6.15,
+          "q": 5.02
+        }
+      ]
+    },
+    "hexyl acetate": {
+      "CAS": "142-92-7",
+      "UNIQUAC_rq": {
+        "r": 6.1762,
+        "q": 5.276,
+        "basis": "Gmehling-style group contribution; exact values used in new water refit"
+      }
+    },
+    "dodecanoic acid": {
+      "CAS": "143-07-7",
+      "UNIQUAC_rq": {
+        "r": 8.931,
+        "q": 7.472,
+        "basis": "Omota et al. 2003 Table 7"
+      }
+    },
+    "2-ethylhexyl dodecanoate": {
+      "CAS": "20292-08-4",
+      "UNIQUAC_rq": {
+        "r": 14.239,
+        "q": 11.752,
+        "basis": "Omota et al. 2003 Table 7"
+      },
+      "aliases": [
+        "2-ethylhexyl laurate"
+      ]
+    },
+    "acetone": {
+      "CAS": "67-64-1",
+      "UNIQUAC_rq": {
+        "r": 2.5735,
+        "q": 2.336,
+        "basis": "Dortmund Data Bank 2023; Matsuda et al. 2025 Table 14"
+      }
+    },
+    "ethanol": {
+      "CAS": "64-17-5",
+      "UNIQUAC_rq": {
+        "r": 2.1055,
+        "q": 1.972,
+        "basis": "Dortmund/Gmehling-style structural set; Matsuda et al. 2025 Table 14"
+      },
+      "known_source_variants": [
+        {
+          "source": "Hartanto et al. ethanol + 1-hexanol VLE",
+          "r": 2.5755,
+          "q": 2.588
+        }
+      ]
+    },
+    "1-butanol": {
+      "CAS": "71-36-3",
+      "UNIQUAC_rq": {
+        "r": 3.4543,
+        "q": 3.052,
+        "basis": "Dortmund Data Bank / Poling-style set; Matsuda et al. 2025 Table 14"
+      },
+      "known_source_variants": [
+        {
+          "source": "Ghanadzadeh et al. 2005 (rounded)",
+          "r": 3.45,
+          "q": 3.05
+        }
+      ]
+    },
+    "isobutanol": {
+      "CAS": "78-83-1",
+      "UNIQUAC_rq": {
+        "r": 3.4535,
+        "q": 3.048,
+        "basis": "Poling et al. structural parameters"
+      }
+    },
+    "tert-butanol": {
+      "CAS": "75-65-0",
+      "UNIQUAC_rq": {
+        "r": 3.45,
+        "q": 3.05,
+        "basis": "source-specific values explicitly used by Ghanadzadeh et al. 2005"
+      }
+    },
+    "cyclohexane": {
+      "CAS": "110-82-7",
+      "UNIQUAC_rq": {
+        "r": 4.0464,
+        "q": 3.24,
+        "basis": "standard group-contribution structural parameters"
+      }
+    },
+    "n-hexane": {
+      "CAS": "110-54-3",
+      "UNIQUAC_rq": {
+        "r": 4.4998,
+        "q": 3.856,
+        "basis": "standard group-contribution structural parameters"
+      }
+    },
+    "toluene": {
+      "CAS": "108-88-3",
+      "UNIQUAC_rq": {
+        "r": 3.9228,
+        "q": 2.968,
+        "basis": "standard group-contribution structural parameters"
+      }
+    },
+    "propionic acid": {
+      "CAS": "79-09-4",
+      "UNIQUAC_rq": {
+        "r": 2.8768,
+        "q": 2.612,
+        "basis": "standard group-contribution structural parameters"
+      }
+    }
+  },
+  "pure_component_correlations": {
+    "water_omota": {
+      "component": "water",
+      "type": "extended_Antoine_equivalent_DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 73.649,
+        "C2_K": -7258.2,
+        "C3": -7.3037,
+        "C4": 4.17e-06,
+        "C5": 2.0
+      },
+      "temperature_unit": "K",
+      "pressure_unit": "Pa",
+      "source": "Omota, Dimian & Bliek 2003, Table 4",
+      "note": "Omota writes A-B/(T+C)+D ln(T)+E*T^F; C=0 for water."
+    },
+    "1-pentanol_user_DIPPR101": {
+      "component": "1-pentanol",
+      "type": "DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 114.74801,
+        "C2_K": -10643.3,
+        "C3": -12.85754,
+        "C4": 1.25e-17,
+        "C5": 6.0
+      },
+      "valid_temperature_range_K": [
+        195.56,
+        588.1
+      ],
+      "source": "user-supplied DIPPR correlation"
+    },
+    "1-hexanol_user_DIPPR101": {
+      "component": "1-hexanol",
+      "type": "DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 135.42149,
+        "C2_K": -12288.40621,
+        "C3": -15.73191,
+        "C4": 1.27e-17,
+        "C5": 6.0
+      },
+      "valid_temperature_range_K": [
+        228.55,
+        611.3
+      ],
+      "source": "user-supplied DIPPR correlation"
+    },
+    "1-octanol_user_DIPPR101": {
+      "component": "1-octanol",
+      "type": "DIPPR101",
+      "equation": "ln(Psat/Pa) = C1 + C2/T + C3*ln(T) + C4*T^C5",
+      "coefficients": {
+        "C1": 144.11083,
+        "C2_K": -13667.15667,
+        "C3": -16.82611,
+        "C4": 9.37e-18,
+        "C5": 6.0
+      },
+      "valid_temperature_range_K": [
+        257.65,
+        652.3
+      ],
+      "source": "user-supplied DIPPR correlation"
+    },
+    "2-ethyl-1-hexanol_omota": {
+      "component": "2-ethyl-1-hexanol",
+      "type": "extended_Antoine",
+      "equation": "ln(Psat/Pa) = A - B/(T+C) + D*ln(T) + E*T^F",
+      "coefficients": {
+        "A": 273.62,
+        "B_K": 18766.0,
+        "C_K": 0.0,
+        "D": -36.767,
+        "E": 1.98e-05,
+        "F": 2.0
+      },
+      "reported_table_range_K": [
+        450.0,
+        608.0
+      ],
+      "source": "Omota et al. 2003, Table 4"
+    },
+    "2-ethyl-1-hexanol_ghanadzadeh": {
+      "component": "2-ethyl-1-hexanol",
+      "type": "Antoine",
+      "equation": "ln(Psat/mmHg) = A - B/(T+C)",
+      "coefficients": {
+        "A": 15.3614,
+        "B_K": 2773.46,
+        "C_K": -140.0
+      },
+      "temperature_unit": "K",
+      "pressure_unit": "mmHg",
+      "source": "Ghanadzadeh et al. 2005, Table 5"
+    },
+    "hexyl_acetate_arce1995": {
+      "component": "hexyl acetate",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 6.4606,
+        "B_degC": 1688.63,
+        "C_degC": 208.766
+      },
+      "temperature_unit": "degC",
+      "pressure_unit": "kPa",
+      "source": "Arce et al. 1995, JCED 40, Table 2"
+    },
+    "ethanol_arce": {
+      "component": "ethanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 7.16879,
+        "B_degC": 1552.601,
+        "C_degC": 222.419
+      },
+      "temperature_unit": "degC",
+      "pressure_unit": "kPa",
+      "source": "Riddick et al. constants as used by Arce et al."
+    },
+    "1-octanol_arce": {
+      "component": "1-octanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 5.88511,
+        "B_degC": 1264.322,
+        "C_degC": 130.73
+      },
+      "temperature_unit": "degC",
+      "pressure_unit": "kPa",
+      "source": "Riddick et al. constants as used by Arce et al."
+    },
+    "cyclohexane_ovejero2008": {
+      "component": "cyclohexane",
+      "type": "Antoine",
+      "equation": "ln(Psat/kPa) = A + B/(T+C)",
+      "coefficients": {
+        "A": 13.74,
+        "B_K": -2766.63,
+        "C_K": -50.5
+      },
+      "valid_temperature_range_K": [
+        280.0,
+        380.0
+      ],
+      "source": "Ovejero et al. 2008, Table 3"
+    },
+    "n-hexane_ovejero2008": {
+      "component": "n-hexane",
+      "type": "Antoine",
+      "equation": "ln(Psat/kPa) = A + B/(T+C)",
+      "coefficients": {
+        "A": 13.82,
+        "B_K": -2697.55,
+        "C_K": -48.78
+      },
+      "valid_temperature_range_K": [
+        245.0,
+        370.0
+      ],
+      "source": "Ovejero et al. 2008, Table 3"
+    },
+    "1-octanol_ovejero2008": {
+      "component": "1-octanol",
+      "type": "Antoine",
+      "equation": "ln(Psat/kPa) = A + B/(T+C)",
+      "coefficients": {
+        "A": 13.73,
+        "B_K": -3017.81,
+        "C_K": -137.1
+      },
+      "valid_temperature_range_K": [
+        343.0,
+        468.0
+      ],
+      "source": "Ovejero et al. 2008, Table 3"
+    },
+    "tert-butanol_ghanadzadeh": {
+      "component": "tert-butanol",
+      "type": "Antoine",
+      "equation": "ln(Psat/mmHg) = A - B/(T+C)",
+      "coefficients": {
+        "A": 16.8548,
+        "B_K": 2658.29,
+        "C_K": -95.5
+      },
+      "temperature_unit": "K",
+      "pressure_unit": "mmHg",
+      "source": "Ghanadzadeh et al. 2005, Table 5"
+    },
+    "1-butanol_ghanadzadeh": {
+      "component": "1-butanol",
+      "type": "Antoine",
+      "equation": "ln(Psat/mmHg) = A - B/(T+C)",
+      "coefficients": {
+        "A": 17.216,
+        "B_K": 3137.02,
+        "C_K": -94.43
+      },
+      "temperature_unit": "K",
+      "pressure_unit": "mmHg",
+      "source": "Ghanadzadeh et al. 2005, Table 5"
+    },
+    "1-pentanol_mohsen": {
+      "component": "1-pentanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/bar) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 4.39646,
+        "B_degC": 1336.01,
+        "C_degC": 166.32
+      },
+      "source": "Mohsen-Nia & Memarzadeh 2010, Table 4"
+    },
+    "propionic_acid_mohsen": {
+      "component": "propionic acid",
+      "type": "Antoine",
+      "equation": "log10(Psat/bar) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 4.75466,
+        "B_degC": 1662.582,
+        "C_degC": 209.046
+      },
+      "source": "Mohsen-Nia & Memarzadeh 2010, Table 4"
+    },
+    "acetone_matsuda": {
+      "component": "acetone",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(T+C)",
+      "coefficients": {
+        "A": 6.28028,
+        "B_K": 1231.603,
+        "C_K": -41.091
+      },
+      "source": "Matsuda et al. 2025, Table 3"
+    },
+    "ethanol_matsuda": {
+      "component": "ethanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(T+C)",
+      "coefficients": {
+        "A": 7.29043,
+        "B_K": 1630.479,
+        "C_K": -42.848
+      },
+      "source": "Matsuda et al. 2025, Table 3"
+    },
+    "1-butanol_matsuda": {
+      "component": "1-butanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(T+C)",
+      "coefficients": {
+        "A": 6.63293,
+        "B_K": 1389.635,
+        "C_K": -90.256
+      },
+      "source": "Matsuda et al. 2025, Table 3"
+    },
+    "2-ethyl-1-hexanol_matsuda": {
+      "component": "2-ethyl-1-hexanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/kPa) = A - B/(T+C)",
+      "coefficients": {
+        "A": 6.06296,
+        "B_K": 1358.827,
+        "C_K": -122.578
+      },
+      "source": "Matsuda et al. 2025, Table 3"
+    },
+    "ethanol_hartanto": {
+      "component": "ethanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/bar) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 5.33675,
+        "B_degC": 1648.22,
+        "C_degC": 230.918
+      },
+      "source": "Hartanto et al., Table 3"
+    },
+    "1-hexanol_hartanto": {
+      "component": "1-hexanol",
+      "type": "Antoine",
+      "equation": "log10(Psat/bar) = A - B/(t_C + C)",
+      "coefficients": {
+        "A": 4.18948,
+        "B_degC": 1295.59,
+        "C_degC": 152.51
+      },
+      "source": "Hartanto et al., Table 3"
+    },
+    "dodecanoic_acid_omota": {
+      "component": "dodecanoic acid",
+      "type": "extended_Antoine",
+      "equation": "ln(Psat/Pa) = A - B/(T+C) + D*ln(T) + E*T^F",
+      "coefficients": {
+        "A": 201.56,
+        "B_K": 20484.0,
+        "C_K": 0.0,
+        "D": -24.334,
+        "E": 8.06e-18,
+        "F": 6.0
+      },
+      "reported_table_range_K": [
+        450.0,
+        608.0
+      ],
+      "source": "Omota et al. 2003, Table 4"
+    },
+    "2-ethylhexyl_dodecanoate_omota": {
+      "component": "2-ethylhexyl dodecanoate",
+      "type": "extended_Antoine",
+      "equation": "ln(Psat/Pa) = A - B/(T+C)",
+      "coefficients": {
+        "A": 23.578,
+        "B_K": 6247.3,
+        "C_K": -89.281
+      },
+      "validated_temperature_range_K": [
+        450.0,
+        600.0
+      ],
+      "source": "Omota et al. 2003, Table 4 / Fig. 8"
+    }
+  }
+}

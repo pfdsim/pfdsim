@@ -81,7 +81,7 @@ INTERACTION_PARAMETERS:
 # missing liquid binaries are fitted once from UNIFDMD during initialization
 # and remain frozen for the complete reactor/condenser simulation.
 INTERACTION_ESTIMATION:
-    UNIQUAC | source=UNIFDMD, policy=missing_only, parameter_order=source, do_not_extrapolate=true, Tmin=293.15 [K], Tmax=423.15 [K]
+    UNIQUAC | source=UNIFDMD, policy=missing_only, parameter_order=source, extrapolation=clamp, Tmin=293.15 [K], Tmax=423.15 [K]
 
 # The centered Arrhenius expression is evaluated directly:
 #

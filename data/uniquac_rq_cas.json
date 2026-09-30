@@ -4,10 +4,12 @@
     "10": "111-65-9",
     "100414": "100-41-4",
     "100663": "100-66-3",
+    "104767": "104-76-7",
     "105373": "105-37-3",
     "105544": "105-54-4",
     "106423": "106-42-3",
     "106978": "106-97-8",
+    "107211": "107-21-1",
     "107926": "107-92-6",
     "108101": "108-10-1",
     "108203": "108-20-3",
@@ -40,7 +42,9 @@
     "14": "7727-37-9",
     "141786": "141-78-6",
     "142825": "142-82-5",
+    "142927": "142-92-7",
     "142961": "142-96-1",
+    "143077": "143-07-7",
     "14dioxane": "123-91-1",
     "15": "7732-18-5",
     "16": "124-38-9",
@@ -50,11 +54,12 @@
     "1903": "7697-37-2",
     "1butanol": "71-36-3",
     "1hexanol": "111-27-3",
-    "1nonanol": "111-87-5",
+    "1octanol": "111-87-5",
     "1pentanol": "71-41-0",
     "1propanol": "71-23-8",
     "2": "74-84-0",
     "20": "95-47-6",
+    "20292084": "20292-08-4",
     "21": "108-38-3",
     "22": "106-42-3",
     "23": "100-41-4",
@@ -63,6 +68,8 @@
     "27": "64-17-5",
     "28": "67-63-0",
     "2butanol": "78-92-2",
+    "2ethyl1hexanol": "104-76-7",
+    "2ethylhexyldodecanoate": "20292-08-4",
     "2methoxyethanol": "109-86-4",
     "2octanol": "123-96-6",
     "2pentanol": "6032-29-7",
@@ -74,6 +81,7 @@
     "5": "75-28-5",
     "544763": "544-76-3",
     "56235": "56-23-5",
+    "56815": "56-81-5",
     "6": "109-66-0",
     "60297": "60-29-7",
     "6032297": "6032-29-7",
@@ -103,6 +111,7 @@
     "7782447": "7782-44-7",
     "7783064": "7783-06-4",
     "78784": "78-78-4",
+    "78831": "78-83-1",
     "78922": "78-92-2",
     "78933": "78-93-3",
     "79094": "79-09-4",
@@ -139,24 +148,29 @@
     "diisopropylether": "108-20-3",
     "dimethylamine": "124-40-3",
     "dipropylether": "111-43-3",
+    "dodecanoicacid": "143-07-7",
     "ethane": "74-84-0",
     "ethanol": "64-17-5",
     "ethylacetate": "141-78-6",
     "ethylbenzene": "100-41-4",
     "ethylbutanoate": "105-54-4",
     "ethylbutyrate": "105-54-4",
+    "ethyleneglycol": "107-21-1",
     "ethyleneoxide": "75-21-8",
     "ethylformate": "109-94-4",
     "ethylpropanoate": "105-37-3",
     "ethylpropionate": "105-37-3",
     "furfural": "98-01-1",
+    "glycerol": "56-81-5",
     "heptane": "142-82-5",
     "hexadecane": "544-76-3",
     "hexane": "110-54-3",
     "hexanol": "111-27-3",
+    "hexylacetate": "142-92-7",
     "hydrogensulfide": "7783-06-4",
     "isoamylalcohol": "123-51-3",
     "isobutane": "75-28-5",
+    "isobutanol": "78-83-1",
     "isopentane": "78-78-4",
     "isopropanol": "67-63-0",
     "isopropylacetate": "108-21-4",
@@ -170,7 +184,6 @@
     "nitricacid": "7697-37-2",
     "nitrogen": "7727-37-9",
     "nonane": "111-84-2",
-    "nonanol": "111-87-5",
     "octane": "111-65-9",
     "oxygen": "7782-44-7",
     "oxylene": "95-47-6",
@@ -231,6 +244,27 @@
         }
       ],
       "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; source_exact"
+    },
+    "104-76-7": {
+      "aliases": [
+        "2-ethyl-1-hexanol",
+        "C8H18O"
+      ],
+      "cas": "104-76-7",
+      "formula": "C8H18O",
+      "name": "2-ethyl-1-hexanol",
+      "q": 5.208,
+      "r": 6.1511,
+      "records": [
+        {
+          "formula": "C8H18O",
+          "name": "2-ethyl-1-hexanol",
+          "q": 5.208,
+          "r": 6.1511,
+          "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; exact water-refit and Omota structural basis"
+        }
+      ],
+      "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; exact water-refit and Omota structural basis"
     },
     "105-37-3": {
       "aliases": [
@@ -335,6 +369,27 @@
         }
       ],
       "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "107-21-1": {
+      "aliases": [
+        "C2H6O2",
+        "ethylene glycol"
+      ],
+      "cas": "107-21-1",
+      "formula": "C2H6O2",
+      "name": "ethylene glycol",
+      "q": 2.248,
+      "r": 2.4087,
+      "records": [
+        {
+          "formula": "C2H6O2",
+          "name": "ethylene glycol",
+          "q": 2.248,
+          "r": 2.4087,
+          "source": "eg_glycerol_activity_parameters.json; Pla-Franco et al. 2015 and Zhong et al. 2014; Aspen/DECHEMA basis"
+        }
+      ],
+      "source": "eg_glycerol_activity_parameters.json; Pla-Franco et al. 2015 and Zhong et al. 2014; Aspen/DECHEMA basis"
     },
     "107-92-6": {
       "aliases": [
@@ -473,6 +528,7 @@
       "formula": "C7H8",
       "name": "Toluene",
       "q": 2.968,
+      "q_prime": 1.114926889191602,
       "r": 3.9228,
       "records": [
         {
@@ -619,6 +675,7 @@
       "formula": "C3H6O2",
       "name": "Ethyl formate",
       "q": 2.576,
+      "q_prime": 1.099245220191554,
       "r": 2.8042,
       "records": [
         {
@@ -705,6 +762,7 @@
       "formula": "C6H12",
       "name": "Cyclohexane",
       "q": 3.24,
+      "q_prime": 1.1247461131420948,
       "r": 4.0464,
       "records": [
         {
@@ -727,14 +785,15 @@
     "111-27-3": {
       "aliases": [
         "1-Hexanol",
+        "1-hexanol",
         "C6H14O",
         "N-hexanol"
       ],
       "cas": "111-27-3",
       "formula": "C6H14O",
-      "name": "1-Hexanol",
+      "name": "1-hexanol",
       "q": 4.132,
-      "r": 4.8029,
+      "r": 4.8031,
       "records": [
         {
           "formula": "C6H14O",
@@ -749,9 +808,16 @@
           "q": 4.132,
           "r": 4.8029,
           "source": "User-provided paper"
+        },
+        {
+          "formula": "C6H14O",
+          "name": "1-hexanol",
+          "q": 4.132,
+          "r": 4.8031,
+          "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; standard water-refit basis plus Hartanto original-UNIFAC basis"
         }
       ],
-      "source": "User-provided paper"
+      "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; standard water-refit basis plus Hartanto original-UNIFAC basis"
     },
     "111-43-3": {
       "aliases": [
@@ -821,32 +887,25 @@
     },
     "111-87-5": {
       "aliases": [
-        "1-Nonanol",
-        "C9H20O",
-        "N-nonanol"
+        "1-octanol",
+        "C8H18O"
       ],
       "cas": "111-87-5",
-      "formula": "C9H20O",
-      "name": "1-Nonanol",
-      "q": 5.828,
-      "r": 6.622,
+      "formula": "C8H18O",
+      "name": "1-octanol",
+      "q": 5.212,
+      "q_prime": 5.5,
+      "r": 6.1519,
       "records": [
         {
-          "formula": "C9H20O",
-          "name": "1-Nonanol",
-          "q": 5.828,
-          "r": 6.622,
-          "source": "User-provided paper"
-        },
-        {
-          "formula": "C9H20O",
-          "name": "N-nonanol",
-          "q": 5.828,
-          "r": 6.622,
-          "source": "User-provided paper"
+          "formula": "C8H18O",
+          "name": "1-octanol",
+          "q": 5.212,
+          "r": 6.1519,
+          "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; standard water-refit basis plus Arce et al. 1996 modified-UNIQUAC basis"
         }
       ],
-      "source": "User-provided paper"
+      "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; standard water-refit basis plus Arce et al. 1996 modified-UNIQUAC basis"
     },
     "121-44-8": {
       "aliases": [
@@ -921,6 +980,7 @@
       "formula": "C4H8O2",
       "name": "1,4-Dioxane",
       "q": 2.64,
+      "q_prime": 1.1019462027587548,
       "r": 3.1854,
       "records": [
         {
@@ -1044,6 +1104,7 @@
       "formula": "C4H8O2",
       "name": "Ethyl acetate",
       "q": 3.1159,
+      "q_prime": 1.1203655464337905,
       "r": 3.4789,
       "records": [
         {
@@ -1088,6 +1149,7 @@
       "formula": "C7H16",
       "name": "N-heptane",
       "q": 4.396,
+      "q_prime": 1.1595934895470186,
       "r": 5.1742,
       "records": [
         {
@@ -1108,6 +1170,27 @@
       ],
       "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
     },
+    "142-92-7": {
+      "aliases": [
+        "C8H16O2",
+        "hexyl acetate"
+      ],
+      "cas": "142-92-7",
+      "formula": "C8H16O2",
+      "name": "hexyl acetate",
+      "q": 5.276,
+      "r": 6.1762,
+      "records": [
+        {
+          "formula": "C8H16O2",
+          "name": "hexyl acetate",
+          "q": 5.276,
+          "r": 6.1762,
+          "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; exact water-refit structural basis"
+        }
+      ],
+      "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; exact water-refit structural basis"
+    },
     "142-96-1": {
       "aliases": [
         "dibutyl ether"
@@ -1127,6 +1210,48 @@
         }
       ],
       "source": "assorted_alcohols_ethers.json; recommended UNIQUAC structural basis; defensible-zero structural basis"
+    },
+    "143-07-7": {
+      "aliases": [
+        "C12H24O2",
+        "dodecanoic acid"
+      ],
+      "cas": "143-07-7",
+      "formula": "C12H24O2",
+      "name": "dodecanoic acid",
+      "q": 7.472,
+      "r": 8.931,
+      "records": [
+        {
+          "formula": "C12H24O2",
+          "name": "dodecanoic acid",
+          "q": 7.472,
+          "r": 8.931,
+          "source": "water_nonwater_binary_parameters_curated.json; Omota et al. 2003 Table 7"
+        }
+      ],
+      "source": "water_nonwater_binary_parameters_curated.json; Omota et al. 2003 Table 7"
+    },
+    "20292-08-4": {
+      "aliases": [
+        "2-ethylhexyl dodecanoate",
+        "C20H40O2"
+      ],
+      "cas": "20292-08-4",
+      "formula": "C20H40O2",
+      "name": "2-ethylhexyl dodecanoate",
+      "q": 11.752,
+      "r": 14.239,
+      "records": [
+        {
+          "formula": "C20H40O2",
+          "name": "2-ethylhexyl dodecanoate",
+          "q": 11.752,
+          "r": 14.239,
+          "source": "water_nonwater_binary_parameters_curated.json; Omota et al. 2003 Table 7"
+        }
+      ],
+      "source": "water_nonwater_binary_parameters_curated.json; Omota et al. 2003 Table 7"
     },
     "544-76-3": {
       "aliases": [
@@ -1177,6 +1302,27 @@
         }
       ],
       "source": "UNIFAC Consortium Exact Component"
+    },
+    "56-81-5": {
+      "aliases": [
+        "C3H8O3",
+        "glycerol"
+      ],
+      "cas": "56-81-5",
+      "formula": "C3H8O3",
+      "name": "glycerol",
+      "q": 4.908,
+      "r": 4.7957,
+      "records": [
+        {
+          "formula": "C3H8O3",
+          "name": "glycerol",
+          "q": 4.908,
+          "r": 4.7957,
+          "source": "eg_glycerol_activity_parameters.json; Zaoui et al. 2014; Wiguno et al. 2016; Mustain et al. 2022"
+        }
+      ],
+      "source": "eg_glycerol_activity_parameters.json; Zaoui et al. 2014; Wiguno et al. 2016; Mustain et al. 2022"
     },
     "60-29-7": {
       "aliases": [
@@ -1253,7 +1399,8 @@
         "27",
         "C2H5OH",
         "C2H6O",
-        "Ethanol"
+        "Ethanol",
+        "ethanol"
       ],
       "cas": "64-17-5",
       "extended_uniquac": {
@@ -1270,8 +1417,9 @@
         "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
       },
       "formula": "C2H6O",
-      "name": "Ethanol",
+      "name": "ethanol",
       "q": 1.972,
+      "q_prime": 0.92,
       "r": 2.1055,
       "records": [
         {
@@ -1291,13 +1439,20 @@
         },
         {
           "formula": "C2H6O",
+          "name": "ethanol",
+          "q": 1.972,
+          "r": 2.1055,
+          "source": "water_nonwater_binary_parameters_curated.json; Arce et al. 1996 / Anderson and Prausnitz 1978 structural basis"
+        },
+        {
+          "formula": "C2H6O",
           "name": "Ethanol",
           "q": 1.972,
           "r": 2.1055,
           "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
         }
       ],
-      "source": "ethanol_water_interactions.json; Voutsas et al. (2011) UNIQUAC structural basis"
+      "source": "water_nonwater_binary_parameters_curated.json; Arce et al. 1996 / Anderson and Prausnitz 1978 structural basis"
     },
     "64-19-7": {
       "aliases": [
@@ -1344,6 +1499,7 @@
       "formula": "CH3OH",
       "name": "Methanol",
       "q": 1.43,
+      "q_prime": 0.95,
       "r": 1.43,
       "records": [
         {
@@ -1389,6 +1545,7 @@
       "formula": "C3H7OH",
       "name": "Isopropanol",
       "q": 2.51,
+      "q_prime": 0.89,
       "r": 2.78,
       "records": [
         {
@@ -1481,6 +1638,7 @@
       "formula": "C3H8O",
       "name": "1-Propanol",
       "q": 2.513,
+      "q_prime": 0.89,
       "r": 2.78,
       "records": [
         {
@@ -1510,6 +1668,7 @@
     "71-36-3": {
       "aliases": [
         "1-Butanol",
+        "1-butanol",
         "C4H10O",
         "C4H9OH",
         "N-butanol"
@@ -1528,10 +1687,11 @@
         "r": 3.4543,
         "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
       },
-      "formula": "C4H9OH",
-      "name": "1-Butanol",
-      "q": 3.048,
-      "r": 3.4542,
+      "formula": "C4H10O",
+      "name": "1-butanol",
+      "q": 3.052,
+      "q_prime": 0.88,
+      "r": 3.4543,
       "records": [
         {
           "formula": "C4H9OH",
@@ -1549,25 +1709,40 @@
         },
         {
           "formula": "C4H10O",
+          "name": "1-butanol",
+          "q": 3.052,
+          "r": 3.4543,
+          "source": "water_nonwater_binary_parameters_curated.json; Matsuda et al. 2025 Table 14 structural basis"
+        },
+        {
+          "formula": "C4H10O",
+          "name": "1-butanol",
+          "q": 3.052,
+          "r": 3.4543,
+          "source": "eg_glycerol_activity_parameters.json; Matsuda et al. 2025 standard basis; Mustain et al. 2022 source basis"
+        },
+        {
+          "formula": "C4H10O",
           "name": "1-Butanol",
           "q": 3.052,
           "r": 3.4543,
           "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
         }
       ],
-      "source": "User-provided paper"
+      "source": "water_nonwater_binary_parameters_curated.json; Matsuda et al. 2025 Table 14 structural basis"
     },
     "71-41-0": {
       "aliases": [
         "1-Pentanol",
+        "1-pentanol",
         "C5H12O",
         "n-Pentanol"
       ],
       "cas": "71-41-0",
       "formula": "C5H12O",
-      "name": "1-Pentanol",
+      "name": "1-pentanol",
       "q": 3.592,
-      "r": 4.129,
+      "r": 4.1287,
       "records": [
         {
           "formula": "C5H12O",
@@ -1582,9 +1757,16 @@
           "q": 3.592,
           "r": 4.129,
           "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        },
+        {
+          "formula": "C5H12O",
+          "name": "1-pentanol",
+          "q": 3.592,
+          "r": 4.1287,
+          "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; exact water-refit structural basis"
         }
       ],
-      "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+      "source": "water_nonwater_binary_parameters_curated.json; water_binary_parameters_v2.json; exact water-refit structural basis"
     },
     "71-43-2": {
       "aliases": [
@@ -1610,6 +1792,7 @@
       "formula": "C6H6",
       "name": "Benzene",
       "q": 2.4,
+      "q_prime": 1.091493425617897,
       "r": 3.1878,
       "records": [
         {
@@ -1723,6 +1906,7 @@
       "formula": "CH3CN",
       "name": "Acetonitrile",
       "q": 1.72,
+      "q_prime": 1.0559752180195185,
       "r": 1.87,
       "records": [
         {
@@ -1885,12 +2069,14 @@
       "aliases": [
         "15",
         "H2O",
-        "Water"
+        "Water",
+        "water"
       ],
       "cas": "7732-18-5",
       "formula": "H2O",
-      "name": "Water",
+      "name": "water",
       "q": 1.4,
+      "q_prime": 1.0,
       "r": 0.92,
       "records": [
         {
@@ -1907,9 +2093,16 @@
           "q": 1.4,
           "r": 0.92,
           "source": "water_organic_binary_fits.json; curated UNIQUAC database structural parameters"
+        },
+        {
+          "formula": "H2O",
+          "name": "water",
+          "q": 1.4,
+          "r": 0.92,
+          "source": "water_nonwater_binary_parameters_curated.json; Arce et al. 1996 / Anderson and Prausnitz 1978 structural basis"
         }
       ],
-      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+      "source": "water_nonwater_binary_parameters_curated.json; Arce et al. 1996 / Anderson and Prausnitz 1978 structural basis"
     },
     "7782-44-7": {
       "aliases": [
@@ -1979,6 +2172,34 @@
         }
       ],
       "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+    },
+    "78-83-1": {
+      "aliases": [
+        "C4H10O",
+        "isobutanol"
+      ],
+      "cas": "78-83-1",
+      "formula": "C4H10O",
+      "name": "isobutanol",
+      "q": 3.048,
+      "r": 3.4535,
+      "records": [
+        {
+          "formula": "C4H10O",
+          "name": "isobutanol",
+          "q": 3.048,
+          "r": 3.4535,
+          "source": "water_nonwater_binary_parameters_curated.json; nonwater_binary_parameters_v2.json component registry"
+        },
+        {
+          "formula": "C4H10O",
+          "name": "isobutanol",
+          "q": 3.048,
+          "r": 3.4535,
+          "source": "eg_glycerol_activity_parameters.json; existing PFDSim standard basis; Mustain et al. 2022 source basis"
+        }
+      ],
+      "source": "water_nonwater_binary_parameters_curated.json; nonwater_binary_parameters_v2.json component registry"
     },
     "78-92-2": {
       "aliases": [
@@ -2089,6 +2310,7 @@
       "formula": "C3H6O2",
       "name": "Methyl acetate",
       "q": 2.576,
+      "q_prime": 1.099245220191554,
       "r": 2.8042,
       "records": [
         {
@@ -2199,18 +2421,20 @@
   "metadata": {
     "ambiguous_alias_count": 0,
     "ambiguous_aliases": [],
-    "component_count": 73,
+    "component_count": 80,
     "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
     "key_basis": "CAS",
     "source_files": [
-      "data/source/dwsim_uniquac_combinatorial_parameters.csv",
-      "data/source/water_ethylene_oxide_interactions.json",
-      "data/source/water_organic_binary_fits.json",
-      "data/source/mibk_water_acids_vle.json",
-      "data/source/ethanol_water_interactions.json",
-      "data/source/nagata_gmehling_extended_uniquac_rq.json",
-      "data/source/ester_uniquac_combinatorial_parameters.json",
-      "data/source/assorted_alcohols_ethers.json"
+      "data/source/activity_fitting/dwsim_uniquac_combinatorial_parameters.csv",
+      "data/source/activity_fitting/water_ethylene_oxide_interactions.json",
+      "data/source/activity_fitting/water_organic_binary_fits.json",
+      "data/source/activity_fitting/mibk_water_acids_vle.json",
+      "data/source/activity_fitting/ethanol_water_interactions.json",
+      "data/source/activity_fitting/nagata_gmehling_extended_uniquac_rq.json",
+      "data/source/activity_fitting/ester_uniquac_combinatorial_parameters.json",
+      "data/source/activity_fitting/assorted_alcohols_ethers.json",
+      "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
+      "data/source/activity_fitting/eg_glycerol_activity_parameters.json"
     ]
   }
 }

@@ -293,6 +293,12 @@ class CanonicalVaporPressureResolutionTests(unittest.TestCase):
                 json.loads(row["metadata_json"])["domain_selection"]["basis"],
                 first_runtime.curve.metadata["domain_selection"]["basis"],
             )
+            self.assertEqual(
+                json.loads(row["metadata_json"])["handoff_decisions"],
+                json.loads(first_resolver._canonical_cache_json(
+                    first_runtime.curve.metadata["handoff_decisions"]
+                )),
+            )
 
             second_resolver = PropertyResolver()
             second_resolver.CANONICAL_PSAT_CACHE_PATH = path

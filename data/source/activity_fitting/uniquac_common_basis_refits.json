@@ -1,0 +1,5328 @@
+{
+  "analyses": {
+    "butanol_glycerol": {
+      "HOC_parameters": [],
+      "active_runtime_validation": {
+        "method": "UNIQUAC",
+        "point_count": 27,
+        "pressure_closure_percent": {
+          "MAE": 2.275869074817,
+          "MaxAE": 5.723465613597,
+          "RMSE": 2.936016295216,
+          "bias": -0.665846564482
+        },
+        "property_basis": "Canonical runtime Psat and the selected runtime vapor backend",
+        "warnings": []
+      },
+      "caloric_diagnostics_over_calibration_range": {
+        "excess_Cp_J_mol_K_range": [
+          8.2732456e-05,
+          1.885326762628
+        ],
+        "excess_enthalpy_J_mol_range": [
+          0.239408875886,
+          860.721705359472
+        ],
+        "note": "Diagnostics only; no excess-enthalpy or heat-capacity measurements constrain these fits"
+      },
+      "candidates": [
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [],
+          "constrained_optimizer_iterations": null,
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.184764568896,
+              "MaxAE": 0.438643626924,
+              "RMSE": 0.238376818546,
+              "bias": -0.086923372243
+            },
+            "pressure_percent": {
+              "MAE": 2.474989220303,
+              "MaxAE": 6.240838983839,
+              "RMSE": 3.170056155709,
+              "bias": -1.321670531715
+            }
+          },
+          "fit_including_pure_endpoints": {
+            "pressure_kPa": {
+              "MAE": 0.173274697764,
+              "MaxAE": 0.438643626924,
+              "RMSE": 0.227228678927,
+              "bias": -0.085217620777
+            },
+            "pressure_percent": {
+              "MAE": 2.295852308725,
+              "MaxAE": 6.240838983839,
+              "RMSE": 3.015581026047,
+              "bias": -1.257865488996
+            }
+          },
+          "form": "B_over_T",
+          "jacobian_condition": 14.742096412026,
+          "jacobian_singular_values": [
+            67.142737299171,
+            4.554490448482
+          ],
+          "minimum_total_G_over_RT_curvature": 0.47647280882,
+          "objective_sum_squares": 1.534234705744,
+          "optimizer_values": [
+            0.17122009986,
+            -0.705294580034
+          ],
+          "parameters": [
+            0.0,
+            57.898076767546,
+            0.0,
+            -238.495362238609
+          ],
+          "reference_temperature_K": 338.15,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 0.47647280882,
+          "unconstrained_nfev": 11,
+          "unconstrained_objective_sum_squares": 1.534234705744,
+          "unconstrained_optimizer_optimality": 9.18633e-06,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 333.15,
+                "Tmin_K": 333.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  65.831577270187,
+                  0.0,
+                  -250.426146275451
+                ]
+              },
+              {
+                "Tmax_K": 338.15,
+                "Tmin_K": 338.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  67.678075548567,
+                  0.0,
+                  -253.636318970668
+                ]
+              },
+              {
+                "Tmax_K": 343.15,
+                "Tmin_K": 343.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  29.949743180562,
+                  0.0,
+                  -198.601154592067
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.237334434766,
+              "MaxAE": 0.540092212724,
+              "RMSE": 0.295998137317,
+              "bias": -0.073245704356
+            }
+          }
+        },
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [],
+          "constrained_optimizer_iterations": null,
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.175201314774,
+              "MaxAE": 0.391946614641,
+              "RMSE": 0.203532797567,
+              "bias": -0.072129814142
+            },
+            "pressure_percent": {
+              "MAE": 2.472061709615,
+              "MaxAE": 9.647300918275,
+              "RMSE": 3.119590017504,
+              "bias": -1.051381416255
+            }
+          },
+          "form": "A_plus_B_over_T",
+          "jacobian_condition": 1199.741051805187,
+          "jacobian_singular_values": [
+            67.436706532182,
+            5.39922859745,
+            0.643675180201,
+            0.056209384876
+          ],
+          "minimum_total_G_over_RT_curvature": 0.422328758723,
+          "objective_sum_squares": 1.118491191511,
+          "optimizer_values": [
+            0.139169065745,
+            -6.321308704955,
+            -0.663518069513,
+            8.704871641709
+          ],
+          "parameters": [
+            6.4604777707,
+            -2137.550538580496,
+            -9.368389711222,
+            2943.552345643747
+          ],
+          "reference_temperature_K": 338.15,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 0.422328758723,
+          "unconstrained_nfev": 12,
+          "unconstrained_objective_sum_squares": 1.118491191511,
+          "unconstrained_optimizer_optimality": 6.632029e-06,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 333.15,
+                "Tmin_K": 333.15,
+                "count": 9,
+                "parameters": [
+                  9.745617560223,
+                  -3260.701909309998,
+                  -14.78686199071,
+                  4795.276574672662
+                ]
+              },
+              {
+                "Tmax_K": 338.15,
+                "Tmin_K": 338.15,
+                "count": 9,
+                "parameters": [
+                  6.145816260224,
+                  -2025.430097116218,
+                  -9.034749830149,
+                  2821.439293543506
+                ]
+              },
+              {
+                "Tmax_K": 343.15,
+                "Tmin_K": 343.15,
+                "count": 9,
+                "parameters": [
+                  2.54599671078,
+                  -826.150105980675,
+                  -3.28261245794,
+                  905.114576803805
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.203673406386,
+              "MaxAE": 0.662150050044,
+              "RMSE": 0.268033347538,
+              "bias": -0.082633127603
+            }
+          }
+        }
+      ],
+      "current_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "pressure_kPa": {
+            "MAE": 0.184764568896,
+            "MaxAE": 0.438643626924,
+            "RMSE": 0.238376818546,
+            "bias": -0.086923372243
+          },
+          "pressure_percent": {
+            "MAE": 2.474989220303,
+            "MaxAE": 6.240838983839,
+            "RMSE": 3.170056155709,
+            "bias": -1.321670531715
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          57.898076767546,
+          0.0,
+          -238.495362238609
+        ],
+        "structure": {
+          "q": [
+            3.052,
+            4.908
+          ],
+          "q_residual": [
+            3.052,
+            4.908
+          ],
+          "r": [
+            3.4543,
+            4.7957
+          ]
+        }
+      },
+      "definition": {
+        "cas": [
+          "71-36-3",
+          "56-81-5"
+        ],
+        "components": [
+          "1-butanol",
+          "glycerol"
+        ],
+        "extrapolation": "unrestricted",
+        "kind": "isothermal",
+        "objective": "absolute pressure residuals in kPa (source objective)",
+        "paper": "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle.pdf",
+        "psat": [
+          {
+            "A": 4.6493,
+            "B": 1395.14,
+            "C": 182.739,
+            "base": "log10",
+            "pressure_factor": 100.0
+          },
+          {
+            "A": 10.619,
+            "B": 4487.04,
+            "C": 132.95,
+            "base": "ln",
+            "pressure_factor": 100.0
+          }
+        ],
+        "rows": [
+          {
+            "P_kPa": 3.38,
+            "T_K": 333.15,
+            "x1": 0.0984
+          },
+          {
+            "P_kPa": 4.25,
+            "T_K": 338.15,
+            "x1": 0.0984
+          },
+          {
+            "P_kPa": 5.64,
+            "T_K": 343.15,
+            "x1": 0.0984
+          },
+          {
+            "P_kPa": 4.93,
+            "T_K": 333.15,
+            "x1": 0.2011
+          },
+          {
+            "P_kPa": 6.39,
+            "T_K": 338.15,
+            "x1": 0.2011
+          },
+          {
+            "P_kPa": 8.26,
+            "T_K": 343.15,
+            "x1": 0.2011
+          },
+          {
+            "P_kPa": 5.59,
+            "T_K": 333.15,
+            "x1": 0.2988
+          },
+          {
+            "P_kPa": 7.19,
+            "T_K": 338.15,
+            "x1": 0.2988
+          },
+          {
+            "P_kPa": 9.06,
+            "T_K": 343.15,
+            "x1": 0.2988
+          },
+          {
+            "P_kPa": 6.13,
+            "T_K": 333.15,
+            "x1": 0.4002
+          },
+          {
+            "P_kPa": 7.99,
+            "T_K": 338.15,
+            "x1": 0.4002
+          },
+          {
+            "P_kPa": 9.86,
+            "T_K": 343.15,
+            "x1": 0.4002
+          },
+          {
+            "P_kPa": 6.39,
+            "T_K": 333.15,
+            "x1": 0.5
+          },
+          {
+            "P_kPa": 8.26,
+            "T_K": 338.15,
+            "x1": 0.5
+          },
+          {
+            "P_kPa": 10.39,
+            "T_K": 343.15,
+            "x1": 0.5
+          },
+          {
+            "P_kPa": 6.79,
+            "T_K": 333.15,
+            "x1": 0.6014
+          },
+          {
+            "P_kPa": 8.61,
+            "T_K": 338.15,
+            "x1": 0.6014
+          },
+          {
+            "P_kPa": 10.85,
+            "T_K": 343.15,
+            "x1": 0.6014
+          },
+          {
+            "P_kPa": 7.06,
+            "T_K": 333.15,
+            "x1": 0.7
+          },
+          {
+            "P_kPa": 9.06,
+            "T_K": 338.15,
+            "x1": 0.7
+          },
+          {
+            "P_kPa": 11.19,
+            "T_K": 343.15,
+            "x1": 0.7
+          },
+          {
+            "P_kPa": 7.22,
+            "T_K": 333.15,
+            "x1": 0.7996
+          },
+          {
+            "P_kPa": 9.43,
+            "T_K": 338.15,
+            "x1": 0.7996
+          },
+          {
+            "P_kPa": 11.67,
+            "T_K": 343.15,
+            "x1": 0.7996
+          },
+          {
+            "P_kPa": 7.62,
+            "T_K": 333.15,
+            "x1": 0.8948
+          },
+          {
+            "P_kPa": 9.7,
+            "T_K": 338.15,
+            "x1": 0.8948
+          },
+          {
+            "P_kPa": 12.34,
+            "T_K": 343.15,
+            "x1": 0.8948
+          },
+          {
+            "P_kPa": 8.05,
+            "T_K": 333.15,
+            "x1": 1.0
+          },
+          {
+            "P_kPa": 10.48,
+            "T_K": 338.15,
+            "x1": 1.0
+          },
+          {
+            "P_kPa": 13.54,
+            "T_K": 343.15,
+            "x1": 1.0
+          }
+        ],
+        "source_doi": "10.1021/acs.jced.1c00937",
+        "source_parameters": [
+          0.0,
+          6.53078887882,
+          0.0,
+          -161.092792344227
+        ],
+        "source_q": [
+          3.668,
+          4.908
+        ],
+        "source_q_residual": [
+          3.668,
+          4.908
+        ],
+        "source_r": [
+          3.9243,
+          4.7957
+        ],
+        "supporting_information": "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle-supporting-information.pdf",
+        "table": "Table 2; SI Tables S2-S3",
+        "vapor": "IDEAL"
+      },
+      "interaction": {
+        "Tmax_K": 343.15,
+        "Tmin_K": 333.15,
+        "cas1": "71-36-3",
+        "cas2": "56-81-5",
+        "comment": "butanol_glycerol: ordinary UNIQUAC binary-data refit; vapor=IDEAL",
+        "component1": "1-butanol",
+        "component2": "glycerol",
+        "extrapolation": "unrestricted",
+        "fit_evidence": {
+          "analysis_key": "butanol_glycerol",
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.184764568896,
+              "MaxAE": 0.438643626924,
+              "RMSE": 0.238376818546,
+              "bias": -0.086923372243
+            },
+            "pressure_percent": {
+              "MAE": 2.474989220303,
+              "MaxAE": 6.240838983839,
+              "RMSE": 3.170056155709,
+              "bias": -1.321670531715
+            }
+          },
+          "held_out_validation": {
+            "folds": [
+              {
+                "Tmax_K": 333.15,
+                "Tmin_K": 333.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  65.831577270187,
+                  0.0,
+                  -250.426146275451
+                ]
+              },
+              {
+                "Tmax_K": 338.15,
+                "Tmin_K": 338.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  67.678075548567,
+                  0.0,
+                  -253.636318970668
+                ]
+              },
+              {
+                "Tmax_K": 343.15,
+                "Tmin_K": 343.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  29.949743180562,
+                  0.0,
+                  -198.601154592067
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.237334434766,
+              "MaxAE": 0.540092212724,
+              "RMSE": 0.295998137317,
+              "bias": -0.073245704356
+            }
+          },
+          "minimum_total_G_over_RT_curvature": 0.47647280882,
+          "mixture_point_count": 27,
+          "quality_flags": [],
+          "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+          "selected_form": "B_over_T",
+          "source_vapor_model": "IDEAL"
+        },
+        "fit_quality_flags": [],
+        "fit_status": "recommended_common_basis_refit",
+        "model": "UNIQUAC",
+        "model_variant": "standard_uniquac",
+        "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1021/acs.jced.1c00937",
+        "source_doi": "10.1021/acs.jced.1c00937",
+        "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+        "tau12_a": 0.0,
+        "tau12_b": 57.898076767546,
+        "tau21_a": 0.0,
+        "tau21_b": -238.495362238609,
+        "use_q_prime": false
+      },
+      "interior_point_count": 27,
+      "physical_property_inputs": {},
+      "provider_warnings": [],
+      "published_fit_on_source_structure": {
+        "pressure_kPa": {
+          "MAE": 0.184606526965,
+          "MaxAE": 0.521181583061,
+          "RMSE": 0.245201382506,
+          "bias": -0.048435974901
+        },
+        "pressure_percent": {
+          "MAE": 2.403729590307,
+          "MaxAE": 6.121391873531,
+          "RMSE": 3.122937898877,
+          "bias": -0.667589208934
+        }
+      },
+      "pure_endpoint_count": 3,
+      "pure_pressure_correlation_endpoint_percent": {
+        "MAE": 0.683620104525,
+        "MaxAE": 0.913607494346,
+        "RMSE": 0.702840645824,
+        "bias": -0.683620104525
+      },
+      "quality_flags": [],
+      "reference_sha256": {
+        "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle-supporting-information.pdf": "a2d3238f38d6430eef8f11edff5d74f152bf82b413ae07a296d5ba934a812ded",
+        "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle.pdf": "d3633f9239f7a1c79488bfab976c25c65139c661a6b0575855fe6d6ac7b25a33"
+      },
+      "selected_form": "B_over_T",
+      "selection_rule": "A+B/T requires at least 10% lower held-out objective RMSE and no active coefficient bound; otherwise B/T",
+      "standard_structure": {
+        "1-butanol": {
+          "q": 3.052,
+          "r": 3.4543
+        },
+        "glycerol": {
+          "q": 4.908,
+          "r": 4.7957
+        }
+      },
+      "superseded_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "pressure_kPa": {
+            "MAE": 0.184606526957,
+            "MaxAE": 0.521181582801,
+            "RMSE": 0.245201382473,
+            "bias": -0.048435975019
+          },
+          "pressure_percent": {
+            "MAE": 2.403729590157,
+            "MaxAE": 6.12139187399,
+            "RMSE": 3.122937898638,
+            "bias": -0.667589210722
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          6.53078888,
+          0.0,
+          -161.09279234
+        ],
+        "structure": {
+          "q": [
+            3.668,
+            4.908
+          ],
+          "q_residual": [
+            3.668,
+            4.908
+          ],
+          "r": [
+            3.9243,
+            4.7957
+          ]
+        }
+      },
+      "unchanged_parameters_on_standard_structure": {
+        "pressure_kPa": {
+          "MAE": 0.260764038257,
+          "MaxAE": 0.913692531398,
+          "RMSE": 0.327818802575,
+          "bias": -0.086754674136
+        },
+        "pressure_percent": {
+          "MAE": 3.919324954193,
+          "MaxAE": 16.200222187904,
+          "RMSE": 5.640364698674,
+          "bias": -2.04417369573
+        }
+      },
+      "virial_matrices_at_observation_temperatures_m3_per_mol": {}
+    },
+    "ethanol_glycerol": {
+      "HOC_parameters": [],
+      "active_runtime_validation": {
+        "method": "UNIQUAC-BV",
+        "point_count": 72,
+        "pressure_closure_percent": {
+          "MAE": 3.43087186724,
+          "MaxAE": 11.390024544371,
+          "RMSE": 4.284344088,
+          "bias": 0.818618798882
+        },
+        "property_basis": "Canonical runtime Psat and the selected runtime vapor backend",
+        "warnings": [
+          "Second cross-virial coefficients use k_ij=0 where no published binary or family rule was resolved: ethanol/glycerol.",
+          "Liquid molar volume for glycerol (Glycerol) was evaluated outside the in-range density correlation for the gamma-phi Poynting correction (extrapolated from nearest correlation boundary T=293.1 K to T=273.1 K).",
+          "Liquid molar volume for glycerol (Glycerol) was evaluated outside the in-range density correlation for the gamma-phi Poynting correction (extrapolated from nearest correlation boundary T=293.1 K to T=283.1 K)."
+        ]
+      },
+      "caloric_diagnostics_over_calibration_range": {
+        "excess_Cp_J_mol_K_range": [
+          0.001087594843,
+          10.242829885898
+        ],
+        "excess_enthalpy_J_mol_range": [
+          0.14633548474,
+          1667.768627230225
+        ],
+        "note": "Diagnostics only; no excess-enthalpy or heat-capacity measurements constrain these fits"
+      },
+      "candidates": [
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [],
+          "constrained_optimizer_iterations": null,
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 1.204841530229,
+              "MaxAE": 12.273362492521,
+              "RMSE": 2.428299688521,
+              "bias": 0.839470200659
+            },
+            "pressure_percent": {
+              "MAE": 4.448844283912,
+              "MaxAE": 17.640224348225,
+              "RMSE": 5.430994284642,
+              "bias": 0.988298118059
+            }
+          },
+          "form": "B_over_T",
+          "jacobian_condition": 12.26094240561,
+          "jacobian_singular_values": [
+            12.882866366411,
+            1.05072399333
+          ],
+          "minimum_total_G_over_RT_curvature": 1.33256878525,
+          "objective_sum_squares": 0.212369032223,
+          "optimizer_values": [
+            0.193530963563,
+            -0.833513443928
+          ],
+          "parameters": [
+            0.0,
+            60.604221239652,
+            0.0,
+            -261.014734966051
+          ],
+          "reference_temperature_K": 313.15,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 1.33256878525,
+          "unconstrained_nfev": 11,
+          "unconstrained_objective_sum_squares": 0.212369032223,
+          "unconstrained_optimizer_optimality": 1.04189e-06,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 273.15,
+                "Tmin_K": 273.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  69.662279312747,
+                  0.0,
+                  -273.00418977316
+                ]
+              },
+              {
+                "Tmax_K": 283.15,
+                "Tmin_K": 283.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  66.383645376015,
+                  0.0,
+                  -268.541874506126
+                ]
+              },
+              {
+                "Tmax_K": 293.15,
+                "Tmin_K": 293.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  63.707444830202,
+                  0.0,
+                  -264.993551448266
+                ]
+              },
+              {
+                "Tmax_K": 303.15,
+                "Tmin_K": 303.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  61.489834370843,
+                  0.0,
+                  -262.093340069108
+                ]
+              },
+              {
+                "Tmax_K": 313.15,
+                "Tmin_K": 313.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  59.661094093566,
+                  0.0,
+                  -259.741188410488
+                ]
+              },
+              {
+                "Tmax_K": 323.15,
+                "Tmin_K": 323.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  58.153641458039,
+                  0.0,
+                  -257.832849930972
+                ]
+              },
+              {
+                "Tmax_K": 333.15,
+                "Tmin_K": 333.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  56.911021470875,
+                  0.0,
+                  -256.279758487246
+                ]
+              },
+              {
+                "Tmax_K": 343.15,
+                "Tmin_K": 343.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  55.890695396712,
+                  0.0,
+                  -255.015890790434
+                ]
+              },
+              {
+                "Tmax_K": 353.15,
+                "Tmin_K": 353.15,
+                "count": 8,
+                "parameters": [
+                  0.0,
+                  55.057032071984,
+                  0.0,
+                  -253.98815596461
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.046675905914,
+              "MaxAE": 0.18173672148,
+              "RMSE": 0.056957170275,
+              "bias": 0.008998956331
+            }
+          }
+        },
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [],
+          "constrained_optimizer_iterations": null,
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.886459123868,
+              "MaxAE": 7.283730792143,
+              "RMSE": 1.719808262941,
+              "bias": 0.234071134384
+            },
+            "pressure_percent": {
+              "MAE": 3.419814234848,
+              "MaxAE": 10.88324544698,
+              "RMSE": 4.293367317086,
+              "bias": 0.668399157317
+            }
+          },
+          "fit_including_pure_endpoints": {
+            "pressure_kPa": {
+              "MAE": 0.762782487293,
+              "MaxAE": 7.283730792173,
+              "RMSE": 1.592277536526,
+              "bias": 0.201212914354
+            },
+            "pressure_percent": {
+              "MAE": 3.332357103062,
+              "MaxAE": 20.140539931119,
+              "RMSE": 4.617957337342,
+              "bias": 0.660253691738
+            }
+          },
+          "form": "A_plus_B_over_T",
+          "jacobian_condition": 135.179999266877,
+          "jacobian_singular_values": [
+            12.926499570825,
+            1.36627650508,
+            0.806629104002,
+            0.095624350059
+          ],
+          "minimum_total_G_over_RT_curvature": 1.039981551394,
+          "objective_sum_squares": 0.13271762102,
+          "optimizer_values": [
+            0.227330622091,
+            -1.175584845301,
+            -0.887341414293,
+            0.95729571972
+          ],
+          "parameters": [
+            1.402915467391,
+            -368.134394305927,
+            -1.844637134014,
+            299.777154630391
+          ],
+          "reference_temperature_K": 313.15,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 1.039981551394,
+          "unconstrained_nfev": 11,
+          "unconstrained_objective_sum_squares": 0.13271762102,
+          "unconstrained_optimizer_optimality": 1.690109e-06,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 273.15,
+                "Tmin_K": 273.15,
+                "count": 8,
+                "parameters": [
+                  1.45399701008,
+                  -384.3266410544,
+                  -1.953939526396,
+                  334.568524543555
+                ]
+              },
+              {
+                "Tmax_K": 283.15,
+                "Tmin_K": 283.15,
+                "count": 8,
+                "parameters": [
+                  1.390459682842,
+                  -363.855424434063,
+                  -1.83191891764,
+                  295.342607172663
+                ]
+              },
+              {
+                "Tmax_K": 293.15,
+                "Tmin_K": 293.15,
+                "count": 8,
+                "parameters": [
+                  1.395683720325,
+                  -365.391427140084,
+                  -1.833282906232,
+                  295.399733888148
+                ]
+              },
+              {
+                "Tmax_K": 303.15,
+                "Tmin_K": 303.15,
+                "count": 8,
+                "parameters": [
+                  1.410002939475,
+                  -369.937241397578,
+                  -1.855747561062,
+                  302.368632201017
+                ]
+              },
+              {
+                "Tmax_K": 313.15,
+                "Tmin_K": 313.15,
+                "count": 8,
+                "parameters": [
+                  1.416735049621,
+                  -372.176221717856,
+                  -1.868948688201,
+                  306.640839724714
+                ]
+              },
+              {
+                "Tmax_K": 323.15,
+                "Tmin_K": 323.15,
+                "count": 8,
+                "parameters": [
+                  1.412007419617,
+                  -370.902431648713,
+                  -1.863371282002,
+                  305.268046085443
+                ]
+              },
+              {
+                "Tmax_K": 333.15,
+                "Tmin_K": 333.15,
+                "count": 8,
+                "parameters": [
+                  1.398520162465,
+                  -366.982073482865,
+                  -1.83977725506,
+                  298.520963291072
+                ]
+              },
+              {
+                "Tmax_K": 343.15,
+                "Tmin_K": 343.15,
+                "count": 8,
+                "parameters": [
+                  1.385594053918,
+                  -363.314912510696,
+                  -1.808991282899,
+                  289.744494993724
+                ]
+              },
+              {
+                "Tmax_K": 353.15,
+                "Tmin_K": 353.15,
+                "count": 8,
+                "parameters": [
+                  1.398388016671,
+                  -367.639811229133,
+                  -1.803920359347,
+                  289.002616175259
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.034565234537,
+              "MaxAE": 0.111403622288,
+              "RMSE": 0.043283100658,
+              "bias": 0.006111824433
+            }
+          }
+        }
+      ],
+      "current_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "pressure_kPa": {
+            "MAE": 0.886459123869,
+            "MaxAE": 7.283730792173,
+            "RMSE": 1.71980826294,
+            "bias": 0.234071134393
+          },
+          "pressure_percent": {
+            "MAE": 3.419814234858,
+            "MaxAE": 10.883245446893,
+            "RMSE": 4.293367317086,
+            "bias": 0.668399157382
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          1.402915467391,
+          -368.134394305927,
+          -1.844637134014,
+          299.777154630391
+        ],
+        "structure": {
+          "q": [
+            1.972,
+            4.908
+          ],
+          "q_residual": [
+            1.972,
+            4.908
+          ],
+          "r": [
+            2.1055,
+            4.7957
+          ]
+        }
+      },
+      "definition": {
+        "cas": [
+          "64-17-5",
+          "56-81-5"
+        ],
+        "components": [
+          "ethanol",
+          "glycerol"
+        ],
+        "extrapolation": "inverse_square_cubic",
+        "kind": "isothermal",
+        "objective": "relative pressure residuals",
+        "paper": "data/reference/vapor-liquid-equilibria/2016-zaoui-glycerol-binary-vle-modeling-thesis.pdf",
+        "psat": [
+          {
+            "A": 8.1122,
+            "B": 1592.864,
+            "C": 226.184,
+            "base": "log10",
+            "pressure_factor": 0.1333223684
+          },
+          {
+            "A": 8.62356,
+            "B": 2814.5,
+            "C": 201.467,
+            "base": "log10",
+            "pressure_factor": 0.1333223684
+          }
+        ],
+        "rows": [
+          {
+            "P_kPa": 0.363,
+            "T_K": 273.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 0.738,
+            "T_K": 273.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 1.061,
+            "T_K": 273.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 1.22,
+            "T_K": 273.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 1.302,
+            "T_K": 273.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 1.429,
+            "T_K": 273.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 1.371,
+            "T_K": 273.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 1.443,
+            "T_K": 273.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 1.592,
+            "T_K": 273.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 0.678,
+            "T_K": 283.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 1.435,
+            "T_K": 283.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 2.067,
+            "T_K": 283.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 2.348,
+            "T_K": 283.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 2.518,
+            "T_K": 283.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 2.745,
+            "T_K": 283.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 2.681,
+            "T_K": 283.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 2.824,
+            "T_K": 283.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 3.141,
+            "T_K": 283.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 1.204,
+            "T_K": 293.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 2.633,
+            "T_K": 293.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 3.806,
+            "T_K": 293.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 4.276,
+            "T_K": 293.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 4.592,
+            "T_K": 293.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 5.003,
+            "T_K": 293.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 4.974,
+            "T_K": 293.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 5.253,
+            "T_K": 293.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 5.872,
+            "T_K": 293.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 2.049,
+            "T_K": 303.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 4.592,
+            "T_K": 303.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 6.672,
+            "T_K": 303.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 7.419,
+            "T_K": 303.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 7.956,
+            "T_K": 303.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 8.702,
+            "T_K": 303.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 8.811,
+            "T_K": 303.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 9.334,
+            "T_K": 303.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 10.47,
+            "T_K": 303.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 3.354,
+            "T_K": 313.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 7.66,
+            "T_K": 313.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 11.195,
+            "T_K": 313.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 12.335,
+            "T_K": 313.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 13.178,
+            "T_K": 313.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 14.524,
+            "T_K": 313.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 14.973,
+            "T_K": 313.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 15.924,
+            "T_K": 313.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 17.892,
+            "T_K": 313.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 5.302,
+            "T_K": 323.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 12.283,
+            "T_K": 323.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 18.07,
+            "T_K": 323.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 19.742,
+            "T_K": 323.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 20.979,
+            "T_K": 323.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 23.364,
+            "T_K": 323.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 24.521,
+            "T_K": 323.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 26.189,
+            "T_K": 323.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 29.439,
+            "T_K": 323.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 0.001,
+            "T_K": 333.15,
+            "x1": 0
+          },
+          {
+            "P_kPa": 8.124,
+            "T_K": 333.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 19.016,
+            "T_K": 333.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 28.174,
+            "T_K": 333.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 30.545,
+            "T_K": 333.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 32.244,
+            "T_K": 333.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 36.362,
+            "T_K": 333.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 38.842,
+            "T_K": 333.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 41.674,
+            "T_K": 333.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 46.906,
+            "T_K": 333.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 0.002,
+            "T_K": 343.15,
+            "x1": 0
+          },
+          {
+            "P_kPa": 12.103,
+            "T_K": 343.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 28.534,
+            "T_K": 343.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 42.587,
+            "T_K": 343.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 45.845,
+            "T_K": 343.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 48.033,
+            "T_K": 343.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 54.935,
+            "T_K": 343.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 59.706,
+            "T_K": 343.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 64.37,
+            "T_K": 343.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 72.218,
+            "T_K": 343.15,
+            "x1": 1
+          },
+          {
+            "P_kPa": 0.006,
+            "T_K": 353.15,
+            "x1": 0
+          },
+          {
+            "P_kPa": 17.578,
+            "T_K": 353.15,
+            "x1": 0.0815
+          },
+          {
+            "P_kPa": 41.63,
+            "T_K": 353.15,
+            "x1": 0.2
+          },
+          {
+            "P_kPa": 62.607,
+            "T_K": 353.15,
+            "x1": 0.35
+          },
+          {
+            "P_kPa": 66.957,
+            "T_K": 353.15,
+            "x1": 0.5001
+          },
+          {
+            "P_kPa": 69.576,
+            "T_K": 353.15,
+            "x1": 0.625
+          },
+          {
+            "P_kPa": 80.798,
+            "T_K": 353.15,
+            "x1": 0.75
+          },
+          {
+            "P_kPa": 89.316,
+            "T_K": 353.15,
+            "x1": 0.8
+          },
+          {
+            "P_kPa": 96.776,
+            "T_K": 353.15,
+            "x1": 0.9
+          },
+          {
+            "P_kPa": 108.348,
+            "T_K": 353.15,
+            "x1": 1
+          }
+        ],
+        "source_doi": "10.1016/j.jct.2013.09.046",
+        "source_note": "Previously staged parameters fit the paper's Barker/Redlich-Kister GE surface. New parameters fit the original measured pressures directly; derived vapor compositions are not observations.",
+        "source_parameters": [
+          1.54977589,
+          -434.9661965,
+          -1.91357655,
+          396.45785751
+        ],
+        "source_q": [
+          2.588,
+          4.908
+        ],
+        "source_q_residual": [
+          2.588,
+          4.908
+        ],
+        "source_r": [
+          2.5755,
+          4.7957
+        ],
+        "table": "Zaoui 2014 Tables 2 and 3, reprinted in thesis; ThermoML dataset 10",
+        "vapor": "TSONOPOULOS"
+      },
+      "interaction": {
+        "Tmax_K": 353.15,
+        "Tmin_K": 273.15,
+        "cas1": "64-17-5",
+        "cas2": "56-81-5",
+        "comment": "ethanol_glycerol: ordinary UNIQUAC binary-data refit; vapor=TSONOPOULOS",
+        "component1": "ethanol",
+        "component2": "glycerol",
+        "extrapolation": "inverse_square_cubic",
+        "fit_evidence": {
+          "analysis_key": "ethanol_glycerol",
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.886459123868,
+              "MaxAE": 7.283730792143,
+              "RMSE": 1.719808262941,
+              "bias": 0.234071134384
+            },
+            "pressure_percent": {
+              "MAE": 3.419814234848,
+              "MaxAE": 10.88324544698,
+              "RMSE": 4.293367317086,
+              "bias": 0.668399157317
+            }
+          },
+          "held_out_validation": {
+            "folds": [
+              {
+                "Tmax_K": 273.15,
+                "Tmin_K": 273.15,
+                "count": 8,
+                "parameters": [
+                  1.45399701008,
+                  -384.3266410544,
+                  -1.953939526396,
+                  334.568524543555
+                ]
+              },
+              {
+                "Tmax_K": 283.15,
+                "Tmin_K": 283.15,
+                "count": 8,
+                "parameters": [
+                  1.390459682842,
+                  -363.855424434063,
+                  -1.83191891764,
+                  295.342607172663
+                ]
+              },
+              {
+                "Tmax_K": 293.15,
+                "Tmin_K": 293.15,
+                "count": 8,
+                "parameters": [
+                  1.395683720325,
+                  -365.391427140084,
+                  -1.833282906232,
+                  295.399733888148
+                ]
+              },
+              {
+                "Tmax_K": 303.15,
+                "Tmin_K": 303.15,
+                "count": 8,
+                "parameters": [
+                  1.410002939475,
+                  -369.937241397578,
+                  -1.855747561062,
+                  302.368632201017
+                ]
+              },
+              {
+                "Tmax_K": 313.15,
+                "Tmin_K": 313.15,
+                "count": 8,
+                "parameters": [
+                  1.416735049621,
+                  -372.176221717856,
+                  -1.868948688201,
+                  306.640839724714
+                ]
+              },
+              {
+                "Tmax_K": 323.15,
+                "Tmin_K": 323.15,
+                "count": 8,
+                "parameters": [
+                  1.412007419617,
+                  -370.902431648713,
+                  -1.863371282002,
+                  305.268046085443
+                ]
+              },
+              {
+                "Tmax_K": 333.15,
+                "Tmin_K": 333.15,
+                "count": 8,
+                "parameters": [
+                  1.398520162465,
+                  -366.982073482865,
+                  -1.83977725506,
+                  298.520963291072
+                ]
+              },
+              {
+                "Tmax_K": 343.15,
+                "Tmin_K": 343.15,
+                "count": 8,
+                "parameters": [
+                  1.385594053918,
+                  -363.314912510696,
+                  -1.808991282899,
+                  289.744494993724
+                ]
+              },
+              {
+                "Tmax_K": 353.15,
+                "Tmin_K": 353.15,
+                "count": 8,
+                "parameters": [
+                  1.398388016671,
+                  -367.639811229133,
+                  -1.803920359347,
+                  289.002616175259
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.034565234537,
+              "MaxAE": 0.111403622288,
+              "RMSE": 0.043283100658,
+              "bias": 0.006111824433
+            }
+          },
+          "minimum_total_G_over_RT_curvature": 1.039981551394,
+          "mixture_point_count": 72,
+          "quality_flags": [
+            "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+          ],
+          "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+          "selected_form": "A_plus_B_over_T",
+          "source_vapor_model": "TSONOPOULOS"
+        },
+        "fit_quality_flags": [
+          "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+        ],
+        "fit_status": "recommended_common_basis_refit",
+        "model": "UNIQUAC",
+        "model_variant": "standard_uniquac",
+        "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1016/j.jct.2013.09.046",
+        "source_doi": "10.1016/j.jct.2013.09.046",
+        "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+        "tau12_a": 1.402915467391,
+        "tau12_b": -368.134394305927,
+        "tau21_a": -1.844637134014,
+        "tau21_b": 299.777154630391,
+        "use_q_prime": false
+      },
+      "interior_point_count": 72,
+      "physical_property_inputs": {
+        "ethanol": {
+          "CAS": "64-17-5",
+          "Pc": 62.679145827021,
+          "Tc": 514.709284881296,
+          "Vc": 168.614548326629,
+          "Zc": 0.246957332369,
+          "omega": 0.644,
+          "smiles": "CCO"
+        },
+        "glycerol": {
+          "CAS": "56-81-5",
+          "Pc": 62.607,
+          "Tc": 824.854,
+          "Vc": 240.22,
+          "Zc": 0.2192924642,
+          "omega": 0.718734,
+          "smiles": "C(C(CO)O)O"
+        }
+      },
+      "provider_warnings": [],
+      "published_fit_on_source_structure": {
+        "pressure_kPa": {
+          "MAE": 0.791959461103,
+          "MaxAE": 7.814213599828,
+          "RMSE": 1.650630041645,
+          "bias": 0.055722472551
+        },
+        "pressure_percent": {
+          "MAE": 3.425344962653,
+          "MaxAE": 12.481373648039,
+          "RMSE": 4.604874219877,
+          "bias": -0.000238649344
+        }
+      },
+      "pure_endpoint_count": 12,
+      "pure_pressure_correlation_endpoint_percent": {
+        "MAE": 2.809709703019,
+        "MaxAE": 20.140753706447,
+        "RMSE": 6.21969474415,
+        "bias": 0.610667378298
+      },
+      "quality_flags": [
+        "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+      ],
+      "reference_sha256": {
+        "data/reference/vapor-liquid-equilibria/2014-zaoui-ethanol-water-glycerol-thermoml.json": "b34691b5195ff97d1507095a16aca72153e9ebc2601ff59b8cbd4e48da222ceb",
+        "data/reference/vapor-liquid-equilibria/2016-zaoui-glycerol-binary-vle-modeling-thesis.pdf": "d8a25aa772ac642aeef92619e0018b82188a658f493fa8d47ebc7200eb08b760"
+      },
+      "selected_form": "A_plus_B_over_T",
+      "selection_rule": "A+B/T requires at least 10% lower held-out objective RMSE and no active coefficient bound; otherwise B/T",
+      "standard_structure": {
+        "ethanol": {
+          "q": 1.972,
+          "r": 2.1055
+        },
+        "glycerol": {
+          "q": 4.908,
+          "r": 4.7957
+        }
+      },
+      "superseded_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "pressure_kPa": {
+            "MAE": 0.791959461103,
+            "MaxAE": 7.814213599828,
+            "RMSE": 1.650630041645,
+            "bias": 0.055722472551
+          },
+          "pressure_percent": {
+            "MAE": 3.425344962653,
+            "MaxAE": 12.481373648039,
+            "RMSE": 4.604874219877,
+            "bias": -0.000238649344
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          1.54977589,
+          -434.9661965,
+          -1.91357655,
+          396.45785751
+        ],
+        "structure": {
+          "q": [
+            2.588,
+            4.908
+          ],
+          "q_residual": [
+            2.588,
+            4.908
+          ],
+          "r": [
+            2.5755,
+            4.7957
+          ]
+        }
+      },
+      "unchanged_parameters_on_standard_structure": {
+        "pressure_kPa": {
+          "MAE": 1.395605347672,
+          "MaxAE": 12.316011292326,
+          "RMSE": 2.647443064336,
+          "bias": -0.705093759177
+        },
+        "pressure_percent": {
+          "MAE": 9.167677740457,
+          "MaxAE": 28.589725676788,
+          "RMSE": 12.427843165783,
+          "bias": -7.376323218699
+        }
+      },
+      "virial_matrices_at_observation_temperatures_m3_per_mol": {
+        "273.15": [
+          [
+            -0.005631148844,
+            -0.009139870481
+          ],
+          [
+            -0.009139870481,
+            -0.057581131221
+          ]
+        ],
+        "283.15": [
+          [
+            -0.004292219002,
+            -0.007406001862
+          ],
+          [
+            -0.007406001862,
+            -0.044599010017
+          ]
+        ],
+        "293.15": [
+          [
+            -0.003326392492,
+            -0.006093996573
+          ],
+          [
+            -0.006093996573,
+            -0.035021964384
+          ]
+        ],
+        "303.15": [
+          [
+            -0.002620581797,
+            -0.00508614757
+          ],
+          [
+            -0.00508614757,
+            -0.027866251763
+          ]
+        ],
+        "313.15": [
+          [
+            -0.002098186225,
+            -0.004300738814
+          ],
+          [
+            -0.004300738814,
+            -0.022454289345
+          ]
+        ],
+        "323.15": [
+          [
+            -0.001706672081,
+            -0.003680239359
+          ],
+          [
+            -0.003680239359,
+            -0.018313250707
+          ]
+        ],
+        "333.15": [
+          [
+            -0.00140958822,
+            -0.003183602114
+          ],
+          [
+            -0.003183602114,
+            -0.015109117496
+          ]
+        ],
+        "343.15": [
+          [
+            -0.001181362322,
+            -0.00278116659
+          ],
+          [
+            -0.00278116659,
+            -0.012603178581
+          ]
+        ],
+        "353.15": [
+          [
+            -0.001003865725,
+            -0.002451238555
+          ],
+          [
+            -0.002451238555,
+            -0.010622952345
+          ]
+        ]
+      }
+    },
+    "ethanol_hexanol": {
+      "HOC_parameters": [],
+      "active_runtime_validation": {
+        "method": "UNIQUAC",
+        "point_count": 13,
+        "pressure_closure_percent": {
+          "MAE": 4.852016141898,
+          "MaxAE": 13.430087339403,
+          "RMSE": 6.109348310029,
+          "bias": -2.477300902342
+        },
+        "property_basis": "Canonical runtime Psat and the selected runtime vapor backend",
+        "warnings": []
+      },
+      "caloric_diagnostics_over_calibration_range": {
+        "excess_Cp_J_mol_K_range": [
+          2.5530022e-05,
+          0.353718033574
+        ],
+        "excess_enthalpy_J_mol_range": [
+          0.08952414786,
+          268.592720135104
+        ],
+        "note": "Diagnostics only; no excess-enthalpy or heat-capacity measurements constrain these fits"
+      },
+      "candidates": [
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [
+            9.999999974937,
+            -0.662791844846,
+            -9.999999801807,
+            8.086392694436,
+            -1.057235977413,
+            1.74509309529,
+            0.740338698188,
+            -5.674612697978,
+            0.184489702155,
+            -1.333247597291,
+            2.323515082581,
+            3.954905328087,
+            2.799556323868
+          ],
+          "constrained_optimizer_iterations": null,
+          "constrained_optimizer_message": null,
+          "constrained_optimizer_success": null,
+          "fit": {
+            "maximum_bubble_log_pressure_residual": 9e-12,
+            "pressure_kPa": {
+              "MAE": 4.623129895982,
+              "MaxAE": 12.233170086863,
+              "RMSE": 5.899079161775,
+              "bias": -1.483094105878
+            },
+            "pressure_percent": {
+              "MAE": 4.623129895982,
+              "MaxAE": 12.233170086863,
+              "RMSE": 5.899079161775,
+              "bias": -1.483094105878
+            },
+            "temperature_K": {
+              "MAE": 1.329891254267,
+              "MaxAE": 4.139159568224,
+              "RMSE": 1.758558536155,
+              "bias": 0.463964394833
+            }
+          },
+          "fit_at_adjusted_compositions": {
+            "maximum_bubble_log_pressure_residual": 9e-12,
+            "pressure_kPa": {
+              "MAE": 3.24998148218,
+              "MaxAE": 7.244330116532,
+              "RMSE": 4.037199228934,
+              "bias": -0.968142510329
+            },
+            "pressure_percent": {
+              "MAE": 3.24998148218,
+              "MaxAE": 7.244330116532,
+              "RMSE": 4.037199228934,
+              "bias": -0.968142510329
+            },
+            "temperature_K": {
+              "MAE": 0.897794795794,
+              "MaxAE": 1.890150695359,
+              "RMSE": 1.104547336572,
+              "bias": 0.273011063735
+            }
+          },
+          "fit_including_pure_endpoints": {
+            "maximum_bubble_log_pressure_residual": 9e-12,
+            "pressure_kPa": {
+              "MAE": 4.289033254573,
+              "MaxAE": 12.233170086863,
+              "RMSE": 5.54590443904,
+              "bias": -1.286919278088
+            },
+            "pressure_percent": {
+              "MAE": 4.289033254573,
+              "MaxAE": 12.233170086863,
+              "RMSE": 5.54590443904,
+              "bias": -1.286919278088
+            },
+            "temperature_K": {
+              "MAE": 1.233439483327,
+              "MaxAE": 4.139159568224,
+              "RMSE": 1.652310959689,
+              "bias": 0.413022498293
+            }
+          },
+          "form": "B_over_T",
+          "jacobian_condition": 39.592374487547,
+          "jacobian_singular_values": [
+            792.86480606097,
+            20.025694753679
+          ],
+          "minimum_total_G_over_RT_curvature": 3.753696809651,
+          "objective_sum_squares": 1551.102685076761,
+          "optimizer_values": [
+            0.141409088416,
+            -0.311149933411
+          ],
+          "parameters": [
+            0.0,
+            52.547617255554,
+            0.0,
+            -115.623315255526
+          ],
+          "reference_temperature_K": 371.6,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 3.753696809651,
+          "unconstrained_nfev": 15,
+          "unconstrained_objective_sum_squares": 1551.102685076761,
+          "unconstrained_optimizer_optimality": 0.05304423275,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 419.0,
+                "Tmin_K": 391.1,
+                "count": 3,
+                "parameters": [
+                  0.0,
+                  162.846786079577,
+                  0.0,
+                  -299.316198721002
+                ]
+              },
+              {
+                "Tmax_K": 376.5,
+                "Tmin_K": 368.5,
+                "count": 3,
+                "parameters": [
+                  0.0,
+                  78.991253216994,
+                  0.0,
+                  -140.168911847219
+                ]
+              },
+              {
+                "Tmax_K": 365.0,
+                "Tmin_K": 359.8,
+                "count": 3,
+                "parameters": [
+                  0.0,
+                  -292.918555776421,
+                  0.0,
+                  158.824148902401
+                ]
+              },
+              {
+                "Tmax_K": 357.9,
+                "Tmin_K": 354.4,
+                "count": 2,
+                "parameters": [
+                  0.0,
+                  58.020196125376,
+                  0.0,
+                  -122.398257964369
+                ]
+              },
+              {
+                "Tmax_K": 352.5,
+                "Tmin_K": 351.7,
+                "count": 2,
+                "parameters": [
+                  0.0,
+                  82.145890740408,
+                  0.0,
+                  -153.338257529743
+                ]
+              }
+            ],
+            "method": "five contiguous liquid-composition blocks",
+            "objective_residual": {
+              "MAE": 8.796703437952,
+              "MaxAE": 31.725630985411,
+              "RMSE": 11.482203480594,
+              "bias": -0.921263117903
+            }
+          }
+        },
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [
+            10.0,
+            -2.81306124973,
+            -10.0,
+            10.0,
+            1.196333171434,
+            3.821502220296,
+            1.94331367494,
+            -6.417395609611,
+            -0.671707213258,
+            -3.431814832019,
+            0.441101459815,
+            2.031953191871,
+            1.005763373861
+          ],
+          "constrained_optimizer_iterations": null,
+          "constrained_optimizer_message": null,
+          "constrained_optimizer_success": null,
+          "fit": {
+            "maximum_bubble_log_pressure_residual": 0.0,
+            "pressure_kPa": {
+              "MAE": 4.994541810713,
+              "MaxAE": 11.302441770028,
+              "RMSE": 6.167439674188,
+              "bias": -0.690040663118
+            },
+            "pressure_percent": {
+              "MAE": 4.994541810713,
+              "MaxAE": 11.302441770028,
+              "RMSE": 6.167439674188,
+              "bias": -0.690040663118
+            },
+            "temperature_K": {
+              "MAE": 1.320007762259,
+              "MaxAE": 3.827225861253,
+              "RMSE": 1.697959359889,
+              "bias": 0.264782714742
+            }
+          },
+          "fit_at_adjusted_compositions": {
+            "maximum_bubble_log_pressure_residual": 0.0,
+            "pressure_kPa": {
+              "MAE": 3.340162144508,
+              "MaxAE": 7.828324500737,
+              "RMSE": 4.074376968662,
+              "bias": -0.196892479708
+            },
+            "pressure_percent": {
+              "MAE": 3.340162144508,
+              "MaxAE": 7.828324500737,
+              "RMSE": 4.074376968662,
+              "bias": -0.196892479708
+            },
+            "temperature_K": {
+              "MAE": 0.836205864482,
+              "MaxAE": 1.80217479173,
+              "RMSE": 1.008875889392,
+              "bias": 0.07085801191
+            }
+          },
+          "form": "A_plus_B_over_T",
+          "jacobian_condition": 571.080066744662,
+          "jacobian_singular_values": [
+            735.977503189933,
+            35.237886285423,
+            13.865351312997,
+            1.288746615488
+          ],
+          "minimum_total_G_over_RT_curvature": 3.761798171732,
+          "objective_sum_squares": 1446.020830189663,
+          "optimizer_values": [
+            -1.349890799855,
+            -6.838480353375,
+            0.6840273335,
+            3.638064483673
+          ],
+          "parameters": [
+            5.48858955352,
+            -2541.179299314013,
+            -2.954037150173,
+            1351.904762132823
+          ],
+          "reference_temperature_K": 371.6,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 3.761798171732,
+          "unconstrained_nfev": 43,
+          "unconstrained_objective_sum_squares": 1446.020830189663,
+          "unconstrained_optimizer_optimality": 0.108916522753,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 419.0,
+                "Tmin_K": 391.1,
+                "count": 3,
+                "parameters": [
+                  10.176535427284,
+                  -4514.613259141297,
+                  -5.375303738764,
+                  2295.140448359062
+                ]
+              },
+              {
+                "Tmax_K": 376.5,
+                "Tmin_K": 368.5,
+                "count": 3,
+                "parameters": [
+                  2.431047778612,
+                  -1700.679639088439,
+                  -1.772772265549,
+                  993.78053211115
+                ]
+              },
+              {
+                "Tmax_K": 365.0,
+                "Tmin_K": 359.8,
+                "count": 3,
+                "parameters": [
+                  -0.032151296823,
+                  -412.975691480491,
+                  -0.455803861357,
+                  389.669930817923
+                ]
+              },
+              {
+                "Tmax_K": 357.9,
+                "Tmin_K": 354.4,
+                "count": 2,
+                "parameters": [
+                  5.76360586421,
+                  -2728.617060783085,
+                  -2.663094807609,
+                  1266.413777759022
+                ]
+              },
+              {
+                "Tmax_K": 352.5,
+                "Tmin_K": 351.7,
+                "count": 2,
+                "parameters": [
+                  0.411576894002,
+                  -73.865801698751,
+                  -0.570559894929,
+                  63.363836397269
+                ]
+              }
+            ],
+            "method": "five contiguous liquid-composition blocks",
+            "objective_residual": {
+              "MAE": 11.758378836504,
+              "MaxAE": 49.930736626764,
+              "RMSE": 16.741927534894,
+              "bias": -1.783626312945
+            }
+          }
+        }
+      ],
+      "current_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "maximum_bubble_log_pressure_residual": 9e-12,
+          "pressure_kPa": {
+            "MAE": 4.623129895982,
+            "MaxAE": 12.233170086863,
+            "RMSE": 5.899079161775,
+            "bias": -1.483094105877
+          },
+          "pressure_percent": {
+            "MAE": 4.623129895982,
+            "MaxAE": 12.233170086863,
+            "RMSE": 5.899079161775,
+            "bias": -1.483094105877
+          },
+          "temperature_K": {
+            "MAE": 1.329891254267,
+            "MaxAE": 4.139159568224,
+            "RMSE": 1.758558536155,
+            "bias": 0.463964394833
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          52.547617255554,
+          0.0,
+          -115.623315255526
+        ],
+        "structure": {
+          "q": [
+            1.972,
+            4.132
+          ],
+          "q_residual": [
+            1.972,
+            4.132
+          ],
+          "r": [
+            2.1055,
+            4.8031
+          ]
+        }
+      },
+      "definition": {
+        "cas": [
+          "64-17-5",
+          "111-27-3"
+        ],
+        "components": [
+          "ethanol",
+          "1-hexanol"
+        ],
+        "extrapolation": "unrestricted",
+        "kind": "isobaric",
+        "objective": "bubble-temperature error in K",
+        "paper": "data/reference/vapor-liquid-equilibria/2015-hartanto-ethanol-hexanol-vle.pdf",
+        "psat": [
+          {
+            "A": 5.33675,
+            "B": 1648.22,
+            "C": 230.918,
+            "base": "log10",
+            "pressure_factor": 100.0
+          },
+          {
+            "A": 4.18948,
+            "B": 1295.59,
+            "C": 152.51,
+            "base": "log10",
+            "pressure_factor": 100.0
+          }
+        ],
+        "rows": [
+          {
+            "P_kPa": 100.0,
+            "T_K": 429.2,
+            "x1": 0.0
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 419.0,
+            "x1": 0.0195
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 395.7,
+            "x1": 0.1499
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 391.1,
+            "x1": 0.2045
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 376.5,
+            "x1": 0.3128
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 374.3,
+            "x1": 0.3778
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 368.5,
+            "x1": 0.4647
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 365.0,
+            "x1": 0.5448
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 364.4,
+            "x1": 0.6179
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 359.8,
+            "x1": 0.6855
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 357.9,
+            "x1": 0.7662
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 354.4,
+            "x1": 0.8273
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 352.5,
+            "x1": 0.8649
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 351.7,
+            "x1": 0.9157
+          },
+          {
+            "P_kPa": 100.0,
+            "T_K": 351.6,
+            "x1": 1.0
+          }
+        ],
+        "source_doi": "10.13140/RG.2.1.4542.3766",
+        "source_parameters": [
+          0.0,
+          -11.287,
+          0.0,
+          -17.367
+        ],
+        "source_q": [
+          2.588,
+          4.748
+        ],
+        "source_q_residual": [
+          2.588,
+          4.748
+        ],
+        "source_r": [
+          2.5755,
+          5.2731
+        ],
+        "table": "Table 2 (measurements), Tables 3-5 (property basis and fitted parameters)",
+        "uncertainty_scales": {
+          "P_kPa": 0.2,
+          "T_K": 0.1,
+          "x1": 0.001
+        },
+        "vapor": "IDEAL"
+      },
+      "interaction": {
+        "Tmax_K": 429.2,
+        "Tmin_K": 351.6,
+        "cas1": "64-17-5",
+        "cas2": "111-27-3",
+        "comment": "ethanol_hexanol: ordinary UNIQUAC binary-data refit; vapor=IDEAL",
+        "component1": "ethanol",
+        "component2": "1-hexanol",
+        "extrapolation": "unrestricted",
+        "fit_evidence": {
+          "analysis_key": "ethanol_hexanol",
+          "fit": {
+            "maximum_bubble_log_pressure_residual": 9e-12,
+            "pressure_kPa": {
+              "MAE": 4.623129895982,
+              "MaxAE": 12.233170086863,
+              "RMSE": 5.899079161775,
+              "bias": -1.483094105878
+            },
+            "pressure_percent": {
+              "MAE": 4.623129895982,
+              "MaxAE": 12.233170086863,
+              "RMSE": 5.899079161775,
+              "bias": -1.483094105878
+            },
+            "temperature_K": {
+              "MAE": 1.329891254267,
+              "MaxAE": 4.139159568224,
+              "RMSE": 1.758558536155,
+              "bias": 0.463964394833
+            }
+          },
+          "held_out_validation": {
+            "folds": [
+              {
+                "Tmax_K": 419.0,
+                "Tmin_K": 391.1,
+                "count": 3,
+                "parameters": [
+                  0.0,
+                  162.846786079577,
+                  0.0,
+                  -299.316198721002
+                ]
+              },
+              {
+                "Tmax_K": 376.5,
+                "Tmin_K": 368.5,
+                "count": 3,
+                "parameters": [
+                  0.0,
+                  78.991253216994,
+                  0.0,
+                  -140.168911847219
+                ]
+              },
+              {
+                "Tmax_K": 365.0,
+                "Tmin_K": 359.8,
+                "count": 3,
+                "parameters": [
+                  0.0,
+                  -292.918555776421,
+                  0.0,
+                  158.824148902401
+                ]
+              },
+              {
+                "Tmax_K": 357.9,
+                "Tmin_K": 354.4,
+                "count": 2,
+                "parameters": [
+                  0.0,
+                  58.020196125376,
+                  0.0,
+                  -122.398257964369
+                ]
+              },
+              {
+                "Tmax_K": 352.5,
+                "Tmin_K": 351.7,
+                "count": 2,
+                "parameters": [
+                  0.0,
+                  82.145890740408,
+                  0.0,
+                  -153.338257529743
+                ]
+              }
+            ],
+            "method": "five contiguous liquid-composition blocks",
+            "objective_residual": {
+              "MAE": 8.796703437952,
+              "MaxAE": 31.725630985411,
+              "RMSE": 11.482203480594,
+              "bias": -0.921263117903
+            }
+          },
+          "minimum_total_G_over_RT_curvature": 3.753696809651,
+          "mixture_point_count": 13,
+          "quality_flags": [
+            "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+            "The regression reaches its ten-uncertainty-scale composition-adjustment bound; the data are not reproduced at their quoted precision.",
+            "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+          ],
+          "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+          "selected_form": "B_over_T",
+          "source_vapor_model": "IDEAL"
+        },
+        "fit_quality_flags": [
+          "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+          "The regression reaches its ten-uncertainty-scale composition-adjustment bound; the data are not reproduced at their quoted precision.",
+          "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+        ],
+        "fit_status": "recommended_common_basis_refit",
+        "model": "UNIQUAC",
+        "model_variant": "standard_uniquac",
+        "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.13140/RG.2.1.4542.3766",
+        "source_doi": "10.13140/RG.2.1.4542.3766",
+        "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+        "tau12_a": 0.0,
+        "tau12_b": 52.547617255554,
+        "tau21_a": 0.0,
+        "tau21_b": -115.623315255526,
+        "use_q_prime": false
+      },
+      "interior_point_count": 13,
+      "physical_property_inputs": {},
+      "provider_warnings": [],
+      "published_fit_on_source_structure": {
+        "maximum_bubble_log_pressure_residual": 9e-12,
+        "pressure_kPa": {
+          "MAE": 4.561230559242,
+          "MaxAE": 12.333402139196,
+          "RMSE": 5.909264573608,
+          "bias": -1.323801231421
+        },
+        "pressure_percent": {
+          "MAE": 4.561230559242,
+          "MaxAE": 12.333402139196,
+          "RMSE": 5.909264573608,
+          "bias": -1.323801231421
+        },
+        "temperature_K": {
+          "MAE": 1.309530615588,
+          "MaxAE": 4.169383853942,
+          "RMSE": 1.758686094336,
+          "bias": 0.423942481686
+        }
+      },
+      "pure_endpoint_count": 2,
+      "pure_pressure_correlation_endpoint_percent": {
+        "MAE": 2.117405085415,
+        "MaxAE": 2.129187982871,
+        "RMSE": 2.117437869788,
+        "bias": -0.011782897457
+      },
+      "quality_flags": [
+        "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+        "The regression reaches its ten-uncertainty-scale composition-adjustment bound; the data are not reproduced at their quoted precision.",
+        "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+      ],
+      "reference_sha256": {
+        "data/reference/vapor-liquid-equilibria/2015-hartanto-ethanol-hexanol-vle.pdf": "59174d0ace9abe3c64e5023b0d2c56211cde8f4310ddb211940b4510fb6c7196"
+      },
+      "rejected_candidates": {},
+      "selected_form": "B_over_T",
+      "selection_rule": "A+B/T requires at least 10% lower held-out objective RMSE and no active coefficient bound; otherwise B/T",
+      "standard_structure": {
+        "1-hexanol": {
+          "q": 4.132,
+          "r": 4.8031
+        },
+        "ethanol": {
+          "q": 1.972,
+          "r": 2.1055
+        }
+      },
+      "superseded_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "maximum_bubble_log_pressure_residual": 9e-12,
+          "pressure_kPa": {
+            "MAE": 4.561230559242,
+            "MaxAE": 12.333402139196,
+            "RMSE": 5.909264573608,
+            "bias": -1.323801231421
+          },
+          "pressure_percent": {
+            "MAE": 4.561230559242,
+            "MaxAE": 12.333402139196,
+            "RMSE": 5.909264573608,
+            "bias": -1.323801231421
+          },
+          "temperature_K": {
+            "MAE": 1.309530615588,
+            "MaxAE": 4.169383853942,
+            "RMSE": 1.758686094336,
+            "bias": 0.423942481686
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          -11.287,
+          0.0,
+          -17.367
+        ],
+        "structure": {
+          "q": [
+            2.588,
+            4.748
+          ],
+          "q_residual": [
+            2.588,
+            4.748
+          ],
+          "r": [
+            2.5755,
+            5.2731
+          ]
+        }
+      },
+      "unchanged_parameters_on_standard_structure": {
+        "maximum_bubble_log_pressure_residual": 9e-12,
+        "pressure_kPa": {
+          "MAE": 6.464343574005,
+          "MaxAE": 14.736344423406,
+          "RMSE": 7.658811735877,
+          "bias": -5.628671556433
+        },
+        "pressure_percent": {
+          "MAE": 6.464343574005,
+          "MaxAE": 14.736344423406,
+          "RMSE": 7.658811735877,
+          "bias": -5.628671556433
+        },
+        "temperature_K": {
+          "MAE": 1.924639713692,
+          "MaxAE": 5.035831878575,
+          "RMSE": 2.371571672921,
+          "bias": 1.703940972482
+        }
+      },
+      "virial_matrices_at_observation_temperatures_m3_per_mol": {}
+    },
+    "ethanol_octanol": {
+      "HOC_parameters": [
+        {
+          "association_group": "hydroxyl",
+          "cas": "64-17-5",
+          "dipole_D": 1.44,
+          "epsilon_K": 353.271332551673,
+          "eta": 1.55,
+          "omega_prime": 0.101399842801,
+          "sigma3_A3": 106.420052594201
+        },
+        {
+          "association_group": "hydroxyl",
+          "cas": "111-87-5",
+          "dipole_D": 2.031180701601,
+          "epsilon_K": 680.4883498456,
+          "eta": 1.55,
+          "omega_prime": 0.408867249618,
+          "sigma3_A3": 199.056581853247
+        }
+      ],
+      "active_runtime_validation": {
+        "method": "UNIQUAC-HOC",
+        "point_count": 23,
+        "pressure_closure_percent": {
+          "MAE": 2.934553781232,
+          "MaxAE": 11.479135386268,
+          "RMSE": 4.609044175263,
+          "bias": -2.83896224559
+        },
+        "property_basis": "Canonical runtime Psat and the selected runtime vapor backend",
+        "warnings": []
+      },
+      "caloric_diagnostics_over_calibration_range": {
+        "excess_Cp_J_mol_K_range": [
+          6.4708698e-05,
+          1.126255634015
+        ],
+        "excess_enthalpy_J_mol_range": [
+          0.129104328219,
+          491.441791121497
+        ],
+        "note": "Diagnostics only; no excess-enthalpy or heat-capacity measurements constrain these fits"
+      },
+      "candidates": [
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [
+            1.725176550743,
+            2.973452163861,
+            3.727083039263,
+            3.190304243723,
+            2.767325742647,
+            3.19308120676,
+            0.787708803609,
+            0.887563950966,
+            2.392923226784,
+            -1.009584794727,
+            -0.478325176488,
+            -0.301901219468,
+            3.234052029423,
+            -2.171772022159,
+            -2.565081505122,
+            -0.384519626514,
+            0.915075981779,
+            0.813950933689,
+            1.452183731757,
+            1.547370663829,
+            -1.129285076922,
+            -1.168055612431,
+            -1.239668727533
+          ],
+          "constrained_optimizer_iterations": null,
+          "fit": {
+            "maximum_bubble_log_pressure_residual": 5e-12,
+            "pressure_kPa": {
+              "MAE": 3.114716592479,
+              "MaxAE": 12.881695485977,
+              "RMSE": 5.093313472996,
+              "bias": -2.721678518526
+            },
+            "pressure_percent": {
+              "MAE": 3.074137971259,
+              "MaxAE": 12.713872370683,
+              "RMSE": 5.02695763225,
+              "bias": -2.686220409126
+            },
+            "temperature_K": {
+              "MAE": 1.233600438602,
+              "MaxAE": 5.311675275957,
+              "RMSE": 2.075430706277,
+              "bias": 1.11138251313
+            },
+            "vapor_y1": {
+              "MAE": 0.022646709067,
+              "MaxAE": 0.101187056567,
+              "RMSE": 0.038661497012,
+              "bias": -0.022476452578
+            }
+          },
+          "fit_at_adjusted_compositions": {
+            "maximum_bubble_log_pressure_residual": 4e-12,
+            "pressure_kPa": {
+              "MAE": 0.031483468777,
+              "MaxAE": 0.108705265077,
+              "RMSE": 0.040919274503,
+              "bias": -0.002816603067
+            },
+            "pressure_percent": {
+              "MAE": 0.031073301201,
+              "MaxAE": 0.107289049622,
+              "RMSE": 0.040386176967,
+              "bias": -0.002779908278
+            },
+            "temperature_K": {
+              "MAE": 0.010717964161,
+              "MaxAE": 0.042694736857,
+              "RMSE": 0.014878232156,
+              "bias": 0.001299825661
+            },
+            "vapor_y1": {
+              "MAE": 0.006122797684,
+              "MaxAE": 0.020863762611,
+              "RMSE": 0.008702764278,
+              "bias": -0.001950901342
+            }
+          },
+          "fit_including_pure_endpoints": {
+            "maximum_bubble_log_pressure_residual": 5e-12,
+            "pressure_kPa": {
+              "MAE": 2.933787670787,
+              "MaxAE": 12.881695485977,
+              "RMSE": 4.892587909563,
+              "bias": -2.535817270566
+            },
+            "pressure_percent": {
+              "MAE": 2.895566196986,
+              "MaxAE": 12.713872370683,
+              "RMSE": 4.828847127481,
+              "bias": -2.50278056708
+            },
+            "temperature_K": {
+              "MAE": 1.158633597745,
+              "MaxAE": 5.311675275957,
+              "RMSE": 1.993090948005,
+              "bias": 1.036777803426
+            },
+            "vapor_y1": {
+              "MAE": 0.020834972342,
+              "MaxAE": 0.101187056567,
+              "RMSE": 0.037082805221,
+              "bias": -0.020678336372
+            }
+          },
+          "form": "B_over_T",
+          "jacobian_condition": 19.340092707046,
+          "jacobian_singular_values": [
+            1088.328920450982,
+            56.273200802936
+          ],
+          "minimum_total_G_over_RT_curvature": 3.396177945056,
+          "objective_sum_squares": 544.701472479316,
+          "optimizer_values": [
+            0.213978492568,
+            -0.519297436389
+          ],
+          "parameters": [
+            0.0,
+            84.835866880129,
+            0.0,
+            -205.885403042316
+          ],
+          "reference_temperature_K": 396.469130434783,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 3.396177945056,
+          "unconstrained_nfev": 15,
+          "unconstrained_objective_sum_squares": 544.701472479316,
+          "unconstrained_optimizer_optimality": 0.006606385214,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 461.91,
+                "Tmin_K": 441.79,
+                "count": 5,
+                "parameters": [
+                  0.0,
+                  79.726893551954,
+                  0.0,
+                  -197.644116497134
+                ]
+              },
+              {
+                "Tmax_K": 435.41,
+                "Tmin_K": 403.52,
+                "count": 5,
+                "parameters": [
+                  0.0,
+                  87.712166246019,
+                  0.0,
+                  -210.633339833084
+                ]
+              },
+              {
+                "Tmax_K": 393.89,
+                "Tmin_K": 367.16,
+                "count": 5,
+                "parameters": [
+                  0.0,
+                  84.454321255337,
+                  0.0,
+                  -206.925192734996
+                ]
+              },
+              {
+                "Tmax_K": 364.98,
+                "Tmin_K": 357.31,
+                "count": 4,
+                "parameters": [
+                  0.0,
+                  97.544857831876,
+                  0.0,
+                  -224.364605472735
+                ]
+              },
+              {
+                "Tmax_K": 355.12,
+                "Tmin_K": 352.2,
+                "count": 4,
+                "parameters": [
+                  0.0,
+                  85.433278472626,
+                  0.0,
+                  -206.767490521399
+                ]
+              }
+            ],
+            "method": "five contiguous liquid-composition blocks",
+            "objective_residual": {
+              "MAE": 1.933794222959,
+              "MaxAE": 10.528890784792,
+              "RMSE": 2.899450110052,
+              "bias": 0.02024987562
+            }
+          }
+        },
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [
+            1.424176117642,
+            2.447899102273,
+            3.024402381914,
+            2.342340543374,
+            1.728536448248,
+            2.007924297718,
+            -0.468672186955,
+            -0.409970081791,
+            1.222725685687,
+            -1.798912006307,
+            -0.607967736786,
+            0.400139435733,
+            4.487035723596,
+            -1.026198000259,
+            -1.885902922449,
+            -0.150059500226,
+            0.633404936713,
+            -0.128281159448,
+            0.215180948583,
+            0.612019706002,
+            -1.643714538282,
+            -1.400263120439,
+            -1.313353791238
+          ],
+          "constrained_optimizer_iterations": null,
+          "fit": {
+            "maximum_bubble_log_pressure_residual": 2e-12,
+            "pressure_kPa": {
+              "MAE": 2.513153132401,
+              "MaxAE": 11.212562942773,
+              "RMSE": 4.172778406508,
+              "bias": -1.906444527157
+            },
+            "pressure_percent": {
+              "MAE": 2.480411697988,
+              "MaxAE": 11.066485336333,
+              "RMSE": 4.118415324229,
+              "bias": -1.881607310656
+            },
+            "temperature_K": {
+              "MAE": 0.965421047413,
+              "MaxAE": 4.538118030223,
+              "RMSE": 1.659223436938,
+              "bias": 0.766396894426
+            },
+            "vapor_y1": {
+              "MAE": 0.017640693124,
+              "MaxAE": 0.085206304885,
+              "RMSE": 0.030888922975,
+              "bias": -0.01743373722
+            }
+          },
+          "fit_at_adjusted_compositions": {
+            "maximum_bubble_log_pressure_residual": 0.0,
+            "pressure_kPa": {
+              "MAE": 0.029733494204,
+              "MaxAE": 0.10677240352,
+              "RMSE": 0.040411626023,
+              "bias": 0.001801631721
+            },
+            "pressure_percent": {
+              "MAE": 0.029346125349,
+              "MaxAE": 0.105381369443,
+              "RMSE": 0.039885142147,
+              "bias": 0.001778160009
+            },
+            "temperature_K": {
+              "MAE": 0.010152646995,
+              "MaxAE": 0.041383474588,
+              "RMSE": 0.014622022331,
+              "bias": -4.5899463e-05
+            },
+            "vapor_y1": {
+              "MAE": 0.006139085031,
+              "MaxAE": 0.020123712742,
+              "RMSE": 0.008767889543,
+              "bias": -0.002119173867
+            }
+          },
+          "form": "A_plus_B_over_T",
+          "jacobian_condition": 2622.804151536295,
+          "jacobian_singular_values": [
+            988.588143007362,
+            65.713993805528,
+            10.742659966502,
+            0.37692030586
+          ],
+          "minimum_total_G_over_RT_curvature": 3.486465635357,
+          "objective_sum_squares": 523.652215595979,
+          "optimizer_values": [
+            0.016970654524,
+            0.809660788257,
+            -0.287156157959,
+            -0.687940240397
+          ],
+          "parameters": [
+            -0.792690133733,
+            321.005508667542,
+            0.400784082439,
+            -272.747068901486
+          ],
+          "reference_temperature_K": 396.469130434783,
+          "stability_constraint_active": false,
+          "unconstrained_minimum_curvature": 3.486465635357,
+          "unconstrained_nfev": 215,
+          "unconstrained_objective_sum_squares": 523.652215595979,
+          "unconstrained_optimizer_optimality": 0.008473399431,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 461.91,
+                "Tmin_K": 441.79,
+                "count": 5,
+                "parameters": [
+                  -5.353597532162,
+                  1815.813056932419,
+                  2.204127827434,
+                  -757.689504600103
+                ]
+              },
+              {
+                "Tmax_K": 435.41,
+                "Tmin_K": 403.52,
+                "count": 5,
+                "parameters": [
+                  -0.291442706012,
+                  117.021118436621,
+                  -0.509953944301,
+                  87.331776106476
+                ]
+              },
+              {
+                "Tmax_K": 393.89,
+                "Tmin_K": 367.16,
+                "count": 5,
+                "parameters": [
+                  -0.473921548527,
+                  181.795175748926,
+                  -0.039023243556,
+                  -81.573583401172
+                ]
+              },
+              {
+                "Tmax_K": 364.98,
+                "Tmin_K": 357.31,
+                "count": 4,
+                "parameters": [
+                  -0.741264476461,
+                  311.246119467081,
+                  0.394238599148,
+                  -281.855176803314
+                ]
+              },
+              {
+                "Tmax_K": 355.12,
+                "Tmin_K": 352.2,
+                "count": 4,
+                "parameters": [
+                  -0.849217366492,
+                  336.208540354051,
+                  0.421151510367,
+                  -273.116595296774
+                ]
+              }
+            ],
+            "method": "five contiguous liquid-composition blocks",
+            "objective_residual": {
+              "MAE": 1.97291847627,
+              "MaxAE": 10.964450944473,
+              "RMSE": 3.181315268301,
+              "bias": -0.107159078927
+            }
+          }
+        }
+      ],
+      "current_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "maximum_bubble_log_pressure_residual": 5e-12,
+          "pressure_kPa": {
+            "MAE": 3.114716592479,
+            "MaxAE": 12.881695485977,
+            "RMSE": 5.093313472996,
+            "bias": -2.721678518526
+          },
+          "pressure_percent": {
+            "MAE": 3.074137971259,
+            "MaxAE": 12.713872370683,
+            "RMSE": 5.02695763225,
+            "bias": -2.686220409126
+          },
+          "temperature_K": {
+            "MAE": 1.233600438602,
+            "MaxAE": 5.311675275957,
+            "RMSE": 2.075430706277,
+            "bias": 1.11138251313
+          },
+          "vapor_y1": {
+            "MAE": 0.022646709067,
+            "MaxAE": 0.101187056567,
+            "RMSE": 0.038661497012,
+            "bias": -0.022476452578
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          84.835866880129,
+          0.0,
+          -205.885403042316
+        ],
+        "structure": {
+          "q": [
+            1.972,
+            5.212
+          ],
+          "q_residual": [
+            1.972,
+            5.212
+          ],
+          "r": [
+            2.1055,
+            6.1519
+          ]
+        }
+      },
+      "definition": {
+        "additional_reference": "data/reference/vapor-liquid-equilibria/1996-arce-water-ethanol-octanol-vle.pdf",
+        "cas": [
+          "64-17-5",
+          "111-87-5"
+        ],
+        "components": [
+          "ethanol",
+          "1-octanol"
+        ],
+        "extrapolation": "unrestricted",
+        "kind": "isobaric_y",
+        "objective": "bubble-temperature error in K plus vapor-y error in percentage points",
+        "paper": "data/reference/vapor-liquid-equilibria/1995-arce-methanol-ethanol-octanol-vle.pdf",
+        "psat": [
+          {
+            "A": 7.16879,
+            "B": 1552.601,
+            "C": 222.419,
+            "base": "log10",
+            "pressure_factor": 1.0
+          },
+          {
+            "A": 5.88511,
+            "B": 1264.322,
+            "C": 130.73,
+            "base": "log10",
+            "pressure_factor": 1.0
+          }
+        ],
+        "rows": [
+          {
+            "P_kPa": 101.32,
+            "T_K": 467.85,
+            "published_gamma": [
+              null,
+              1.0
+            ],
+            "published_phi": [
+              null,
+              0.9622
+            ],
+            "x1": 0.0,
+            "y1": 0.0
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 461.91,
+            "published_gamma": [
+              1.1316,
+              1.0
+            ],
+            "published_phi": [
+              1.0044,
+              0.9605
+            ],
+            "x1": 0.0044,
+            "y1": 0.1462
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 456.69,
+            "published_gamma": [
+              1.1309,
+              1.0
+            ],
+            "published_phi": [
+              1.0015,
+              0.9593
+            ],
+            "x1": 0.0088,
+            "y1": 0.2612
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 452.19,
+            "published_gamma": [
+              1.1301,
+              1.0
+            ],
+            "published_phi": [
+              0.9989,
+              0.9586
+            ],
+            "x1": 0.0137,
+            "y1": 0.3666
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 448.1,
+            "published_gamma": [
+              1.129,
+              1.0
+            ],
+            "published_phi": [
+              0.9962,
+              0.9586
+            ],
+            "x1": 0.021,
+            "y1": 0.4566
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 441.79,
+            "published_gamma": [
+              1.1272,
+              1.0001
+            ],
+            "published_phi": [
+              0.9933,
+              0.9586
+            ],
+            "x1": 0.0323,
+            "y1": 0.5599
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 435.41,
+            "published_gamma": [
+              1.1255,
+              1.0001
+            ],
+            "published_phi": [
+              0.9913,
+              0.9583
+            ],
+            "x1": 0.0434,
+            "y1": 0.6557
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 430.8,
+            "published_gamma": [
+              1.1231,
+              1.0002
+            ],
+            "published_phi": [
+              0.9898,
+              0.9587
+            ],
+            "x1": 0.0579,
+            "y1": 0.7133
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 423.35,
+            "published_gamma": [
+              1.1202,
+              1.0004
+            ],
+            "published_phi": [
+              0.9882,
+              0.9581
+            ],
+            "x1": 0.0757,
+            "y1": 0.784
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 413.28,
+            "published_gamma": [
+              1.1156,
+              1.0008
+            ],
+            "published_phi": [
+              0.9862,
+              0.9564
+            ],
+            "x1": 0.1032,
+            "y1": 0.8564
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 403.52,
+            "published_gamma": [
+              1.1077,
+              1.0019
+            ],
+            "published_phi": [
+              0.9842,
+              0.9545
+            ],
+            "x1": 0.1494,
+            "y1": 0.9112
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 393.89,
+            "published_gamma": [
+              1.0985,
+              1.0037
+            ],
+            "published_phi": [
+              0.9821,
+              0.9514
+            ],
+            "x1": 0.2016,
+            "y1": 0.9473
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 384.51,
+            "published_gamma": [
+              1.0854,
+              1.0074
+            ],
+            "published_phi": [
+              0.9798,
+              0.9473
+            ],
+            "x1": 0.2747,
+            "y1": 0.9688
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 376.14,
+            "published_gamma": [
+              1.0698,
+              1.0143
+            ],
+            "published_phi": [
+              0.9775,
+              0.9427
+            ],
+            "x1": 0.3619,
+            "y1": 0.9819
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 370.83,
+            "published_gamma": [
+              1.0539,
+              1.0249
+            ],
+            "published_phi": [
+              0.9758,
+              0.9393
+            ],
+            "x1": 0.4546,
+            "y1": 0.988
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 367.16,
+            "published_gamma": [
+              1.0424,
+              1.0358
+            ],
+            "published_phi": [
+              0.9745,
+              0.9366
+            ],
+            "x1": 0.5258,
+            "y1": 0.992
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 364.98,
+            "published_gamma": [
+              1.0357,
+              1.0438
+            ],
+            "published_phi": [
+              0.9737,
+              0.9349
+            ],
+            "x1": 0.5697,
+            "y1": 0.9937
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 362.88,
+            "published_gamma": [
+              1.0288,
+              1.0542
+            ],
+            "published_phi": [
+              0.9729,
+              0.9332
+            ],
+            "x1": 0.619,
+            "y1": 0.9948
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 360.13,
+            "published_gamma": [
+              1.019,
+              1.0737
+            ],
+            "published_phi": [
+              0.9719,
+              0.9308
+            ],
+            "x1": 0.6961,
+            "y1": 0.9959
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 357.31,
+            "published_gamma": [
+              1.01,
+              1.1012
+            ],
+            "published_phi": [
+              0.9707,
+              0.9282
+            ],
+            "x1": 0.784,
+            "y1": 0.997
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 355.12,
+            "published_gamma": [
+              1.0044,
+              1.1301
+            ],
+            "published_phi": [
+              0.9697,
+              0.926
+            ],
+            "x1": 0.8597,
+            "y1": 0.9981
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 353.75,
+            "published_gamma": [
+              1.0016,
+              1.155
+            ],
+            "published_phi": [
+              0.9691,
+              0.9247
+            ],
+            "x1": 0.9156,
+            "y1": 0.9986
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 352.85,
+            "published_gamma": [
+              1.0006,
+              1.1716
+            ],
+            "published_phi": [
+              0.9686,
+              0.9237
+            ],
+            "x1": 0.9492,
+            "y1": 0.9989
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 352.2,
+            "published_gamma": [
+              1.0002,
+              1.1846
+            ],
+            "published_phi": [
+              0.9683,
+              0.923
+            ],
+            "x1": 0.9739,
+            "y1": 0.9992
+          },
+          {
+            "P_kPa": 101.32,
+            "T_K": 351.56,
+            "published_gamma": [
+              1.0,
+              null
+            ],
+            "published_phi": [
+              0.968,
+              null
+            ],
+            "x1": 1.0,
+            "y1": 1.0
+          }
+        ],
+        "source_doi": "10.1021/je00020a063",
+        "source_note": "The 1995 prose specifies ethanol q'=0.96 and octanol q'=2.71. The later 1996 binary GE correlation optimizes octanol q'=5.50. Printed derived gamma/phi columns are not fitted.",
+        "source_parameters": [
+          0.0,
+          120.87371681794,
+          0.0,
+          -320.96361756122
+        ],
+        "source_q": [
+          2.588,
+          5.828
+        ],
+        "source_q_residual": [
+          0.96,
+          2.71
+        ],
+        "source_r": [
+          2.5755,
+          6.6219
+        ],
+        "table": "Table 3 ethanol subsection; Table 2 Antoine coefficients; Table 4 published fits",
+        "uncertainty_scales": {
+          "P_kPa": 0.01,
+          "T_K": 0.02,
+          "x1": 0.002,
+          "y1": 0.002
+        },
+        "vapor": "HOC"
+      },
+      "interaction": {
+        "Tmax_K": 467.85,
+        "Tmin_K": 351.56,
+        "cas1": "64-17-5",
+        "cas2": "111-87-5",
+        "comment": "ethanol_octanol: ordinary UNIQUAC binary-data refit; vapor=HOC",
+        "component1": "ethanol",
+        "component2": "1-octanol",
+        "extrapolation": "unrestricted",
+        "fit_evidence": {
+          "analysis_key": "ethanol_octanol",
+          "fit": {
+            "maximum_bubble_log_pressure_residual": 5e-12,
+            "pressure_kPa": {
+              "MAE": 3.114716592479,
+              "MaxAE": 12.881695485977,
+              "RMSE": 5.093313472996,
+              "bias": -2.721678518526
+            },
+            "pressure_percent": {
+              "MAE": 3.074137971259,
+              "MaxAE": 12.713872370683,
+              "RMSE": 5.02695763225,
+              "bias": -2.686220409126
+            },
+            "temperature_K": {
+              "MAE": 1.233600438602,
+              "MaxAE": 5.311675275957,
+              "RMSE": 2.075430706277,
+              "bias": 1.11138251313
+            },
+            "vapor_y1": {
+              "MAE": 0.022646709067,
+              "MaxAE": 0.101187056567,
+              "RMSE": 0.038661497012,
+              "bias": -0.022476452578
+            }
+          },
+          "held_out_validation": {
+            "folds": [
+              {
+                "Tmax_K": 461.91,
+                "Tmin_K": 441.79,
+                "count": 5,
+                "parameters": [
+                  0.0,
+                  79.726893551954,
+                  0.0,
+                  -197.644116497134
+                ]
+              },
+              {
+                "Tmax_K": 435.41,
+                "Tmin_K": 403.52,
+                "count": 5,
+                "parameters": [
+                  0.0,
+                  87.712166246019,
+                  0.0,
+                  -210.633339833084
+                ]
+              },
+              {
+                "Tmax_K": 393.89,
+                "Tmin_K": 367.16,
+                "count": 5,
+                "parameters": [
+                  0.0,
+                  84.454321255337,
+                  0.0,
+                  -206.925192734996
+                ]
+              },
+              {
+                "Tmax_K": 364.98,
+                "Tmin_K": 357.31,
+                "count": 4,
+                "parameters": [
+                  0.0,
+                  97.544857831876,
+                  0.0,
+                  -224.364605472735
+                ]
+              },
+              {
+                "Tmax_K": 355.12,
+                "Tmin_K": 352.2,
+                "count": 4,
+                "parameters": [
+                  0.0,
+                  85.433278472626,
+                  0.0,
+                  -206.767490521399
+                ]
+              }
+            ],
+            "method": "five contiguous liquid-composition blocks",
+            "objective_residual": {
+              "MAE": 1.933794222959,
+              "MaxAE": 10.528890784792,
+              "RMSE": 2.899450110052,
+              "bias": 0.02024987562
+            }
+          },
+          "minimum_total_G_over_RT_curvature": 3.396177945056,
+          "mixture_point_count": 23,
+          "quality_flags": [
+            "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+            "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+          ],
+          "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+          "selected_form": "B_over_T",
+          "source_vapor_model": "HOC"
+        },
+        "fit_quality_flags": [
+          "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+          "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+        ],
+        "fit_status": "recommended_common_basis_refit",
+        "model": "UNIQUAC",
+        "model_variant": "standard_uniquac",
+        "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1021/je00020a063",
+        "source_doi": "10.1021/je00020a063",
+        "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+        "tau12_a": 0.0,
+        "tau12_b": 84.835866880129,
+        "tau21_a": 0.0,
+        "tau21_b": -205.885403042316,
+        "use_q_prime": false
+      },
+      "interior_point_count": 23,
+      "physical_property_inputs": {
+        "1-octanol": {
+          "CAS": "111-87-5",
+          "Pc": 27.83,
+          "Tc": 652.3,
+          "Vc": 509.0,
+          "Zc": 0.261,
+          "omega": 0.569694,
+          "smiles": "CCCCCCCCO"
+        },
+        "ethanol": {
+          "CAS": "64-17-5",
+          "Pc": 62.679145827021,
+          "Tc": 514.709284881296,
+          "Vc": 168.614548326629,
+          "Zc": 0.246957332369,
+          "omega": 0.644,
+          "smiles": "CCO"
+        }
+      },
+      "provider_warnings": [],
+      "published_fit_on_source_structure": {
+        "maximum_bubble_log_pressure_residual": 4e-12,
+        "pressure_kPa": {
+          "MAE": 2.768400103827,
+          "MaxAE": 11.942531461201,
+          "RMSE": 4.533436016436,
+          "bias": -2.022477548728
+        },
+        "pressure_percent": {
+          "MAE": 2.732333304211,
+          "MaxAE": 11.786943803001,
+          "RMSE": 4.474374275993,
+          "bias": -1.996128650541
+        },
+        "temperature_K": {
+          "MAE": 1.077042196989,
+          "MaxAE": 4.896903401438,
+          "RMSE": 1.830098081108,
+          "bias": 0.831354908793
+        },
+        "vapor_y1": {
+          "MAE": 0.019435050652,
+          "MaxAE": 0.092592368047,
+          "RMSE": 0.034104012865,
+          "bias": -0.019261159846
+        }
+      },
+      "pure_endpoint_count": 2,
+      "pure_pressure_correlation_endpoint_percent": {
+        "MAE": 0.881231443343,
+        "MaxAE": 1.296275251131,
+        "RMSE": 0.974079164709,
+        "bias": -0.415043807788
+      },
+      "quality_flags": [
+        "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+        "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+      ],
+      "reference_sha256": {
+        "data/reference/vapor-liquid-equilibria/1995-arce-methanol-ethanol-octanol-vle.pdf": "0b4e5c6abb81accef423e9bb9fe208b8dd591f8e8d0543cac40295d48176b711",
+        "data/reference/vapor-liquid-equilibria/1996-arce-water-ethanol-octanol-vle.pdf": "7bab9f912b913dd1ae62209d8839815c9b218ffdbe05a9dd8c39eacfdf935104"
+      },
+      "selected_form": "B_over_T",
+      "selection_rule": "A+B/T requires at least 10% lower held-out objective RMSE and no active coefficient bound; otherwise B/T",
+      "standard_structure": {
+        "1-octanol": {
+          "q": 5.212,
+          "r": 6.1519
+        },
+        "ethanol": {
+          "q": 1.972,
+          "r": 2.1055
+        }
+      },
+      "superseded_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "maximum_bubble_log_pressure_residual": 7e-12,
+          "pressure_kPa": {
+            "MAE": 9.71501720279,
+            "MaxAE": 17.836680769569,
+            "RMSE": 11.33362848331,
+            "bias": -7.229230720684
+          },
+          "pressure_percent": {
+            "MAE": 9.588449667183,
+            "MaxAE": 17.604303957332,
+            "RMSE": 11.185973631375,
+            "bias": -7.135048085949
+          },
+          "temperature_K": {
+            "MAE": 3.627108558116,
+            "MaxAE": 7.431410416994,
+            "RMSE": 4.433402531322,
+            "bias": 2.983451753494
+          },
+          "vapor_y1": {
+            "MAE": 0.041107860481,
+            "MaxAE": 0.136960176484,
+            "RMSE": 0.063458750095,
+            "bias": -0.040730320651
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          -445.3,
+          0.0,
+          202.96
+        ],
+        "structure": {
+          "q": [
+            2.588,
+            5.828
+          ],
+          "q_residual": [
+            0.92,
+            5.5
+          ],
+          "r": [
+            2.5755,
+            6.6219
+          ]
+        }
+      },
+      "unchanged_parameters_on_standard_structure": {
+        "maximum_bubble_log_pressure_residual": 4e-12,
+        "pressure_kPa": {
+          "MAE": 9.65078217883,
+          "MaxAE": 27.501126920051,
+          "RMSE": 13.110309087264,
+          "bias": 8.474399657622
+        },
+        "pressure_percent": {
+          "MAE": 9.525051499043,
+          "MaxAE": 27.142841413394,
+          "RMSE": 12.939507587114,
+          "bias": 8.363994924617
+        },
+        "temperature_K": {
+          "MAE": 3.174128310807,
+          "MaxAE": 8.781119486981,
+          "RMSE": 4.323263111544,
+          "bias": -2.705215003681
+        },
+        "vapor_y1": {
+          "MAE": 0.014165244135,
+          "MaxAE": 0.055234367857,
+          "RMSE": 0.02210532501,
+          "bias": 0.006888170824
+        }
+      },
+      "virial_matrices_at_observation_temperatures_m3_per_mol": {
+        "352.2": [
+          [
+            -0.001001493099,
+            -0.001641995683
+          ],
+          [
+            -0.001641995683,
+            -0.004463138061
+          ]
+        ],
+        "352.85": [
+          [
+            -0.000992446054,
+            -0.00162920312
+          ],
+          [
+            -0.00162920312,
+            -0.004429582754
+          ]
+        ],
+        "353.75": [
+          [
+            -0.000980128384,
+            -0.001611756034
+          ],
+          [
+            -0.001611756034,
+            -0.004383765171
+          ]
+        ],
+        "355.12": [
+          [
+            -0.000961831562,
+            -0.001585774996
+          ],
+          [
+            -0.001585774996,
+            -0.004315422358
+          ]
+        ],
+        "357.31": [
+          [
+            -0.000933674006,
+            -0.00154563533
+          ],
+          [
+            -0.00154563533,
+            -0.00420956566
+          ]
+        ],
+        "360.13": [
+          [
+            -0.000899280345,
+            -0.001496336153
+          ],
+          [
+            -0.001496336153,
+            -0.004079103637
+          ]
+        ],
+        "362.88": [
+          [
+            -0.000867623744,
+            -0.001450683343
+          ],
+          [
+            -0.001450683343,
+            -0.003957847856
+          ]
+        ],
+        "364.98": [
+          [
+            -0.000844618368,
+            -0.001417331103
+          ],
+          [
+            -0.001417331103,
+            -0.003868993365
+          ]
+        ],
+        "367.16": [
+          [
+            -0.000821742487,
+            -0.001384012936
+          ],
+          [
+            -0.001384012936,
+            -0.003780002767
+          ]
+        ],
+        "370.83": [
+          [
+            -0.000785390847,
+            -0.001330735688
+          ],
+          [
+            -0.001330735688,
+            -0.003637233482
+          ]
+        ],
+        "376.14": [
+          [
+            -0.000737155092,
+            -0.001259366322
+          ],
+          [
+            -0.001259366322,
+            -0.003445085765
+          ]
+        ],
+        "384.51": [
+          [
+            -0.000670186299,
+            -0.001158865577
+          ],
+          [
+            -0.001158865577,
+            -0.003172809537
+          ]
+        ],
+        "393.89": [
+          [
+            -0.000606081992,
+            -0.001060913252
+          ],
+          [
+            -0.001060913252,
+            -0.002905621923
+          ]
+        ],
+        "403.52": [
+          [
+            -0.00054999458,
+            -0.000973594629
+          ],
+          [
+            -0.000973594629,
+            -0.002666063117
+          ]
+        ],
+        "413.28": [
+          [
+            -0.000501264462,
+            -0.000896330456
+          ],
+          [
+            -0.000896330456,
+            -0.002453151331
+          ]
+        ],
+        "423.35": [
+          [
+            -0.000457931451,
+            -0.000826388318
+          ],
+          [
+            -0.000826388318,
+            -0.00225980429
+          ]
+        ],
+        "430.8": [
+          [
+            -0.000429640577,
+            -0.000780030194
+          ],
+          [
+            -0.000780030194,
+            -0.002131414674
+          ]
+        ],
+        "435.41": [
+          [
+            -0.000413520983,
+            -0.000753351459
+          ],
+          [
+            -0.000753351459,
+            -0.002057468323
+          ]
+        ],
+        "441.79": [
+          [
+            -0.000392767943,
+            -0.000718704601
+          ],
+          [
+            -0.000718704601,
+            -0.001961397633
+          ]
+        ],
+        "448.1": [
+          [
+            -0.000373840175,
+            -0.000686796345
+          ],
+          [
+            -0.000686796345,
+            -0.001872906829
+          ]
+        ],
+        "452.19": [
+          [
+            -0.000362338643,
+            -0.00066725682
+          ],
+          [
+            -0.00066725682,
+            -0.001818723473
+          ]
+        ],
+        "456.69": [
+          [
+            -0.000350322729,
+            -0.000646717528
+          ],
+          [
+            -0.000646717528,
+            -0.001761781061
+          ]
+        ],
+        "461.91": [
+          [
+            -0.000337158781,
+            -0.000624063492
+          ],
+          [
+            -0.000624063492,
+            -0.001699001545
+          ]
+        ]
+      }
+    },
+    "isobutanol_glycerol": {
+      "HOC_parameters": [],
+      "active_runtime_validation": {
+        "method": "UNIQUAC",
+        "point_count": 27,
+        "pressure_closure_percent": {
+          "MAE": 4.907961926251,
+          "MaxAE": 13.517228602399,
+          "RMSE": 5.949080409785,
+          "bias": -4.822935157508
+        },
+        "property_basis": "Canonical runtime Psat and the selected runtime vapor backend",
+        "warnings": []
+      },
+      "caloric_diagnostics_over_calibration_range": {
+        "excess_Cp_J_mol_K_range": [
+          3.160196e-06,
+          1.328479706917
+        ],
+        "excess_enthalpy_J_mol_range": [
+          0.365789336911,
+          1026.701048200593
+        ],
+        "note": "Diagnostics only; no excess-enthalpy or heat-capacity measurements constrain these fits"
+      },
+      "candidates": [
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [],
+          "constrained_optimizer_iterations": 21,
+          "constrained_optimizer_message": "Positive directional derivative for linesearch",
+          "constrained_optimizer_success": false,
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.155062042255,
+              "MaxAE": 0.341676671033,
+              "RMSE": 0.18511863438,
+              "bias": -0.144794422363
+            },
+            "pressure_percent": {
+              "MAE": 3.962199789566,
+              "MaxAE": 12.487168235777,
+              "RMSE": 5.095751467992,
+              "bias": -3.699247392393
+            }
+          },
+          "fit_including_pure_endpoints": {
+            "pressure_kPa": {
+              "MAE": 0.140593195421,
+              "MaxAE": 0.341676671033,
+              "RMSE": 0.175657775632,
+              "bias": -0.129701732001
+            },
+            "pressure_percent": {
+              "MAE": 3.58882806035,
+              "MaxAE": 12.487168235777,
+              "RMSE": 4.835093711307,
+              "bias": -3.314522017569
+            }
+          },
+          "form": "B_over_T",
+          "jacobian_condition": 14.10339918213,
+          "jacobian_singular_values": [
+            37.252630371655,
+            2.641393744202
+          ],
+          "minimum_total_G_over_RT_curvature": 8.4448628e-05,
+          "objective_sum_squares": 0.92526053746,
+          "optimizer_values": [
+            0.043773562324,
+            -0.59716681312
+          ],
+          "parameters": [
+            0.0,
+            13.926558853301,
+            0.0,
+            -189.988621594053
+          ],
+          "reference_temperature_K": 318.15,
+          "stability_constraint_active": true,
+          "unconstrained_minimum_curvature": -0.148244225101,
+          "unconstrained_nfev": 11,
+          "unconstrained_objective_sum_squares": 0.6548834984,
+          "unconstrained_optimizer_optimality": 4.126008e-06,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 313.15,
+                "Tmin_K": 313.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  16.052519825854,
+                  0.0,
+                  -193.108293274389
+                ]
+              },
+              {
+                "Tmax_K": 318.15,
+                "Tmin_K": 318.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  16.154811889565,
+                  0.0,
+                  -193.258779350953
+                ]
+              },
+              {
+                "Tmax_K": 323.15,
+                "Tmin_K": 323.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  6.617251881683,
+                  0.0,
+                  -179.434592903084
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.156166306618,
+              "MaxAE": 0.360294473449,
+              "RMSE": 0.187548445836,
+              "bias": -0.145104136334
+            }
+          }
+        },
+        {
+          "at_parameter_bound": false,
+          "composition_adjustments_sigma": [],
+          "constrained_optimizer_iterations": 19,
+          "constrained_optimizer_message": "Optimization terminated successfully",
+          "constrained_optimizer_success": true,
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.137762071139,
+              "MaxAE": 0.33148523027,
+              "RMSE": 0.168703906538,
+              "bias": -0.110388170348
+            },
+            "pressure_percent": {
+              "MAE": 3.673043432911,
+              "MaxAE": 13.111273258215,
+              "RMSE": 4.947002244224,
+              "bias": -3.047390451503
+            }
+          },
+          "form": "A_plus_B_over_T",
+          "jacobian_condition": 1204.996205902381,
+          "jacobian_singular_values": [
+            37.820503608563,
+            2.698509985097,
+            0.440531978973,
+            0.031386408873
+          ],
+          "minimum_total_G_over_RT_curvature": 9.2938432e-05,
+          "objective_sum_squares": 0.768447218195,
+          "optimizer_values": [
+            0.02002389377,
+            -0.472913057054,
+            -0.571412964054,
+            0.671734318202
+          ],
+          "parameters": [
+            0.492936950824,
+            -150.457289101735,
+            -1.243147282256,
+            213.712273335958
+          ],
+          "reference_temperature_K": 318.15,
+          "stability_constraint_active": true,
+          "unconstrained_minimum_curvature": -0.19612220562,
+          "unconstrained_nfev": 11,
+          "unconstrained_objective_sum_squares": 0.637527884916,
+          "unconstrained_optimizer_optimality": 6.498149e-06,
+          "validation": {
+            "folds": [
+              {
+                "Tmax_K": 313.15,
+                "Tmin_K": 313.15,
+                "count": 9,
+                "parameters": [
+                  1.227767980793,
+                  -386.849617609087,
+                  -2.295130126705,
+                  552.118883904473
+                ]
+              },
+              {
+                "Tmax_K": 318.15,
+                "Tmin_K": 318.15,
+                "count": 9,
+                "parameters": [
+                  0.361311158057,
+                  -106.612606736777,
+                  -1.059481575093,
+                  152.465240549367
+                ]
+              },
+              {
+                "Tmax_K": 323.15,
+                "Tmin_K": 323.15,
+                "count": 9,
+                "parameters": [
+                  -0.295771058989,
+                  96.900144757393,
+                  -0.12594717902,
+                  -136.672055983864
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.138422861392,
+              "MaxAE": 0.329033299477,
+              "RMSE": 0.170599019548,
+              "bias": -0.110787318095
+            }
+          }
+        }
+      ],
+      "current_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "pressure_kPa": {
+            "MAE": 0.155062042255,
+            "MaxAE": 0.341676671033,
+            "RMSE": 0.18511863438,
+            "bias": -0.144794422363
+          },
+          "pressure_percent": {
+            "MAE": 3.962199789566,
+            "MaxAE": 12.487168235777,
+            "RMSE": 5.095751467992,
+            "bias": -3.699247392393
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          13.926558853301,
+          0.0,
+          -189.988621594053
+        ],
+        "structure": {
+          "q": [
+            3.048,
+            4.908
+          ],
+          "q_residual": [
+            3.048,
+            4.908
+          ],
+          "r": [
+            3.4535,
+            4.7957
+          ]
+        }
+      },
+      "definition": {
+        "cas": [
+          "78-83-1",
+          "56-81-5"
+        ],
+        "components": [
+          "isobutanol",
+          "glycerol"
+        ],
+        "extrapolation": "unrestricted",
+        "kind": "isothermal",
+        "objective": "absolute pressure residuals in kPa (source objective)",
+        "paper": "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle.pdf",
+        "psat": [
+          {
+            "A": 4.34504,
+            "B": 1190.38,
+            "C": 166.67,
+            "base": "log10",
+            "pressure_factor": 100.0
+          },
+          {
+            "A": 10.619,
+            "B": 4487.04,
+            "C": 132.95,
+            "base": "ln",
+            "pressure_factor": 100.0
+          }
+        ],
+        "rows": [
+          {
+            "P_kPa": 1.99,
+            "T_K": 313.15,
+            "x1": 0.099
+          },
+          {
+            "P_kPa": 2.71,
+            "T_K": 318.15,
+            "x1": 0.099
+          },
+          {
+            "P_kPa": 3.44,
+            "T_K": 323.15,
+            "x1": 0.099
+          },
+          {
+            "P_kPa": 2.79,
+            "T_K": 313.15,
+            "x1": 0.2029
+          },
+          {
+            "P_kPa": 3.59,
+            "T_K": 318.15,
+            "x1": 0.2029
+          },
+          {
+            "P_kPa": 4.87,
+            "T_K": 323.15,
+            "x1": 0.2029
+          },
+          {
+            "P_kPa": 3.15,
+            "T_K": 313.15,
+            "x1": 0.302
+          },
+          {
+            "P_kPa": 4.12,
+            "T_K": 318.15,
+            "x1": 0.302
+          },
+          {
+            "P_kPa": 5.8,
+            "T_K": 323.15,
+            "x1": 0.302
+          },
+          {
+            "P_kPa": 3.33,
+            "T_K": 313.15,
+            "x1": 0.3982
+          },
+          {
+            "P_kPa": 4.47,
+            "T_K": 318.15,
+            "x1": 0.3982
+          },
+          {
+            "P_kPa": 6.02,
+            "T_K": 323.15,
+            "x1": 0.3982
+          },
+          {
+            "P_kPa": 3.41,
+            "T_K": 313.15,
+            "x1": 0.4976
+          },
+          {
+            "P_kPa": 4.55,
+            "T_K": 318.15,
+            "x1": 0.4976
+          },
+          {
+            "P_kPa": 6.09,
+            "T_K": 323.15,
+            "x1": 0.4976
+          },
+          {
+            "P_kPa": 3.54,
+            "T_K": 313.15,
+            "x1": 0.6022
+          },
+          {
+            "P_kPa": 4.71,
+            "T_K": 318.15,
+            "x1": 0.6022
+          },
+          {
+            "P_kPa": 6.21,
+            "T_K": 323.15,
+            "x1": 0.6022
+          },
+          {
+            "P_kPa": 3.61,
+            "T_K": 313.15,
+            "x1": 0.7004
+          },
+          {
+            "P_kPa": 4.84,
+            "T_K": 318.15,
+            "x1": 0.7004
+          },
+          {
+            "P_kPa": 6.33,
+            "T_K": 323.15,
+            "x1": 0.7004
+          },
+          {
+            "P_kPa": 3.65,
+            "T_K": 313.15,
+            "x1": 0.7955
+          },
+          {
+            "P_kPa": 4.98,
+            "T_K": 318.15,
+            "x1": 0.7955
+          },
+          {
+            "P_kPa": 6.45,
+            "T_K": 323.15,
+            "x1": 0.7955
+          },
+          {
+            "P_kPa": 3.68,
+            "T_K": 313.15,
+            "x1": 0.9005
+          },
+          {
+            "P_kPa": 5.05,
+            "T_K": 318.15,
+            "x1": 0.9005
+          },
+          {
+            "P_kPa": 6.57,
+            "T_K": 323.15,
+            "x1": 0.9005
+          },
+          {
+            "P_kPa": 3.83,
+            "T_K": 313.15,
+            "x1": 1.0
+          },
+          {
+            "P_kPa": 5.27,
+            "T_K": 318.15,
+            "x1": 1.0
+          },
+          {
+            "P_kPa": 7.09,
+            "T_K": 323.15,
+            "x1": 1.0
+          }
+        ],
+        "source_doi": "10.1021/acs.jced.1c00937",
+        "source_parameters": [
+          0.0,
+          -41.866806790373,
+          0.0,
+          -116.592020978419
+        ],
+        "source_q": [
+          3.664,
+          4.908
+        ],
+        "source_q_residual": [
+          3.664,
+          4.908
+        ],
+        "source_r": [
+          3.9235,
+          4.7957
+        ],
+        "supporting_information": "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle-supporting-information.pdf",
+        "table": "Table 3; SI Tables S2-S3",
+        "vapor": "IDEAL"
+      },
+      "interaction": {
+        "Tmax_K": 323.15,
+        "Tmin_K": 313.15,
+        "cas1": "78-83-1",
+        "cas2": "56-81-5",
+        "comment": "isobutanol_glycerol: ordinary UNIQUAC binary-data refit; vapor=IDEAL",
+        "component1": "isobutanol",
+        "component2": "glycerol",
+        "extrapolation": "unrestricted",
+        "fit_evidence": {
+          "analysis_key": "isobutanol_glycerol",
+          "fit": {
+            "pressure_kPa": {
+              "MAE": 0.155062042255,
+              "MaxAE": 0.341676671033,
+              "RMSE": 0.18511863438,
+              "bias": -0.144794422363
+            },
+            "pressure_percent": {
+              "MAE": 3.962199789566,
+              "MaxAE": 12.487168235777,
+              "RMSE": 5.095751467992,
+              "bias": -3.699247392393
+            }
+          },
+          "held_out_validation": {
+            "folds": [
+              {
+                "Tmax_K": 313.15,
+                "Tmin_K": 313.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  16.052519825854,
+                  0.0,
+                  -193.108293274389
+                ]
+              },
+              {
+                "Tmax_K": 318.15,
+                "Tmin_K": 318.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  16.154811889565,
+                  0.0,
+                  -193.258779350953
+                ]
+              },
+              {
+                "Tmax_K": 323.15,
+                "Tmin_K": 323.15,
+                "count": 9,
+                "parameters": [
+                  0.0,
+                  6.617251881683,
+                  0.0,
+                  -179.434592903084
+                ]
+              }
+            ],
+            "method": "leave one complete temperature out",
+            "objective_residual": {
+              "MAE": 0.156166306618,
+              "MaxAE": 0.360294473449,
+              "RMSE": 0.187548445836,
+              "bias": -0.145104136334
+            }
+          },
+          "minimum_total_G_over_RT_curvature": 8.4448628e-05,
+          "mixture_point_count": 27,
+          "quality_flags": [
+            "The stable fit lies close to a spinodal boundary; stability outside the calibration range is not established.",
+            "The constrained optimizer did not report success; the candidate is retained on numerical feasibility and residual quality, with continuous stability and exact bubble-root checks."
+          ],
+          "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+          "selected_form": "B_over_T",
+          "source_vapor_model": "IDEAL"
+        },
+        "fit_quality_flags": [
+          "The stable fit lies close to a spinodal boundary; stability outside the calibration range is not established.",
+          "The constrained optimizer did not report success; the candidate is retained on numerical feasibility and residual quality, with continuous stability and exact bubble-root checks."
+        ],
+        "fit_status": "recommended_common_basis_refit",
+        "model": "UNIQUAC",
+        "model_variant": "standard_uniquac",
+        "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1021/acs.jced.1c00937",
+        "source_doi": "10.1021/acs.jced.1c00937",
+        "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+        "tau12_a": 0.0,
+        "tau12_b": 13.926558853301,
+        "tau21_a": 0.0,
+        "tau21_b": -189.988621594053,
+        "use_q_prime": false
+      },
+      "interior_point_count": 27,
+      "physical_property_inputs": {},
+      "provider_warnings": [],
+      "published_fit_on_source_structure": {
+        "pressure_kPa": {
+          "MAE": 0.13208581264,
+          "MaxAE": 0.33456027524,
+          "RMSE": 0.163371405985,
+          "bias": -0.089825146763
+        },
+        "pressure_percent": {
+          "MAE": 3.313342279924,
+          "MaxAE": 9.156223764841,
+          "RMSE": 4.250758557086,
+          "bias": -2.259684768609
+        }
+      },
+      "pure_endpoint_count": 3,
+      "pure_pressure_correlation_endpoint_percent": {
+        "MAE": 0.228482497409,
+        "MaxAE": 0.46872720192,
+        "RMSE": 0.284894294951,
+        "bias": 0.148006355855
+      },
+      "quality_flags": [
+        "The stable fit lies close to a spinodal boundary; stability outside the calibration range is not established.",
+        "The constrained optimizer did not report success; the candidate is retained on numerical feasibility and residual quality, with continuous stability and exact bubble-root checks."
+      ],
+      "reference_sha256": {
+        "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle-supporting-information.pdf": "a2d3238f38d6430eef8f11edff5d74f152bf82b413ae07a296d5ba934a812ded",
+        "data/reference/vapor-liquid-equilibria/2022-mustain-butanol-isobutanol-glycerol-water-vle.pdf": "d3633f9239f7a1c79488bfab976c25c65139c661a6b0575855fe6d6ac7b25a33"
+      },
+      "rejected_candidates": {},
+      "selected_form": "B_over_T",
+      "selection_rule": "A+B/T requires at least 10% lower held-out objective RMSE and no active coefficient bound; otherwise B/T",
+      "standard_structure": {
+        "glycerol": {
+          "q": 4.908,
+          "r": 4.7957
+        },
+        "isobutanol": {
+          "q": 3.048,
+          "r": 3.4535
+        }
+      },
+      "superseded_runtime_fit_comparison": {
+        "metrics_on_the_same_source_fluid_model": {
+          "pressure_kPa": {
+            "MAE": 0.132085812642,
+            "MaxAE": 0.334560275238,
+            "RMSE": 0.163371405983,
+            "bias": -0.089825146748
+          },
+          "pressure_percent": {
+            "MAE": 3.313342279957,
+            "MaxAE": 9.156223763816,
+            "RMSE": 4.250758556932,
+            "bias": -2.259684768215
+          }
+        },
+        "note": "Existing binary parameters and active structural flags; evaluated using the same source Psat/vapor model as the candidates. This is not a validation of canonical runtime Psat.",
+        "parameters": [
+          0.0,
+          -41.86680679,
+          0.0,
+          -116.59202098
+        ],
+        "structure": {
+          "q": [
+            3.664,
+            4.908
+          ],
+          "q_residual": [
+            3.664,
+            4.908
+          ],
+          "r": [
+            3.9235,
+            4.7957
+          ]
+        }
+      },
+      "unchanged_parameters_on_standard_structure": {
+        "pressure_kPa": {
+          "MAE": 0.166363420727,
+          "MaxAE": 0.654803165916,
+          "RMSE": 0.235829479469,
+          "bias": -0.147043377394
+        },
+        "pressure_percent": {
+          "MAE": 4.738906473008,
+          "MaxAE": 22.297516009722,
+          "RMSE": 7.71881569871,
+          "bias": -4.383384204086
+        }
+      },
+      "virial_matrices_at_observation_temperatures_m3_per_mol": {}
+    }
+  },
+  "interactions": [
+    {
+      "Tmax_K": 429.2,
+      "Tmin_K": 351.6,
+      "cas1": "64-17-5",
+      "cas2": "111-27-3",
+      "comment": "ethanol_hexanol: ordinary UNIQUAC binary-data refit; vapor=IDEAL",
+      "component1": "ethanol",
+      "component2": "1-hexanol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "analysis_key": "ethanol_hexanol",
+        "fit": {
+          "maximum_bubble_log_pressure_residual": 9e-12,
+          "pressure_kPa": {
+            "MAE": 4.623129895982,
+            "MaxAE": 12.233170086863,
+            "RMSE": 5.899079161775,
+            "bias": -1.483094105878
+          },
+          "pressure_percent": {
+            "MAE": 4.623129895982,
+            "MaxAE": 12.233170086863,
+            "RMSE": 5.899079161775,
+            "bias": -1.483094105878
+          },
+          "temperature_K": {
+            "MAE": 1.329891254267,
+            "MaxAE": 4.139159568224,
+            "RMSE": 1.758558536155,
+            "bias": 0.463964394833
+          }
+        },
+        "held_out_validation": {
+          "folds": [
+            {
+              "Tmax_K": 419.0,
+              "Tmin_K": 391.1,
+              "count": 3,
+              "parameters": [
+                0.0,
+                162.846786079577,
+                0.0,
+                -299.316198721002
+              ]
+            },
+            {
+              "Tmax_K": 376.5,
+              "Tmin_K": 368.5,
+              "count": 3,
+              "parameters": [
+                0.0,
+                78.991253216994,
+                0.0,
+                -140.168911847219
+              ]
+            },
+            {
+              "Tmax_K": 365.0,
+              "Tmin_K": 359.8,
+              "count": 3,
+              "parameters": [
+                0.0,
+                -292.918555776421,
+                0.0,
+                158.824148902401
+              ]
+            },
+            {
+              "Tmax_K": 357.9,
+              "Tmin_K": 354.4,
+              "count": 2,
+              "parameters": [
+                0.0,
+                58.020196125376,
+                0.0,
+                -122.398257964369
+              ]
+            },
+            {
+              "Tmax_K": 352.5,
+              "Tmin_K": 351.7,
+              "count": 2,
+              "parameters": [
+                0.0,
+                82.145890740408,
+                0.0,
+                -153.338257529743
+              ]
+            }
+          ],
+          "method": "five contiguous liquid-composition blocks",
+          "objective_residual": {
+            "MAE": 8.796703437952,
+            "MaxAE": 31.725630985411,
+            "RMSE": 11.482203480594,
+            "bias": -0.921263117903
+          }
+        },
+        "minimum_total_G_over_RT_curvature": 3.753696809651,
+        "mixture_point_count": 13,
+        "quality_flags": [
+          "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+          "The regression reaches its ten-uncertainty-scale composition-adjustment bound; the data are not reproduced at their quoted precision.",
+          "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+        ],
+        "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+        "selected_form": "B_over_T",
+        "source_vapor_model": "IDEAL"
+      },
+      "fit_quality_flags": [
+        "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+        "The regression reaches its ten-uncertainty-scale composition-adjustment bound; the data are not reproduced at their quoted precision.",
+        "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+      ],
+      "fit_status": "recommended_common_basis_refit",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.13140/RG.2.1.4542.3766",
+      "source_doi": "10.13140/RG.2.1.4542.3766",
+      "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+      "tau12_a": 0.0,
+      "tau12_b": 52.547617255554,
+      "tau21_a": 0.0,
+      "tau21_b": -115.623315255526,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 467.85,
+      "Tmin_K": 351.56,
+      "cas1": "64-17-5",
+      "cas2": "111-87-5",
+      "comment": "ethanol_octanol: ordinary UNIQUAC binary-data refit; vapor=HOC",
+      "component1": "ethanol",
+      "component2": "1-octanol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "analysis_key": "ethanol_octanol",
+        "fit": {
+          "maximum_bubble_log_pressure_residual": 5e-12,
+          "pressure_kPa": {
+            "MAE": 3.114716592479,
+            "MaxAE": 12.881695485977,
+            "RMSE": 5.093313472996,
+            "bias": -2.721678518526
+          },
+          "pressure_percent": {
+            "MAE": 3.074137971259,
+            "MaxAE": 12.713872370683,
+            "RMSE": 5.02695763225,
+            "bias": -2.686220409126
+          },
+          "temperature_K": {
+            "MAE": 1.233600438602,
+            "MaxAE": 5.311675275957,
+            "RMSE": 2.075430706277,
+            "bias": 1.11138251313
+          },
+          "vapor_y1": {
+            "MAE": 0.022646709067,
+            "MaxAE": 0.101187056567,
+            "RMSE": 0.038661497012,
+            "bias": -0.022476452578
+          }
+        },
+        "held_out_validation": {
+          "folds": [
+            {
+              "Tmax_K": 461.91,
+              "Tmin_K": 441.79,
+              "count": 5,
+              "parameters": [
+                0.0,
+                79.726893551954,
+                0.0,
+                -197.644116497134
+              ]
+            },
+            {
+              "Tmax_K": 435.41,
+              "Tmin_K": 403.52,
+              "count": 5,
+              "parameters": [
+                0.0,
+                87.712166246019,
+                0.0,
+                -210.633339833084
+              ]
+            },
+            {
+              "Tmax_K": 393.89,
+              "Tmin_K": 367.16,
+              "count": 5,
+              "parameters": [
+                0.0,
+                84.454321255337,
+                0.0,
+                -206.925192734996
+              ]
+            },
+            {
+              "Tmax_K": 364.98,
+              "Tmin_K": 357.31,
+              "count": 4,
+              "parameters": [
+                0.0,
+                97.544857831876,
+                0.0,
+                -224.364605472735
+              ]
+            },
+            {
+              "Tmax_K": 355.12,
+              "Tmin_K": 352.2,
+              "count": 4,
+              "parameters": [
+                0.0,
+                85.433278472626,
+                0.0,
+                -206.767490521399
+              ]
+            }
+          ],
+          "method": "five contiguous liquid-composition blocks",
+          "objective_residual": {
+            "MAE": 1.933794222959,
+            "MaxAE": 10.528890784792,
+            "RMSE": 2.899450110052,
+            "bias": 0.02024987562
+          }
+        },
+        "minimum_total_G_over_RT_curvature": 3.396177945056,
+        "mixture_point_count": 23,
+        "quality_flags": [
+          "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+          "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+        ],
+        "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+        "selected_form": "B_over_T",
+        "source_vapor_model": "HOC"
+      },
+      "fit_quality_flags": [
+        "Some fitted liquid compositions differ by more than three reported uncertainty scales from the observations.",
+        "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+      ],
+      "fit_status": "recommended_common_basis_refit",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1021/je00020a063",
+      "source_doi": "10.1021/je00020a063",
+      "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+      "tau12_a": 0.0,
+      "tau12_b": 84.835866880129,
+      "tau21_a": 0.0,
+      "tau21_b": -205.885403042316,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 353.15,
+      "Tmin_K": 273.15,
+      "cas1": "64-17-5",
+      "cas2": "56-81-5",
+      "comment": "ethanol_glycerol: ordinary UNIQUAC binary-data refit; vapor=TSONOPOULOS",
+      "component1": "ethanol",
+      "component2": "glycerol",
+      "extrapolation": "inverse_square_cubic",
+      "fit_evidence": {
+        "analysis_key": "ethanol_glycerol",
+        "fit": {
+          "pressure_kPa": {
+            "MAE": 0.886459123868,
+            "MaxAE": 7.283730792143,
+            "RMSE": 1.719808262941,
+            "bias": 0.234071134384
+          },
+          "pressure_percent": {
+            "MAE": 3.419814234848,
+            "MaxAE": 10.88324544698,
+            "RMSE": 4.293367317086,
+            "bias": 0.668399157317
+          }
+        },
+        "held_out_validation": {
+          "folds": [
+            {
+              "Tmax_K": 273.15,
+              "Tmin_K": 273.15,
+              "count": 8,
+              "parameters": [
+                1.45399701008,
+                -384.3266410544,
+                -1.953939526396,
+                334.568524543555
+              ]
+            },
+            {
+              "Tmax_K": 283.15,
+              "Tmin_K": 283.15,
+              "count": 8,
+              "parameters": [
+                1.390459682842,
+                -363.855424434063,
+                -1.83191891764,
+                295.342607172663
+              ]
+            },
+            {
+              "Tmax_K": 293.15,
+              "Tmin_K": 293.15,
+              "count": 8,
+              "parameters": [
+                1.395683720325,
+                -365.391427140084,
+                -1.833282906232,
+                295.399733888148
+              ]
+            },
+            {
+              "Tmax_K": 303.15,
+              "Tmin_K": 303.15,
+              "count": 8,
+              "parameters": [
+                1.410002939475,
+                -369.937241397578,
+                -1.855747561062,
+                302.368632201017
+              ]
+            },
+            {
+              "Tmax_K": 313.15,
+              "Tmin_K": 313.15,
+              "count": 8,
+              "parameters": [
+                1.416735049621,
+                -372.176221717856,
+                -1.868948688201,
+                306.640839724714
+              ]
+            },
+            {
+              "Tmax_K": 323.15,
+              "Tmin_K": 323.15,
+              "count": 8,
+              "parameters": [
+                1.412007419617,
+                -370.902431648713,
+                -1.863371282002,
+                305.268046085443
+              ]
+            },
+            {
+              "Tmax_K": 333.15,
+              "Tmin_K": 333.15,
+              "count": 8,
+              "parameters": [
+                1.398520162465,
+                -366.982073482865,
+                -1.83977725506,
+                298.520963291072
+              ]
+            },
+            {
+              "Tmax_K": 343.15,
+              "Tmin_K": 343.15,
+              "count": 8,
+              "parameters": [
+                1.385594053918,
+                -363.314912510696,
+                -1.808991282899,
+                289.744494993724
+              ]
+            },
+            {
+              "Tmax_K": 353.15,
+              "Tmin_K": 353.15,
+              "count": 8,
+              "parameters": [
+                1.398388016671,
+                -367.639811229133,
+                -1.803920359347,
+                289.002616175259
+              ]
+            }
+          ],
+          "method": "leave one complete temperature out",
+          "objective_residual": {
+            "MAE": 0.034565234537,
+            "MaxAE": 0.111403622288,
+            "RMSE": 0.043283100658,
+            "bias": 0.006111824433
+          }
+        },
+        "minimum_total_G_over_RT_curvature": 1.039981551394,
+        "mixture_point_count": 72,
+        "quality_flags": [
+          "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+        ],
+        "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+        "selected_form": "A_plus_B_over_T",
+        "source_vapor_model": "TSONOPOULOS"
+      },
+      "fit_quality_flags": [
+        "The source pure-fluid correlation differs from at least one measured pure endpoint by more than 1%; excluded endpoints cannot be repaired by liquid interaction parameters."
+      ],
+      "fit_status": "recommended_common_basis_refit",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1016/j.jct.2013.09.046",
+      "source_doi": "10.1016/j.jct.2013.09.046",
+      "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+      "tau12_a": 1.402915467391,
+      "tau12_b": -368.134394305927,
+      "tau21_a": -1.844637134014,
+      "tau21_b": 299.777154630391,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 343.15,
+      "Tmin_K": 333.15,
+      "cas1": "71-36-3",
+      "cas2": "56-81-5",
+      "comment": "butanol_glycerol: ordinary UNIQUAC binary-data refit; vapor=IDEAL",
+      "component1": "1-butanol",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "analysis_key": "butanol_glycerol",
+        "fit": {
+          "pressure_kPa": {
+            "MAE": 0.184764568896,
+            "MaxAE": 0.438643626924,
+            "RMSE": 0.238376818546,
+            "bias": -0.086923372243
+          },
+          "pressure_percent": {
+            "MAE": 2.474989220303,
+            "MaxAE": 6.240838983839,
+            "RMSE": 3.170056155709,
+            "bias": -1.321670531715
+          }
+        },
+        "held_out_validation": {
+          "folds": [
+            {
+              "Tmax_K": 333.15,
+              "Tmin_K": 333.15,
+              "count": 9,
+              "parameters": [
+                0.0,
+                65.831577270187,
+                0.0,
+                -250.426146275451
+              ]
+            },
+            {
+              "Tmax_K": 338.15,
+              "Tmin_K": 338.15,
+              "count": 9,
+              "parameters": [
+                0.0,
+                67.678075548567,
+                0.0,
+                -253.636318970668
+              ]
+            },
+            {
+              "Tmax_K": 343.15,
+              "Tmin_K": 343.15,
+              "count": 9,
+              "parameters": [
+                0.0,
+                29.949743180562,
+                0.0,
+                -198.601154592067
+              ]
+            }
+          ],
+          "method": "leave one complete temperature out",
+          "objective_residual": {
+            "MAE": 0.237334434766,
+            "MaxAE": 0.540092212724,
+            "RMSE": 0.295998137317,
+            "bias": -0.073245704356
+          }
+        },
+        "minimum_total_G_over_RT_curvature": 0.47647280882,
+        "mixture_point_count": 27,
+        "quality_flags": [],
+        "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+        "selected_form": "B_over_T",
+        "source_vapor_model": "IDEAL"
+      },
+      "fit_quality_flags": [],
+      "fit_status": "recommended_common_basis_refit",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1021/acs.jced.1c00937",
+      "source_doi": "10.1021/acs.jced.1c00937",
+      "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+      "tau12_a": 0.0,
+      "tau12_b": 57.898076767546,
+      "tau21_a": 0.0,
+      "tau21_b": -238.495362238609,
+      "use_q_prime": false
+    },
+    {
+      "Tmax_K": 323.15,
+      "Tmin_K": 313.15,
+      "cas1": "78-83-1",
+      "cas2": "56-81-5",
+      "comment": "isobutanol_glycerol: ordinary UNIQUAC binary-data refit; vapor=IDEAL",
+      "component1": "isobutanol",
+      "component2": "glycerol",
+      "extrapolation": "unrestricted",
+      "fit_evidence": {
+        "analysis_key": "isobutanol_glycerol",
+        "fit": {
+          "pressure_kPa": {
+            "MAE": 0.155062042255,
+            "MaxAE": 0.341676671033,
+            "RMSE": 0.18511863438,
+            "bias": -0.144794422363
+          },
+          "pressure_percent": {
+            "MAE": 3.962199789566,
+            "MaxAE": 12.487168235777,
+            "RMSE": 5.095751467992,
+            "bias": -3.699247392393
+          }
+        },
+        "held_out_validation": {
+          "folds": [
+            {
+              "Tmax_K": 313.15,
+              "Tmin_K": 313.15,
+              "count": 9,
+              "parameters": [
+                0.0,
+                16.052519825854,
+                0.0,
+                -193.108293274389
+              ]
+            },
+            {
+              "Tmax_K": 318.15,
+              "Tmin_K": 318.15,
+              "count": 9,
+              "parameters": [
+                0.0,
+                16.154811889565,
+                0.0,
+                -193.258779350953
+              ]
+            },
+            {
+              "Tmax_K": 323.15,
+              "Tmin_K": 323.15,
+              "count": 9,
+              "parameters": [
+                0.0,
+                6.617251881683,
+                0.0,
+                -179.434592903084
+              ]
+            }
+          ],
+          "method": "leave one complete temperature out",
+          "objective_residual": {
+            "MAE": 0.156166306618,
+            "MaxAE": 0.360294473449,
+            "RMSE": 0.187548445836,
+            "bias": -0.145104136334
+          }
+        },
+        "minimum_total_G_over_RT_curvature": 8.4448628e-05,
+        "mixture_point_count": 27,
+        "quality_flags": [
+          "The stable fit lies close to a spinodal boundary; stability outside the calibration range is not established.",
+          "The constrained optimizer did not report success; the candidate is retained on numerical feasibility and residual quality, with continuous stability and exact bubble-root checks."
+        ],
+        "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+        "selected_form": "B_over_T",
+        "source_vapor_model": "IDEAL"
+      },
+      "fit_quality_flags": [
+        "The stable fit lies close to a spinodal boundary; stability outside the calibration range is not established.",
+        "The constrained optimizer did not report success; the candidate is retained on numerical feasibility and residual quality, with continuous stability and exact bubble-root checks."
+      ],
+      "fit_status": "recommended_common_basis_refit",
+      "model": "UNIQUAC",
+      "model_variant": "standard_uniquac",
+      "source": "PFDSim ordinary-basis refit of binary measurements; DOI 10.1021/acs.jced.1c00937",
+      "source_doi": "10.1021/acs.jced.1c00937",
+      "source_file": "data/source/activity_fitting/uniquac_common_basis_refits.json",
+      "tau12_a": 0.0,
+      "tau12_b": 13.926558853301,
+      "tau21_a": 0.0,
+      "tau21_b": -189.988621594053,
+      "use_q_prime": false
+    }
+  ],
+  "metadata": {
+    "activation": "The interaction builder replaces the five corresponding curated UNIQUAC entries with this collection; NRTL and all other UNIQUAC entries are preserved",
+    "description": "Five reviewed ordinary-basis UNIQUAC refits from original binary measurements",
+    "failed_cases": {},
+    "held_out_isobaric_metric": "Distance to the fixed prediction curve allowing measurement uncertainty; no interaction coefficients are fitted to the held-out observations",
+    "isobaric_objective": "Profile least squares with latent liquid compositions penalized using published measurement tolerances; local temperature closure is checked by exact bubble roots",
+    "physical_constraint": "Nonnegative total g/RT curvature over the complete calibration range; dense final audit",
+    "pure_endpoints": "excluded from regression and retained in source definitions",
+    "randomness": "none; fixed deterministic initial guesses",
+    "script": "scripts/activity_fitting/refit_uniquac_common_basis.py",
+    "structural_basis": "data/uniquac_rq_cas.json ordinary r/q; residual q equals q"
+  }
+}

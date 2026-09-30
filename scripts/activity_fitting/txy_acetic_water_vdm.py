@@ -11,7 +11,7 @@ VLE correction.
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import matplotlib
 matplotlib.use('Agg')
@@ -272,6 +272,6 @@ if azo_uni:
                  fontsize=8, arrowprops=dict(arrowstyle='->', lw=0.8))
 
 plt.tight_layout()
-out = Path(__file__).parent.parent / 'outputs' / 'txy_acetic_water_vdm.png'
+out = Path(__file__).resolve().parents[2] / 'outputs' / 'txy_acetic_water_vdm.png'
 plt.savefig(out, dpi=150)
 print(f"\nPlot saved to {out}")

@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum, IntEnum
 from typing import Any, Callable, Iterable, Mapping, Optional, Sequence
 
 import numpy as np
+from scipy.integrate import quad
 from scipy.linalg import null_space
 from scipy.optimize import brentq
 
@@ -46,9 +47,7 @@ class PsatHandoffRequirement(str, Enum):
 
     NONE = "none"
     HIGHER_PREFERENCE_OVERLAP = "higher_preference_overlap"
-    HIGHER_PREFERENCE_OVERLAP_IF_AVAILABLE = (
-        "higher_preference_overlap_if_available"
-    )
+    HIGHER_PREFERENCE_OVERLAP_IF_AVAILABLE = "higher_preference_overlap_if_available"
 
 
 class CanonicalPsatForm(str, Enum):
@@ -111,7 +110,9 @@ class PsatSegment:
             raise PsatCanonicalizationError("A Psat segment method is required")
         if not isinstance(self.segment_type, PsatSegmentType):
             try:
-                object.__setattr__(self, "segment_type", PsatSegmentType(self.segment_type))
+                object.__setattr__(
+                    self, "segment_type", PsatSegmentType(self.segment_type)
+                )
             except (TypeError, ValueError) as error:
                 raise PsatCanonicalizationError("Invalid Psat segment type") from error
         if not isinstance(self.handoff_requirement, PsatHandoffRequirement):
@@ -134,10 +135,14 @@ class PsatSegment:
                 "Psat junction slope mismatch allowance must be boolean"
             )
         if not math.isfinite(float(self.quality)) or not 0.0 <= self.quality <= 1.0:
-            raise PsatCanonicalizationError("Psat segment quality must be between 0 and 1")
+            raise PsatCanonicalizationError(
+                "Psat segment quality must be between 0 and 1"
+            )
         if not callable(self.ln_pressure_function):
             raise PsatCanonicalizationError("A Psat segment evaluator is required")
-        if self.derivative_function is not None and not callable(self.derivative_function):
+        if self.derivative_function is not None and not callable(
+            self.derivative_function
+        ):
             raise PsatCanonicalizationError("Psat segment derivative must be callable")
         derivative_basis = self.derivative_basis
         if derivative_basis is None:
@@ -169,9 +174,13 @@ class PsatSegment:
     def covers_pressure(self, pressure_bar: float, tolerance: float = 1.0e-9) -> bool:
         if not math.isfinite(pressure_bar) or pressure_bar <= 0.0:
             return False
-        if self.P_min_bar is not None and pressure_bar < self.P_min_bar * (1.0 - tolerance):
+        if self.P_min_bar is not None and pressure_bar < self.P_min_bar * (
+            1.0 - tolerance
+        ):
             return False
-        if self.P_max_bar is not None and pressure_bar > self.P_max_bar * (1.0 + tolerance):
+        if self.P_max_bar is not None and pressure_bar > self.P_max_bar * (
+            1.0 + tolerance
+        ):
             return False
         return True
 
@@ -221,7 +230,9 @@ class PsatSegment:
     def clipped(self, T_min: float, T_max: float) -> "PsatSegment":
         _validate_temperature_range(T_min, T_max)
         if T_min < self.T_min or T_max > self.T_max:
-            raise PsatCanonicalizationError("A clipped segment exceeds its source range")
+            raise PsatCanonicalizationError(
+                "A clipped segment exceeds its source range"
+            )
         return replace(self, T_min=float(T_min), T_max=float(T_max))
 
     def _require_temperature(self, T: float) -> None:
@@ -356,11 +367,17 @@ class PsatEndpoint:
                     "Invalid Psat endpoint derivative basis"
                 ) from error
         if self.temperature <= 0.0:
-            raise PsatCanonicalizationError("Psat endpoint temperature must be positive")
+            raise PsatCanonicalizationError(
+                "Psat endpoint temperature must be positive"
+            )
         if not 0.0 <= self.quality <= 1.0:
-            raise PsatCanonicalizationError("Psat endpoint quality must be between 0 and 1")
+            raise PsatCanonicalizationError(
+                "Psat endpoint quality must be between 0 and 1"
+            )
         if not str(self.source).strip() or not str(self.method).strip():
-            raise PsatCanonicalizationError("Psat endpoint source and method are required")
+            raise PsatCanonicalizationError(
+                "Psat endpoint source and method are required"
+            )
 
     @property
     def has_derivative(self) -> bool:
@@ -392,7 +409,9 @@ class PsatEndpoint:
         context: Optional[Mapping[str, Any]] = None,
     ) -> "PsatEndpoint":
         if not math.isfinite(pressure_bar) or pressure_bar <= 0.0:
-            raise PsatCanonicalizationError("Fixed Psat boundary pressure must be positive")
+            raise PsatCanonicalizationError(
+                "Fixed Psat boundary pressure must be positive"
+            )
         return cls(
             temperature=float(temperature),
             ln_pressure=math.log(pressure_bar),
@@ -441,7 +460,9 @@ class PsatAnchorRequirement:
 
     def __post_init__(self) -> None:
         if not str(self.name).strip():
-            raise PsatCanonicalizationError("A named Psat anchor requirement is required")
+            raise PsatCanonicalizationError(
+                "A named Psat anchor requirement is required"
+            )
 
 
 @dataclass(frozen=True)
@@ -461,7 +482,9 @@ class PsatAssemblyAnchorRequirement:
             raise PsatCanonicalizationError(
                 "An assembly anchor temperature must be positive and finite"
             )
-        if any(not isinstance(item, PsatSegmentType) for item in self.allowed_segment_types):
+        if any(
+            not isinstance(item, PsatSegmentType) for item in self.allowed_segment_types
+        ):
             raise PsatCanonicalizationError(
                 "Assembly anchor segment types must be PsatSegmentType values"
             )
@@ -481,11 +504,17 @@ class PsatBoundaryConditions:
     def __post_init__(self) -> None:
         _validate_temperature_range(self.T_min, self.T_max)
         tolerance = 1.0e-7 * max(self.T_max - self.T_min, 1.0)
-        if self.left is not None and abs(self.left.temperature - self.T_min) > tolerance:
+        if (
+            self.left is not None
+            and abs(self.left.temperature - self.T_min) > tolerance
+        ):
             raise PsatCanonicalizationError(
                 "The left boundary condition must lie at the gap lower endpoint"
             )
-        if self.right is not None and abs(self.right.temperature - self.T_max) > tolerance:
+        if (
+            self.right is not None
+            and abs(self.right.temperature - self.T_max) > tolerance
+        ):
             raise PsatCanonicalizationError(
                 "The right boundary condition must lie at the gap upper endpoint"
             )
@@ -522,18 +551,15 @@ class BoundaryConditionedPsatEvaluation:
         if self.derivative_function is not None and not callable(
             self.derivative_function
         ):
-            raise PsatCanonicalizationError(
-                "A bound Psat derivative must be callable"
-            )
+            raise PsatCanonicalizationError("A bound Psat derivative must be callable")
         if self.quality is not None and (
             not math.isfinite(self.quality) or not 0.0 <= self.quality <= 1.0
         ):
             raise PsatCanonicalizationError(
                 "A bound Psat quality must be between 0 and 1"
             )
-        if (
-            self.allow_junction_slope_mismatch is not None
-            and not isinstance(self.allow_junction_slope_mismatch, bool)
+        if self.allow_junction_slope_mismatch is not None and not isinstance(
+            self.allow_junction_slope_mismatch, bool
         ):
             raise PsatCanonicalizationError(
                 "A bound junction slope mismatch allowance must be boolean"
@@ -562,8 +588,12 @@ class BoundaryConditionedPsatSegment:
     evaluation_factory: BoundaryEvaluationFactory = field(repr=False, compare=False)
     P_min_bar: Optional[float] = None
     P_max_bar: Optional[float] = None
-    left_derivative_requirement: PsatDerivativeRequirement = PsatDerivativeRequirement.NONE
-    right_derivative_requirement: PsatDerivativeRequirement = PsatDerivativeRequirement.NONE
+    left_derivative_requirement: PsatDerivativeRequirement = (
+        PsatDerivativeRequirement.NONE
+    )
+    right_derivative_requirement: PsatDerivativeRequirement = (
+        PsatDerivativeRequirement.NONE
+    )
     required_anchor_names: tuple[str, ...] = ()
     anchor_requirements: tuple[PsatAnchorRequirement, ...] = ()
     assembly_anchor_requirements: tuple[PsatAssemblyAnchorRequirement, ...] = ()
@@ -593,15 +623,16 @@ class BoundaryConditionedPsatSegment:
             raise PsatCanonicalizationError("Psat segment priority must be an integer")
         if not isinstance(self.allow_junction_slope_mismatch, bool):
             raise PsatCanonicalizationError(
-                "Boundary-conditioned junction slope mismatch allowance "
-                "must be boolean"
+                "Boundary-conditioned junction slope mismatch allowance must be boolean"
             )
         if not isinstance(self.requires_no_hard_segments, bool):
             raise PsatCanonicalizationError(
                 "Boundary-conditioned no-hard-segment requirement must be boolean"
             )
         if not math.isfinite(self.quality) or not 0.0 <= self.quality <= 1.0:
-            raise PsatCanonicalizationError("Psat segment quality must be between 0 and 1")
+            raise PsatCanonicalizationError(
+                "Psat segment quality must be between 0 and 1"
+            )
         if not callable(self.evaluation_factory):
             raise PsatCanonicalizationError("A boundary evaluation factory is required")
         for label, segment_types in (
@@ -635,9 +666,7 @@ class BoundaryConditionedPsatSegment:
             dynamic_context.update(evaluation.context)
             dynamic_metadata.update(evaluation.metadata)
             if evaluation.allow_junction_slope_mismatch is not None:
-                allow_junction_slope_mismatch = (
-                    evaluation.allow_junction_slope_mismatch
-                )
+                allow_junction_slope_mismatch = evaluation.allow_junction_slope_mismatch
         elif isinstance(evaluation, tuple) and len(evaluation) == 2:
             evaluator, derivative = evaluation
             quality = self.quality
@@ -659,7 +688,8 @@ class BoundaryConditionedPsatSegment:
             for requirement in self.assembly_anchor_requirements
         )
         endpoints.extend(
-            item for item in conditions.anchors
+            item
+            for item in conditions.anchors
             if str(item.context.get("anchor_name") or "").strip().lower()
             in required_anchor_names
         )
@@ -737,7 +767,8 @@ class BoundaryConditionedPsatSegment:
                     f"{allowed}; received {actual}"
                 )
         missing_anchors = [
-            name for name in self.required_anchor_names
+            name
+            for name in self.required_anchor_names
             if conditions.anchor(name) is None
         ]
         missing_anchors.extend(
@@ -864,6 +895,7 @@ class PsatHandoffPolicy:
     )
     smoothing_max_absolute_relative_pressure_mismatch: float = 0.025
     smoothing_max_absolute_relative_slope_mismatch: float = 0.15
+    max_direct_handoff_compensation_integral_K: float = 0.12
     search_sample_count: int = 201
     bridge_width_fractions: tuple[float, ...] = (
         0.10,
@@ -887,6 +919,7 @@ class PsatHandoffPolicy:
         limits = (
             self.smoothing_max_absolute_relative_pressure_mismatch,
             self.smoothing_max_absolute_relative_slope_mismatch,
+            self.max_direct_handoff_compensation_integral_K,
         )
         if any(not math.isfinite(value) or value < 0.0 for value in limits):
             raise PsatCanonicalizationError(
@@ -936,6 +969,13 @@ class PsatHandoffResult:
     rejected_segments: tuple[PsatSegment, ...]
     decisions: tuple[PsatHandoffDecision, ...]
     gap_assessments: tuple[PsatGapAssessment, ...] = ()
+
+    @property
+    def cache_metadata(self) -> dict[str, Any]:
+        """Retain arbitration history beyond the final source provenance."""
+        return {
+            "handoff_decisions": tuple(asdict(decision) for decision in self.decisions),
+        }
 
 
 @dataclass(frozen=True)
@@ -1030,10 +1070,14 @@ class PsatAssembly:
             object.__setattr__(self, "slices", ordered)
         for item in self.slices:
             if item.T_min < self.target_T_min or item.T_max > self.target_T_max:
-                raise PsatCanonicalizationError("A selected slice exceeds the target range")
+                raise PsatCanonicalizationError(
+                    "A selected slice exceeds the target range"
+                )
         for left, right in zip(self.slices, self.slices[1:]):
             if right.T_min < left.T_max - 1.0e-9:
-                raise PsatCanonicalizationError("Selected Psat slices overlap internally")
+                raise PsatCanonicalizationError(
+                    "Selected Psat slices overlap internally"
+                )
 
     def coverage_gaps(self, tolerance: float = 1.0e-9) -> tuple[PsatGap, ...]:
         gaps = []
@@ -1080,13 +1124,15 @@ class PsatAssembly:
             right_ln_pressure = right.ln_pressure(temperature)
             left_slope = left.dln_pressure_dT(temperature)
             right_slope = right.dln_pressure_dT(temperature)
-            junctions.append(PsatJunction(
-                temperature=temperature,
-                left=left,
-                right=right,
-                delta_ln_pressure=right_ln_pressure - left_ln_pressure,
-                delta_dln_pressure_dT=right_slope - left_slope,
-            ))
+            junctions.append(
+                PsatJunction(
+                    temperature=temperature,
+                    left=left,
+                    right=right,
+                    delta_ln_pressure=right_ln_pressure - left_ln_pressure,
+                    delta_dln_pressure_dT=right_slope - left_slope,
+                )
+            )
         return tuple(junctions)
 
     def assess_junctions(
@@ -1094,10 +1140,7 @@ class PsatAssembly:
         policy: Optional[PsatJunctionPolicy] = None,
         tolerance: float = 1.0e-9,
     ) -> tuple[PsatJunctionAssessment, ...]:
-        return tuple(
-            junction.assess(policy)
-            for junction in self.junctions(tolerance)
-        )
+        return tuple(junction.assess(policy) for junction in self.junctions(tolerance))
 
     def require_compatible_junctions(
         self,
@@ -1232,7 +1275,8 @@ class PsatAnchorRegistry:
         name = str(point.context.get("anchor_name") or "").strip().lower()
         if name:
             existing = [
-                item for item in self._points
+                item
+                for item in self._points
                 if str(item.context.get("anchor_name") or "").strip().lower() == name
             ]
             if existing and max(item.quality for item in existing) > point.quality:
@@ -1243,7 +1287,8 @@ class PsatAnchorRegistry:
     def named(self, name: str) -> Optional[PsatEndpoint]:
         normalized = str(name).strip().lower()
         candidates = [
-            item for item in self._points
+            item
+            for item in self._points
             if str(item.context.get("anchor_name") or "").strip().lower() == normalized
         ]
         return max(candidates, key=lambda item: item.quality) if candidates else None
@@ -1254,7 +1299,8 @@ class PsatAnchorRegistry:
         tolerance: float = 1.0e-7,
     ) -> Optional[PsatEndpoint]:
         candidates = [
-            item for item in self._points
+            item
+            for item in self._points
             if abs(item.temperature - temperature) <= tolerance
         ]
         return max(candidates, key=lambda item: item.quality) if candidates else None
@@ -1273,27 +1319,31 @@ class PsatAnchorRegistry:
         common_context = dict(context or {})
         critical_context = dict(common_context)
         critical_context["anchor_name"] = "Tc"
-        points = [PsatEndpoint.fixed_pressure_point(
-            T_critical,
-            P_critical_bar,
-            source="fixed_anchor",
-            method="critical_point",
-            quality=critical_quality,
-            context=critical_context,
-        )]
+        points = [
+            PsatEndpoint.fixed_pressure_point(
+                T_critical,
+                P_critical_bar,
+                source="fixed_anchor",
+                method="critical_point",
+                quality=critical_quality,
+                context=critical_context,
+            )
+        ]
         if T_boiling is not None:
             boiling_context = dict(common_context)
             boiling_context["anchor_name"] = "Tb"
-            points.append(PsatEndpoint.fixed_pressure_point(
-                T_boiling,
-                1.01325,
-                source="fixed_anchor",
-                method="normal_boiling_point",
-                quality=(
-                    critical_quality if boiling_quality is None else boiling_quality
-                ),
-                context=boiling_context,
-            ))
+            points.append(
+                PsatEndpoint.fixed_pressure_point(
+                    T_boiling,
+                    1.01325,
+                    source="fixed_anchor",
+                    method="normal_boiling_point",
+                    quality=(
+                        critical_quality if boiling_quality is None else boiling_quality
+                    ),
+                    context=boiling_context,
+                )
+            )
         return cls(points)
 
 
@@ -1347,7 +1397,8 @@ class PsatCompletionCoordinator:
         handoffs = PsatHandoffCoordinator(
             self.assembler.target_T_min,
             self.assembler.target_T_max,
-            self.handoff_policy or PsatHandoffPolicy(
+            self.handoff_policy
+            or PsatHandoffPolicy(
                 direct_junction_policy=junction_policy or PsatJunctionPolicy(),
             ),
         ).coordinate(hard_segments)
@@ -1368,12 +1419,10 @@ class PsatCompletionCoordinator:
             assembly = self.assembler.assemble()
             gaps = assembly.coverage_gaps()
             if not gaps:
-                assembly, generated = (
-                    self._apply_junction_slope_exception_penalties(
-                        assembly,
-                        generated,
-                        junction_policy,
-                    )
+                assembly, generated = self._apply_junction_slope_exception_penalties(
+                    assembly,
+                    generated,
+                    junction_policy,
                 )
                 assembly.require_compatible_junctions(junction_policy)
                 return PsatCompletionResult(
@@ -1420,19 +1469,16 @@ class PsatCompletionCoordinator:
         assembly = self.assembler.assemble()
         if require_complete and not assembly.covers_target():
             gaps = ", ".join(
-                f"{gap.T_min:g}-{gap.T_max:g} K"
-                for gap in assembly.coverage_gaps()
+                f"{gap.T_min:g}-{gap.T_max:g} K" for gap in assembly.coverage_gaps()
             )
             raise PsatCanonicalizationError(
                 f"Unable to complete Psat target range; uncovered gaps: {gaps}"
             )
         if assembly.covers_target():
-            assembly, generated = (
-                self._apply_junction_slope_exception_penalties(
-                    assembly,
-                    generated,
-                    junction_policy,
-                )
+            assembly, generated = self._apply_junction_slope_exception_penalties(
+                assembly,
+                generated,
+                junction_policy,
             )
             assembly.require_compatible_junctions(junction_policy)
         return PsatCompletionResult(
@@ -1476,25 +1522,24 @@ class PsatCompletionCoordinator:
         updated_segments = []
         for segment in self.assembler.segments:
             segment_id = id(segment)
-            if (
-                segment_id not in affected_mismatches
-                or segment.metadata.get(
-                    "junction_slope_exception_penalty_applied"
-                )
+            if segment_id not in affected_mismatches or segment.metadata.get(
+                "junction_slope_exception_penalty_applied"
             ):
                 updated_segments.append(segment)
                 continue
             metadata = dict(segment.metadata)
-            metadata.update({
-                "junction_slope_exception_penalty_applied": True,
-                "junction_slope_exception_original_quality": segment.quality,
-                "junction_slope_exception_quality_factor": (
-                    active_policy.slope_mismatch_exception_quality_factor
-                ),
-                "junction_slope_exception_maximum_mismatch": (
-                    affected_mismatches[segment_id]
-                ),
-            })
+            metadata.update(
+                {
+                    "junction_slope_exception_penalty_applied": True,
+                    "junction_slope_exception_original_quality": segment.quality,
+                    "junction_slope_exception_quality_factor": (
+                        active_policy.slope_mismatch_exception_quality_factor
+                    ),
+                    "junction_slope_exception_maximum_mismatch": (
+                        affected_mismatches[segment_id]
+                    ),
+                }
+            )
             replacement = replace(
                 segment,
                 quality=(
@@ -1511,10 +1556,7 @@ class PsatCompletionCoordinator:
         self.assembler.replace_segments(updated_segments)
         return (
             self.assembler.assemble(),
-            [
-                replacements.get(id(segment), segment)
-                for segment in generated
-            ],
+            [replacements.get(id(segment), segment) for segment in generated],
         )
 
     def _conditions_for(
@@ -1524,8 +1566,7 @@ class PsatCompletionCoordinator:
         relation: BoundaryConditionedPsatSegment,
     ) -> Optional[PsatBoundaryConditions]:
         if relation.requires_no_hard_segments and any(
-            item.segment.is_hard_pinned
-            for item in assembly.slices
+            item.segment.is_hard_pinned for item in assembly.slices
         ):
             return None
         overlap_min = max(gap.T_min, relation.T_min)
@@ -1573,17 +1614,19 @@ class PsatCompletionCoordinator:
             endpoint = PsatEndpoint.from_slice(item, requirement.temperature)
             anchor_context = dict(endpoint.context)
             anchor_context["anchor_name"] = requirement.name
-            anchors.append(PsatEndpoint(
-                temperature=endpoint.temperature,
-                ln_pressure=endpoint.ln_pressure,
-                dln_pressure_dT=endpoint.dln_pressure_dT,
-                source=endpoint.source,
-                method=endpoint.method,
-                quality=endpoint.quality,
-                derivative_basis=endpoint.derivative_basis,
-                context=anchor_context,
-                segment_type=endpoint.segment_type,
-            ))
+            anchors.append(
+                PsatEndpoint(
+                    temperature=endpoint.temperature,
+                    ln_pressure=endpoint.ln_pressure,
+                    dln_pressure_dT=endpoint.dln_pressure_dT,
+                    source=endpoint.source,
+                    method=endpoint.method,
+                    quality=endpoint.quality,
+                    derivative_basis=endpoint.derivative_basis,
+                    context=anchor_context,
+                    segment_type=endpoint.segment_type,
+                )
+            )
         return PsatBoundaryConditions(
             T_min=T_min,
             T_max=T_max,
@@ -1620,21 +1663,25 @@ def trim_psat_segment_to_validity(
 ) -> PsatSegment:
     """Trim a monotonic segment to its declared pressure-valid interval."""
     if sample_count < 3:
-        raise PsatCanonicalizationError("At least three validity probe points are required")
+        raise PsatCanonicalizationError(
+            "At least three validity probe points are required"
+        )
     temperatures = np.linspace(segment.T_min, segment.T_max, sample_count)
     try:
-        ln_pressures = np.asarray([
-            segment.raw_ln_pressure(float(temperature))
-            for temperature in temperatures
-        ])
-        slopes = np.asarray([
-            segment.raw_dln_pressure_dT(float(temperature))
-            for temperature in temperatures
-        ])
+        ln_pressures = np.asarray(
+            [
+                segment.raw_ln_pressure(float(temperature))
+                for temperature in temperatures
+            ]
+        )
+        slopes = np.asarray(
+            [
+                segment.raw_dln_pressure_dT(float(temperature))
+                for temperature in temperatures
+            ]
+        )
     except (ArithmeticError, PsatCanonicalizationError, TypeError, ValueError) as error:
-        raise PsatCanonicalizationError(
-            "Unable to probe segment validity"
-        ) from error
+        raise PsatCanonicalizationError("Unable to probe segment validity") from error
     if (
         np.any(~np.isfinite(ln_pressures))
         or np.any(~np.isfinite(slopes))
@@ -1652,7 +1699,9 @@ def trim_psat_segment_to_validity(
         lower_value = segment.raw_ln_pressure(T_min)
         upper_value = segment.raw_ln_pressure(T_max)
         if upper_value < target - 1.0e-10:
-            raise PsatCanonicalizationError("Segment never reaches its minimum pressure")
+            raise PsatCanonicalizationError(
+                "Segment never reaches its minimum pressure"
+            )
         if lower_value < target:
             if abs(upper_value - target) <= 1.0e-10:
                 T_min = T_max
@@ -1704,7 +1753,9 @@ def probe_psat_segment(
     sample_count: int = 201,
 ) -> PsatSegmentProbe:
     if sample_count < 3:
-        raise PsatCanonicalizationError("At least three segment probe points are required")
+        raise PsatCanonicalizationError(
+            "At least three segment probe points are required"
+        )
     temperatures = np.linspace(segment.T_min, segment.T_max, sample_count)
     ln_pressures = []
     slopes = []
@@ -1723,9 +1774,10 @@ def probe_psat_segment(
             maximum_ln_pressure=math.nan,
         )
     finite = all(math.isfinite(value) for value in (*ln_pressures, *slopes))
-    monotonic = finite and min(slopes) > 0.0 and all(
-        right > left
-        for left, right in zip(ln_pressures, ln_pressures[1:])
+    monotonic = (
+        finite
+        and min(slopes) > 0.0
+        and all(right > left for left, right in zip(ln_pressures, ln_pressures[1:]))
     )
     return PsatSegmentProbe(
         sample_count=sample_count,
@@ -1787,27 +1839,21 @@ def make_c1_bridge_segment(
     else:
         left_value = left.ln_pressure - baseline.ln_pressure(left.temperature)
         right_value = right.ln_pressure - baseline.ln_pressure(right.temperature)
-        left_temperature_slope = (
-            left.dln_pressure_dT
-            - baseline.dln_pressure_dT(left.temperature)
+        left_temperature_slope = left.dln_pressure_dT - baseline.dln_pressure_dT(
+            left.temperature
         )
-        right_temperature_slope = (
-            right.dln_pressure_dT
-            - baseline.dln_pressure_dT(right.temperature)
+        right_temperature_slope = right.dln_pressure_dT - baseline.dln_pressure_dT(
+            right.temperature
         )
-    left_coordinate_slope = (
-        left_temperature_slope
-        / coordinate_derivative(left.temperature)
+    left_coordinate_slope = left_temperature_slope / coordinate_derivative(
+        left.temperature
     )
-    right_coordinate_slope = (
-        right_temperature_slope
-        / coordinate_derivative(right.temperature)
+    right_coordinate_slope = right_temperature_slope / coordinate_derivative(
+        right.temperature
     )
 
     def correction(T: float) -> float:
-        fraction = (
-            coordinate_function(T) - left_coordinate
-        ) / coordinate_span
+        fraction = (coordinate_function(T) - left_coordinate) / coordinate_span
         fraction2 = fraction * fraction
         fraction3 = fraction2 * fraction
         h00 = 2.0 * fraction3 - 3.0 * fraction2 + 1.0
@@ -1822,9 +1868,7 @@ def make_c1_bridge_segment(
         )
 
     def correction_derivative(T: float) -> float:
-        fraction = (
-            coordinate_function(T) - left_coordinate
-        ) / coordinate_span
+        fraction = (coordinate_function(T) - left_coordinate) / coordinate_span
         fraction2 = fraction * fraction
         dh00 = 6.0 * fraction2 - 6.0 * fraction
         dh10 = 3.0 * fraction2 - 4.0 * fraction + 1.0
@@ -1898,26 +1942,26 @@ def assess_psat_gap_consistency(
     for gap in assembly.coverage_gaps():
         left = next(
             (
-                item for item in reversed(assembly.slices)
+                item
+                for item in reversed(assembly.slices)
                 if abs(item.T_max - gap.T_min) <= 1.0e-9
             ),
             None,
         )
         right = next(
-            (
-                item for item in assembly.slices
-                if abs(item.T_min - gap.T_max) <= 1.0e-9
-            ),
+            (item for item in assembly.slices if abs(item.T_min - gap.T_max) <= 1.0e-9),
             None,
         )
         if left is None or right is None:
-            assessments.append(PsatGapAssessment(
-                gap=gap,
-                status=PsatGapConsistency.OPEN_ENDED,
-                left=left,
-                right=right,
-                reason="only one source boundary is available",
-            ))
+            assessments.append(
+                PsatGapAssessment(
+                    gap=gap,
+                    status=PsatGapConsistency.OPEN_ENDED,
+                    left=left,
+                    right=right,
+                    reason="only one source boundary is available",
+                )
+            )
             continue
 
         left_endpoint = PsatEndpoint.from_slice(left, gap.T_min)
@@ -1938,41 +1982,47 @@ def assess_psat_gap_consistency(
             else None
         )
         if pressure_span <= 0.0:
-            assessments.append(PsatGapAssessment(
-                gap=gap,
-                status=PsatGapConsistency.INCONSISTENT,
-                left=left,
-                right=right,
-                secant_dln_pressure_dT=secant_slope,
-                left_slope_ratio=left_ratio,
-                right_slope_ratio=right_ratio,
-                reason="the upper-temperature boundary does not have higher pressure",
-            ))
+            assessments.append(
+                PsatGapAssessment(
+                    gap=gap,
+                    status=PsatGapConsistency.INCONSISTENT,
+                    left=left,
+                    right=right,
+                    secant_dln_pressure_dT=secant_slope,
+                    left_slope_ratio=left_ratio,
+                    right_slope_ratio=right_ratio,
+                    reason="the upper-temperature boundary does not have higher pressure",
+                )
+            )
             continue
         if left_slope is None or right_slope is None:
-            assessments.append(PsatGapAssessment(
-                gap=gap,
-                status=PsatGapConsistency.STRESSED,
-                left=left,
-                right=right,
-                secant_dln_pressure_dT=secant_slope,
-                left_slope_ratio=left_ratio,
-                right_slope_ratio=right_ratio,
-                continuation_possible=True,
-                reason="pressure ordering is consistent but a boundary slope is unavailable",
-            ))
+            assessments.append(
+                PsatGapAssessment(
+                    gap=gap,
+                    status=PsatGapConsistency.STRESSED,
+                    left=left,
+                    right=right,
+                    secant_dln_pressure_dT=secant_slope,
+                    left_slope_ratio=left_ratio,
+                    right_slope_ratio=right_ratio,
+                    continuation_possible=True,
+                    reason="pressure ordering is consistent but a boundary slope is unavailable",
+                )
+            )
             continue
         if left_slope <= 0.0 or right_slope <= 0.0:
-            assessments.append(PsatGapAssessment(
-                gap=gap,
-                status=PsatGapConsistency.INCONSISTENT,
-                left=left,
-                right=right,
-                secant_dln_pressure_dT=secant_slope,
-                left_slope_ratio=left_ratio,
-                right_slope_ratio=right_ratio,
-                reason="one or both source boundary slopes are nonpositive",
-            ))
+            assessments.append(
+                PsatGapAssessment(
+                    gap=gap,
+                    status=PsatGapConsistency.INCONSISTENT,
+                    left=left,
+                    right=right,
+                    secant_dln_pressure_dT=secant_slope,
+                    left_slope_ratio=left_ratio,
+                    right_slope_ratio=right_ratio,
+                    reason="one or both source boundary slopes are nonpositive",
+                )
+            )
             continue
         try:
             make_c1_bridge_segment(
@@ -1984,29 +2034,33 @@ def assess_psat_gap_consistency(
                 probe_points=probe_points,
             )
         except PsatCanonicalizationError as error:
-            assessments.append(PsatGapAssessment(
+            assessments.append(
+                PsatGapAssessment(
+                    gap=gap,
+                    status=PsatGapConsistency.STRESSED,
+                    left=left,
+                    right=right,
+                    secant_dln_pressure_dT=secant_slope,
+                    left_slope_ratio=left_ratio,
+                    right_slope_ratio=right_ratio,
+                    continuation_possible=True,
+                    reason=f"ordered boundaries require a more flexible continuation: {error}",
+                )
+            )
+            continue
+        assessments.append(
+            PsatGapAssessment(
                 gap=gap,
-                status=PsatGapConsistency.STRESSED,
+                status=PsatGapConsistency.C1_CONNECTABLE,
                 left=left,
                 right=right,
                 secant_dln_pressure_dT=secant_slope,
                 left_slope_ratio=left_ratio,
                 right_slope_ratio=right_ratio,
                 continuation_possible=True,
-                reason=f"ordered boundaries require a more flexible continuation: {error}",
-            ))
-            continue
-        assessments.append(PsatGapAssessment(
-            gap=gap,
-            status=PsatGapConsistency.C1_CONNECTABLE,
-            left=left,
-            right=right,
-            secant_dln_pressure_dT=secant_slope,
-            left_slope_ratio=left_ratio,
-            right_slope_ratio=right_ratio,
-            continuation_possible=True,
-            reason="a monotonic cubic C1 continuation connects both boundaries",
-        ))
+                reason="a monotonic cubic C1 continuation connects both boundaries",
+            )
+        )
     return tuple(assessments)
 
 
@@ -2034,7 +2088,9 @@ class PsatHandoffCoordinator:
             raise PsatCanonicalizationError(
                 "Psat handoff coordination accepts only hard-pinned segments"
             )
-        insertion_order = {id(segment): index for index, segment in enumerate(candidates)}
+        insertion_order = {
+            id(segment): index for index, segment in enumerate(candidates)
+        }
         active = []
         rejected_segments = []
         decisions = []
@@ -2052,15 +2108,17 @@ class PsatHandoffCoordinator:
                 reasons.append("non-finite value or derivative")
             if not probe.monotonic:
                 reasons.append("not strictly monotonic")
-            decisions.append(PsatHandoffDecision(
-                action=PsatHandoffAction.REJECT,
-                left_method=segment.method,
-                right_method=segment.method,
-                overlap_T_min=None,
-                overlap_T_max=None,
-                rejected_method=segment.method,
-                reason="invalid hard-pinned segment: " + ", ".join(reasons),
-            ))
+            decisions.append(
+                PsatHandoffDecision(
+                    action=PsatHandoffAction.REJECT,
+                    left_method=segment.method,
+                    right_method=segment.method,
+                    overlap_T_min=None,
+                    overlap_T_max=None,
+                    rejected_method=segment.method,
+                    reason="invalid hard-pinned segment: " + ", ".join(reasons),
+                )
+            )
 
         while True:
             assembler = PsatSegmentAssembler(self.target_T_min, self.target_T_max)
@@ -2077,22 +2135,22 @@ class PsatHandoffCoordinator:
                     insertion_order,
                 )
                 if rejected is not None:
-                    decisions.append(PsatHandoffDecision(
-                        action=PsatHandoffAction.REJECT,
-                        left_method=rejected.method,
-                        right_method=rejected.method,
-                        overlap_T_min=None,
-                        overlap_T_max=None,
-                        rejected_method=rejected.method,
-                        reason=(
-                            "required reasonable overlap with a higher-preference "
-                            "hard-pinned segment was unavailable"
-                        ),
-                    ))
+                    decisions.append(
+                        PsatHandoffDecision(
+                            action=PsatHandoffAction.REJECT,
+                            left_method=rejected.method,
+                            right_method=rejected.method,
+                            overlap_T_min=None,
+                            overlap_T_max=None,
+                            rejected_method=rejected.method,
+                            reason=(
+                                "required reasonable overlap with a higher-preference "
+                                "hard-pinned segment was unavailable"
+                            ),
+                        )
+                    )
                     rejected_segments.append(rejected)
-                    active = [
-                        segment for segment in active if segment is not rejected
-                    ]
+                    active = [segment for segment in active if segment is not rejected]
                     continue
                 decisions.extend(new_decisions)
                 coordinated = self._promote_overlap_validated_quality(
@@ -2141,12 +2199,14 @@ class PsatHandoffCoordinator:
             overlap = self._overlap(left, right)
             current_assessment = self._assessment(left, right, left.T_max)
             if current_assessment is not None and current_assessment.accepted:
-                decisions.append(self._direct_decision(
-                    left,
-                    right,
-                    left.T_max,
-                    "existing priority boundary is compatible",
-                ))
+                decisions.append(
+                    self._direct_decision(
+                        left,
+                        right,
+                        left.T_max,
+                        "existing priority boundary is compatible",
+                    )
+                )
                 index += 1
                 continue
 
@@ -2157,14 +2217,51 @@ class PsatHandoffCoordinator:
                     overlap,
                 )
                 if direct_temperature is not None:
+                    compensation, compensation_rms = (
+                        self._direct_handoff_compensation_metrics(
+                            left,
+                            right,
+                            left.T_max,
+                            direct_temperature,
+                            insertion_order,
+                        )
+                    )
+                    if (
+                        compensation
+                        > self.policy.max_direct_handoff_compensation_integral_K
+                    ):
+                        rejected = self._lower_preference_segment(
+                            left.segment,
+                            right.segment,
+                            insertion_order,
+                        )
+                        decisions.append(
+                            PsatHandoffDecision(
+                                action=PsatHandoffAction.REJECT,
+                                left_method=left.segment.method,
+                                right_method=right.segment.method,
+                                overlap_T_min=overlap[0],
+                                overlap_T_max=overlap[1],
+                                rejected_method=rejected.method,
+                                reason=(
+                                    "direct handoff relocation exceeds compensation "
+                                    f"budget; integral={compensation:.6g} K, limit="
+                                    f"{self.policy.max_direct_handoff_compensation_integral_K:.6g} K, "
+                                    f"normalized log-pressure RMS={compensation_rms:.6g}"
+                                ),
+                            )
+                        )
+                        return assembly, rejected, tuple(decisions)
                     slices[index] = replace(left, T_max=direct_temperature)
                     slices[index + 1] = replace(right, T_min=direct_temperature)
-                    decisions.append(self._direct_decision(
-                        left,
-                        right,
-                        direct_temperature,
-                        "compatible point selected inside source overlap",
-                    ))
+                    decisions.append(
+                        self._direct_decision(
+                            left,
+                            right,
+                            direct_temperature,
+                            "compatible point selected inside source overlap",
+                        )
+                    )
                     index += 1
                     continue
 
@@ -2181,16 +2278,18 @@ class PsatHandoffCoordinator:
                         index + 2,
                         replace(right, T_min=bridge_T_max),
                     )
-                    decisions.append(PsatHandoffDecision(
-                        action=PsatHandoffAction.BRIDGE,
-                        left_method=left.segment.method,
-                        right_method=right.segment.method,
-                        overlap_T_min=overlap[0],
-                        overlap_T_max=overlap[1],
-                        bridge_T_min=bridge_T_min,
-                        bridge_T_max=bridge_T_max,
-                        reason="narrowest successful monotonic C1 bridge inside overlap",
-                    ))
+                    decisions.append(
+                        PsatHandoffDecision(
+                            action=PsatHandoffAction.BRIDGE,
+                            left_method=left.segment.method,
+                            right_method=right.segment.method,
+                            overlap_T_min=overlap[0],
+                            overlap_T_max=overlap[1],
+                            bridge_T_min=bridge_T_min,
+                            bridge_T_max=bridge_T_max,
+                            reason="narrowest successful monotonic C1 bridge inside overlap",
+                        )
+                    )
                     index += 2
                     continue
 
@@ -2204,22 +2303,28 @@ class PsatHandoffCoordinator:
                 if overlap is not None
                 else "incompatible touching segments have no overlap available for smoothing"
             )
-            decisions.append(PsatHandoffDecision(
-                action=PsatHandoffAction.REJECT,
-                left_method=left.segment.method,
-                right_method=right.segment.method,
-                overlap_T_min=overlap[0] if overlap is not None else None,
-                overlap_T_max=overlap[1] if overlap is not None else None,
-                rejected_method=rejected.method,
-                reason=reason,
-            ))
+            decisions.append(
+                PsatHandoffDecision(
+                    action=PsatHandoffAction.REJECT,
+                    left_method=left.segment.method,
+                    right_method=right.segment.method,
+                    overlap_T_min=overlap[0] if overlap is not None else None,
+                    overlap_T_max=overlap[1] if overlap is not None else None,
+                    rejected_method=rejected.method,
+                    reason=reason,
+                )
+            )
             return assembly, rejected, tuple(decisions)
 
-        return PsatAssembly(
-            target_T_min=assembly.target_T_min,
-            target_T_max=assembly.target_T_max,
-            slices=tuple(slices),
-        ), None, tuple(decisions)
+        return (
+            PsatAssembly(
+                target_T_min=assembly.target_T_min,
+                target_T_max=assembly.target_T_max,
+                slices=tuple(slices),
+            ),
+            None,
+            tuple(decisions),
+        )
 
     @staticmethod
     def _overlap(
@@ -2244,13 +2349,58 @@ class PsatHandoffCoordinator:
             assessment = self._assessment(left, right, temperature)
             if assessment is None or not assessment.accepted:
                 continue
-            accepted.append((
-                abs(temperature - left.T_max),
-                abs(assessment.junction.relative_pressure_mismatch),
-                abs(assessment.junction.relative_slope_mismatch),
-                temperature,
-            ))
+            accepted.append(
+                (
+                    abs(temperature - left.T_max),
+                    abs(assessment.junction.relative_pressure_mismatch),
+                    abs(assessment.junction.relative_slope_mismatch),
+                    temperature,
+                )
+            )
         return min(accepted)[-1] if accepted else None
+
+    def _direct_handoff_compensation_metrics(
+        self,
+        left: PsatSegmentSlice,
+        right: PsatSegmentSlice,
+        original_boundary: float,
+        relocated_boundary: float,
+        insertion_order: Mapping[int, int],
+    ) -> tuple[float, float]:
+        if abs(relocated_boundary - original_boundary) <= 1.0e-12:
+            return 0.0, 0.0
+        lower = self._lower_preference_segment(
+            left.segment,
+            right.segment,
+            insertion_order,
+        )
+        higher = right.segment if lower is left.segment else left.segment
+        interval_min = min(original_boundary, relocated_boundary)
+        interval_max = max(original_boundary, relocated_boundary)
+        source_knots = sorted(
+            {
+                float(temperature)
+                for segment in (lower, higher)
+                for temperature in segment.metadata.get("temperatures_K", ())
+                if interval_min < float(temperature) < interval_max
+            }
+        )
+        integral = float(
+            quad(
+                lambda temperature: (
+                    (lower.ln_pressure(temperature) - higher.ln_pressure(temperature))
+                    ** 2
+                ),
+                interval_min,
+                interval_max,
+                points=source_knots or None,
+                epsabs=1.0e-12,
+                epsrel=1.0e-10,
+                limit=max(50, 4 * (len(source_knots) + 1)),
+            )[0]
+        )
+        width = abs(relocated_boundary - original_boundary)
+        return integral, math.sqrt(integral / width)
 
     def _smooth_bridge(
         self,
@@ -2258,9 +2408,7 @@ class PsatHandoffCoordinator:
         right: PsatSegmentSlice,
         overlap: tuple[float, float],
     ) -> Optional[tuple[PsatSegment, float, float]]:
-        pressure_limit = (
-            self.policy.smoothing_max_absolute_relative_pressure_mismatch
-        )
+        pressure_limit = self.policy.smoothing_max_absolute_relative_pressure_mismatch
         slope_limit = self.policy.smoothing_max_absolute_relative_slope_mismatch
         overlap_T_min, overlap_T_max = overlap
         for width_fraction, bridge_T_min, bridge_T_max in self._bridge_intervals(
@@ -2284,8 +2432,7 @@ class PsatHandoffCoordinator:
                     PsatEndpoint.from_segment(right.segment, bridge_T_max),
                     source="calculated",
                     method=(
-                        f"c1_handoff_{left.segment.method}_to_"
-                        f"{right.segment.method}"
+                        f"c1_handoff_{left.segment.method}_to_{right.segment.method}"
                     ),
                     priority=max(left.priority, right.priority),
                     context={
@@ -2336,22 +2483,26 @@ class PsatHandoffCoordinator:
             for start in (*starts, preferred_start):
                 bridge_T_min = float(start)
                 bridge_T_max = bridge_T_min + width
-                candidates.add((
-                    float(width_fraction),
-                    bridge_T_min,
-                    bridge_T_max,
-                ))
-        return tuple(sorted(
-            candidates,
-            key=lambda item: (
-                max(
-                    abs(item[1] - current_boundary),
-                    abs(item[2] - current_boundary),
+                candidates.add(
+                    (
+                        float(width_fraction),
+                        bridge_T_min,
+                        bridge_T_max,
+                    )
+                )
+        return tuple(
+            sorted(
+                candidates,
+                key=lambda item: (
+                    max(
+                        abs(item[1] - current_boundary),
+                        abs(item[2] - current_boundary),
+                    ),
+                    item[2] - item[1],
+                    item[1],
                 ),
-                item[2] - item[1],
-                item[1],
-            ),
-        ))
+            )
+        )
 
     def _sources_are_consistent_over_bridge(
         self,
@@ -2464,10 +2615,9 @@ class PsatHandoffCoordinator:
         temperature: float,
     ) -> Optional[tuple[float, float, float, float]]:
         try:
-            delta_ln_pressure = (
-                right.segment.ln_pressure(temperature)
-                - left.segment.ln_pressure(temperature)
-            )
+            delta_ln_pressure = right.segment.ln_pressure(
+                temperature
+            ) - left.segment.ln_pressure(temperature)
             left_slope = left.segment.dln_pressure_dT(temperature)
             right_slope = right.segment.dln_pressure_dT(temperature)
         except PsatCanonicalizationError:
@@ -2488,11 +2638,13 @@ class PsatHandoffCoordinator:
         overlap: tuple[float, float],
         current_boundary: float,
     ) -> tuple[float, ...]:
-        values = list(np.linspace(
-            overlap[0],
-            overlap[1],
-            self.policy.search_sample_count,
-        ))
+        values = list(
+            np.linspace(
+                overlap[0],
+                overlap[1],
+                self.policy.search_sample_count,
+            )
+        )
         if overlap[0] <= current_boundary <= overlap[1]:
             values.append(float(current_boundary))
         return tuple(sorted(set(float(value) for value in values)))
@@ -2503,13 +2655,18 @@ class PsatHandoffCoordinator:
         right: PsatSegment,
         insertion_order: Mapping[int, int],
     ) -> PsatSegment:
-        return left if PsatHandoffCoordinator._preference(
-            left,
-            insertion_order,
-        ) < PsatHandoffCoordinator._preference(
-            right,
-            insertion_order,
-        ) else right
+        return (
+            left
+            if PsatHandoffCoordinator._preference(
+                left,
+                insertion_order,
+            )
+            < PsatHandoffCoordinator._preference(
+                right,
+                insertion_order,
+            )
+            else right
+        )
 
     @staticmethod
     def _preference(
@@ -2546,8 +2703,7 @@ class PsatHandoffCoordinator:
                 requirement
                 is PsatHandoffRequirement.HIGHER_PREFERENCE_OVERLAP_IF_AVAILABLE
                 and not any(
-                    other is not segment
-                    and other.priority > segment.priority
+                    other is not segment and other.priority > segment.priority
                     for other in active
                 )
             ):
@@ -2603,8 +2759,7 @@ class PsatHandoffCoordinator:
             target = segment.metadata.get("higher_preference_overlap_quality")
             if (
                 target is None
-                or segment.metadata.get("quality_basis")
-                != "standalone_unvalidated"
+                or segment.metadata.get("quality_basis") != "standalone_unvalidated"
             ):
                 continue
             try:
@@ -2627,13 +2782,15 @@ class PsatHandoffCoordinator:
                 key=lambda item: (item.priority, item.quality),
             )
             metadata = dict(segment.metadata)
-            metadata.update({
-                "quality_basis": "higher_preference_overlap",
-                "overlap_validation_original_quality": segment.quality,
-                "overlap_validation_source": corroborator.source,
-                "overlap_validation_method": corroborator.method,
-                "overlap_validation_priority": corroborator.priority,
-            })
+            metadata.update(
+                {
+                    "quality_basis": "higher_preference_overlap",
+                    "overlap_validation_original_quality": segment.quality,
+                    "overlap_validation_source": corroborator.source,
+                    "overlap_validation_method": corroborator.method,
+                    "overlap_validation_priority": corroborator.priority,
+                }
+            )
             replacements[id(segment)] = replace(
                 segment,
                 quality=min(1.0, target_quality),
@@ -2666,11 +2823,14 @@ class PsatHandoffCoordinator:
             return False
         first_slice = PsatSegmentSlice(first, first.T_min, first.T_max)
         second_slice = PsatSegmentSlice(second, second.T_min, second.T_max)
-        if self._direct_handoff_temperature(
-            first_slice,
-            second_slice,
-            overlap,
-        ) is not None:
+        if (
+            self._direct_handoff_temperature(
+                first_slice,
+                second_slice,
+                overlap,
+            )
+            is not None
+        ):
             return True
         return any(
             self._sources_are_consistent_over_bridge(
@@ -2679,8 +2839,9 @@ class PsatHandoffCoordinator:
                 bridge_T_min,
                 bridge_T_max,
             )
-            for _width_fraction, bridge_T_min, bridge_T_max
-            in self._bridge_intervals(overlap, overlap[1])
+            for _width_fraction, bridge_T_min, bridge_T_max in self._bridge_intervals(
+                overlap, overlap[1]
+            )
         )
 
     @staticmethod
@@ -2746,9 +2907,7 @@ class PsatSegmentProvenance:
             quality=segment.quality,
             T_min=item.T_min,
             T_max=item.T_max,
-            allow_junction_slope_mismatch=(
-                segment.allow_junction_slope_mismatch
-            ),
+            allow_junction_slope_mismatch=(segment.allow_junction_slope_mismatch),
             context=dict(segment.context),
             metadata=dict(segment.metadata),
         )
@@ -2841,9 +3000,13 @@ class CanonicalPsatFitPolicy:
 
     def __post_init__(self) -> None:
         if self.minimum_sample_count < 6:
-            raise PsatCanonicalizationError("Canonical fitting requires at least six samples")
+            raise PsatCanonicalizationError(
+                "Canonical fitting requires at least six samples"
+            )
         if self.validation_sample_count < 3:
-            raise PsatCanonicalizationError("Fit validation requires at least three points")
+            raise PsatCanonicalizationError(
+                "Fit validation requires at least three points"
+            )
         if self.slice_validation_sample_count < 3:
             raise PsatCanonicalizationError(
                 "Slice fit validation requires at least three points"
@@ -2856,7 +3019,9 @@ class CanonicalPsatFitPolicy:
         )
         for value in limits:
             if value is not None and (not math.isfinite(value) or value < 0.0):
-                raise PsatCanonicalizationError("Canonical fit limits must be nonnegative")
+                raise PsatCanonicalizationError(
+                    "Canonical fit limits must be nonnegative"
+                )
         for value in (
             self.pfd_slice_mard_percent,
             self.pfd_slice_max_error_percent,
@@ -2865,10 +3030,7 @@ class CanonicalPsatFitPolicy:
                 raise PsatCanonicalizationError(
                     "PFD slice fit limits must be finite and nonnegative"
                 )
-        if any(
-            power not in {-3, -5, -7}
-            for power in self.inverse_retry_powers
-        ):
+        if any(power not in {-3, -5, -7} for power in self.inverse_retry_powers):
             raise PsatCanonicalizationError(
                 "Canonical inverse retry powers must be selected from -3, -5, and -7"
             )
@@ -2884,7 +3046,8 @@ class CanonicalPsatFitPolicy:
         if not (
             math.isfinite(self.quality_middle_pressure_min_bar)
             and math.isfinite(self.quality_middle_pressure_max_bar)
-            and 0.0 < self.quality_middle_pressure_min_bar
+            and 0.0
+            < self.quality_middle_pressure_min_bar
             < self.quality_middle_pressure_max_bar
         ):
             raise PsatCanonicalizationError(
@@ -2951,18 +3114,14 @@ class CanonicalPsatFitPolicy:
         )
         return CanonicalPsatFitTolerance(
             profile=(
-                "quality_scaled_one_shot"
-                if full_source
-                else "quality_scaled_assembled"
+                "quality_scaled_one_shot" if full_source else "quality_scaled_assembled"
             ),
             full_source=full_source,
             quality_basis=quality,
             mard_threshold_percent=20.0 * (1.0 - quality),
             max_error_threshold_percent=100.0 * (1.0 - quality),
             mard_penalty_factor=self.mard_excess_quality_penalty_factor,
-            max_error_penalty_factor=(
-                self.max_error_excess_quality_penalty_factor
-            ),
+            max_error_penalty_factor=(self.max_error_excess_quality_penalty_factor),
         )
 
     def pfd_slice_rejection_reasons(
@@ -3138,14 +3297,22 @@ class CanonicalPsatCurve:
             object.__setattr__(self, "form", form)
         coefficients = self.coefficients
         if any(not math.isfinite(value) for value in coefficients):
-            raise PsatCanonicalizationError("Canonical Psat coefficients must be finite")
+            raise PsatCanonicalizationError(
+                "Canonical Psat coefficients must be finite"
+            )
         _validate_temperature_range(self.T_min, self.T_critical)
         if not math.isfinite(self.P_critical_bar) or self.P_critical_bar <= 0.0:
-            raise PsatCanonicalizationError("Canonical critical pressure must be positive")
+            raise PsatCanonicalizationError(
+                "Canonical critical pressure must be positive"
+            )
         if self.T_boiling is not None and not self.covers_temperature(self.T_boiling):
-            raise PsatCanonicalizationError("Canonical boiling point is outside the curve domain")
+            raise PsatCanonicalizationError(
+                "Canonical boiling point is outside the curve domain"
+            )
         if not math.isfinite(self.quality) or not 0.0 <= self.quality <= 1.0:
-            raise PsatCanonicalizationError("Canonical Psat quality must be between 0 and 1")
+            raise PsatCanonicalizationError(
+                "Canonical Psat quality must be between 0 and 1"
+            )
         if self.inverse_power not in {None, -3, -5, -7}:
             raise PsatCanonicalizationError(
                 "Canonical inverse power must be None, -3, -5, or -7"
@@ -3166,8 +3333,8 @@ class CanonicalPsatCurve:
             raise PsatCanonicalizationError(
                 "Canonical A-H form requires an inverse_power"
             )
-        supercritical_slope = (
-            self.P_critical_bar * self.dln_pressure_dT(self.T_critical)
+        supercritical_slope = self.P_critical_bar * self.dln_pressure_dT(
+            self.T_critical
         )
         if not math.isfinite(supercritical_slope):
             raise PsatCanonicalizationError(
@@ -3186,7 +3353,9 @@ class CanonicalPsatCurve:
         )
 
     @property
-    def coefficients(self) -> tuple[float, float, float, float, float, float, float, float]:
+    def coefficients(
+        self,
+    ) -> tuple[float, float, float, float, float, float, float, float]:
         return self.A, self.B, self.C, self.D, self.E, self.F, self.G, self.H
 
     def covers_temperature(self, T: float, tolerance: float = 1.0e-9) -> bool:
@@ -3214,7 +3383,9 @@ class CanonicalPsatCurve:
         try:
             value = math.exp(self.ln_pressure(T))
         except OverflowError as error:
-            raise PsatCanonicalizationError("Canonical Psat evaluation overflowed") from error
+            raise PsatCanonicalizationError(
+                "Canonical Psat evaluation overflowed"
+            ) from error
         if not math.isfinite(value) or value <= 0.0:
             raise PsatCanonicalizationError("Canonical Psat evaluation is invalid")
         return value
@@ -3274,14 +3445,16 @@ def sample_psat_assembly(
                 f"Cannot sample uncovered Psat temperature {temperature:g} K"
             )
         segment = item.segment
-        samples.append(PsatSample(
-            temperature=temperature,
-            ln_pressure=item.ln_pressure(temperature),
-            weight=weight,
-            source=segment.source,
-            method=segment.method,
-            context=dict(segment.context),
-        ))
+        samples.append(
+            PsatSample(
+                temperature=temperature,
+                ln_pressure=item.ln_pressure(temperature),
+                weight=weight,
+                source=segment.source,
+                method=segment.method,
+                context=dict(segment.context),
+            )
+        )
     return tuple(samples)
 
 
@@ -3313,24 +3486,22 @@ def log_pressure_weighted_psat_quality(
         log_span = max(0.0, pressure_max - pressure_min)
         middle_span = max(
             0.0,
-            min(pressure_max, middle_max)
-            - max(pressure_min, middle_min),
+            min(pressure_max, middle_max) - max(pressure_min, middle_min),
         )
-        weighted_span = (
-            log_span
-            + (middle_pressure_weight - 1.0) * middle_span
-        )
+        weighted_span = log_span + (middle_pressure_weight - 1.0) * middle_span
         if weighted_span <= 0.0:
             continue
         weighted_quality += item.quality * weighted_span
         total_weight += weighted_span
-        breakdown.append({
-            "method": item.segment.method,
-            "quality": item.quality,
-            "log_pressure_span": log_span,
-            "middle_log_pressure_span": middle_span,
-            "weighted_log_pressure_span": weighted_span,
-        })
+        breakdown.append(
+            {
+                "method": item.segment.method,
+                "quality": item.quality,
+                "log_pressure_span": log_span,
+                "middle_log_pressure_span": middle_span,
+                "weighted_log_pressure_span": weighted_span,
+            }
+        )
     quality = (
         weighted_quality / total_weight
         if total_weight > 0.0
@@ -3366,8 +3537,7 @@ class CanonicalPsatFitter:
         assembly.require_compatible_junctions(junction_policy)
         samples = sample_psat_assembly(assembly, temperatures)
         provenance = tuple(
-            PsatSegmentProvenance.from_slice(item)
-            for item in assembly.slices
+            PsatSegmentProvenance.from_slice(item) for item in assembly.slices
         )
         slice_validation_targets = []
         for item, item_provenance in zip(assembly.slices, provenance):
@@ -3376,41 +3546,31 @@ class CanonicalPsatFitter:
                 item.T_max,
                 self.policy.slice_validation_sample_count,
             )
-            slice_validation_targets.append((
-                item_provenance,
-                slice_temperatures,
-                np.asarray(
-                    [
-                        item.ln_pressure(float(temperature))
-                        for temperature in slice_temperatures
-                    ],
-                    dtype=float,
-                ),
-            ))
+            slice_validation_targets.append(
+                (
+                    item_provenance,
+                    slice_temperatures,
+                    np.asarray(
+                        [
+                            item.ln_pressure(float(temperature))
+                            for temperature in slice_temperatures
+                        ],
+                        dtype=float,
+                    ),
+                )
+            )
         quality, quality_breakdown = log_pressure_weighted_psat_quality(
             assembly,
-            middle_pressure_min_bar=(
-                self.policy.quality_middle_pressure_min_bar
-            ),
-            middle_pressure_max_bar=(
-                self.policy.quality_middle_pressure_max_bar
-            ),
-            middle_pressure_weight=(
-                self.policy.quality_middle_pressure_weight
-            ),
+            middle_pressure_min_bar=(self.policy.quality_middle_pressure_min_bar),
+            middle_pressure_max_bar=(self.policy.quality_middle_pressure_max_bar),
+            middle_pressure_weight=(self.policy.quality_middle_pressure_weight),
         )
         fit_metadata = dict(metadata or {})
         fit_metadata["quality_aggregation"] = {
             "basis": "log_pressure_weighted_segment_average",
-            "middle_pressure_min_bar": (
-                self.policy.quality_middle_pressure_min_bar
-            ),
-            "middle_pressure_max_bar": (
-                self.policy.quality_middle_pressure_max_bar
-            ),
-            "middle_pressure_weight": (
-                self.policy.quality_middle_pressure_weight
-            ),
+            "middle_pressure_min_bar": (self.policy.quality_middle_pressure_min_bar),
+            "middle_pressure_max_bar": (self.policy.quality_middle_pressure_max_bar),
+            "middle_pressure_weight": (self.policy.quality_middle_pressure_weight),
             "segment_breakdown": quality_breakdown,
         }
         return self.fit(
@@ -3456,7 +3616,9 @@ class CanonicalPsatFitter:
         if len(samples) < self.policy.minimum_sample_count:
             raise PsatCanonicalizationError("Insufficient canonical fit samples")
         if T_boiling is not None and not T_min <= T_boiling < T_critical:
-            raise PsatCanonicalizationError("Boiling point must lie below Tc in the fit domain")
+            raise PsatCanonicalizationError(
+                "Boiling point must lie below Tc in the fit domain"
+            )
         for sample in samples:
             if not T_min <= sample.temperature <= T_critical:
                 raise PsatCanonicalizationError(
@@ -3468,7 +3630,9 @@ class CanonicalPsatFitter:
                 "Canonical fitting requires distinct sample temperatures"
             )
 
-        temperatures = np.asarray([sample.temperature for sample in samples], dtype=float)
+        temperatures = np.asarray(
+            [sample.temperature for sample in samples], dtype=float
+        )
         targets = np.asarray([sample.ln_pressure for sample in samples], dtype=float)
         square_root_weights = np.sqrt(
             np.asarray([sample.weight for sample in samples], dtype=float)
@@ -3518,7 +3682,9 @@ class CanonicalPsatFitter:
             )
             scales = np.linalg.norm(weighted_matrix, axis=0)
             if np.any(~np.isfinite(scales)) or np.any(scales <= 0.0):
-                raise PsatCanonicalizationError("Canonical fit matrix has invalid scaling")
+                raise PsatCanonicalizationError(
+                    "Canonical fit matrix has invalid scaling"
+                )
             scaled_matrix = weighted_matrix / scales
             scaled_constraints = constraints / scales
             gram = scaled_constraints @ scaled_constraints.T
@@ -3588,38 +3754,39 @@ class CanonicalPsatFitter:
                 item_temperatures,
                 item_targets,
             ) in slice_validation_targets:
-                item_predicted = _canonical_design_matrix(
-                    item_temperatures,
-                    T_critical,
-                    form,
-                    inverse_power,
-                ) @ coefficients
+                item_predicted = (
+                    _canonical_design_matrix(
+                        item_temperatures,
+                        T_critical,
+                        form,
+                        inverse_power,
+                    )
+                    @ coefficients
+                )
                 with np.errstate(over="ignore", invalid="ignore"):
-                    item_errors = np.abs(np.expm1(
-                        item_predicted - item_targets
-                    ))
+                    item_errors = np.abs(np.expm1(item_predicted - item_targets))
                 if np.any(~np.isfinite(item_errors)):
                     raise PsatCanonicalizationError(
                         "Canonical fit produced non-finite slice errors"
                     )
-                slice_diagnostics.append(CanonicalPsatSliceFitDiagnostics(
-                    source=item_provenance.source,
-                    method=item_provenance.method,
-                    priority=item_provenance.priority,
-                    quality=item_provenance.quality,
-                    T_min=item_provenance.T_min,
-                    T_max=item_provenance.T_max,
-                    sample_count=len(item_temperatures),
-                    mard_percent=(
-                        100.0 * float(np.mean(item_errors))
-                    ),
-                    p95_absolute_relative_error_percent=(
-                        100.0 * float(np.percentile(item_errors, 95.0))
-                    ),
-                    max_absolute_relative_error_percent=(
-                        100.0 * float(np.max(item_errors))
-                    ),
-                ))
+                slice_diagnostics.append(
+                    CanonicalPsatSliceFitDiagnostics(
+                        source=item_provenance.source,
+                        method=item_provenance.method,
+                        priority=item_provenance.priority,
+                        quality=item_provenance.quality,
+                        T_min=item_provenance.T_min,
+                        T_max=item_provenance.T_max,
+                        sample_count=len(item_temperatures),
+                        mard_percent=(100.0 * float(np.mean(item_errors))),
+                        p95_absolute_relative_error_percent=(
+                            100.0 * float(np.percentile(item_errors, 95.0))
+                        ),
+                        max_absolute_relative_error_percent=(
+                            100.0 * float(np.max(item_errors))
+                        ),
+                    )
+                )
             return (
                 coefficients,
                 diagnostics,
@@ -3720,21 +3887,14 @@ class CanonicalPsatFitter:
         fit_metadata["fit_original_overall_quality"] = quality
         fit_metadata["fit_quality_penalty"] = quality_penalty
         fit_metadata["fit_penalized_overall_quality"] = penalized_quality
-        fit_metadata["fit_mard_threshold_percent"] = (
-            tolerance.mard_threshold_percent
-        )
+        fit_metadata["fit_mard_threshold_percent"] = tolerance.mard_threshold_percent
         fit_metadata["fit_max_error_threshold_percent"] = (
             tolerance.max_error_threshold_percent
         )
-        mard_excess, max_error_excess = tolerance.excess_fractions(
-            diagnostics
-        )
+        mard_excess, max_error_excess = tolerance.excess_fractions(diagnostics)
         fit_metadata["fit_mard_excess_fraction"] = mard_excess
         fit_metadata["fit_max_error_excess_fraction"] = max_error_excess
-        fit_warnings = tuple(
-            str(item)
-            for item in fit_metadata.get("fit_warnings", ())
-        )
+        fit_warnings = tuple(str(item) for item in fit_metadata.get("fit_warnings", ()))
         if fit_warning is not None:
             fit_warnings += (fit_warning,)
         if fit_warnings:
@@ -3746,8 +3906,7 @@ class CanonicalPsatFitter:
             "fit_warnings",
         ):
             canonical_warnings.extend(
-                str(item)
-                for item in fit_metadata.get(warning_key, ())
+                str(item) for item in fit_metadata.get(warning_key, ())
             )
         if canonical_warnings:
             fit_metadata["canonical_warnings"] = tuple(canonical_warnings)
@@ -3755,22 +3914,25 @@ class CanonicalPsatFitter:
         fit_metadata["attempted_forms"] = tuple(attempted_forms)
         fit_metadata["attempted_inverse_powers"] = tuple(attempted_inverse_powers)
         fit_metadata["selected_inverse_power"] = inverse_power
-        fit_metadata["slice_fit_diagnostics"] = tuple({
-            "source": item.source,
-            "method": item.method,
-            "priority": item.priority,
-            "quality": item.quality,
-            "T_min": item.T_min,
-            "T_max": item.T_max,
-            "sample_count": item.sample_count,
-            "mard_percent": item.mard_percent,
-            "p95_absolute_relative_error_percent": (
-                item.p95_absolute_relative_error_percent
-            ),
-            "max_absolute_relative_error_percent": (
-                item.max_absolute_relative_error_percent
-            ),
-        } for item in slice_diagnostics)
+        fit_metadata["slice_fit_diagnostics"] = tuple(
+            {
+                "source": item.source,
+                "method": item.method,
+                "priority": item.priority,
+                "quality": item.quality,
+                "T_min": item.T_min,
+                "T_max": item.T_max,
+                "sample_count": item.sample_count,
+                "mard_percent": item.mard_percent,
+                "p95_absolute_relative_error_percent": (
+                    item.p95_absolute_relative_error_percent
+                ),
+                "max_absolute_relative_error_percent": (
+                    item.max_absolute_relative_error_percent
+                ),
+            }
+            for item in slice_diagnostics
+        )
         G = (
             float(coefficients[6])
             if form in {CanonicalPsatForm.AG, CanonicalPsatForm.AH}
@@ -3829,11 +3991,15 @@ class PsatCanonicalizer:
     ):
         _validate_temperature_range(T_min, T_critical)
         if not math.isfinite(P_critical_bar) or P_critical_bar <= 0.0:
-            raise PsatCanonicalizationError("Canonicalizer critical pressure must be positive")
+            raise PsatCanonicalizationError(
+                "Canonicalizer critical pressure must be positive"
+            )
         if T_boiling is not None and not T_min <= T_boiling < T_critical:
             raise PsatCanonicalizationError("Canonicalizer Tb must lie below Tc")
         if fit_sample_count < 6:
-            raise PsatCanonicalizationError("Canonicalizer requires at least six fit points")
+            raise PsatCanonicalizationError(
+                "Canonicalizer requires at least six fit points"
+            )
         self.T_min = float(T_min)
         self.T_critical = float(T_critical)
         self.P_critical_bar = float(P_critical_bar)
@@ -3893,6 +4059,7 @@ class PsatCanonicalizer:
             junction_policy=self.junction_policy,
             metadata={
                 **dict(metadata or {}),
+                **completion.handoffs.cache_metadata,
                 **(
                     {
                         "junction_warnings": completion.junction_warnings,
@@ -3973,7 +4140,9 @@ def _best_fit_candidate(candidates, *, require_monotonic: bool):
         if not require_monotonic or candidate[1].monotonic
     ] or list(candidates)
     if not physically_valid:
-        raise PsatCanonicalizationError("No canonical fit candidate could be constructed")
+        raise PsatCanonicalizationError(
+            "No canonical fit candidate could be constructed"
+        )
     return min(
         physically_valid,
         key=lambda candidate: (
@@ -4024,11 +4193,7 @@ def _validate_pressure_range(
     for value in (P_min_bar, P_max_bar):
         if value is not None and (not math.isfinite(value) or value <= 0.0):
             raise PsatCanonicalizationError("Psat pressure limits must be positive")
-    if (
-        P_min_bar is not None
-        and P_max_bar is not None
-        and P_max_bar < P_min_bar
-    ):
+    if P_min_bar is not None and P_max_bar is not None and P_max_bar < P_min_bar:
         raise PsatCanonicalizationError(
             "A Psat pressure range must satisfy P_min <= P_max"
         )

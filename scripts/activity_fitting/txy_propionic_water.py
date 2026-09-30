@@ -1,7 +1,7 @@
 """T-xy for water-propionic acid — UNIQUAC (fixed Antoine + VDM comparison)"""
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import numpy as np
 from thermodynamics import UNIQUACThermodynamics
 from vapor_dimerization import VaporDimerizationModel, get_dimerization_params

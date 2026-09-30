@@ -5,15 +5,15 @@ from dataclasses import dataclass, field
 from types import MappingProxyType, SimpleNamespace
 from typing import Iterable, Optional, Union
 
-if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from ..chemical_properties import ChemicalDatabase, ChemicalProperties, get_database
 else:
     from chemical_properties import ChemicalDatabase, ChemicalProperties, get_database
-if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from ..fluid_phase_models import normalize_fluid_phase_model
 else:
     from fluid_phase_models import normalize_fluid_phase_model
-if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from ..particle_size_distributions import (
         ParticleSizeDistribution,
         instantiate_particle_size_distribution,
@@ -71,12 +71,13 @@ class FluidPhaseEquilibrium:
 @dataclass
 class StreamState:
     """Thermodynamic state of a process stream"""
+
     T: float  # Temperature [K]
     P: float  # Pressure [bar]
     F: float  # Total molar flow [kmol/h]
     composition: dict[str, float]  # Mole fractions (must sum to 1)
     vapor_fraction: float = 1.0  # Vapor fraction (0=all liquid, 1=all vapor)
-    
+
     # Calculated properties (filled by calculate_properties)
     H: Optional[float] = None  # Molar enthalpy [kJ/kmol]
     S: Optional[float] = None  # Molar entropy [kJ/kmol-K]
@@ -84,7 +85,7 @@ class StreamState:
     rho: Optional[float] = None  # Molar density [kmol/m3]
     Cp: Optional[float] = None  # Heat capacity [kJ/kmol-K]
     mu: Optional[float] = None  # Dynamic viscosity [Pa*s]
-    
+
     # Phase compositions (for two-phase)
     x: Optional[dict[str, float]] = None  # Liquid mole fractions
     y: Optional[dict[str, float]] = None  # Vapor mole fractions
@@ -98,14 +99,14 @@ class StreamState:
     solid_composition: Optional[dict[str, float]] = None
     solid_component_flows: dict[str, float] = field(default_factory=dict)
     solid_particle_properties: dict[str, dict[str, float]] = field(default_factory=dict)
-    solid_particle_size_distributions: dict[
-        str, ParticleSizeDistribution
-    ] = field(default_factory=dict)
-    fluid_phase_model: str = 'VLE'
-    phase_status: str = 'unspecified'
-    phase_stability: str = 'not_checked'
+    solid_particle_size_distributions: dict[str, ParticleSizeDistribution] = field(
+        default_factory=dict
+    )
+    fluid_phase_model: str = "VLE"
+    phase_status: str = "unspecified"
+    phase_stability: str = "not_checked"
     phase_details: dict = field(default_factory=dict)
-    thermo_scope: str = 'global'
+    thermo_scope: str = "global"
 
     @property
     def effective_liquid1_fraction(self) -> float:
@@ -123,20 +124,20 @@ class StreamState:
     def phase_fractions(self) -> dict[str, float]:
         """Return explicit total-stream phase fractions."""
         return {
-            'vapor': max(0.0, float(self.vapor_fraction)),
-            'liquid1': self.effective_liquid1_fraction,
-            'liquid2': max(0.0, float(self.liquid2_fraction)),
-            'solid': max(0.0, float(self.solid_fraction)),
+            "vapor": max(0.0, float(self.vapor_fraction)),
+            "liquid1": self.effective_liquid1_fraction,
+            "liquid2": max(0.0, float(self.liquid2_fraction)),
+            "solid": max(0.0, float(self.solid_fraction)),
         }
 
     @property
     def fluid_vapor_fraction(self) -> Optional[float]:
         """Vapor fraction on the active-fluid subtotal basis, if fluid exists."""
         fractions = self.phase_fractions()
-        fluid = fractions['vapor'] + fractions['liquid1'] + fractions['liquid2']
+        fluid = fractions["vapor"] + fractions["liquid1"] + fractions["liquid2"]
         if fluid <= 1.0e-15:
             return None
-        return fractions['vapor'] / fluid
+        return fractions["vapor"] / fluid
 
     def phase_component_flows(self) -> dict[str, dict[str, float]]:
         """Return phase component flows [kmol/h] from the retained inventory."""
@@ -153,13 +154,13 @@ class StreamState:
 
         liquid1 = self.x1 or self.x
         return {
-            'vapor': flows(fractions['vapor'], self.y),
-            'liquid1': flows(fractions['liquid1'], liquid1),
-            'liquid2': flows(fractions['liquid2'], self.x2),
-            'solid': dict(self.solid_component_flows),
+            "vapor": flows(fractions["vapor"], self.y),
+            "liquid1": flows(fractions["liquid1"], liquid1),
+            "liquid2": flows(fractions["liquid2"], self.x2),
+            "solid": dict(self.solid_component_flows),
         }
-    
-    def copy(self) -> 'StreamState':
+
+    def copy(self) -> "StreamState":
         """Create a copy of this state"""
         return StreamState(
             T=self.T,
@@ -197,17 +198,17 @@ class StreamState:
             phase_details=dict(self.phase_details),
             thermo_scope=self.thermo_scope,
         )
-    
+
     def mass_flow(self) -> float:
         """Mass flow rate [kg/h]"""
         if self.MW is None:
             return 0.0
         return self.F * self.MW
-    
+
     def component_flows(self) -> dict[str, float]:
         """Molar flow of each component [kmol/h]"""
         return {comp: self.F * z for comp, z in self.composition.items()}
-    
+
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization"""
         phase_fractions = {
@@ -221,66 +222,64 @@ class StreamState:
             if values
         }
         payload = {
-            'T': self.T,
-            'T_C': self.T - 273.15,
-            'P': self.P,
-            'F': self.F,
-            'composition': self.composition,
-            'vapor_fraction': self.vapor_fraction,
-            'H': self.H,
-            'S': self.S,
-            'MW': self.MW,
-            'rho': self.rho,
-            'Cp': self.Cp,
-            'mu': self.mu,
-            'x': self.x,
-            'y': self.y,
-            'liquid1_fraction': self.effective_liquid1_fraction,
-            'fluid_phase_model': self.fluid_phase_model,
-            'phase_status': self.phase_status,
-            'phase_stability': self.phase_stability,
-            'thermo_scope': self.thermo_scope,
-            'phase_fractions': phase_fractions,
-            'phase_component_flows': phase_component_flows,
-            'mass_flow': self.mass_flow(),
+            "T": self.T,
+            "T_C": self.T - 273.15,
+            "P": self.P,
+            "F": self.F,
+            "composition": self.composition,
+            "vapor_fraction": self.vapor_fraction,
+            "H": self.H,
+            "S": self.S,
+            "MW": self.MW,
+            "rho": self.rho,
+            "Cp": self.Cp,
+            "mu": self.mu,
+            "x": self.x,
+            "y": self.y,
+            "liquid1_fraction": self.effective_liquid1_fraction,
+            "fluid_phase_model": self.fluid_phase_model,
+            "phase_status": self.phase_status,
+            "phase_stability": self.phase_stability,
+            "thermo_scope": self.thermo_scope,
+            "phase_fractions": phase_fractions,
+            "phase_component_flows": phase_component_flows,
+            "mass_flow": self.mass_flow(),
         }
         if self.fluid_vapor_fraction is not None:
-            payload['fluid_vapor_fraction'] = self.fluid_vapor_fraction
+            payload["fluid_vapor_fraction"] = self.fluid_vapor_fraction
         if self.x1 is not None:
-            payload['x1'] = self.x1
+            payload["x1"] = self.x1
         if self.liquid2_fraction > 1.0e-15 or self.x2:
-            payload['liquid2_fraction'] = self.liquid2_fraction
-            payload['x2'] = self.x2
+            payload["liquid2_fraction"] = self.liquid2_fraction
+            payload["x2"] = self.x2
         if (
             self.solid_fraction > 1.0e-15
             or self.solid_composition
             or self.solid_component_flows
         ):
-            payload['solid_fraction'] = self.solid_fraction
-            payload['solid_composition'] = self.solid_composition
-            payload['solid_component_flows'] = dict(self.solid_component_flows)
+            payload["solid_fraction"] = self.solid_fraction
+            payload["solid_composition"] = self.solid_composition
+            payload["solid_component_flows"] = dict(self.solid_component_flows)
             if self.solid_particle_properties:
-                payload['solid_particle_properties'] = {
+                payload["solid_particle_properties"] = {
                     component: dict(values)
                     for component, values in self.solid_particle_properties.items()
                 }
             if self.solid_particle_size_distributions:
                 self.validate_particle_size_distributions()
-                payload['solid_particle_size_distributions'] = {
+                payload["solid_particle_size_distributions"] = {
                     component: distribution.to_dict()
                     for component, distribution in (
                         self.solid_particle_size_distributions.items()
                     )
                 }
         if self.phase_details:
-            payload['phase_details'] = dict(self.phase_details)
+            payload["phase_details"] = dict(self.phase_details)
         return payload
 
     def validate_particle_size_distributions(self) -> None:
         """Require each attached PSD to account for its full solid component."""
-        for component, distribution in (
-            self.solid_particle_size_distributions.items()
-        ):
+        for component, distribution in self.solid_particle_size_distributions.items():
             solid_flow = float(self.solid_component_flows.get(component, 0.0))
             tolerance = max(1.0e-12, abs(solid_flow) * 1.0e-10)
             if solid_flow <= 1.0e-15:
@@ -299,7 +298,7 @@ class StreamState:
 class IdealThermodynamics:
     """
     Ideal thermodynamic property calculator.
-    
+
     Uses:
     - Ideal gas law for vapor phase
     - Raoult's law for VLE
@@ -307,7 +306,7 @@ class IdealThermodynamics:
     """
 
     LIQUID_TRANSPORT_TRACE_CUTOFF = 1.0e-6
-    
+
     def __init__(
         self,
         components: list[str],
@@ -316,7 +315,7 @@ class IdealThermodynamics:
     ):
         """
         Initialize with list of component symbols.
-        
+
         Args:
             components: List of chemical symbols (e.g., ['H2O', 'C2H5OH'])
             db: Chemical database (uses default if None)
@@ -327,7 +326,7 @@ class IdealThermodynamics:
         self.permanent_solid_components: tuple[str, ...] = ()
         self.conventional_solid_components: tuple[str, ...] = ()
         self.solid_particle_defaults: dict[str, dict[str, float]] = {}
-        self.fluid_phase_model = 'VLE'
+        self.fluid_phase_model = "VLE"
         self.interaction_overrides = list(interaction_overrides or [])
         self.estimated_interaction_metadata: dict[tuple[str, str], dict] = {}
         self._estimated_interaction_extrapolation_warnings: set[tuple] = set()
@@ -349,7 +348,9 @@ class IdealThermodynamics:
         self._hvap_cache: dict[str, float] = {}
         self._hvap_T_cache: dict[tuple[str, float], float] = {}
         self._liquid_molar_volume_cache: dict[tuple[str, float], float] = {}
-        self._liquid_molar_volume_info_cache: dict[tuple[str, float], tuple[float, Optional[str]]] = {}
+        self._liquid_molar_volume_info_cache: dict[
+            tuple[str, float], tuple[float, Optional[str]]
+        ] = {}
         self._solid_molar_volume_cache: dict[tuple[str, float], float] = {}
         self._viscosity_cache: dict[tuple[str, str, float, float], float] = {}
         self._viscosity_kernels: dict[tuple[str, str], object] = {}
@@ -381,10 +382,10 @@ class IdealThermodynamics:
         self._runtime_initialized = False
         self.warnings: list[str] = []
         self._warning_keys: set[str] = set()
-        
+
         # Load properties for each component
         for comp in components:
-            if hasattr(self.db, 'get_user_component'):
+            if hasattr(self.db, "get_user_component"):
                 props = self.db.get_user_component(comp)
             else:
                 props = self.db.get(comp)
@@ -398,8 +399,10 @@ class IdealThermodynamics:
             self.props[comp] = props
             self._hydrate_henry_properties(comp, props)
             self._resolver_known_props[comp] = props.to_dict()
-            self._resolver_known_props[comp].setdefault('cas', props.CAS)
-            self._resolver_known_props[comp].setdefault('antoine_source', 'chemicals.json')
+            self._resolver_known_props[comp].setdefault("cas", props.CAS)
+            self._resolver_known_props[comp].setdefault(
+                "antoine_source", "chemicals.json"
+            )
             self._prebind_component_properties(comp, props)
 
     def configure_permanent_solids(
@@ -410,22 +413,26 @@ class IdealThermodynamics:
         conventional_solid_components: Iterable[str] = (),
     ) -> None:
         """Configure fixed solids and fluid components that may also freeze."""
-        process = list(dict.fromkeys(str(component) for component in process_components))
-        solids = tuple(dict.fromkeys(str(component) for component in permanent_solid_components))
-        conventional_solids = tuple(dict.fromkeys(
-            str(component) for component in conventional_solid_components
-        ))
+        process = list(
+            dict.fromkeys(str(component) for component in process_components)
+        )
+        solids = tuple(
+            dict.fromkeys(str(component) for component in permanent_solid_components)
+        )
+        conventional_solids = tuple(
+            dict.fromkeys(str(component) for component in conventional_solid_components)
+        )
         unknown = sorted((set(solids) | set(conventional_solids)) - set(process))
         if unknown:
             raise ThermodynamicsError(
                 "Solid-enabled components are not process components: "
-                + ', '.join(unknown)
+                + ", ".join(unknown)
             )
         overlap = sorted(set(solids) & set(conventional_solids))
         if overlap:
             raise ThermodynamicsError(
                 "Components cannot be both permanent-solid and conventional-with-solid: "
-                + ', '.join(overlap)
+                + ", ".join(overlap)
             )
         fluid_expected = [component for component in process if component not in solids]
         if fluid_expected != list(self.components):
@@ -442,9 +449,7 @@ class IdealThermodynamics:
         self.solid_particle_defaults = {
             component: {
                 key: (
-                    dict(value)
-                    if key == 'particle_size_distribution'
-                    else float(value)
+                    dict(value) if key == "particle_size_distribution" else float(value)
                 )
                 for key, value in values.items()
                 if value is not None
@@ -456,7 +461,7 @@ class IdealThermodynamics:
         for comp in solids:
             if comp in self.props:
                 continue
-            if hasattr(self.db, 'get_user_component'):
+            if hasattr(self.db, "get_user_component"):
                 props = self.db.get_user_component(comp)
             else:
                 props = self.db.get(comp)
@@ -466,8 +471,8 @@ class IdealThermodynamics:
                 )
             self.props[comp] = props
             known = props.to_dict()
-            known.setdefault('cas', props.CAS)
-            known.setdefault('antoine_source', 'chemicals.json')
+            known.setdefault("cas", props.CAS)
+            known.setdefault("antoine_source", "chemicals.json")
             self._resolver_known_props[comp] = known
 
     @staticmethod
@@ -475,14 +480,12 @@ class IdealThermodynamics:
         try:
             return normalize_fluid_phase_model(value)
         except ValueError as error:
-            raise ThermodynamicsError(
-                str(error)
-            ) from error
+            raise ThermodynamicsError(str(error)) from error
 
     def set_fluid_phase_model(self, value: str) -> None:
         """Configure unconstrained stream flashes without affecting phase probes."""
         normalized = self._normalize_fluid_phase_model(value)
-        if normalized != 'VLE' and self.components and not hasattr(self, 'flash3_TP'):
+        if normalized != "VLE" and self.components and not hasattr(self, "flash3_TP"):
             raise ThermodynamicsError(
                 f"Fluid phase model {normalized} requires an LLE-capable "
                 "activity-coefficient thermodynamic model"
@@ -504,14 +507,14 @@ class IdealThermodynamics:
             component: (
                 max(0.0, liquid1_fraction) * float(x1.get(component, 0.0))
                 + max(0.0, liquid2_fraction) * float(x2.get(component, 0.0))
-            ) / total
+            )
+            / total
             for component in components
         }
         norm = sum(max(value, 0.0) for value in pooled.values())
         if norm > 0.0:
             pooled = {
-                component: max(value, 0.0) / norm
-                for component, value in pooled.items()
+                component: max(value, 0.0) / norm for component, value in pooled.items()
             }
         return pooled
 
@@ -532,22 +535,24 @@ class IdealThermodynamics:
             x1=dict(x or composition),
             x2={},
             status=(
-                'single_vapor' if V >= 1.0 - 1.0e-10
-                else 'single_liquid' if V <= 1.0e-10
-                else 'ordinary_vle'
+                "single_vapor"
+                if V >= 1.0 - 1.0e-10
+                else "single_liquid"
+                if V <= 1.0e-10
+                else "ordinary_vle"
             ),
-            stability='vle_constrained',
+            stability="vle_constrained",
             extra={},
         )
 
-    def initialize(self) -> 'IdealThermodynamics':
+    def initialize(self) -> "IdealThermodynamics":
         """Prepare persistent-process property backends without solving a state."""
         if self._runtime_initialized:
             return self
 
         # Default StreamState calculations consume resolved H, Cp, S, and rho,
         # so the resolver itself is an unconditional runtime dependency.
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from ..property_resolver import get_property_resolver
         else:
             from property_resolver import get_property_resolver
@@ -556,7 +561,7 @@ class IdealThermodynamics:
         # Import and identify CoolProp only for components with an exact bundled
         # CAS mapping. This prepares the provider the resolver will select while
         # avoiding CoolProp entirely for unsupported component sets.
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from ..property_resolution.coolprop import coolprop_reference_for
         else:
             from property_resolution.coolprop import coolprop_reference_for
@@ -573,9 +578,7 @@ class IdealThermodynamics:
     def quality_context(self, **context):
         """Attach result-provenance metadata to lazy property lookups."""
         normalized = {
-            str(key): value
-            for key, value in context.items()
-            if value is not None
+            str(key): value for key, value in context.items() if value is not None
         }
         self._quality_context_stack.append(normalized)
         try:
@@ -587,30 +590,30 @@ class IdealThermodynamics:
         context: dict = {}
         for item in self._quality_context_stack:
             context.update(item)
-        context.setdefault('kind', 'unscoped')
-        context.setdefault('phase', 'calculation')
-        context.setdefault('affects_result', True)
+        context.setdefault("kind", "unscoped")
+        context.setdefault("phase", "calculation")
+        context.setdefault("affects_result", True)
         return context
 
     @staticmethod
     def _quality_context_key(context: dict) -> tuple:
         return (
-            str(context.get('kind') or ''),
-            str(context.get('unit_id') or ''),
-            str(context.get('unit_type') or ''),
-            str(context.get('stream_id') or ''),
-            str(context.get('phase') or ''),
-            bool(context.get('affects_result', True)),
+            str(context.get("kind") or ""),
+            str(context.get("unit_id") or ""),
+            str(context.get("unit_type") or ""),
+            str(context.get("stream_id") or ""),
+            str(context.get("phase") or ""),
+            bool(context.get("affects_result", True)),
         )
 
     @staticmethod
     def _quality_context_payload(context: dict) -> dict:
         payload = {
-            'kind': str(context.get('kind') or 'unscoped'),
-            'phase': str(context.get('phase') or 'calculation'),
-            'affects_result': bool(context.get('affects_result', True)),
+            "kind": str(context.get("kind") or "unscoped"),
+            "phase": str(context.get("phase") or "calculation"),
+            "affects_result": bool(context.get("affects_result", True)),
         }
-        for key in ('unit_id', 'unit_type', 'stream_id', 'port_id', 'description'):
+        for key in ("unit_id", "unit_type", "stream_id", "port_id", "description"):
             if context.get(key) is not None:
                 payload[key] = str(context[key])
         return payload
@@ -622,22 +625,26 @@ class IdealThermodynamics:
             return
         if isinstance(prop_names, str):
             prop_names = (prop_names,)
-        payload = self._quality_context_payload({
-            'kind': 'thermo_model',
-            'phase': 'model_parameter',
-            'affects_result': True,
-            **context,
-        })
-        payload.setdefault('count', 1)
+        payload = self._quality_context_payload(
+            {
+                "kind": "thermo_model",
+                "phase": "model_parameter",
+                "affects_result": True,
+                **context,
+            }
+        )
+        payload.setdefault("count", 1)
         for prop_name in prop_names:
             source = props.property_sources.get(prop_name)
             if not isinstance(source, dict):
                 continue
-            contexts = source.setdefault('contexts', [])
+            contexts = source.setdefault("contexts", [])
             key = self._quality_context_key(payload)
             for existing in contexts:
                 if self._quality_context_key(existing) == key:
-                    existing['count'] = int(existing.get('count') or 0) + int(payload['count'])
+                    existing["count"] = int(existing.get("count") or 0) + int(
+                        payload["count"]
+                    )
                     break
             else:
                 contexts.append(dict(payload))
@@ -652,13 +659,13 @@ class IdealThermodynamics:
         """Mark static property-source usage once per component/context/phase."""
         current_context = self._current_quality_context()
         merged = {
-            'kind': current_context.get('kind', 'thermo_model'),
-            'unit_id': current_context.get('unit_id'),
-            'unit_type': current_context.get('unit_type'),
-            'stream_id': current_context.get('stream_id'),
-            'affects_result': current_context.get('affects_result', True),
+            "kind": current_context.get("kind", "thermo_model"),
+            "unit_id": current_context.get("unit_id"),
+            "unit_type": current_context.get("unit_type"),
+            "stream_id": current_context.get("stream_id"),
+            "affects_result": current_context.get("affects_result", True),
             **context,
-            'phase': phase,
+            "phase": phase,
         }
         if isinstance(prop_names, str):
             prop_tuple = (prop_names,)
@@ -670,12 +677,16 @@ class IdealThermodynamics:
         props = self.props.get(comp)
         if props is None:
             return
-        if not any(isinstance(props.property_sources.get(prop), dict) for prop in prop_tuple):
+        if not any(
+            isinstance(props.property_sources.get(prop), dict) for prop in prop_tuple
+        ):
             return
         self._static_quality_marked_contexts.add(key)
         self.mark_property_source_context(comp, prop_tuple, **merged)
 
-    def _record_lazy_property_source(self, comp: str, prop_name: str, T: float, result) -> None:
+    def _record_lazy_property_source(
+        self, comp: str, prop_name: str, T: float, result
+    ) -> None:
         """Aggregate provenance for temperature-dependent resolver calls.
 
         The property resolver returns quality/source metadata for lazy
@@ -687,97 +698,112 @@ class IdealThermodynamics:
         """
         if result is None:
             return
-        source = str(getattr(result, 'source', None) or 'unknown')
-        method = str(getattr(result, 'method', None) or 'unknown')
+        source = str(getattr(result, "source", None) or "unknown")
+        method = str(getattr(result, "method", None) or "unknown")
         key = (str(comp), str(prop_name), source, method)
         try:
             T_value = float(T)
         except (TypeError, ValueError):
             T_value = None
-        raw_quality = getattr(result, 'quality', None)
+        raw_quality = getattr(result, "quality", None)
         try:
-            quality = None if raw_quality is None else max(0.0, min(1.0, float(raw_quality)))
+            quality = (
+                None if raw_quality is None else max(0.0, min(1.0, float(raw_quality)))
+            )
         except (TypeError, ValueError):
             quality = None
 
         entry = self._lazy_property_sources.get(key)
         if entry is None:
             entry = {
-                'component': str(comp),
-                'property': f"{prop_name}(T)",
-                'source': source,
-                'method': method,
-                'quality': quality,
-                'count': 0,
-                'T_min': T_value,
-                'T_max': T_value,
-                'result_quality': None,
-                'result_count': 0,
-                'result_T_min': None,
-                'result_T_max': None,
-                'notes': [],
-                'contexts': [],
-                '_context_index': {},
+                "component": str(comp),
+                "property": f"{prop_name}(T)",
+                "source": source,
+                "method": method,
+                "quality": quality,
+                "count": 0,
+                "T_min": T_value,
+                "T_max": T_value,
+                "result_quality": None,
+                "result_count": 0,
+                "result_T_min": None,
+                "result_T_max": None,
+                "notes": [],
+                "contexts": [],
+                "_context_index": {},
             }
             self._lazy_property_sources[key] = entry
 
-        entry['count'] += 1
+        entry["count"] += 1
         if quality is not None:
-            previous_quality = entry.get('quality')
-            entry['quality'] = quality if previous_quality is None else min(previous_quality, quality)
+            previous_quality = entry.get("quality")
+            entry["quality"] = (
+                quality if previous_quality is None else min(previous_quality, quality)
+            )
         if T_value is not None:
-            entry['T_min'] = T_value if entry.get('T_min') is None else min(entry['T_min'], T_value)
-            entry['T_max'] = T_value if entry.get('T_max') is None else max(entry['T_max'], T_value)
+            entry["T_min"] = (
+                T_value if entry.get("T_min") is None else min(entry["T_min"], T_value)
+            )
+            entry["T_max"] = (
+                T_value if entry.get("T_max") is None else max(entry["T_max"], T_value)
+            )
 
         context = self._current_quality_context()
         context_key = self._quality_context_key(context)
-        context_index = entry.setdefault('_context_index', {})
+        context_index = entry.setdefault("_context_index", {})
         context_position = context_index.get(context_key)
         if context_position is None:
             context_record = self._quality_context_payload(context)
-            context_record['count'] = 0
-            context_record['T_min'] = T_value
-            context_record['T_max'] = T_value
-            entry.setdefault('contexts', []).append(context_record)
-            context_position = len(entry['contexts']) - 1
+            context_record["count"] = 0
+            context_record["T_min"] = T_value
+            context_record["T_max"] = T_value
+            entry.setdefault("contexts", []).append(context_record)
+            context_position = len(entry["contexts"]) - 1
             context_index[context_key] = context_position
-        context_record = entry['contexts'][context_position]
-        context_record['count'] += 1
+        context_record = entry["contexts"][context_position]
+        context_record["count"] += 1
         if T_value is not None:
-            context_record['T_min'] = (
-                T_value if context_record.get('T_min') is None
-                else min(context_record['T_min'], T_value)
+            context_record["T_min"] = (
+                T_value
+                if context_record.get("T_min") is None
+                else min(context_record["T_min"], T_value)
             )
-            context_record['T_max'] = (
-                T_value if context_record.get('T_max') is None
-                else max(context_record['T_max'], T_value)
+            context_record["T_max"] = (
+                T_value
+                if context_record.get("T_max") is None
+                else max(context_record["T_max"], T_value)
             )
-        if context_record.get('affects_result', True):
-            entry['result_count'] += 1
+        if context_record.get("affects_result", True):
+            entry["result_count"] += 1
             if quality is not None:
-                previous_result_quality = entry.get('result_quality')
-                entry['result_quality'] = (
-                    quality if previous_result_quality is None
+                previous_result_quality = entry.get("result_quality")
+                entry["result_quality"] = (
+                    quality
+                    if previous_result_quality is None
                     else min(previous_result_quality, quality)
                 )
             if T_value is not None:
-                entry['result_T_min'] = (
-                    T_value if entry.get('result_T_min') is None
-                    else min(entry['result_T_min'], T_value)
+                entry["result_T_min"] = (
+                    T_value
+                    if entry.get("result_T_min") is None
+                    else min(entry["result_T_min"], T_value)
                 )
-                entry['result_T_max'] = (
-                    T_value if entry.get('result_T_max') is None
-                    else max(entry['result_T_max'], T_value)
+                entry["result_T_max"] = (
+                    T_value
+                    if entry.get("result_T_max") is None
+                    else max(entry["result_T_max"], T_value)
                 )
 
-        notes = str(getattr(result, 'notes', None) or '').strip()
+        notes = str(getattr(result, "notes", None) or "").strip()
         if notes:
-            stored_notes = entry.setdefault('notes', [])
+            stored_notes = entry.setdefault("notes", [])
             if notes not in stored_notes:
                 if len(stored_notes) < 2:
                     stored_notes.append(notes)
                 else:
-                    entry['additional_note_count'] = entry.get('additional_note_count', 0) + 1
+                    entry["additional_note_count"] = (
+                        entry.get("additional_note_count", 0) + 1
+                    )
 
         if len(self._lazy_property_sources) > 20000:
             self._lazy_property_sources.clear()
@@ -797,15 +823,13 @@ class IdealThermodynamics:
         diagnostics for actual provider/fallback/range changes without
         repeatedly aggregating identical static provenance.
         """
-        source = str(getattr(result, 'source', None) or 'unknown')
-        method = str(getattr(result, 'method', None) or 'unknown')
-        notes = str(getattr(result, 'notes', None) or '').strip()
-        raw_quality = getattr(result, 'quality', None)
+        source = str(getattr(result, "source", None) or "unknown")
+        method = str(getattr(result, "method", None) or "unknown")
+        notes = str(getattr(result, "notes", None) or "").strip()
+        raw_quality = getattr(result, "quality", None)
         try:
             quality = (
-                None
-                if raw_quality is None
-                else max(0.0, min(1.0, float(raw_quality)))
+                None if raw_quality is None else max(0.0, min(1.0, float(raw_quality)))
             )
         except (TypeError, ValueError):
             quality = None
@@ -824,7 +848,7 @@ class IdealThermodynamics:
         self._viscosity_quality_marked_contexts.add(key)
         self._record_lazy_property_source(
             comp,
-            f'{phase}_viscosity',
+            f"{phase}_viscosity",
             T,
             result,
         )
@@ -834,64 +858,74 @@ class IdealThermodynamics:
         rows = []
         for entry in self._lazy_property_sources.values():
             row = {
-                key: value for key, value in entry.items()
-                if key != '_context_index'
+                key: value for key, value in entry.items() if key != "_context_index"
             }
-            row['contexts'] = [dict(context) for context in entry.get('contexts', [])]
+            row["contexts"] = [dict(context) for context in entry.get("contexts", [])]
             rows.append(row)
         return rows
 
     @staticmethod
     def _henry_grade_quality(grade: Optional[str]) -> Optional[float]:
         return {
-            'A+': 0.99, 'A': 0.96, 'A-': 0.92,
-            'B+': 0.89, 'B': 0.86, 'B-': 0.82,
-            'C+': 0.78, 'C': 0.74, 'C-': 0.69,
-            'D+': 0.64, 'D': 0.58, 'D-': 0.50,
-            'F': 0.30,
-        }.get(str(grade or '').upper())
+            "A+": 0.99,
+            "A": 0.96,
+            "A-": 0.92,
+            "B+": 0.89,
+            "B": 0.86,
+            "B-": 0.82,
+            "C+": 0.78,
+            "C": 0.74,
+            "C-": 0.69,
+            "D+": 0.64,
+            "D": 0.58,
+            "D-": 0.50,
+            "F": 0.30,
+        }.get(str(grade or "").upper())
 
     def _hydrate_henry_properties(self, comp: str, props: ChemicalProperties) -> None:
-        record = get_henry_constant_database().get(getattr(props, 'CAS', ''))
+        record = get_henry_constant_database().get(getattr(props, "CAS", ""))
         if record is None:
             return
-        if getattr(props, 'henry_Hcp', None) is None:
+        if getattr(props, "henry_Hcp", None) is None:
             props.henry_Hcp = record.hcp_298
-            props.property_sources['henry_Hcp'] = {
-                'source': 'Sander Henry database',
-                'method': 'henry_database_hcp_298',
-                'quality': (
+            props.property_sources["henry_Hcp"] = {
+                "source": "Sander Henry database",
+                "method": "henry_database_hcp_298",
+                "quality": (
                     record.quality_score_h
                     if record.quality_score_h is not None
                     else self._henry_grade_quality(record.quality_h)
                 ),
-                'grade': record.quality_h,
-                'notes': 'Hcp at 298.15 K [mol/(m3*Pa)] from bundled CAS-keyed database',
+                "grade": record.quality_h,
+                "notes": "Hcp at 298.15 K [mol/(m3*Pa)] from bundled CAS-keyed database",
             }
-        if getattr(props, 'henry_B', None) is None and record.B is not None:
+        if getattr(props, "henry_B", None) is None and record.B is not None:
             props.henry_B = record.B
-            props.property_sources['henry_B'] = {
-                'source': 'Sander Henry database',
-                'method': 'henry_database_temperature_coefficient',
-                'quality': (
+            props.property_sources["henry_B"] = {
+                "source": "Sander Henry database",
+                "method": "henry_database_temperature_coefficient",
+                "quality": (
                     record.quality_score_b
                     if record.quality_score_b is not None
                     else self._henry_grade_quality(record.quality_b)
                 ),
-                'grade': record.quality_b,
-                'notes': 'd(ln Hcp)/d(1/T) [K] from bundled CAS-keyed database',
+                "grade": record.quality_b,
+                "notes": "d(ln Hcp)/d(1/T) [K] from bundled CAS-keyed database",
             }
-        if getattr(props, 'henry_Vinf', None) is None and record.vinf_298_cm3_per_mol is not None:
+        if (
+            getattr(props, "henry_Vinf", None) is None
+            and record.vinf_298_cm3_per_mol is not None
+        ):
             props.henry_Vinf = record.vinf_298_cm3_per_mol
             props.henry_Vinf_uncertainty = record.vinf_uncertainty_cm3_per_mol
-            props.property_sources['henry_Vinf'] = {
-                'source': record.vinf_source or 'Zhou and Battino (2001)',
-                'method': 'henry_vinf_measured_298K',
-                'quality': 0.98,
-                'doi': record.vinf_doi,
-                'notes': (
-                    'Infinite-dilution partial molar volume in water at 298.15 K '
-                    '[cm3/mol]'
+            props.property_sources["henry_Vinf"] = {
+                "source": record.vinf_source or "Zhou and Battino (2001)",
+                "method": "henry_vinf_measured_298K",
+                "quality": 0.98,
+                "doi": record.vinf_doi,
+                "notes": (
+                    "Infinite-dilution partial molar volume in water at 298.15 K "
+                    "[cm3/mol]"
                 ),
             }
 
@@ -909,13 +943,15 @@ class IdealThermodynamics:
 
     def _component_label(self, comp: str) -> str:
         props = self.props.get(comp)
-        name = getattr(props, 'name', None)
+        name = getattr(props, "name", None)
         if name and name != comp:
             return f"{comp} ({name})"
         return comp
 
     def _allow_online_lookup_for_component(self, comp: str) -> bool:
-        return (self._resolver_known_props.get(comp) or {}).get('_allow_online_lookup') is not False
+        return (self._resolver_known_props.get(comp) or {}).get(
+            "_allow_online_lookup"
+        ) is not False
 
     def _warn_rk_binary_interactions_unavailable(self, context: str = "RK EOS") -> None:
         if len(self.components) < 2:
@@ -925,16 +961,18 @@ class IdealThermodynamics:
             "using classical van der Waals mixing with k_ij=0 for all component pairs."
         )
 
-    def _prebind_component_properties(self, comp: str, props: ChemicalProperties) -> None:
+    def _prebind_component_properties(
+        self, comp: str, props: ChemicalProperties
+    ) -> None:
         """Bind hot pure-property evaluators once per thermo object."""
         known = self._resolver_known_props.get(comp, {})
-        cp_coeffs = known.get('Cp_coeffs')
+        cp_coeffs = known.get("Cp_coeffs")
         if cp_coeffs and len(cp_coeffs) >= 4:
             self._provided_cp_coeffs[comp] = list(cp_coeffs)
         self._prebind_provided_liquid_molar_volume_source(comp, known)
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..perry_properties import get_perry_property_library
             else:
                 from perry_properties import get_perry_property_library
@@ -943,7 +981,7 @@ class IdealThermodynamics:
             return
 
         identifiers = [props.CAS, props.symbol, props.name, comp]
-        formula = getattr(props, 'formula', None)
+        formula = getattr(props, "formula", None)
         if self._formula_is_safe_perry_prebind(comp, formula, props):
             identifiers.append(formula)
 
@@ -958,56 +996,75 @@ class IdealThermodynamics:
                 return
 
     @staticmethod
-    def _formula_is_safe_perry_prebind(comp: str, formula: Optional[str], props: ChemicalProperties) -> bool:
+    def _formula_is_safe_perry_prebind(
+        comp: str, formula: Optional[str], props: ChemicalProperties
+    ) -> bool:
         """Only use a bare formula for Perry binding when it names this component."""
         if not formula:
             return False
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                from ..compound_identity import get_compound_identity_resolver, looks_like_formula
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+                from ..compound_identity import (
+                    get_compound_identity_resolver,
+                    looks_like_formula,
+                )
             else:
-                from compound_identity import get_compound_identity_resolver, looks_like_formula
+                from compound_identity import (
+                    get_compound_identity_resolver,
+                    looks_like_formula,
+                )
             if not looks_like_formula(comp):
                 return False
             resolver = get_compound_identity_resolver()
             formula_symbol = resolver.resolve_symbol(formula, allow_formula=True)
             comp_symbol = resolver.resolve_symbol(comp, allow_formula=True)
             prop_symbol = resolver.resolve_symbol(props.symbol, allow_formula=False)
-            return bool(formula_symbol and formula_symbol in {comp_symbol, prop_symbol, props.symbol})
+            return bool(
+                formula_symbol
+                and formula_symbol in {comp_symbol, prop_symbol, props.symbol}
+            )
         except Exception:
             return str(comp).strip().upper() == str(formula).strip().upper()
 
-    def _prebind_provided_liquid_molar_volume_source(self, comp: str, known: dict) -> None:
-        correlations = known.get('property_correlations') or {}
+    def _prebind_provided_liquid_molar_volume_source(
+        self, comp: str, known: dict
+    ) -> None:
+        correlations = known.get("property_correlations") or {}
         if not isinstance(correlations, dict):
             return
-        correlation = correlations.get('rhol')
-        if not correlation or not known.get('MW'):
+        correlation = correlations.get("rhol")
+        if not correlation or not known.get("MW"):
             return
-        self._liquid_molar_volume_sources.setdefault(comp, []).append({
-            'kind': 'provided_rhol',
-            'correlation': correlation,
-            'MW': float(known['MW']),
-            'Tmin': correlation.get('Tmin_K'),
-            'Tmax': correlation.get('Tmax_K'),
-        })
+        self._liquid_molar_volume_sources.setdefault(comp, []).append(
+            {
+                "kind": "provided_rhol",
+                "correlation": correlation,
+                "MW": float(known["MW"]),
+                "Tmin": correlation.get("Tmin_K"),
+                "Tmax": correlation.get("Tmax_K"),
+            }
+        )
 
-    def _prebind_perry_liquid_molar_volume_sources(self, comp: str, entry: dict) -> None:
+    def _prebind_perry_liquid_molar_volume_sources(
+        self, comp: str, entry: dict
+    ) -> None:
         sources = self._liquid_molar_volume_sources.setdefault(comp, [])
-        for row in entry.get('liquid_density', []) or []:
-            if row.get('equation_id') not in {100, 105}:
+        for row in entry.get("liquid_density", []) or []:
+            if row.get("equation_id") not in {100, 105}:
                 continue
-            sources.append({
-                'kind': 'perry_density',
-                'row': row,
-                'Tmin': row.get('T_min_K'),
-                'Tmax': row.get('T_max_K'),
-            })
+            sources.append(
+                {
+                    "kind": "perry_density",
+                    "row": row,
+                    "Tmin": row.get("T_min_K"),
+                    "Tmax": row.get("T_max_K"),
+                }
+            )
 
     @staticmethod
     def _source_covers_temperature(source: dict, T: float) -> bool:
-        Tmin = source.get('Tmin')
-        Tmax = source.get('Tmax')
+        Tmin = source.get("Tmin")
+        Tmax = source.get("Tmax")
         if Tmin is not None and T < float(Tmin) - 1e-9:
             return False
         if Tmax is not None and T > float(Tmax) + 1e-9:
@@ -1016,8 +1073,8 @@ class IdealThermodynamics:
 
     @staticmethod
     def _source_boundary_temperature(source: dict, T: float) -> Optional[float]:
-        Tmin = source.get('Tmin')
-        Tmax = source.get('Tmax')
+        Tmin = source.get("Tmin")
+        Tmax = source.get("Tmax")
         if Tmin is None or Tmax is None:
             return None
         Tmin = float(Tmin)
@@ -1030,23 +1087,23 @@ class IdealThermodynamics:
 
     @staticmethod
     def _source_range_width(source: dict) -> float:
-        Tmin = source.get('Tmin')
-        Tmax = source.get('Tmax')
+        Tmin = source.get("Tmin")
+        Tmax = source.get("Tmax")
         if Tmin is None or Tmax is None:
-            return float('inf')
+            return float("inf")
         return max(float(Tmax) - float(Tmin), 1e-12)
 
     @staticmethod
     def _source_range_center_distance(source: dict, T: float) -> float:
-        Tmin = source.get('Tmin')
-        Tmax = source.get('Tmax')
+        Tmin = source.get("Tmin")
+        Tmax = source.get("Tmax")
         if Tmin is None or Tmax is None:
             return 0.0
         return abs(0.5 * (float(Tmin) + float(Tmax)) - T)
 
     @staticmethod
     def _correlation_coefficients(correlation: dict) -> dict[str, float]:
-        coefficients = correlation.get('coefficients') or {}
+        coefficients = correlation.get("coefficients") or {}
         if not isinstance(coefficients, dict):
             return {}
         return {
@@ -1055,36 +1112,40 @@ class IdealThermodynamics:
             if value is not None
         }
 
-    def _evaluate_prebound_liquid_molar_volume_source(self, source: dict, T: float) -> Optional[float]:
+    def _evaluate_prebound_liquid_molar_volume_source(
+        self, source: dict, T: float
+    ) -> Optional[float]:
         try:
-            if source.get('kind') == 'provided_rhol':
-                correlation = source['correlation']
-                equation = str(correlation.get('equation', '')).lower()
+            if source.get("kind") == "provided_rhol":
+                correlation = source["correlation"]
+                equation = str(correlation.get("equation", "")).lower()
                 coeffs = self._correlation_coefficients(correlation)
                 x = (T - 298.15) / 100.0
-                if equation == 'poly_x':
+                if equation == "poly_x":
                     rho_kg_m3 = sum(
                         coeffs.get(name, 0.0) * x**power
-                        for power, name in enumerate(('A', 'B', 'C', 'D', 'E', 'F'))
+                        for power, name in enumerate(("A", "B", "C", "D", "E", "F"))
                     )
-                elif equation == 'exp_poly_x':
+                elif equation == "exp_poly_x":
                     exponent = sum(
                         coeffs.get(name, 0.0) * x**power
-                        for power, name in enumerate(('A', 'B', 'C', 'D', 'E', 'F'))
+                        for power, name in enumerate(("A", "B", "C", "D", "E", "F"))
                     )
                     rho_kg_m3 = math.exp(exponent)
                 else:
                     return None
                 if rho_kg_m3 <= 0.0:
                     return None
-                return float(source['MW']) / rho_kg_m3
+                return float(source["MW"]) / rho_kg_m3
 
-            if source.get('kind') == 'perry_density':
-                row = source['row']
-                coeffs = row.get('coefficients', [])
-                equation_id = row.get('equation_id')
+            if source.get("kind") == "perry_density":
+                row = source["row"]
+                coeffs = row.get("coefficients", [])
+                equation_id = row.get("equation_id")
                 if equation_id == 100:
-                    rho_mol_dm3 = sum(coef * T**power for power, coef in enumerate(coeffs))
+                    rho_mol_dm3 = sum(
+                        coef * T**power for power, coef in enumerate(coeffs)
+                    )
                 elif equation_id == 105 and len(coeffs) >= 4:
                     C1, C2, C3, C4 = coeffs[:4]
                     tau = 1.0 - T / C3
@@ -1100,13 +1161,19 @@ class IdealThermodynamics:
             return None
         return None
 
-    def _prebound_liquid_molar_volume(self, comp: str, T: float) -> Optional[tuple[float, Optional[str]]]:
+    def _prebound_liquid_molar_volume(
+        self, comp: str, T: float
+    ) -> Optional[tuple[float, Optional[str]]]:
         sources = self._liquid_molar_volume_sources.get(comp) or []
         if not sources:
             return None
 
-        provided_sources = [source for source in sources if source.get('kind') == 'provided_rhol']
-        perry_sources = [source for source in sources if source.get('kind') == 'perry_density']
+        provided_sources = [
+            source for source in sources if source.get("kind") == "provided_rhol"
+        ]
+        perry_sources = [
+            source for source in sources if source.get("kind") == "perry_density"
+        ]
         ordered_groups = [
             provided_sources,
             sorted(
@@ -1143,11 +1210,15 @@ class IdealThermodynamics:
                     f"T={boundary_T:.1f} K to T={T:.1f} K"
                 )
                 endpoint_key = (comp, float(T))
-                self._set_limited_cache(self._liquid_molar_volume_cache, endpoint_key, value)
+                self._set_limited_cache(
+                    self._liquid_molar_volume_cache, endpoint_key, value
+                )
                 return value, endpoint_note
         return None
 
-    def _liquid_molar_volume_for_poynting(self, comp: str, T: float) -> tuple[Optional[float], Optional[str]]:
+    def _liquid_molar_volume_for_poynting(
+        self, comp: str, T: float
+    ) -> tuple[Optional[float], Optional[str]]:
         cache_key = (comp, float(T))
         cached_info = self._liquid_molar_volume_info_cache.get(cache_key)
         if cached_info is not None:
@@ -1168,7 +1239,7 @@ class IdealThermodynamics:
             return info
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1180,12 +1251,14 @@ class IdealThermodynamics:
         except Exception:
             return None, None
 
-        self._record_lazy_property_source(comp, 'liquid_molar_volume', T, result)
+        self._record_lazy_property_source(comp, "liquid_molar_volume", T, result)
         endpoint_note = None
-        if result.method.endswith('_nearest_temperature'):
-            endpoint_note = result.notes.rsplit('used nearest endpoint ', 1)[-1]
+        if result.method.endswith("_nearest_temperature"):
+            endpoint_note = result.notes.rsplit("used nearest endpoint ", 1)[-1]
         info = (result.value, endpoint_note)
-        self._set_limited_cache(self._liquid_molar_volume_cache, cache_key, result.value)
+        self._set_limited_cache(
+            self._liquid_molar_volume_cache, cache_key, result.value
+        )
         if len(self._liquid_molar_volume_info_cache) > 20000:
             self._liquid_molar_volume_info_cache.clear()
         self._liquid_molar_volume_info_cache[cache_key] = info
@@ -1209,7 +1282,7 @@ class IdealThermodynamics:
             return self._ideal_gas_cp_kernels[comp]
         props = self.props.get(comp)
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1223,13 +1296,13 @@ class IdealThermodynamics:
         self._ideal_gas_cp_kernels[comp] = kernel
         if kernel is not None:
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import PropertyResolutionResult
                 else:
                     from property_resolver import PropertyResolutionResult
                 self._record_lazy_property_source(
                     comp,
-                    'Cp_ideal_gas',
+                    "Cp_ideal_gas",
                     T_REF,
                     PropertyResolutionResult(
                         value=kernel.cp(T_REF),
@@ -1243,19 +1316,21 @@ class IdealThermodynamics:
                 pass
         return kernel
 
-    def _record_ideal_gas_cp_kernel_range_use(self, comp: str, T: float, kernel) -> None:
+    def _record_ideal_gas_cp_kernel_range_use(
+        self, comp: str, T: float, kernel
+    ) -> None:
         """Record degraded provenance when a thermal path leaves the fit range."""
         if kernel is None or kernel.covers(T):
             return
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import PropertyResolutionResult
             else:
                 from property_resolver import PropertyResolutionResult
             evaluation = kernel.evaluate(T)
             self._record_lazy_property_source(
                 comp,
-                'Cp_ideal_gas',
+                "Cp_ideal_gas",
                 T,
                 PropertyResolutionResult(
                     value=evaluation.value,
@@ -1274,7 +1349,7 @@ class IdealThermodynamics:
             return self._liquid_cp_kernels[comp]
         props = self.props.get(comp)
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1288,13 +1363,13 @@ class IdealThermodynamics:
         self._liquid_cp_kernels[comp] = kernel
         if kernel is not None:
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import PropertyResolutionResult
                 else:
                     from property_resolver import PropertyResolutionResult
                 self._record_lazy_property_source(
                     comp,
-                    'Cp_liquid',
+                    "Cp_liquid",
                     T_REF,
                     PropertyResolutionResult(
                         value=kernel.cp(T_REF),
@@ -1313,14 +1388,14 @@ class IdealThermodynamics:
         if kernel is None or kernel.covers(T):
             return
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import PropertyResolutionResult
             else:
                 from property_resolver import PropertyResolutionResult
             evaluation = kernel.evaluate(T)
             self._record_lazy_property_source(
                 comp,
-                'Cp_liquid',
+                "Cp_liquid",
                 T,
                 PropertyResolutionResult(
                     value=evaluation.value,
@@ -1339,7 +1414,7 @@ class IdealThermodynamics:
             return self._solid_cp_kernels[comp]
         props = self.props.get(comp)
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1353,18 +1428,20 @@ class IdealThermodynamics:
         self._solid_cp_kernels[comp] = kernel
         if kernel is not None:
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import PropertyResolutionResult
                 else:
                     from property_resolver import PropertyResolutionResult
                 active = kernel.active_kernel(T_REF)
                 self._record_lazy_property_source(
                     comp,
-                    'Cp_solid',
+                    "Cp_solid",
                     T_REF,
                     PropertyResolutionResult(
-                        value=kernel.cp(T_REF), source=active.source,
-                        method=active.method, quality=kernel.quality_at(T_REF),
+                        value=kernel.cp(T_REF),
+                        source=active.source,
+                        method=active.method,
+                        quality=kernel.quality_at(T_REF),
                         notes=active.notes,
                     ),
                 )
@@ -1376,7 +1453,7 @@ class IdealThermodynamics:
         if kernel is None or kernel.covers(T):
             return
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import PropertyResolutionResult
             else:
                 from property_resolver import PropertyResolutionResult
@@ -1384,11 +1461,13 @@ class IdealThermodynamics:
             active = kernel.active_kernel(T)
             self._record_lazy_property_source(
                 comp,
-                'Cp_solid',
+                "Cp_solid",
                 T,
                 PropertyResolutionResult(
-                    value=evaluation.value, source=active.source,
-                    method=active.method, quality=evaluation.quality,
+                    value=evaluation.value,
+                    source=active.source,
+                    method=active.method,
+                    quality=evaluation.quality,
                     notes=evaluation.range_note,
                 ),
             )
@@ -1400,8 +1479,8 @@ class IdealThermodynamics:
         lo = min(T1, T2)
         hi = max(T1, T2)
         return (
-            row.get('T_min_K', -math.inf) <= lo + 1e-9
-            and hi <= row.get('T_max_K', math.inf) + 1e-9
+            row.get("T_min_K", -math.inf) <= lo + 1e-9
+            and hi <= row.get("T_max_K", math.inf) + 1e-9
         )
 
     @staticmethod
@@ -1416,12 +1495,12 @@ class IdealThermodynamics:
         try:
             total = 0.0
             for power, coef in enumerate(coeffs):
-                total += float(coef) * (
-                    T2 ** (power + 1) - T1 ** (power + 1)
-                ) / (power + 1)
+                total += (
+                    float(coef) * (T2 ** (power + 1) - T1 ** (power + 1)) / (power + 1)
+                )
         except (TypeError, ValueError, OverflowError):
             return None
-        if coeff_units == 'J_per_kmol_K':
+        if coeff_units == "J_per_kmol_K":
             return total / 1.0e6
         return total / 1000.0
 
@@ -1453,16 +1532,18 @@ class IdealThermodynamics:
         return total / 1.0e6
 
     @staticmethod
-    def _provided_poly_x_cp_integral(correlation: dict, T1: float, T2: float) -> Optional[float]:
+    def _provided_poly_x_cp_integral(
+        correlation: dict, T1: float, T2: float
+    ) -> Optional[float]:
         """Analytic portable poly_x Cp integral, returned as kJ/mol."""
-        coefficients = correlation.get('coefficients') or {}
+        coefficients = correlation.get("coefficients") or {}
         if not isinstance(coefficients, dict):
             return None
         x1 = (T1 - 298.15) / 100.0
         x2 = (T2 - 298.15) / 100.0
         try:
             total = 0.0
-            for power, name in enumerate(('A', 'B', 'C', 'D', 'E', 'F')):
+            for power, name in enumerate(("A", "B", "C", "D", "E", "F")):
                 coef = float(coefficients.get(name, 0.0))
                 total += coef * (x2 ** (power + 1) - x1 ** (power + 1)) / (power + 1)
         except (TypeError, ValueError, OverflowError):
@@ -1478,14 +1559,14 @@ class IdealThermodynamics:
     ) -> Optional[float]:
         """Analytic integral for portable Cp correlations when available."""
         props = self._resolver_known_props.get(comp) or {}
-        correlations = props.get('property_correlations') or {}
+        correlations = props.get("property_correlations") or {}
         if not isinstance(correlations, dict):
             return None
         correlation = correlations.get(correlation_key)
         if not correlation or not self._temperature_range_covers(correlation, T1, T2):
             return None
-        equation = str(correlation.get('equation', '')).lower()
-        if equation == 'poly_x':
+        equation = str(correlation.get("equation", "")).lower()
+        if equation == "poly_x":
             return self._provided_poly_x_cp_integral(correlation, T1, T2)
         return None
 
@@ -1501,39 +1582,45 @@ class IdealThermodynamics:
         if entry is None:
             return None
 
-        if phase == 'liquid':
-            rows = entry.get('liquid_heat_capacity', []) or []
+        if phase == "liquid":
+            rows = entry.get("liquid_heat_capacity", []) or []
             for row in rows:
-                if row.get('equation_id') != 100 or not self._temperature_range_covers(row, T1, T2):
+                if row.get("equation_id") != 100 or not self._temperature_range_covers(
+                    row, T1, T2
+                ):
                     continue
                 return self._polynomial_cp_integral(
-                    row.get('coefficients', []),
+                    row.get("coefficients", []),
                     T1,
                     T2,
-                    coeff_units='J_per_kmol_K',
+                    coeff_units="J_per_kmol_K",
                 )
             return None
 
-        if phase == 'ideal_gas':
-            rows = entry.get('ideal_gas_heat_capacity_polynomial', []) or []
+        if phase == "ideal_gas":
+            rows = entry.get("ideal_gas_heat_capacity_polynomial", []) or []
             for row in rows:
                 if not self._temperature_range_covers(row, T1, T2):
                     continue
                 return self._polynomial_cp_integral(
-                    row.get('coefficients', []),
+                    row.get("coefficients", []),
                     T1,
                     T2,
-                    coeff_units='J_per_kmol_K',
+                    coeff_units="J_per_kmol_K",
                 )
 
-            rows = entry.get('ideal_gas_heat_capacity_hyperbolic', []) or []
+            rows = entry.get("ideal_gas_heat_capacity_hyperbolic", []) or []
             for row in rows:
                 if not self._temperature_range_covers(row, T1, T2):
                     continue
-                return self._perry_hyperbolic_cp_integral(row.get('coefficients', []), T1, T2)
+                return self._perry_hyperbolic_cp_integral(
+                    row.get("coefficients", []), T1, T2
+                )
         return None
 
-    def _integrate_cp_analytic(self, comp: str, T1: float, T2: float, phase: str) -> Optional[float]:
+    def _integrate_cp_analytic(
+        self, comp: str, T1: float, T2: float, phase: str
+    ) -> Optional[float]:
         """Return analytic Cp integral [kJ/mol] for supported sources."""
         if abs(T2 - T1) < 1e-12:
             return 0.0
@@ -1544,7 +1631,7 @@ class IdealThermodynamics:
             return cached
 
         value = None
-        if phase == 'ideal_gas':
+        if phase == "ideal_gas":
             kernel = self._ideal_gas_cp_kernel(comp)
             if kernel is not None:
                 self._record_ideal_gas_cp_kernel_range_use(comp, T1, kernel)
@@ -1557,29 +1644,29 @@ class IdealThermodynamics:
                         coeffs[:4],
                         T1,
                         T2,
-                        coeff_units='J_per_mol_K',
+                        coeff_units="J_per_mol_K",
                     )
             if value is None:
-                value = self._perry_cp_integral(comp, T1, T2, 'ideal_gas')
+                value = self._perry_cp_integral(comp, T1, T2, "ideal_gas")
             if value is None:
-                value = self._provided_correlation_cp_integral(comp, T1, T2, 'Cpg')
-        elif phase == 'liquid':
+                value = self._provided_correlation_cp_integral(comp, T1, T2, "Cpg")
+        elif phase == "liquid":
             kernel = self._liquid_cp_kernel(comp)
             if kernel is not None:
                 self._record_liquid_cp_kernel_range_use(comp, T1, kernel)
                 self._record_liquid_cp_kernel_range_use(comp, T2, kernel)
                 value = kernel.delta_h(T1, T2) / 1000.0
-        elif phase == 'solid':
+        elif phase == "solid":
             kernel = self._solid_cp_kernel(comp)
             if kernel is not None:
                 self._record_solid_cp_kernel_range_use(comp, T1, kernel)
                 self._record_solid_cp_kernel_range_use(comp, T2, kernel)
                 value = kernel.delta_h(T1, T2) / 1000.0
 
-        if value is None and phase != 'liquid':
+        if value is None and phase != "liquid":
             props = self.props.get(comp)
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import get_property_resolver
                 else:
                     from property_resolver import get_property_resolver
@@ -1610,7 +1697,7 @@ class IdealThermodynamics:
             return None
         value, _, _ = evaluated
         return value
-    
+
     def mixture_MW(self, composition: dict[str, float]) -> float:
         """Calculate mixture molecular weight [kg/kmol]"""
         mw = 0.0
@@ -1618,17 +1705,18 @@ class IdealThermodynamics:
             if comp in self.props:
                 self.mark_property_source_context_once(
                     comp,
-                    'MW',
-                    phase='molecular_weight',
+                    "MW",
+                    phase="molecular_weight",
                 )
                 mw += z * self.props[comp].MW
         return mw
 
-    def _composition_cache_key(self, composition: dict[str, float]) -> tuple[tuple[str, float], ...]:
+    def _composition_cache_key(
+        self, composition: dict[str, float]
+    ) -> tuple[tuple[str, float], ...]:
         """Exact component-order composition key for repeated solver evaluations."""
         return tuple(
-            (comp, float(composition.get(comp, 0.0)))
-            for comp in self.components
+            (comp, float(composition.get(comp, 0.0))) for comp in self.components
         )
 
     def _k_values_cache_key(
@@ -1644,7 +1732,9 @@ class IdealThermodynamics:
         cached = self._k_values_cache.get(key)
         return dict(cached) if cached is not None else None
 
-    def _set_cached_k_values(self, key: tuple, values: dict[str, float]) -> dict[str, float]:
+    def _set_cached_k_values(
+        self, key: tuple, values: dict[str, float]
+    ) -> dict[str, float]:
         if len(self._k_values_cache) > 20000:
             self._k_values_cache.clear()
         self._k_values_cache[key] = dict(values)
@@ -1656,7 +1746,7 @@ class IdealThermodynamics:
             cache.clear()
         cache[key] = value
         return value
-    
+
     def Cp_ideal_gas(self, comp: str, T: float) -> float:
         """
         Ideal gas heat capacity [J/mol-K] at temperature T [K]
@@ -1674,21 +1764,21 @@ class IdealThermodynamics:
             except Exception:
                 pass
         known = self._resolver_known_props.get(comp) or {}
-        if 'Cpg' in (known.get('property_correlations') or {}):
+        if "Cpg" in (known.get("property_correlations") or {}):
             props = self.props.get(comp)
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import get_property_resolver
                 else:
                     from property_resolver import get_property_resolver
                 result = get_property_resolver().resolve_heat_capacity(
                     props.symbol if props else comp,
                     T,
-                    phase='ideal_gas',
+                    phase="ideal_gas",
                     props=known,
                     allow_online=self._allow_online_lookup_for_component(comp),
                 )
-                self._record_lazy_property_source(comp, 'Cp_ideal_gas', T, result)
+                self._record_lazy_property_source(comp, "Cp_ideal_gas", T, result)
                 value = result.value
                 return self._set_limited_cache(self._cp_ideal_cache, cache_key, value)
             except Exception:
@@ -1697,33 +1787,33 @@ class IdealThermodynamics:
         if coeffs:
             self.mark_property_source_context_once(
                 comp,
-                'Cp_coeffs',
-                phase='ideal_gas_heat_capacity',
+                "Cp_coeffs",
+                phase="ideal_gas_heat_capacity",
             )
-            value = coeffs[0] + coeffs[1]*T + coeffs[2]*T**2 + coeffs[3]*T**3
+            value = coeffs[0] + coeffs[1] * T + coeffs[2] * T**2 + coeffs[3] * T**3
             return self._set_limited_cache(self._cp_ideal_cache, cache_key, value)
-        value = self._fast_perry_cp(comp, T, 'ideal_gas')
+        value = self._fast_perry_cp(comp, T, "ideal_gas")
         if value is not None:
             return self._set_limited_cache(self._cp_ideal_cache, cache_key, value)
         props = self.props.get(comp)
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
             result = get_property_resolver().resolve_heat_capacity(
                 props.symbol if props else comp,
                 T,
-                phase='ideal_gas',
+                phase="ideal_gas",
                 props=self._resolver_known_props.get(comp),
                 allow_online=self._allow_online_lookup_for_component(comp),
             )
-            self._record_lazy_property_source(comp, 'Cp_ideal_gas', T, result)
+            self._record_lazy_property_source(comp, "Cp_ideal_gas", T, result)
             value = result.value
             return self._set_limited_cache(self._cp_ideal_cache, cache_key, value)
         except Exception:
             return self._set_limited_cache(self._cp_ideal_cache, cache_key, 33.0)
-    
+
     def Cp_liquid(self, comp: str, T: float) -> float:
         """
         Liquid heat capacity [J/mol-K]
@@ -1754,7 +1844,9 @@ class IdealThermodynamics:
             return cached
         kernel = self._solid_cp_kernel(comp)
         if kernel is None:
-            raise ThermodynamicsError(f"Cannot resolve solid heat capacity for '{comp}'.")
+            raise ThermodynamicsError(
+                f"Cannot resolve solid heat capacity for '{comp}'."
+            )
         try:
             value = kernel.cp(T)
             self._record_solid_cp_kernel_range_use(comp, T, kernel)
@@ -1771,7 +1863,7 @@ class IdealThermodynamics:
             return cached
         props = self.props.get(comp)
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1780,15 +1872,15 @@ class IdealThermodynamics:
                 self._resolver_known_props.get(comp),
                 allow_online=self._allow_online_lookup_for_component(comp),
             )
-            self._record_lazy_property_source(comp, 'Hvap', T_REF, result)
+            self._record_lazy_property_source(comp, "Hvap", T_REF, result)
             value = result.value
         except Exception:
             value = None
         if value is None:
             self.mark_property_source_context_once(
                 comp,
-                'Hvap',
-                phase='heat_of_vaporization',
+                "Hvap",
+                phase="heat_of_vaporization",
             )
             value = props.Hvap if (props and props.Hvap) else 30.0
         return self._set_limited_cache(self._hvap_cache, comp, float(value))
@@ -1804,19 +1896,20 @@ class IdealThermodynamics:
         if props is not None and props.Hvap is not None:
             self.mark_property_source_context_once(
                 comp,
-                'Hvap',
-                phase='heat_of_vaporization',
+                "Hvap",
+                phase="heat_of_vaporization",
             )
         known = self._resolver_known_props.get(comp)
-        sources = (known or {}).get('property_sources') or {}
-        pfd_hvap = (sources.get('Hvap') or {}).get('method') == 'pfd_component_override'
-        pfd_hvap_correlation = (
-            (sources.get('property_correlations') or {}).get('method') == 'pfd_property_correlations'
-            and 'Hvap' in ((known or {}).get('property_correlations') or {})
+        sources = (known or {}).get("property_sources") or {}
+        pfd_hvap = (sources.get("Hvap") or {}).get("method") == "pfd_component_override"
+        pfd_hvap_correlation = (sources.get("property_correlations") or {}).get(
+            "method"
+        ) == "pfd_property_correlations" and "Hvap" in (
+            (known or {}).get("property_correlations") or {}
         )
         if pfd_hvap or pfd_hvap_correlation:
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import get_property_resolver
                 else:
                     from property_resolver import get_property_resolver
@@ -1828,8 +1921,10 @@ class IdealThermodynamics:
                     allow_estimation=False,
                 )
                 if result.value is not None:
-                    self._record_lazy_property_source(comp, 'Hvap', T, result)
-                    return self._set_limited_cache(self._hvap_T_cache, cache_key, float(result.value))
+                    self._record_lazy_property_source(comp, "Hvap", T, result)
+                    return self._set_limited_cache(
+                        self._hvap_T_cache, cache_key, float(result.value)
+                    )
             except Exception:
                 pass
 
@@ -1838,7 +1933,7 @@ class IdealThermodynamics:
             return self._set_limited_cache(self._hvap_T_cache, cache_key, value)
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1850,7 +1945,9 @@ class IdealThermodynamics:
                 allow_estimation=True,
             )
             if result.value is not None:
-                return self._set_limited_cache(self._hvap_T_cache, cache_key, float(result.value))
+                return self._set_limited_cache(
+                    self._hvap_T_cache, cache_key, float(result.value)
+                )
         except Exception:
             pass
 
@@ -1861,7 +1958,7 @@ class IdealThermodynamics:
         """Integral of liquid Cp from T1 to T2 [kJ/mol]."""
         if abs(T2 - T1) < 1e-12:
             return 0.0
-        analytic = self._integrate_cp_analytic(comp, T1, T2, 'liquid')
+        analytic = self._integrate_cp_analytic(comp, T1, T2, "liquid")
         if analytic is not None:
             return analytic
         steps = 16
@@ -1876,16 +1973,20 @@ class IdealThermodynamics:
         """Integral of solid Cp from T1 to T2 [kJ/mol]."""
         if abs(T2 - T1) < 1e-12:
             return 0.0
-        analytic = self._integrate_cp_analytic(comp, T1, T2, 'solid')
+        analytic = self._integrate_cp_analytic(comp, T1, T2, "solid")
         if analytic is None:
             raise ThermodynamicsError(
                 f"Cannot integrate solid heat capacity for '{comp}' over {T1:g}-{T2:g} K."
             )
         return analytic
 
-    def mixture_Cp(self, composition: dict[str, float], T: float,
-                   vapor_fraction: float = 1.0,
-                   P: Optional[float] = None) -> float:
+    def mixture_Cp(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float = 1.0,
+        P: Optional[float] = None,
+    ) -> float:
         """
         Mixture heat capacity [kJ/kmol-K]
 
@@ -1904,16 +2005,21 @@ class IdealThermodynamics:
             elif vapor_fraction < 0.001:
                 cp_comp = self.Cp_liquid(comp, T)
             else:
-                cp_comp = vapor_fraction * self.Cp_ideal_gas(comp, T) + \
-                         (1 - vapor_fraction) * self.Cp_liquid(comp, T)
+                cp_comp = vapor_fraction * self.Cp_ideal_gas(comp, T) + (
+                    1 - vapor_fraction
+                ) * self.Cp_liquid(comp, T)
             cp += z * cp_comp
         return cp  # J/mol-K is numerically kJ/kmol-K
 
-    def phase_weighted_mixture_Cp(self, composition: dict[str, float], T: float,
-                                  vapor_fraction: float,
-                                  x: Optional[dict] = None,
-                                  y: Optional[dict] = None,
-                                  P: Optional[float] = None) -> float:
+    def phase_weighted_mixture_Cp(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float,
+        x: Optional[dict] = None,
+        y: Optional[dict] = None,
+        P: Optional[float] = None,
+    ) -> float:
         """
         Mixture heat capacity [kJ/kmol-K] using phase compositions when available.
         """
@@ -1924,7 +2030,7 @@ class IdealThermodynamics:
         cp_liq = self.mixture_Cp(x or composition, T, 0.0, P)
         cp_vap = self.mixture_Cp(y or composition, T, 1.0, P)
         return (1.0 - vapor_fraction) * cp_liq + vapor_fraction * cp_vap
-    
+
     def get_Psat_coefficients(self, comp: str) -> tuple[float, ...]:
         """Return and cache one component's canonical Psat coefficient payload."""
         props = self.props.get(comp)
@@ -1936,7 +2042,7 @@ class IdealThermodynamics:
             return cached
 
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -1944,13 +2050,16 @@ class IdealThermodynamics:
             resolver = get_property_resolver()
             known_props = self._resolver_known_props.get(comp)
             lookup_name = _property_lookup_identifier(comp, props)
-            coefficients = tuple(float(value) for value in (
-                resolver.resolve_vapor_pressure_coefficients(
-                    lookup_name,
-                    known_props,
-                    allow_online=self._allow_online_lookup_for_component(comp),
+            coefficients = tuple(
+                float(value)
+                for value in (
+                    resolver.resolve_vapor_pressure_coefficients(
+                        lookup_name,
+                        known_props,
+                        allow_online=self._allow_online_lookup_for_component(comp),
+                    )
                 )
-            ))
+            )
             if len(coefficients) != 13:
                 raise ValueError(
                     "Canonical Psat coefficient payload must contain 13 values"
@@ -1969,11 +2078,11 @@ class IdealThermodynamics:
         This hot-path evaluator intentionally omits canonical temperature-range
         checks. ``get_Psat_coefficients`` performs the resolver work once per
         component, after which calls evaluate the canonical equation directly.
-        
+
         Args:
             comp: Component symbol
             T: Temperature [K]
-            
+
         Returns:
             Saturation pressure [bar]
         """
@@ -1985,8 +2094,19 @@ class IdealThermodynamics:
 
         try:
             (
-                A, B, C, D, E, F, G, H, Tc, inverse_power,
-                supercritical_slope, T_min, lower_continuation_slope,
+                A,
+                B,
+                C,
+                D,
+                E,
+                F,
+                G,
+                H,
+                Tc,
+                inverse_power,
+                supercritical_slope,
+                T_min,
+                lower_continuation_slope,
             ) = self.get_Psat_coefficients(comp)
             evaluation_temperature = min(max(temperature, T_min), Tc)
             ln_pressure = (
@@ -2003,8 +2123,10 @@ class IdealThermodynamics:
                     (evaluation_temperature / Tc) ** int(inverse_power) - 1.0
                 )
             if temperature < T_min:
-                ln_pressure -= T_min**2 * lower_continuation_slope * (
-                    1.0 / temperature - 1.0 / T_min
+                ln_pressure -= (
+                    T_min**2
+                    * lower_continuation_slope
+                    * (1.0 / temperature - 1.0 / T_min)
                 )
             try:
                 pressure = math.exp(ln_pressure)
@@ -2018,18 +2140,18 @@ class IdealThermodynamics:
             raise ThermodynamicsError(
                 f"Cannot calculate vapor pressure for '{comp}' at T={T:.1f}K."
             ) from exc
-    
+
     def henry_component_data(self, comp: str) -> Optional[HenryComponentData]:
         """Return hydrated Henry data for one component, including override provenance."""
         if comp in self._henry_component_data_cache:
             return self._henry_component_data_cache[comp]
         props = self.props.get(comp)
-        if props is None or getattr(props, 'henry_Hcp', None) is None:
+        if props is None or getattr(props, "henry_Hcp", None) is None:
             self._henry_component_data_cache[comp] = None
             return None
 
         hcp = float(props.henry_Hcp)
-        B = None if getattr(props, 'henry_B', None) is None else float(props.henry_B)
+        B = None if getattr(props, "henry_B", None) is None else float(props.henry_B)
         if not math.isfinite(hcp) or hcp <= 0.0:
             raise ThermodynamicsError(
                 f"Henry Hcp for {self._component_label(comp)} must be positive and finite"
@@ -2039,16 +2161,16 @@ class IdealThermodynamics:
                 f"Henry B for {self._component_label(comp)} must be finite"
             )
 
-        record = get_henry_constant_database().get(getattr(props, 'CAS', ''))
-        h_source_info = props.property_sources.get('henry_Hcp') or {}
-        b_source_info = props.property_sources.get('henry_B') or {}
-        vinf_source_info = props.property_sources.get('henry_Vinf') or {}
-        h_method = h_source_info.get('method')
-        b_method = b_source_info.get('method')
-        h_is_provided = h_method == 'pfd_component_override'
-        b_is_provided = b_method == 'pfd_component_override'
-        h_is_database = h_method == 'henry_database_hcp_298'
-        b_is_database = b_method == 'henry_database_temperature_coefficient'
+        record = get_henry_constant_database().get(getattr(props, "CAS", ""))
+        h_source_info = props.property_sources.get("henry_Hcp") or {}
+        b_source_info = props.property_sources.get("henry_B") or {}
+        vinf_source_info = props.property_sources.get("henry_Vinf") or {}
+        h_method = h_source_info.get("method")
+        b_method = b_source_info.get("method")
+        h_is_provided = h_method == "pfd_component_override"
+        b_is_provided = b_method == "pfd_component_override"
+        h_is_database = h_method == "henry_database_hcp_298"
+        b_is_database = b_method == "henry_database_temperature_coefficient"
         temperature_correlation = (
             record.temperature_correlation
             if record is not None and h_is_database and b_is_database
@@ -2056,7 +2178,7 @@ class IdealThermodynamics:
         )
 
         def source_quality(source: dict, grade: Optional[str]) -> Optional[float]:
-            raw = source.get('quality')
+            raw = source.get("quality")
             if raw is None:
                 return self._henry_grade_quality(grade)
             try:
@@ -2065,20 +2187,26 @@ class IdealThermodynamics:
                 return self._henry_grade_quality(grade)
 
         quality_h_grade = (
-            'provided' if h_is_provided
-            else (record.quality_h if h_is_database and record else h_source_info.get('grade'))
+            "provided"
+            if h_is_provided
+            else (
+                record.quality_h
+                if h_is_database and record
+                else h_source_info.get("grade")
+            )
         )
         quality_b_grade = (
-            'provided' if b_is_provided
+            "provided"
+            if b_is_provided
             else (
                 record.quality_b
                 if b_is_database and record and B is not None
-                else b_source_info.get('grade')
+                else b_source_info.get("grade")
             )
         )
 
-        explicit_tmin = getattr(props, 'henry_Tmin', None)
-        explicit_tmax = getattr(props, 'henry_Tmax', None)
+        explicit_tmin = getattr(props, "henry_Tmin", None)
+        explicit_tmax = getattr(props, "henry_Tmax", None)
         temperature_min = (
             float(explicit_tmin)
             if explicit_tmin is not None
@@ -2109,17 +2237,17 @@ class IdealThermodynamics:
                 "positive, finite, and ordered"
             )
 
-        vinf = getattr(props, 'henry_Vinf', None)
-        vinf_uncertainty = getattr(props, 'henry_Vinf_uncertainty', None)
-        vinf_method = str(vinf_source_info.get('method') or '') or None
-        vinf_source = str(vinf_source_info.get('source') or '') or None
+        vinf = getattr(props, "henry_Vinf", None)
+        vinf_uncertainty = getattr(props, "henry_Vinf_uncertainty", None)
+        vinf_method = str(vinf_source_info.get("method") or "") or None
+        vinf_source = str(vinf_source_info.get("source") or "") or None
         vinf_quality = source_quality(vinf_source_info, None)
         vinf_unavailable_reason = None
         vinf_estimated_relative_mae = None
         if vinf is None:
-            critical_volume = getattr(props, 'Vc', None)
-            vc_source_info = props.property_sources.get('Vc') or {}
-            vc_quality = source_quality(vc_source_info, vc_source_info.get('grade'))
+            critical_volume = getattr(props, "Vc", None)
+            vc_source_info = props.property_sources.get("Vc") or {}
+            vc_quality = source_quality(vc_source_info, vc_source_info.get("grade"))
             if critical_volume is not None:
                 critical_volume = float(critical_volume)
                 if (
@@ -2130,28 +2258,29 @@ class IdealThermodynamics:
                 ):
                     vinf = 10.74 + 0.2683 * critical_volume
                     vinf_estimated_relative_mae = 0.09
-                    vinf_method = 'henry_vinf_from_critical_volume'
-                    vinf_source = 'Zhou and Battino (2001) correlation'
+                    vinf_method = "henry_vinf_from_critical_volume"
+                    vinf_source = "Zhou and Battino (2001) correlation"
                     vinf_quality = 0.90
                     props.henry_Vinf = vinf
                     props.henry_Vinf_uncertainty = vinf_uncertainty
-                    props.property_sources['henry_Vinf'] = {
-                        'source': vinf_source,
-                        'method': vinf_method,
-                        'quality': vinf_quality,
-                        'doi': '10.1021/je000215o',
-                        'notes': (
-                            'Estimated as 10.74 + 0.2683*Vc [cm3/mol]; '
-                            'reported mean absolute error is approximately 8-10%'
+                    props.property_sources["henry_Vinf"] = {
+                        "source": vinf_source,
+                        "method": vinf_method,
+                        "quality": vinf_quality,
+                        "doi": "10.1021/je000215o",
+                        "notes": (
+                            "Estimated as 10.74 + 0.2683*Vc [cm3/mol]; "
+                            "reported mean absolute error is approximately 8-10%"
                         ),
                     }
                 elif math.isfinite(critical_volume) and critical_volume > 0.0:
                     vinf_unavailable_reason = (
-                        'Vc_quality_below_0.8'
-                        if vc_quality is not None else 'Vc_quality_unknown'
+                        "Vc_quality_below_0.8"
+                        if vc_quality is not None
+                        else "Vc_quality_unknown"
                     )
             if vinf is None and vinf_unavailable_reason is None:
-                vinf_unavailable_reason = 'Vc_unavailable'
+                vinf_unavailable_reason = "Vc_unavailable"
         if vinf is not None:
             vinf = float(vinf)
             if not math.isfinite(vinf) or vinf <= 0.0:
@@ -2168,23 +2297,30 @@ class IdealThermodynamics:
 
         data = HenryComponentData(
             component=comp,
-            cas=str(getattr(props, 'CAS', '') or ''),
+            cas=str(getattr(props, "CAS", "") or ""),
             hcp_298=hcp,
             B=B,
             quality_h=quality_h_grade,
             quality_b=quality_b_grade,
             quality_score_h=source_quality(h_source_info, quality_h_grade),
             quality_score_b=(
-                source_quality(b_source_info, quality_b_grade) if B is not None else None
+                source_quality(b_source_info, quality_b_grade)
+                if B is not None
+                else None
             ),
             temperature_min_K=temperature_min,
             temperature_max_K=temperature_max,
             temperature_range_source=(
-                'provided' if explicit_tmin is not None or explicit_tmax is not None
+                "provided"
+                if explicit_tmin is not None or explicit_tmax is not None
                 else (
                     temperature_correlation.range_source
                     if temperature_correlation is not None
-                    else ('default_5_to_50C' if B is not None else 'reference_temperature_only')
+                    else (
+                        "default_5_to_50C"
+                        if B is not None
+                        else "reference_temperature_only"
+                    )
                 )
             ),
             vinf_cm3_per_mol=vinf,
@@ -2199,14 +2335,17 @@ class IdealThermodynamics:
             ),
             temperature_correlation=temperature_correlation,
             h_source=(
-                'pfd' if h_is_provided
-                else ('database' if h_is_database else 'component_property')
+                "pfd"
+                if h_is_provided
+                else ("database" if h_is_database else "component_property")
             ),
             b_source=(
-                'pfd' if b_is_provided
+                "pfd"
+                if b_is_provided
                 else (
-                    'database' if b_is_database
-                    else ('component_property' if B is not None else None)
+                    "database"
+                    if b_is_database
+                    else ("component_property" if B is not None else None)
                 )
             ),
         )
@@ -2216,11 +2355,11 @@ class IdealThermodynamics:
     def create_aqueous_equilibrium_context(
         self,
         henry_components,
-        water_component: str = 'water',
+        water_component: str = "water",
         pressure_warning_bar: float = 20.0,
     ) -> AqueousEquilibriumContext:
         """Build a frozen pure-water Henry context for a later equilibrium solve."""
-        if self.fluid_phase_model != 'VLE':
+        if self.fluid_phase_model != "VLE":
             raise ThermodynamicsError(
                 f"Aqueous Henry standard states currently support only "
                 f"FLUID_PHASE_MODEL VLE, not {self.fluid_phase_model}; "
@@ -2232,14 +2371,15 @@ class IdealThermodynamics:
             )
         if isinstance(henry_components, str):
             selected = [
-                item.strip() for item in henry_components.replace(';', ',').split(',')
+                item.strip()
+                for item in henry_components.replace(";", ",").split(",")
                 if item.strip()
             ]
         else:
             selected = list(henry_components or [])
 
         component_data = {}
-        low_quality_grades = {'D+', 'D', 'D-', 'F'}
+        low_quality_grades = {"D+", "D", "D-", "F"}
         for comp in dict.fromkeys(selected):
             if comp == water_component:
                 raise ThermodynamicsError(
@@ -2261,12 +2401,15 @@ class IdealThermodynamics:
                     f"{self._component_label(comp)}; holding Hcp at its 298.15 K value "
                     "and using the corresponding zero-B dissolution-enthalpy approximation."
                 )
-            if str(data.quality_h or '').upper() in low_quality_grades:
+            if str(data.quality_h or "").upper() in low_quality_grades:
                 self.add_warning(
                     f"Henry Hcp for {self._component_label(comp)} has low database "
                     f"quality grade {data.quality_h}; aqueous equilibrium results may be unreliable."
                 )
-            if data.B is not None and str(data.quality_b or '').upper() in low_quality_grades:
+            if (
+                data.B is not None
+                and str(data.quality_b or "").upper() in low_quality_grades
+            ):
                 self.add_warning(
                     f"Henry B for {self._component_label(comp)} has low database "
                     f"quality grade {data.quality_b}; temperature and heat effects may be unreliable."
@@ -2290,7 +2433,9 @@ class IdealThermodynamics:
 
         pressure_warning_bar = float(pressure_warning_bar)
         if not math.isfinite(pressure_warning_bar) or pressure_warning_bar <= 0.0:
-            raise ThermodynamicsError("Henry pressure warning threshold must be positive")
+            raise ThermodynamicsError(
+                "Henry pressure warning threshold must be positive"
+            )
         return AqueousEquilibriumContext(
             water_component=water_component,
             component_data=MappingProxyType(dict(component_data)),
@@ -2299,14 +2444,17 @@ class IdealThermodynamics:
         )
 
     @staticmethod
-    def _normalized_aqueous_composition(composition: dict[str, float], components) -> dict[str, float]:
+    def _normalized_aqueous_composition(
+        composition: dict[str, float], components
+    ) -> dict[str, float]:
         values = {
-            comp: max(float(composition.get(comp, 0.0)), 0.0)
-            for comp in components
+            comp: max(float(composition.get(comp, 0.0)), 0.0) for comp in components
         }
         total = sum(values.values())
         if total <= 0.0:
-            raise ThermodynamicsError("Aqueous equilibrium composition must have positive total")
+            raise ThermodynamicsError(
+                "Aqueous equilibrium composition must have positive total"
+            )
         return {comp: value / total for comp, value in values.items()}
 
     def aqueous_solvent_molar_concentration(
@@ -2341,7 +2489,11 @@ class IdealThermodynamics:
         T: float,
         context: AqueousEquilibriumContext,
     ) -> float:
-        key = (context.water_component, float(T), context.solvent_molar_volume_ref_m3_per_kmol)
+        key = (
+            context.water_component,
+            float(T),
+            context.solvent_molar_volume_ref_m3_per_kmol,
+        )
         cached = self._aqueous_solvent_density_derivative_cache.get(key)
         if cached is not None:
             return cached
@@ -2353,7 +2505,8 @@ class IdealThermodynamics:
         denominator = 1.0 / T_high - 1.0 / T_low
         derivative = (
             (math.log(c_high) - math.log(c_low)) / denominator
-            if abs(denominator) > 1e-30 else 0.0
+            if abs(denominator) > 1e-30
+            else 0.0
         )
         return self._set_limited_cache(
             self._aqueous_solvent_density_derivative_cache,
@@ -2373,7 +2526,7 @@ class IdealThermodynamics:
             (-15.9618719, 4.0),
             (1.80122502, 7.5),
         )
-        exponent = sum(a * tau ** b for a, b in coefficients) / reduced_temperature
+        exponent = sum(a * tau**b for a, b in coefficients) / reduced_temperature
         return 220.64 * math.exp(exponent)
 
     def _raw_iapws_hcp(
@@ -2383,14 +2536,14 @@ class IdealThermodynamics:
         data: HenryComponentData,
     ) -> float:
         correlation = data.temperature_correlation
-        if correlation is None or correlation.model != 'iapws_g7_04':
+        if correlation is None or correlation.model != "iapws_g7_04":
             raise ThermodynamicsError("IAPWS Henry correlation is unavailable")
         reduced_temperature = float(T) / 647.096
         tau = max(0.0, 1.0 - reduced_temperature)
         ln_ratio = (
             correlation.A / reduced_temperature
-            + correlation.B * tau ** 0.355 / reduced_temperature
-            + correlation.C * reduced_temperature ** -0.41 * math.exp(tau)
+            + correlation.B * tau**0.355 / reduced_temperature
+            + correlation.C * reduced_temperature**-0.41 * math.exp(tau)
         )
         water_psat_bar = self._iapws_water_psat_bar(T)
         volatility_bar = water_psat_bar * math.exp(max(min(ln_ratio, 100.0), -100.0))
@@ -2405,14 +2558,15 @@ class IdealThermodynamics:
     ) -> float:
         correlation = data.temperature_correlation
         if correlation is None or correlation.model not in {
-            'brockbank_dippr101', 'chapoy_dippr101'
+            "brockbank_dippr101",
+            "chapoy_dippr101",
         }:
             raise ThermodynamicsError("DIPPR-101 Henry correlation is unavailable")
         exponent = (
             correlation.A
             + correlation.B / T
             + correlation.C * math.log(T)
-            + correlation.D * T ** correlation.E
+            + correlation.D * T**correlation.E
         )
         volatility_kPa = math.exp(max(min(exponent, 100.0), -100.0))
         concentration = self.aqueous_solvent_molar_concentration(T, context)
@@ -2424,7 +2578,7 @@ class IdealThermodynamics:
         context: AqueousEquilibriumContext,
         data: HenryComponentData,
     ) -> float:
-        if data.temperature_correlation.model == 'iapws_g7_04':
+        if data.temperature_correlation.model == "iapws_g7_04":
             return self._raw_iapws_hcp(T, context, data)
         return self._raw_brockbank_hcp(T, context, data)
 
@@ -2445,16 +2599,19 @@ class IdealThermodynamics:
         if cached is not None:
             return cached
         reference_temperature = context.reference_temperature_K
+
         def at_reference_pressure(temperature: float) -> float:
             raw = self._raw_volatility_hcp(temperature, context, data)
             if data.vinf_cm3_per_mol is None:
                 return raw
             pressure_reference = (
                 self._iapws_water_psat_bar(temperature)
-                if correlation.model == 'iapws_g7_04' else P_REF
+                if correlation.model == "iapws_g7_04"
+                else P_REF
             )
             exponent = (
-                -data.vinf_cm3_per_mol * 1.0e-6
+                -data.vinf_cm3_per_mol
+                * 1.0e-6
                 * (P_REF - pressure_reference)
                 / (R_BAR * temperature)
             )
@@ -2472,7 +2629,9 @@ class IdealThermodynamics:
             math.log(data.hcp_298 / raw_reference),
             (data.B or raw_slope) - raw_slope,
         )
-        return self._set_limited_cache(self._henry_temperature_anchor_cache, key, anchor)
+        return self._set_limited_cache(
+            self._henry_temperature_anchor_cache, key, anchor
+        )
 
     def henry_constant_hcp(
         self,
@@ -2483,16 +2642,21 @@ class IdealThermodynamics:
     ) -> float:
         data = (
             context.component_data.get(comp)
-            if context is not None else self.henry_component_data(comp)
+            if context is not None
+            else self.henry_component_data(comp)
         )
         if data is None:
-            raise ThermodynamicsError(f"No Henry Hcp is available for {self._component_label(comp)}")
+            raise ThermodynamicsError(
+                f"No Henry Hcp is available for {self._component_label(comp)}"
+            )
         T = float(T)
         if not math.isfinite(T) or T <= 0.0:
             raise ThermodynamicsError("Henry temperature must be positive")
         correlation = data.temperature_correlation if context is not None else None
         if correlation is not None and correlation.model in {
-            'iapws_g7_04', 'brockbank_dippr101', 'chapoy_dippr101'
+            "iapws_g7_04",
+            "brockbank_dippr101",
+            "chapoy_dippr101",
         }:
             raw_hcp = self._raw_volatility_hcp(T, context, data)
             if correlation.normalize_to_reference:
@@ -2507,28 +2671,36 @@ class IdealThermodynamics:
                 hcp = raw_hcp
             pressure_reference_bar = (
                 self._iapws_water_psat_bar(T)
-                if correlation.model == 'iapws_g7_04' else P_REF
+                if correlation.model == "iapws_g7_04"
+                else P_REF
             )
-        elif correlation is not None and correlation.model == 'exp_a_b_over_t_c_log_t':
+        elif correlation is not None and correlation.model == "exp_a_b_over_t_c_log_t":
             exponent = correlation.A + correlation.B / T + correlation.C * math.log(T)
             hcp = math.exp(max(min(exponent, 100.0), -100.0))
             pressure_reference_bar = P_REF
         else:
             exponent = 0.0
             if data.B is not None:
-                T_ref = context.reference_temperature_K if context is not None else T_REF
+                T_ref = (
+                    context.reference_temperature_K if context is not None else T_REF
+                )
                 exponent = data.B * (1.0 / T - 1.0 / T_ref)
             hcp = data.hcp_298 * math.exp(max(min(exponent, 100.0), -100.0))
             pressure_reference_bar = P_REF
         evaluation_pressure = P
-        if evaluation_pressure is None and correlation is not None and correlation.model in {
-            'iapws_g7_04', 'brockbank_dippr101', 'chapoy_dippr101'
-        }:
+        if (
+            evaluation_pressure is None
+            and correlation is not None
+            and correlation.model
+            in {"iapws_g7_04", "brockbank_dippr101", "chapoy_dippr101"}
+        ):
             evaluation_pressure = P_REF
         if evaluation_pressure is not None:
             evaluation_pressure = float(evaluation_pressure)
             if not math.isfinite(evaluation_pressure) or evaluation_pressure <= 0.0:
-                raise ThermodynamicsError("Pressure must be positive for Henry equilibrium")
+                raise ThermodynamicsError(
+                    "Pressure must be positive for Henry equilibrium"
+                )
             if data.vinf_cm3_per_mol is not None:
                 volume_m3_per_mol = data.vinf_cm3_per_mol * 1.0e-6
                 pressure_exponent = (
@@ -2550,7 +2722,9 @@ class IdealThermodynamics:
         data = context.component_data[comp]
         correlation = data.temperature_correlation
         if correlation is not None and correlation.model in {
-            'iapws_g7_04', 'brockbank_dippr101', 'chapoy_dippr101'
+            "iapws_g7_04",
+            "brockbank_dippr101",
+            "chapoy_dippr101",
         }:
             dT = max(0.05, 1e-4 * float(T))
             low = max(1.0, float(T) - dT)
@@ -2558,7 +2732,7 @@ class IdealThermodynamics:
             h_low = self.henry_constant_hcp(comp, low, context, P=P)
             h_high = self.henry_constant_hcp(comp, high, context, P=P)
             return (math.log(h_high) - math.log(h_low)) / (1.0 / high - 1.0 / low)
-        if correlation is not None and correlation.model == 'exp_a_b_over_t_c_log_t':
+        if correlation is not None and correlation.model == "exp_a_b_over_t_c_log_t":
             derivative = correlation.B - correlation.C * float(T)
         else:
             derivative = data.B or 0.0
@@ -2571,14 +2745,22 @@ class IdealThermodynamics:
         if score is None:
             return None
         for threshold, grade in (
-            (0.95, 'A+'), (0.90, 'A'), (0.84, 'A-'),
-            (0.78, 'B+'), (0.72, 'B'), (0.66, 'B-'),
-            (0.58, 'C+'), (0.50, 'C'), (0.42, 'C-'),
-            (0.34, 'D+'), (0.27, 'D'), (0.20, 'D-'),
+            (0.95, "A+"),
+            (0.90, "A"),
+            (0.84, "A-"),
+            (0.78, "B+"),
+            (0.72, "B"),
+            (0.66, "B-"),
+            (0.58, "C+"),
+            (0.50, "C"),
+            (0.42, "C-"),
+            (0.34, "D+"),
+            (0.27, "D"),
+            (0.20, "D-"),
         ):
             if score >= threshold:
                 return grade
-        return 'F'
+        return "F"
 
     def henry_effective_quality(
         self,
@@ -2590,13 +2772,19 @@ class IdealThermodynamics:
         """Return T/P-adjusted Henry correlation quality and audit details."""
         data = context.component_data.get(comp)
         if data is None:
-            raise ThermodynamicsError(f"No Henry data in context for {self._component_label(comp)}")
+            raise ThermodynamicsError(
+                f"No Henry data in context for {self._component_label(comp)}"
+            )
         T = float(T)
         P = float(P)
         if not math.isfinite(T) or T <= 0.0:
-            raise ThermodynamicsError("Henry quality temperature must be positive and finite")
+            raise ThermodynamicsError(
+                "Henry quality temperature must be positive and finite"
+            )
         if not math.isfinite(P) or P <= 0.0:
-            raise ThermodynamicsError("Henry quality pressure must be positive and finite")
+            raise ThermodynamicsError(
+                "Henry quality pressure must be positive and finite"
+            )
         h_quality = (
             data.quality_score_h
             if data.quality_score_h is not None
@@ -2609,7 +2797,9 @@ class IdealThermodynamics:
         )
         base_quality = h_quality
         if data.B is not None and b_quality is not None:
-            base_quality = b_quality if base_quality is None else min(base_quality, b_quality)
+            base_quality = (
+                b_quality if base_quality is None else min(base_quality, b_quality)
+            )
         if (
             data.temperature_correlation is not None
             and not data.temperature_correlation.normalize_to_reference
@@ -2625,61 +2815,68 @@ class IdealThermodynamics:
         temperature_rate = 0.005 if data.B is not None else 0.01
         temperature_penalty = temperature_rate * temperature_distance
 
-        if data.vinf_method == 'henry_vinf_from_critical_volume':
-            pressure_method = 'Vc_correlation'
+        if data.vinf_method == "henry_vinf_from_critical_volume":
+            pressure_method = "Vc_correlation"
             pressure_rate = 0.001
         elif data.vinf_cm3_per_mol is not None:
-            pressure_method = 'measured_or_provided_Vinf'
+            pressure_method = "measured_or_provided_Vinf"
             pressure_rate = 0.0002
         else:
-            pressure_method = 'uncorrected'
+            pressure_method = "uncorrected"
             pressure_rate = 0.003
         pressure_penalty = pressure_rate * max(P - 10.0, 0.0)
         effective_quality = (
             None
             if base_quality is None
-            else max(0.0, min(1.0, base_quality - temperature_penalty - pressure_penalty))
+            else max(
+                0.0, min(1.0, base_quality - temperature_penalty - pressure_penalty)
+            )
         )
         return {
-            'base_quality': base_quality,
-            'base_grade': self._henry_score_grade(base_quality),
-            'effective_quality': effective_quality,
-            'effective_grade': self._henry_score_grade(effective_quality),
-            'temperature_penalty': temperature_penalty,
-            'temperature_penalty_per_K': temperature_rate,
-            'temperature_distance_outside_range_K': temperature_distance,
-            'temperature_min_K': data.temperature_min_K,
-            'temperature_max_K': data.temperature_max_K,
-            'temperature_range_source': data.temperature_range_source,
-            'temperature_model': (
+            "base_quality": base_quality,
+            "base_grade": self._henry_score_grade(base_quality),
+            "effective_quality": effective_quality,
+            "effective_grade": self._henry_score_grade(effective_quality),
+            "temperature_penalty": temperature_penalty,
+            "temperature_penalty_per_K": temperature_rate,
+            "temperature_distance_outside_range_K": temperature_distance,
+            "temperature_min_K": data.temperature_min_K,
+            "temperature_max_K": data.temperature_max_K,
+            "temperature_range_source": data.temperature_range_source,
+            "temperature_model": (
                 data.temperature_correlation.model
                 if data.temperature_correlation is not None
-                else ('van_t_hoff_B' if data.B is not None else 'constant_Hcp')
+                else ("van_t_hoff_B" if data.B is not None else "constant_Hcp")
             ),
-            'temperature_fit_rms_lnH': (
+            "temperature_fit_rms_lnH": (
                 data.temperature_correlation.rms_lnH
-                if data.temperature_correlation is not None else None
+                if data.temperature_correlation is not None
+                else None
             ),
-            'temperature_fit_quality': (
+            "temperature_fit_quality": (
                 data.temperature_correlation.fit_quality
-                if data.temperature_correlation is not None else None
+                if data.temperature_correlation is not None
+                else None
             ),
-            'temperature_normalized_to_reference': (
+            "temperature_normalized_to_reference": (
                 data.temperature_correlation.normalize_to_reference
-                if data.temperature_correlation is not None else False
+                if data.temperature_correlation is not None
+                else False
             ),
-            'raw_reference_value_difference_percent': (
+            "raw_reference_value_difference_percent": (
                 data.temperature_correlation.raw_reference_value_difference_percent
-                if data.temperature_correlation is not None else None
+                if data.temperature_correlation is not None
+                else None
             ),
-            'raw_reference_slope_difference_K': (
+            "raw_reference_slope_difference_K": (
                 data.temperature_correlation.raw_reference_slope_difference_K
-                if data.temperature_correlation is not None else None
+                if data.temperature_correlation is not None
+                else None
             ),
-            'pressure_penalty': pressure_penalty,
-            'pressure_penalty_per_bar_above_10': pressure_rate,
-            'pressure_method': pressure_method,
-            'pressure_correction_applied': data.vinf_cm3_per_mol is not None,
+            "pressure_penalty": pressure_penalty,
+            "pressure_penalty_per_bar_above_10": pressure_rate,
+            "pressure_method": pressure_method,
+            "pressure_correction_applied": data.vinf_cm3_per_mol is not None,
         }
 
     def record_henry_effective_quality(
@@ -2693,9 +2890,9 @@ class IdealThermodynamics:
         quality = self.henry_effective_quality(comp, T, P, context)
         data = context.component_data[comp]
         observation = SimpleNamespace(
-            source=(data.h_source or 'Henry correlation'),
-            method='henry_effective_TP_quality',
-            quality=quality['effective_quality'],
+            source=(data.h_source or "Henry correlation"),
+            method="henry_effective_TP_quality",
+            quality=quality["effective_quality"],
             notes=(
                 f"Full-quality T range {data.temperature_min_K:.2f}-"
                 f"{data.temperature_max_K:.2f} K ({data.temperature_range_source}); "
@@ -2703,7 +2900,7 @@ class IdealThermodynamics:
                 f"{float(P):.6g} bar"
             ),
         )
-        self._record_lazy_property_source(comp, 'henry_Hcp_effective', T, observation)
+        self._record_lazy_property_source(comp, "henry_Hcp_effective", T, observation)
         return quality
 
     def _henry_ideal_vapor_K_value(
@@ -2719,21 +2916,21 @@ class IdealThermodynamics:
         context_key = (comp, self._quality_context_key(current_context))
         if context_key not in self._henry_quality_marked_contexts:
             self._henry_quality_marked_contexts.add(context_key)
-            prop_names = ['henry_Hcp']
+            prop_names = ["henry_Hcp"]
             data = context.component_data.get(comp)
             if data is not None and data.B is not None:
-                prop_names.append('henry_B')
+                prop_names.append("henry_B")
             if data is not None and data.vinf_cm3_per_mol is not None:
-                prop_names.append('henry_Vinf')
+                prop_names.append("henry_Vinf")
             self.mark_property_source_context(
                 comp,
                 prop_names,
-                kind=current_context.get('kind', 'thermo_model'),
-                unit_id=current_context.get('unit_id'),
-                unit_type=current_context.get('unit_type'),
-                stream_id=current_context.get('stream_id'),
-                phase='aqueous_henry_equilibrium',
-                affects_result=current_context.get('affects_result', True),
+                kind=current_context.get("kind", "thermo_model"),
+                unit_id=current_context.get("unit_id"),
+                unit_type=current_context.get("unit_type"),
+                stream_id=current_context.get("stream_id"),
+                phase="aqueous_henry_equilibrium",
+                affects_result=current_context.get("affects_result", True),
             )
         hcp = self.henry_constant_hcp(comp, T, context, P=P)
         concentration = self.aqueous_solvent_molar_concentration(T, context)
@@ -2746,7 +2943,8 @@ class IdealThermodynamics:
     ) -> None:
         if P > context.pressure_warning_bar:
             uncorrected = [
-                comp for comp, data in context.component_data.items()
+                comp
+                for comp, data in context.component_data.items()
                 if data.vinf_cm3_per_mol is None
             ]
             if uncorrected:
@@ -2767,7 +2965,9 @@ class IdealThermodynamics:
         """Ideal-vapor aqueous K-values using a frozen Henry component set."""
         self._warn_aqueous_henry_pressure(P, context)
         x = self._normalized_aqueous_composition(composition, self.components)
-        cache_key = self._k_values_cache_key('aqueous_ideal', T, P, x) + (context.cache_key(),)
+        cache_key = self._k_values_cache_key("aqueous_ideal", T, P, x) + (
+            context.cache_key(),
+        )
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached
@@ -2816,10 +3016,7 @@ class IdealThermodynamics:
             x, y = self._flash_phase_compositions(z, K, V)
             return (V, x, y), converged
 
-        if (
-            liquid_composition_guess is not None
-            or vapor_fraction_guess is not None
-        ):
+        if liquid_composition_guess is not None or vapor_fraction_guess is not None:
             try:
                 initial_x = (
                     z
@@ -2830,9 +3027,7 @@ class IdealThermodynamics:
                     )
                 )
                 initial_v = (
-                    0.5
-                    if vapor_fraction_guess is None
-                    else float(vapor_fraction_guess)
+                    0.5 if vapor_fraction_guess is None else float(vapor_fraction_guess)
                 )
                 if not math.isfinite(initial_v):
                     raise ValueError("non-finite aqueous flash vapor seed")
@@ -2873,10 +3068,7 @@ class IdealThermodynamics:
             xi = x.get(comp, 0.0)
             if xi <= 0.0:
                 continue
-            B_x = (
-                self.henry_dln_hcp_dinvT(comp, T, P, context)
-                - density_derivative
-            )
+            B_x = self.henry_dln_hcp_dinvT(comp, T, P, context) - density_derivative
             h_infinite_dilution = 1000.0 * self.enthalpy_ideal_gas(comp, T) - R * B_x
             enthalpy += xi * h_infinite_dilution
         return enthalpy
@@ -2904,78 +3096,78 @@ class IdealThermodynamics:
     def K_value(self, comp: str, T: float, P: float) -> float:
         """
         Equilibrium K-value for Raoult's law: K_i = P_sat_i / P
-        
+
         Args:
             comp: Component symbol
             T: Temperature [K]
             P: Pressure [bar]
-            
+
         Returns:
             K = y/x equilibrium ratio
         """
         Psat = self.Psat(comp, T)
         return Psat / P
 
-    def K_values(self, T: float, P: float,
-                 composition: dict[str, float]) -> dict[str, float]:
-        cache_key = self._k_values_cache_key('scalar', T, P, composition)
+    def K_values(
+        self, T: float, P: float, composition: dict[str, float]
+    ) -> dict[str, float]:
+        cache_key = self._k_values_cache_key("scalar", T, P, composition)
         cached = self._get_cached_k_values(cache_key)
         if cached is not None:
             return cached
         K = {comp: self.K_value(comp, T, P) for comp in self.components}
         return self._set_cached_k_values(cache_key, K)
-    
-    def bubble_point_T(self, composition: dict[str, float], P: float, 
-                       T_guess: float = 300.0) -> float:
+
+    def bubble_point_T(
+        self, composition: dict[str, float], P: float, T_guess: float = 300.0
+    ) -> float:
         """
         Calculate bubble point temperature at given pressure.
-        
+
         At bubble point: sum(x_i * K_i) = 1
-        
+
         Args:
             composition: Liquid mole fractions
             P: Pressure [bar]
             T_guess: Initial temperature guess [K]
-            
+
         Returns:
             Bubble point temperature [K]
         """
         T = T_guess
         for _ in range(50):
             K = self.K_values(T, P, composition)
-            sum_xK = sum(
-                x * K.get(comp, 1.0)
-                for comp, x in composition.items()
-            )
-            
+            sum_xK = sum(x * K.get(comp, 1.0) for comp, x in composition.items())
+
             if abs(sum_xK - 1.0) < 1e-6:
                 return T
-            
+
             # When sum_xK > 1, temperature is too high (too much vapor)
             # When sum_xK < 1, temperature is too low
             # Use Newton-like update with proper direction
             if sum_xK > 1:
                 dT = -5.0 * (sum_xK - 1.0)  # Decrease T
             else:
-                dT = 5.0 * (1.0 - sum_xK)   # Increase T
-            
+                dT = 5.0 * (1.0 - sum_xK)  # Increase T
+
             T += dT
             T = max(100, min(800, T))  # Keep in reasonable range
-        
+
         return T
-    
-    def dew_point_T(self, composition: dict[str, float], P: float,
-                    T_guess: float = 350.0) -> float:
+
+    def dew_point_T(
+        self, composition: dict[str, float], P: float, T_guess: float = 350.0
+    ) -> float:
         """
         Calculate dew point temperature at given pressure.
-        
+
         At dew point: sum(y_i / K_i) = 1
-        
+
         Args:
             composition: Vapor mole fractions
             P: Pressure [bar]
             T_guess: Initial temperature guess [K]
-            
+
         Returns:
             Dew point temperature [K]
         """
@@ -2983,63 +3175,68 @@ class IdealThermodynamics:
         for _ in range(50):
             K = self.K_values(T, P, composition)
             sum_yK = sum(
-                y / max(K.get(comp, 1.0), 1e-30)
-                for comp, y in composition.items()
+                y / max(K.get(comp, 1.0), 1e-30) for comp, y in composition.items()
             )
-            
+
             if abs(sum_yK - 1.0) < 1e-6:
                 return T
-            
+
             # When sum_yK > 1, temperature is too low (too much liquid)
             # When sum_yK < 1, temperature is too high
             if sum_yK > 1:
-                dT = 5.0 * (sum_yK - 1.0)   # Increase T
+                dT = 5.0 * (sum_yK - 1.0)  # Increase T
             else:
                 dT = -5.0 * (1.0 - sum_yK)  # Decrease T
-            
+
             T += dT
             T = max(100, min(800, T))
-        
+
         return T
-    
-    def flash_TP(self, composition: dict[str, float], T: float, P: float) -> tuple[float, dict, dict]:
+
+    def flash_TP(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> tuple[float, dict, dict]:
         """
         TP Flash calculation using Rachford-Rice equation.
-        
+
         Args:
             composition: Feed mole fractions
             T: Temperature [K]
             P: Pressure [bar]
-            
+
         Returns:
             (vapor_fraction, x_liquid, y_vapor)
         """
         # Calculate K-values
         K = self.K_values(T, P, composition)
-        
+
         # Check if all liquid or all vapor
         sum_zK = sum(z * K[comp] for comp, z in composition.items())
         sum_zKinv = sum(z / K[comp] for comp, z in composition.items())
-        
+
         if sum_zK <= 1.0:
             # All liquid (below bubble point)
             return 0.0, dict(composition), dict(composition)
-        
+
         if sum_zKinv <= 1.0:
             # All vapor (above dew point)
             return 1.0, dict(composition), dict(composition)
-        
+
         # Two-phase: solve Rachford-Rice
         # f(V) = sum(z_i * (K_i - 1) / (1 + V*(K_i - 1))) = 0
-        
+
         def rachford_rice(V):
-            return sum(z * (K[comp] - 1) / (1 + V * (K[comp] - 1))
-                      for comp, z in composition.items())
-        
+            return sum(
+                z * (K[comp] - 1) / (1 + V * (K[comp] - 1))
+                for comp, z in composition.items()
+            )
+
         def rachford_rice_deriv(V):
-            return -sum(z * (K[comp] - 1)**2 / (1 + V * (K[comp] - 1))**2
-                       for comp, z in composition.items())
-        
+            return -sum(
+                z * (K[comp] - 1) ** 2 / (1 + V * (K[comp] - 1)) ** 2
+                for comp, z in composition.items()
+            )
+
         # Newton-Raphson to find V
         V = 0.5
         for _ in range(50):
@@ -3051,14 +3248,14 @@ class IdealThermodynamics:
                 break
             V = V - f / df
             V = max(0.0, min(1.0, V))
-        
+
         # Calculate phase compositions
         x = {}
         y = {}
         for comp, z in composition.items():
             x[comp] = z / (1 + V * (K[comp] - 1))
             y[comp] = K[comp] * x[comp]
-        
+
         # Normalize
         sum_x = sum(x.values())
         sum_y = sum(y.values())
@@ -3067,15 +3264,15 @@ class IdealThermodynamics:
 
         return V, x, y
 
-    def _fallback_flash_TP(self, composition: dict[str, float], T: float,
-                           P: float, exc: Exception) -> tuple[float, dict, dict]:
+    def _fallback_flash_TP(
+        self, composition: dict[str, float], T: float, P: float, exc: Exception
+    ) -> tuple[float, dict, dict]:
         """Single K-value evaluation phase fallback for a failed TP flash."""
         try:
             K = self.K_values(T, P, composition)
             sum_zK = sum(z * K.get(comp, 1.0) for comp, z in composition.items())
             sum_zK_inv = sum(
-                z / max(K.get(comp, 1.0), 1e-300)
-                for comp, z in composition.items()
+                z / max(K.get(comp, 1.0), 1e-300) for comp, z in composition.items()
             )
             if sum_zK <= 1.0:
                 V, x, y = 0.0, dict(composition), dict(composition)
@@ -3102,8 +3299,14 @@ class IdealThermodynamics:
             )
             return V, dict(composition), dict(composition)
 
-    def _iterative_K_flash_TP(self, composition: dict[str, float], T: float, P: float,
-                              max_iter: int = 50, tol: float = 1e-8) -> tuple[float, dict, dict]:
+    def _iterative_K_flash_TP(
+        self,
+        composition: dict[str, float],
+        T: float,
+        P: float,
+        max_iter: int = 50,
+        tol: float = 1e-8,
+    ) -> tuple[float, dict, dict]:
         """
         TP flash with outer direct substitution on composition-dependent K-values.
 
@@ -3142,8 +3345,9 @@ class IdealThermodynamics:
         V = self._rachford_rice_bounded(z, K, V)
         return (V, *self._flash_phase_compositions(z, K, V))
 
-    def _rachford_rice_bounded(self, z: dict[str, float], K: dict[str, float],
-                               V_guess: float = 0.5) -> float:
+    def _rachford_rice_bounded(
+        self, z: dict[str, float], K: dict[str, float], V_guess: float = 0.5
+    ) -> float:
         def residual(V_value: float) -> float:
             total = 0.0
             for comp in self.components:
@@ -3197,8 +3401,9 @@ class IdealThermodynamics:
                 high = mid
         return 0.5 * (low + high)
 
-    def _flash_phase_compositions(self, z: dict[str, float], K: dict[str, float],
-                                  V: float) -> tuple[dict[str, float], dict[str, float]]:
+    def _flash_phase_compositions(
+        self, z: dict[str, float], K: dict[str, float], V: float
+    ) -> tuple[dict[str, float], dict[str, float]]:
         x = {}
         y = {}
         for comp in self.components:
@@ -3215,47 +3420,48 @@ class IdealThermodynamics:
         if y_sum > 0.0:
             y = {comp: value / y_sum for comp, value in y.items()}
         return x, y
-    
-    def flash_PV(self, composition: dict[str, float], P: float, 
-                 vapor_frac: float) -> tuple[float, dict, dict]:
+
+    def flash_PV(
+        self, composition: dict[str, float], P: float, vapor_frac: float
+    ) -> tuple[float, dict, dict]:
         """
         PV Flash: find temperature for specified vapor fraction.
-        
+
         Args:
             composition: Feed mole fractions
             P: Pressure [bar]
             vapor_frac: Target vapor fraction
-            
+
         Returns:
             (T, x_liquid, y_vapor)
         """
         # Bracket the temperature
         T_low = self.bubble_point_T(composition, P)
         T_high = self.dew_point_T(composition, P)
-        
+
         if vapor_frac <= 0.001:
             V, x, y = self.flash_TP(composition, T_low, P)
             return T_low, x, y
-        
+
         if vapor_frac >= 0.999:
             V, x, y = self.flash_TP(composition, T_high, P)
             return T_high, x, y
-        
+
         # Bisection to find T
         for _ in range(50):
             T_mid = (T_low + T_high) / 2
             V, x, y = self.flash_TP(composition, T_mid, P)
-            
+
             if abs(V - vapor_frac) < 1e-6:
                 return T_mid, x, y
-            
+
             if V < vapor_frac:
                 T_low = T_mid
             else:
                 T_high = T_mid
-        
+
         return T_mid, x, y
-    
+
     def enthalpy_ideal_gas(self, comp: str, T: float) -> float:
         """
         Ideal gas enthalpy [kJ/mol] relative to reference state.
@@ -3268,20 +3474,20 @@ class IdealThermodynamics:
         props = self.props.get(comp)
         if props is None:
             return 0.0
-        
+
         # Formation enthalpy
         Hf = props.Hf if props.Hf else 0.0
         if props.Hf is not None:
             self.mark_property_source_context_once(
                 comp,
-                'Hf',
-                phase='ideal_gas_enthalpy',
+                "Hf",
+                phase="ideal_gas_enthalpy",
             )
-        
+
         if abs(T - T_REF) < 1e-12:
             delta_H = 0.0
         else:
-            delta_H = self._integrate_cp_analytic(comp, T_REF, T, 'ideal_gas')
+            delta_H = self._integrate_cp_analytic(comp, T_REF, T, "ideal_gas")
             if delta_H is None:
                 steps = 16
                 h = (T - T_REF) / steps
@@ -3290,9 +3496,11 @@ class IdealThermodynamics:
                     weight = 4 if index % 2 else 2
                     total += weight * self.Cp_ideal_gas(comp, T_REF + index * h)
                 delta_H = total * h / 3.0 / 1000.0
-        
-        return self._set_limited_cache(self._enthalpy_ideal_cache, cache_key, Hf + delta_H)
-    
+
+        return self._set_limited_cache(
+            self._enthalpy_ideal_cache, cache_key, Hf + delta_H
+        )
+
     def enthalpy_liquid(self, comp: str, T: float) -> float:
         """
         Liquid enthalpy [kJ/mol] relative to reference state.
@@ -3311,7 +3519,9 @@ class IdealThermodynamics:
 
         H_liq_ref = self.enthalpy_ideal_gas(comp, T_REF) - self.Hvap_at_T(comp, T_REF)
         delta_H = self._integrate_liquid_cp(comp, T_REF, T)
-        return self._set_limited_cache(self._enthalpy_liquid_cache, cache_key, H_liq_ref + delta_H)
+        return self._set_limited_cache(
+            self._enthalpy_liquid_cache, cache_key, H_liq_ref + delta_H
+        )
 
     def enthalpy_solid(self, comp: str, T: float) -> float:
         """Solid enthalpy [kJ/mol] anchored to Hf_solid at 298.15 K."""
@@ -3320,9 +3530,15 @@ class IdealThermodynamics:
         if cached is not None:
             return cached
         props = self.props.get(comp)
-        reference = float(props.Hf_solid) if props is not None and props.Hf_solid is not None else 0.0
+        reference = (
+            float(props.Hf_solid)
+            if props is not None and props.Hf_solid is not None
+            else 0.0
+        )
         if props is not None and props.Hf_solid is not None:
-            self.mark_property_source_context_once(comp, 'Hf_solid', phase='solid_enthalpy')
+            self.mark_property_source_context_once(
+                comp, "Hf_solid", phase="solid_enthalpy"
+            )
         value = reference + self._integrate_solid_cp(comp, T_REF, T)
         return self._set_limited_cache(self._enthalpy_solid_cache, cache_key, value)
 
@@ -3349,36 +3565,39 @@ class IdealThermodynamics:
             self._enthalpy_process_solid_cache, cache_key, value
         )
 
-    def _integrate_cp_over_T(self, comp: str, T1: float, T2: float,
-                             phase: str = 'ideal_gas') -> float:
+    def _integrate_cp_over_T(
+        self, comp: str, T1: float, T2: float, phase: str = "ideal_gas"
+    ) -> float:
         """Integral of Cp/T from T1 to T2 [kJ/kmol-K]."""
         if abs(T2 - T1) < 1e-12:
             return 0.0
-        if phase in {'ideal_gas', 'liquid', 'solid'}:
+        if phase in {"ideal_gas", "liquid", "solid"}:
             kernel = (
                 self._ideal_gas_cp_kernel(comp)
-                if phase == 'ideal_gas'
+                if phase == "ideal_gas"
                 else self._liquid_cp_kernel(comp)
-                if phase == 'liquid'
+                if phase == "liquid"
                 else self._solid_cp_kernel(comp)
             )
             if kernel is not None:
                 try:
-                    if phase == 'ideal_gas':
+                    if phase == "ideal_gas":
                         self._record_ideal_gas_cp_kernel_range_use(comp, T1, kernel)
                         self._record_ideal_gas_cp_kernel_range_use(comp, T2, kernel)
                     else:
                         recorder = (
                             self._record_liquid_cp_kernel_range_use
-                            if phase == 'liquid'
+                            if phase == "liquid"
                             else self._record_solid_cp_kernel_range_use
                         )
                         recorder(comp, T1, kernel)
                         recorder(comp, T2, kernel)
                     return kernel.delta_s(T1, T2)
                 except Exception as exc:
-                    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-                        from ..property_resolution.solid_cp import SolidCpTransitionError
+                    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+                        from ..property_resolution.solid_cp import (
+                            SolidCpTransitionError,
+                        )
                     else:
                         from property_resolution.solid_cp import SolidCpTransitionError
                     if isinstance(exc, SolidCpTransitionError):
@@ -3388,9 +3607,9 @@ class IdealThermodynamics:
         h = (T2 - T1) / steps
 
         def cp_over_T(temperature: float) -> float:
-            if phase == 'liquid':
+            if phase == "liquid":
                 cp = self.Cp_liquid(comp, temperature)
-            elif phase == 'solid':
+            elif phase == "solid":
                 cp = self.Cp_solid(comp, temperature)
             else:
                 cp = self.Cp_ideal_gas(comp, temperature)
@@ -3420,11 +3639,13 @@ class IdealThermodynamics:
         if props is not None and props.S is not None:
             self.mark_property_source_context_once(
                 comp,
-                'S',
-                phase='ideal_gas_entropy',
+                "S",
+                phase="ideal_gas_entropy",
             )
-        delta_S = self._integrate_cp_over_T(comp, T_REF, T, 'ideal_gas')
-        return self._set_limited_cache(self._entropy_ideal_cache, cache_key, S_ref + delta_S)
+        delta_S = self._integrate_cp_over_T(comp, T_REF, T, "ideal_gas")
+        return self._set_limited_cache(
+            self._entropy_ideal_cache, cache_key, S_ref + delta_S
+        )
 
     def entropy_liquid(self, comp: str, T: float) -> float:
         """
@@ -3442,15 +3663,22 @@ class IdealThermodynamics:
 
         try:
             Psat = max(float(self.Psat(comp, T)), 1e-300)
-            S_vap_sat = self.entropy_ideal_gas(comp, T) + self._pressure_entropy_correction(Psat)
+            S_vap_sat = self.entropy_ideal_gas(
+                comp, T
+            ) + self._pressure_entropy_correction(Psat)
             S_liq = S_vap_sat - 1000.0 * self.Hvap_at_T(comp, T) / max(T, 1e-12)
             return self._set_limited_cache(self._entropy_liquid_cache, cache_key, S_liq)
         except Exception:
             pass
 
-        S_liq_ref = self.entropy_ideal_gas(comp, T_REF) - 1000.0 * self.Hvap_at_T(comp, T_REF) / T_REF
-        delta_S = self._integrate_cp_over_T(comp, T_REF, T, 'liquid')
-        return self._set_limited_cache(self._entropy_liquid_cache, cache_key, S_liq_ref + delta_S)
+        S_liq_ref = (
+            self.entropy_ideal_gas(comp, T_REF)
+            - 1000.0 * self.Hvap_at_T(comp, T_REF) / T_REF
+        )
+        delta_S = self._integrate_cp_over_T(comp, T_REF, T, "liquid")
+        return self._set_limited_cache(
+            self._entropy_liquid_cache, cache_key, S_liq_ref + delta_S
+        )
 
     def entropy_solid(self, comp: str, T: float) -> float:
         """Solid molar entropy [kJ/kmol-K] anchored to S_solid at 298.15 K."""
@@ -3459,10 +3687,16 @@ class IdealThermodynamics:
         if cached is not None:
             return cached
         props = self.props.get(comp)
-        reference = float(props.S_solid) if props is not None and props.S_solid is not None else 0.0
+        reference = (
+            float(props.S_solid)
+            if props is not None and props.S_solid is not None
+            else 0.0
+        )
         if props is not None and props.S_solid is not None:
-            self.mark_property_source_context_once(comp, 'S_solid', phase='solid_entropy')
-        value = reference + self._integrate_cp_over_T(comp, T_REF, T, 'solid')
+            self.mark_property_source_context_once(
+                comp, "S_solid", phase="solid_entropy"
+            )
+        value = reference + self._integrate_cp_over_T(comp, T_REF, T, "solid")
         return self._set_limited_cache(self._entropy_solid_cache, cache_key, value)
 
     def process_solid_entropy(self, comp: str, T: float) -> float:
@@ -3482,9 +3716,7 @@ class IdealThermodynamics:
         value = (
             self.entropy_liquid(comp, melting_temperature)
             - 1000.0 * float(props.Hfus) / melting_temperature
-            + self._integrate_cp_over_T(
-                comp, melting_temperature, T, 'solid'
-            )
+            + self._integrate_cp_over_T(comp, melting_temperature, T, "solid")
         )
         return self._set_limited_cache(
             self._entropy_process_solid_cache, cache_key, value
@@ -3501,10 +3733,7 @@ class IdealThermodynamics:
         props = self.props.get(comp)
         if props is None:
             raise ThermodynamicsError(f"Component '{comp}' is unavailable")
-        missing = [
-            name for name in ('Hf', 'S')
-            if getattr(props, name, None) is None
-        ]
+        missing = [name for name in ("Hf", "S") if getattr(props, name, None) is None]
         if missing:
             raise ThermodynamicsError(
                 f"Component '{comp}' requires {', '.join(missing)} for a "
@@ -3512,14 +3741,13 @@ class IdealThermodynamics:
             )
         self.mark_property_source_context_once(
             comp,
-            ('Hf', 'S'),
-            phase='reaction_standard_chemical_potential',
-            description='Chemical-reaction standard-state Gibbs energy',
+            ("Hf", "S"),
+            phase="reaction_standard_chemical_potential",
+            description="Chemical-reaction standard-state Gibbs energy",
         )
-        return (
-            1000.0 * self.enthalpy_ideal_gas(comp, T)
-            - float(T) * self.entropy_ideal_gas(comp, T)
-        )
+        return 1000.0 * self.enthalpy_ideal_gas(comp, T) - float(
+            T
+        ) * self.entropy_ideal_gas(comp, T)
 
     def reaction_standard_gibbs(
         self,
@@ -3579,26 +3807,27 @@ class IdealThermodynamics:
             for component in self.components
         }
         phase_name = str(phase).strip().lower()
-        if phase_name in {'vapor', 'gas'}:
-            fugacity_method = getattr(self, 'fugacity_coefficients', None)
+        if phase_name in {"vapor", "gas"}:
+            fugacity_method = getattr(self, "fugacity_coefficients", None)
             phi = (
-                fugacity_method(temperature, pressure, values, 'vapor')
+                fugacity_method(temperature, pressure, values, "vapor")
                 if callable(fugacity_method)
                 else {component: 1.0 for component in self.components}
             )
             return {
                 component: values[component]
                 * max(float(phi.get(component, 1.0)), 1.0e-300)
-                * pressure / P_REF
+                * pressure
+                / P_REF
                 for component in self.components
             }
-        if phase_name != 'liquid':
+        if phase_name != "liquid":
             raise ThermodynamicsError(
                 "Reaction activities require phase='vapor' or phase='liquid'"
             )
 
-        activity_method = getattr(self, 'activity_coefficients', None)
-        reference_method = getattr(self, '_gamma_phi_reference_factors', None)
+        activity_method = getattr(self, "activity_coefficients", None)
+        reference_method = getattr(self, "_gamma_phi_reference_factors", None)
         if callable(activity_method) and callable(reference_method):
             gamma = activity_method(temperature, values)
             reference = reference_method(temperature, pressure)
@@ -3610,13 +3839,14 @@ class IdealThermodynamics:
                 for component in self.components
             }
 
-        fugacity_method = getattr(self, 'fugacity_coefficients', None)
+        fugacity_method = getattr(self, "fugacity_coefficients", None)
         if callable(fugacity_method):
-            phi = fugacity_method(temperature, pressure, values, 'liquid')
+            phi = fugacity_method(temperature, pressure, values, "liquid")
             return {
                 component: values[component]
                 * max(float(phi.get(component, 1.0)), 1.0e-300)
-                * pressure / P_REF
+                * pressure
+                / P_REF
                 for component in self.components
             }
 
@@ -3639,25 +3869,31 @@ class IdealThermodynamics:
         """Ideal-gas pressure entropy correction from 1 bar standard state to P [kJ/kmol-K]."""
         return -R * math.log(max(float(P), 1e-300) / P_REF)
 
-    def _ideal_gas_mixture_entropy(self, composition: dict[str, float], T: float,
-                                   P: float = P_REF) -> float:
+    def _ideal_gas_mixture_entropy(
+        self, composition: dict[str, float], T: float, P: float = P_REF
+    ) -> float:
         return (
             sum(z * self.entropy_ideal_gas(comp, T) for comp, z in composition.items())
             + self._ideal_mixing_entropy(composition)
             + self._pressure_entropy_correction(P)
         )
 
-    def _ideal_liquid_mixture_entropy(self, composition: dict[str, float], T: float) -> float:
-        return (
-            sum(z * self.entropy_liquid(comp, T) for comp, z in composition.items())
-            + self._ideal_mixing_entropy(composition)
-        )
+    def _ideal_liquid_mixture_entropy(
+        self, composition: dict[str, float], T: float
+    ) -> float:
+        return sum(
+            z * self.entropy_liquid(comp, T) for comp, z in composition.items()
+        ) + self._ideal_mixing_entropy(composition)
 
-    def mixture_entropy(self, composition: dict[str, float], T: float,
-                        vapor_fraction: float = 1.0,
-                        x: Optional[dict] = None,
-                        y: Optional[dict] = None,
-                        P: float = P_REF) -> float:
+    def mixture_entropy(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float = 1.0,
+        x: Optional[dict] = None,
+        y: Optional[dict] = None,
+        P: float = P_REF,
+    ) -> float:
         """Mixture molar entropy [kJ/kmol-K]."""
         if vapor_fraction > 0.999:
             return self._ideal_gas_mixture_entropy(composition, T, P)
@@ -3669,15 +3905,19 @@ class IdealThermodynamics:
         S_liq = self._ideal_liquid_mixture_entropy(x, T)
         S_vap = self._ideal_gas_mixture_entropy(y, T, P)
         return vapor_fraction * S_vap + (1.0 - vapor_fraction) * S_liq
-    
-    def mixture_enthalpy(self, composition: dict[str, float], T: float,
-                        vapor_fraction: float = 1.0,
-                        x: Optional[dict] = None,
-                        y: Optional[dict] = None,
-                        P: float = P_REF) -> float:
+
+    def mixture_enthalpy(
+        self,
+        composition: dict[str, float],
+        T: float,
+        vapor_fraction: float = 1.0,
+        x: Optional[dict] = None,
+        y: Optional[dict] = None,
+        P: float = P_REF,
+    ) -> float:
         """
         Mixture molar enthalpy [kJ/kmol]
-        
+
         Args:
             composition: Overall mole fractions
             T: Temperature [K]
@@ -3688,12 +3928,14 @@ class IdealThermodynamics:
         """
         if vapor_fraction > 0.999:
             # All vapor
-            H = sum(z * self.enthalpy_ideal_gas(comp, T) 
-                   for comp, z in composition.items())
+            H = sum(
+                z * self.enthalpy_ideal_gas(comp, T) for comp, z in composition.items()
+            )
         elif vapor_fraction < 0.001:
             # All liquid
-            H = sum(z * self.enthalpy_liquid(comp, T)
-                   for comp, z in composition.items())
+            H = sum(
+                z * self.enthalpy_liquid(comp, T) for comp, z in composition.items()
+            )
         else:
             # Two-phase
             x = x or composition
@@ -3701,25 +3943,29 @@ class IdealThermodynamics:
             H_liq = sum(xi * self.enthalpy_liquid(comp, T) for comp, xi in x.items())
             H_vap = sum(yi * self.enthalpy_ideal_gas(comp, T) for comp, yi in y.items())
             H = vapor_fraction * H_vap + (1 - vapor_fraction) * H_liq
-        
+
         return H * 1000  # mol to kmol
 
     def excess_enthalpy(self, composition: dict[str, float], T: float) -> float:
         """Excess enthalpy [kJ/kmol]. Ideal mixtures have zero excess enthalpy."""
         return 0.0
 
-    def mixture_liquid_molar_volume(self, composition: dict[str, float], T: float) -> float:
+    def mixture_liquid_molar_volume(
+        self, composition: dict[str, float], T: float
+    ) -> float:
         """Mixture liquid molar volume [m3/kmol] using resolver-backed pure volumes."""
         composition = self._normalized_liquid_transport_composition(composition)
         V_molar = 0.0
         for comp, x in composition.items():
             if comp not in self.props:
-                raise ThermodynamicsError(f"Component '{comp}' not found for liquid volume calculation")
+                raise ThermodynamicsError(
+                    f"Component '{comp}' not found for liquid volume calculation"
+                )
             props = self.props[comp]
             cache_key = (comp, float(T))
             volume = self._liquid_molar_volume_cache.get(cache_key)
             if volume is None:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import get_property_resolver
                 else:
                     from property_resolver import get_property_resolver
@@ -3728,9 +3974,13 @@ class IdealThermodynamics:
                     T,
                     self._resolver_known_props.get(comp),
                 )
-                self._record_lazy_property_source(comp, 'liquid_molar_volume', T, result)
+                self._record_lazy_property_source(
+                    comp, "liquid_molar_volume", T, result
+                )
                 volume = result.value
-                self._set_limited_cache(self._liquid_molar_volume_cache, cache_key, volume)
+                self._set_limited_cache(
+                    self._liquid_molar_volume_cache, cache_key, volume
+                )
             if volume is None or volume <= 0.0:
                 raise ThermodynamicsError(
                     f"Property resolver returned invalid liquid molar volume for '{comp}'"
@@ -3738,7 +3988,9 @@ class IdealThermodynamics:
             V_molar += x * volume
         if V_molar > 0:
             return V_molar
-        raise ThermodynamicsError("Cannot calculate liquid molar volume for empty composition")
+        raise ThermodynamicsError(
+            "Cannot calculate liquid molar volume for empty composition"
+        )
 
     def mixture_liquid_density(self, composition: dict[str, float], T: float) -> float:
         """Mixture liquid molar density [kmol/m3]."""
@@ -3751,26 +4003,32 @@ class IdealThermodynamics:
         if key in self._thermal_conductivity_cache:
             return self._thermal_conductivity_cache[key]
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
             result = get_property_resolver().resolve_thermal_conductivity(
-                _property_lookup_identifier(comp, self.props[comp]), T, phase=phase,
+                _property_lookup_identifier(comp, self.props[comp]),
+                T,
+                phase=phase,
                 props=self._resolver_known_props.get(comp),
             )
             value = float(result.value)
             if not math.isfinite(value) or value <= 0:
-                raise ValueError('conductivity must be positive and finite')
+                raise ValueError("conductivity must be positive and finite")
         except Exception as error:
             raise ThermodynamicsError(
                 f"Cannot resolve {phase} thermal conductivity for {comp!r} "
                 f"at T={T:g} K: {error}"
             ) from error
-        self._record_lazy_property_source(comp, f'{phase}_thermal_conductivity', T, result)
+        self._record_lazy_property_source(
+            comp, f"{phase}_thermal_conductivity", T, result
+        )
         return self._set_limited_cache(self._thermal_conductivity_cache, key, value)
 
-    def mixture_liquid_thermal_conductivity(self, composition: dict[str, float], T: float) -> float:
+    def mixture_liquid_thermal_conductivity(
+        self, composition: dict[str, float], T: float
+    ) -> float:
         """Li (1976) volume-fraction/harmonic-pair liquid mixing [W/(m K)].
 
         DOI: 10.1002/aic.690220520. Pure volumes use the same resolver path as
@@ -3778,7 +4036,7 @@ class IdealThermodynamics:
         """
         composition = self._normalized_liquid_transport_composition(composition)
         conductivities = {
-            c: self.pure_thermal_conductivity(c, T, 'liquid') for c in composition
+            c: self.pure_thermal_conductivity(c, T, "liquid") for c in composition
         }
         if len(composition) == 1:
             return next(iter(conductivities.values()))
@@ -3788,26 +4046,32 @@ class IdealThermodynamics:
         }
         total = sum(volumes.values())
         return sum(
-            volumes[i] * volumes[j] / total**2
-            * 2 / (1 / conductivities[i] + 1 / conductivities[j])
-            for i in composition for j in composition
+            volumes[i]
+            * volumes[j]
+            / total**2
+            * 2
+            / (1 / conductivities[i] + 1 / conductivities[j])
+            for i in composition
+            for j in composition
         )
 
     def _pure_viscosity(self, comp: str, T: float, P: float, phase: str) -> float:
         """Resolve and cache pure-component dynamic viscosity [Pa*s]."""
-        phase_key = 'vapor' if phase in {'gas', 'vapor'} else 'liquid'
+        phase_key = "vapor" if phase in {"gas", "vapor"} else "liquid"
         cache_key = (phase_key, comp, float(T), float(P))
         cached = self._viscosity_cache.get(cache_key)
         if cached is not None:
             return cached
         props = self.props.get(comp)
         if props is None:
-            raise ThermodynamicsError(f"Component '{comp}' not found for viscosity calculation")
+            raise ThermodynamicsError(
+                f"Component '{comp}' not found for viscosity calculation"
+            )
         try:
             kernel_key = (phase_key, comp)
             kernel = self._viscosity_kernels.get(kernel_key)
             if kernel is None:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..property_resolver import get_property_resolver
                 else:
                     from property_resolver import get_property_resolver
@@ -3839,14 +4103,15 @@ class IdealThermodynamics:
         return self._set_limited_cache(self._viscosity_cache, cache_key, value)
 
     @staticmethod
-    def _normalized_positive_composition(composition: dict[str, float]) -> dict[str, float]:
-        values = {
-            comp: max(float(value), 0.0)
-            for comp, value in composition.items()
-        }
+    def _normalized_positive_composition(
+        composition: dict[str, float],
+    ) -> dict[str, float]:
+        values = {comp: max(float(value), 0.0) for comp, value in composition.items()}
         total = sum(values.values())
         if total <= 0.0:
-            raise ThermodynamicsError("Cannot calculate mixture property for empty composition")
+            raise ThermodynamicsError(
+                "Cannot calculate mixture property for empty composition"
+            )
         return {comp: value / total for comp, value in values.items() if value > 0.0}
 
     def _normalized_liquid_transport_composition(
@@ -3872,22 +4137,18 @@ class IdealThermodynamics:
         total = sum(retained.values())
         return {comp: value / total for comp, value in retained.items()}
 
-    def _mixture_vapor_viscosity(self, composition: dict[str, float], T: float, P: float) -> float:
+    def _mixture_vapor_viscosity(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> float:
         """Gas mixture viscosity [Pa*s] from Wilke's rule."""
         y = self._normalized_positive_composition(composition)
         if len(y) == 1:
             comp = next(iter(y))
-            return self._pure_viscosity(comp, T, P, 'vapor')
+            return self._pure_viscosity(comp, T, P, "vapor")
 
         components = list(y)
-        mus = {
-            comp: self._pure_viscosity(comp, T, P, 'vapor')
-            for comp in components
-        }
-        mws = {
-            comp: float(self.props[comp].MW)
-            for comp in components
-        }
+        mus = {comp: self._pure_viscosity(comp, T, P, "vapor") for comp in components}
+        mws = {comp: float(self.props[comp].MW) for comp in components}
         total = 0.0
         for comp_i in components:
             denom = 0.0
@@ -3897,26 +4158,26 @@ class IdealThermodynamics:
                 mu_j = mus[comp_j]
                 mw_j = mws[comp_j]
                 phi_ij = (
-                    (1.0 + math.sqrt(mu_i / mu_j) * (mw_j / mw_i) ** 0.25) ** 2
-                    / math.sqrt(8.0 * (1.0 + mw_i / mw_j))
-                )
+                    1.0 + math.sqrt(mu_i / mu_j) * (mw_j / mw_i) ** 0.25
+                ) ** 2 / math.sqrt(8.0 * (1.0 + mw_i / mw_j))
                 denom += y[comp_j] * phi_ij
             total += y[comp_i] * mu_i / max(denom, 1e-300)
         if total <= 0.0 or not math.isfinite(total):
             raise ThermodynamicsError("Calculated nonpositive vapor mixture viscosity")
         return total
 
-    def _mixture_liquid_viscosity(self, composition: dict[str, float], T: float, P: float) -> float:
+    def _mixture_liquid_viscosity(
+        self, composition: dict[str, float], T: float, P: float
+    ) -> float:
         """Liquid mixture viscosity [Pa*s] from the configured mixture hierarchy."""
         x = self._normalized_liquid_transport_composition(composition)
         pure_viscosities = {
-            comp: self._pure_viscosity(comp, T, P, 'liquid')
-            for comp in x
+            comp: self._pure_viscosity(comp, T, P, "liquid") for comp in x
         }
         if len(x) == 1:
             return next(iter(pure_viscosities.values()))
 
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from ..liquid_mixture_viscosity import estimate_liquid_mixture_viscosity
         else:
             from liquid_mixture_viscosity import estimate_liquid_mixture_viscosity
@@ -3926,8 +4187,8 @@ class IdealThermodynamics:
             pure_viscosities,
             T,
             component_props=self.props,
-            component_groups=getattr(self, 'component_groups', None),
-            component_group_variant=getattr(self, 'unifac_variant', None),
+            component_groups=getattr(self, "component_groups", None),
+            component_group_variant=getattr(self, "unifac_variant", None),
             interaction_overrides=self.interaction_overrides,
         )
         self.extend_warnings(result.warnings)
@@ -3981,17 +4242,25 @@ class IdealThermodynamics:
             )
         return TransportPhaseValues(liquid=liquid, vapor=vapor)
 
-    def vapor_molar_volume_for_density(self, T: float, P: float,
-                                       composition: dict[str, float]) -> float:
+    def vapor_molar_volume_for_density(
+        self, T: float, P: float, composition: dict[str, float]
+    ) -> float:
         """Vapor molar volume for stream density [m3/kmol]."""
         if P <= 0.0:
-            raise ThermodynamicsError("Pressure must be positive for vapor density calculation")
+            raise ThermodynamicsError(
+                "Pressure must be positive for vapor density calculation"
+            )
         return 1000.0 * R_BAR * T / P
 
-    def mixture_molar_density(self, composition: dict[str, float], T: float, P: float,
-                              vapor_fraction: float = 1.0,
-                              x: Optional[dict] = None,
-                              y: Optional[dict] = None) -> float:
+    def mixture_molar_density(
+        self,
+        composition: dict[str, float],
+        T: float,
+        P: float,
+        vapor_fraction: float = 1.0,
+        x: Optional[dict] = None,
+        y: Optional[dict] = None,
+    ) -> float:
         """Bulk molar density [kmol/m3] from phase molar-volume averaging."""
         V = max(0.0, min(1.0, float(vapor_fraction)))
         if V <= 0.001:
@@ -4046,7 +4315,7 @@ class IdealThermodynamics:
                 f"Component '{comp}' not found for surface-tension calculation"
             )
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -4066,7 +4335,7 @@ class IdealThermodynamics:
                 f"Property resolver returned invalid surface tension for "
                 f"{self._component_label(comp)}"
             )
-        self._record_lazy_property_source(comp, 'surface_tension', T, result)
+        self._record_lazy_property_source(comp, "surface_tension", T, result)
         return self._set_limited_cache(self._surface_tension_cache, cache_key, value)
 
     def _surface_tension_calculator(self, components: tuple[str, ...], method: str):
@@ -4075,16 +4344,16 @@ class IdealThermodynamics:
         if cached is not None:
             return cached
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..interfacial_properties import (
-                                MixtureSurfaceTensionCalculator,
-                                SurfaceComponent,
-                            )
+                    MixtureSurfaceTensionCalculator,
+                    SurfaceComponent,
+                )
             else:
                 from interfacial_properties import (
-                                MixtureSurfaceTensionCalculator,
-                                SurfaceComponent,
-                            )
+                    MixtureSurfaceTensionCalculator,
+                    SurfaceComponent,
+                )
         except Exception as exc:
             raise ThermodynamicsError(
                 "Mixture surface-tension calculator is unavailable"
@@ -4097,9 +4366,7 @@ class IdealThermodynamics:
                 raise ThermodynamicsError(
                     f"Component '{comp}' not found for surface-tension calculation"
                 )
-            critical_volume = (
-                None if props.Vc is None else float(props.Vc) * 1.0e-6
-            )
+            critical_volume = None if props.Vc is None else float(props.Vc) * 1.0e-6
             surface_components.append(
                 SurfaceComponent(
                     name=comp,
@@ -4119,10 +4386,10 @@ class IdealThermodynamics:
                             float(temperature),
                         )
                     ),
-                    CAS=getattr(props, 'CAS', None),
+                    CAS=getattr(props, "CAS", None),
                 )
             )
-        activity_model = self if hasattr(self, 'activity_coefficients') else None
+        activity_model = self if hasattr(self, "activity_coefficients") else None
         calculator = MixtureSurfaceTensionCalculator(
             surface_components,
             activity_model=activity_model,
@@ -4139,7 +4406,7 @@ class IdealThermodynamics:
         x: Optional[dict] = None,
         y: Optional[dict] = None,
         *,
-        method: str = 'auto',
+        method: str = "auto",
     ) -> float:
         """Liquid-vapor/gas surface tension [N/m] for transport models."""
         V = max(0.0, min(1.0, float(vapor_fraction)))
@@ -4169,7 +4436,9 @@ class IdealThermodynamics:
         return value
 
     @staticmethod
-    def _normalize_state_include(include: Optional[Union[str, Iterable[str]]]) -> frozenset[str]:
+    def _normalize_state_include(
+        include: Optional[Union[str, Iterable[str]]],
+    ) -> frozenset[str]:
         """Normalize optional StreamState property names."""
         if include is None:
             return DEFAULT_STATE_INCLUDE
@@ -4179,16 +4448,16 @@ class IdealThermodynamics:
             raw_names = include
         normalized = set()
         aliases = {
-            'h': 'H',
-            'enthalpy': 'H',
-            'cp': 'Cp',
-            'heat_capacity': 'Cp',
-            's': 'S',
-            'entropy': 'S',
-            'rho': 'rho',
-            'density': 'rho',
-            'mu': 'mu',
-            'viscosity': 'mu',
+            "h": "H",
+            "enthalpy": "H",
+            "cp": "Cp",
+            "heat_capacity": "Cp",
+            "s": "S",
+            "entropy": "S",
+            "rho": "rho",
+            "density": "rho",
+            "mu": "mu",
+            "viscosity": "mu",
         }
         for name in raw_names:
             key = str(name).strip()
@@ -4196,7 +4465,9 @@ class IdealThermodynamics:
                 continue
             canonical = aliases.get(key.lower())
             if canonical is None:
-                raise ThermodynamicsError(f"Unknown calculate_state include property: {name!r}")
+                raise ThermodynamicsError(
+                    f"Unknown calculate_state include property: {name!r}"
+                )
             normalized.add(canonical)
         return frozenset(normalized)
 
@@ -4213,20 +4484,16 @@ class IdealThermodynamics:
         total = sum(positive.values())
         if total <= 0.0:
             raise ThermodynamicsError("Stream composition must contain positive flow")
-        normalized = {
-            component: value / total
-            for component, value in positive.items()
-        }
+        normalized = {component: value / total for component, value in positive.items()}
         solid_set = set(self.permanent_solid_components)
         unknown = sorted(set(normalized) - set(self.process_components))
         if unknown:
             raise ThermodynamicsError(
                 "Stream composition contains unknown process component(s): "
-                + ', '.join(unknown)
+                + ", ".join(unknown)
             )
         solid_fraction = sum(
-            value for component, value in normalized.items()
-            if component in solid_set
+            value for component, value in normalized.items() if component in solid_set
         )
         fluid_fraction = max(0.0, 1.0 - solid_fraction)
         fluid_composition = (
@@ -4235,7 +4502,8 @@ class IdealThermodynamics:
                 for component, value in normalized.items()
                 if component not in solid_set and value > 0.0
             }
-            if fluid_fraction > 1.0e-15 else {}
+            if fluid_fraction > 1.0e-15
+            else {}
         )
         solid_composition = (
             {
@@ -4243,7 +4511,8 @@ class IdealThermodynamics:
                 for component, value in normalized.items()
                 if component in solid_set and value > 0.0
             }
-            if solid_fraction > 1.0e-15 else {}
+            if solid_fraction > 1.0e-15
+            else {}
         )
         return (
             normalized,
@@ -4264,7 +4533,7 @@ class IdealThermodynamics:
         if cached is not None:
             return cached
         try:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
@@ -4285,7 +4554,7 @@ class IdealThermodynamics:
             )
         self._record_lazy_property_source(
             component,
-            'solid_molar_volume',
+            "solid_molar_volume",
             T,
             result,
         )
@@ -4316,7 +4585,8 @@ class IdealThermodynamics:
                 for component, flow in solid_component_flows_override.items()
                 if float(flow) > 0.0
             }
-            if solid_component_flows_override is not None else {
+            if solid_component_flows_override is not None
+            else {
                 component: float(F) * float(composition.get(component, 0.0))
                 for component in solid_composition
                 if float(composition.get(component, 0.0)) > 0.0
@@ -4328,23 +4598,23 @@ class IdealThermodynamics:
                 for key, value in self.solid_particle_defaults.get(
                     component, {}
                 ).items()
-                if key in {'diameter_m', 'sphericity'}
+                if key in {"diameter_m", "sphericity"}
             }
             for component in solid_composition
             if any(
                 key in self.solid_particle_defaults.get(component, {})
-                for key in {'diameter_m', 'sphericity'}
+                for key in {"diameter_m", "sphericity"}
             )
         }
         particle_size_distributions = {}
         for component, solid_component_flow in solid_component_flows.items():
             defaults = self.solid_particle_defaults.get(component, {})
-            specification = defaults.get('particle_size_distribution')
-            if specification is None and defaults.get('diameter_m') is not None:
+            specification = defaults.get("particle_size_distribution")
+            if specification is None and defaults.get("diameter_m") is not None:
                 specification = {
-                    'diameters_m': [defaults['diameter_m']],
-                    'fractions': [1.0],
-                    'basis': 'mole',
+                    "diameters_m": [defaults["diameter_m"]],
+                    "fractions": [1.0],
+                    "basis": "mole",
                 }
             if specification is not None:
                 particle_size_distributions[component] = (
@@ -4361,20 +4631,39 @@ class IdealThermodynamics:
             composition=dict(composition),
             vapor_fraction=(
                 fluid_fraction * float(fluid_state.vapor_fraction)
-                if fluid_state is not None else 0.0
+                if fluid_state is not None
+                else 0.0
             ),
             liquid1_fraction=(
                 fluid_fraction * fluid_state.effective_liquid1_fraction
-                if fluid_state is not None else 0.0
+                if fluid_state is not None
+                else 0.0
             ),
             liquid2_fraction=(
                 fluid_fraction * float(fluid_state.liquid2_fraction)
-                if fluid_state is not None else 0.0
+                if fluid_state is not None
+                else 0.0
             ),
-            x=(dict(fluid_state.x) if fluid_state is not None and fluid_state.x else None),
-            y=(dict(fluid_state.y) if fluid_state is not None and fluid_state.y else None),
-            x1=(dict(fluid_state.x1) if fluid_state is not None and fluid_state.x1 else None),
-            x2=(dict(fluid_state.x2) if fluid_state is not None and fluid_state.x2 else None),
+            x=(
+                dict(fluid_state.x)
+                if fluid_state is not None and fluid_state.x
+                else None
+            ),
+            y=(
+                dict(fluid_state.y)
+                if fluid_state is not None and fluid_state.y
+                else None
+            ),
+            x1=(
+                dict(fluid_state.x1)
+                if fluid_state is not None and fluid_state.x1
+                else None
+            ),
+            x2=(
+                dict(fluid_state.x2)
+                if fluid_state is not None and fluid_state.x2
+                else None
+            ),
             solid_fraction=solid_fraction,
             solid_composition=dict(solid_composition) or None,
             solid_component_flows=solid_component_flows,
@@ -4383,22 +4672,23 @@ class IdealThermodynamics:
             fluid_phase_model=self.fluid_phase_model,
             phase_status=(
                 f"solid_bearing_{fluid_state.phase_status}"
-                if fluid_state is not None else 'solid_only'
+                if fluid_state is not None
+                else "solid_only"
             ),
             phase_stability=(
                 fluid_state.phase_stability
-                if fluid_state is not None else 'permanent_solid_assignment'
+                if fluid_state is not None
+                else "permanent_solid_assignment"
             ),
             phase_details=(
-                dict(fluid_state.phase_details)
-                if fluid_state is not None else {}
+                dict(fluid_state.phase_details) if fluid_state is not None else {}
             ),
         )
-        state.phase_details['permanent_solids'] = {
-            'components': list(solid_composition),
-            'solid_fraction': solid_fraction,
-            'fluid_fraction': fluid_fraction,
-            'model': 'permanent_solid',
+        state.phase_details["permanent_solids"] = {
+            "components": list(solid_composition),
+            "solid_fraction": solid_fraction,
+            "fluid_fraction": fluid_fraction,
+            "model": "permanent_solid",
         }
         state.MW = self.mixture_MW(composition)
 
@@ -4406,7 +4696,7 @@ class IdealThermodynamics:
             component: solid_fraction * float(fraction)
             for component, fraction in solid_composition.items()
         }
-        if 'Cp' in include_set:
+        if "Cp" in include_set:
             fluid_cp = fluid_state.Cp if fluid_state is not None else 0.0
             if fluid_state is not None and fluid_cp is None:
                 state.Cp = None
@@ -4415,7 +4705,7 @@ class IdealThermodynamics:
                     fraction * self.Cp_solid(component, T)
                     for component, fraction in solid_total_fractions.items()
                 )
-        if 'H' in include_set:
+        if "H" in include_set:
             fluid_H = fluid_state.H if fluid_state is not None else 0.0
             if fluid_state is not None and fluid_H is None:
                 state.H = None
@@ -4424,7 +4714,7 @@ class IdealThermodynamics:
                     fraction * 1000.0 * self.process_solid_enthalpy(component, T)
                     for component, fraction in solid_total_fractions.items()
                 )
-        if 'S' in include_set:
+        if "S" in include_set:
             fluid_S = fluid_state.S if fluid_state is not None else 0.0
             if fluid_state is not None and fluid_S is None:
                 state.S = None
@@ -4433,7 +4723,7 @@ class IdealThermodynamics:
                     fraction * self.process_solid_entropy(component, T)
                     for component, fraction in solid_total_fractions.items()
                 )
-        if 'rho' in include_set:
+        if "rho" in include_set:
             if fluid_state is not None and fluid_state.rho is None:
                 state.rho = None
             else:
@@ -4448,7 +4738,7 @@ class IdealThermodynamics:
                         "Calculated nonpositive solid-bearing stream molar volume"
                     )
                 state.rho = 1.0 / molar_volume
-        if 'mu' in include_set:
+        if "mu" in include_set:
             # Apparent slurry/powder viscosity requires particle and rheology
             # models that are intentionally outside the permanent-solid layer.
             state.mu = None
@@ -4590,7 +4880,8 @@ class IdealThermodynamics:
                 for component, flow in fluid_component_flows.items()
                 if flow > 1.0e-15
             }
-            if fluid_flow > 1.0e-15 else {}
+            if fluid_flow > 1.0e-15
+            else {}
         )
         solid_composition = {
             component: flow / solid_flow
@@ -4621,21 +4912,21 @@ class IdealThermodynamics:
             solid_component_flows_override=combined_solid_flows,
         )
         state.solid_component_flows = combined_solid_flows
-        state.phase_details.pop('permanent_solids', None)
+        state.phase_details.pop("permanent_solids", None)
         if permanent_solid_flows:
-            state.phase_details['permanent_solids'] = {
-                'components': list(permanent_solid_flows),
-                'component_flows': dict(permanent_solid_flows),
-                'model': 'permanent_solid',
+            state.phase_details["permanent_solids"] = {
+                "components": list(permanent_solid_flows),
+                "component_flows": dict(permanent_solid_flows),
+                "model": "permanent_solid",
             }
         if explicit_solid_flows:
-            state.phase_details['conventional_solids'] = {
-                'components': list(explicit_solid_flows),
-                'component_flows': dict(explicit_solid_flows),
-                'model': 'explicit_solid_flow',
+            state.phase_details["conventional_solids"] = {
+                "components": list(explicit_solid_flows),
+                "component_flows": dict(explicit_solid_flows),
+                "model": "explicit_solid_flow",
             }
         return state
-    
+
     def _populate_multifluid_state_properties(
         self,
         state: StreamState,
@@ -4651,8 +4942,10 @@ class IdealThermodynamics:
                 for component, flow in state.solid_component_flows.items()
                 if state.F > 0.0 and float(flow) > 0.0
             }
-            if state.solid_component_flows else {
-                component: max(0.0, float(state.solid_fraction)) * max(0.0, float(value))
+            if state.solid_component_flows
+            else {
+                component: max(0.0, float(state.solid_fraction))
+                * max(0.0, float(value))
                 for component, value in (state.solid_composition or {}).items()
             }
         )
@@ -4663,15 +4956,14 @@ class IdealThermodynamics:
         if abs(total - 1.0) > 1.0e-9:
             V, L1, L2 = V / total, L1 / total, L2 / total
             solid_fractions = {
-                component: value / total
-                for component, value in solid_fractions.items()
+                component: value / total for component, value in solid_fractions.items()
             }
             S = sum(solid_fractions.values())
         y = state.y or state.composition
         x1 = state.x1 or state.x or state.composition
         x2 = state.x2 or state.x or state.composition
 
-        if 'Cp' in include_set:
+        if "Cp" in include_set:
             state.Cp = (
                 V * self.mixture_Cp(y, state.T, 1.0, state.P)
                 + L1 * self.mixture_Cp(x1, state.T, 0.0, state.P)
@@ -4681,18 +4973,17 @@ class IdealThermodynamics:
                     for component, fraction in solid_fractions.items()
                 )
             )
-        if 'H' in include_set:
+        if "H" in include_set:
             state.H = (
                 V * self.mixture_enthalpy(y, state.T, 1.0, None, y, state.P)
                 + L1 * self.mixture_enthalpy(x1, state.T, 0.0, x1, None, state.P)
                 + L2 * self.mixture_enthalpy(x2, state.T, 0.0, x2, None, state.P)
                 + sum(
-                    fraction * 1000.0
-                    * self.process_solid_enthalpy(component, state.T)
+                    fraction * 1000.0 * self.process_solid_enthalpy(component, state.T)
                     for component, fraction in solid_fractions.items()
                 )
             )
-        if 'S' in include_set:
+        if "S" in include_set:
             state.S = (
                 V * self.mixture_entropy(y, state.T, 1.0, None, y, state.P)
                 + L1 * self.mixture_entropy(x1, state.T, 0.0, x1, None, state.P)
@@ -4702,7 +4993,7 @@ class IdealThermodynamics:
                     for component, fraction in solid_fractions.items()
                 )
             )
-        if 'rho' in include_set:
+        if "rho" in include_set:
             phase_volumes = []
             if V > 0.0:
                 rho_v = self.mixture_molar_density(y, state.T, state.P, 1.0, y=y)
@@ -4719,13 +5010,19 @@ class IdealThermodynamics:
             )
             volume = sum(phase_volumes)
             if volume <= 0.0:
-                raise ThermodynamicsError("Calculated nonpositive multifluid molar volume")
+                raise ThermodynamicsError(
+                    "Calculated nonpositive multifluid molar volume"
+                )
             state.rho = 1.0 / volume
-        if 'mu' in include_set:
-            state.mu = None if S > 0.0 else (
-                V * self.mixture_viscosity(y, state.T, state.P, 1.0, y=y)
-                + L1 * self.mixture_viscosity(x1, state.T, state.P, 0.0, x=x1)
-                + L2 * self.mixture_viscosity(x2, state.T, state.P, 0.0, x=x2)
+        if "mu" in include_set:
+            state.mu = (
+                None
+                if S > 0.0
+                else (
+                    V * self.mixture_viscosity(y, state.T, state.P, 1.0, y=y)
+                    + L1 * self.mixture_viscosity(x1, state.T, state.P, 0.0, x=x1)
+                    + L2 * self.mixture_viscosity(x2, state.T, state.P, 0.0, x=x2)
+                )
             )
 
     def _apply_fluid_equilibrium_to_state(
@@ -4763,7 +5060,7 @@ class IdealThermodynamics:
         if state.liquid2_fraction > 1.0e-12:
             self._populate_multifluid_state_properties(state, include_set)
         else:
-            if 'Cp' in include_set:
+            if "Cp" in include_set:
                 state.Cp = self.phase_weighted_mixture_Cp(
                     state.composition,
                     state.T,
@@ -4772,7 +5069,7 @@ class IdealThermodynamics:
                     state.y,
                     state.P,
                 )
-            if 'H' in include_set:
+            if "H" in include_set:
                 state.H = self.mixture_enthalpy(
                     state.composition,
                     state.T,
@@ -4781,7 +5078,7 @@ class IdealThermodynamics:
                     state.y,
                     state.P,
                 )
-            if 'S' in include_set:
+            if "S" in include_set:
                 state.S = self.mixture_entropy(
                     state.composition,
                     state.T,
@@ -4790,7 +5087,7 @@ class IdealThermodynamics:
                     state.y,
                     state.P,
                 )
-            if 'rho' in include_set:
+            if "rho" in include_set:
                 state.rho = self.mixture_molar_density(
                     state.composition,
                     state.T,
@@ -4799,7 +5096,7 @@ class IdealThermodynamics:
                     state.x,
                     state.y,
                 )
-            if 'mu' in include_set:
+            if "mu" in include_set:
                 state.mu = self.mixture_viscosity(
                     state.composition,
                     state.T,
@@ -4816,7 +5113,7 @@ class IdealThermodynamics:
         liquid_phases,
     ) -> None:
         """Warn only after an accepted liquid equilibrium uses an extrapolated fit."""
-        metadata = getattr(self, 'estimated_interaction_metadata', None) or {}
+        metadata = getattr(self, "estimated_interaction_metadata", None) or {}
         if not metadata:
             return
         accepted_liquids = [
@@ -4827,10 +5124,10 @@ class IdealThermodynamics:
         if not accepted_liquids:
             return
         for pair_key, details in metadata.items():
-            if details.get('do_not_extrapolate', False):
+            if details.get("extrapolation", "unrestricted") != "unrestricted":
                 continue
-            comp1 = details['component1']
-            comp2 = details['component2']
+            comp1 = details["component1"]
+            comp2 = details["component2"]
             relevant = any(
                 float(composition.get(comp1, 0.0)) > 1.0e-15
                 and float(composition.get(comp2, 0.0)) > 1.0e-15
@@ -4838,9 +5135,9 @@ class IdealThermodynamics:
             )
             if not relevant:
                 continue
-            low = float(details['fit_Tmin_K'])
-            high = float(details['fit_Tmax_K'])
-            direction = 'below' if T < low else 'above' if T > high else None
+            low = float(details["fit_Tmin_K"])
+            high = float(details["fit_Tmax_K"])
+            direction = "below" if T < low else "above" if T > high else None
             if direction is None:
                 continue
             warning_key = (tuple(pair_key), direction)
@@ -4856,21 +5153,21 @@ class IdealThermodynamics:
 
     def _compiled_caloric_backend(self, phase: str):
         """Resolve compact pure caloric curves without replacing model corrections."""
-        names = ('enthalpy_ideal_gas', 'Cp_ideal_gas')
-        if phase == 'liquid':
-            names += ('enthalpy_liquid', 'Cp_liquid')
+        names = ("enthalpy_ideal_gas", "Cp_ideal_gas")
+        if phase == "liquid":
+            names += ("enthalpy_liquid", "Cp_liquid")
         if any(
-            getattr(getattr(self, name), '__func__', None)
+            getattr(getattr(self, name), "__func__", None)
             is not getattr(IdealThermodynamics, name)
             for name in names
         ):
             return None
-        cache = getattr(self, '_compiled_caloric_backends', None)
+        cache = getattr(self, "_compiled_caloric_backends", None)
         if cache is None:
             cache = self._compiled_caloric_backends = {}
         if phase not in cache:
             try:
-                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                     from ..compiled_ph import CompiledPHBackend
                 else:
                     from compiled_ph import CompiledPHBackend
@@ -4882,15 +5179,15 @@ class IdealThermodynamics:
     def _ph_caloric_evaluator(self, P, composition, phase):
         """Return a complete compact backend or an authoritative H/Cp callback."""
         if (
-            getattr(self.mixture_enthalpy, '__func__', None)
+            getattr(self.mixture_enthalpy, "__func__", None)
             is IdealThermodynamics.mixture_enthalpy
-            and getattr(self.mixture_Cp, '__func__', None)
+            and getattr(self.mixture_Cp, "__func__", None)
             is IdealThermodynamics.mixture_Cp
         ):
             backend = self._compiled_caloric_backend(phase)
             if backend is not None:
                 return backend, None
-        vapor_fraction = 1.0 if phase == 'vapor' else 0.0
+        vapor_fraction = 1.0 if phase == "vapor" else 0.0
 
         def evaluate(T):
             return (
@@ -4906,32 +5203,44 @@ class IdealThermodynamics:
         Phase equilibrium and permanent-solid mixtures remain the responsibility
         of the state solver; this method never guesses a homogeneous phase.
         """
-        phase = str(phase or '').strip().lower()
-        if phase == 'gas':
-            phase = 'vapor'
-        if phase not in {'vapor', 'liquid'}:
-            raise NotImplementedError('direct PH requires an explicit homogeneous phase')
-        if any(composition.get(comp, 0.0) > 0.0 for comp in self.permanent_solid_components):
-            raise NotImplementedError('direct PH does not include permanent solids')
+        phase = str(phase or "").strip().lower()
+        if phase == "gas":
+            phase = "vapor"
+        if phase not in {"vapor", "liquid"}:
+            raise NotImplementedError(
+                "direct PH requires an explicit homogeneous phase"
+            )
+        if any(
+            composition.get(comp, 0.0) > 0.0 for comp in self.permanent_solid_components
+        ):
+            raise NotImplementedError("direct PH does not include permanent solids")
         P, H = float(P), float(H)
         seed = T_REF if T_guess is None else float(T_guess)
         if not all(math.isfinite(value) for value in (P, H, seed)) or P <= 0.0:
-            raise ThermodynamicsError('PH requires finite inputs and positive pressure')
-        if any(not math.isfinite(float(z)) or float(z) < 0.0 for z in composition.values()):
-            raise ThermodynamicsError('PH composition must be finite and nonnegative')
-        if any(comp not in self.components and z > 0.0 for comp, z in composition.items()):
-            raise ThermodynamicsError('PH composition contains an unknown component')
+            raise ThermodynamicsError("PH requires finite inputs and positive pressure")
+        if any(
+            not math.isfinite(float(z)) or float(z) < 0.0 for z in composition.values()
+        ):
+            raise ThermodynamicsError("PH composition must be finite and nonnegative")
+        if any(
+            comp not in self.components and z > 0.0 for comp, z in composition.items()
+        ):
+            raise ThermodynamicsError("PH composition contains an unknown component")
         total = sum(composition.values())
         if not math.isfinite(total) or total <= 0.0:
-            raise ThermodynamicsError('PH composition must contain positive flow')
+            raise ThermodynamicsError("PH composition must contain positive flow")
         normalized = {comp: z / total for comp, z in composition.items() if z > 0.0}
         backend, evaluate = self._ph_caloric_evaluator(P, normalized, phase)
         if backend is not None:
             result = backend.solve_temperature(
-                P, H, [normalized.get(comp, 0.0) for comp in self.components], seed, phase,
+                P,
+                H,
+                [normalized.get(comp, 0.0) for comp in self.components],
+                seed,
+                phase,
             )
         else:
-            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..ph_solver import solve_caloric_temperature
             else:
                 from ph_solver import solve_caloric_temperature
@@ -4939,36 +5248,58 @@ class IdealThermodynamics:
         temperature, residual, _evaluations, converged = result
         if not converged:
             raise ThermodynamicsError(
-                f'homogeneous PH solve did not converge; residual {residual:.6g} kJ/kmol'
+                f"homogeneous PH solve did not converge; residual {residual:.6g} kJ/kmol"
             )
         # Preserve range/provenance reporting that full trial states used to do.
         for comp in normalized:
-            kernel = (self._ideal_gas_cp_kernel(comp) if phase == 'vapor'
-                      else self._liquid_cp_kernel(comp))
+            kernel = (
+                self._ideal_gas_cp_kernel(comp)
+                if phase == "vapor"
+                else self._liquid_cp_kernel(comp)
+            )
             if kernel is not None:
-                record = (self._record_ideal_gas_cp_kernel_range_use if phase == 'vapor'
-                          else self._record_liquid_cp_kernel_range_use)
+                record = (
+                    self._record_ideal_gas_cp_kernel_range_use
+                    if phase == "vapor"
+                    else self._record_liquid_cp_kernel_range_use
+                )
                 record(comp, T_REF, kernel)
                 record(comp, temperature, kernel)
         return float(temperature), float(residual)
 
-    def calculate_state_PH(self, P, H, F, composition, include=None, *, phase=None, T_guess=None):
+    def calculate_state_PH(
+        self, P, H, F, composition, include=None, *, phase=None, T_guess=None
+    ):
         temperature, _residual = self.temperature_at_PH(
-            P, H, composition, phase=phase, T_guess=T_guess,
+            P,
+            H,
+            composition,
+            phase=phase,
+            T_guess=T_guess,
         )
         return self.calculate_state(
-            temperature, P, F, composition, phase=str(phase).strip().lower(),
-            flash=False, include=include,
+            temperature,
+            P,
+            F,
+            composition,
+            phase=str(phase).strip().lower(),
+            flash=False,
+            include=include,
         )
 
-    def calculate_state(self, T: float, P: float, F: float,
-                       composition: dict[str, float],
-                       phase: Optional[str] = None,
-                       flash: bool = True,
-                       include: Optional[Union[str, Iterable[str]]] = None) -> StreamState:
+    def calculate_state(
+        self,
+        T: float,
+        P: float,
+        F: float,
+        composition: dict[str, float],
+        phase: Optional[str] = None,
+        flash: bool = True,
+        include: Optional[Union[str, Iterable[str]]] = None,
+    ) -> StreamState:
         """
         Calculate complete stream state.
-        
+
         Args:
             T: Temperature [K]
             P: Pressure [bar]
@@ -4979,7 +5310,7 @@ class IdealThermodynamics:
             include: Optional properties to calculate. Defaults to H, Cp, S,
                 and rho. Temporary probes can request only the properties they
                 consume, e.g. include=('H', 'Cp').
-            
+
         Returns:
             StreamState with all properties calculated
         """
@@ -4999,8 +5330,8 @@ class IdealThermodynamics:
         # Normalize composition
         total = sum(composition.values())
         if total > 0:
-            composition = {k: v/total for k, v in composition.items()}
-        
+            composition = {k: v / total for k, v in composition.items()}
+
         state = StreamState(
             T=T,
             P=P,
@@ -5008,25 +5339,25 @@ class IdealThermodynamics:
             composition=composition,
             fluid_phase_model=self.fluid_phase_model,
         )
-        
+
         # Do flash if requested, unless a phase is forced by the caller.
         if phase is not None:
             phase_lower = phase.lower()
-            if phase_lower in ('vapor', 'gas'):
+            if phase_lower in ("vapor", "gas"):
                 state.vapor_fraction = 1.0
                 state.liquid1_fraction = 0.0
                 state.y = dict(composition)
                 state.x = None
-                state.phase_status = 'forced_vapor'
-                state.phase_stability = 'explicit_phase_constraint'
-            elif phase_lower == 'liquid':
+                state.phase_status = "forced_vapor"
+                state.phase_stability = "explicit_phase_constraint"
+            elif phase_lower == "liquid":
                 state.vapor_fraction = 0.0
                 state.liquid1_fraction = 1.0
                 state.x = dict(composition)
                 state.y = None
                 state.x1 = dict(composition)
-                state.phase_status = 'forced_liquid'
-                state.phase_stability = 'explicit_phase_constraint'
+                state.phase_status = "forced_liquid"
+                state.phase_stability = "explicit_phase_constraint"
             else:
                 raise ThermodynamicsError(f"Unknown forced phase: {phase}")
         elif flash:
@@ -5037,7 +5368,7 @@ class IdealThermodynamics:
                     P,
                 )
             except Exception as exc:
-                if self.fluid_phase_model != 'VLE':
+                if self.fluid_phase_model != "VLE":
                     raise ThermodynamicsError(
                         f"{self.fluid_phase_model} fluid phase calculation failed"
                     ) from exc
@@ -5049,9 +5380,9 @@ class IdealThermodynamics:
                     y=dict(y or composition),
                     x1=dict(x or composition),
                     x2={},
-                    status='fallback_vle',
-                    stability='vle_fallback_after_error',
-                    extra={'error': str(exc)},
+                    status="fallback_vle",
+                    stability="vle_fallback_after_error",
+                    extra={"error": str(exc)},
                 )
             return self._apply_fluid_equilibrium_to_state(
                 state,
@@ -5066,27 +5397,27 @@ class IdealThermodynamics:
 
         # Calculate properties
         state.MW = self.mixture_MW(composition)
-        if 'Cp' in include_set:
+        if "Cp" in include_set:
             state.Cp = self.phase_weighted_mixture_Cp(
                 composition, T, state.vapor_fraction, state.x, state.y, P
             )
-        if 'H' in include_set:
+        if "H" in include_set:
             state.H = self.mixture_enthalpy(
                 composition, T, state.vapor_fraction, state.x, state.y, P
             )
-        if 'S' in include_set:
+        if "S" in include_set:
             state.S = self.mixture_entropy(
                 composition, T, state.vapor_fraction, state.x, state.y, P
             )
-        if 'rho' in include_set:
+        if "rho" in include_set:
             state.rho = self.mixture_molar_density(
                 composition, T, P, state.vapor_fraction, state.x, state.y
             )
-        if 'mu' in include_set:
+        if "mu" in include_set:
             state.mu = self.mixture_viscosity(
                 composition, T, P, state.vapor_fraction, state.x, state.y
             )
-        
+
         return state
 
     def _permanent_solid_state_at_PQ(
@@ -5163,7 +5494,8 @@ class IdealThermodynamics:
         total = sum(composition.values())
         normalized = (
             {component: value / total for component, value in composition.items()}
-            if total > 0.0 else dict(composition)
+            if total > 0.0
+            else dict(composition)
         )
         T, x, y = self.flash_PV(normalized, P, target)
         equilibrium = FluidPhaseEquilibrium(
@@ -5174,11 +5506,13 @@ class IdealThermodynamics:
             x1=dict(x or normalized),
             x2={},
             status=(
-                'single_vapor' if target >= 1.0 - 1.0e-10
-                else 'single_liquid' if target <= 1.0e-10
-                else 'ordinary_vle'
+                "single_vapor"
+                if target >= 1.0 - 1.0e-10
+                else "single_liquid"
+                if target <= 1.0e-10
+                else "ordinary_vle"
             ),
-            stability='vle_constrained',
+            stability="vle_constrained",
             extra={},
         )
         state = StreamState(

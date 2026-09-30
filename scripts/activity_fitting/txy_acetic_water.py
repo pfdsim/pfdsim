@@ -1,7 +1,7 @@
 """Generate T-xy diagram for acetic acid-water using UNIQUAC at 1 atm."""
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import matplotlib
 matplotlib.use('Agg')
@@ -60,6 +60,6 @@ if azeo:
                 arrowprops=dict(arrowstyle='->', lw=0.8))
 
 plt.tight_layout()
-out_path = Path(__file__).parent.parent / 'outputs' / 'txy_acetic_acid_water_uniquac.png'
+out_path = Path(__file__).resolve().parents[2] / 'outputs' / 'txy_acetic_acid_water_uniquac.png'
 plt.savefig(out_path, dpi=150)
 print(f"\nPlot saved to {out_path}")

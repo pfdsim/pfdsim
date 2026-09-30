@@ -18,7 +18,7 @@ import sys
 import numpy as np
 from scipy.optimize import least_squares
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics
@@ -31,7 +31,7 @@ WATER = "H2O"
 
 def table1_data() -> list[dict]:
     """Reuse the carefully transcribed Table 1 blocks without executing its script."""
-    source = (ROOT / "scripts" / "fit_acrylic_vdm.py").read_text()
+    source = (ROOT / "scripts/activity_fitting/fit_acrylic_vdm.py").read_text()
     tree = ast.parse(source)
     blocks = None
     for node in tree.body:
