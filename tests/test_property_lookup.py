@@ -883,6 +883,76 @@ class PropertyLookupCacheTests(unittest.TestCase):
         self.assertEqual(props.source, "textbook")
         self.assertEqual(props.name, "iso-Butanol")
         self.assertEqual(props.CAS, "78-83-1")
+        self.assertAlmostEqual(props.MW, 74.12, delta=0.005)
+        self.assertEqual(props.property_sources["MW"]["method"], "rdkit_molwt_from_smiles")
+
+    def test_pfd_missing_textbook_mw_keeps_isomers_distinct(self):
+        components = [
+            ("ISO", "isobutanol", "78-83-1"),
+            ("NBU", "butanol", "71-36-3"),
+            ("SEC", "2-butanol", "78-92-2"),
+        ]
+        for ordered in (components, list(reversed(components))):
+            with self.subTest(order=[c[0] for c in ordered]):
+                definitions = "\n".join(f"    {symbol} | {name}" for symbol, name, _ in ordered)
+                sim = Simulator.from_string(
+                    "PROCESS: Butanol identity and mass\nVERSION: 1.0\n"
+                    "ONLINE_LOOKUP: false\nTHERMO_METHOD: NRTL\n"
+                    f"COMPONENTS:\n{definitions}\n"
+                    "STREAM Feed : FEED -> PRODUCT\n"
+                    "    T = 25 [C]\n    P = 1 [bar]\n    F = 1 [kmol/h]\n"
+                    "    x = ISO:0.25, NBU:0.50, SEC:0.25\n"
+                ).initialize()
+                for symbol, _, cas in components:
+                    props = sim.thermo.props[symbol]
+                    self.assertEqual(props.CAS, cas)
+                    self.assertEqual(sim.thermo.component_cas[symbol], cas)
+                    self.assertAlmostEqual(props.MW, 74.12, delta=0.005)
+                result = sim.run()
+                self.assertTrue(result.converged)
+                self.assertAlmostEqual(result.streams["Feed"].MW, 74.12, delta=0.005)
+
+    def test_pfd_structure_fallback_preserves_known_specific_cas(self):
+        sim = Simulator.from_string(
+            "PROCESS: Specific alcohol identities\nVERSION: 1.0\n"
+            "ONLINE_LOOKUP: false\nTHERMO_METHOD: NRTL\n"
+            "COMPONENTS:\n    PEN | 1-pentanol\n    HEX | 1-hexanol\n"
+            "STREAM Feed : FEED -> PRODUCT\n"
+            "    T = 25 [C]\n    P = 1 [bar]\n    F = 1 [kmol/h]\n"
+            "    x = PEN:0.5, HEX:0.5\n"
+        ).initialize()
+        for symbol, cas, mw in (("PEN", "71-41-0", 88.15), ("HEX", "111-27-3", 102.177)):
+            self.assertEqual(sim.thermo.props[symbol].CAS, cas)
+            self.assertEqual(sim.thermo.component_cas[symbol], cas)
+            self.assertAlmostEqual(sim.thermo.props[symbol].MW, mw, delta=0.005)
+
+    def test_pfd_valid_mw_override_survives_textbook_hydration(self):
+        sim = Simulator.from_string(
+            "PROCESS: Explicit molecular weight\nVERSION: 1.0\n"
+            "ONLINE_LOOKUP: false\nTHERMO_METHOD: IDEAL\n"
+            "COMPONENTS:\n    ISO | isobutanol | MW=80\n"
+            "STREAM Feed : FEED -> PRODUCT\n"
+            "    T = 25 [C]\n    P = 1 [bar]\n    F = 1 [kmol/h]\n"
+            "    x = ISO:1\n"
+        ).initialize()
+        self.assertEqual(sim.thermo.props["ISO"].MW, 80.0)
+        self.assertEqual(sim.thermo.props["ISO"].property_sources["MW"]["method"], "pfd_component_override")
+
+    def test_hydration_does_not_assign_isomer_cas_from_a_table_formula(self):
+        resolver = types.SimpleNamespace(
+            resolve_melting_point=lambda *a, **kw: None,
+            resolve_triple_point=lambda *a, **kw: {},
+            resolve_boiling_point=lambda *a, **kw: None,
+            resolve_critical_properties=lambda *a, **kw: {},
+            resolve_hvap=lambda *a, **kw: None,
+            resolve_hfus=lambda *a, **kw: None,
+            resolve_formation_properties=lambda *a, **kw: {},
+        )
+        database = ChemicalDatabase(enable_online=False)
+        props = ChemicalProperties(symbol="C6H14", name="unrecognized hexane isomer", formula="C6H14", MW=86.18)
+        with patch("property_resolver.get_property_resolver", return_value=resolver):
+            database._hydrate_properties(props, allow_online=False)
+        self.assertEqual(props.CAS, "")
 
     def test_database_supplements_textbook_hit_with_antoine_table(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -2680,6 +2680,13 @@ class ChemicalDatabase:
     ) -> bool:
         if getattr(props, attr, None) is None:
             return True
+        if attr == "MW":
+            try:
+                molecular_weight = float(props.MW)
+            except (TypeError, ValueError):
+                return True
+            if not math.isfinite(molecular_weight) or molecular_weight <= 0.0:
+                return True
         if not self._stored_source_is_estimated(props, attr):
             return False
         result_source = str(getattr(result, "source", "") or "").lower()
@@ -2915,13 +2922,33 @@ class ChemicalDatabase:
         """
         try:
             if __package__ and __package__.split(".", 1)[0] == "pfdsim":
-                from .property_resolver import get_property_resolver
+                from .property_resolver import get_property_resolver, PropertyResolutionError
+                from .interaction_parameters import cas_for_component
             else:
-                from property_resolver import get_property_resolver
+                from property_resolver import get_property_resolver, PropertyResolutionError
+                from interaction_parameters import cas_for_component
         except ImportError:
             return props
 
         resolver = get_property_resolver()
+        if not props.CAS:
+            # Use exactly the same conservative identity lookup as interaction
+            # tables, for the explicit name/identifier only. A table's formula
+            # must not replace an unrecognized name with another structural isomer.
+            props.CAS = cas_for_component(props.name or props.symbol) or ""
+        if self._should_replace_scalar(props, "MW", None):
+            try:
+                molecular_weight = resolver.resolve_molecular_weight(
+                    props.name or props.symbol,
+                    self._resolver_props_dict(props),
+                    allow_online=allow_online,
+                )
+            except PropertyResolutionError:
+                # Partial records may still supply other useful properties.
+                # The resolver reports an unavailable mass rather than inventing it.
+                pass
+            else:
+                self._set_missing_scalar(props, "MW", molecular_weight)
         self._discard_stale_coupled_values_after_pfd_overrides(props)
         has_pfd_psat_override = self._has_pfd_psat_override(props)
 

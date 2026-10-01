@@ -447,18 +447,15 @@ class Simulator:
                 from .compound_identity import (
                     get_compound_identity_resolver,
                     looks_like_formula,
-                    parse_formula_counts,
                 )
             else:
                 from compound_identity import (
                     get_compound_identity_resolver,
                     looks_like_formula,
-                    parse_formula_counts,
                 )
         except ImportError:
             get_compound_identity_resolver = None
             looks_like_formula = lambda _value: False
-            parse_formula_counts = lambda _value: None
 
         pfd_property_attrs = (
             ("formula", "formula"),
@@ -656,20 +653,6 @@ class Simulator:
                 fetch_online=fetch_online,
             )
 
-        def formula_molecular_weight(formula: str) -> float | None:
-            counts = parse_formula_counts(formula)
-            if not counts:
-                return None
-            try:
-                from chemicals.elements import periodic_table
-
-                return sum(
-                    float(periodic_table[element].MW) * count
-                    for element, count in counts.items()
-                )
-            except (ImportError, KeyError, TypeError, ValueError):
-                return None
-
         # Resolve components first so local/online lookup can fill gaps, then
         # apply PFD-provided values before thermodynamics constructors bind
         # critical properties, CAS identities, or UNIQUAC r/q parameters.
@@ -710,7 +693,16 @@ class Simulator:
                 inferred_formula = pfd_comp.identifier if formula_identifier else None
                 molecular_weight = pfd_comp.molecular_weight
                 if molecular_weight is None and inferred_formula:
-                    molecular_weight = formula_molecular_weight(inferred_formula)
+                    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+                        from .property_resolver import get_property_resolver, PropertyResolutionError
+                    else:
+                        from property_resolver import get_property_resolver, PropertyResolutionError
+                    try:
+                        molecular_weight = get_property_resolver().resolve_molecular_weight(
+                            inferred_formula, {"formula": inferred_formula}, allow_online=False
+                        ).value
+                    except PropertyResolutionError:
+                        molecular_weight = None
                 if molecular_weight is None:
                     raise SimulationError(
                         f"Component '{pfd_comp.symbol}' lookup identifier "

@@ -243,18 +243,52 @@ class PropertyResolverBase:
             props: Optional[Dict[str, Any]] = None,
             allow_online: bool = True,
         ) -> PropertyResolutionResult:
-            """Resolve molecular weight, deriving it from the shared SMILES path when needed."""
+            """Resolve MW from a supplied value, resolved structure, or known formula."""
             props = self._coerce_props(identifier, props, allow_online=allow_online)
             provided = self._source_result_for_value(props, 'MW', units='g/mol')
-            if provided and provided.value is not None:
+            try:
+                provided_mw = float(provided.value) if provided else 0.0
+            except (TypeError, ValueError):
+                provided_mw = 0.0
+            if math.isfinite(provided_mw) and provided_mw > 0.0:
                 return provided
 
-            smiles = self._resolve_smiles_result(
-                identifier,
-                props,
-                allow_online=allow_online,
+            # Missing table values use zero; they must not constrain structure
+            # matching or win over the mass calculated from a resolved graph.
+            props = dict(props)
+            props.pop('MW', None)
+
+            if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                from ..compound_identity import looks_like_formula, parse_formula_counts
+            else:
+                from compound_identity import looks_like_formula, parse_formula_counts
+            formula_only = looks_like_formula(identifier) and not any(
+                props.get(key) for key in ('name', 'CAS', 'cas', 'smiles')
+            )
+            # Formula-only requests calculate mass without choosing or caching
+            # a representative isomer's structure.
+            smiles = None if formula_only else self._resolve_smiles_result(
+                identifier, props, allow_online=allow_online,
             )
             if not smiles or not smiles.value:
+                # A formula determines mass even when it cannot identify an
+                # isomer. This is also the PFD custom-component calculation.
+                formula = props.get('formula') or identifier
+                counts = parse_formula_counts(formula)
+                if counts:
+                    from chemicals.elements import periodic_table
+                    molecular_weight = sum(
+                        float(periodic_table[element].MW) * count
+                        for element, count in counts.items()
+                    )
+                    if math.isfinite(molecular_weight) and molecular_weight > 0.0:
+                        return PropertyResolutionResult(
+                            value=molecular_weight,
+                            source='calculated',
+                            method='molecular_weight_from_formula',
+                            quality=1.0,
+                            notes=f"Calculated formula mass for {formula}; no compound identity inferred",
+                        )
                 raise PropertyResolutionError(f"Cannot resolve molecular weight for {identifier!r}")
             try:
                 from rdkit import Chem
@@ -268,8 +302,13 @@ class PropertyResolverBase:
                 raise PropertyResolutionError(
                     f"Cannot parse resolved SMILES for molecular weight of {identifier!r}"
                 )
+            molecular_weight = float(Descriptors.MolWt(mol))
+            if not math.isfinite(molecular_weight) or molecular_weight <= 0.0:
+                raise PropertyResolutionError(
+                    f"Cannot resolve a positive molecular weight for {identifier!r}"
+                )
             return PropertyResolutionResult(
-                value=float(Descriptors.MolWt(mol)),
+                value=molecular_weight,
                 source='calculated',
                 method='rdkit_molwt_from_smiles',
                 quality=smiles.quality,

@@ -41,6 +41,14 @@ class CompoundIdentityFormulaTests(unittest.TestCase):
         self.assertEqual(resolver.resolve_cas('N-methylpyrrolidone'), '872-50-4')
         self.assertIsNone(resolver.resolve_cas('C3H6O'))
 
+    def test_specific_alcohol_cas_never_promotes_ambiguous_names(self):
+        resolver = get_compound_identity_resolver()
+        for name in ('pentanol', 'hexanol', 'C5H12O', 'C6H14O'):
+            self.assertIsNone(resolver.resolve_cas(name), name)
+        self.assertEqual(resolver.resolve_cas('1-pentanol'), '71-41-0')
+        self.assertEqual(resolver.resolve_cas('1-hexanol'), '111-27-3')
+        self.assertNotEqual(resolver.resolve_cas('1-pentanol'), resolver.resolve_cas('2-pentanol'))
+
 
 if __name__ == '__main__':
     unittest.main()

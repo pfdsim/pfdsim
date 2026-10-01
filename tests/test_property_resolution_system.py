@@ -35,6 +35,55 @@ class PropertyResolutionSystemTests(unittest.TestCase):
             f'{actual!r} != {expected!r}',
         )
 
+    def test_molecular_weight_rejects_invalid_scalars_and_uses_existing_structure_route(self):
+        resolver = PropertyResolver()
+        structure = PropertyResolutionResult('CCO', 'provided', 'test_structure', 1.0)
+        for value in (0.0, -1.0, float('nan'), float('inf'), None, 'invalid'):
+            with self.subTest(value=value), patch.object(resolver, '_resolve_smiles_result', return_value=structure) as resolve:
+                mw = resolver.resolve_molecular_weight('ethanol', {'MW': value}, allow_online=False)
+                self.assertAlmostEqual(mw.value, 46.07, delta=0.005)
+                self.assertNotIn('MW', resolve.call_args.args[1])
+
+    def test_molecular_weight_preserves_valid_supplied_provenance(self):
+        resolver = PropertyResolver()
+        props = {'MW': 80.0, 'property_sources': {'MW': {
+            'source': 'provided', 'method': 'pfd_component_override', 'quality': 1.0,
+        }}}
+        with patch.object(resolver, '_resolve_smiles_result', side_effect=AssertionError('provided mass needs no structure lookup')):
+            mw = resolver.resolve_molecular_weight('custom component', props, allow_online=False)
+        self.assertEqual(mw.value, 80.0)
+        self.assertEqual(mw.method, 'pfd_component_override')
+
+    def test_molecular_weight_rejects_zero_mass_structures(self):
+        resolver = PropertyResolver()
+        structure = PropertyResolutionResult('*', 'provided', 'test_structure', 1.0)
+        with patch.object(resolver, '_resolve_smiles_result', return_value=structure):
+            with self.assertRaisesRegex(PropertyResolutionError, 'positive molecular weight'):
+                resolver.resolve_molecular_weight('dummy atom', {'MW': 0}, allow_online=False)
+
+    def test_molecular_weight_uses_formula_when_no_structure_is_available(self):
+        resolver = PropertyResolver()
+        with patch.object(resolver, '_resolve_smiles_result', return_value=None):
+            mw = resolver.resolve_molecular_weight('unidentified butanol isomer', {'MW': 0, 'formula': 'C4H10O'}, allow_online=False)
+        self.assertAlmostEqual(mw.value, 74.12, delta=0.005)
+        self.assertEqual(mw.method, 'molecular_weight_from_formula')
+
+    def test_formula_mass_does_not_select_an_isomer_structure(self):
+        resolver = PropertyResolver()
+        with patch.object(resolver, '_resolve_smiles_result', side_effect=AssertionError('formula mass must not choose an isomer')):
+            mw = resolver.resolve_molecular_weight('C4H10O', {'formula': 'C4H10O'}, allow_online=False)
+        self.assertAlmostEqual(mw.value, 74.12, delta=0.005)
+        self.assertEqual(mw.method, 'molecular_weight_from_formula')
+
+    def test_molecular_weight_prefers_isotopic_structure_over_plain_formula(self):
+        resolver = PropertyResolver()
+        structure = PropertyResolutionResult('[13CH3]CO', 'provided', 'test_structure', 1.0)
+        with patch.object(resolver, '_resolve_smiles_result', return_value=structure):
+            mw = resolver.resolve_molecular_weight('labelled ethanol', {'MW': 0, 'formula': 'C2H6O'}, allow_online=False)
+        self.assertGreater(mw.value, 47.0)
+        self.assertLess(mw.value, 48.0)
+        self.assertEqual(mw.method, 'rdkit_molwt_from_smiles')
+
     def write_effective_criticals_db(self, directory, rows):
         path = Path(directory, 'effective_criticals.sqlite')
         with sqlite3.connect(path) as connection:
