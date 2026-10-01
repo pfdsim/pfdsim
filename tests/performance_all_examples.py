@@ -69,7 +69,7 @@ PER_EXAMPLE_RELATIVE_REGRESSION = {
 # enough absolute slack to avoid flagging scheduling noise as a regression.
 MIN_EXAMPLE_SLOWDOWN_SECONDS = 0.03
 
-BASELINE_WALL_SECONDS = 15.5
+BASELINE_WALL_SECONDS = 18.0
 BASELINE_EXAMPLE_SECONDS = {
     '3methylpyridine_ether_extraction_recycle.pfd': 1.445,
     'adaptive_spinodal_water_toluene.pfd': 0.010,
@@ -80,6 +80,7 @@ BASELINE_EXAMPLE_SECONDS = {
     'benzene_toluene_20_stage_distillation_nrtl.pfd': 0.086,
     'biosteam_mesh_hydrocarbon_distillation.pfd': 1.113,
     'butanol_water_lle.pfd': 0.007,
+    'competitive_13x_adsorption.pfd': 0.055,
     'cryogenic_air_separation_rks_bm.pfd': 0.264,
     'cstr_pfr_comparison.pfd': 0.090,
     'dcm_3a_molecular_sieve_drying.pfd': 0.008,
@@ -107,6 +108,7 @@ BASELINE_EXAMPLE_SECONDS = {
     'mixed_acid_dehydration_uniquac_vdm.pfd': 0.744,
     'permanent_solid_global_vlle_flash.pfd': 0.019,
     'permanent_solid_slurry_operations.pfd': 0.003,
+    'propane_propylene_4a_adsorption.pfd': 1.973,
     'pyridine_ether_extraction.pfd': 0.197,
     'rk_thermodynamics_pfr.pfd': 0.129,
     'simple_flash.pfd': 0.005,
