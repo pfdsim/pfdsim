@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import closing, contextmanager
 import os
 import socket
 import sqlite3
@@ -10,7 +11,7 @@ import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, Optional
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -77,10 +78,13 @@ class SQLiteLeaseLock:
         self._heartbeat_thread: Optional[threading.Thread] = None
         self._ensure_schema()
 
-    def _connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.path, timeout=1.0)
-        connection.execute("PRAGMA busy_timeout = 1000")
-        return connection
+    @contextmanager
+    def _connect(self) -> Iterator[sqlite3.Connection]:
+        """Close lease connections after committing or rolling back."""
+        with closing(sqlite3.connect(self.path, timeout=1.0)) as connection:
+            connection.execute("PRAGMA busy_timeout = 1000")
+            with connection:
+                yield connection
 
     def _ensure_schema(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)

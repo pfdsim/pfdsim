@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import closing, contextmanager
 import json
 import re
 import sqlite3
@@ -134,13 +135,16 @@ class SQLiteJSONCache:
             raise ValueError("Runtime cache namespace cannot be empty")
         self._ensure_schema()
 
-    def _connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.path, timeout=30.0)
-        connection.row_factory = sqlite3.Row
-        connection.execute("PRAGMA busy_timeout = 30000")
-        connection.execute("PRAGMA journal_mode = WAL")
-        connection.execute("PRAGMA synchronous = NORMAL")
-        return connection
+    @contextmanager
+    def _connect(self) -> Iterator[sqlite3.Connection]:
+        """Commit/roll back each operation, then close its connection."""
+        with closing(sqlite3.connect(self.path, timeout=30.0)) as connection:
+            connection.row_factory = sqlite3.Row
+            connection.execute("PRAGMA busy_timeout = 30000")
+            connection.execute("PRAGMA journal_mode = WAL")
+            connection.execute("PRAGMA synchronous = NORMAL")
+            with connection:
+                yield connection
 
     def _ensure_schema(self) -> None:
         normalized = self.path.absolute()

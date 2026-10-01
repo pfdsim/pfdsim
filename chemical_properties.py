@@ -21,6 +21,7 @@ import warnings as warnings_module
 import tempfile
 import uuid
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
@@ -2079,7 +2080,7 @@ class ChemicalDatabase:
     def _ensure_smiles_cache(self) -> None:
         path = Path(self._smiles_cache_path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        with sqlite3.connect(path) as conn:
+        with closing(sqlite3.connect(path)) as conn, conn:
             conn.execute("PRAGMA busy_timeout = 30000")
             version = int(conn.execute("PRAGMA user_version").fetchone()[0])
             if version == self._SMILES_CACHE_SCHEMA_VERSION:
@@ -2131,7 +2132,7 @@ class ChemicalDatabase:
         if key in memo:
             return True
         self._ensure_smiles_cache()
-        with sqlite3.connect(Path(self._smiles_cache_path)) as conn:
+        with closing(sqlite3.connect(Path(self._smiles_cache_path))) as conn, conn:
             row = conn.execute(
                 """
                 SELECT opsin_version FROM opsin_negative_cache
@@ -2154,7 +2155,7 @@ class ChemicalDatabase:
             return
         self._ensure_smiles_cache()
         try:
-            with sqlite3.connect(Path(self._smiles_cache_path)) as conn:
+            with closing(sqlite3.connect(Path(self._smiles_cache_path))) as conn, conn:
                 conn.execute(
                     """
                     INSERT INTO opsin_negative_cache (identifier, opsin_version)
@@ -2172,7 +2173,7 @@ class ChemicalDatabase:
         if not key:
             return None
         self._ensure_smiles_cache()
-        with sqlite3.connect(Path(self._smiles_cache_path)) as conn:
+        with closing(sqlite3.connect(Path(self._smiles_cache_path))) as conn, conn:
             row = conn.execute(
                 """
                 SELECT smiles, source, quality, notes
@@ -2211,7 +2212,7 @@ class ChemicalDatabase:
         if not keys:
             return
         self._ensure_smiles_cache()
-        with sqlite3.connect(Path(self._smiles_cache_path)) as conn:
+        with closing(sqlite3.connect(Path(self._smiles_cache_path))) as conn, conn:
             conn.executemany(
                 """
                 INSERT INTO smiles_cache
