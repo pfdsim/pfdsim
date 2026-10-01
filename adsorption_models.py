@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 from scipy.integrate import quad
 from scipy.optimize import brentq
-from scipy.special import expit, logsumexp
+from scipy.special import expit
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .kinetic_models import SafeRateExpression
@@ -32,6 +32,14 @@ GSTA_3A_WATER = {
 
 class IsothermRangeError(ValueError):
     """A requested equilibrium lies outside the numerically representable range."""
+
+
+def _logsumexp(values):
+    """Stable scalar reduction for the small real vectors used by IAST."""
+    largest = max(values)
+    if not math.isfinite(largest):
+        return largest
+    return largest + math.log(math.fsum(math.exp(v-largest) for v in values))
 
 
 def positive(value, name, *, zero=False):
@@ -69,7 +77,8 @@ class PureIsotherm:
             )
         elif self.model == 'gsta_3a_water':
             self.qmax = GSTA_3A_WATER['qmax']
-            self.logk = np.array(GSTA_3A_WATER['dS']) / R - np.array(GSTA_3A_WATER['dH']) / (R*self.T)
+            self.logk = tuple(s/R-h/(R*self.T)
+                             for s,h in zip(GSTA_3A_WATER['dS'],GSTA_3A_WATER['dH']))
         elif self.model in {'langmuir', 'dual_site_langmuir', 'sips', 'toth', 'henry', 'freundlich'}:
             required = {'henry':('k',), 'freundlich':('k','n'),
                         'langmuir':('qmax','b'), 'dual_site_langmuir':('qmax','b','qmax2','b2'),
@@ -106,8 +115,8 @@ class PureIsotherm:
         if f == 0:
             return 0.0
         if self.model == 'gsta_3a_water':
-            logs = np.r_[0.0, self.logk + np.arange(1, 5)*math.log(f)]
-            return self.qmax / 4 * float(np.dot(np.arange(5), np.exp(logs-logsumexp(logs))))
+            weights = self._gsta_weights(f)
+            return self.qmax/4 * math.fsum(n*w for n,w in enumerate(weights))
         if self.model == 'henry':
             return self.k * f
         if self.model == 'freundlich':
@@ -122,13 +131,26 @@ class PureIsotherm:
             q += self.qmax2 * expit(math.log(self.b2)+math.log(f))
         return float(q)
 
+    def _gsta_logs(self, f):
+        logf = math.log(f)
+        return (0., *(k+n*logf for n,k in enumerate(self.logk, 1)))
+
+    def _gsta_weights(self, f):
+        logs = self._gsta_logs(f)
+        normalizer = _logsumexp(logs)
+        return tuple(math.exp(v-normalizer) for v in logs)
+
     def spreading(self, f):
         """Integral from zero to f of q(u)/u du, in mol/kg."""
         if f <= 0:
             return 0.0
         if self.model == 'gsta_3a_water':
-            log_terms = logsumexp(self.logk+np.arange(1,5)*math.log(f))
-            return self.qmax/4 * float(np.logaddexp(0.,log_terms))
+            log_terms = _logsumexp(self._gsta_logs(f)[1:])
+            # Preserve trace spreading potentials when 1 + sum(terms) rounds
+            # to one; also avoid exponent overflow at large fugacities.
+            softplus = (math.log1p(math.exp(log_terms)) if log_terms <= 0
+                        else log_terms + math.log1p(math.exp(-log_terms)))
+            return self.qmax/4 * softplus
         if self.model == 'henry':
             return self.loading(f)
         if self.model == 'freundlich':
@@ -158,14 +180,52 @@ class PureIsotherm:
             n = self.n if self.model == 'sips' else 1.0
             a = spreading*n/self.qmax
             return (a + math.log(-math.expm1(-a)))/n - math.log(self.b)
+        root = self._invert_log_fugacity(
+            spreading, self.spreading, getattr(self, '_spreading_inverse_guess', 0.)
+        )
+        # A guess only: every subsequent query is bracketed and solved anew.
+        self._spreading_inverse_guess = root
+        return root
+
+    @staticmethod
+    def _invert_log_fugacity(value, evaluate, guess):
+        """Bracket near the previous solution instead of spanning 740 log units."""
         def residual(logf):
-            return self.spreading(math.exp(logf)) - spreading
-        low, high = -690., 50.
-        while residual(high) < 0 and high < 690:
-            high = min(high+50, 690.)
-        if residual(low) > 0 or residual(high) < 0:
-            raise IsothermRangeError('Cannot invert isotherm spreading integral')
+            return evaluate(math.exp(logf)) - value
+        center = min(max(guess, -690.), 690.)
+        at_center = residual(center)
+        if at_center == 0:
+            return center
+        low = high = center
+        step = 1.
+        if at_center < 0:
+            while high < 690.:
+                high = min(center+step, 690.)
+                if residual(high) >= 0:
+                    break
+                low = high
+                step *= 2
+            else:
+                raise IsothermRangeError('Cannot invert isotherm in representable fugacity range')
+        else:
+            while low > -690.:
+                low = max(center-step, -690.)
+                if residual(low) <= 0:
+                    break
+                high = low
+                step *= 2
+            else:
+                raise IsothermRangeError('Cannot invert isotherm in representable fugacity range')
         return brentq(residual, low, high, xtol=1e-11)
+
+    def log_fugacity_at_loading(self, loading):
+        """Invert a pure loading directly, without an outer spreading solve."""
+        positive(loading, 'Adsorbed loading')
+        if self.model in {'langmuir', 'sips', 'toth', 'gsta_3a_water', 'dual_site_langmuir'}:
+            capacity = self.qmax + (self.qmax2 if self.model == 'dual_site_langmuir' else 0.)
+            if loading >= capacity:
+                raise IsothermRangeError('Adsorbed inventory reaches or exceeds the pure isotherm capacity')
+        return self._invert_log_fugacity(loading, self.loading, 0.)
 
     def validate_range(self, upper):
         """Reject negative/decreasing custom curves before equilibrium solving."""
@@ -201,9 +261,8 @@ class PureIsotherm:
         if f <= 0:
             return 0.0
         if self.model == 'gsta_3a_water':
-            logs = np.r_[0., self.logk+np.arange(1,5)*math.log(f)]
-            weights = np.exp(logs-logsumexp(logs))
-            return self.qmax/4 * float(np.dot(weights[1:], GSTA_3A_WATER['dH']))
+            weights = self._gsta_weights(f)
+            return self.qmax/4 * math.fsum(w*h for w,h in zip(weights[1:],GSTA_3A_WATER['dH']))
         if self.model == 'dual_site_langmuir':
             first = self.qmax*expit(math.log(self.b*f))
             second = self.qmax2*expit(math.log(self.b2*f))
@@ -248,7 +307,7 @@ def iast(isotherms, fugacities):
     def state(logpi):
         pi = math.exp(logpi)
         logf0 = np.array([isotherms[c].log_fugacity_at_spreading(pi) for c in active])
-        return logf0, float(logsumexp(logf-logf0))
+        return logf0, _logsumexp(logf-logf0)
     low = math.log(max(pure_spread))
     high = low + math.log(len(active)+1)
     while state(high)[1] > 0:
@@ -270,6 +329,10 @@ def iast_from_loadings(isotherms, loadings):
     active = [c for c in isotherms if loadings.get(c,0.) > 0]
     if not active:
         return {}, 0., {}
+    if len(active) == 1:
+        c = active[0]
+        f = math.exp(isotherms[c].log_fugacity_at_loading(loadings[c]))
+        return {c:f}, isotherms[c].spreading(f), {c:f}
     total = sum(loadings[c] for c in active)
     x = {c:loadings[c]/total for c in active}
     def at(logpi):

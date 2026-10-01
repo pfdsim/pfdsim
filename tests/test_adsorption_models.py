@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pytest
 
-from adsorption_models import (GSTA_3A_WATER, PureIsotherm, iast,
+from adsorption_models import (GSTA_3A_WATER, IsothermRangeError, PureIsotherm, iast,
                                iast_enthalpy, iast_from_loadings, iast_isosteric_heats, R)
 
 
@@ -56,6 +56,59 @@ def test_gsta_3a_water_retains_existing_curve():
                      for n,(h,s) in enumerate(zip(GSTA_3A_WATER['dH'],GSTA_3A_WATER['dS']),1)]
             old = .21/4*sum(n*x for n,x in enumerate(terms,1))/(1+sum(terms))
             assert iso.loading(f)*18.01528/1000 == pytest.approx(old,rel=1e-12)
+
+
+@pytest.mark.parametrize('model', ['langmuir', 'dual_site_langmuir', 'sips',
+                                  'toth', 'henry', 'freundlich', 'gsta_3a_water', 'custom'])
+def test_pure_inventory_inverse_and_isosteric_heat(model):
+    setting = {'model':model, 'qmax':3., 'b':2., 'qmax2':1., 'b2':.1,
+               'k':2., 'n':.7, 'heat':25000., 'heat2':12000., 'T_ref':310.,
+               'expression':'3*2*exp(25000/R*(1/T-1/310))*f/(1+2*exp(25000/R*(1/T-1/310))*f)'}
+    iso = PureIsotherm(setting, 310.)
+    for f in (1e-12, .03, 2.):
+        inventory = {'A':iso.loading(f), 'absent':0.}
+        models = {'A':iso, 'absent':PureIsotherm({'qmax':1., 'b':1.}, 310.)}
+        recovered, pi, f0 = iast_from_loadings(models, inventory)
+        assert recovered['A'] == pytest.approx(f, rel=2e-8)
+        assert f0 == recovered
+        assert pi == pytest.approx(iso.spreading(f), rel=2e-8)
+        # Independent implicit derivative at fixed pure inventory:
+        # Qst = -RT^2 (partial q/partial T)/(partial q/partial ln f).
+        hT, hlogf = .001, 1e-4
+        dq_dT = (PureIsotherm(setting,310+hT).loading(f)
+                 - PureIsotherm(setting,310-hT).loading(f))/(2*hT)
+        dq_dlogf = (iso.loading(f*math.exp(hlogf))
+                    - iso.loading(f*math.exp(-hlogf)))/(2*hlogf)
+        expected = -R*310**2*dq_dT/dq_dlogf
+        assert iast_isosteric_heats(models, inventory)['A'] == pytest.approx(expected, rel=2e-6)
+
+
+def test_gsta_trace_spreading_remains_positive_and_has_correct_derivative():
+    iso = PureIsotherm(GSTA_3A_WATER, 450.)
+    for f in (1e-40, 1e-30, 1e-20):
+        h = 1e-4
+        assert iso.spreading(f) > 0
+        derivative = (iso.spreading(f*math.exp(h))-iso.spreading(f*math.exp(-h)))/(2*h)
+        assert derivative == pytest.approx(iso.loading(f), rel=1e-7, abs=0.)
+
+
+@pytest.mark.parametrize('model', ['langmuir', 'dual_site_langmuir', 'sips', 'toth', 'gsta_3a_water'])
+def test_pure_inventory_rejects_unreachable_capacity(model):
+    iso = PureIsotherm({'model':model, 'qmax':3., 'b':2., 'qmax2':1., 'b2':.1, 'n':.7}, 310.)
+    capacity = iso.qmax + (iso.qmax2 if model == 'dual_site_langmuir' else 0.)
+    for inventory in (capacity, capacity*1.1):
+        with pytest.raises(IsothermRangeError, match='capacity'):
+            iast_from_loadings({'A':iso}, {'A':inventory})
+
+
+@pytest.mark.parametrize('model', ['dual_site_langmuir', 'toth', 'gsta_3a_water', 'custom'])
+def test_spreading_inverse_guess_handles_large_changes_in_query_order(model):
+    iso = PureIsotherm({'model':model, 'qmax':3., 'b':2., 'qmax2':1., 'b2':.1,
+                       'n':.7, 'expression':'3*2*f/(1+2*f)'}, 310.)
+    for f in (1e-25, 1e15, .1, 1e-20, 1e6):
+        pi = iso.spreading(f)
+        recovered = math.exp(iso.log_fugacity_at_spreading(pi))
+        assert recovered == pytest.approx(f, rel=1e-7, abs=0.)
 
 
 @pytest.mark.parametrize('expression', ['__import__("os")','f.__class__','[f for f in [1]]','open("file")','f[0]'])
