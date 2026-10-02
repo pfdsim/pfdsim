@@ -11,14 +11,14 @@ COMPONENTS:
     CH4 | Methane | MW=16.04246
     N2 | Nitrogen | MW=28.0134
 
-STREAM Feed : FEED -> MS.feed
+STREAM Feed : -> MS.feed
     T = 313 [K]
     P = 1 [bar]
     F = 1 [kmol/h]
     x = propane:0.85, propylene:0.10, CO2:0.03, CH4:0.01, N2:0.01
 
-STREAM Product : MS.product -> PRODUCT
-STREAM Adsorbate : MS.adsorbate -> PRODUCT
+STREAM Product : MS.product
+STREAM Adsorbate : MS.adsorbate
 
 UNIT MS : MolecularSieveDryer
     sieve_type = 4A

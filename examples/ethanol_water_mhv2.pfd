@@ -7,13 +7,13 @@ COMPONENTS:
     ETOH | Ethanol
     H2O | Water
 
-STREAM Feed : FEED -> FLASH-1.in
+STREAM Feed : -> FLASH-1.in
     T = 355 [K]
     P = 1 [bar]
     F = 100 [kmol/h]
     x = ETOH:0.5, H2O:0.5
-STREAM Vapor : FLASH-1.vap -> PRODUCT
-STREAM Liquid : FLASH-1.liq -> PRODUCT
+STREAM Vapor : FLASH-1.vap
+STREAM Liquid : FLASH-1.liq
 
 UNIT FLASH-1 : Flash
     T = 355 [K]

@@ -8,35 +8,29 @@ COMPONENTS:
     butanol | 1-Butanol | MW=74.12
     water | Water | MW=18.02
 
-STREAM Feed : FEED -> COL-1.feed
+STREAM Feed : -> COL-1.feed
     T = 25 [C]
     P = 1 [bar]
     F = 100 [kmol/h]
     x = butanol:0.4, water:0.6
 
-STREAM Aqueous-Distillate : COL-1.distillate -> PRODUCT
-STREAM Butanol-Bottoms : COL-1.bottoms -> PRODUCT
+STREAM Aqueous-Distillate : COL-1.distillate
+STREAM Butanol-Bottoms : COL-1.bottoms
 
-UNIT COL-1
-    TYPE: RigorousDistillation
-    PORTS:
-        feed : inlet
-        distillate : outlet
-        bottoms : outlet
-    PARAMS:
-        N_stages = 20
-        feed_stage = 10
-        D_to_F = 0.6119275124597854
-        P_condenser = 1 [bar]
-        P_drop_per_stage = 0 [bar]
-        condenser_type = total
-        stage_phase_model = VLLE
-        distillate_liquid1_component = butanol
-        distillate_liquid1_fraction = 0
-        distillate_liquid2_fraction = 1
-        mesh_tolerance = 1e-7
-        max_iterations = 80
-        max_jacobian_evaluations = 80
+UNIT COL-1 : RigorousDistillation
+    N_stages = 20
+    feed_stage = 10
+    D_to_F = 0.6119275124597854
+    P_condenser = 1 [bar]
+    P_drop_per_stage = 0 [bar]
+    condenser_type = total
+    stage_phase_model = VLLE
+    distillate_liquid1_component = butanol
+    distillate_liquid1_fraction = 0
+    distillate_liquid2_fraction = 1
+    mesh_tolerance = 1e-7
+    max_iterations = 80
+    max_jacobian_evaluations = 80
 
 # Liquid 1 is the butanol-rich top phase and is returned entirely as internal
 # reflux. Liquid 2 is the water-rich top phase and is withdrawn entirely.

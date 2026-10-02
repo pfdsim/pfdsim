@@ -14,20 +14,20 @@ COMPONENTS:
     3-methylpentane  | 3-Methylpentane  | CAS=96-14-0
     ethanol          | Ethanol          | CAS=64-17-5
 
-STREAM Olefin-Gas : FEED -> ABS-100.gas
+STREAM Olefin-Gas : -> ABS-100.gas
     T = 40 [C]
     P = 10 [bar]
     F = 100 [kmol/h]
     x = ethylene:0.80, ethane:0.20
 
-STREAM Lean-Solvent : FEED -> ABS-100.solvent
+STREAM Lean-Solvent : -> ABS-100.solvent
     T = 25 [C]
     P = 10 [bar]
     F = 300 [kmol/h]
     x = hexane:0.56, 2-methylpentane:0.16, 3-methylpentane:0.08, ethanol:0.20
 
-STREAM Treated-Gas : ABS-100.gas_out -> PRODUCT
-STREAM Rich-Solvent : ABS-100.liquid_out -> PRODUCT
+STREAM Treated-Gas : ABS-100.gas_out
+STREAM Rich-Solvent : ABS-100.liquid_out
 
 UNIT ABS-100 : RigorousAbsorber
     N_stages = 8
