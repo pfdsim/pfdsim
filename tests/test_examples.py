@@ -84,6 +84,46 @@ class ExampleSimulationTests(unittest.TestCase):
         self.assertGreater(bottoms.composition['ethanol'], 0.55)
         self.assertGreater(bottoms.composition['water'], 0.35)
 
+    def test_butanol_phase_selective_distillation_preserves_purity_and_recovery(self):
+        result = Simulator.from_file(os.path.join(
+            ROOT,'examples','butanol_water_phase_selective_distillation.pfd',
+        )).run()
+        self.assertTrue(result.converged,result.errors)
+        self.assertEqual(result.errors,[])
+        feed = result.streams['Feed']
+        distillate = result.streams['Aqueous-Distillate']
+        bottoms = result.streams['Butanol-Bottoms']
+        column = result.units['COL-1']
+        p = column.performance
+        recovery = bottoms.F*bottoms.composition['butanol']/(feed.F*feed.composition['butanol'])
+
+        # Approximate physical-result pins for the saturated example; permit
+        # small thermodynamic/solver refinements while retaining high recovery.
+        self.assertAlmostEqual(bottoms.composition['butanol'],.99731,delta=.0005)
+        self.assertAlmostEqual(recovery,.96757,delta=.0005)
+        self.assertAlmostEqual(distillate.composition['butanol'],.02120,delta=.0005)
+        self.assertAlmostEqual(p['reflux_ratio'],1.32861,delta=.02)
+        self.assertAlmostEqual(distillate.T,366.1896,delta=.2)
+        self.assertAlmostEqual(bottoms.T,390.3436,delta=.3)
+        self.assertAlmostEqual(p['condenser_duty_kW'],-1569.735,delta=25.)
+        self.assertAlmostEqual(p['reboiler_duty_kW'],1888.496,delta=25.)
+
+        self.assertEqual(p['stage_phase_model'],'VLLE')
+        self.assertEqual(p['liquid_phase_routing'],'phase_selective_overhead')
+        routing = p['top_liquid_routing']
+        self.assertEqual(routing['distillate_liquid1_flow'],0.)
+        self.assertEqual(routing['reflux_liquid2_flow'],0.)
+        self.assertAlmostEqual(routing['distillate_liquid2_flow'],distillate.F,delta=1e-7)
+        self.assertEqual(set(result.units),{'COL-1'})
+        self.assertEqual(set(result.streams),{'Feed','Aqueous-Distillate','Butanol-Bottoms'})
+        self.assertLess(p['mesh_residual'],1e-7)
+        self.assertLess(p['vlle_max_log_fugacity_residual'],1e-7)
+        self.assertLess(relative_component_balance([feed],[distillate,bottoms]),1e-8)
+        self.assertAlmostEqual(
+            distillate.F*distillate.H+bottoms.F*bottoms.H-feed.F*feed.H,
+            3600*(p['condenser_duty_kW']+p['reboiler_duty_kW']),delta=.01,
+        )
+
     def test_all_examples_converge_and_close_balances(self):
         examples = [
             path for path in sorted(glob.glob(os.path.join(ROOT, 'examples', '*.pfd')))

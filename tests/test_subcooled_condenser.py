@@ -79,9 +79,25 @@ class SubcooledCondenserTests(unittest.TestCase):
                 self.assert_balanced(unit,feed,result)
 
     def test_vlle_subcooling_re_equilibrates_liquids_and_selective_routing(self):
-        unit,feed = butanol_column(condenser_subcooling=5.)
+        saturated,feed = butanol_column()
+        baseline = saturated.solve({'feed':feed})
+        self.assert_balanced(saturated,feed,baseline)
+        unit,_ = butanol_column(condenser_subcooling=5.)
         result = unit.solve({'feed':feed})
         p = result.performance
+        baseline_bottoms = baseline.outlet_streams['bottoms']
+        cooled_bottoms = result.outlet_streams['bottoms']
+        butanol_feed = feed.F*feed.composition['butanol']
+        baseline_recovery = baseline_bottoms.F*baseline_bottoms.composition['butanol']/butanol_feed
+        cooled_recovery = cooled_bottoms.F*cooled_bottoms.composition['butanol']/butanol_feed
+        # At the same cut and withdrawal fractions, cooling this tie line
+        # improves purity/recovery and reduces reflux. Require material
+        # changes, with margins below half the observed effect, rather than
+        # pinning solver-dependent digits or claiming a universal direction.
+        self.assertGreater(cooled_bottoms.composition['butanol'],
+                           baseline_bottoms.composition['butanol']+.0005)
+        self.assertGreater(cooled_recovery,baseline_recovery+.0005)
+        self.assertLess(p['reflux_ratio'],baseline.performance['reflux_ratio']-.05)
         self.assertAlmostEqual(p['condenser_saturation_temperature_K']-p['condenser_temperature_K'],5.)
         self.assertEqual(p['stage_phase_counts'][0],2)
         self.assertFalse(p['stage_vapor_equilibrium_enforced'][0])
