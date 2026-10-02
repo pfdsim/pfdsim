@@ -18,8 +18,10 @@ import numpy as np
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+    from .distillation_condenser import TotalCondenserBoundary
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+    from distillation_condenser import TotalCondenserBoundary
 
 
 @dataclass
@@ -333,21 +335,23 @@ def three_phase_fugacity_residuals(
     x2: dict[str, float],
     y: dict[str, float],
     components,
+    *,
+    include_vapor=True,
 ) -> dict[str, float]:
     """Return maximum dimensionless log-fugacity residuals for one stage."""
     log_f1 = thermo._phase_log_fugacities(T, P, x1, "liquid")
     log_f2 = thermo._phase_log_fugacities(T, P, x2, "liquid")
-    log_fv = thermo._phase_log_fugacities(T, P, y, "vapor")
     liquid_liquid = max(
         abs(log_f1[comp] - log_f2[comp]) for comp in components
     )
+    log_fv = thermo._phase_log_fugacities(T, P, y, "vapor") if include_vapor else None
     vapor_liquid = max(
         max(
             abs(log_f1[comp] - log_fv[comp]),
             abs(log_f2[comp] - log_fv[comp]),
         )
         for comp in components
-    )
+    ) if include_vapor else 0.0
     return {
         "liquid_liquid": float(liquid_liquid),
         "vapor_liquid": float(vapor_liquid),
@@ -473,6 +477,9 @@ class EquationOrientedVLLEColumn:
         self.T_min = float(T_min)
         self.T_max = float(T_max)
         self.temperature_span = self.T_max - self.T_min
+        self.condenser_boundary = TotalCondenserBoundary(
+            unit, self.components, self.pressures[0], T_min, T_max, allow_lle=True,
+        )
         self.flow_scale = float(flow_scale)
         self.energy_scale = float(energy_scale)
         self.component_scales = component_scales
@@ -739,7 +746,8 @@ class EquationOrientedVLLEColumn:
             h_vapor = self.thermo.mixture_enthalpy(y, T, 1.0, P=P)
         return {
             "y": y,
-            "bubble": vapor_total - 1.0,
+            "bubble": (self.condenser_boundary.residual(T, state['aggregate_x'], vapor_total-1.)
+                       if stage == 0 else vapor_total-1.),
             "lle": lle,
             "hL": float(h_liquid),
             "hL1": float(h1),
@@ -1456,6 +1464,22 @@ def solve_vlle_active_set(
         components,
         float(unit.get_param("vlle_stability_tolerance", 1e-7)),
     )
+    boundary = TotalCondenserBoundary(unit, components, pressures[0], T_min, T_max, allow_lle=True)
+    if boundary.options:
+        profile = VLLEProfile(
+            T=list(initial_profile.T), aggregate_x=[dict(x) for x in initial_profile.aggregate_x],
+            L=list(initial_profile.L), V=list(initial_profile.V),
+            Q_cond=initial_profile.Q_cond, Q_reb=initial_profile.Q_reb,
+            split_data=list(initial_profile.split_data),
+        )
+        profile.T[0] = boundary.seed_temperature(profile.aggregate_x[0], profile.T[0])
+        split, x1, x2, beta = stability.split(profile.T[0], profile.aggregate_x[0])
+        profile.split_data[0] = (x1, x2, beta) if split else None
+        if initial_active is not None:
+            initial_active = list(initial_active)
+            initial_active[0] = _split_is_active(split, x1, x2, beta, components,
+                                                phase_fraction_appearance_min, phase_distance_appearance_min)
+        initial_profile = profile
     profile = initial_profile
     screened_active = None
     initial_topology = "previous_recycle" if initial_active is not None else str(

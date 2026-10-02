@@ -2,6 +2,57 @@
 
 import math
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .unit_conversions import temperature_to_kelvin
+else:
+    from unit_conversions import temperature_to_kelvin
+
+
+CONDENSER_THERMAL_PARAMETERS = frozenset({'condenser_temperature', 'condenser_subcooling'})
+
+
+def total_condenser_specification(params, *, supports_subcooling=True):
+    """Normalize absolute temperature or temperature-difference input once.
+
+    These fields retain their raw PFD values/units until this shared validator;
+    subcooling must never receive the offset used for absolute temperatures.
+    """
+    pairs = params.items() if hasattr(params, 'items') else params
+    values = {}
+    for key, value in pairs:
+        key = str(key).strip().lower()
+        if key in values and key in CONDENSER_THERMAL_PARAMETERS:
+            raise ValueError(f'Duplicate distillation specification: {key}')
+        values[key] = value
+    present = CONDENSER_THERMAL_PARAMETERS.intersection(values)
+    if not present:
+        return None
+    if not supports_subcooling:
+        raise ValueError('Condenser temperature/subcooling requires RigorousDistillation')
+    if len(present) != 1:
+        raise ValueError('Specify only one of condenser_temperature and condenser_subcooling')
+    condenser = str(values.get('condenser_type', 'total')).strip().lower()
+    if condenser not in ('total', 'complete', 'liquid', 'total_condenser'):
+        raise ValueError('Condenser temperature/subcooling requires a total condenser')
+    name = next(iter(present))
+    try:
+        value = float(values[name])
+    except (TypeError, ValueError) as error:
+        raise ValueError(f'{name} must be a finite temperature') from error
+    unit = str(values.get(f'__unit__{name}') or '').strip().lower()
+    if unit not in ('', 'k', 'kelvin', 'c', '°c', 'celsius', 'f', '°f', 'fahrenheit'):
+        raise ValueError(f'Unsupported {name} unit: {unit}')
+    if name == 'condenser_temperature':
+        value = temperature_to_kelvin(value, unit, infer_unitless_celsius_below=200.)
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError('condenser_temperature must be a positive finite absolute temperature')
+        return {'temperature_K':value, 'subcooling_K':None}
+    if unit in ('f', '°f', 'fahrenheit'):
+        value *= 5./9.
+    if not math.isfinite(value) or value < 0:
+        raise ValueError('condenser_subcooling must be a finite nonnegative temperature difference')
+    return {'temperature_K':None, 'subcooling_K':value}
+
 
 REMOVED_DECANTER_CONDENSERS = frozenset({
     'decanter', 'heterogeneous', 'heterogeneous_decanter', 'top_decanter',

@@ -26,12 +26,14 @@ else:
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from .distillation_specifications import liquid_distillate_routing, stage_phase_model
-    from .distillation_specifications import LIQUID_ROUTING_PARAMETERS
+    from .distillation_specifications import LIQUID_ROUTING_PARAMETERS, CONDENSER_THERMAL_PARAMETERS, total_condenser_specification
+    from .distillation_condenser import TotalCondenserBoundary
     from .thermodynamics_models.base import FluidPhaseEquilibrium
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from distillation_specifications import liquid_distillate_routing, stage_phase_model
-    from distillation_specifications import LIQUID_ROUTING_PARAMETERS
+    from distillation_specifications import LIQUID_ROUTING_PARAMETERS, CONDENSER_THERMAL_PARAMETERS, total_condenser_specification
+    from distillation_condenser import TotalCondenserBoundary
     from thermodynamics_models.base import FluidPhaseEquilibrium
 
 
@@ -62,6 +64,19 @@ def _liquid_routing_specification(unit, components=None, *, supports_phase_routi
         )
     except ValueError as error:
         raise UnitOperationError(f"{type(unit).__name__} '{unit.unit_id}': {error}") from error
+
+
+def _condenser_thermal_specification(unit, *, supports_subcooling=True):
+    try:
+        return total_condenser_specification(unit.params, supports_subcooling=supports_subcooling)
+    except ValueError as error:
+        raise UnitOperationError(f"{type(unit).__name__} '{unit.unit_id}': {error}") from error
+
+
+def _saturated_condenser_seed_params(unit):
+    """Approximate initializers seed saturation; the rigorous boundary cools it."""
+    excluded = CONDENSER_THERMAL_PARAMETERS | {f'__unit__{name}' for name in CONDENSER_THERMAL_PARAMETERS}
+    return {key:value for key,value in unit.params.items() if str(key).lower() not in excluded}
 
 
 def _inlet_mass_flow(unit: UnitOperation, inlet: StreamState) -> float:
@@ -128,6 +143,7 @@ class ShortcutDistillation(UnitOperation):
     """Fenske-Underwood-Gilliland shortcut distillation column."""
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
+        _condenser_thermal_specification(self, supports_subcooling=False)
         if not inlets:
             raise UnitOperationError(f"ShortcutDistillation '{self.unit_id}' has no inlet stream")
         inlet = list(inlets.values())[0]
@@ -1154,6 +1170,7 @@ class McCabeThieleDistillation(UnitOperation):
     """
     
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
+        _condenser_thermal_specification(self, supports_subcooling=False)
         inlet = list(inlets.values())[0]
         _liquid_routing_specification(self, supports_phase_routing=False)
         
@@ -2122,7 +2139,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
     """
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
-
+        _condenser_thermal_specification(self)
         if not inlets:
             raise UnitOperationError(f"RigorousDistillation '{self.unit_id}' has no inlet stream")
         N = int(self.get_param('N_stages', self.get_param('stages', 10)))
@@ -2268,6 +2285,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             condenser_vapor_fraction, side_draws, distillate_spec,
             flow_scale, energy_scale, component_scales, T_min, T_max,
         )
+        initial['T'][0] = model['condenser_boundary'].seed_temperature(initial['x'][0], initial['T'][0])
 
         z0 = self._pack_variables(
             initial['T'], initial['x'], initial['L'], initial['V'],
@@ -2412,6 +2430,9 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                     classification=classification,
                     warnings=warnings,
                 )
+        condenser_diagnostics = model['condenser_boundary'].diagnostics(
+            float(T[0]), x[0], solver_options['mesh_tolerance'],
+        )
         warnings.extend(
             self._post_solve_noncondensable_check(
                 comps, feed_z, float(T[0]), float(pressures[0]), x[0], y[0],
@@ -2553,12 +2574,14 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'feed_thermal_condition_q': float(q_feed),
                 'stage_phase_model': stage_phase_model,
                 'liquid_phase_routing': 'single',
-                'stage_phase_counts': [2] * N,
+                'stage_phase_counts': ([1]+[2]*(N-1) if condenser_diagnostics else [2]*N),
+                'stage_vapor_equilibrium_enforced': ([False]+[True]*(N-1) if condenser_diagnostics else [True]*N),
                 'stage_spinodal_minimum_eigenvalues': [
                     float(check['minimum_eigenvalue'])
                     for check in stage_spinodal
                 ],
                 'condenser_type': condenser,
+                **condenser_diagnostics,
                 'distillate_vapor_fraction': float(condenser_vapor_fraction),
                 'reflux_ratio': float(L[0] / max(D, 1e-30)),
                 'distillate_flow': D,
@@ -2706,6 +2729,9 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             )
         requested_seed_mode = seed_mode
         routing_options = self._distillate_liquid_routing_options(comps)
+        condenser_boundary = TotalCondenserBoundary(
+            self, comps, pressures[0], T_min, T_max, allow_lle=True,
+        )
         azeotropic_candidates = []
         azeotropic_search_seconds = 0.0
         candidate_source = None
@@ -2760,9 +2786,10 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             ]
             initializer_label = 'previous_recycle'
         else:
-            seed_params = dict(self.params)
+            seed_params = _saturated_condenser_seed_params(self)
             for name in LIQUID_ROUTING_PARAMETERS:
                 seed_params.pop(name, None)
+                seed_params.pop(f'__unit__{name}', None)
             seed_params['stage_phase_model'] = 'VLE'
             seed_params['initializer'] = 'estimate'
             seed_unit = RigorousDistillation(
@@ -2803,9 +2830,16 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                                 candidate['composition'], candidate['T'], max_iter=100, tol=1e-7)
                         else:
                             has_lle = True
+                        if condenser_boundary.options:
+                            cooled_T = condenser_boundary.seed_temperature(candidate['composition'], candidate['T'])
+                            has_lle, phase1, phase2, beta = self.thermo.liquid_liquid_equilibrium(
+                                candidate['composition'], cooled_T, max_iter=100, tol=1e-9,
+                            )
+                        else:
+                            cooled_T = candidate['T']
                         if has_lle:
-                            h1 = self.thermo.mixture_enthalpy(phase1, candidate['T'], 0., P=pressures[0])
-                            h2 = self.thermo.mixture_enthalpy(phase2, candidate['T'], 0., P=pressures[0])
+                            h1 = self.thermo.mixture_enthalpy(phase1, cooled_T, 0., P=pressures[0])
+                            h2 = self.thermo.mixture_enthalpy(phase2, cooled_T, 0., P=pressures[0])
                             routed = route_top_liquids(comps, routing_options,
                                 {'x1':phase1, 'x2':phase2, 'beta':beta, 'aggregate_x':candidate['composition']},
                                 {'hL1':h1, 'hL2':h2, 'hL':(1-beta)*h1+beta*h2})
@@ -3128,6 +3162,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         Q_cond = float(decoded['Q_cond'])
         Q_reb = float(decoded['Q_reb'])
         solution = solved.solver
+        condenser_diagnostics = condenser_boundary.diagnostics(T[0], x[0], solver_options['mesh_tolerance'])
         solution['finite_difference_rel_step'] = solver_options['finite_difference_rel_step']
         jacobian_fallback = (
             solution.get('jacobian_method') == 'colored_finite_difference'
@@ -3155,6 +3190,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 x2[stage],
                 y[stage],
                 comps,
+                include_vapor=not (stage == 0 and condenser_boundary.options is not None),
             )
             fugacity_residuals.append((stage + 1, residuals))
         max_liquid_liquid_fugacity_residual = max(
@@ -3274,6 +3310,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         H_out_external = distillate.F * distillate.H + bottoms.F * bottoms.H
         active_stages = [index + 1 for index, active in enumerate(solved.active) if active]
         phase_counts = [3 if active else 2 for active in solved.active]
+        if condenser_boundary.options:
+            phase_counts[0] -= 1
         performance = {
             'N_stages': N,
             'feed_stage': feed_stage,
@@ -3292,7 +3330,9 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 for feed in feed_specs
             ],
             'feed_thermal_condition_q': float(q_feed),
+            'stage_vapor_equilibrium_enforced': ([False]+[True]*(N-1) if condenser_diagnostics else [True]*N),
             'condenser_type': condenser,
+            **condenser_diagnostics,
             'distillate_vapor_fraction': float(condenser_vapor_fraction),
             'reflux_ratio': float(L[0] / max(D, 1e-30)),
             'top_liquid_routing': {
@@ -3958,7 +3998,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         distillate_spec: dict,
     ) -> Optional[dict]:
         try:
-            params = dict(self.params)
+            params = _saturated_condenser_seed_params(self)
             params['q'] = q_feed
             params['reflux_ratio'] = RR
             if distillate_spec.get('kind') == 'molar':
@@ -4029,7 +4069,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         *,
         latent_heat_correction: bool,
     ) -> dict:
-        params = dict(self.params)
+        params = _saturated_condenser_seed_params(self)
         params.update({
             'q': q_feed,
             'feed_stage': feed_stage,
@@ -5487,6 +5527,7 @@ class CMODistillation(RigorousDistillation):
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         import numpy as np
+        _condenser_thermal_specification(self, supports_subcooling=False)
         _liquid_routing_specification(self, supports_phase_routing=False)
 
         if self._stage_phase_model() != 'VLE':

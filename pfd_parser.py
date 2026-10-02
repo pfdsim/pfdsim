@@ -16,10 +16,10 @@ from enum import Enum
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .lyngby_parameters import canonical_lyngby_method
-    from .distillation_specifications import liquid_distillate_routing
+    from .distillation_specifications import liquid_distillate_routing, total_condenser_specification
 else:
     from lyngby_parameters import canonical_lyngby_method
-    from distillation_specifications import liquid_distillate_routing
+    from distillation_specifications import liquid_distillate_routing, total_condenser_specification
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .crystallizer_specs import (
@@ -2764,11 +2764,12 @@ class PFDParser:
 
         self._finalize_compact_unit_ports()
         for unit in self.pfd.units:
-            if unit.unit_type not in {'RigorousDistillation', 'CMODistillation', 'McCabeThieleDistillation'}:
+            if unit.unit_type not in {'RigorousDistillation', 'CMODistillation', 'McCabeThieleDistillation', 'ShortcutDistillation'}:
                 continue
             parameters = [(param.name,param.value) for param in unit.params]
             parameters.extend((f'__unit__{param.name}',param.unit) for param in unit.params if param.unit)
             try:
+                total_condenser_specification(parameters, supports_subcooling=unit.unit_type == 'RigorousDistillation')
                 liquid_distillate_routing(
                     parameters, default_phase_model=self.pfd.metadata.fluid_phase_model,
                     components=[component.symbol for component in self.pfd.components] or None,

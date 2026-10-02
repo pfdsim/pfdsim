@@ -19,8 +19,10 @@ else:
     from unit_operations_base import UnitOperationError
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+    from .distillation_condenser import TotalCondenserBoundary
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+    from distillation_condenser import TotalCondenserBoundary
 
 
 class EquilibriumStageColumnMixin:
@@ -501,6 +503,7 @@ class EquilibriumStageColumnMixin:
         Q_start = V_start + N
         n_vars = Q_start + 2
         span = T_max - T_min
+        condenser_boundary = TotalCondenserBoundary(self, comps, pressures[0], T_min, T_max)
 
         stage_feeds = [[] for _ in range(N)]
         for feed in feed_specs:
@@ -568,10 +571,12 @@ class EquilibriumStageColumnMixin:
                 y_stage = dict(x_stage)
             else:
                 y_stage = {comp: value / kx_sum for comp, value in kx.items()}
+            bubble = sum(K[comp] * x_stage.get(comp, 0.0) for comp in comps) - 1.0
             return {
                 'K': K,
                 'y': y_stage,
-                'bubble': sum(K[comp] * x_stage.get(comp, 0.0) for comp in comps) - 1.0,
+                'bubble': (condenser_boundary.residual(float(T_stage), x_stage, bubble)
+                           if stage == 0 else bubble),
                 'hL': self.thermo.mixture_enthalpy(
                     x_stage, float(T_stage), vapor_fraction=0.0,
                     P=float(pressures[stage]),
@@ -666,7 +671,8 @@ class EquilibriumStageColumnMixin:
                 labels.append(('energy', stage + 1, None, energy_scale))
 
                 residuals.append(props[stage]['bubble'])
-                labels.append(('bubble', stage + 1, None, 1.0))
+                labels.append(('condenser_temperature' if stage == 0 and condenser_boundary.options
+                               else 'bubble', stage + 1, None, 1.0))
 
             if distillate_spec['kind'] == 'molar':
                 residuals.append((D - distillate_spec['value']) / flow_scale)
@@ -1068,6 +1074,7 @@ class EquilibriumStageColumnMixin:
             'stage_properties': stage_properties,
             'side_draw_flow': side_draw_flow,
             'residual_labels': residual_labels,
+            'condenser_boundary': condenser_boundary,
         }
 
     def _sparse_newton_solve(self, residual, sparsity, x0, options: dict,

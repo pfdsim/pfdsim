@@ -2521,6 +2521,17 @@ not support side draws or phase-selective overhead withdrawal.
 - `P_bottom` - Optional bottom pressure; creates a linear pressure profile from `P_condenser`
 - `stage_pressures` - Optional comma-separated pressure profile with one value per stage
 - `condenser_type` - `total`, `partial`, or `mixed`
+- `condenser_temperature` - Optional absolute temperature for a rigorous total
+  condenser, for example `condenser_temperature = 85 [C]`. Supports K, C, and F;
+  unitless values follow the existing temperature convention (below 200 means
+  Celsius, otherwise kelvin).
+- `condenser_subcooling` - Optional nonnegative temperature difference below
+  condensate saturation at condenser pressure, for example
+  `condenser_subcooling = 5 [K]`. K and C differences are equal; F differences
+  convert by a factor of 5/9. Unitless differences are kelvin. Specify either
+  this or `condenser_temperature`, never both. These options require
+  `RigorousDistillation` with a total condenser; approximate column models,
+  partial condensers, and mixed condensers reject them.
 - `stage_phase_model` - `VLE` (default) or `VLLE`. `VLLE` permits up to two
   liquid phases on each stage and retains the smaller VLE equation set on
   stages whose liquid remains stable.
@@ -2605,6 +2616,31 @@ stage L1/L2 arrays retain their solver ordering.
 For the top stage, `stage_liquid2_fractions` describes the entire condensate
 before withdrawal, while `stage_liquid1_flows` and `stage_liquid2_flows` report
 the actual remaining phase flows returned as reflux.
+
+For a subcooled total condenser, the condenser temperature specification
+replaces the top bubble-point equation. Component and energy balances use the
+actual cold distillate and reflux; the upper trays respond to the reflux
+thermal condition through their coupled MESH equations. The condenser can
+contain one or two equilibrium liquids in VLLE mode, with phase-selective
+withdrawal applied after liquid equilibrium at its actual temperature. It has
+no equilibrium vapor phase, even though the trays below can have VLLE.
+
+Degrees of subcooling refer to incipient vapor above the **whole condensate**
+at the condenser pressure, before product/reflux routing. In VLLE mode the
+reference liquids re-equilibrate at that saturation temperature; their
+compositions need not equal the colder condenser liquids. Thus the reference
+is neither a metastable homogeneous bubble point nor the bubble point of the
+selected product alone. Explicit temperatures above condensate saturation and
+temperatures outside the configured column bounds are rejected. Leaving both
+temperature options unset retains the saturated total-condenser model.
+
+Results report `condenser_temperature_K`,
+`condenser_saturation_temperature_K`, `condenser_subcooling_K`, and
+`condenser_vapor_saturation_ratio`. `stage_vapor_equilibrium_enforced` marks the
+specified-temperature total condenser as liquid-only. Any reported top vapor
+composition is a hypothetical incipient-vapor calculation, not a vapor outlet;
+liquid–liquid fugacity equality is audited there, while the trays retain their
+vapor–liquid audits.
 
 The former VLE `condenser_type = decanter` and its aliases/parameters were
 removed. Affected `.pfd` input fails during parsing and directs you to enable
