@@ -37,7 +37,7 @@ flow diagrams from the same input.
 ## Under development
 
 > **PFDSim is under active development.** The current package version is
-> `0.3.0`. Models, data coverage, numerical robustness, and documentation
+> `0.3.1`. Models, data coverage, numerical robustness, and documentation
 > are evolving. Check property sources, model assumptions, convergence, and
 > material/energy closure before relying on a result for a new application.
 
@@ -816,13 +816,13 @@ relevant sources.
 A software citation for this version is:
 
 > PFDSim. *PFDSim: a chemical-process simulator for text-based flowsheets*.
-> Version 0.3.0, 2026. Software.
+> Version 0.3.1, 2026. Software.
 
 ```bibtex
 @software{pfdsim,
   author  = {PFDSim},
   title   = {{PFDSim}: A Chemical-Process Simulator for Text-Based Flowsheets},
-  version = {0.3.0},
+  version = {0.3.1},
   year    = {2026},
   note    = {Software; specify the Git commit and source URL used}
 }
