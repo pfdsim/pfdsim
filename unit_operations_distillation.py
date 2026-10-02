@@ -1443,10 +1443,37 @@ class McCabeThieleDistillation(UnitOperation):
             self.get_param('latent_heat_correction', False),
         ))
 
+    @staticmethod
+    def _minimum_binary_stage_excess(excess, samples: list[tuple[float, float]],
+                                     bounds: tuple[float, float]) -> float:
+        """Minimize over finite trials while retaining the best sampled split."""
+        from scipy.optimize import minimize_scalar
+
+        best_x, best_excess = min(samples, key=lambda sample: max(sample[1], 0.0))
+        best_score = max(best_excess, 0.0)
+        penalty = 1.0 + max(max(value, 0.0) for _, value in samples)
+
+        def objective(x: float) -> float:
+            nonlocal best_x, best_score
+            value = excess(float(x))
+            if not math.isfinite(value):
+                return penalty
+            score = max(value, 0.0)
+            if score < best_score:
+                best_x, best_score = float(x), score
+            return score
+
+        # An infeasible plateau or unsuccessful optimizer result must not
+        # displace a known finite split. Keep the best finite trial directly.
+        minimize_scalar(
+            objective, bounds=bounds, method='bounded', options={'xatol': 1e-10},
+        )
+        return best_x
+
     def _solve_binary_column(self, inlet: StreamState, light_key: str, heavy_key: str,
                              N: int, feed_stage: int, reflux_ratio: float,
                              q: float, pressures: list[float]) -> dict:
-        from scipy.optimize import brentq, minimize_scalar
+        from scipy.optimize import brentq
 
         zF = inlet.composition.get(light_key, 0.0)
         if not 0.0 < zF < 1.0:
@@ -1565,13 +1592,7 @@ class McCabeThieleDistillation(UnitOperation):
                 if r1 <= 0.0 < r2:
                     root = brentq(section_excess, x1, x2, xtol=1e-10, rtol=1e-10, maxiter=100)
         else:
-            optimum = minimize_scalar(
-                lambda x: max(section_excess(x), 0.0),
-                bounds=(lo, hi),
-                method='bounded',
-                options={'xatol': 1e-10},
-            )
-            root = optimum.x
+            root = self._minimum_binary_stage_excess(section_excess, samples, (lo, hi))
 
         D, B, xB_lk = material_balance(root)
         rectifying_required, stripping_required = section_stage_requirements(root)
@@ -1597,7 +1618,7 @@ class McCabeThieleDistillation(UnitOperation):
         whose rectifying + stripping requirements fit in the available stages,
         then assign the integer feed stage closest to that split.
         """
-        from scipy.optimize import brentq, minimize_scalar
+        from scipy.optimize import brentq
 
         zF = inlet.composition.get(light_key, 0.0)
         if not 0.0 < zF < 1.0:
@@ -1695,13 +1716,7 @@ class McCabeThieleDistillation(UnitOperation):
                 if r1 <= 0.0 < r2:
                     root = brentq(stage_excess, x1, x2, xtol=1e-10, rtol=1e-10, maxiter=100)
         else:
-            optimum = minimize_scalar(
-                lambda x: max(stage_excess(x), 0.0),
-                bounds=(lo, hi),
-                method='bounded',
-                options={'xatol': 1e-10},
-            )
-            root = optimum.x
+            root = self._minimum_binary_stage_excess(stage_excess, samples, (lo, hi))
 
         D, B, xB_lk = material_balance(root)
         rectifying_required, stripping_required = section_stage_requirements(root)
