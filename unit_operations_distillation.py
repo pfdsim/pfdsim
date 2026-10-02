@@ -25,8 +25,14 @@ else:
     from unit_operations_base import UnitOperation, UnitOperationError, UnitResult
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+    from .distillation_specifications import liquid_distillate_routing, stage_phase_model
+    from .distillation_specifications import LIQUID_ROUTING_PARAMETERS
+    from .thermodynamics_models.base import FluidPhaseEquilibrium
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
+    from distillation_specifications import liquid_distillate_routing, stage_phase_model
+    from distillation_specifications import LIQUID_ROUTING_PARAMETERS
+    from thermodynamics_models.base import FluidPhaseEquilibrium
 
 
 _DISTILLATE_MOLAR_NAMES = ('distillate_flow', 'top_flow', 'D', 'D_flow')
@@ -45,6 +51,17 @@ _DISTILLATE_MASS_FRACTION_NAMES = (
     'distillate_mass_to_feed',
     'top_mass_fraction',
 )
+
+
+def _liquid_routing_specification(unit, components=None, *, supports_phase_routing=True):
+    try:
+        return liquid_distillate_routing(
+            unit.params, components=components,
+            default_phase_model=getattr(unit.thermo, 'fluid_phase_model', 'VLE'),
+            supports_phase_routing=supports_phase_routing,
+        )
+    except ValueError as error:
+        raise UnitOperationError(f"{type(unit).__name__} '{unit.unit_id}': {error}") from error
 
 
 def _inlet_mass_flow(unit: UnitOperation, inlet: StreamState) -> float:
@@ -1138,6 +1155,7 @@ class McCabeThieleDistillation(UnitOperation):
     
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         inlet = list(inlets.values())[0]
+        _liquid_routing_specification(self, supports_phase_routing=False)
         
         N = int(self.get_param('N_stages', self.get_param('stages', 10)))
         RR = float(self.get_param('reflux_ratio', self.get_param('RR', 2.0)))
@@ -2121,6 +2139,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 f"RigorousDistillation '{self.unit_id}' needs >= 2 components"
             )
 
+        self._distillate_liquid_routing_options(comps)
+
         RR = float(self.get_param('reflux_ratio', self.get_param('RR', 2.0)))
         condenser = str(self.get_param('condenser_type', 'total')).strip().lower()
         if condenser in ('complete', 'liquid', 'total_condenser'):
@@ -2129,14 +2149,11 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             condenser = 'partial'
         if condenser in ('two_phase', 'two-phase', 'mixed_distillate', 'partial_liquid'):
             condenser = 'mixed'
-        if condenser in ('decanter', 'heterogeneous', 'heterogeneous_decanter', 'top_decanter'):
-            condenser = 'decanter'
-        if condenser not in ('total', 'partial', 'mixed', 'decanter'):
+        if condenser not in ('total', 'partial', 'mixed'):
             raise UnitOperationError(
-                f"RigorousDistillation '{self.unit_id}' condenser_type must be total, mixed, partial, or decanter"
+                f"RigorousDistillation '{self.unit_id}' condenser_type must be total, mixed, or partial"
             )
         condenser_vapor_fraction = self._condenser_vapor_fraction(condenser)
-        decanter_options = self._decanter_options() if condenser == 'decanter' else None
         if N < 2:
             raise UnitOperationError(
                 f"RigorousDistillation '{self.unit_id}' requires N_stages >= 2"
@@ -2185,11 +2202,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             )
 
         side_draws = self._parse_side_draws(N)
-        distillate_spec = (
-            self._decanter_distillate_guess(inlet)
-            if condenser == 'decanter'
-            else self._distillate_spec(inlet)
-        )
+        distillate_spec = self._distillate_spec(inlet)
         self._validate_external_flow_specs(inlet, distillate_spec, side_draws)
         T_min, T_max = self._temperature_bounds(comps)
         if self.get_param('q') is not None:
@@ -2252,14 +2265,13 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
 
         model = self._build_mesh_model(
             inlet, feed_specs, comps, feed_z, N, feed_stage - 1, RR, pressures, condenser,
-            condenser_vapor_fraction, decanter_options, side_draws, distillate_spec,
+            condenser_vapor_fraction, side_draws, distillate_spec,
             flow_scale, energy_scale, component_scales, T_min, T_max,
         )
 
         z0 = self._pack_variables(
             initial['T'], initial['x'], initial['L'], initial['V'],
             initial['Q_cond'], initial['Q_reb'], comps, T_min, T_max, energy_scale,
-            initial.get('decanter_distillate_x'), initial.get('decanter_beta'),
         )
 
         solver_options = {
@@ -2408,57 +2420,10 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         )
 
         D = float(V[0])
-        decanter_split = None
-        decanter_purge = None
-        if condenser == 'decanter':
-            decanter_split = model['top_decanter_solution'](
-                float(T[0]), float(L[0]), float(V[0]), x[0],
-                decoded['decanter_distillate_x'], decoded['decanter_beta'],
-            )
-            if not decanter_split.get('two_phases'):
-                raise UnitOperationError(
-                    f"RigorousDistillation '{self.unit_id}' top decanter did not form "
-                    "two liquid phases at the converged condenser conditions. Use a "
-                    "mixed/partial condenser or adjust entrainer/recycle specifications."
-                )
-            reflux_selector = (decanter_options or {}).get('reflux_component')
-            if reflux_selector:
-                reflux_key = self._match_component_name(comps, reflux_selector)
-                if (
-                    reflux_key is not None
-                    and decanter_split['reflux_composition'].get(reflux_key, 0.0)
-                    < decanter_split['distillate_composition'].get(reflux_key, 0.0)
-                ):
-                    raise UnitOperationError(
-                        f"RigorousDistillation '{self.unit_id}' converged to a decanter "
-                        f"phase assignment where the reflux phase is not richer in {reflux_key}"
-                    )
-            D = float(decanter_split['distillate_flow'])
-            distillate_vapor_flow = 0.0
-            distillate_liquid_flow = D
-            if decanter_split['purge_flow'] > 0.0:
-                decanter_purge = self.thermo.calculate_state(
-                    float(T[0]), float(pressures[0]), decanter_split['purge_flow'],
-                    decanter_split['reflux_composition'], phase='liquid', flash=False
-                )
-        else:
-            distillate_vapor_flow = condenser_vapor_fraction * D
-            distillate_liquid_flow = (1.0 - condenser_vapor_fraction) * D
+        distillate_vapor_flow = condenser_vapor_fraction * D
+        distillate_liquid_flow = (1.0 - condenser_vapor_fraction) * D
         B = float(L[-1])
-        if condenser == 'decanter':
-            distillate_comp = {
-                comp: float(decanter_split['distillate_composition'].get(comp, 0.0))
-                for comp in comps
-            }
-            distillate_h = self.thermo.mixture_enthalpy(
-                distillate_comp, float(T[0]), vapor_fraction=0.0,
-                P=float(pressures[0]),
-            )
-            distillate = self.thermo.calculate_state(
-                float(T[0]), float(pressures[0]), D, distillate_comp,
-                phase='liquid', flash=False
-            )
-        elif condenser_vapor_fraction >= 1.0 - 1e-12:
+        if condenser_vapor_fraction >= 1.0 - 1e-12:
             distillate_comp = {comp: float(y[0].get(comp, 0.0)) for comp in comps}
             distillate_phase = 'vapor'
             distillate_h = hV[0]
@@ -2498,9 +2463,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         )
 
         outlets = {'distillate': distillate, 'bottoms': bottoms}
-        if decanter_purge is not None:
-            outlets['decanter_purge'] = decanter_purge
-        if condenser != 'decanter' and 1e-12 < condenser_vapor_fraction < 1.0 - 1e-12:
+        if 1e-12 < condenser_vapor_fraction < 1.0 - 1e-12:
             outlets['distillate_liquid'] = self.thermo.calculate_state(
                 float(T[0]), float(pressures[0]), distillate_liquid_flow,
                 {comp: float(x[0].get(comp, 0.0)) for comp in comps},
@@ -2539,8 +2502,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
 
         component_balance_error = self._external_component_balance_error_vle(
             comps, inlet, feed_z, distillate, bottoms,
-            [outlets[draw['port']] for draw in side_draws]
-            + ([decanter_purge] if decanter_purge is not None else []),
+            [outlets[draw['port']] for draw in side_draws],
             flow_scale,
         )
         if component_balance_error > max(1e-5, 10.0 * solver_options['mesh_tolerance']):
@@ -2635,7 +2597,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'component_classification': classification,
                 'side_draws': side_summaries,
                 'distillate_enthalpy_basis': float(distillate_h),
-                'top_decanter': decanter_split,
             },
             warnings=warnings,
         )
@@ -2644,33 +2605,35 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
 
 
     def _stage_phase_model(self) -> str:
-        value = self.get_param('stage_phase_model')
-        if value is None:
-            value = self.get_param('valid_phases')
-        if value is None:
-            value = self.get_param('stage_phases')
-        if value is None:
-            value = getattr(self.thermo, 'fluid_phase_model', 'VLE')
-        normalized = str(value).strip().upper().replace('-', '').replace('_', '')
-        if normalized in ('VLE', 'VL'):
-            return 'VLE'
-        if normalized in ('VL(L)E', 'VLL(E)', 'ADAPTIVEVLLE', 'SPINODALVLLE'):
-            return 'VL(L)E'
-        if normalized in ('VLLE', 'VLL'):
-            return 'VLLE'
-        raise UnitOperationError(
-            f"RigorousDistillation '{self.unit_id}' stage_phase_model must be "
-            "VLE, VL(L)E, or VLLE"
+        try:
+            return stage_phase_model(self.params, getattr(self.thermo, 'fluid_phase_model', 'VLE'))
+        except ValueError as error:
+            raise UnitOperationError(f"RigorousDistillation '{self.unit_id}': {error}") from error
+
+    def _distillate_liquid_routing_options(self, components):
+        return _liquid_routing_specification(self, components)
+
+    def _vlle_outlet_state(self, T, P, flow, composition, x1, x2, beta,
+                           vapor_fraction, vapor_composition, enthalpy):
+        """Build an outlet from the solved phase inventory without another flash."""
+        state = StreamState(T=T, P=P, F=flow, composition=dict(composition),
+                            fluid_phase_model='VLLE')
+        liquid_fraction = 1-vapor_fraction
+        equilibrium = FluidPhaseEquilibrium(
+            vapor_fraction=vapor_fraction,
+            liquid1_fraction=liquid_fraction*(1-beta),
+            liquid2_fraction=liquid_fraction*beta,
+            y=dict(vapor_composition), x1=dict(x1), x2=dict(x2),
+            status='column_equilibrium', stability='validated_column_equilibrium',
+            extra={'source':'coupled_vlle_column'},
         )
+        self.thermo._apply_fluid_equilibrium_to_state(
+            state, equilibrium, frozenset({'H','Cp','S','rho'}),
+        )
+        state.H = float(enthalpy)
+        return state
 
     def _validate_vlle_stage_configuration(self, condenser, side_draws) -> None:
-        if condenser == 'decanter':
-            raise UnitOperationError(
-                f"RigorousDistillation '{self.unit_id}' cannot combine "
-                "stage_phase_model=VLLE with a decanter condenser; use a "
-                "total, partial, or mixed condenser until separate decanter "
-                "phase routing is implemented."
-            )
         if side_draws:
             raise UnitOperationError(
                 f"RigorousDistillation '{self.unit_id}' does not yet support "
@@ -2720,6 +2683,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                         solve_vlle_active_set,
                         three_phase_fugacity_residuals,
                         topology_text,
+                        route_top_liquids,
                     )
         else:
             from equilibrium_stage_vlle import (
@@ -2729,6 +2693,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                         solve_vlle_active_set,
                         three_phase_fugacity_residuals,
                         topology_text,
+                        route_top_liquids,
                     )
 
         seed_mode = str(self.get_param('vlle_seed', 'auto')).strip().lower()
@@ -2739,16 +2704,32 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 f"RigorousDistillation '{self.unit_id}' vlle_seed must be "
                 "auto, cheap, homogeneous, or azeotropic"
             )
+        requested_seed_mode = seed_mode
+        routing_options = self._distillate_liquid_routing_options(comps)
+        azeotropic_candidates = []
+        azeotropic_search_seconds = 0.0
+        candidate_source = None
+        if (seed_mode == 'auto' and routing_options is not None
+                and routing_options['fractions'][0] != routing_options['fractions'][1]):
+            # A homogeneous overhead cannot satisfy a selective two-liquid
+            # boundary. Reuse the existing phase-aware azeotropic initializer.
+            azeotropic_candidates = self._provided_vlle_azeotrope_candidates(comps)
+            candidate_source = 'provided'
+            if not azeotropic_candidates:
+                search_started = time.perf_counter()
+                azeotropic_candidates = self._vlle_azeotrope_candidates(comps, pressures[0], feed_z=feed_z)
+                azeotropic_search_seconds += time.perf_counter()-search_started
+                candidate_source = 'simultaneous_binary_vlle'
+            if azeotropic_candidates:
+                seed_mode = 'azeotropic'
         homogeneous_initializer = str(self.get_param(
             'vlle_homogeneous_initializer', 'estimate'
         )).strip().lower().replace('-', '_').replace(' ', '_')
         seed_fallback = False
         seed_failure = None
-        azeotropic_candidates = []
-        azeotropic_search_seconds = 0.0
-        candidate_source = None
         profile_attempts = None
         initializer_attempts = []
+        seed_candidates = []
 
         recycle_guess = self._recycle_profile_initial_guess(
             comps, N, T_min, T_max
@@ -2780,6 +2761,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             initializer_label = 'previous_recycle'
         else:
             seed_params = dict(self.params)
+            for name in LIQUID_ROUTING_PARAMETERS:
+                seed_params.pop(name, None)
             seed_params['stage_phase_model'] = 'VLE'
             seed_params['initializer'] = 'estimate'
             seed_unit = RigorousDistillation(
@@ -2788,16 +2771,15 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 seed_params,
             )
             if seed_mode == 'azeotropic':
-                azeotropic_candidates = (
-                    self._provided_vlle_azeotrope_candidates(comps)
-                )
-                candidate_source = 'provided'
+                if not azeotropic_candidates:
+                    azeotropic_candidates = self._provided_vlle_azeotrope_candidates(comps)
+                    candidate_source = 'provided'
                 if not azeotropic_candidates:
                     search_started = time.perf_counter()
                     azeotropic_candidates = self._vlle_azeotrope_candidates(
                         comps, pressures[0], feed_z=feed_z
                     )
-                    azeotropic_search_seconds = (
+                    azeotropic_search_seconds += (
                         time.perf_counter() - search_started
                     )
                     candidate_source = 'simultaneous_binary_vlle'
@@ -2809,6 +2791,29 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                         "vlle_azeotrope_temperature for a known higher-order "
                         "azeotrope"
                     )
+                seed_candidates = []
+                for candidate in azeotropic_candidates:
+                    seeded = dict(candidate)
+                    if routing_options is not None:
+                        phase1 = candidate.get('liquid1')
+                        phase2 = candidate.get('liquid2')
+                        beta = candidate.get('liquid2_fraction')
+                        if phase1 is None or phase2 is None or beta is None:
+                            has_lle, phase1, phase2, beta = self.thermo.liquid_liquid_equilibrium(
+                                candidate['composition'], candidate['T'], max_iter=100, tol=1e-7)
+                        else:
+                            has_lle = True
+                        if has_lle:
+                            h1 = self.thermo.mixture_enthalpy(phase1, candidate['T'], 0., P=pressures[0])
+                            h2 = self.thermo.mixture_enthalpy(phase2, candidate['T'], 0., P=pressures[0])
+                            routed = route_top_liquids(comps, routing_options,
+                                {'x1':phase1, 'x2':phase2, 'beta':beta, 'aggregate_x':candidate['composition']},
+                                {'hL1':h1, 'hL2':h2, 'hL':(1-beta)*h1+beta*h2})
+                            seeded['product_composition'] = self._normalize({
+                                comp:(1-condenser_vapor_fraction)*routed['distillate_x'][comp]
+                                     +condenser_vapor_fraction*candidate['composition'][comp]
+                                for comp in comps})
+                    seed_candidates.append(seeded)
                 seed_unit.params['initializer'] = 'azeotropic'
                 requested_profile = str(self.get_param(
                     'vlle_azeotropic_profile', 'auto'
@@ -3008,7 +3013,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                     [],
                     T_min,
                     T_max,
-                    azeotrope_candidates=azeotropic_candidates,
+                    azeotrope_candidates=seed_candidates,
                     azeotropic_profile=attempt_profile,
                 )
                 attempt_profile = VLLEProfile(
@@ -3204,59 +3209,42 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         distillate_liquid_flow = (1.0 - condenser_vapor_fraction) * D
         distillate_vapor_flow = condenser_vapor_fraction * D
 
-        def liquid_state(stage: int, flow: float, composition: dict[str, float]):
-            state = self.thermo.calculate_state(
-                T[stage],
-                pressures[stage],
-                flow,
-                composition,
-                phase='liquid',
-                flash=False,
-            )
-            state.H = hL[stage]
-            try:
-                state.Cp = (
-                    (1.0 - liquid2_fraction[stage])
-                    * self.thermo.mixture_Cp(x1[stage], T[stage], 0.0, P=pressures[stage])
-                    + liquid2_fraction[stage]
-                    * self.thermo.mixture_Cp(x2[stage], T[stage], 0.0, P=pressures[stage])
+        routing_options = self._distillate_liquid_routing_options(comps)
+        top_routing = solved.top_liquid_routing
+        if routing_options is not None and routing_options['fractions'][0] != routing_options['fractions'][1]:
+            if not solved.active[0]:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' phase-selective withdrawal "
+                    "requires two distinct stable top liquids; the selected phase is absent"
                 )
-            except Exception:
-                pass
-            return state
-
-        if condenser_vapor_fraction >= 1.0 - 1e-12:
-            distillate_comp = dict(y[0])
-            distillate_h = hV[0]
-            distillate = self.thermo.calculate_state(
-                T[0], pressures[0], D, distillate_comp,
-                phase='vapor', flash=False,
-            )
-        elif condenser_vapor_fraction <= 1e-12:
-            distillate_comp = dict(x[0])
-            distillate_h = hL[0]
-            distillate = liquid_state(0, D, distillate_comp)
-        else:
-            distillate_comp = self._normalize({
-                comp: (
-                    distillate_liquid_flow * x[0].get(comp, 0.0)
-                    + distillate_vapor_flow * y[0].get(comp, 0.0)
+            selector = routing_options['component']
+            if abs(top_routing['liquid1_x'][selector]-top_routing['liquid2_x'][selector]) <= 1e-10:
+                raise UnitOperationError(
+                    f"RigorousDistillation '{self.unit_id}' component '{selector}' "
+                    "does not distinguish the top liquids; choose another distillate_liquid1_component"
                 )
-                for comp in comps
-            })
-            distillate_h = (
-                (1.0 - condenser_vapor_fraction) * hL[0]
-                + condenser_vapor_fraction * hV[0]
-            )
-            distillate = self._two_phase_stream(
-                T[0], pressures[0], D, distillate_comp,
-                x[0], y[0], condenser_vapor_fraction, distillate_h,
-            )
-        bottoms = liquid_state(N - 1, B, x[-1])
+        distillate_liquid_x = top_routing['distillate_x']
+        distillate_comp = self._normalize({
+            comp:(1-condenser_vapor_fraction)*distillate_liquid_x[comp]
+                 +condenser_vapor_fraction*y[0][comp] for comp in comps
+        })
+        distillate_h = ((1-condenser_vapor_fraction)*top_routing['distillate_h']
+                        +condenser_vapor_fraction*hV[0])
+        distillate = self._vlle_outlet_state(
+            T[0], pressures[0], D, distillate_comp,
+            top_routing['liquid1_x'], top_routing['liquid2_x'],
+            top_routing['distillate_beta'], condenser_vapor_fraction, y[0], distillate_h,
+        )
+        bottoms = self._vlle_outlet_state(
+            T[-1], pressures[-1], B, x[-1], x1[-1], x2[-1],
+            liquid2_fraction[-1], 0., y[-1], hL[-1],
+        )
         outlets = {'distillate': distillate, 'bottoms': bottoms}
         if 1e-12 < condenser_vapor_fraction < 1.0 - 1e-12:
-            outlets['distillate_liquid'] = liquid_state(
-                0, distillate_liquid_flow, x[0]
+            outlets['distillate_liquid'] = self._vlle_outlet_state(
+                T[0], pressures[0], distillate_liquid_flow, distillate_liquid_x,
+                top_routing['liquid1_x'], top_routing['liquid2_x'],
+                top_routing['distillate_beta'], 0., y[0], top_routing['distillate_h'],
             )
             outlets['distillate_vapor'] = self.thermo.calculate_state(
                 T[0], pressures[0], distillate_vapor_flow, y[0],
@@ -3307,6 +3295,17 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'condenser_type': condenser,
             'distillate_vapor_fraction': float(condenser_vapor_fraction),
             'reflux_ratio': float(L[0] / max(D, 1e-30)),
+            'top_liquid_routing': {
+                'component':routing_options['component'] if routing_options else None,
+                'withdrawal_fractions':list(routing_options['fractions']) if routing_options else None,
+                'liquid1_composition':dict(top_routing['liquid1_x']),
+                'liquid2_composition':dict(top_routing['liquid2_x']),
+                'distillate_liquid1_flow':float(distillate_liquid_flow*(1-top_routing['distillate_beta'])),
+                'distillate_liquid2_flow':float(distillate_liquid_flow*top_routing['distillate_beta']),
+                'reflux_liquid1_flow':float(L[0]*(1-top_routing['reflux_beta'])),
+                'reflux_liquid2_flow':float(L[0]*top_routing['reflux_beta']),
+                'reflux_composition':dict(top_routing['reflux_x']),
+            },
             'distillate_flow': float(D),
             'distillate_liquid_flow': float(distillate_liquid_flow),
             'distillate_vapor_flow': float(distillate_vapor_flow),
@@ -3315,7 +3314,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'component_balance_error': float(component_balance_error),
             'solver': 'sparse_damped_newton_vlle_active_set',
             'initializer': initializer_label,
-            'vlle_seed_requested': seed_mode,
+            'vlle_seed_requested': requested_seed_mode,
             'vlle_homogeneous_initializer': homogeneous_initializer,
             'vlle_seed_fallback': bool(seed_fallback),
             'vlle_seed_failure': seed_failure,
@@ -3394,18 +3393,22 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'component_classification': classification,
             'side_draws': [],
             'distillate_enthalpy_basis': float(distillate_h),
-            'top_decanter': None,
             'stage_phase_model': 'VLLE',
-            'liquid_phase_routing': 'co_routed_equilibrium',
+            'liquid_phase_routing': (
+                'phase_selective_overhead' if routing_options is not None
+                else 'co_routed_equilibrium'
+            ),
             'stage_phase_counts': phase_counts,
             'stage_liquid1_compositions': x1,
             'stage_liquid2_compositions': x2,
             'stage_liquid2_fractions': liquid2_fraction,
             'stage_liquid1_flows': [
-                (1.0 - beta) * flow for beta, flow in zip(liquid2_fraction, L)
+                (1.0-(top_routing['reflux_stage_beta'] if stage == 0 else beta))*flow
+                for stage,(beta,flow) in enumerate(zip(liquid2_fraction,L))
             ],
             'stage_liquid2_flows': [
-                beta * flow for beta, flow in zip(liquid2_fraction, L)
+                (top_routing['reflux_stage_beta'] if stage == 0 else beta)*flow
+                for stage,(beta,flow) in enumerate(zip(liquid2_fraction,L))
             ],
             'vlle_active_stages': active_stages,
             'vlle_topology': topology_text(solved.active),
@@ -3514,8 +3517,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
     def _condenser_vapor_fraction(self, condenser: str) -> float:
         if condenser == 'total':
             return 0.0
-        if condenser == 'decanter':
-            return 0.0
         if condenser == 'partial':
             return 1.0
         value = self.get_param(
@@ -3533,39 +3534,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             )
         return fraction
 
-    def _decanter_options(self) -> dict:
-        reflux_phase = str(self.get_param('decanter_reflux_phase', '') or '').strip().lower()
-        distillate_phase = str(self.get_param('decanter_distillate_phase', '') or '').strip().lower()
-        reflux_component = self.get_param(
-            'decanter_reflux_component',
-            self.get_param('reflux_phase_component'),
-        )
-        distillate_component = self.get_param(
-            'decanter_distillate_component',
-            self.get_param('distillate_phase_component'),
-        )
-        purge_fraction = float(self.get_param(
-            'decanter_reflux_purge_fraction',
-            self.get_param('reflux_purge_fraction', 0.0),
-        ))
-        if not 0.0 <= purge_fraction < 1.0:
-            raise UnitOperationError(
-                f"RigorousDistillation '{self.unit_id}' decanter reflux purge fraction "
-                "must be in [0, 1)"
-            )
-        T_spec = self.get_param(
-            'decanter_T',
-            self.get_param('condenser_T', self.get_param('T_condenser')),
-        )
-        return {
-            'reflux_phase': reflux_phase,
-            'distillate_phase': distillate_phase,
-            'reflux_component': str(reflux_component).strip() if reflux_component else None,
-            'distillate_component': str(distillate_component).strip() if distillate_component else None,
-            'purge_fraction': purge_fraction,
-            'T_spec': None if T_spec is None else float(T_spec),
-        }
-
     def _distillate_spec(self, inlet: StreamState) -> dict:
         spec = _distillate_flow_spec_from_params(self, inlet, default_fraction=0.5)
         if spec['kind'] == 'molar':
@@ -3581,26 +3549,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 f"RigorousDistillation '{self.unit_id}' distillate mass flow is infeasible"
             )
         return spec
-
-    def _decanter_distillate_guess(self, inlet: StreamState) -> dict:
-        for name in ('decanter_distillate_guess', 'distillate_flow_guess', 'D_guess'):
-            value = self.get_param(name)
-            if value is None:
-                continue
-            guess = float(value)
-            if guess <= 0.0:
-                raise UnitOperationError(
-                    f"RigorousDistillation '{self.unit_id}' {name} must be positive"
-                )
-            return {'kind': 'decanter', 'value': min(guess, 0.95 * inlet.F), 'source': name}
-        D_to_F = self.get_param('D_to_F')
-        if D_to_F is not None:
-            guess = inlet.F * float(D_to_F)
-        else:
-            guess = 0.35 * inlet.F
-        if not 0.0 < guess < inlet.F:
-            guess = 0.35 * inlet.F
-        return {'kind': 'decanter', 'value': guess, 'source': 'decanter_guess'}
 
     def _validate_external_flow_specs(
         self,
@@ -3763,7 +3711,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         if initializer in ('default', 'auto'):
             initializer = (
                 'estimate'
-                if len(comps) == 2 or condenser == 'decanter'
+                if len(comps) == 2
                 else 'coarse_rigorous'
             )
 
@@ -3997,26 +3945,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 dict(item)
                 for item in azeotropic_endpoint_data['pseudo_components']
             ]
-        if condenser == 'decanter':
-            reflux_component = self.get_param('decanter_reflux_component', self.get_param('reflux_phase_component'))
-            distillate_guess = dict(x[0])
-            if reflux_component:
-                reflux_name = str(reflux_component).strip().lower().replace('_', ' ').replace('-', ' ')
-                reflux_match = None
-                for comp in comps:
-                    if comp.lower().replace('_', ' ').replace('-', ' ') == reflux_name:
-                        reflux_match = comp
-                        break
-                if reflux_match is not None:
-                    reflux_rich = dict(x[0])
-                    reflux_rich[reflux_match] = max(reflux_rich.get(reflux_match, 0.0), 0.65)
-                    x[0] = self._normalize(reflux_rich)
-                    distillate_guess = dict(feed_z)
-                    distillate_guess[reflux_match] = max(distillate_guess.get(reflux_match, 0.0) * 0.3, 1e-8)
-                    distillate_guess = self._normalize(distillate_guess)
-            raw_reflux = L[0] / max(1.0 - float(self.get_param('decanter_reflux_purge_fraction', self.get_param('reflux_purge_fraction', 0.0))), 1e-8)
-            initial['decanter_distillate_x'] = distillate_guess
-            initial['decanter_beta'] = D_guess / max(D_guess + raw_reflux, 1e-12)
         return initial
 
     def _legacy_cmo_endpoint_initial_guess(
@@ -4252,10 +4180,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         if self._truthy_param(self.get_param('_skip_coarse_init', False)):
             return None
         condenser_type = str(self.get_param('condenser_type', '')).strip().lower()
-        if condenser_type in (
-            'decanter', 'heterogeneous', 'heterogeneous_decanter', 'top_decanter',
-        ):
-            return None
         if condenser_type and condenser_type not in (
             'total', 'complete', 'liquid', 'total_condenser',
         ):
@@ -4369,7 +4293,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         pressure: float,
         candidates: Optional[list[dict]] = None,
     ) -> Optional[dict]:
-        """Build top/bottom endpoint guesses from VLE-only azeotrope pseudos.
+        """Build top/bottom endpoint guesses from equilibrium azeotrope pseudos.
 
         This intentionally uses only endpoint compositions.  The usual initial
         guess path below will fill the internal profile linearly.
@@ -4389,27 +4313,29 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         pseudos = []
 
         for candidate in sorted(candidates, key=lambda item: (-item['order'], item['T'])):
+            product = candidate.get('product_composition', candidate['composition'])
             active = [
                 comp for comp in comps
-                if candidate['composition'].get(comp, 0.0) > 1e-8
+                if product.get(comp, 0.0) > 1e-8
             ]
             if not active:
                 continue
             amount = min(
-                inventory[comp] / max(candidate['composition'][comp], 1e-30)
+                inventory[comp] / max(product[comp], 1e-30)
                 for comp in active
             )
             if amount <= inventory_scale * 1e-8:
                 continue
             pseudos.append({
                 'name': candidate['name'],
-                'composition': dict(candidate['composition']),
+                'composition': dict(product),
+                'stage_composition': dict(candidate['composition']),
                 'amount': amount,
                 'T': candidate['T'],
             })
             for comp in active:
                 inventory[comp] = max(
-                    inventory[comp] - amount * candidate['composition'][comp],
+                    inventory[comp] - amount * product[comp],
                     0.0,
                 )
 
@@ -4507,10 +4433,12 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             for index, item in enumerate(pseudos)
         }
 
-        def expand(amounts: dict[int, float]) -> tuple[dict[str, float], float]:
+        def expand(amounts: dict[int, float], *, stage_composition=False) -> tuple[dict[str, float], float]:
             moles = {comp: 0.0 for comp in comps}
             for index, amount in amounts.items():
-                for comp, fraction in pseudos[index]['composition'].items():
+                pseudo = pseudos[index]
+                composition = pseudo.get('stage_composition', pseudo['composition']) if stage_composition else pseudo['composition']
+                for comp, fraction in composition.items():
                     moles[comp] += amount * fraction
             total = sum(moles.values())
             if total <= 0.0:
@@ -4520,7 +4448,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 )
             return ({comp: moles[comp] / total for comp in comps}, total)
 
-        x_top, D = expand(dist_pseudo)
+        x_top, D = expand(dist_pseudo, stage_composition=True)
         x_bottom, B = expand(bot_pseudo)
         return {
             'x_top': self._dense_composition(x_top, comps),
@@ -5549,8 +5477,6 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         }
 
     def _distillate_molar_guess(self, spec: dict, inlet: StreamState, composition: dict[str, float]) -> float:
-        if spec['kind'] == 'decanter':
-            return max(float(spec['value']), 1e-9)
         if spec['kind'] == 'molar':
             return max(float(spec['value']), 1e-9)
         mw = sum(composition.get(comp, 0.0) * self.thermo.props[comp].MW for comp in composition)
@@ -5561,6 +5487,7 @@ class CMODistillation(RigorousDistillation):
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         import numpy as np
+        _liquid_routing_specification(self, supports_phase_routing=False)
 
         if self._stage_phase_model() != 'VLE':
             raise UnitOperationError(
@@ -5594,10 +5521,6 @@ class CMODistillation(RigorousDistillation):
             condenser = 'partial'
         if condenser in ('two_phase', 'two-phase', 'mixed_distillate', 'partial_liquid'):
             condenser = 'mixed'
-        if condenser in ('decanter', 'heterogeneous', 'heterogeneous_decanter', 'top_decanter'):
-            raise UnitOperationError(
-                f"CMODistillation '{self.unit_id}' does not support decanter condensers"
-            )
         if condenser not in ('total', 'partial', 'mixed'):
             raise UnitOperationError(
                 f"CMODistillation '{self.unit_id}' condenser_type must be total, mixed, or partial"

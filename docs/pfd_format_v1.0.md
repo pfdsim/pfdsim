@@ -1264,7 +1264,7 @@ serialization and `.pfr` reporting expose.
 - `ShortcutDistillation` - Shortcut distillation column
 - `McCabeThieleDistillation` - Binary McCabe-Thiele column with optional latent-heat-corrected operating curves
 - `CMODistillation` - Multicomponent stage-by-stage constant-molar-overflow column with total, partial, or mixed condenser
-- `RigorousDistillation` - Sparse Newton MESH-equation distillation column with pressure profiles, side draws, total/partial/mixed condensers, and optional top decanter
+- `RigorousDistillation` - Sparse Newton MESH-equation distillation column with pressure profiles, side draws, total/partial/mixed condensers, and phase-selective VLLE overhead withdrawal
 - `MolecularSieveDryer` - Competitive molecular-sieve adsorption with built-in and custom isotherms; alias: `Dryer`
 - `ShortcutExtractor` - Shortcut multi-stage LLE extraction; aliases: `Extractor`, `LiquidLiquidExtractor`, `LLE`
 - `RigorousExtractor` - Equilibrium-stage LLE extraction; alias: `RigorousLiquidLiquidExtractor`
@@ -2504,7 +2504,7 @@ equations with fixed section traffic. It supports multicomponent feeds and
 `distillate_liquid` and `distillate_vapor` outlets are exposed. Set
 `latent_heat_correction = true` to use constant component latent heats when
 calculating section traffic. CMO currently accepts one positive feed and does
-not support side draws or a decanter condenser.
+not support side draws or phase-selective overhead withdrawal.
 
 **RigorousDistillation:**
 - `N_stages` - Number of stages
@@ -2520,13 +2520,15 @@ not support side draws or a decanter condenser.
 - `P_drop_per_stage` - Pressure drop per stage
 - `P_bottom` - Optional bottom pressure; creates a linear pressure profile from `P_condenser`
 - `stage_pressures` - Optional comma-separated pressure profile with one value per stage
-- `condenser_type` - `total`, `partial`, `mixed`, or `decanter`
+- `condenser_type` - `total`, `partial`, or `mixed`
 - `stage_phase_model` - `VLE` (default) or `VLLE`. `VLLE` permits up to two
   liquid phases on each stage and retains the smaller VLE equation set on
   stages whose liquid remains stable.
-- `vlle_seed` - `auto` (default), `cheap`, or `homogeneous`. Auto uses the
+- `vlle_seed` - `auto` (default), `cheap`, `homogeneous`, or `azeotropic`. Auto uses the
   inexpensive estimate directly when it already contains LLE and otherwise
-  obtains a homogeneous MESH profile before activating VLLE stages.
+  obtains a homogeneous MESH profile before activating VLLE stages. For
+  unequal top-liquid withdrawal fractions, auto prefers an available
+  phase-aware azeotropic seed.
 - `vlle_max_topology_updates` - Maximum active-set topology solves, default `8`
 - `vlle_initial_topology` - `screened` (default), `all_vle`, or `all_vlle`.
   The forced forms are intended for continuation studies and diagnostics;
@@ -2544,9 +2546,15 @@ not support side draws or a decanter condenser.
   `azeotropic`
 - `coarse_initial_stages` - Number of stages used when `initializer = coarse_rigorous`
 - `distillate_vapor_fraction` - Vapor fraction of the distillate for `mixed` condensers
-- `decanter_reflux_component` - For `RigorousDistillation` top decanters, sends the liquid phase richer in this component back as reflux
-- `decanter_distillate_component` - Optional component selector for the decanter distillate phase
-- `decanter_reflux_purge_fraction` - Optional purge fraction taken from the selected reflux phase before it returns to the column
+- `distillate_liquid1_fraction`, `distillate_liquid2_fraction` - Fractions of
+  the respective equilibrium top liquids withdrawn as distillate; the rest
+  returns internally as reflux. Specify both, between 0 and 1, without units.
+  Requires `stage_phase_model = VLLE` and a total or mixed condenser. These
+  fractions determine reflux flow, so omit `reflux_ratio`/`RR`.
+- `distillate_liquid1_component` - Declared component symbol identifying the
+  top liquid richer in that component as liquid 1. Required for unequal
+  withdrawal fractions, making routing independent of solver phase ordering.
+  The selector must distinguish the two liquid compositions at the solution.
 - `side_draws` - Optional semicolon-separated side draw specs for `RigorousDistillation`, for example `stage:7,phase:liquid,flow:5,port:side_liq`
 - `mesh_tolerance` - Scaled MESH residual tolerance for rigorous solvers
 - `semi_analytic_flow_jacobian` - Enables the optimized Jacobian, default
@@ -2560,11 +2568,48 @@ not support side draws or a decanter condenser.
   strategy.
 
 For `RigorousDistillation`, the standard outlets are `distillate` and `bottoms`.
-Mixed condensers also expose `distillate_liquid` and `distillate_vapor`. Top
-decanters expose `decanter_purge` when `decanter_reflux_purge_fraction` is
-positive; in this mode `D_to_F`/`D` specifies the distillate product rate, and
-the decanter phase split determines the effective reflux ratio. Side draw ports
+Mixed condensers also expose `distillate_liquid` and `distillate_vapor`. These
+are views of the combined distillate and are not additional material products.
+Side draw ports
 use the `port` names provided in `side_draws`.
+
+Phase-selective withdrawal uses the same coupled VLLE equilibrium equations
+as the rest of the column. It changes the product and reflux routing in the
+component and enthalpy balances, including the reflux entering stage 2.
+For mixed condensers, the fractions apply to the condensed liquids; the
+existing `distillate_vapor_fraction` still specifies the vapor share of the
+combined product. Molar and mass distillate specifications use the actual
+routed product composition. Unequal withdrawal requires two distinct stable
+top liquids; an absent selected phase produces a descriptive solve error.
+
+For example, return the butanol-rich phase and withdraw the water-rich phase:
+
+```pfd
+        condenser_type = total
+        stage_phase_model = VLLE
+        D_to_F = 0.6119275124597854
+        distillate_liquid1_component = butanol
+        distillate_liquid1_fraction = 0
+        distillate_liquid2_fraction = 1
+```
+
+The complete
+[butanol recovery example](../examples/butanol_water_phase_selective_distillation.pfd)
+uses one column without external recycle. Its 20-stage NRTL model predicts
+approximately 99.731 mol% butanol bottoms and 96.757% butanol recovery.
+The performance report's `top_liquid_routing` records the labelled phase
+compositions, withdrawal fractions, product phase flows, and reflux phase
+flows. Phase inventories and phase-weighted bulk properties are retained in
+the outlet streams. This selector labels the top routing phases; internal
+stage L1/L2 arrays retain their solver ordering.
+For the top stage, `stage_liquid2_fractions` describes the entire condensate
+before withdrawal, while `stage_liquid1_flows` and `stage_liquid2_flows` report
+the actual remaining phase flows returned as reflux.
+
+The former VLE `condenser_type = decanter` and its aliases/parameters were
+removed. Affected `.pfd` input fails during parsing and directs you to enable
+VLLE and specify coupled phase withdrawal. There is no `decanter_purge` port
+or separate VLE-only overhead liquid-equilibrium implementation.
 
 With `stage_phase_model = VLLE`, coexisting equilibrium liquids are modeled as
 co-routed phases with one aggregate downward flow. The MESH equations use separate L1/L2
@@ -2573,15 +2618,16 @@ vapor in equilibrium with both liquids. The reported performance includes
 `stage_phase_counts`, `stage_liquid1_compositions`,
 `stage_liquid2_compositions`, `stage_liquid2_fractions`, phase-specific liquid
 flows, and the active-set topology history. Total, partial, and mixed
-condensers are supported. Decanter condensers and side draws are rejected in
-VLLE mode until their separate liquid-phase routing is specified. The selected
+condensers are supported. The top liquids may be routed separately using the
+withdrawal fractions above; liquids on internal stages remain co-routed.
+Side draws remain unsupported in VLLE mode. The selected
 thermodynamic method must provide activity coefficients and LLE stability;
 gamma-phi methods iterate one shared vapor EOS state from both liquid
 fugacities and report a post-solve three-phase log-fugacity residual.
 `CMODistillation`, shortcut columns, and McCabe-Thiele columns remain VLE-only.
 Stage-local Jacobians support total, partial, and mixed condensers with molar
-or mass distillate specifications. Decanter condensers and columns with side
-draws retain the original colored finite-difference Jacobian. If an optimized
+or mass distillate specifications, including top-liquid routing. VLE columns
+with side draws retain the original colored finite-difference Jacobian. If an optimized
 Jacobian does not converge, the solve automatically retries from the same
 initial profile with the original Jacobian.
 
@@ -2589,8 +2635,7 @@ Use `initializer = auto` for most columns. Auto uses the inexpensive smooth
 `estimate` path for binary columns and a coarse rigorous solve for
 multicomponent columns. The coarse solve is seeded by the internal legacy CMO
 estimate. If a coarse grid is inapplicable, multicomponent auto initialization
-falls back to that legacy estimate; top-decanter columns use the decanter-aware
-smooth estimate directly.
+falls back to that legacy estimate.
 
 `estimate` and `cheap_estimate` are aliases for the same inexpensive smooth
 profile and do not run a shortcut, coarse, CMO, or azeotrope solve.

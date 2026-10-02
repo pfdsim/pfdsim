@@ -16,8 +16,10 @@ from enum import Enum
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .lyngby_parameters import canonical_lyngby_method
+    from .distillation_specifications import liquid_distillate_routing
 else:
     from lyngby_parameters import canonical_lyngby_method
+    from distillation_specifications import liquid_distillate_routing
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .crystallizer_specs import (
@@ -2761,6 +2763,19 @@ class PFDParser:
             i += 1
 
         self._finalize_compact_unit_ports()
+        for unit in self.pfd.units:
+            if unit.unit_type not in {'RigorousDistillation', 'CMODistillation', 'McCabeThieleDistillation'}:
+                continue
+            parameters = [(param.name,param.value) for param in unit.params]
+            parameters.extend((f'__unit__{param.name}',param.unit) for param in unit.params if param.unit)
+            try:
+                liquid_distillate_routing(
+                    parameters, default_phase_model=self.pfd.metadata.fluid_phase_model,
+                    components=[component.symbol for component in self.pfd.components] or None,
+                    supports_phase_routing=unit.unit_type == 'RigorousDistillation',
+                )
+            except ValueError as error:
+                self._record_error(f"Unit '{unit.id}': {error}")
         self._raise_recorded_errors()
         return self.pfd
 

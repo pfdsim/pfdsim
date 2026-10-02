@@ -92,8 +92,6 @@ TEST_SECONDS = {
     'test_mccabe_thiele_uses_latent_heat_curved_operating_lines': 9.507,
     'tests.test_examples.ExampleSimulationTests.'
     'test_pressure_swing_recycle_converges_with_two_phase_second_column_feed': 9.192,
-    'tests.test_unit_operations.UnitOperationSmokeTests.'
-    'test_rigorous_distillation_top_decanter_selects_reflux_phase_and_purge': 7.665,
 }
 
 

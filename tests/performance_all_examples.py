@@ -80,6 +80,7 @@ BASELINE_EXAMPLE_SECONDS = {
     'benzene_toluene_20_stage_distillation_nrtl.pfd': 0.086,
     'biosteam_mesh_hydrocarbon_distillation.pfd': 1.113,
     'butanol_water_lle.pfd': 0.007,
+    'butanol_water_phase_selective_distillation.pfd': 0.511,
     'competitive_13x_adsorption.pfd': 0.055,
     'cryogenic_air_separation_rks_bm.pfd': 0.264,
     'cstr_pfr_comparison.pfd': 0.090,

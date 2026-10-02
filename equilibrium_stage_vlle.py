@@ -56,6 +56,7 @@ class VLLEColumnSolution:
     topology_events: list[dict]
     work: dict[str, int]
     final_topology_projection_checks: int
+    top_liquid_routing: dict
 
 
 class _ActiveSetChange(RuntimeError):
@@ -396,6 +397,41 @@ class VLLEStabilityCache:
         return int(self._cached.cache_info().hits)
 
 
+def route_top_liquids(components, options, state, props):
+    """Shared phase-labelled product/reflux routing for equations and seed inventories."""
+    x1, x2, beta = state['x1'], state['x2'], state['beta']
+    h1, h2 = props['hL1'], props['hL2']
+    if options is None:
+        return {'distillate_x':state['aggregate_x'], 'reflux_x':state['aggregate_x'],
+                'distillate_h':props['hL'], 'reflux_h':props['hL'],
+                'liquid1_x':x1, 'liquid2_x':x2,
+                'distillate_beta':beta, 'reflux_beta':beta,
+                'reflux_stage_beta':beta,
+                'condensate_beta':beta, 'withdrawal_fraction':None}
+    selector = options['component']
+    swapped = bool(selector and x2[selector] > x1[selector])
+    if swapped:
+        x1, x2, beta, h1, h2 = x2, x1, 1-beta, h2, h1
+    f1, f2 = options['fractions']
+    draw1, draw2 = (1-beta)*f1, beta*f2
+    return1, return2 = (1-beta)*(1-f1), beta*(1-f2)
+
+    def blend(first, second, fallback):
+        amount = first+second
+        if amount <= 0:
+            return fallback, props['hL'], beta
+        composition = {c:(first*x1[c]+second*x2[c])/amount for c in components}
+        return composition, (first*h1+second*h2)/amount, second/amount
+
+    xD, hD, betaD = blend(draw1, draw2, state['aggregate_x'])
+    xR, hR, betaR = blend(return1, return2, state['aggregate_x'])
+    return {'distillate_x':xD, 'reflux_x':xR, 'distillate_h':hD, 'reflux_h':hR,
+            'liquid1_x':x1, 'liquid2_x':x2, 'distillate_beta':betaD,
+            'reflux_beta':betaR, 'condensate_beta':beta,
+            'reflux_stage_beta':1-betaR if swapped else betaR,
+            'withdrawal_fraction':draw1+draw2}
+
+
 class EquationOrientedVLLEColumn:
     """One fixed VLE/VLLE stage topology and its sparse MESH equations."""
 
@@ -427,6 +463,7 @@ class EquationOrientedVLLEColumn:
         self.inlet = inlet
         self.feed_specs = feed_specs
         self.components = tuple(components)
+        self.liquid_routing = unit._distillate_liquid_routing_options(self.components)
         self.nc = len(self.components)
         self.N = len(pressures)
         self.pressures = [float(value) for value in pressures]
@@ -659,6 +696,7 @@ class EquationOrientedVLLEColumn:
             h_liquid = self.thermo.mixture_enthalpy(
                 state["x1"], T, vapor_fraction=0.0, P=P
             )
+            h1 = h2 = h_liquid
         else:
             gamma1 = self.thermo.activity_coefficients(T, state["x1"])
             gamma2 = self.thermo.activity_coefficients(T, state["x2"])
@@ -704,8 +742,14 @@ class EquationOrientedVLLEColumn:
             "bubble": vapor_total - 1.0,
             "lle": lle,
             "hL": float(h_liquid),
+            "hL1": float(h1),
+            "hL2": float(h2),
             "hV": float(h_vapor),
         }
+
+    def top_liquid_routing(self, state, props):
+        """Return physical top-liquid product/reflux compositions and enthalpies."""
+        return route_top_liquids(self.components, self.liquid_routing, state, props)
 
     def _feed_component(self, stage: int, comp: str) -> float:
         return sum(
@@ -720,6 +764,7 @@ class EquationOrientedVLLEColumn:
         decoded = self.decode(vector)
         stages = decoded["stages"]
         props = [self.stage_properties(stage, state) for stage, state in enumerate(stages)]
+        routing = self.top_liquid_routing(stages[0], props[0])
         values = []
         D = stages[0]["V"]
         top_vapor_fraction = self.condenser_vapor_fraction
@@ -727,9 +772,10 @@ class EquationOrientedVLLEColumn:
             for comp in self.components:
                 incoming = self._feed_component(stage, comp)
                 if stage > 0:
+                    incoming_liquid_x = routing['reflux_x'] if stage == 1 else stages[stage-1]['aggregate_x']
                     incoming += (
                         stages[stage - 1]["L"]
-                        * stages[stage - 1]["aggregate_x"].get(comp, 0.0)
+                        * incoming_liquid_x.get(comp, 0.0)
                     )
                 if stage < self.N - 1:
                     incoming += (
@@ -751,7 +797,8 @@ class EquationOrientedVLLEColumn:
 
             incoming_energy = self._feed_enthalpy(stage)
             if stage > 0:
-                incoming_energy += stages[stage - 1]["L"] * props[stage - 1]["hL"]
+                incoming_liquid_h = routing['reflux_h'] if stage == 1 else props[stage-1]['hL']
+                incoming_energy += stages[stage - 1]["L"] * incoming_liquid_h
             if stage < self.N - 1:
                 incoming_energy += stages[stage + 1]["V"] * props[stage + 1]["hV"]
             if stage == 0:
@@ -774,7 +821,7 @@ class EquationOrientedVLLEColumn:
         if self.distillate_spec["kind"] == "mass":
             product_mw = sum(
                 (
-                    (1.0 - top_vapor_fraction) * stages[0]["aggregate_x"].get(comp, 0.0)
+                    (1.0 - top_vapor_fraction) * routing['distillate_x'].get(comp, 0.0)
                     + top_vapor_fraction * props[0]["y"].get(comp, 0.0)
                 ) * self.thermo.props[comp].MW
                 for comp in self.components
@@ -787,9 +834,12 @@ class EquationOrientedVLLEColumn:
             values.append(
                 (D - float(self.distillate_spec["value"])) / self.flow_scale
             )
-        values.append(
-            (stages[0]["L"] - self.reflux_ratio * D) / self.flow_scale
-        )
+        if self.liquid_routing is None:
+            values.append((stages[0]['L']-self.reflux_ratio*D)/self.flow_scale)
+        else:
+            liquid_product = (1-top_vapor_fraction)*D
+            condensed = stages[0]['L']+liquid_product
+            values.append((liquid_product-condensed*routing['withdrawal_fraction'])/self.flow_scale)
         return np.asarray(values, dtype=float)
 
     def sparsity(self):
@@ -817,6 +867,8 @@ class EquationOrientedVLLEColumn:
         matrix.mark_range(spec_row, top.start, top.stop)
         matrix.mark(spec_row + 1, top.liquid_flow)
         matrix.mark(spec_row + 1, top.vapor_flow)
+        if self.liquid_routing is not None:
+            matrix.mark_range(spec_row+1, top.start, top.stop)
         return matrix.tocsr()
 
     def topology_assessment(self, decoded: dict) -> tuple[list[bool], list[dict]]:
@@ -952,6 +1004,7 @@ class EquationOrientedVLLEColumn:
         stages = decoded["stages"]
         props = [self.stage_properties(stage, state) for stage, state in enumerate(stages)]
         matrix = self._jacobian_pattern.empty()
+        top_routing = self.top_liquid_routing(stages[0], props[0])
         evaluations = 0
         top_vapor_fraction = self.condenser_vapor_fraction
 
@@ -988,6 +1041,18 @@ class EquationOrientedVLLEColumn:
                 }
                 dhL = (changed["hL"] - base["hL"]) / step
                 dhV = (changed["hV"] - base["hV"]) / step
+                reflux_dx, reflux_dh = dx, dhL
+                if stage == 0:
+                    changed_routing = self.top_liquid_routing(changed_state, changed)
+                    reflux_dx = {comp:(changed_routing['reflux_x'][comp]
+                                      -top_routing['reflux_x'][comp])/step
+                                 for comp in self.components}
+                    reflux_dh = (changed_routing['reflux_h']-top_routing['reflux_h'])/step
+                    if self.liquid_routing is not None:
+                        condensed = state['L']+(1-top_vapor_fraction)*state['V']
+                        derivative = (changed_routing['withdrawal_fraction']
+                                      -top_routing['withdrawal_fraction'])/step
+                        add(self.n_rows-1,column,-condensed*derivative/self.flow_scale)
                 liquid_coefficient = state["L"]
                 vapor_coefficient = state["V"]
                 if stage == 0:
@@ -1005,7 +1070,7 @@ class EquationOrientedVLLEColumn:
                         add(
                             self.stage_row_starts[stage + 1] + ci,
                             column,
-                            state["L"] * dx[comp] / scale,
+                            state["L"] * reflux_dx[comp] / scale,
                         )
                     if stage > 0:
                         add(
@@ -1023,7 +1088,7 @@ class EquationOrientedVLLEColumn:
                     add(
                         self.stage_row_starts[stage + 1] + self.nc,
                         column,
-                        state["L"] * dhL / self.energy_scale,
+                        state["L"] * reflux_dh / self.energy_scale,
                     )
                 if stage > 0:
                     add(
@@ -1046,7 +1111,9 @@ class EquationOrientedVLLEColumn:
                 if stage == 0 and self.distillate_spec["kind"] == "mass":
                     d_mw = sum(
                         self.thermo.props[comp].MW
-                        * ((1.0 - top_vapor_fraction) * dx[comp] + top_vapor_fraction * dy[comp])
+                        * ((1.0 - top_vapor_fraction)
+                           * (changed_routing['distillate_x'][comp]-top_routing['distillate_x'][comp])/step
+                           + top_vapor_fraction * dy[comp])
                         for comp in self.components
                     )
                     add(
@@ -1060,6 +1127,8 @@ class EquationOrientedVLLEColumn:
             item = props[stage]
             dL = state["L"]
             dV = state["V"]
+            reflux_x = top_routing['reflux_x'] if stage == 0 else state['aggregate_x']
+            reflux_h = top_routing['reflux_h'] if stage == 0 else item['hL']
             for ci, comp in enumerate(self.components):
                 scale = self.component_scales[comp]
                 row = self.stage_row_starts[stage] + ci
@@ -1068,7 +1137,7 @@ class EquationOrientedVLLEColumn:
                     add(
                         self.stage_row_starts[stage + 1] + ci,
                         layout.liquid_flow,
-                        dL * state["aggregate_x"][comp] / scale,
+                        dL * reflux_x[comp] / scale,
                     )
                 if stage == 0:
                     product_comp = (
@@ -1089,7 +1158,7 @@ class EquationOrientedVLLEColumn:
                 add(
                     self.stage_row_starts[stage + 1] + self.nc,
                     layout.liquid_flow,
-                    dL * item["hL"] / self.energy_scale,
+                    dL * reflux_h / self.energy_scale,
                 )
             if stage == 0:
                 product_h = (
@@ -1114,7 +1183,7 @@ class EquationOrientedVLLEColumn:
         if self.distillate_spec["kind"] == "mass":
             product_mw = sum(
                 (
-                    (1.0 - top_vapor_fraction) * top["aggregate_x"][comp]
+                    (1.0 - top_vapor_fraction) * top_routing['distillate_x'][comp]
                     + top_vapor_fraction * top_props["y"][comp]
                 ) * self.thermo.props[comp].MW
                 for comp in self.components
@@ -1122,12 +1191,14 @@ class EquationOrientedVLLEColumn:
             add(spec_row, top_layout.vapor_flow, top["V"] * product_mw / self.distillate_scale)
         else:
             add(spec_row, top_layout.vapor_flow, top["V"] / self.flow_scale)
-        add(spec_row + 1, top_layout.liquid_flow, top["L"] / self.flow_scale)
-        add(
-            spec_row + 1,
-            top_layout.vapor_flow,
-            -self.reflux_ratio * top["V"] / self.flow_scale,
-        )
+        if self.liquid_routing is None:
+            add(spec_row+1, top_layout.liquid_flow, top['L']/self.flow_scale)
+            add(spec_row+1, top_layout.vapor_flow, -self.reflux_ratio*top['V']/self.flow_scale)
+        else:
+            fraction = top_routing['withdrawal_fraction']
+            add(spec_row+1, top_layout.liquid_flow, -fraction*top['L']/self.flow_scale)
+            add(spec_row+1, top_layout.vapor_flow,
+                (1-top_vapor_fraction)*(1-fraction)*top['V']/self.flow_scale)
         return matrix.tocsr(), evaluations, "vlle_semi_analytic_local_thermo"
 
     def projected_boundary_event(self, vector, residual, direction) -> None:
@@ -1554,6 +1625,7 @@ def solve_vlle_active_set(
                 topology_events=topology_events,
                 work=work_snapshot(),
                 final_topology_projection_checks=model.projection_checks,
+                top_liquid_routing=model.top_liquid_routing(decoded['stages'][0], props[0]),
             )
         topology_events.append({
             "from": topology_text(active),

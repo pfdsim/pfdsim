@@ -554,7 +554,7 @@ class RigorousDistillationVLLETests(unittest.TestCase):
             'P_condenser': 1.0,
             'stage_phase_model': 'VLLE',
         }
-        with self.assertRaisesRegex(UnitOperationError, 'decanter condenser'):
+        with self.assertRaisesRegex(UnitOperationError, 'removed.*VLLE'):
             RigorousDistillation(
                 'VLLE-DECANTER',
                 thermo,

@@ -5048,70 +5048,10 @@ class UnitOperationSmokeTests(unittest.TestCase):
             1e-5,
         )
 
-    def test_rigorous_distillation_top_decanter_selects_reflux_phase_and_purge(self):
-        thermo = create_thermodynamics(['ethanol', 'water', 'benzene'], 'UNIFAC')
-        feed = thermo.calculate_state(
-            298.15,
-            1.0,
-            20.0,
-            {
-                'ethanol': 0.35,
-                'water': 0.25,
-                'benzene': 0.40,
-            },
-            phase='liquid',
-            flash=False,
-        )
-        result = RigorousDistillation(
-            'AZD', thermo,
-            {
-                'N_stages': 16,
-                'feed_stage': 8,
-                'condenser_type': 'decanter',
-                'decanter_reflux_component': 'benzene',
-                'decanter_reflux_purge_fraction': 0.02,
-                'D_to_F': 0.4,
-                'P_condenser': 1.0,
-                'P_drop_per_stage': 0.0,
-                'mesh_tolerance': 1e-5,
-                'max_iterations': 80,
-                'max_jacobian_evaluations': 80,
-            },
-        ).solve({'feed': feed})
-
-        decanter = result.performance['top_decanter']
-        self.assertEqual(result.performance['initializer'], 'estimate')
-        self.assertEqual(
-            result.performance['jacobian_method'],
-            'colored_finite_difference',
-        )
-        self.assertTrue(decanter['two_phases'])
-        self.assertIn('decanter_purge', result.outlet_streams)
-        self.assertAlmostEqual(
-            result.outlet_streams['distillate'].F,
-            0.4 * feed.F,
-            places=5,
-        )
-        self.assertGreater(
-            decanter['reflux_composition']['benzene'],
-            decanter['distillate_composition']['benzene'],
-        )
-        self.assertAlmostEqual(
-            result.outlet_streams['decanter_purge'].F,
-            0.02 * decanter['reflux_raw_flow'],
-            places=6,
-        )
-        self.assertLess(
-            relative_component_balance(
-                [feed],
-                [
-                    result.outlet_streams['distillate'],
-                    result.outlet_streams['bottoms'],
-                    result.outlet_streams['decanter_purge'],
-                ],
-            ),
-            1e-5,
-        )
+    def test_rigorous_distillation_rejects_removed_vle_decanter(self):
+        with self.assertRaisesRegex(UnitOperationError, 'removed.*VLLE'):
+            RigorousDistillation('U', self.ideal, {'condenser_type':'decanter'}).solve(
+                {'feed':self.liquid})
 
     def test_rigorous_distillation_rejects_infeasible_external_flow_specs(self):
         thermo = create_thermodynamics(['methanol', 'water'], 'UNIFAC')

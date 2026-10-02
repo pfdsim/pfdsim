@@ -1672,16 +1672,8 @@ class Simulator:
                     for param in unit.params
                 }
                 stage_model = params.get("stage_phase_model", "vle")
-                condenser = params.get("condenser_type", "total")
                 if stage_model not in {"vle", ""}:
                     need_vlle = True
-                    need_lle = True
-                if condenser in {
-                    "decanter",
-                    "heterogeneous",
-                    "heterogeneous_decanter",
-                    "top_decanter",
-                }:
                     need_lle = True
             return need_lle, need_vlle
 

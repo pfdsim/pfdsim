@@ -455,8 +455,6 @@ class EquilibriumStageColumnMixin:
         T_min: float,
         T_max: float,
         energy_scale: float,
-        decanter_distillate_x: Optional[dict[str, float]] = None,
-        decanter_beta: Optional[float] = None,
     ):
         import numpy as np
 
@@ -473,12 +471,6 @@ class EquilibriumStageColumnMixin:
         values.extend(math.log(max(value, 1e-14)) for value in V)
         values.append(Q_cond / energy_scale)
         values.append(Q_reb / energy_scale)
-        if decanter_distillate_x is not None:
-            last = max(decanter_distillate_x.get(comps[-1], 0.0), 1e-14)
-            for comp in comps[:-1]:
-                values.append(math.log(max(decanter_distillate_x.get(comp, 0.0), 1e-14) / last))
-            beta = min(max(float(0.5 if decanter_beta is None else decanter_beta), 1e-8), 1.0 - 1e-8)
-            values.append(math.log(beta / (1.0 - beta)))
         return np.array(values, dtype=float)
 
     def _build_mesh_model(
@@ -493,7 +485,6 @@ class EquilibriumStageColumnMixin:
         pressures: list[float],
         condenser: str,
         condenser_vapor_fraction: float,
-        decanter_options: Optional[dict],
         side_draws: list[dict],
         distillate_spec: dict,
         flow_scale: float,
@@ -509,10 +500,6 @@ class EquilibriumStageColumnMixin:
         V_start = L_start + N
         Q_start = V_start + N
         n_vars = Q_start + 2
-        decanter_x_start = n_vars
-        decanter_beta_index = decanter_x_start + (nc - 1)
-        if condenser == 'decanter':
-            n_vars += nc
         span = T_max - T_min
 
         stage_feeds = [[] for _ in range(N)]
@@ -548,19 +535,6 @@ class EquilibriumStageColumnMixin:
             Q_cond = float(vector[Q_start] * energy_scale)
             Q_reb = float(vector[Q_start + 1] * energy_scale)
             decoded = {'T': T, 'x': x, 'L': L, 'V': V, 'Q_cond': Q_cond, 'Q_reb': Q_reb}
-            if condenser == 'decanter':
-                logits = np.array(
-                    list(vector[decanter_x_start:decanter_x_start + nc - 1]) + [0.0],
-                    dtype=float,
-                )
-                logits -= np.max(logits)
-                exp_values = np.exp(logits)
-                fractions = exp_values / np.sum(exp_values)
-                decoded['decanter_distillate_x'] = {
-                    comp: float(fractions[i]) for i, comp in enumerate(comps)
-                }
-                beta_theta = float(np.clip(vector[decanter_beta_index], -60.0, 60.0))
-                decoded['decanter_beta'] = float(1.0 / (1.0 + np.exp(-beta_theta)))
             return decoded
 
         def stage_K_values(T_stage: float, P_stage: float, x_stage: dict[str, float]):
@@ -615,58 +589,6 @@ class EquilibriumStageColumnMixin:
             base = V[stage] if draw['phase'] == 'vapor' else L[stage]
             return float(draw['fraction'] * base)
 
-        def top_decanter_temperature_residual(T_stage: float, vapor_comp: dict[str, float]) -> float:
-            options = decanter_options or {}
-            if options.get('T_spec') is not None:
-                T_spec = float(options['T_spec'])
-                return (float(T_stage) - T_spec) / max(T_spec, 1.0)
-            try:
-                K = stage_K_values(float(T_stage), pressures[0], vapor_comp)
-                return sum(K[comp] * vapor_comp.get(comp, 0.0) for comp in comps) - 1.0
-            except Exception:
-                return props_safe_large
-
-        props_safe_large = 1e3
-
-        def top_decanter_solution(T_stage: float, L0: float, D: float,
-                                  reflux_comp: dict[str, float],
-                                  distillate_comp: dict[str, float],
-                                  beta: float) -> dict:
-            purge_fraction = float((decanter_options or {}).get('purge_fraction', 0.0))
-            raw_reflux = float(L0) / max(1.0 - purge_fraction, 1e-12)
-            return {
-                'two_phases': (
-                    sum(abs(reflux_comp.get(comp, 0.0) - distillate_comp.get(comp, 0.0)) for comp in comps)
-                    > 1e-4
-                ),
-                'reflux_flow': float(L0),
-                'reflux_raw_flow': raw_reflux,
-                'purge_flow': raw_reflux - float(L0),
-                'distillate_flow': float(D),
-                'reflux_composition': {comp: float(reflux_comp.get(comp, 0.0)) for comp in comps},
-                'distillate_composition': {comp: float(distillate_comp.get(comp, 0.0)) for comp in comps},
-                'phase1_composition': {comp: float(distillate_comp.get(comp, 0.0)) for comp in comps},
-                'phase2_composition': {comp: float(reflux_comp.get(comp, 0.0)) for comp in comps},
-                'phase2_fraction': 1.0 - float(beta),
-                'selected_reflux_phase': 2,
-                'selected_distillate_phase': 1,
-            }
-
-        def decanter_activity_residuals(T_stage: float,
-                                        reflux_comp: dict[str, float],
-                                        distillate_comp: dict[str, float]) -> list[float]:
-            gamma_reflux = self.thermo.activity_coefficients(float(T_stage), reflux_comp)
-            gamma_dist = self.thermo.activity_coefficients(float(T_stage), distillate_comp)
-            residuals = []
-            reference = comps[-1]
-            a_ref_reflux = max(reflux_comp.get(reference, 0.0) * gamma_reflux.get(reference, 1.0), 1e-30)
-            a_ref_dist = max(distillate_comp.get(reference, 0.0) * gamma_dist.get(reference, 1.0), 1e-30)
-            for comp in comps[:-1]:
-                a_reflux = max(reflux_comp.get(comp, 0.0) * gamma_reflux.get(comp, 1.0), 1e-30)
-                a_dist = max(distillate_comp.get(comp, 0.0) * gamma_dist.get(comp, 1.0), 1e-30)
-                residuals.append(math.log(a_reflux / a_ref_reflux) - math.log(a_dist / a_ref_dist))
-            return residuals
-
         residual_labels = []
 
         def residual(vector):
@@ -681,14 +603,6 @@ class EquilibriumStageColumnMixin:
             y = [item['y'] for item in props]
             hL = [item['hL'] for item in props]
             hV = [item['hV'] for item in props]
-            top_decanter = (
-                top_decanter_solution(
-                    float(T[0]), float(L[0]), float(V[0]), x[0],
-                    decoded['decanter_distillate_x'], decoded['decanter_beta'],
-                )
-                if condenser == 'decanter' and N > 1
-                else None
-            )
 
             residuals = []
             labels = []
@@ -715,13 +629,7 @@ class EquilibriumStageColumnMixin:
                     if vapor_in_comp is not None:
                         in_comp += vapor_in_flow * vapor_in_comp.get(comp, 0.0)
 
-                    if stage == 0 and top_decanter is not None:
-                        out_comp = (
-                            (L[stage] + top_decanter['purge_flow'])
-                            * x[stage].get(comp, 0.0)
-                            + D * top_decanter['distillate_composition'].get(comp, 0.0)
-                        )
-                    elif stage == 0:
+                    if stage == 0:
                         out_comp = (
                             (L[stage] + D_liquid) * x[stage].get(comp, 0.0)
                             + D_vapor * y[stage].get(comp, 0.0)
@@ -747,17 +655,7 @@ class EquilibriumStageColumnMixin:
                     + stage_feed_enthalpy_flow(stage)
                     + heat
                 )
-                if stage == 0 and top_decanter is not None:
-                    distillate_h = self.thermo.mixture_enthalpy(
-                        top_decanter['distillate_composition'], float(T[stage]),
-                        vapor_fraction=0.0,
-                        P=float(pressures[stage]),
-                    )
-                    out_energy = (
-                        (L[stage] + top_decanter['purge_flow']) * hL[stage]
-                        + D * distillate_h
-                    )
-                elif stage == 0:
+                if stage == 0:
                     out_energy = (L[stage] + D_liquid) * hL[stage] + D_vapor * hV[stage]
                 else:
                     out_energy = L[stage] * hL[stage] + V[stage] * hV[stage]
@@ -767,40 +665,10 @@ class EquilibriumStageColumnMixin:
                 residuals.append((in_energy - out_energy) / energy_scale)
                 labels.append(('energy', stage + 1, None, energy_scale))
 
-                if stage == 0 and top_decanter is not None:
-                    residuals.append(top_decanter_temperature_residual(float(T[0]), x[0]))
-                    labels.append(('decanter_temperature', stage + 1, None, 1.0))
-                else:
-                    residuals.append(props[stage]['bubble'])
-                    labels.append(('bubble', stage + 1, None, 1.0))
+                residuals.append(props[stage]['bubble'])
+                labels.append(('bubble', stage + 1, None, 1.0))
 
-            if top_decanter is not None:
-                beta = decoded['decanter_beta']
-                raw_reflux = L[0] / max(
-                    1.0 - float((decanter_options or {}).get('purge_fraction', 0.0)),
-                    1e-12,
-                )
-                residuals.append((D - beta * V[1]) / flow_scale)
-                labels.append(('decanter_distillate_flow', None, None, flow_scale))
-                residuals.append((raw_reflux - (1.0 - beta) * V[1]) / flow_scale)
-                labels.append(('decanter_reflux_flow', None, None, flow_scale))
-                for value in decanter_activity_residuals(
-                    float(T[0]), x[0], decoded['decanter_distillate_x']
-                ):
-                    residuals.append(value)
-                    labels.append(('decanter_activity', None, None, 1.0))
-                if distillate_spec['kind'] == 'mass':
-                    product_mw = sum(
-                        decoded['decanter_distillate_x'].get(comp, 0.0) * self.thermo.props[comp].MW
-                        for comp in comps
-                    )
-                    mass_scale = max(abs(distillate_spec['value']), flow_scale * product_mw, 1.0)
-                    residuals.append((D * product_mw - distillate_spec['value']) / mass_scale)
-                    labels.append(('distillate_spec', None, None, mass_scale))
-                else:
-                    residuals.append((D - distillate_spec['value']) / flow_scale)
-                    labels.append(('distillate_spec', None, None, flow_scale))
-            elif distillate_spec['kind'] == 'molar':
+            if distillate_spec['kind'] == 'molar':
                 residuals.append((D - distillate_spec['value']) / flow_scale)
                 labels.append(('distillate_spec', None, None, flow_scale))
             else:
@@ -815,16 +683,15 @@ class EquilibriumStageColumnMixin:
                 residuals.append((D * product_mw - distillate_spec['value']) / mass_scale)
                 labels.append(('distillate_spec', None, None, mass_scale))
 
-            if top_decanter is None:
-                residuals.append((L[0] - RR * D) / flow_scale)
-                labels.append(('reflux_spec', None, None, flow_scale))
+            residuals.append((L[0] - RR * D) / flow_scale)
+            labels.append(('reflux_spec', None, None, flow_scale))
 
             if not residual_labels:
                 residual_labels.extend(labels)
             return np.array(residuals, dtype=float)
 
         def sparsity():
-            n_rows = N * (nc + 2) + (nc + 2 if condenser == 'decanter' else 2)
+            n_rows = N * (nc + 2) + 2
             matrix = SparsePatternBuilder((n_rows, n_vars))
 
             def mark_stage(row: int, stage: int):
@@ -835,11 +702,6 @@ class EquilibriumStageColumnMixin:
                 matrix.mark_range(row, start, start + nc - 1)
                 matrix.mark(row, L_start + stage)
                 matrix.mark(row, V_start + stage)
-
-            def mark_decanter(row: int):
-                if condenser != 'decanter':
-                    return
-                matrix.mark_range(row, decanter_x_start, decanter_x_start + nc)
 
             row = 0
             for stage in range(N):
@@ -853,43 +715,24 @@ class EquilibriumStageColumnMixin:
                         mark_stage(row, local)
                     if stage == 0:
                         matrix.mark(row, V_start)
-                        mark_decanter(row)
                     row += 1
                 for local in local_stages:
                     mark_stage(row, local)
                 if stage == 0:
                     matrix.mark(row, V_start)
                     matrix.mark(row, Q_start)
-                    mark_decanter(row)
                 if stage == N - 1:
                     matrix.mark(row, Q_start + 1)
                 row += 1
                 mark_stage(row, stage)
-                if condenser == 'decanter' and stage == 0 and N > 1:
-                    mark_stage(row, 1)
-                    mark_decanter(row)
                 row += 1
 
             mark_stage(row, 0)
-            if condenser == 'decanter' and N > 1:
-                mark_stage(row, 1)
-                mark_decanter(row)
             matrix.mark(row, V_start)
             row += 1
             matrix.mark(row, L_start)
             matrix.mark(row, V_start)
-            if condenser == 'decanter' and N > 1:
-                mark_stage(row, 0)
-                mark_stage(row, 1)
-                mark_decanter(row)
             row += 1
-            if condenser == 'decanter':
-                for _ in comps[:-1]:
-                    mark_stage(row, 0)
-                    mark_decanter(row)
-                    row += 1
-                mark_stage(row, 0)
-                mark_decanter(row)
             return matrix.tocsr()
 
         sparsity_matrix = sparsity()
@@ -907,7 +750,6 @@ class EquilibriumStageColumnMixin:
         ))
         local_thermo_available = (
             condenser in ('total', 'partial', 'mixed')
-            and not decanter_options
             and not side_draws
             and distillate_spec.get('kind') in ('molar', 'mass')
             and dense_limit_mb > 0.0
@@ -922,7 +764,6 @@ class EquilibriumStageColumnMixin:
             if (
                 not self._truthy_param(self.get_param('semi_analytic_flow_jacobian', True))
                 or condenser not in ('total', 'partial', 'mixed')
-                or decanter_options
                 or side_draws
                 or distillate_spec.get('kind') not in ('molar', 'mass')
             ):
@@ -1226,7 +1067,6 @@ class EquilibriumStageColumnMixin:
             'jacobian_dense_mb': dense_jacobian_mb,
             'stage_properties': stage_properties,
             'side_draw_flow': side_draw_flow,
-            'top_decanter_solution': top_decanter_solution,
             'residual_labels': residual_labels,
         }
 
