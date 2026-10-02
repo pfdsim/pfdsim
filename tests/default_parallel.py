@@ -227,10 +227,12 @@ def _worker_payload(result, elapsed: float) -> dict:
 
 def run_worker(test_ids: list[str]) -> int:
     import unittest
+    from .cache_isolation import isolated_runtime_caches
 
-    suite = unittest.TestLoader().loadTestsFromNames(test_ids)
-    started = time.perf_counter()
-    result = unittest.TextTestRunner(verbosity=1).run(suite)
+    with isolated_runtime_caches():
+        suite = unittest.TestLoader().loadTestsFromNames(test_ids)
+        started = time.perf_counter()
+        result = unittest.TextTestRunner(verbosity=1).run(suite)
     payload = _worker_payload(result, time.perf_counter() - started)
     print(
         RESULT_SENTINEL + json.dumps(payload, sort_keys=True),

@@ -1,6 +1,10 @@
 import os
 import unittest
 
+from .cache_isolation import install_unittest_cache_isolation
+
+install_unittest_cache_isolation()
+
 
 class ParallelDefaultDiscovery(unittest.TestCase):
     def test_default_suite(self):

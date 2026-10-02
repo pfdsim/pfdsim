@@ -2,6 +2,25 @@ import os
 
 import pytest
 
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .tests.cache_isolation import isolated_runtime_caches
+else:
+    from tests.cache_isolation import isolated_runtime_caches
+
+
+@pytest.fixture(scope='session', autouse=True)
+def runtime_cache_session():
+    """Protect shared class fixtures before individual test scopes begin."""
+    with isolated_runtime_caches():
+        yield
+
+
+@pytest.fixture(autouse=True)
+def runtime_cache_test(runtime_cache_session):
+    """Give pytest function tests fresh disk and in-memory caches."""
+    with isolated_runtime_caches():
+        yield
+
 
 @pytest.fixture(autouse=True)
 def disable_automatic_xtb_rrho(monkeypatch):

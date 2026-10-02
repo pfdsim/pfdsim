@@ -359,17 +359,20 @@ class AdaptivePFRUnitTests(unittest.TestCase):
         )
         self.assertEqual(performance['profile'][-1]['reaction_rates'], [0.0])
         self.assertAlmostEqual(depleted.heat_duty, 3600.0, places=8)
+        # Event localization uses rtol=1e-7 across a rate discontinuity at
+        # depletion; allow modest slack around the analytical 10 m3 position.
+        event_volume_tolerance = 1.0e-5
         self.assertAlmostEqual(
             performance['component_depletion_events'][0][
                 'reaction_measure_at_event'
             ],
             10.0,
-            places=7,
+            delta=event_volume_tolerance,
         )
         self.assertAlmostEqual(
             performance['inactive_remaining_reactor_volume_m3'],
             90.0,
-            places=7,
+            delta=event_volume_tolerance,
         )
         self.assertTrue(any(
             'component inventory depleted for C2H4O' in warning

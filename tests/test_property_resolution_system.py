@@ -132,7 +132,9 @@ class PropertyResolutionSystemTests(unittest.TestCase):
         for symbol, entry in payload['chemicals'].items():
             if symbol in {'3-methylpentane', 'H2SO4'}:
                 continue
-            self.assertTrue(removed_keys.isdisjoint(entry))
+            # Neon deliberately supplies the constant monatomic ideal-gas Cp=5R/2.
+            prohibited_keys = removed_keys - {'Cp_coeffs'} if symbol == 'Ne' else removed_keys
+            self.assertTrue(prohibited_keys.isdisjoint(entry), symbol)
 
     def test_ambiguous_hexane_formula_does_not_shadow_perry_isomer(self):
         database = ChemicalDatabase(enable_online=False)
@@ -2882,13 +2884,14 @@ class PropertyResolutionSystemTests(unittest.TestCase):
     def test_coolprop_viscosity_skips_missing_transport_model_and_falls_through_to_hsu(self):
         resolver = PropertyResolver()
 
-        with patch.object(resolver, '_get_perry_evaluation', return_value=None):
+        with patch.object(resolver, '_get_perry_evaluation', return_value=None), \
+             patch.object(resolver, '_fetch_viscosity_online', return_value=None):
             viscosity = resolver.resolve_viscosity(
                 'acetone',
                 298.15,
                 phase='liquid',
                 props={'CAS': '67-64-1', 'name': 'Acetone'},
-        )
+            )
 
         self.assertEqual(viscosity.method, 'hsu_liquid_viscosity')
         self.assertClose(viscosity.value, 0.0002906827264208932, rel=1e-6)  # native hsu_method engine
@@ -6018,7 +6021,9 @@ class PropertyResolutionSystemTests(unittest.TestCase):
     def test_opsin_smiles_to_nannoolal_end_to_end_for_unlisted_ester(self):
         name = 'Isobutyl 2,3,3-trifluorocyclopentane-1-carboxylate'
         expected_smiles = 'FC1C(CCC1(F)F)C(=O)OCC(C)C'
-        cache_path = Path(ROOT, 'data', 'runtime', 'smiles_cache.sqlite')
+        database = ChemicalDatabase(enable_online=False)
+        database._ensure_smiles_cache()
+        cache_path = Path(database._smiles_cache_path)
         with sqlite3.connect(cache_path) as connection:
             connection.execute(
                 """

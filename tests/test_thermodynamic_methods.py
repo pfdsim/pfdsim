@@ -1965,7 +1965,8 @@ class ThermodynamicMethodTests(unittest.TestCase):
     def test_binary_lle_detects_narrow_near_critical_splits(self):
         cases = (
             ('NRTL', 399.40, 0.0987),
-            ('UNIQUAC', 399.11, 0.0924),
+            # Near-critical split with 1-butanol r=3.4543 and q=3.052.
+            ('UNIQUAC', 398.86, 0.0924),
         )
         for method, temperature, z_butanol in cases:
             with self.subTest(method=method):

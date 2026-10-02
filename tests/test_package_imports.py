@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 import tomllib
@@ -18,6 +19,12 @@ def run_python(
     *,
     env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess:
+    module = 'tests.cache_isolation' if cwd == ROOT else 'pfdsim.tests.cache_isolation'
+    code = (
+        f'from {module} import isolated_runtime_caches\n'
+        'with isolated_runtime_caches():\n'
+        + textwrap.indent(code, '    ')
+    )
     return subprocess.run(
         [sys.executable, '-c', code],
         cwd=cwd,
