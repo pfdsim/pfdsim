@@ -2463,23 +2463,10 @@ class ChemicalDatabase:
         except Exception:
             pass
         expected_cas = self._normalize_cas(expected_cas)
-        if expected_cas and resolved_cas and resolved_cas != expected_cas:
+        if expected_cas and resolved_cas != expected_cas:
             return None
-        # Synonym search happily matches short component tags to unrelated
-        # compounds ('ANI' -> 1-naphthyl isothiocyanate), so when the caller
-        # knows the molecular weight, a badly disagreeing match is rejected.
-        if expected_mw is not None:
-            try:
-                resolved_mw = float(getattr(metadata, "MW", None))
-            except (TypeError, ValueError):
-                resolved_mw = None
-            if (
-                resolved_mw is not None
-                and resolved_mw > 0.0
-                and expected_mw > 0.0
-                and abs(resolved_mw - expected_mw) > 0.02 * expected_mw
-            ):
-                return None
+        if not self._smiles_matches_identity(smiles, expected_mw=expected_mw):
+            return None
         name = getattr(metadata, "common_name", None) or identifier
         return SmilesResolution(
             smiles=smiles,
@@ -2492,6 +2479,39 @@ class ChemicalDatabase:
             ),
             identifier=identifier,
         )
+
+    @staticmethod
+    def _smiles_matches_identity(
+        smiles: str, *, expected_smiles: str = "", expected_mw: Optional[float] = None
+    ) -> bool:
+        """Check a discovered graph against the caller's structure/mass constraints."""
+        try:
+            from rdkit import Chem, rdBase
+            from rdkit.Chem import Descriptors
+
+            with rdBase.BlockLogs():
+                molecule = Chem.MolFromSmiles(smiles)
+                reference = (
+                    Chem.MolFromSmiles(expected_smiles) if expected_smiles else None
+                )
+            if molecule is None or (expected_smiles and reference is None):
+                return False
+            if reference is not None and Chem.MolToSmiles(
+                molecule, isomericSmiles=True
+            ) != Chem.MolToSmiles(reference, isomericSmiles=True):
+                return False
+            try:
+                mass = float(expected_mw)
+            except (TypeError, ValueError):
+                mass = 0.0
+            # Keep the existing two-percent guard against unrelated synonym
+            # matches, and apply it equally to cache and provider results.
+            if math.isfinite(mass) and mass > 0.0:
+                if abs(float(Descriptors.MolWt(molecule)) - mass) > 0.02 * mass:
+                    return False
+            return True
+        except (ImportError, TypeError, ValueError):
+            return False
 
     def _smiles_from_opsin(self, identifier: str) -> Optional[SmilesResolution]:
         text = str(identifier or "").strip()
@@ -3155,6 +3175,8 @@ class ChemicalDatabase:
         self,
         result: SmilesResolution,
         candidates: list[str],
+        *,
+        resolved_cas: str = "",
     ) -> None:
         keys = {
             self._smiles_cache_key(candidate) for candidate in candidates if candidate
@@ -3166,6 +3188,21 @@ class ChemicalDatabase:
                 if value
             }
             if keys & values:
+                if (
+                    resolved_cas and props.CAS
+                    and self._normalize_cas(props.CAS) != resolved_cas
+                ):
+                    continue
+                reference_smiles = ""
+                if props.CAS and not resolved_cas:
+                    reference = self._smiles_from_chemicals_metadata(props.CAS, props.CAS)
+                    if reference is None:
+                        continue
+                    reference_smiles = reference.smiles
+                if not self._smiles_matches_identity(
+                    result.smiles, expected_smiles=reference_smiles, expected_mw=props.MW
+                ):
+                    continue
                 self._remember_resolved_smiles(
                     props,
                     result.smiles,
@@ -3181,11 +3218,39 @@ class ChemicalDatabase:
         candidates: Optional[list[str]] = None,
         expected_mw: Optional[float] = None,
     ) -> Optional[SmilesResolution]:
-        """Resolve SMILES through the cache-first local -> chemicals -> OPSIN -> PubChem path."""
+        """Honor explicit structures, then resolve identity-checked cache/provider graphs."""
         props_mapping = self._props_mapping(props)
+        explicit = self._smiles_from_props(props)
+        if explicit:
+            return explicit
+        direct_inchi = self._smiles_from_inchi_identifier(identifier)
+        if direct_inchi:
+            return direct_inchi
+        direct_smiles = self._smiles_from_explicit_identifier(identifier)
+        if direct_smiles:
+            return direct_smiles
+
         expected_cas = self._normalize_cas(
             props_mapping.get("CAS") or props_mapping.get("cas") or ""
         )
+        if not expected_cas and self._looks_like_cas(identifier):
+            expected_cas = self._normalize_cas(identifier)
+        try:
+            if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+                from .compound_identity import get_compound_identity_resolver
+            else:
+                from compound_identity import get_compound_identity_resolver
+            identity_resolver = get_compound_identity_resolver()
+        except ImportError:
+            identity_resolver = None
+        if not expected_cas and identity_resolver is not None:
+            for name in (props_mapping.get("name"), identifier):
+                if name:
+                    expected_cas = identity_resolver.resolve_cas(
+                        str(name), allow_formula=False
+                    ) or ""
+                    if expected_cas:
+                        break
         refrigerant_cas = None
         try:
             if __package__ and __package__.split(".", 1)[0] == "pfdsim":
@@ -3224,6 +3289,45 @@ class ChemicalDatabase:
         candidate_list = list(
             dict.fromkeys(str(candidate) for candidate in candidate_list if candidate)
         )
+        if expected_cas and expected_cas not in candidate_list:
+            candidate_list.insert(0, expected_cas)
+
+        # A legacy alias row carries no CAS provenance. Verify its graph using
+        # independent local CAS metadata rather than trusting the alias key.
+        reference = None
+        if expected_cas:
+            reference = self._smiles_from_chemicals_metadata(expected_cas, expected_cas)
+            if reference is None:
+                reference = self._smiles_from_local_database(expected_cas)
+        expected_smiles = reference.smiles if reference else ""
+
+        # Do not propagate a corrected identity into known names/CAS keys for
+        # another compound. Unknown component tags can still be useful aliases.
+        if expected_cas:
+            compatible_candidates = []
+            for candidate in candidate_list:
+                known_cas = (
+                    self._normalize_cas(candidate)
+                    if self._looks_like_cas(candidate)
+                    else identity_resolver.resolve_cas(candidate, allow_formula=False)
+                    if identity_resolver is not None else None
+                )
+                if not known_cas or self._normalize_cas(known_cas) == expected_cas:
+                    compatible_candidates.append(candidate)
+            candidate_list = compatible_candidates
+        elif props_mapping.get("name"):
+            # Reusing a component tag for a different unresolved name must not
+            # inherit the previous component just because its mass is similar.
+            name_key = self._smiles_cache_key(props_mapping["name"])
+            tag_keys = {
+                self._smiles_cache_key(value)
+                for value in (identifier, props_mapping.get("symbol")) if value
+            }
+            candidate_list = [
+                candidate for candidate in candidate_list
+                if self._smiles_cache_key(candidate) == name_key
+                or self._smiles_cache_key(candidate) not in tag_keys
+            ]
         cache_identifiers = list(dict.fromkeys([*candidate_list, *cache_aliases]))
         formula_only = self._looks_like_formula(identifier) and not props_mapping
         lookup_candidates = [
@@ -3237,30 +3341,25 @@ class ChemicalDatabase:
             except (TypeError, ValueError):
                 expected_mw = None
 
+        def matches(
+            result: SmilesResolution, *, exact_cas_provider: bool = False
+        ) -> bool:
+            if expected_cas and not expected_smiles and not exact_cas_provider:
+                return False
+            return self._smiles_matches_identity(
+                result.smiles, expected_smiles=expected_smiles, expected_mw=expected_mw
+            )
+
         for candidate in candidate_list:
             cached = self._cached_smiles(candidate)
-            if cached:
+            if cached and matches(cached):
                 if cache_aliases:
                     self._cache_smiles(cached, cache_identifiers)
                 return cached
 
-        explicit = self._smiles_from_props(props)
-        if explicit:
-            self._cache_smiles(explicit, cache_identifiers)
-            return explicit
-
-        direct_inchi = self._smiles_from_inchi_identifier(identifier)
-        if direct_inchi:
-            self._cache_smiles(direct_inchi, cache_identifiers)
-            return direct_inchi
-
-        direct_smiles = self._smiles_from_explicit_identifier(identifier)
-        if direct_smiles:
-            return direct_smiles
-
         for candidate in candidate_list:
             local = self._smiles_from_local_database(candidate)
-            if local:
+            if local and matches(local):
                 self._cache_smiles(local, cache_identifiers)
                 return local
 
@@ -3270,10 +3369,12 @@ class ChemicalDatabase:
                 expected_cas,
                 expected_mw,
             )
-            if chemicals_result:
+            if chemicals_result and matches(
+                chemicals_result, exact_cas_provider=candidate == expected_cas
+            ):
                 self._cache_smiles(chemicals_result, cache_identifiers)
                 self._remember_smiles_for_local_matches(
-                    chemicals_result, candidate_list
+                    chemicals_result, candidate_list, resolved_cas=expected_cas
                 )
                 return chemicals_result
 
@@ -3292,9 +3393,11 @@ class ChemicalDatabase:
 
         for candidate in opsin_candidates:
             opsin_result = self._smiles_from_opsin(candidate)
-            if opsin_result:
+            if opsin_result and matches(opsin_result):
                 self._cache_smiles(opsin_result, cache_identifiers)
-                self._remember_smiles_for_local_matches(opsin_result, candidate_list)
+                self._remember_smiles_for_local_matches(
+                    opsin_result, candidate_list, resolved_cas=expected_cas
+                )
                 return opsin_result
 
         if not fetch_online or not self.enable_online or self.online_fetcher is None:
@@ -3302,9 +3405,13 @@ class ChemicalDatabase:
 
         for candidate in lookup_candidates:
             pubchem = self._smiles_from_pubchem(candidate)
-            if pubchem:
+            if pubchem and matches(
+                pubchem, exact_cas_provider=candidate == expected_cas
+            ):
                 self._cache_smiles(pubchem, cache_identifiers)
-                self._remember_smiles_for_local_matches(pubchem, candidate_list)
+                self._remember_smiles_for_local_matches(
+                    pubchem, candidate_list, resolved_cas=expected_cas
+                )
                 return pubchem
         return None
 

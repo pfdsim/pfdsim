@@ -21,7 +21,7 @@ from pfd_parser import parse_pfd
 from thermodynamics import create_thermodynamics
 from chemical_properties import OnlinePropertyFetcher
 from chemical_properties import ChemicalProperties
-from chemical_properties import ChemicalDatabase
+from chemical_properties import ChemicalDatabase, SmilesResolution
 from property_resolver import PropertyResolver
 from textbook_properties import TextbookPropertyLibrary
 from antoine_properties import get_antoine_table
@@ -106,6 +106,7 @@ class PropertyLookupCacheTests(unittest.TestCase):
     def test_provided_smiles_override_is_not_persisted(self):
         db = ChemicalDatabase(enable_online=False)
         db._smiles_cache_path = Path(tempfile.mkdtemp()) / "smiles.sqlite"
+        db._ensure_smiles_cache()
         props = {
             "name": "temporary PFD identity",
             "symbol": "XPFD",
@@ -129,6 +130,147 @@ class PropertyLookupCacheTests(unittest.TestCase):
                 0
             ]
         self.assertEqual(count, 0)
+
+    def test_explicit_structures_override_conflicting_cache_without_rewriting_aliases(self):
+        from rdkit import Chem
+
+        for identifier, supplied in (
+            ('X', {'smiles': 'CCO'}),
+            ('C=C', {}),
+            ('InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3', {}),
+        ):
+            with self.subTest(identifier=identifier):
+                db = ChemicalDatabase(enable_online=False)
+                db._cache_smiles(SmilesResolution(
+                    'CO', 'chemicals', 'chemicals_identifier_smiles', .99,
+                    'conflicting cached structure', identifier,
+                ), [identifier])
+                props = {**supplied, 'MW': 80., 'property_sources': {'smiles': {
+                    'source': 'pfd', 'method': 'pfd_component_override', 'quality': 1.,
+                }}}
+                result = db.resolve_smiles_info(identifier, props=props, fetch_online=False)
+                expected = 'C=C' if identifier == 'C=C' else 'CCO'
+                self.assertEqual(Chem.MolToSmiles(Chem.MolFromSmiles(result.smiles)), expected)
+                self.assertEqual(result.quality, 1.)
+                self.assertEqual(db._cached_smiles(identifier).smiles, 'CO')
+
+    def test_cached_structure_obeys_molecular_weight_constraint(self):
+        db = ChemicalDatabase(enable_online=False)
+        db._cache_smiles(SmilesResolution('CO', 'chemicals', 'fixture', .99, '', 'X'), ['X'])
+        with patch.object(db, '_smiles_from_local_database', return_value=None), \
+             patch.object(db, '_smiles_from_chemicals_metadata', return_value=None), \
+             patch.object(db, '_smiles_from_opsin', return_value=None):
+            result = db.resolve_smiles_info('X', fetch_online=False, props={
+                'name':'unidentified component', 'symbol':'X', 'MW':50.,
+            })
+        self.assertIsNone(result)
+        compatible = db.resolve_smiles_info('X', fetch_online=False, props={'MW':32.04})
+        self.assertEqual(compatible.smiles, 'CO')
+
+    def test_reused_tag_does_not_override_an_unresolved_name_of_equal_mass(self):
+        db = ChemicalDatabase(enable_online=False)
+        db._cache_smiles(SmilesResolution('CCCCO', 'chemicals', 'fixture', .99, '', 'X'), ['X'])
+        with patch.object(db, '_smiles_from_local_database', return_value=None), \
+             patch.object(db, '_smiles_from_chemicals_metadata', return_value=None), \
+             patch.object(db, '_smiles_from_opsin', return_value=None):
+            self.assertIsNone(db.resolve_smiles_info('X', fetch_online=False, props={
+                'symbol':'X', 'name':'Unidentified structural isomer', 'MW':74.12,
+            }))
+
+    def test_cached_isomer_is_checked_against_cas_even_with_matching_mass(self):
+        from rdkit import Chem
+
+        db = ChemicalDatabase(enable_online=False)
+        for alias in ('X', '78-83-1'):
+            db._cache_smiles(SmilesResolution('CCCCO', 'chemicals', 'fixture', .99, '', alias), [alias])
+        result = db.resolve_smiles_info('X', fetch_online=False, props={
+            'name':'isobutanol', 'symbol':'X', 'CAS':'78-83-1', 'MW':74.12,
+        })
+        self.assertEqual(Chem.MolToSmiles(Chem.MolFromSmiles(result.smiles)), 'CC(C)CO')
+        self.assertEqual(db._cached_smiles('X').smiles, result.smiles)
+        self.assertEqual(db._cached_smiles('78-83-1').smiles, result.smiles)
+
+    def test_known_name_checks_cached_identity_without_supplied_cas(self):
+        from rdkit import Chem
+
+        db = ChemicalDatabase(enable_online=False)
+        db._cache_smiles(SmilesResolution('CCCCO', 'chemicals', 'fixture', .99, '', 'isobutanol'), ['isobutanol'])
+        result = db.resolve_smiles_info('isobutanol', fetch_online=False)
+        self.assertEqual(Chem.MolToSmiles(Chem.MolFromSmiles(result.smiles)), 'CC(C)CO')
+
+    def test_corrected_alias_does_not_poison_another_known_component(self):
+        from rdkit import Chem
+
+        db = ChemicalDatabase(enable_online=False)
+        db._cache_smiles(SmilesResolution('CO', 'chemicals', 'fixture', .99, '', 'methanol'), ['methanol', 'X'])
+        result = db.resolve_smiles_info('X', fetch_online=False, props={
+            'symbol':'X', 'name':'methanol', 'CAS':'67-64-1', 'MW':58.08,
+        })
+        self.assertEqual(Chem.MolToSmiles(Chem.MolFromSmiles(result.smiles)), 'CC(C)=O')
+        self.assertEqual(db._cached_smiles('methanol').smiles, 'CO')
+        self.assertEqual(db._cached_smiles('X').smiles, result.smiles)
+
+    def test_unknown_cas_does_not_trust_an_unverified_alias(self):
+        db = ChemicalDatabase(enable_online=False)
+        db._cache_smiles(SmilesResolution('CO', 'chemicals', 'fixture', .99, '', 'X'), ['X'])
+        with patch.object(db, '_smiles_from_chemicals_metadata', return_value=None), \
+             patch.object(db, '_smiles_from_local_database', return_value=None), \
+             patch.object(db, '_smiles_from_opsin', return_value=None):
+            self.assertIsNone(db.resolve_smiles_info('X', fetch_online=False, props={
+                'name':'unknown CAS component', 'CAS':'1234567-89-0', 'MW':32.04,
+            }))
+
+    def test_invalid_cached_graph_falls_through_to_a_valid_provider(self):
+        db = ChemicalDatabase(enable_online=False)
+        name = 'Unidentified cache fixture'
+        db._cache_smiles(SmilesResolution('not a graph', 'chemicals', 'fixture', .99, '', name), [name])
+        with patch.object(db, '_smiles_from_local_database', return_value=None), \
+             patch.object(db, '_smiles_from_chemicals_metadata', return_value=None), \
+             patch.object(db, '_smiles_from_opsin', return_value=SmilesResolution(
+                 'CCO', 'opsin', 'fixture', .97, '', 'X',
+             )):
+            result = db.resolve_smiles_info('X', fetch_online=False, props={
+                'name':name, 'MW':46.07,
+            })
+        self.assertEqual(result.smiles, 'CCO')
+
+    def test_hydration_rejects_properties_from_an_incompatible_cached_alias(self):
+        db = ChemicalDatabase(enable_online=False)
+        db._cache_smiles(SmilesResolution('CO', 'chemicals', 'fixture', .99, '', 'X'), ['X'])
+        props = ChemicalProperties(symbol='X', name='Unidentified hydration fixture',
+                                   formula='X', MW=50., Tb=350., Tc=600., Pc=30.,
+                                   Hvap=40., Cp_coeffs=[50., 0., 0., 0.])
+        with patch.object(ChemicalDatabase, '_smiles_from_opsin', return_value=None):
+            db._hydrate_properties(props, allow_online=False)
+        self.assertIsNone(props.Hf)
+        self.assertNotIn('Hf', props.property_sources)
+        self.assertEqual(props.MW, 50.)
+
+    def test_resolved_graph_is_not_attached_to_a_conflicting_local_record(self):
+        db = ChemicalDatabase(enable_online=False)
+        props = ChemicalProperties(symbol='X', name='ethanol', formula='C2H6O',
+                                   CAS='64-17-5', MW=46.07)
+        db.chemicals['X'] = props
+        result = db.resolve_smiles_info('X', fetch_online=False, props={
+            'CAS':'67-64-1', 'MW':58.08,
+        })
+        self.assertIsNotNone(result)
+        self.assertIsNone(props.smiles)
+        self.assertNotIn('smiles', props.property_sources)
+
+    def test_provider_fallbacks_also_obey_structure_constraints(self):
+        db = ChemicalDatabase(enable_online=True)
+        reference = SmilesResolution('CC(C)CO', 'chemicals', 'fixture', .99, '', '78-83-1')
+        wrong_isomer = SmilesResolution('CCCCO', 'opsin', 'fixture', .97, '', 'X')
+        with patch.object(db, '_smiles_from_local_database', return_value=None), \
+             patch.object(db, '_smiles_from_chemicals_metadata', side_effect=[reference, None, None, None]), \
+             patch.object(db, '_smiles_from_opsin', return_value=wrong_isomer) as opsin, \
+             patch.object(db, '_smiles_from_pubchem', return_value=wrong_isomer) as pubchem:
+            self.assertIsNone(db.resolve_smiles_info('X', fetch_online=True, props={
+                'name':'Unidentified provider fixture', 'CAS':'78-83-1', 'MW':74.12,
+            }))
+        opsin.assert_called()
+        pubchem.assert_called()
 
     def test_smiles_resolution_prefers_chemicals_before_opsin_and_pubchem(self):
         db = ChemicalDatabase(enable_online=True)
