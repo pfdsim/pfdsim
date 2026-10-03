@@ -90,7 +90,7 @@ PowerShell. Pip installation uses the dependency constraints in
 | Extra | Purpose | uv command |
 | --- | --- | --- |
 | `render` | PDF/PNG export through CairoSVG | `uv sync --extra render` |
-| `web` | Legacy Flask editor and HTTP API | `uv sync --extra web` |
+| `web` | Process laboratory, phase atlas, accounts, and HTTP API | `uv sync --extra web` |
 | `dipole-xtb` | Optional xTB molecular calculations | `uv sync --extra dipole-xtb` |
 | `dipole-pvdz` | Optional higher-level molecular calculations using PySCF | `uv sync --extra dipole-pvdz` |
 
@@ -508,10 +508,12 @@ specifications**, not calculated results. Diagrams are engineering process
 schematics, not P&IDs or a certified symbol library. See the
 [rendering guide](docs/rendering.md).
 
-The optional legacy Flask application can be started with
-`uv run python app.py` after installing `web`. Its editor/frontend predates
-much of the simulation core; use the CLI/library and current format reference
-for the capabilities described here.
+The optional Flask process laboratory can be started with
+`uv run --extra web python app.py` after installing `web`. It includes a visual
+editor, tabbed process configuration, local/account autosaves, and a phase atlas
+with selectable thermodynamics and binary/ternary LLE/VLLE views. See the
+[web interface guide](docs/web_interface.md) for accounts, CPU budgets, and
+the two-HTTP/two-calculation-worker deployment.
 
 ## Flowsheet specification and syntax
 
@@ -777,7 +779,7 @@ than a particular commercial or open-source simulator.
   subgroup and interaction coverage. Unavailable planned methods are rejected,
   not silently substituted. Virial vapor corrections have density/pressure
   applicability limits and are not liquid equations of state.
-- **Interfaces and diagrams:** the web frontend is outdated. Rendered diagrams
+- **Interfaces and diagrams:** rendered diagrams
   are schematics, and large layouts can need manual drafting. Rendering does
   not produce a calculated stream table or a P&ID.
 
@@ -799,9 +801,9 @@ or release-date commitments**:
 - Continued numerical robustness, performance, property diagnostics, worked
   examples, and documentation improvements.
 
-These directions appear in the format/model design documents. A modern web
-interface and general dynamic simulation would require additional development;
-neither should be inferred from the existing editor or internal batch models.
+These directions appear in the format/model design documents. General dynamic
+simulation would require additional development and should not be inferred
+from the web laboratory or internal batch models.
 
 ## Citation
 
