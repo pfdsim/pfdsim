@@ -212,6 +212,65 @@ class EfficiencyColumn(NativeColumn):
         return matrix.tocsr(),evaluations,'probe_vlle_murphree_local_thermo'
 
 
+class ProjectionProbeColumn(EfficiencyColumn):
+    """Exact native projection logic, with optional per-tray threshold scaling.
+
+    The native guard has scalar thresholds. This explicit script-only copy
+    changes just those two thresholds and records confirmed removal decisions;
+    liquid stability checks and candidate-streak handling remain unchanged.
+    """
+
+    def projected_boundary_event(self,vector,residual,direction):
+        self.projection_direction_assessments += 1
+        predicted_vector = np.asarray(vector,dtype=float)+np.asarray(direction,dtype=float)
+        updated = list(self.active)
+        changed = []
+        details = []
+        for j,layout in enumerate(self.layouts):
+            if not layout.active_vlle:
+                continue
+            current_logit = float(vector[layout.beta])
+            beta_step = float(direction[layout.beta])
+            current_beta = vlle._sigmoid(current_logit)
+            if not ((current_beta >= .5 and beta_step > 0.) or (current_beta < .5 and beta_step < 0.)):
+                continue
+            predicted_beta = vlle._sigmoid(current_logit+beta_step)
+            current_fraction = min(current_beta,1-current_beta)
+            predicted_fraction = min(predicted_beta,1-predicted_beta)
+            ratio = predicted_fraction/max(current_fraction,1e-300)
+            E = self.efficiencies[j] if self.unit.probe_scale_projection else 1.
+            gate = self.projection_gate_fraction*E
+            contraction = self.projection_contraction_ratio*E
+            if predicted_fraction > gate or ratio > contraction:
+                continue
+            state = self.decode_stage(predicted_vector,j)
+            split,x1,x2,beta = self.stability.split(state['T'],state['aggregate_x'])
+            self.projection_checks += 1
+            fraction,distance = vlle._split_phase_metrics(split,x1,x2,beta,self.components)
+            mapped = bool(split and fraction > self.phase_fraction_min and distance > self.phase_distance_min)
+            if not mapped:
+                updated[j] = False
+                changed.append(j)
+                details.append({'stage':j+1,'efficiency':float(self.efficiencies[j]),
+                    'current_fraction':float(current_fraction),'predicted_fraction':float(predicted_fraction),
+                    'contraction_ratio':float(ratio),'gate':float(gate),'ratio_limit':float(contraction)})
+        candidate = tuple(updated) if changed else None
+        if candidate is not None and candidate == self._projection_last_candidate:
+            self._projection_candidate_count += 1
+        elif candidate is not None:
+            self._projection_last_candidate = candidate
+            self._projection_candidate_count = 1
+        else:
+            self._projection_last_candidate = None
+            self._projection_candidate_count = 0
+        if candidate is not None and self._projection_candidate_count >= self.projection_candidate_streak:
+            self.unit.probe_projection_events.append({'from':vlle.topology_text(self.active),
+                'to':vlle.topology_text(updated),'residual':float(np.linalg.norm(residual,ord=np.inf)),
+                'decisions':details})
+            raise vlle._ActiveSetChange(self.profile_from_decoded(self.decode(vector)),updated,
+                reason='projected_newton_boundary',residual_norm=float(np.linalg.norm(residual,ord=np.inf)))
+
+
 def setup(case,topology_policy,warm_seed,no_projection):
     method = 'NRTL-RK' if case.endswith('_rk') else 'NRTL'
     z = {'butanol':.4,'water':.6}
@@ -351,7 +410,7 @@ def validate_jacobian(unit,args,kwargs,efficiency):
     return error
 
 
-def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants):
+def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants,scale_projection):
     with isolated_runtime_caches():
         thermo,feed,params,args,kwargs,initializer = setup(case,topology_policy,warm_seed,no_projection)
         check_unit = RigorousDistillation('CHECK',thermo,params)
@@ -364,11 +423,13 @@ def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants)
                 for variant in (variants if repeat % 2 == 0 else variants[::-1]):
                     unit = RigorousDistillation('PROBE',thermo,params)
                     unit.probe_efficiency = 1. if variant == 'native' else ('profile' if variant == 'profile' else float(variant[1:]))
+                    unit.probe_scale_projection = scale_projection
+                    unit.probe_projection_events = []
                     unit.probe_feeds = args[2]
                     call_args = [unit,*args[1:]]
                     start = time.perf_counter()
                     try:
-                        with patch.object(vlle,'EquationOrientedVLLEColumn',NativeColumn if variant == 'native' else EfficiencyColumn):
+                        with patch.object(vlle,'EquationOrientedVLLEColumn',NativeColumn if variant == 'native' else ProjectionProbeColumn):
                             solved = NativeActiveSet(*call_args,**kwargs)
                         elapsed = time.perf_counter()-start
                         row = {'case':case,'variant':variant,'repeat':repeat,'warmup':repeat==0,
@@ -383,6 +444,7 @@ def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants)
                     except (RuntimeError,AssertionError) as error:
                         row = {'case':case,'variant':variant,'repeat':repeat,'warmup':repeat==0,
                                'success':False,'seconds':time.perf_counter()-start,'error':str(error)}
+                    row['projection_events'] = unit.probe_projection_events
                     handle.write(json.dumps(row)+'\n')
                     handle.flush()
                     rows.append(row)
@@ -411,11 +473,14 @@ def main():
     parser.add_argument('--warm-seed',action='store_true',help='Recovery probe: start from the native converged equilibrium profile')
     parser.add_argument('--no-projection',action='store_true',help='Disable the existing projected phase-contraction heuristic for diagnosis')
     parser.add_argument('--variants',nargs='+',choices=VARIANTS,default=list(VARIANTS))
+    parser.add_argument('--scale-projection',action='store_true',help='Multiply both projection thresholds by each tray efficiency')
     args = parser.parse_args()
     if 'native' not in args.variants:
         parser.error('Include native for a comparable timing baseline')
+    if args.scale_projection and args.no_projection:
+        parser.error('Choose threshold scaling or disabled projection, not both')
     if args.worker:
-        worker(args.worker,args.output,args.repeats,args.topology_policy,args.warm_seed,args.no_projection,args.variants)
+        worker(args.worker,args.output,args.repeats,args.topology_policy,args.warm_seed,args.no_projection,args.variants,args.scale_projection)
         return
     if args.repeats < 1 or args.timeout <= 0:
         parser.error('repeats/timeout must be positive')
@@ -424,6 +489,7 @@ def main():
         'threads':1,'timeout':args.timeout,'seed':'no RNG',
         'topology_policy':args.topology_policy or 'native default',
         'projection_enabled':not args.no_projection,
+        'projection_thresholds':'per-tray efficiency scaled' if args.scale_projection else 'native constants',
         'timing':'active-set coupled solve, excludes property hydration and initializer construction',
         'initialization':('native converged equilibrium profile' if args.warm_seed
                           else 'same native initializer profile, not a converged-state continuation')},indent=2)+'\n')
@@ -437,6 +503,8 @@ def main():
             command.append('--warm-seed')
         if args.no_projection:
             command.append('--no-projection')
+        if args.scale_projection:
+            command.append('--scale-projection')
         with (args.output/f'{case}.log').open('x') as handle:
             try:
                 run = subprocess.run(command,

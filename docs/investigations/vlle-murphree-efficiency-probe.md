@@ -167,3 +167,43 @@ Artifacts are under `/tmp/pfdsim-vlle-efficiency-comparison-20261002/`,
 `/tmp/pfdsim-vlle-efficiency-ternary-20261002/`,
 `/tmp/pfdsim-vlle-efficiency-physical-audits-20261002/`, and
 `/tmp/pfdsim-vlle-efficiency-recovery-audit-20261002/`.
+
+## Scaling projection thresholds by efficiency
+
+A subsequent script-only experiment multiplies both the predicted smaller
+liquid-fraction gate and the predicted/current contraction-ratio limit by the
+efficiency on that tray. For E=0.5, the limits are 0.075 and 0.25; for E=0.7,
+0.105 and 0.35. Condenser and reboiler efficiencies remain one. Stability
+checks and the two-assessment confirmation streak are unchanged. The script
+uses an explicit copy of the native guard solely to apply per-tray thresholds
+and record confirmed decisions. At unit scaling the copy reproduces the
+unscaled failing path exactly.
+
+The co-routed E=0.7 case still fails in all three measured repetitions, with
+the same 13 -> 12 -> 13 split-stage cycle. An unscaled control in the same
+instrumented script also fails in all three repetitions. The decisive stage
+13 removal is identical in both runs:
+
+| Quantity | Unscaled | E-scaled |
+|---|---:|---:|
+| Predicted-fraction gate | 0.15 | 0.105 |
+| Predicted/current ratio limit | 0.50 | 0.35 |
+| Current smaller liquid fraction | 0.0072064783 | 0.0072064783 |
+| Raw predicted smaller fraction | 1.86449e-11 | 1.86449e-11 |
+| Raw predicted/current ratio | 2.58724e-9 | 2.58724e-9 |
+| MESH residual at removal | 0.0499735823 | 0.0499735823 |
+
+Both predicted quantities are many orders below either set of limits, so
+realistic efficiency scaling cannot screen this particular decision. Native,
+enlarged E=1, E=0.9, E=0.5, E=0.3, and the nonuniform profile all converged
+in the scaled sweep, but the proposal did not recover the problem point.
+
+The underlying concern remains that the guard evaluates the raw Newton step
+before the solver limits its maximum absolute coordinate change to 8 and
+before line-search damping. Predicting from a bounded/accepted direction is
+a separate hypothesis to investigate; it was not implemented here.
+
+Reproduce the threshold experiment by adding `--scale-projection` to the
+probe command. Artifacts are in
+`/tmp/pfdsim-vlle-efficiency-scaled-projection-20261002/` and
+`/tmp/pfdsim-vlle-efficiency-projection-control-20261002/`.
