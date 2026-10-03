@@ -2004,6 +2004,7 @@ class ProcessFlowDiagram:
                 "thermo_options": dict(self.metadata.thermo_options),
                 "fluid_phase_model": self.metadata.fluid_phase_model,
                 "online_lookup": self.metadata.online_lookup,
+                "allow_computation": self.metadata.allow_computation,
                 "psat_minimum_pressure_bar": (self.metadata.psat_minimum_pressure_bar),
                 "recycle_method": self.metadata.recycle_method,
                 "recycle_options": dict(self.metadata.recycle_options),
@@ -2124,6 +2125,7 @@ class ProcessFlowDiagram:
                 meta.get("fluid_phase_model", "VLE")
             ),
             online_lookup=meta.get("online_lookup", True),
+            allow_computation=meta.get("allow_computation", True),
             psat_minimum_pressure_bar=meta.get("psat_minimum_pressure_bar"),
             recycle_method=meta.get("recycle_method", "WEGSTEIN"),
             recycle_options=meta.get("recycle_options", {}),
