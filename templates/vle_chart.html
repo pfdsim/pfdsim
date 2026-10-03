@@ -1,699 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VLE Phase Diagrams - PFD Editor</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: #e0e0e0;
-        }
-        
-        .header {
-            background: rgba(0,0,0,0.3);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .header h1 {
-            font-size: 1.5rem;
-            color: #4fc3f7;
-        }
-        
-        .header a {
-            color: #81d4fa;
-            text-decoration: none;
-        }
-        
-        .header a:hover {
-            text-decoration: underline;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px;
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 30px;
-        }
-        
-        .controls {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .controls h2 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: #4fc3f7;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #b0bec5;
-        }
-        
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            font-size: 14px;
-        }
-        
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: #4fc3f7;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
-            color: #000;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(79, 195, 247, 0.3);
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .chart-container {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .chart-header h2 {
-            font-size: 1.2rem;
-            color: #4fc3f7;
-        }
-        
-        .chart-tabs {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .chart-tab {
-            padding: 8px 16px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 6px;
-            background: transparent;
-            color: #b0bec5;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .chart-tab.active {
-            background: #4fc3f7;
-            color: #000;
-            border-color: #4fc3f7;
-        }
-        
-        .chart-wrapper {
-            position: relative;
-            height: 500px;
-        }
-        
-        .info-panel {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-        }
-        
-        .info-panel h3 {
-            font-size: 1rem;
-            margin-bottom: 10px;
-            color: #4fc3f7;
-        }
-        
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        
-        .azeotrope-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #ff9800;
-            color: #000;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 400px;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #4fc3f7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .error-message {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid #f44336;
-            border-radius: 8px;
-            padding: 15px;
-            color: #ef9a9a;
-        }
-        
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🔬 VLE Phase Diagrams</h1>
-        <a href="/">← Back to PFD Editor</a>
+{% extends "base.html" %} {% block title %}Phase Atlas · PFDSIM{% endblock %} {%
+block content %}
+<main class="atlas-screen">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">MAP THE BEHAVIOR OF YOUR MIXTURE</p>
+      <h1>Phase atlas</h1>
+      <p>
+        Explore binary equilibrium curves and ternary phase maps with the
+        simulator’s thermodynamic models.
+      </p>
     </div>
-    
-    <div class="container">
-        <div class="controls">
-            <h2>System Configuration</h2>
-            
-            <div class="form-group">
-                <label>Component 1 (More Volatile)</label>
-                <select id="comp1">
-                    <option value="">Select component...</option>
-                </select>
-                <input type="text" id="comp1Custom" placeholder="Or enter: name, formula, SMILES, or CAS" style="margin-top: 8px;">
-            </div>
-            
-            <div class="form-group">
-                <label>Component 2 (Less Volatile)</label>
-                <select id="comp2">
-                    <option value="">Select component...</option>
-                </select>
-                <input type="text" id="comp2Custom" placeholder="Or enter: name, formula, SMILES, or CAS" style="margin-top: 8px;">
-            </div>
-            
-            <div class="form-group">
-                <label>Diagram Type</label>
-                <select id="chartType">
-                    <option value="Txy">T-x-y (Isobaric)</option>
-                    <option value="Pxy">P-x-y (Isothermal)</option>
-                    <option value="xy">x-y Equilibrium Curve</option>
-                </select>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group" id="pressureGroup">
-                    <label>Pressure (bar)</label>
-                    <input type="number" id="pressure" value="1.0" step="0.1" min="0.01">
-                </div>
-                <div class="form-group" id="temperatureGroup" style="display:none;">
-                    <label>Temperature (°C)</label>
-                    <input type="number" id="temperature" value="25" step="1">
-                </div>
-            </div>
-            
-            <button class="btn btn-primary" id="generateBtn" onclick="generateChart()">
-                Generate Diagram
+    <a href="/editor">Return to workspace ↗</a>
+  </div>
+  <div class="atlas-layout">
+    <section class="atlas-controls panel-card">
+      <p class="eyebrow">SYSTEM CONFIGURATION</p>
+      <form id="chart-form">
+        <label class="field"
+          ><span class="field-label">Component definitions</span
+          ><select id="chart-source">
+            <option value="independent">Independent mixture</option>
+          </select></label
+        ><button id="atlas-open-pfd" type="button">
+          Import .pfd definitions</button
+        ><input id="atlas-pfd-file" type="file" accept=".pfd" hidden />
+        <p class="field-help" id="definition-description">
+          Accepts any chemical identifier supported by .pfd, not just the
+          suggestions below.
+        </p>
+        <label class="field"
+          ><span class="field-label">Component 1</span
+          ><input
+            id="comp1"
+            value="ethanol"
+            type="text"
+            autocomplete="off"
+            required
+            placeholder="Name, formula, CAS, or SMILES"
+        /></label>
+        <label class="field"
+          ><span class="field-label">Component 2</span
+          ><input
+            id="comp2"
+            value="water"
+            type="text"
+            autocomplete="off"
+            required
+            placeholder="Name, formula, CAS, or SMILES"
+        /></label>
+        <label class="field" id="third-component-field" hidden
+          ><span class="field-label">Component 3</span
+          ><input
+            id="comp3"
+            value="benzene"
+            type="text"
+            autocomplete="off"
+            placeholder="Name, formula, CAS, or SMILES"
+        /></label>
+        <details id="reference-browser" class="structured-group">
+          <summary>Browse reference chemicals (optional)</summary>
+          <label class="field"
+            ><span class="field-label">Search Perry and chemicals.json</span
+            ><input
+              id="reference-search"
+              type="search"
+              placeholder="Name, formula or CAS"
+              autocomplete="off"
+          /></label>
+          <label class="field"
+            ><span class="field-label">Reference chemical</span
+            ><select id="reference-chemical">
+              <option>Open Browse to load references</option>
+            </select></label
+          >
+          <div class="reference-actions">
+            <button type="button" data-reference-target="comp1">
+              Use for component 1</button
+            ><button type="button" data-reference-target="comp2">
+              Use for component 2</button
+            ><button
+              type="button"
+              data-reference-target="comp3"
+              id="third-reference-button"
+              hidden
+            >
+              Use for component 3
             </button>
-            
-            <div class="info-panel" id="infoPanel" style="display:none;">
-                <h3>System Information</h3>
-                <div id="infoContent"></div>
-            </div>
+          </div>
+          <p id="reference-status" class="field-help">
+            Typing in the component textboxes resolves the identifier when you
+            generate a diagram.
+          </p>
+        </details>
+        <label class="field" id="scope-field" hidden
+          ><span class="field-label">Thermodynamic scope</span
+          ><select id="chart-scope">
+            <option value="global">Global</option>
+          </select></label
+        >
+        <label class="field"
+          ><span class="field-label">Thermodynamic model</span
+          ><select id="chart-method"></select
+        ></label>
+        <label class="field"
+          ><span class="field-label">Diagram</span
+          ><select id="chart-type">
+            <option value="TXY">T–x–y · constant pressure</option>
+            <option value="PXY">P–x–y · constant temperature</option>
+            <option value="XY">x–y · equilibrium curve</option>
+            <option value="VLLE">Binary VLLE · T–x–y and binodal at fixed P</option>
+            <option value="TERNARY_LLE">Ternary LLE · tie lines at T</option>
+            <option value="TERNARY_VLLE">
+              Ternary VLLE · phase map at T, P
+            </option>
+          </select></label
+        >
+        <label class="field" id="pressure-field"
+          ><span class="field-label">Pressure (bar)</span
+          ><input
+            type="number"
+            id="chart-pressure"
+            value="1"
+            min="0.000001"
+            max="10000"
+            step="any"
+            required
+        /></label>
+        <label class="field" id="temperature-field" hidden
+          ><span class="field-label">Temperature (°C)</span
+          ><input
+            type="number"
+            id="chart-temperature"
+            value="25"
+            min="-273.149"
+            max="5000"
+            step="any"
+            required
+        /></label>
+        <details class="structured-group">
+          <summary>Advanced options</summary>
+          <label class="field" id="binodal-minimum-field" hidden>
+            <span class="field-label">Binodal lower temperature (°C)</span>
+            <input type="number" id="binodal-minimum-temperature" value="25"
+              min="-273.149" max="5000" step="any" required disabled />
+          </label>
+          <label class="field"
+            ><span class="field-label" id="point-count-label"
+              >Curve intervals (10–200)</span
+            ><input
+              type="number"
+              id="chart-points"
+              value="50"
+              min="10"
+              max="200"
+              step="1"
+              required
+          /></label>
+          <div id="chart-model-options"></div>
+          <label class="check-field"
+            ><input id="chart-online" type="checkbox" checked /><span
+              >Allow online property lookup</span
+            ></label
+          >
+          <p class="field-help">
+            Local property and compiled caches are reused. Imported definitions
+            retain their .pfd lookup and computation policy.
+          </p>
+        </details>
+        <button class="primary" id="generate-chart" type="submit">
+          Generate phase diagram ↗</button
+        ><button id="cancel-chart" type="button" hidden>Stop</button>
+      </form>
+    </section>
+    <section class="atlas-chart panel-card">
+      <div class="results-heading">
+        <div>
+          <p class="eyebrow">EQUILIBRIUM OBSERVATORY</p>
+          <h2 id="chart-title">Your mixture, mapped.</h2>
         </div>
-        
-        <div class="chart-container">
-            <div class="chart-header">
-                <h2 id="chartTitle">Phase Diagram</h2>
-            </div>
-            
-            <div class="chart-wrapper">
-                <canvas id="vleChart"></canvas>
-                <div class="loading" id="loading" style="display:none;">
-                    <div class="spinner"></div>
-                </div>
-                <div class="error-message" id="errorMsg" style="display:none;"></div>
-            </div>
+        <div>
+          <button id="export-chart-svg" disabled>Export SVG</button
+          ><button id="export-chart" disabled>Export data</button>
         </div>
-    </div>
-    
-    <script>
-        let chart = null;
-        
-        // Load components on page load
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadComponents();
-            
-            // Update form visibility based on chart type
-            document.getElementById('chartType').addEventListener('change', updateFormVisibility);
-        });
-        
-        async function loadComponents() {
-            try {
-                const response = await fetch('/api/vle-chart/components');
-                const data = await response.json();
-                
-                if (data.success) {
-                    const comp1 = document.getElementById('comp1');
-                    const comp2 = document.getElementById('comp2');
-                    
-                    // Common VLE components first
-                    const commonComps = ['ethanol', 'water', 'methanol', 'acetone', 'benzene', 'toluene', 'hexane'];
-                    
-                    data.components.forEach(comp => {
-                        const option1 = new Option(comp.name || comp.symbol, comp.symbol);
-                        const option2 = new Option(comp.name || comp.symbol, comp.symbol);
-                        comp1.add(option1);
-                        comp2.add(option2);
-                    });
-                    
-                    // Set defaults
-                    comp1.value = 'C2H5OH';
-                    comp2.value = 'H2O';
-                }
-            } catch (error) {
-                console.error('Failed to load components:', error);
-            }
-        }
-        
-        function updateFormVisibility() {
-            const chartType = document.getElementById('chartType').value;
-            const pressureGroup = document.getElementById('pressureGroup');
-            const temperatureGroup = document.getElementById('temperatureGroup');
-            
-            if (chartType === 'Txy' || chartType === 'xy') {
-                pressureGroup.style.display = 'block';
-                temperatureGroup.style.display = 'none';
-            } else if (chartType === 'Pxy') {
-                pressureGroup.style.display = 'none';
-                temperatureGroup.style.display = 'block';
-            }
-        }
-        
-        async function generateChart() {
-            // Get component values - prefer custom input over dropdown
-            let comp1 = document.getElementById('comp1Custom').value.trim();
-            if (!comp1) {
-                comp1 = document.getElementById('comp1').value;
-            }
-            
-            let comp2 = document.getElementById('comp2Custom').value.trim();
-            if (!comp2) {
-                comp2 = document.getElementById('comp2').value;
-            }
-            
-            const chartType = document.getElementById('chartType').value;
-            const pressure = parseFloat(document.getElementById('pressure').value);
-            const temperature = parseFloat(document.getElementById('temperature').value);
-            
-            if (!comp1 || !comp2) {
-                showError('Please select or enter both components');
-                return;
-            }
-            
-            if (comp1 === comp2) {
-                showError('Please select different components');
-                return;
-            }
-            
-            showLoading(true);
-            hideError();
-            
-            try {
-                const requestData = {
-                    comp1: comp1,
-                    comp2: comp2,
-                    chart_type: chartType,
-                    pressure: pressure,
-                    temperature: temperature,
-                    n_points: 50
-                };
-                
-                const response = await fetch('/api/vle-chart', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(requestData)
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    renderChart(data, chartType);
-                    showInfo(data);
-                } else {
-                    showError(data.error || 'Failed to generate chart');
-                }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                showLoading(false);
-            }
-        }
-        
-        function renderChart(data, chartType) {
-            const ctx = document.getElementById('vleChart').getContext('2d');
-            
-            if (chart) {
-                chart.destroy();
-            }
-            
-            let config;
-            
-            if (chartType === 'Txy') {
-                config = createTxyConfig(data);
-            } else if (chartType === 'Pxy') {
-                config = createPxyConfig(data);
-            } else if (chartType === 'xy') {
-                config = createXyConfig(data);
-            }
-            
-            chart = new Chart(ctx, config);
-            
-            document.getElementById('chartTitle').textContent = getChartTitle(data, chartType);
-        }
-        
-        function createTxyConfig(data) {
-            const datasets = [
-                {
-                    label: 'Bubble Point (Liquid)',
-                    data: data.x.map((x, i) => ({x: x, y: data.T_bubble[i]})),
-                    borderColor: '#4fc3f7',
-                    backgroundColor: 'rgba(79, 195, 247, 0.1)',
-                    fill: false,
-                    tension: 0.3,
-                    pointRadius: 2
-                },
-                {
-                    label: 'Dew Point (Vapor)',
-                    data: data.y.map((y, i) => ({x: y, y: data.T_dew[i]})),
-                    borderColor: '#ff7043',
-                    backgroundColor: 'rgba(255, 112, 67, 0.1)',
-                    fill: false,
-                    tension: 0.3,
-                    pointRadius: 2
-                }
-            ];
-            
-            // Add azeotrope marker if present
-            if (data.azeotrope) {
-                datasets.push({
-                    label: 'Azeotrope',
-                    data: [{x: data.azeotrope.x, y: data.azeotrope.T}],
-                    borderColor: '#ff9800',
-                    backgroundColor: '#ff9800',
-                    pointRadius: 8,
-                    pointStyle: 'star',
-                    showLine: false
-                });
-            }
-            
-            return {
-                type: 'scatter',
-                data: { datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#e0e0e0' }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            title: { display: true, text: `Mole Fraction ${data.comp1_name || data.comp1}`, color: '#b0bec5' },
-                            min: 0, max: 1,
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        },
-                        y: {
-                            title: { display: true, text: 'Temperature (°C)', color: '#b0bec5' },
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        }
-                    }
-                }
-            };
-        }
-        
-        function createPxyConfig(data) {
-            return {
-                type: 'scatter',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Bubble Point',
-                            data: data.x.map((x, i) => ({x: x, y: data.P_bubble[i]})),
-                            borderColor: '#4fc3f7',
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 2
-                        },
-                        {
-                            label: 'Dew Point',
-                            data: data.y.map((y, i) => ({x: y, y: data.P_dew[i]})),
-                            borderColor: '#ff7043',
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#e0e0e0' } }
-                    },
-                    scales: {
-                        x: {
-                            title: { display: true, text: `Mole Fraction ${data.comp1_name || data.comp1}`, color: '#b0bec5' },
-                            min: 0, max: 1,
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        },
-                        y: {
-                            title: { display: true, text: 'Pressure (bar)', color: '#b0bec5' },
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        }
-                    }
-                }
-            };
-        }
-        
-        function createXyConfig(data) {
-            return {
-                type: 'scatter',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Equilibrium Curve',
-                            data: data.x.map((x, i) => ({x: x, y: data.y[i]})),
-                            borderColor: '#4fc3f7',
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 2
-                        },
-                        {
-                            label: '45° Line (x = y)',
-                            data: [{x: 0, y: 0}, {x: 1, y: 1}],
-                            borderColor: 'rgba(255,255,255,0.3)',
-                            borderDash: [5, 5],
-                            fill: false,
-                            pointRadius: 0
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#e0e0e0' } }
-                    },
-                    scales: {
-                        x: {
-                            title: { display: true, text: `x (Liquid Mole Fraction ${data.comp1_name || data.comp1})`, color: '#b0bec5' },
-                            min: 0, max: 1,
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        },
-                        y: {
-                            title: { display: true, text: `y (Vapor Mole Fraction ${data.comp1_name || data.comp1})`, color: '#b0bec5' },
-                            min: 0, max: 1,
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        }
-                    }
-                }
-            };
-        }
-        
-        function getChartTitle(data, chartType) {
-            const c1 = data.comp1_name || data.comp1;
-            const c2 = data.comp2_name || data.comp2;
-            
-            if (chartType === 'Txy') {
-                return `T-x-y Diagram: ${c1} / ${c2} at ${data.pressure_bar} bar`;
-            } else if (chartType === 'Pxy') {
-                return `P-x-y Diagram: ${c1} / ${c2} at ${data.temperature_C}°C`;
-            } else if (chartType === 'xy') {
-                return `x-y Equilibrium: ${c1} / ${c2} at ${data.pressure_bar} bar`;
-            }
-            return 'Phase Diagram';
-        }
-        
-        function showInfo(data) {
-            const panel = document.getElementById('infoPanel');
-            const content = document.getElementById('infoContent');
-            
-            let html = `
-                <div class="info-item">
-                    <span>Component 1:</span>
-                    <span>${data.comp1_name || data.comp1}</span>
-                </div>
-                <div class="info-item">
-                    <span>Component 2:</span>
-                    <span>${data.comp2_name || data.comp2}</span>
-                </div>
-            `;
-            
-            if (data.pressure_bar) {
-                html += `
-                    <div class="info-item">
-                        <span>Pressure:</span>
-                        <span>${data.pressure_bar} bar</span>
-                    </div>
-                `;
-            }
-            
-            if (data.temperature_C !== undefined && data.temperature_C !== null) {
-                html += `
-                    <div class="info-item">
-                        <span>Temperature:</span>
-                        <span>${data.temperature_C}°C</span>
-                    </div>
-                `;
-            }
-            
-            if (data.azeotrope) {
-                html += `
-                    <div class="info-item">
-                        <span>Azeotrope:</span>
-                        <span class="azeotrope-badge">${data.azeotrope.type}</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Azeotrope Composition:</span>
-                        <span>x = ${data.azeotrope.x.toFixed(3)}</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Azeotrope Temperature:</span>
-                        <span>${data.azeotrope.T.toFixed(1)}°C</span>
-                    </div>
-                `;
-            }
-            
-            if (data.T_bubble) {
-                const Tmin = Math.min(...data.T_bubble).toFixed(1);
-                const Tmax = Math.max(...data.T_bubble).toFixed(1);
-                html += `
-                    <div class="info-item">
-                        <span>Temperature Range:</span>
-                        <span>${Tmin} - ${Tmax}°C</span>
-                    </div>
-                `;
-            }
-            
-            content.innerHTML = html;
-            panel.style.display = 'block';
-        }
-        
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-            document.getElementById('generateBtn').disabled = show;
-        }
-        
-        function showError(message) {
-            const el = document.getElementById('errorMsg');
-            el.textContent = message;
-            el.style.display = 'block';
-        }
-        
-        function hideError() {
-            document.getElementById('errorMsg').style.display = 'none';
-        }
-    </script>
-</body>
-</html>
+      </div>
+      <div id="chart-status" role="status">
+        Choose a system and generate its diagram.
+      </div>
+      <div id="chart-frame" class="chart-frame">
+        <p>Your phase diagram will appear here.</p>
+      </div>
+      <div id="chart-legend" class="chart-legend"></div>
+      <div id="chart-information"></div>
+      <div id="phase-point-detail"></div>
+    </section>
+  </div>
+</main>
+{% endblock %} {% block scripts %}
+<script
+  type="module"
+  src="{{ url_for('static', filename='js/phase-atlas.js') }}"
+></script>
+{% endblock %}
