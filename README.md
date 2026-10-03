@@ -23,8 +23,7 @@ flow diagrams from the same input.
   optional online lookup, persistent caching, and source/quality diagnostics.
 - **Separation equipment:** flashes and decanters; shortcut and rigorous
   distillation, extraction, absorption, and stripping; competitive molecular-
-  sieve adsorption. Rigorous columns include coupled VLLE overhead routing
-  and vapor Murphree stage efficiencies.
+  sieve adsorption. 
 - **Reaction engineering:** conversion and equilibrium reactors, kinetic
   CSTRs, batch/semi-batch reactors, adaptive PFRs, and catalyst packed beds
   with effectiveness and hydraulic models.
@@ -428,14 +427,13 @@ listed in the [PFD reference](docs/pfd_format_v1.0.md).
 | Solids | `Crystallizer`, `LayerCrystallizer`, `Filter` | Pure-solid equilibrium/growth, deposited layers/sweating, PSD-dependent cake filtration and washing |
 
 **Rigorous distillation** solves coupled material, equilibrium, summation, and
-energy (MESH) equations, with pressure profiles, multiple feeds, and total,
-partial, or mixed condensers. VLE supports side draws. VLLE stages retain two
-liquid compositions with an aggregate downward liquid flow; the top liquids
-can have different withdrawal/reflux fractions. Specified-temperature or
-subcooled total condensers use their actual liquid equilibrium and enthalpy in
-the coupled balances. VLLE side draws remain unsupported. The former separate
-VLE `condenser_type=decanter` path has been removed; affected input receives a
-migration error directing it to coupled VLLE withdrawal.
+energy (MESH) equations, with pressure profiles, multiple feeds, detailed 
+convergence settings, stage efficiencies, and total, partial, or mixed 
+condensers. VLE supports side draws. VLLE stages retain two liquid compositions
+with an aggregate downward liquid flow; the top liquids can have different 
+withdrawal/reflux fractions. Specified-temperature or subcooled total condensers
+use their actual liquid equilibrium and enthalpy in the coupled balances. VLLE
+side draws remain unsupported. 
 
 **Reactors** support unit-specific thermal modes and explicitly declared rate
 bases/units. Kinetic PFRs provide adaptive axial integration and profiles;
