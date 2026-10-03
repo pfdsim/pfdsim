@@ -321,7 +321,7 @@ def _solve_dew_point_temperature(thermo, composition: dict[str, float],
     def residual(T: float) -> float:
         x = dict(y)
         sum_yK_inv = 1.0
-        for _ in range(50):
+        for _ in range(200):
             K = thermo.K_values(T, P, x)
             x_new = {}
             sum_yK_inv = 0.0
@@ -340,6 +340,8 @@ def _solve_dew_point_temperature(thermo, composition: dict[str, float],
             x = x_new
             if max_change < 1e-9:
                 break
+        else:
+            raise ThermodynamicsError("Dew point liquid composition did not converge")
         return sum_yK_inv - 1.0
 
     significant_cutoff = 1e-6
@@ -537,7 +539,11 @@ def _solve_dew_point_temperature(thermo, composition: dict[str, float],
         guess = max(grid[0], min(grid[-1], float(T_guess)))
         return min(roots, key=lambda root: abs(root - guess))
     if values:
-        return min(values, key=lambda item: abs(item[1]))[0]
+        best_temperature, best_residual = min(values, key=lambda item: abs(item[1]))
+        raise ThermodynamicsError(
+            "Could not bracket dew point temperature; "
+            f"best residual {best_residual:.6g} at T={best_temperature:.6g} K"
+        )
     raise ThermodynamicsError("Could not bracket dew point temperature")
 
 __all__ = [

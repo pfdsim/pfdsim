@@ -34,6 +34,8 @@ from .common import (
     T_REF,
     ThermodynamicsError,
     _property_lookup_identifier,
+    _solve_bubble_point_temperature,
+    _solve_dew_point_temperature,
 )
 
 from .henry import (
@@ -3134,26 +3136,7 @@ class IdealThermodynamics:
         Returns:
             Bubble point temperature [K]
         """
-        T = T_guess
-        for _ in range(50):
-            K = self.K_values(T, P, composition)
-            sum_xK = sum(x * K.get(comp, 1.0) for comp, x in composition.items())
-
-            if abs(sum_xK - 1.0) < 1e-6:
-                return T
-
-            # When sum_xK > 1, temperature is too high (too much vapor)
-            # When sum_xK < 1, temperature is too low
-            # Use Newton-like update with proper direction
-            if sum_xK > 1:
-                dT = -5.0 * (sum_xK - 1.0)  # Decrease T
-            else:
-                dT = 5.0 * (1.0 - sum_xK)  # Increase T
-
-            T += dT
-            T = max(100, min(800, T))  # Keep in reasonable range
-
-        return T
+        return _solve_bubble_point_temperature(self, composition, P, T_guess)
 
     def dew_point_T(
         self, composition: dict[str, float], P: float, T_guess: float = 350.0
@@ -3171,27 +3154,7 @@ class IdealThermodynamics:
         Returns:
             Dew point temperature [K]
         """
-        T = T_guess
-        for _ in range(50):
-            K = self.K_values(T, P, composition)
-            sum_yK = sum(
-                y / max(K.get(comp, 1.0), 1e-30) for comp, y in composition.items()
-            )
-
-            if abs(sum_yK - 1.0) < 1e-6:
-                return T
-
-            # When sum_yK > 1, temperature is too low (too much liquid)
-            # When sum_yK < 1, temperature is too high
-            if sum_yK > 1:
-                dT = 5.0 * (sum_yK - 1.0)  # Increase T
-            else:
-                dT = -5.0 * (1.0 - sum_yK)  # Decrease T
-
-            T += dT
-            T = max(100, min(800, T))
-
-        return T
+        return _solve_dew_point_temperature(self, composition, P, T_guess)
 
     def flash_TP(
         self, composition: dict[str, float], T: float, P: float
