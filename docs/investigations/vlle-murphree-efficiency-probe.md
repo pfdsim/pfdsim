@@ -207,3 +207,51 @@ Reproduce the threshold experiment by adding `--scale-projection` to the
 probe command. Artifacts are in
 `/tmp/pfdsim-vlle-efficiency-scaled-projection-20261002/` and
 `/tmp/pfdsim-vlle-efficiency-projection-control-20261002/`.
+
+## Disable projection on the first detected topology cycle
+
+The next script-only experiment keeps projection enabled initially. When the
+native cycle guard first rejects a previously visited topology, it disables
+projection and resumes from that rejected transition's current iterate and
+requested topology. It carries the actual vapor-composition variables as
+well as the liquid states, flows, and duties. This does not return to the
+original initializer or start from a separate equilibrium solution.
+
+The retry is allowed once. Normal stability checks, liquid-phase appearance
+and disappearance, and cycle detection remain enabled in the new solve mode.
+The original outer-topology budget is retained across both attempts, and all
+spent iterations/evaluations are included in reported work. Each trial owns
+its parameter dictionary, so disabling projection cannot leak into subsequent
+control runs. Both mid-Newton and post-convergence cycles have checkpoint
+paths; the tested failure was a mid-Newton transition.
+
+For co-routed butanol at E=0.7, all three measured repetitions and the warm-up
+converged, each requiring exactly one recovery:
+
+- Median solve time: `2.7144 s`, including the failed first attempt.
+- Measured times: `2.3786`, `2.7808`, and `2.7144 s`.
+- Final MESH residual: `1.6659e-13`.
+- Final topology: 12 two-liquid stages, followed by 8 homogeneous stages.
+- Independent liquid-split error: `3.7683e-8`.
+- Maximum liquid log-fugacity mismatch: `3.3307e-15`.
+- Maximum vapor-reference log-fugacity mismatch: `6.2173e-15`.
+- Maximum Murphree equation residual: `2.5258e-15`.
+- Maximum component imbalance: `8.172e-14 kmol/h`.
+- Relative external energy imbalance: `1.659e-15`.
+
+The first attempt spent 18 Newton iterations and 3 topology solves. Recovery
+spent another 27 iterations and 2 topology solves, giving 45 iterations and
+5 topology solves in total. The path was homogeneous -> 13 split stages ->
+12 -> cycle requesting 13 -> disable projection and resume at 13 -> stable 12.
+
+Native equilibrium and enlarged E=1 controls also converged in all three
+measured repetitions, without triggering recovery. Their median times were
+`0.5443 s` and `0.6874 s`. Thus projection remains available on the ordinary
+successful paths. The recovery is not claimed faster than disabling projection
+from the start; it avoids imposing that slower mode on every column solve.
+
+Reproduce with `--projection-cycle-fallback --cases butanol_copooled
+--variants native E1.0 E0.7 --repeats 3`. Results are in
+`/tmp/pfdsim-vlle-projection-cycle-fallback-20261002/`. This verifies the
+recovery for the identified case, not general robustness across all VLLE
+topology cycles. Production code remains unchanged.

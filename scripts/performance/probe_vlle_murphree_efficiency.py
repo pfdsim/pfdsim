@@ -94,6 +94,8 @@ class EfficiencyColumn(NativeColumn):
     def pack_initial(self):
         vector = super().pack_initial()
         old_y = getattr(self.profile,'probe_vapor_compositions',None)
+        if old_y is None:
+            old_y = getattr(self.unit,'probe_resume_vapor',None)
         for j in range(1,self.N-1):
             state = self.decode_stage(vector,j)
             y = old_y[j] if old_y is not None else super().stage_properties(j,state)['y']
@@ -212,7 +214,21 @@ class EfficiencyColumn(NativeColumn):
         return matrix.tocsr(),evaluations,'probe_vlle_murphree_local_thermo'
 
 
-class ProjectionProbeColumn(EfficiencyColumn):
+class CheckpointColumn:
+    """Retain a converged checkpoint for cycles detected after a solve."""
+
+    def solve(self):
+        self.unit.probe_last_converged = None
+        result = super().solve()
+        self.unit.probe_last_converged = (self,result)
+        return result
+
+
+class NativeCheckpointColumn(CheckpointColumn,NativeColumn):
+    pass
+
+
+class ProjectionProbeColumn(CheckpointColumn,EfficiencyColumn):
     """Exact native projection logic, with optional per-tray threshold scaling.
 
     The native guard has scalar thresholds. This explicit script-only copy
@@ -269,6 +285,55 @@ class ProjectionProbeColumn(EfficiencyColumn):
                 'decisions':details})
             raise vlle._ActiveSetChange(self.profile_from_decoded(self.decode(vector)),updated,
                 reason='projected_newton_boundary',residual_norm=float(np.linalg.norm(residual,ord=np.inf)))
+
+
+def solve_with_cycle_fallback(call_args,kwargs,enabled):
+    """One bounded, script-only recovery at the first repeated topology."""
+    unit = call_args[0]
+    try:
+        return NativeActiveSet(*call_args,**kwargs)
+    except vlle.VLLETopologyCycle as failure:
+        if not enabled or not unit._truthy_param(unit.get_param('vlle_projection_enabled',True)):
+            raise
+        change = failure.__cause__
+        if isinstance(change,vlle._ActiveSetChange):
+            profile,active = change.profile,list(change.active)
+            residual,reason = change.residual_norm,change.reason
+        else:
+            checkpoint = getattr(unit,'probe_last_converged',None)
+            if checkpoint is None:
+                raise
+            model,(decoded,_props,solution) = checkpoint
+            profile = model.profile_from_decoded(decoded)
+            active = model.topology_for_decoded(decoded)
+            residual,reason = solution['residual_norm'],'post_convergence_screen'
+        original_work = dict(failure.work)
+        original_budget = unit.get_param('vlle_max_topology_updates')
+        if original_budget is None:
+            original_budget = max(8,min(len(call_args[4])+4,24))
+        remaining = int(original_budget)-original_work['vlle_topology_solves']
+        if remaining <= 0:
+            raise
+        unit.params['vlle_projection_enabled'] = False
+        unit.params['vlle_max_topology_updates'] = remaining
+        unit.probe_resume_vapor = getattr(profile,'probe_vapor_compositions',None)
+        recovery_args = list(call_args)
+        recovery_args[13] = profile
+        recovery_kwargs = dict(kwargs,initial_active=active)
+        unit.probe_cycle_recovery = {'disabled_projection':True,'trigger':str(failure),
+            'history_before':list(failure.history),'resume_topology':vlle.topology_text(active),
+            'checkpoint_residual':float(residual),'reason':reason,'work_before':original_work}
+        # Exactly one retry. Ordinary stability screening and the cycle guard
+        # remain enabled; a second cycle still fails. Preserve spent work.
+        try:
+            solved = NativeActiveSet(*recovery_args,**recovery_kwargs)
+        except vlle.VLLESolveFailure as second:
+            second.work = {key:original_work[key]+second.work.get(key,0) for key in original_work}
+            raise
+        unit.probe_cycle_recovery['work_after'] = dict(solved.work)
+        solved.work = {key:original_work[key]+solved.work.get(key,0) for key in original_work}
+        solved.topology_history = list(failure.history)+solved.topology_history
+        return solved
 
 
 def setup(case,topology_policy,warm_seed,no_projection):
@@ -410,7 +475,7 @@ def validate_jacobian(unit,args,kwargs,efficiency):
     return error
 
 
-def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants,scale_projection):
+def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants,scale_projection,cycle_fallback):
     with isolated_runtime_caches():
         thermo,feed,params,args,kwargs,initializer = setup(case,topology_policy,warm_seed,no_projection)
         check_unit = RigorousDistillation('CHECK',thermo,params)
@@ -421,7 +486,7 @@ def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants,
         with (output/f'{case}.jsonl').open('x') as handle:
             for repeat in range(repeats+1):
                 for variant in (variants if repeat % 2 == 0 else variants[::-1]):
-                    unit = RigorousDistillation('PROBE',thermo,params)
+                    unit = RigorousDistillation('PROBE',thermo,dict(params))
                     unit.probe_efficiency = 1. if variant == 'native' else ('profile' if variant == 'profile' else float(variant[1:]))
                     unit.probe_scale_projection = scale_projection
                     unit.probe_projection_events = []
@@ -429,8 +494,8 @@ def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants,
                     call_args = [unit,*args[1:]]
                     start = time.perf_counter()
                     try:
-                        with patch.object(vlle,'EquationOrientedVLLEColumn',NativeColumn if variant == 'native' else ProjectionProbeColumn):
-                            solved = NativeActiveSet(*call_args,**kwargs)
+                        with patch.object(vlle,'EquationOrientedVLLEColumn',NativeCheckpointColumn if variant == 'native' else ProjectionProbeColumn):
+                            solved = solve_with_cycle_fallback(call_args,kwargs,cycle_fallback)
                         elapsed = time.perf_counter()-start
                         row = {'case':case,'variant':variant,'repeat':repeat,'warmup':repeat==0,
                                'success':True,'seconds':elapsed,'residual':float(solved.solver['residual_norm']),
@@ -445,6 +510,7 @@ def worker(case,output,repeats,topology_policy,warm_seed,no_projection,variants,
                         row = {'case':case,'variant':variant,'repeat':repeat,'warmup':repeat==0,
                                'success':False,'seconds':time.perf_counter()-start,'error':str(error)}
                     row['projection_events'] = unit.probe_projection_events
+                    row['cycle_recovery'] = getattr(unit,'probe_cycle_recovery',None)
                     handle.write(json.dumps(row)+'\n')
                     handle.flush()
                     rows.append(row)
@@ -474,13 +540,14 @@ def main():
     parser.add_argument('--no-projection',action='store_true',help='Disable the existing projected phase-contraction heuristic for diagnosis')
     parser.add_argument('--variants',nargs='+',choices=VARIANTS,default=list(VARIANTS))
     parser.add_argument('--scale-projection',action='store_true',help='Multiply both projection thresholds by each tray efficiency')
+    parser.add_argument('--projection-cycle-fallback',action='store_true',help='On the first topology cycle, disable projection and continue from that iterate')
     args = parser.parse_args()
     if 'native' not in args.variants:
         parser.error('Include native for a comparable timing baseline')
     if args.scale_projection and args.no_projection:
         parser.error('Choose threshold scaling or disabled projection, not both')
     if args.worker:
-        worker(args.worker,args.output,args.repeats,args.topology_policy,args.warm_seed,args.no_projection,args.variants,args.scale_projection)
+        worker(args.worker,args.output,args.repeats,args.topology_policy,args.warm_seed,args.no_projection,args.variants,args.scale_projection,args.projection_cycle_fallback)
         return
     if args.repeats < 1 or args.timeout <= 0:
         parser.error('repeats/timeout must be positive')
@@ -490,6 +557,7 @@ def main():
         'topology_policy':args.topology_policy or 'native default',
         'projection_enabled':not args.no_projection,
         'projection_thresholds':'per-tray efficiency scaled' if args.scale_projection else 'native constants',
+        'projection_cycle_fallback':args.projection_cycle_fallback,
         'timing':'active-set coupled solve, excludes property hydration and initializer construction',
         'initialization':('native converged equilibrium profile' if args.warm_seed
                           else 'same native initializer profile, not a converged-state continuation')},indent=2)+'\n')
@@ -505,6 +573,8 @@ def main():
             command.append('--no-projection')
         if args.scale_projection:
             command.append('--scale-projection')
+        if args.projection_cycle_fallback:
+            command.append('--projection-cycle-fallback')
         with (args.output/f'{case}.log').open('x') as handle:
             try:
                 run = subprocess.run(command,
