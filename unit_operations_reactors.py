@@ -37,6 +37,8 @@ else:
 class Reactor(UnitOperation):
     """Stoichiometric conversion reactor with inlet-basis extents."""
 
+    supports_reactions = True
+
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         if len(inlets) != 1:
             raise UnitOperationError(

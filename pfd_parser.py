@@ -992,6 +992,16 @@ def normalize_interaction_model(model: str) -> str:
     return _INTERACTION_MODEL_ALIASES.get(text, text)
 
 
+def configuration_field_catalog() -> dict:
+    """Expose supported configuration names for structured editor controls."""
+    return {
+        'interaction_models': {name:sorted(fields) for name,fields in _INTERACTION_PARAMETER_FIELDS.items()},
+        'interaction_estimation_fields':sorted(_INTERACTION_ESTIMATION_FIELDS),
+        'property_equations': {name:sorted(equations) for name,equations in _PROPERTY_CORRELATION_EQUATIONS.items()},
+        'property_coefficients': {name:sorted(fields) for name,fields in _PROPERTY_CORRELATION_COEFFICIENTS.items()},
+    }
+
+
 def canonical_correlation_field_name(name: object) -> str:
     """Normalize a non-coefficient correlation field exactly as the parser does."""
     text = str(name)

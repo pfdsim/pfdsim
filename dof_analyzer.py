@@ -17,6 +17,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .unit_syntax import UNIT_TYPE_ALIASES, canonical_unit_type
+else:
+    from unit_syntax import UNIT_TYPE_ALIASES, canonical_unit_type
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .crystallizer_specs import (
         CrystallizerSpecificationError,
         validate_crystallizer_specification,
@@ -878,6 +883,59 @@ UNIT_DOF_RULES = {
 }
 
 
+# These registered columns are closed by inlet states and runtime defaults;
+# optional operating settings are not missing degrees of freedom.
+_COLUMN_SPECS = {
+    'N_stages': {'description': 'Optional stage count; the unit supplies its default'},
+    'T': {'unit': 'C', 'description': 'Optional operating temperature'},
+    'mode': {'description': 'Thermal mode, where supported'},
+    'P': {'unit': 'bar'}, 'P_drop_per_stage': {'unit': 'bar'},
+}
+UNIT_DOF_RULES['ShortcutDistillation']['required_specs'] = []
+UNIT_DOF_RULES['ShortcutDistillation']['dof_notes'] = 'Fenske–Underwood–Gilliland design supplies missing stages/reflux from key recoveries and runtime defaults. Explicit operating targets override those defaults.'
+for _name, _description, _phases in (
+    ('RigorousDistillation', 'Equation-oriented MESH distillation column', ['VLE', 'VLLE']),
+    ('CMODistillation', 'Multicomponent constant-molar-overflow column', ['VLE']),
+    ('McCabeThieleDistillation', 'Binary McCabe-Thiele column', ['VLE']),
+    ('ShortcutExtractor', 'Shortcut counter-current liquid-liquid extraction', ['LLE']),
+    ('RigorousExtractor', 'Rigorous equilibrium-stage liquid-liquid extraction', ['LLE']),
+    ('RigorousAbsorber', 'Rigorous equilibrium-stage absorption', ['VLE']),
+    ('RigorousStripper', 'Rigorous equilibrium-stage stripping', ['VLE']),
+):
+    UNIT_DOF_RULES[_name] = {
+        'description': _description, 'category': 'separation',
+        'phase_support': _phases, 'required_specs': [],
+        'optional_specs': dict(_COLUMN_SPECS),
+        'dof_notes': 'Inlet states and runtime defaults close the column. Stage, pressure and operating settings may override those defaults.',
+    }
+for _name in ('RigorousDistillation', 'CMODistillation', 'McCabeThieleDistillation'):
+    UNIT_DOF_RULES[_name]['optional_specs'].update({
+        'reflux_ratio': {}, 'D_to_F': {}, 'D_rate': {'unit': 'kmol/h'},
+        'feed_stage': {}, 'P_condenser': {'unit': 'bar'},
+    })
+
+# UI importance is independent of whether a runtime default closes a DOF.
+_PRIMARY_SPECS = {
+    'distillation': ('N_stages', 'stages', 'feed_stage', 'feed_stages', 'reflux_ratio', 'RR',
+        'D_to_F', 'D_rate', 'D_mass', 'distillate_flow', 'light_key', 'heavy_key',
+        'light_key_recovery', 'heavy_key_recovery', 'condenser_type', 'P_condenser', 'P_top'),
+    'extractor': ('N_stages', 'stages', 'T', 'mode', 'extract_phase', 'heavy_component'),
+    'absorber': ('N_stages', 'stages', 'mode', 'T', 'stage_temperature', 'P', 'P_top', 'gas_stage', 'liquid_stage'),
+    'stripper': ('N_stages', 'stages', 'mode', 'T', 'stage_temperature', 'P', 'P_top', 'stripping_gas_stage', 'liquid_stage'),
+    'pump': ('P_out', 'delta_P', 'pressure_ratio', 'eta', 'eta_mech'),
+    'compressor': ('P_out', 'delta_P', 'pressure_ratio', 'eta_isen', 'eta_mech'),
+    'expander': ('P_out', 'delta_P', 'pressure_ratio', 'eta_isen', 'eta_mech'),
+    'valve': ('P_out',),
+    'pipe': ('length', 'diameter', 'velocity', 'diameter_out', 'roughness', 'elevation_change'),
+    'heat_exchanger': ('T_hot_out', 'T_cold_out', 'T_tube_out', 'T_shell_out', 'Q', 'UA', 'U', 'A', 'area', 'estimate_U'),
+    'reactor': ('volume', 'V', 'length', 'diameter', 'phase', 'mode', 'T', 'P', 'catalyst_mass'),
+    'batch_reactor': ('V_batch', 'N', 't_rxn', 'phase', 'mode', 'T', 'P'),
+    'filter': ('cycle_time', 'P_drop', 'area', 'porosity', 'capture_cut_size', 'washing_model', 'deliquoring_time'),
+    'dryer': ('sieve_type', 'adsorbent_mass_flow', 'target_component', 'target_mole_fraction', 'target_water_mole_fraction', 'removal_fraction'),
+    'splitter': ('split_frac', 'split_fractions', 'flows', 'outlet_flows', 'mass_flows'),
+}
+
+
 class DOFAnalyzer:
     """Analyzes degrees of freedom for process specifications"""
     
@@ -914,7 +972,7 @@ class DOFAnalyzer:
                 result.warnings.append(unit_result.message)
         
         if result.errors:
-            if any('under' in e.lower() for e in result.errors):
+            if any(item.status is SpecificationStatus.UNDER_SPECIFIED for item in result.unit_results+result.stream_results):
                 result.overall_status = SpecificationStatus.UNDER_SPECIFIED
             else:
                 result.overall_status = SpecificationStatus.OVER_SPECIFIED
@@ -984,19 +1042,8 @@ class DOFAnalyzer:
                         message=f"Stream '{stream.id}' composition sums to {total:.4f}, not 1.0",
                         details=[]
                     )
-        else:
-            if specs_provided > 2 and not stream.destination.is_product:
-                return DOFResult(
-                    entity_id=stream.id,
-                    entity_type='stream',
-                    total_variables=4,
-                    equations=0,
-                    specifications=specs_provided,
-                    dof=-specs_provided,
-                    status=SpecificationStatus.WARNING,
-                    message=f"Internal stream '{stream.id}' has {specs_provided} specs - may over-constrain",
-                    details=["Internal stream properties are typically calculated"]
-                )
+        # Non-feed values are initialization data, not additional equations.
+        # Tear-stream values seed recycles; upstream units determine the result.
         
         return DOFResult(
             entity_id=stream.id,
@@ -1012,8 +1059,7 @@ class DOFAnalyzer:
     
     def _analyze_unit(self, unit) -> DOFResult:
         """Analyze DOF for a single unit operation"""
-        unit_type = unit.unit_type
-        rules = UNIT_DOF_RULES.get(unit_type)
+        rules = get_unit_info(unit.unit_type)
         
         if not rules:
             return DOFResult(
@@ -1024,8 +1070,8 @@ class DOFAnalyzer:
                 specifications=0,
                 dof=0,
                 status=SpecificationStatus.WARNING,
-                message=f"Unknown unit type '{unit_type}' - cannot analyze DOF",
-                details=[f"Supported: {', '.join(sorted(UNIT_DOF_RULES.keys()))}"]
+                message=f"Unknown unit type '{unit.unit_type}' - cannot analyze DOF",
+                details=[f"Supported: {', '.join(sorted(set(UNIT_TYPE_ALIASES.values())))}"]
             )
         
         param_names = {p.name.lower() for p in unit.params}
@@ -1033,7 +1079,7 @@ class DOFAnalyzer:
     
     def _check_unit_specs(self, unit, rules, param_names) -> DOFResult:
         """Check if unit has correct specifications"""
-        unit_type = unit.unit_type
+        unit_type = canonical_unit_type(unit.unit_type) or unit.unit_type
         details = []
         dof = 0
         status = SpecificationStatus.OK
@@ -1307,7 +1353,7 @@ class DOFAnalyzer:
                 status = SpecificationStatus.OVER_SPECIFIED
                 message = f"Unit '{unit.id}' cannot specify both decanter temperature and heat duty"
                 
-        elif unit_type in ['ShortcutDistillation', 'ReactiveDistillation']:
+        elif unit_type == 'ReactiveDistillation':
             has_stages = any(p in param_names for p in ['n_stages', 'nstages', 'stages'])
             has_feed_stage = any(p in param_names for p in ['feed_stage', 'feedstage'])
             has_reflux = any(p in param_names for p in ['reflux', 'reflux_ratio', 'rr'])
@@ -1485,14 +1531,22 @@ def analyze_dof(pfd) -> ProcessDOFResult:
 
 def get_unit_info(unit_type: str) -> dict:
     """Get DOF rules for a unit type"""
-    return UNIT_DOF_RULES.get(unit_type, {})
+    canonical = canonical_unit_type(unit_type)
+    rules = UNIT_DOF_RULES.get(canonical, {})
+    if not rules:
+        return {}
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .unit_syntax import port_family_for_unit_type
+    else:
+        from unit_syntax import port_family_for_unit_type
+    return {**rules, 'primary_specs': list(_PRIMARY_SPECS.get(port_family_for_unit_type(canonical), ()))}
 
 
 def list_unit_types() -> list[str]:
     """List all supported unit types"""
-    return list(UNIT_DOF_RULES.keys())
+    return list(dict.fromkeys(UNIT_TYPE_ALIASES.values()))
 
 
 def get_units_by_category(category: str) -> list[str]:
     """Get unit types in a category"""
-    return [name for name, rules in UNIT_DOF_RULES.items() if rules.get('category') == category]
+    return [name for name in list_unit_types() if get_unit_info(name).get('category') == category]

@@ -37,6 +37,22 @@ class KineticsError(ValueError):
     """Raised when a kinetic definition or reactor solve is invalid."""
 
 
+KINETIC_PARAMETER_FIELDS = frozenset({
+    'equation', 'name', 'label', 'type', 'kinetics_type', 'A', 'Ea',
+    'activation_energy', 'Ea_unit', 'rate_basis', 'basis',
+    'concentration_unit', 'pressure_unit', 'rate_unit', 'expression',
+})
+
+
+def kinetic_input_catalog() -> dict:
+    """Expose the runtime's supported kinetic choices and unit vocabulary."""
+    return {'models':['power_law','custom','custom_net'],
+            'basis':sorted(set(_RATE_BASIS_ALIASES.values())),
+            'Ea_unit':list(_ACTIVATION_ENERGY_FACTORS),
+            'concentration_unit':list(_CONCENTRATION_FACTORS),
+            'pressure_unit':list(_PRESSURE_FACTORS), 'rate_unit':list(_RATE_FACTORS)}
+
+
 _RATE_BASIS_ALIASES = {
     'concentration': 'concentration',
     'c': 'concentration',
@@ -457,11 +473,7 @@ def kinetic_reaction_from_mapping(
             "Kinetic reactions require -> or the reversible arrow <=> or <->"
         )
 
-    allowed = {
-        'equation', 'name', 'label', 'type', 'kinetics_type', 'A', 'Ea',
-        'activation_energy', 'Ea_unit', 'rate_basis', 'basis',
-        'concentration_unit', 'pressure_unit', 'rate_unit', 'expression',
-    }
+    allowed = KINETIC_PARAMETER_FIELDS
     dynamic = ('order_', 'param_')
     unexpected = sorted(
         str(key) for key in definition

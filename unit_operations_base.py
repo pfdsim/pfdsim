@@ -55,6 +55,7 @@ class UnitOperation:
     """Base class for unit operations"""
 
     supports_permanent_solids = False
+    supports_reactions = False
     particle_size_behavior = 'unsupported'
 
     def __init_subclass__(cls, **kwargs):
