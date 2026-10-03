@@ -214,6 +214,29 @@ class PerryPropertyLibrary:
                         self._normalize(cas), name
                     )
 
+    def list_chemicals(self) -> list[dict[str, Any]]:
+        """List local Perry identities without resolving/evaluating properties."""
+        self._load()
+        self._load_heat_of_fusion()
+        self._load_table_2_10()
+        self._load_thermal_conductivity()
+        chemicals = {}
+        for table in (self.chemicals, self.heat_of_fusion_chemicals,
+                      self.table_2_10_chemicals, self.thermal_conductivity_chemicals):
+            for key, entry in table.items():
+                cas = entry.get('cas') or key
+                name = entry.get('name') or entry.get('table_name') or cas
+                item = chemicals.setdefault(cas, {'identifier': cas, 'CAS': cas,
+                    'name': name, 'formula': entry.get('formula') or next(iter(entry.get('formulas') or []), ''),
+                    'aliases': []})
+                item['aliases'] = sorted(set(item['aliases']) | set(entry.get('names') or []) | {name})
+        known_names = {alias for item in chemicals.values() for alias in item['aliases']}
+        for name, entry in self.saturated_liquids.items():
+            if name not in known_names:
+                chemicals[name] = {'identifier': name, 'CAS': None, 'name': name,
+                                   'formula': '', 'aliases': list(entry.get('aliases') or [])}
+        return sorted(chemicals.values(), key=lambda item: item['name'].casefold())
+
     def get(self, identifier: str, expand_identity: bool = True) -> Optional[dict[str, Any]]:
         self._load()
         cas = self.aliases.get(self._normalize(identifier))
