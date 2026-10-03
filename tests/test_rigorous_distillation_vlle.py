@@ -44,6 +44,9 @@ class VLLEInitializerEdgeCaseTests(unittest.TestCase):
                                       [1.0], [1.0], 0.0, 0.0, [None])
                 unit = RigorousDistillation('ACCOUNTING', None, {
                     'vlle_max_topology_updates': 1 if scenario == 'exhausted' else 3,
+                    # This test covers terminal failure accounting; cycle
+                    # recovery is covered separately with its retained work.
+                    'vlle_projection_cycle_fallback': False,
                 })
                 change = _ActiveSetChange(
                     profile, [True], reason='test', residual_norm=1.0
@@ -1145,6 +1148,9 @@ class RigorousDistillationVLLETests(unittest.TestCase):
         )
         params = dict(original.params)
         params['vlle_seed'] = 'azeotropic'
+        # Exercise alternate-profile recovery rather than the new lower-level
+        # recovery that disables projection and retains the current iterate.
+        params['vlle_projection_cycle_fallback'] = False
         result = RigorousDistillation(
             'VLLE-LACTIC-AZEOTROPIC', thermo, params
         ).solve({'feed': feed})
@@ -1166,6 +1172,7 @@ class RigorousDistillationVLLETests(unittest.TestCase):
     def test_direct_azeotropic_seed_recovers_full_stage_topology_cycle(self):
         thermo, feed, params = self._nrtl_rk_case(stages=12)
         params['vlle_seed'] = 'azeotropic'
+        params['vlle_projection_cycle_fallback'] = False
         params['vlle_azeotropic_max_ternary_combinations'] = 0
         result = RigorousDistillation(
             'VLLE-NRTL-RK-AZEOTROPIC', thermo, params

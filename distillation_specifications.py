@@ -1,6 +1,8 @@
 """Shared input contract for coupled distillation overhead liquid routing."""
 
 import math
+import ast
+import re
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_conversions import temperature_to_kelvin
@@ -9,6 +11,86 @@ else:
 
 
 CONDENSER_THERMAL_PARAMETERS = frozenset({'condenser_temperature', 'condenser_subcooling'})
+STAGE_EFFICIENCY_PARAMETERS = frozenset({'stage_efficiency', 'stage_efficiencies'})
+
+
+def stage_efficiency_specification(params, stages=None, *, supports_efficiency=True):
+    """Return vapor Murphree efficiencies, with equilibrium end boundaries.
+
+    Uniform efficiency is the base. A profile replaces all tray values; a map
+    overrides individual stages or nonoverlapping inclusive ranges. Profiles
+    can contain N entries (including end boundaries) or N-2 tray entries.
+    """
+    pairs = params.items() if hasattr(params, 'items') else params
+    values = {}
+    for key,value in pairs:
+        key = str(key).strip().lower()
+        if key in values and key in STAGE_EFFICIENCY_PARAMETERS:
+            raise ValueError(f'Duplicate distillation specification: {key}')
+        values[key] = value
+    present = STAGE_EFFICIENCY_PARAMETERS.intersection(values)
+    if not present and not supports_efficiency:
+        return None
+    if present and not supports_efficiency:
+        raise ValueError('Stage efficiencies require RigorousDistillation')
+    if stages is None:
+        stages = values.get('n_stages',values.get('stages',10))
+    try:
+        number = float(stages)
+        count = int(number)
+        if count != number or count < 2:
+            raise ValueError()
+    except (TypeError,ValueError,OverflowError) as error:
+        raise ValueError('Stage efficiencies require an integer N_stages >= 2') from error
+    def fraction(value):
+        try:
+            number = float(value)
+        except (TypeError,ValueError) as error:
+            raise ValueError('Stage efficiency must be a finite fraction between 0 and 1') from error
+        if not math.isfinite(number) or not 0 <= number <= 1:
+            raise ValueError('Stage efficiency must be a finite fraction between 0 and 1')
+        return number
+    for name in present:
+        if values.get(f'__unit__{name}'):
+            raise ValueError(f'{name} is dimensionless and must not specify units')
+    result = [1.]*count
+    base = fraction(values.get('stage_efficiency',1.))
+    result[1:-1] = [base]*(count-2)
+    profile = values.get('stage_efficiencies')
+    if profile is None:
+        return tuple(result)
+    if isinstance(profile,str):
+        try:
+            profile = ast.literal_eval(profile)
+        except (ValueError,SyntaxError) as error:
+            raise ValueError('stage_efficiencies must be an ordered list or stage/range map') from error
+    if isinstance(profile,(list,tuple)):
+        if len(profile) == count-2:
+            result[1:-1] = [fraction(v) for v in profile]
+        elif len(profile) == count:
+            result = [fraction(v) for v in profile]
+        else:
+            raise ValueError(f'stage_efficiencies profile must contain {count} stage values or {count-2} tray values')
+    elif isinstance(profile,dict):
+        used = set()
+        for key,value in profile.items():
+            match = re.fullmatch(r'(\d+)(?:\s*-\s*(\d+))?',str(key).strip())
+            if match is None:
+                raise ValueError(f'Invalid stage selector {key!r}; use a stage number or inclusive range such as 2-8')
+            first,last = int(match[1]),int(match[2] or match[1])
+            if not 1 <= first <= last <= count:
+                raise ValueError(f'Stage selector {key!r} lies outside stages 1-{count}')
+            number = fraction(value)
+            for stage in range(first,last+1):
+                if stage in used:
+                    raise ValueError(f'Overlapping stage-efficiency selectors on stage {stage}')
+                used.add(stage)
+                result[stage-1] = number
+    else:
+        raise ValueError('stage_efficiencies must be an ordered list or stage/range map')
+    if result[0] != 1. or result[-1] != 1.:
+        raise ValueError('Condenser stage 1 and reboiler stage N must have efficiency 1')
+    return tuple(result)
 
 
 def total_condenser_specification(params, *, supports_subcooling=True):

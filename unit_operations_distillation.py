@@ -26,13 +26,15 @@ else:
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from .distillation_specifications import liquid_distillate_routing, stage_phase_model
-    from .distillation_specifications import LIQUID_ROUTING_PARAMETERS, CONDENSER_THERMAL_PARAMETERS, total_condenser_specification
+    from .distillation_specifications import (LIQUID_ROUTING_PARAMETERS, CONDENSER_THERMAL_PARAMETERS,
+        STAGE_EFFICIENCY_PARAMETERS, total_condenser_specification, stage_efficiency_specification)
     from .distillation_condenser import TotalCondenserBoundary
     from .thermodynamics_models.base import FluidPhaseEquilibrium
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from distillation_specifications import liquid_distillate_routing, stage_phase_model
-    from distillation_specifications import LIQUID_ROUTING_PARAMETERS, CONDENSER_THERMAL_PARAMETERS, total_condenser_specification
+    from distillation_specifications import (LIQUID_ROUTING_PARAMETERS, CONDENSER_THERMAL_PARAMETERS,
+        STAGE_EFFICIENCY_PARAMETERS, total_condenser_specification, stage_efficiency_specification)
     from distillation_condenser import TotalCondenserBoundary
     from thermodynamics_models.base import FluidPhaseEquilibrium
 
@@ -68,6 +70,7 @@ def _liquid_routing_specification(unit, components=None, *, supports_phase_routi
 
 def _condenser_thermal_specification(unit, *, supports_subcooling=True):
     try:
+        stage_efficiency_specification(unit.params,supports_efficiency=supports_subcooling)
         return total_condenser_specification(unit.params, supports_subcooling=supports_subcooling)
     except ValueError as error:
         raise UnitOperationError(f"{type(unit).__name__} '{unit.unit_id}': {error}") from error
@@ -75,7 +78,8 @@ def _condenser_thermal_specification(unit, *, supports_subcooling=True):
 
 def _saturated_condenser_seed_params(unit):
     """Approximate initializers seed saturation; the rigorous boundary cools it."""
-    excluded = CONDENSER_THERMAL_PARAMETERS | {f'__unit__{name}' for name in CONDENSER_THERMAL_PARAMETERS}
+    excluded = CONDENSER_THERMAL_PARAMETERS | STAGE_EFFICIENCY_PARAMETERS
+    excluded = excluded | {f'__unit__{name}' for name in excluded}
     return {key:value for key,value in unit.params.items() if str(key).lower() not in excluded}
 
 
@@ -2286,10 +2290,15 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             flow_scale, energy_scale, component_scales, T_min, T_max,
         )
         initial['T'][0] = model['condenser_boundary'].seed_temperature(initial['x'][0], initial['T'][0])
+        vapor_seed = initial.get('y')
+        if model['efficiency'].active and vapor_seed is None:
+            vapor_seed = [model['stage_properties'](j,initial['T'][j],initial['x'][j])['equilibrium_y']
+                          for j in range(N)]
 
         z0 = self._pack_variables(
             initial['T'], initial['x'], initial['L'], initial['V'],
             initial['Q_cond'], initial['Q_reb'], comps, T_min, T_max, energy_scale,
+            vapor_compositions=vapor_seed,
         )
 
         solver_options = {
@@ -2380,12 +2389,13 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         Q_cond = decoded['Q_cond']
         Q_reb = decoded['Q_reb']
         stage_props = [
-            model['stage_properties'](stage, T[stage], x[stage])
+            model['stage_properties'](stage,T[stage],x[stage],decoded['actual_vapor_compositions'][stage])
             for stage in range(N)
         ]
         y = [props['y'] for props in stage_props]
         hL = [props['hL'] for props in stage_props]
         hV = [props['hV'] for props in stage_props]
+        efficiency_diagnostics = model['efficiency'].diagnostics(stage_props,V)
         stage_spinodal = []
         if stage_phase_model == 'VL(L)E':
             spinodal_test = getattr(self.thermo, 'liquid_spinodal_stability', None)
@@ -2575,7 +2585,9 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'stage_phase_model': stage_phase_model,
                 'liquid_phase_routing': 'single',
                 'stage_phase_counts': ([1]+[2]*(N-1) if condenser_diagnostics else [2]*N),
-                'stage_vapor_equilibrium_enforced': ([False]+[True]*(N-1) if condenser_diagnostics else [True]*N),
+                'stage_vapor_equilibrium_enforced': [E == 1. and not (j == 0 and condenser_diagnostics)
+                    for j,E in enumerate(model['efficiency'].values)],
+                **efficiency_diagnostics,
                 'stage_spinodal_minimum_eigenvalues': [
                     float(check['minimum_eigenvalue'])
                     for check in stage_spinodal
@@ -2708,6 +2720,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                         topology_text,
                         route_top_liquids,
                     )
+            from .stage_efficiency import VaporStageEfficiencies
         else:
             from equilibrium_stage_vlle import (
                         VLLEProfile,
@@ -2718,6 +2731,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                         topology_text,
                         route_top_liquids,
                     )
+            from stage_efficiency import VaporStageEfficiencies
 
         seed_mode = str(self.get_param('vlle_seed', 'auto')).strip().lower()
         if seed_mode in ('azeotrope', 'vlle_azeotropic', 'direct_azeotropic'):
@@ -2728,6 +2742,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 "auto, cheap, homogeneous, or azeotropic"
             )
         requested_seed_mode = seed_mode
+        efficiency_options = stage_efficiency_specification(self.params,N)
         routing_options = self._distillate_liquid_routing_options(comps)
         condenser_boundary = TotalCondenserBoundary(
             self, comps, pressures[0], T_min, T_max, allow_lle=True,
@@ -2780,6 +2795,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 Q_cond=float(recycle_guess['Q_cond']),
                 Q_reb=float(recycle_guess['Q_reb']),
                 split_data=split_data,
+                vapor_compositions=recycle_guess.get('y'),
             )
             initial_active = [
                 value == 'L' for value in recycle_guess['vlle_topology']
@@ -2787,6 +2803,11 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             initializer_label = 'previous_recycle'
         else:
             seed_params = _saturated_condenser_seed_params(self)
+            # Homogeneous rigorous initialization also represents inefficient
+            # trays, whereas approximate endpoint estimators remain saturated.
+            for name in STAGE_EFFICIENCY_PARAMETERS:
+                if self.get_param(name) is not None:
+                    seed_params[name] = self.get_param(name)
             for name in LIQUID_ROUTING_PARAMETERS:
                 seed_params.pop(name, None)
                 seed_params.pop(f'__unit__{name}', None)
@@ -2903,6 +2924,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                     Q_cond=float(cheap['Q_cond']),
                     Q_reb=float(cheap['Q_reb']),
                     split_data=[None] * N,
+                    vapor_compositions=cheap.get('y'),
                 )
                 cheap_has_lle = any(
                     self.thermo.liquid_liquid_equilibrium(
@@ -2996,6 +3018,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                         Q_cond=float(performance['condenser_duty_kW']) * 3600.0,
                         Q_reb=float(performance['reboiler_duty_kW']) * 3600.0,
                         split_data=[None] * N,
+                        vapor_compositions=[dict(y) for y in performance['stage_vapor_compositions']],
                     )
                     initializer_label = 'vlle_homogeneous'
 
@@ -3162,6 +3185,8 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         Q_cond = float(decoded['Q_cond'])
         Q_reb = float(decoded['Q_reb'])
         solution = solved.solver
+        efficiency = VaporStageEfficiencies(self,comps,N,feed_specs,0,0)
+        efficiency_diagnostics = efficiency.diagnostics(stage_props,V)
         condenser_diagnostics = condenser_boundary.diagnostics(T[0], x[0], solver_options['mesh_tolerance'])
         solution['finite_difference_rel_step'] = solver_options['finite_difference_rel_step']
         jacobian_fallback = (
@@ -3188,7 +3213,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 pressures[stage],
                 x1[stage],
                 x2[stage],
-                y[stage],
+                stage_props[stage]['equilibrium_y'],
                 comps,
                 include_vapor=not (stage == 0 and condenser_boundary.options is not None),
             )
@@ -3330,7 +3355,10 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 for feed in feed_specs
             ],
             'feed_thermal_condition_q': float(q_feed),
-            'stage_vapor_equilibrium_enforced': ([False]+[True]*(N-1) if condenser_diagnostics else [True]*N),
+            'stage_vapor_equilibrium_enforced': [E == 1. and not (j == 0 and condenser_diagnostics)
+                                               for j,E in enumerate(efficiency_options)],
+            **efficiency_diagnostics,
+            'vlle_projection_cycle_recoveries':solved.projection_cycle_recoveries,
             'condenser_type': condenser,
             **condenser_diagnostics,
             'distillate_vapor_fraction': float(condenser_vapor_fraction),
@@ -4141,6 +4169,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             return {
                 'T': T,
                 'x': x,
+                **({'y':[dict(stage) for stage in profile['y']]} if len(profile.get('y',[])) == N else {}),
                 'L': L,
                 'V': V,
                 'Q_cond': float(profile['Q_cond']),
@@ -4182,6 +4211,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'comps': tuple(x[0].keys()),
                 'T': [float(value) + 273.15 for value in T_c],
                 'x': [dict(stage) for stage in x],
+                'y': [dict(stage) for stage in performance['stage_vapor_compositions']],
                 'L': [float(value) for value in L],
                 'V': [float(value) for value in V],
                 'Q_cond': float(performance['condenser_duty_kW']) * 3600.0,
@@ -4258,6 +4288,13 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
         coarse_feed_stage = 1 + round((feed_stage - 1) * (coarse_N - 1) / max(N - 1, 1))
         coarse_params = dict(self.params)
         coarse_params['N_stages'] = coarse_N
+        if any(self.get_param(name) is not None for name in STAGE_EFFICIENCY_PARAMETERS):
+            efficiencies = stage_efficiency_specification(self.params,N)
+            for name in STAGE_EFFICIENCY_PARAMETERS:
+                coarse_params.pop(name,None)
+                coarse_params.pop(f'__unit__{name}',None)
+            coarse_params['stage_efficiencies'] = list(map(float,np.interp(
+                np.linspace(0.,1.,coarse_N),np.linspace(0.,1.,N),efficiencies)))
         coarse_params['feed_stage'] = coarse_feed_stage
         recurse_child = recursive_3x and coarse_N > 12
         coarse_params['_skip_coarse_init'] = not recurse_child

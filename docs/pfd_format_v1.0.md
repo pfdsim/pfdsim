@@ -2535,6 +2535,18 @@ not support side draws or phase-selective overhead withdrawal.
 - `stage_phase_model` - `VLE` (default) or `VLLE`. `VLLE` permits up to two
   liquid phases on each stage and retains the smaller VLE equation set on
   stages whose liquid remains stable.
+- `stage_efficiency` - Uniform vapor Murphree efficiency on interior trays,
+  default `1`. Must be a finite dimensionless fraction from `0` to `1`.
+  Condenser stage 1 and reboiler stage N remain equilibrium boundaries.
+- `stage_efficiencies` - Optional ordered efficiency profile or stage/range
+  override map. A profile contains N values including unit-efficiency end
+  boundaries, or N-2 interior-tray values. Maps use one-based stage numbers
+  and inclusive ranges, for example `{"2-8": 0.7, "9-19": 0.8}`. Map values
+  override `stage_efficiency`; otherwise it supplies the unspecified trays.
+  A profile supplies all values. Overlapping map selectors, out-of-range
+  stages, and non-unit condenser/reboiler entries are rejected during parsing.
+  These specifications require `RigorousDistillation`; approximate columns
+  reject them instead of silently ignoring the efficiency.
 - `vlle_seed` - `auto` (default), `cheap`, `homogeneous`, or `azeotropic`. Auto uses the
   inexpensive estimate directly when it already contains LLE and otherwise
   obtains a homogeneous MESH profile before activating VLLE stages. For
@@ -2552,6 +2564,12 @@ not support side draws or phase-selective overhead withdrawal.
   second liquid, default `1e-3`
 - `vlle_colored_jacobian_fallback` - Retry a failed fixed-topology local
   Jacobian solve with colored finite differences, default `true`
+- `vlle_projection_cycle_fallback` - On the first repeated liquid topology,
+  disable projected phase contraction for the remaining coupled solve and
+  resume from its current iterate, default `true`. Liquid stability screening
+  and normal phase appearance/disappearance remain enabled. The total topology
+  budget is unchanged; a second cycle still fails. Set `false` for diagnostics
+  that specifically exercise alternate-initializer recovery.
 - `initializer` / `initialization` - Initial profile method: `auto` (default),
   `estimate`/`cheap_estimate`, `coarse_rigorous`, `cmo`, `cmo-hvap`, or
   `azeotropic`
@@ -2641,6 +2659,50 @@ specified-temperature total condenser as liquid-only. Any reported top vapor
 composition is a hypothetical incipient-vapor calculation, not a vapor outlet;
 liquid–liquid fugacity equality is audited there, while the trays retain their
 vapor–liquid audits.
+
+With tray efficiencies below one, outgoing vapor is an independent normalized
+composition, distinct from the equilibrium vapor above the tray liquid:
+
+\[
+y_{i,j}^{out}=y_{i,j}^{in}+E_j\left(y_{i,j}^{*}-y_{i,j}^{in}\right).
+\]
+
+One scalar E applies to all components on that tray. Incoming vapor includes
+the flow-weighted vapor phase of any feeds entering the same tray; their actual
+phase compositions are retained. Actual outgoing-vapor composition and
+enthalpy enter all balances and vapor side draws, including EOS enthalpy
+departures. At E=0 the outgoing vapor composition equals the incoming vapor;
+tray energy balances still apply. This is an empirical efficiency model with
+a common tray temperature and a saturated-liquid equilibrium reference, not a
+rate-based mass-transfer calculation. Vapor thermal-equilibrium/phase-stability
+limitations of this approximation remain relevant, particularly for vapor
+products; this is not a model of separate liquid and vapor temperatures.
+
+In VLLE mode the two liquids equilibrate immediately; E describes only vapor
+approach to their common equilibrium reference. Their stability and fugacity
+equality are enforced independently of E. The actual vapor is not required to
+have equal fugacity with the liquids on an inefficient tray. Condenser and
+reboiler behavior, including subcooling and top phase withdrawal, are unchanged.
+With every efficiency equal to one, vapor variables remain eliminated and the
+original equilibrium equation set is retained.
+
+Examples for a 20-stage column:
+
+```pfd
+    stage_efficiency = 0.7
+    stage_efficiencies = {"2-8": 0.6, "9-19": 0.8}
+```
+
+An ordered interior-tray profile can instead be written as
+`stage_efficiencies = [0.7, 0.8, 0.9]` for a 5-stage column. The report retains
+actual `stage_vapor_compositions`, reference
+`stage_equilibrium_vapor_compositions`, the normalized `stage_efficiencies`,
+and `max_murphree_residual` over all components.
+`stage_vapor_equilibrium_enforced` distinguishes equilibrium stages from
+efficiency stages. In VLLE, `vlle_max_vapor_liquid_log_fugacity_residual`
+audits the equilibrium reference vapor; `vlle_projection_cycle_recoveries`
+records whether cycle recovery disabled projection. Recycle warm starts carry
+the actual vapor states through both iterations and phase-topology changes.
 
 The former VLE `condenser_type = decanter` and its aliases/parameters were
 removed. Affected `.pfd` input fails during parsing and directs you to enable

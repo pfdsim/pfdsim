@@ -19,9 +19,11 @@ import numpy as np
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from .distillation_condenser import TotalCondenserBoundary
+    from .stage_efficiency import VaporStageEfficiencies
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from distillation_condenser import TotalCondenserBoundary
+    from stage_efficiency import VaporStageEfficiencies
 
 
 @dataclass
@@ -33,6 +35,7 @@ class VLLEProfile:
     Q_cond: float
     Q_reb: float
     split_data: list[Optional[tuple[dict[str, float], dict[str, float], float]]]
+    vapor_compositions: Optional[list[dict[str, float]]] = None
 
 
 @dataclass(frozen=True)
@@ -59,6 +62,7 @@ class VLLEColumnSolution:
     work: dict[str, int]
     final_topology_projection_checks: int
     top_liquid_routing: dict
+    projection_cycle_recoveries: int = 0
 
 
 class _ActiveSetChange(RuntimeError):
@@ -561,6 +565,10 @@ class EquationOrientedVLLEColumn:
             self.stage_row_starts.append(cursor)
             cursor += count
         self.n_rows = cursor + 2
+        self.core_rows = self.n_rows
+        self.efficiency = VaporStageEfficiencies(unit,self.components,self.N,feed_specs,self.n_vars,self.n_rows)
+        self.n_vars += self.efficiency.extra_size
+        self.n_rows += self.efficiency.extra_size
         self.stage_feeds = [[] for _ in range(self.N)]
         for feed in feed_specs:
             stage = int(feed["stage"])
@@ -647,6 +655,15 @@ class EquationOrientedVLLEColumn:
             vector[layout.vapor_flow] = math.log(max(self.profile.V[stage], 1e-12))
         vector[self.Q_cond_index] = self.profile.Q_cond / self.energy_scale
         vector[self.Q_reb_index] = self.profile.Q_reb / self.energy_scale
+        if self.efficiency.active:
+            vapor_seed = self.profile.vapor_compositions
+            if vapor_seed is None:
+                vapor_seed = []
+                for stage in range(self.N):
+                    state = self.decode_stage(vector,stage)
+                    state['actual_y'] = None
+                    vapor_seed.append(self.stage_properties(stage,state)['equilibrium_y'])
+            self.efficiency.pack(vector,vapor_seed)
         return vector
 
     def decode_stage(self, vector, stage: int) -> dict:
@@ -666,6 +683,7 @@ class EquationOrientedVLLEColumn:
             aggregate = dict(x1)
         return {
             "T": float(T),
+            'actual_y': self.efficiency.decode(vector,stage),
             "x1": x1,
             "x2": x2,
             "beta": float(beta),
@@ -740,12 +758,16 @@ class EquationOrientedVLLEColumn:
         reused_enthalpy = getattr(
             self.thermo, "_vapor_enthalpy_from_association_state", None
         )
-        if vapor_association_state is not None and callable(reused_enthalpy):
+        actual_y = state.get('actual_y')
+        if actual_y is not None:
+            h_vapor = self.thermo.mixture_enthalpy(actual_y,T,1.,P=P)
+        elif vapor_association_state is not None and callable(reused_enthalpy):
             h_vapor = reused_enthalpy(y, T, vapor_association_state)
         else:
             h_vapor = self.thermo.mixture_enthalpy(y, T, 1.0, P=P)
         return {
-            "y": y,
+            "y": actual_y if actual_y is not None else y,
+            'equilibrium_y': y,
             "bubble": (self.condenser_boundary.residual(T, state['aggregate_x'], vapor_total-1.)
                        if stage == 0 else vapor_total-1.),
             "lle": lle,
@@ -848,6 +870,7 @@ class EquationOrientedVLLEColumn:
             liquid_product = (1-top_vapor_fraction)*D
             condensed = stages[0]['L']+liquid_product
             values.append((liquid_product-condensed*routing['withdrawal_fraction'])/self.flow_scale)
+        values.extend(self.efficiency.residuals(props,[s['V'] for s in stages]))
         return np.asarray(values, dtype=float)
 
     def sparsity(self):
@@ -866,17 +889,20 @@ class EquationOrientedVLLEColumn:
                 for dependent in dependencies:
                     layout = self.layouts[dependent]
                     matrix.mark_range(row, layout.start, layout.stop)
+                    for column in self.efficiency.columns.get(dependent,()):
+                        matrix.mark(row,column)
                 if stage == 0:
                     matrix.mark(row, self.Q_cond_index)
                 if stage == self.N - 1:
                     matrix.mark(row, self.Q_reb_index)
         top = self.layouts[0]
-        spec_row = self.n_rows - 2
+        spec_row = self.core_rows - 2
         matrix.mark_range(spec_row, top.start, top.stop)
         matrix.mark(spec_row + 1, top.liquid_flow)
         matrix.mark(spec_row + 1, top.vapor_flow)
         if self.liquid_routing is not None:
             matrix.mark_range(spec_row+1, top.start, top.stop)
+        self.efficiency.mark_sparsity(matrix,lambda j:tuple(range(self.layouts[j].start,self.layouts[j].stop)))
         return matrix.tocsr()
 
     def topology_assessment(self, decoded: dict) -> tuple[list[bool], list[dict]]:
@@ -1015,6 +1041,7 @@ class EquationOrientedVLLEColumn:
         top_routing = self.top_liquid_routing(stages[0], props[0])
         evaluations = 0
         top_vapor_fraction = self.condenser_vapor_fraction
+        vapor_flows = [s['V'] for s in stages]
 
         def add(row, column, value):
             matrix.add(row, column, value)
@@ -1025,6 +1052,7 @@ class EquationOrientedVLLEColumn:
             if layout.active_vlle:
                 columns.extend(range(layout.x2.start, layout.x2.stop))
                 columns.append(layout.beta)
+            columns.extend(self.efficiency.columns.get(stage,()))
             state = stages[stage]
             base = props[stage]
             for column in columns:
@@ -1032,7 +1060,11 @@ class EquationOrientedVLLEColumn:
                 trial = np.array(vector, dtype=float, copy=True)
                 trial[column] += step
                 changed_state = self.decode_stage(trial, stage)
-                changed = self.stage_properties(stage, changed_state)
+                if column in self.efficiency.columns.get(stage,()):
+                    changed = self.efficiency.actual_properties(base,stage,changed_state['T'],
+                        self.pressures[stage],changed_state['actual_y'])
+                else:
+                    changed = self.stage_properties(stage, changed_state)
                 evaluations += 1
                 dx = {
                     comp: (
@@ -1060,7 +1092,7 @@ class EquationOrientedVLLEColumn:
                         condensed = state['L']+(1-top_vapor_fraction)*state['V']
                         derivative = (changed_routing['withdrawal_fraction']
                                       -top_routing['withdrawal_fraction'])/step
-                        add(self.n_rows-1,column,-condensed*derivative/self.flow_scale)
+                        add(self.core_rows-1,column,-condensed*derivative/self.flow_scale)
                 liquid_coefficient = state["L"]
                 vapor_coefficient = state["V"]
                 if stage == 0:
@@ -1116,6 +1148,7 @@ class EquationOrientedVLLEColumn:
                     column,
                     (changed["bubble"] - base["bubble"]) / step,
                 )
+                self.efficiency.add_local_derivatives(add,stage,column,props,changed,step,vapor_flows)
                 if stage == 0 and self.distillate_spec["kind"] == "mass":
                     d_mw = sum(
                         self.thermo.props[comp].MW
@@ -1125,7 +1158,7 @@ class EquationOrientedVLLEColumn:
                         for comp in self.components
                     )
                     add(
-                        self.n_rows - 2,
+                        self.core_rows - 2,
                         column,
                         state["V"] * d_mw / self.distillate_scale,
                     )
@@ -1133,6 +1166,7 @@ class EquationOrientedVLLEColumn:
         for stage, layout in enumerate(self.layouts):
             state = stages[stage]
             item = props[stage]
+            self.efficiency.add_flow_derivatives(add,stage,layout.vapor_flow,props,vapor_flows)
             dL = state["L"]
             dV = state["V"]
             reflux_x = top_routing['reflux_x'] if stage == 0 else state['aggregate_x']
@@ -1184,7 +1218,7 @@ class EquationOrientedVLLEColumn:
 
         add(self.stage_row_starts[0] + self.nc, self.Q_cond_index, 1.0)
         add(self.stage_row_starts[-1] + self.nc, self.Q_reb_index, 1.0)
-        spec_row = self.n_rows - 2
+        spec_row = self.core_rows - 2
         top = stages[0]
         top_props = props[0]
         top_layout = self.layouts[0]
@@ -1303,6 +1337,8 @@ class EquationOrientedVLLEColumn:
             Q_cond=decoded["Q_cond"],
             Q_reb=decoded["Q_reb"],
             split_data=split_data,
+            vapor_compositions=[dict(self.stage_properties(j,state)['y'])
+                                for j,state in enumerate(decoded['stages'])] if self.efficiency.active else None,
         )
 
     def solve(self):
@@ -1471,6 +1507,7 @@ def solve_vlle_active_set(
             L=list(initial_profile.L), V=list(initial_profile.V),
             Q_cond=initial_profile.Q_cond, Q_reb=initial_profile.Q_reb,
             split_data=list(initial_profile.split_data),
+            vapor_compositions=initial_profile.vapor_compositions,
         )
         profile.T[0] = boundary.seed_temperature(profile.aggregate_x[0], profile.T[0])
         split, x1, x2, beta = stability.split(profile.T[0], profile.aggregate_x[0])
@@ -1534,6 +1571,21 @@ def solve_vlle_active_set(
             "residual_norm": None,
         })
     visited_topologies = {topology_text(active)}
+    projection_enabled = unit._truthy_param(unit.get_param('vlle_projection_enabled',True))
+    projection_cycle_recoveries = 0
+    def recover_projection_cycle(previous,proposed,residual):
+        nonlocal projection_enabled,projection_cycle_recoveries
+        if (not projection_enabled or projection_cycle_recoveries
+                or not unit._truthy_param(unit.get_param('vlle_projection_cycle_fallback',True))):
+            return False
+        projection_enabled = False
+        projection_cycle_recoveries += 1
+        # A different solver mode may validly revisit a topology. Reset only
+        # this mode's cycle guard, retaining history, iterate and spent work.
+        visited_topologies.clear()
+        topology_events.append({'from':previous,'to':proposed,
+            'reason':'disable_projection_on_cycle','residual_norm':float(residual)})
+        return True
     total_iterations = 0
     total_functions = 0
     total_jacobians = 0
@@ -1579,6 +1631,7 @@ def solve_vlle_active_set(
             topology_change_residual,
             solver_options,
         )
+        model.projection_enabled = projection_enabled
         try:
             decoded, props, solution = model.solve()
         except _ActiveSetChange as change:
@@ -1589,7 +1642,7 @@ def solve_vlle_active_set(
             total_projection_checks += model.projection_checks
             previous = topology_text(active)
             proposed = topology_text(change.active)
-            if proposed in visited_topologies:
+            if proposed in visited_topologies and not recover_projection_cycle(previous,proposed,change.residual_norm):
                 raise VLLETopologyCycle(
                     "VLLE topology cycle detected while changing "
                     f"{previous} -> {proposed}; history={history}",
@@ -1650,6 +1703,7 @@ def solve_vlle_active_set(
                 work=work_snapshot(),
                 final_topology_projection_checks=model.projection_checks,
                 top_liquid_routing=model.top_liquid_routing(decoded['stages'][0], props[0]),
+                projection_cycle_recoveries=projection_cycle_recoveries,
             )
         topology_events.append({
             "from": topology_text(active),
@@ -1665,7 +1719,8 @@ def solve_vlle_active_set(
             "projection_checks": model.projection_checks,
         })
         proposed = topology_text(updated)
-        if proposed in visited_topologies:
+        if proposed in visited_topologies and not recover_projection_cycle(
+                topology_text(active),proposed,solution['residual_norm']):
             raise VLLETopologyCycle(
                 "VLLE topology cycle detected after convergence while changing "
                 f"{topology_text(active)} -> {proposed}; history={history}",

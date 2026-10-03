@@ -16,10 +16,10 @@ from enum import Enum
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .lyngby_parameters import canonical_lyngby_method
-    from .distillation_specifications import liquid_distillate_routing, total_condenser_specification
+    from .distillation_specifications import liquid_distillate_routing, total_condenser_specification, stage_efficiency_specification
 else:
     from lyngby_parameters import canonical_lyngby_method
-    from distillation_specifications import liquid_distillate_routing, total_condenser_specification
+    from distillation_specifications import liquid_distillate_routing, total_condenser_specification, stage_efficiency_specification
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .crystallizer_specs import (
@@ -2769,6 +2769,7 @@ class PFDParser:
             parameters = [(param.name,param.value) for param in unit.params]
             parameters.extend((f'__unit__{param.name}',param.unit) for param in unit.params if param.unit)
             try:
+                stage_efficiency_specification(parameters,supports_efficiency=unit.unit_type == 'RigorousDistillation')
                 total_condenser_specification(parameters, supports_subcooling=unit.unit_type == 'RigorousDistillation')
                 liquid_distillate_routing(
                     parameters, default_phase_model=self.pfd.metadata.fluid_phase_model,
@@ -4829,12 +4830,13 @@ class PFDParser:
                 "isotherms",
                 "initial_loadings",
                 "kinetic_diameters",
+                "stage_efficiencies",
             }:
                 try:
                     value = self._parse_property_value(raw_value)
                 except ValueError:
                     return None
-                if not isinstance(value, dict):
+                if not isinstance(value,(dict,list) if name.casefold() == 'stage_efficiencies' else dict):
                     return None
                 return Parameter(
                     name=name,

@@ -20,9 +20,11 @@ else:
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from .distillation_condenser import TotalCondenserBoundary
+    from .stage_efficiency import VaporStageEfficiencies
 else:
     from sparse_jacobian import FixedPatternCSR, SparsePatternBuilder
     from distillation_condenser import TotalCondenserBoundary
+    from stage_efficiency import VaporStageEfficiencies
 
 
 class EquilibriumStageColumnMixin:
@@ -116,6 +118,8 @@ class EquilibriumStageColumnMixin:
                 'T': float(stream.T),
                 'P': float(stream.P),
                 'vapor_fraction': float(stream.vapor_fraction),
+                'vapor_composition': (dict(stream.y) if stream.y is not None
+                                      else dict(z) if stream.vapor_fraction >= 1.-1e-12 else None),
             })
             total_flow += stream.F
             enthalpy_flow += stream.F * h
@@ -457,6 +461,8 @@ class EquilibriumStageColumnMixin:
         T_min: float,
         T_max: float,
         energy_scale: float,
+        *,
+        vapor_compositions=None,
     ):
         import numpy as np
 
@@ -473,7 +479,10 @@ class EquilibriumStageColumnMixin:
         values.extend(math.log(max(value, 1e-14)) for value in V)
         values.append(Q_cond / energy_scale)
         values.append(Q_reb / energy_scale)
-        return np.array(values, dtype=float)
+        efficiency = VaporStageEfficiencies(self,comps,len(T),[],len(values),len(values))
+        vector = np.asarray([*values,*([0.]*efficiency.extra_size)],dtype=float)
+        efficiency.pack(vector,vapor_compositions)
+        return vector
 
     def _build_mesh_model(
         self,
@@ -502,6 +511,9 @@ class EquilibriumStageColumnMixin:
         V_start = L_start + N
         Q_start = V_start + N
         n_vars = Q_start + 2
+        core_rows = N*(nc+2)+2
+        efficiency = VaporStageEfficiencies(self,comps,N,feed_specs,n_vars,core_rows)
+        n_vars += efficiency.extra_size
         span = T_max - T_min
         condenser_boundary = TotalCondenserBoundary(self, comps, pressures[0], T_min, T_max)
 
@@ -538,6 +550,7 @@ class EquilibriumStageColumnMixin:
             Q_cond = float(vector[Q_start] * energy_scale)
             Q_reb = float(vector[Q_start + 1] * energy_scale)
             decoded = {'T': T, 'x': x, 'L': L, 'V': V, 'Q_cond': Q_cond, 'Q_reb': Q_reb}
+            decoded['actual_vapor_compositions'] = [efficiency.decode(vector,j) for j in range(N)]
             return decoded
 
         def stage_K_values(T_stage: float, P_stage: float, x_stage: dict[str, float]):
@@ -563,7 +576,8 @@ class EquilibriumStageColumnMixin:
                 for comp in comps
             }
 
-        def stage_properties(stage: int, T_stage: float, x_stage: dict[str, float]):
+        def stage_properties(stage: int, T_stage: float, x_stage: dict[str, float], actual_y=None,
+                             vapor_enthalpy=None):
             K = stage_K_values(float(T_stage), pressures[stage], x_stage)
             kx = {comp: max(K[comp] * x_stage.get(comp, 0.0), 0.0) for comp in comps}
             kx_sum = sum(kx.values())
@@ -572,19 +586,23 @@ class EquilibriumStageColumnMixin:
             else:
                 y_stage = {comp: value / kx_sum for comp, value in kx.items()}
             bubble = sum(K[comp] * x_stage.get(comp, 0.0) for comp in comps) - 1.0
+            equilibrium_y = y_stage
+            if actual_y is not None:
+                y_stage = actual_y
             return {
                 'K': K,
                 'y': y_stage,
+                'equilibrium_y': equilibrium_y,
                 'bubble': (condenser_boundary.residual(float(T_stage), x_stage, bubble)
                            if stage == 0 else bubble),
                 'hL': self.thermo.mixture_enthalpy(
                     x_stage, float(T_stage), vapor_fraction=0.0,
                     P=float(pressures[stage]),
                 ),
-                'hV': self.thermo.mixture_enthalpy(
+                'hV': (vapor_enthalpy if vapor_enthalpy is not None else self.thermo.mixture_enthalpy(
                     y_stage, float(T_stage), vapor_fraction=1.0,
                     P=float(pressures[stage]),
-                ),
+                )),
             }
 
         def side_draw_flow(draw: dict, L, V, x, y) -> float:
@@ -604,7 +622,8 @@ class EquilibriumStageColumnMixin:
             V = decoded['V']
             Q_cond = decoded['Q_cond']
             Q_reb = decoded['Q_reb']
-            props = [stage_properties(stage, T[stage], x[stage]) for stage in range(N)]
+            props = [stage_properties(stage,T[stage],x[stage],decoded['actual_vapor_compositions'][stage])
+                     for stage in range(N)]
             y = [item['y'] for item in props]
             hL = [item['hL'] for item in props]
             hV = [item['hV'] for item in props]
@@ -691,13 +710,15 @@ class EquilibriumStageColumnMixin:
 
             residuals.append((L[0] - RR * D) / flow_scale)
             labels.append(('reflux_spec', None, None, flow_scale))
+            residuals.extend(efficiency.residuals(props,V))
+            labels.extend(('murphree',j+1,c,1.) for j in efficiency.active for c in comps[:-1])
 
             if not residual_labels:
                 residual_labels.extend(labels)
             return np.array(residuals, dtype=float)
 
         def sparsity():
-            n_rows = N * (nc + 2) + 2
+            n_rows = core_rows+efficiency.extra_size
             matrix = SparsePatternBuilder((n_rows, n_vars))
 
             def mark_stage(row: int, stage: int):
@@ -708,6 +729,8 @@ class EquilibriumStageColumnMixin:
                 matrix.mark_range(row, start, start + nc - 1)
                 matrix.mark(row, L_start + stage)
                 matrix.mark(row, V_start + stage)
+                for col in efficiency.columns.get(stage,()):
+                    matrix.mark(row,col)
 
             row = 0
             for stage in range(N):
@@ -739,6 +762,8 @@ class EquilibriumStageColumnMixin:
             matrix.mark(row, L_start)
             matrix.mark(row, V_start)
             row += 1
+            efficiency.mark_sparsity(matrix,lambda j:(j,*range(logits_start+j*(nc-1),
+                logits_start+(j+1)*(nc-1)),V_start+j))
             return matrix.tocsr()
 
         sparsity_matrix = sparsity()
@@ -780,7 +805,8 @@ class EquilibriumStageColumnMixin:
             x = decoded['x']
             L = decoded['L']
             V = decoded['V']
-            props = [stage_properties(stage, T[stage], x[stage]) for stage in range(N)]
+            props = [stage_properties(stage,T[stage],x[stage],decoded['actual_vapor_compositions'][stage])
+                     for stage in range(N)]
             y = [item['y'] for item in props]
             hL = [item['hL'] for item in props]
             hV = [item['hV'] for item in props]
@@ -828,13 +854,19 @@ class EquilibriumStageColumnMixin:
                         logits_start + stage * (nc - 1),
                         logits_start + (stage + 1) * (nc - 1),
                     ))
+                    local_columns.extend(efficiency.columns.get(stage,()))
                     for col in local_columns:
                         step = rel_step * max(abs(vector[col]), 1.0)
                         T_perturbed = float(T[stage])
                         x_perturbed = x[stage]
+                        actual_y = decoded['actual_vapor_compositions'][stage]
                         if col == stage:
                             theta = min(max(float(vector[col] + step), -60.0), 60.0)
                             T_perturbed = T_min + span / (1.0 + math.exp(-theta))
+                        elif col in efficiency.columns.get(stage,()):
+                            trial = vector.copy()
+                            trial[col] += step
+                            actual_y = efficiency.decode(trial,stage)
                         else:
                             start = logits_start + stage * (nc - 1)
                             logits = np.array(
@@ -850,11 +882,11 @@ class EquilibriumStageColumnMixin:
                                 for index, comp in enumerate(comps)
                             }
 
-                        perturbed = stage_properties(
-                            stage,
-                            T_perturbed,
-                            x_perturbed,
-                        )
+                        if col in efficiency.columns.get(stage,()):
+                            perturbed = efficiency.actual_properties(props[stage],stage,T_perturbed,pressures[stage],actual_y)
+                        else:
+                            perturbed = stage_properties(stage,T_perturbed,x_perturbed,actual_y,
+                                vapor_enthalpy=hV[stage] if actual_y is not None and col != stage else None)
                         dx = {
                             comp: (
                                 x_perturbed.get(comp, 0.0)
@@ -930,6 +962,7 @@ class EquilibriumStageColumnMixin:
                                 V[stage] * dhV / energy_scale,
                             )
                         add(energy_row + 1, col, dbubble)
+                        efficiency.add_local_derivatives(add,stage,col,props,perturbed,step,V)
 
                         if stage == 0 and mass_scale is not None:
                             d_product_mw = sum(
@@ -961,6 +994,8 @@ class EquilibriumStageColumnMixin:
                 nonlinear_columns.update(
                     range(logits_start, logits_start + N * (nc - 1))
                 )
+                for columns in efficiency.columns.values():
+                    nonlinear_columns.update(columns)
                 restricted_groups = []
                 group_rows = []
                 for col in sorted(nonlinear_columns):
@@ -990,6 +1025,7 @@ class EquilibriumStageColumnMixin:
                             )
 
             for stage in range(N):
+                efficiency.add_flow_derivatives(add,stage,V_start+stage,props,V)
                 for ci, comp in enumerate(comps):
                     row = stage * (nc + 2) + ci
                     scale = component_scales[comp]
@@ -1075,6 +1111,7 @@ class EquilibriumStageColumnMixin:
             'side_draw_flow': side_draw_flow,
             'residual_labels': residual_labels,
             'condenser_boundary': condenser_boundary,
+            'efficiency': efficiency,
         }
 
     def _sparse_newton_solve(self, residual, sparsity, x0, options: dict,
