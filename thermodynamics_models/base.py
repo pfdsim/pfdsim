@@ -45,6 +45,7 @@ from .henry import (
     HenryComponentData,
     get_henry_constant_database,
 )
+from .phase_diagrams import PhaseDiagramMixin
 
 
 @dataclass(frozen=True)
@@ -297,7 +298,7 @@ class StreamState:
                 )
 
 
-class IdealThermodynamics:
+class IdealThermodynamics(PhaseDiagramMixin):
     """
     Ideal thermodynamic property calculator.
 
