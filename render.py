@@ -17,6 +17,8 @@ from functools import lru_cache
 import heapq
 from html import escape
 import math
+import json
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -123,9 +125,15 @@ def _port_level(unit: Unit, name: str) -> float:
     return 0.5
 
 
-def _port_banks(pfd: ProcessFlowDiagram) -> dict:
+def _port_banks(pfd: ProcessFlowDiagram, *, include_unused=False) -> dict:
     """Separate port direction from its physical side on the drawing."""
     connected = _connections(pfd)
+    if include_unused:
+        for unit in pfd.units:
+            for port in unit.ports:
+                side='in' if port.port_type.value.endswith('inlet') else 'out'
+                if port.id not in connected[unit.id][side]:
+                    connected[unit.id][side].append(port.id)
     banks = {}
     for unit in pfd.units:
         banks[unit.id] = {'w': list(connected[unit.id]['in']),
@@ -149,10 +157,14 @@ def _port_banks(pfd: ProcessFlowDiagram) -> dict:
     return banks
 
 
-def _unit_label(unit: Unit, ports: dict, port_ids: dict) -> str:
+def _unit_label(unit: Unit, ports: dict, port_ids: dict, node_size=None) -> str:
     family = port_family_for_unit_type(unit.unit_type)
     tall = family in {'distillation', 'absorber', 'stripper', 'extractor', 'dryer'}
     height = max(150 if tall else 100, 28 * max(map(len, ports.values()), default=0) + 40)
+    width = 100
+    if node_size is not None:
+        width, minimum_height = node_size
+        height = max(minimum_height, 28 * max(map(len, ports.values()), default=0) + 40)
 
     def bank(side: str) -> str:
         names = ports[side]
@@ -182,13 +194,13 @@ def _unit_label(unit: Unit, ports: dict, port_ids: dict) -> str:
         f'<TR><TD COLSPAN="3"><B>{escape(unit.id)}</B></TD></TR>'
         f'<TR><TD COLSPAN="3"><FONT POINT-SIZE="10">{escape(unit.unit_type)}</FONT></TD></TR>'
         '<TR>' + bank('w')
-        + f'<TD BGCOLOR="{BODY_COLOR}" WIDTH="100" HEIGHT="{height}" FIXEDSIZE="TRUE"> </TD>'
+        + f'<TD BGCOLOR="{BODY_COLOR}" WIDTH="{width}" HEIGHT="{height}" FIXEDSIZE="TRUE"> </TD>'
         + bank('e') + '</TR></TABLE>'
     )
 
 
-def _dot_source(pfd: ProcessFlowDiagram) -> str:
-    connected = _port_banks(pfd)
+def _dot_source(pfd: ProcessFlowDiagram, node_size=None) -> str:
+    connected = _port_banks(pfd,include_unused=node_size is not None)
     lines = [
         'digraph flowsheet {',
         'graph [rankdir=LR, splines=polyline, nodesep=0.65, ranksep=0.9, '
@@ -202,7 +214,7 @@ def _dot_source(pfd: ProcessFlowDiagram) -> str:
         for unit in pfd.units
     }
     for i, unit in enumerate(pfd.units):
-        label = _unit_label(unit, connected[unit.id], port_ids[unit.id])
+        label = _unit_label(unit, connected[unit.id], port_ids[unit.id], node_size)
         lines.append(f'u{i} [id="equipment-{i}", label=<{label}>];')
     for i, stream in enumerate(pfd.streams):
         endpoints = []
@@ -276,7 +288,7 @@ def _route_layout(root: ET.Element, pfd: ProcessFlowDiagram, *, mirror_returns: 
     crossings and shared segments are penalized, so returns prefer clear lanes.
     """
     groups = {group.get('id'): group for group in root.iter(f'{{{SVG}}}g')}
-    banks = _port_banks(pfd)
+    banks = _port_banks(pfd,include_unused=root.get('data-show-unused-ports')=='true')
     centers = {}
     for i, unit in enumerate(pfd.units):
         body = next(p for p in groups[f'equipment-{i}'].findall(f'{{{SVG}}}polygon')
@@ -319,6 +331,10 @@ def _route_layout(root: ET.Element, pfd: ProcessFlowDiagram, *, mirror_returns: 
             for name in banks[unit.id][side]:
                 x0, y0, x1, y1 = _bounds(next(cells))
                 anchors[(unit.id, name)] = ((x0 if side == 'w' else x1, (y0+y1)/2), side, unit.id)
+        group.set('data-layout-box', ' '.join(str(v) for v in boxes[unit.id]))
+        group.set('data-port-layout', json.dumps({name: {'x':anchors[(unit.id,name)][0][0],
+            'y':anchors[(unit.id,name)][0][1], 'side':side}
+            for side in ('w','e') for name in banks[unit.id][side]}))
     for i, stream in enumerate(pfd.streams):
         for ref, kind in ((stream.source, 'feed'), (stream.destination, 'product')):
             if ref.unit_id is not None:
@@ -335,7 +351,14 @@ def _route_layout(root: ET.Element, pfd: ProcessFlowDiagram, *, mirror_returns: 
     def endpoint(ref, boundary):
         point, side, key = anchors[(ref.unit_id or boundary, ref.port_id)]
         box = boxes[key]
-        stub = (box[0]-18 if side == 'w' else box[2]+18, point[1])
+        clearance=18.0
+        for other_key,other_box in boxes.items():
+            if other_key==key or not other_box[1]-6<=point[1]<=other_box[3]+6:
+                continue
+            gap=(point[0]-other_box[2]) if side=='w' else (other_box[0]-point[0])
+            if gap>0:
+                clearance=min(clearance,max(6.0,gap/2))
+        stub = (box[0]-clearance if side == 'w' else box[2]+clearance, point[1])
         return point, stub
 
     ends = [(endpoint(s.source, f'feed-{i}'), endpoint(s.destination, f'product-{i}'))
@@ -655,9 +678,33 @@ def _sheet(diagram: ET.Element, pfd: ProcessFlowDiagram, stream_table: bool) -> 
     return root
 
 
-def render_svg(pfd: ProcessFlowDiagram, *, stream_table: bool = False) -> str:
-    """Return a standalone SVG using the parsed PFD's exact stream topology."""
-    source = _dot_source(pfd)
+def _position_diagram(diagram, pfd):
+    """Keep edited card locations while reusing the shared obstacle router."""
+    groups={g.get('id'):g for g in diagram.iter(f'{{{SVG}}}g')}
+    deltas={}
+    def shift(group, dx, dy):
+        for polygon in group.findall(f'{{{SVG}}}polygon'):
+            polygon.set('points',' '.join(f'{float(x)+dx},{float(y)+dy}' for x,y in (p.split(',') for p in polygon.get('points').split())))
+        for text in group.findall(f'{{{SVG}}}text'):
+            text.set('x',str(float(text.get('x'))+dx))
+            text.set('y',str(float(text.get('y'))+dy))
+    for i,unit in enumerate(pfd.units):
+        group=groups[f'equipment-{i}']
+        boxes=[_bounds(p) for p in group.findall(f'{{{SVG}}}polygon')]
+        ys=[float(t.get('y'))-float(t.get('font-size','12')) for t in group.findall(f'{{{SVG}}}text')]
+        x0=min(b[0] for b in boxes)
+        y0=min([b[1] for b in boxes]+ys)-4
+        deltas[unit.id]=(unit.x-x0,unit.y-y0)
+        shift(group,*deltas[unit.id])
+    for i,stream in enumerate(pfd.streams):
+        for ref,other,kind in ((stream.source,stream.destination,'feed'),(stream.destination,stream.source,'product')):
+            if ref.unit_id is None and other.unit_id in deltas:
+                shift(groups[f'{kind}-{i}'],*deltas[other.unit_id])
+
+
+def _layout_diagram(pfd: ProcessFlowDiagram, *, node_size=None, keep_positions=False):
+    """Authoritative Graphviz placement and obstacle-aware stream routing."""
+    source = _dot_source(pfd, node_size)
     executable = shutil.which('dot')
     if executable is None:
         raise RenderError('Graphviz is required: install Graphviz and put dot on PATH.')
@@ -670,7 +717,52 @@ def render_svg(pfd: ProcessFlowDiagram, *, stream_table: bool = False) -> str:
         raise RenderError(f'Graphviz failed: {exc.stderr.strip()}') from exc
     try:
         diagram = ET.fromstring(result.stdout)
+        if node_size is not None:
+            diagram.set('data-show-unused-ports','true')
+        if keep_positions:
+            _position_diagram(diagram,pfd)
         diagram = _route_streams(diagram, pfd)
+        return diagram
+    except (ET.ParseError, KeyError, StopIteration, ValueError) as exc:
+        raise RenderError('Graphviz returned an unsupported or invalid SVG layout.') from exc
+
+
+def layout_flowsheet(pfd: ProcessFlowDiagram, *, node_size=(152,160), keep_positions=False) -> dict:
+    """Return interactive geometry using the same layout/router as SVG export."""
+    diagram = _layout_diagram(pfd, node_size=node_size, keep_positions=keep_positions)
+    groups = {g.get('id'):g for g in diagram.iter(f'{{{SVG}}}g')}
+    graph = next(g for g in groups.values() if g.get('class')=='graph')
+    match = re.search(r'translate\(([-\d.]+)[ ,]+([-\d.]+)\)',graph.get('transform','translate(0 0)'))
+    ox,oy = map(float,match.groups())
+    bounds_origin=(-ox,-oy) if keep_positions else (0,0)
+    if keep_positions:
+        ox=oy=0
+    units,streams={},{}
+    for i,unit in enumerate(pfd.units):
+        group=groups[f'equipment-{i}']
+        x0,y0,x1,y1=map(float,group.get('data-layout-box').split())
+        ports=json.loads(group.get('data-port-layout'))
+        units[unit.id]={'x':x0+ox,'y':y0+oy,'width':x1-x0,'height':y1-y0,
+            'mirrored':group.get('data-mirrored')=='true',
+            'ports':{name:{'x':p['x']-x0,'y':p['y']-y0,'side':p['side']} for name,p in ports.items()}}
+    for i,stream in enumerate(pfd.streams):
+        group=groups[f'stream-{i}']
+        points=[[float(x)+ox,float(y)+oy] for x,y in (p.split(',') for p in group.get('data-route').split())]
+        label=group.find(f'{{{SVG}}}text')
+        item={'points':points,'label':{'x':float(label.get('x'))+ox,'y':float(label.get('y'))+oy}}
+        for ref,kind in ((stream.source,'feed'),(stream.destination,'product')):
+            if ref.unit_id is None:
+                box=_bounds(groups[f'{kind}-{i}'].find(f'{{{SVG}}}polygon'))
+                item[kind]={'x':box[0]+ox,'y':box[1]+oy,'width':box[2]-box[0],'height':box[3]-box[1]}
+        streams[stream.id]=item
+    width,height=map(float,diagram.get('viewBox').split()[2:])
+    return {'units':units,'streams':streams,'bounds':{'x':bounds_origin[0],'y':bounds_origin[1],'width':width,'height':height}}
+
+
+def render_svg(pfd: ProcessFlowDiagram, *, stream_table: bool = False) -> str:
+    """Return a standalone SVG using the parsed PFD's exact stream topology."""
+    try:
+        diagram = _layout_diagram(pfd)
         _replace_equipment(diagram, pfd)
         root = _sheet(diagram, pfd, stream_table)
     except (ET.ParseError, KeyError, StopIteration, ValueError) as exc:
