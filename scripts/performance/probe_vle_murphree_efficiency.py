@@ -9,8 +9,9 @@ One thread, sequential timing workers, bounded worker runtime, fresh generic
 profiles, one untimed warm-up per variant, alternating variant order, no RNG.
 Imports, property hydration, initialization and audits are excluded from solve
 timings. A common vapor efficiency applies to every component on an interior
-tray; condensers/reboilers remain equilibrium boundaries. Only single-liquid
-VLE and a fully liquid feed are probed. There is no VLLE implementation here.
+tray; condensers/reboilers remain equilibrium boundaries. Single-liquid VLE,
+partial condensers, fully vaporized feeds, and EOS methods can be probed.
+There is no VLLE implementation here.
 """
 
 import argparse
@@ -36,7 +37,34 @@ from unit_operations_distillation import RigorousDistillation
 
 
 CASES = ('methanol_water_20','methanol_water_40','ternary_20','ethanol_water_20',
-         'subcooled_methanol_water_20')
+         'subcooled_methanol_water_20','partial_methanol_water_20',
+         'vapor_methanol_water_20','partial_vapor_methanol_water_20',
+         'gamma_phi_methanol_water_20','eos_partial_vapor_20')
+
+
+def vapor_feed_inventory(feeds, components, stages):
+    flow = np.zeros(stages)
+    components_in = [dict.fromkeys(components,0.) for _ in range(stages)]
+    for feed in feeds:
+        amount = feed['F']*feed['vapor_fraction']
+        if amount <= 0:
+            continue
+        y = feed.get('probe_vapor_y')
+        if y is None:
+            if feed['vapor_fraction'] < 1.-1e-12:
+                raise ValueError('Two-phase feeds require their actual vapor composition')
+            y = feed['z']
+        stage = int(feed['stage'])
+        flow[stage] += amount
+        for c in components:
+            components_in[stage][c] += amount*y.get(c,0.)
+    return flow,components_in
+
+
+def incoming_vapor(model, stage, below_flow, below_y):
+    total = below_flow+model.feed_vapor_flow[stage]
+    return ({c:(below_flow*below_y[c]+model.feed_vapor_components[stage][c])/total
+             for c in model.comps},below_flow/total)
 
 
 def softmax(logits, components):
@@ -62,6 +90,7 @@ class MurphreeProbe:
         self.unit,self.base,self.feeds = unit,base,feeds
         self.comps,self.N,self.nc = components,N,len(components)
         self.RR,self.pressures,self.D = RR,pressures,D
+        self.condenser_vapor_fraction = unit._condenser_vapor_fraction(unit.get_param('condenser_type','total'))
         self.energy_scale,self.scales,self.flow_scale = energy_scale,scales,flow_scale
         self.core_size = base['sparsity'].shape[1]
         self.nvars = self.core_size+(N-2)*(self.nc-1)
@@ -75,6 +104,7 @@ class MurphreeProbe:
         self.fixed = FixedPatternCSR(self.pattern)
         self.feed_components = np.zeros((N,self.nc))
         self.feed_energy = np.zeros(N)
+        self.feed_vapor_flow,self.feed_vapor_components = vapor_feed_inventory(feeds,components,N)
         for f in feeds:
             stage = int(f['stage'])
             self.feed_components[stage] += f['F']*np.asarray([f['z'].get(c,0.) for c in components])
@@ -112,6 +142,7 @@ class MurphreeProbe:
                 pattern.mark(start+self.nc,self.Q_start+1)
             if 1 <= stage < self.N-1:
                 for row in range(self.efficiency_row(stage),self.efficiency_row(stage)+self.nc-1):
+                    pattern.mark(row,self.V_start+stage+1)
                     for neighbor in (stage,stage+1):
                         for col in self.local_columns(neighbor):
                             pattern.mark(row,col)
@@ -160,7 +191,8 @@ class MurphreeProbe:
                     incoming += L[j-1]*s['x'][j-1][c]
                 if j < self.N-1:
                     incoming += V[j+1]*props[j+1]['y'][c]
-                outgoing = ((L[0]+D)*s['x'][0][c] if j == 0
+                outgoing = ((L[0]+(1-self.condenser_vapor_fraction)*D)*s['x'][0][c]
+                            +self.condenser_vapor_fraction*D*props[0]['y'][c] if j == 0
                             else L[j]*s['x'][j][c]+V[j]*props[j]['y'][c])
                 values[row+i] = (incoming-outgoing)/self.scales[c]
             incoming_h = self.feed_energy[j]
@@ -170,7 +202,8 @@ class MurphreeProbe:
                 incoming_h += V[j+1]*props[j+1]['hV']
             if j == 0:
                 incoming_h += s['Q_cond']
-                outgoing_h = (L[0]+D)*props[0]['hL']
+                outgoing_h = ((L[0]+(1-self.condenser_vapor_fraction)*D)*props[0]['hL']
+                              +self.condenser_vapor_fraction*D*props[0]['hV'])
             else:
                 if j == self.N-1:
                     incoming_h += s['Q_reb']
@@ -179,9 +212,9 @@ class MurphreeProbe:
             values[row+self.nc+1] = props[j]['bubble']
             if 1 <= j < self.N-1:
                 E = self.efficiencies[j]
+                yin,_ = incoming_vapor(self,j,V[j+1],props[j+1]['y'])
                 for i,c in enumerate(self.comps[:-1]):
-                    yin = props[j+1]['y'][c]
-                    values[self.efficiency_row(j)+i] = props[j]['y'][c]-yin-E*(props[j]['equilibrium']['y'][c]-yin)
+                    values[self.efficiency_row(j)+i] = props[j]['y'][c]-yin[c]-E*(props[j]['equilibrium']['y'][c]-yin[c])
         values[self.core_rows-2] = (D-self.D)/self.flow_scale
         values[self.core_rows-1] = (L[0]-self.RR*D)/self.flow_scale
         return values
@@ -221,7 +254,8 @@ class MurphreeProbe:
                 dyeq = {c:(changed['equilibrium']['y'][c]-props[j]['equilibrium']['y'][c])/step
                         for c in self.comps}
                 dhL,dhV = (changed['hL']-props[j]['hL'])/step,(changed['hV']-props[j]['hV'])/step
-                liquid,vapor = (L[0]+D,0.) if j == 0 else (L[j],V[j])
+                liquid,vapor = ((L[0]+(1-self.condenser_vapor_fraction)*D,
+                                 self.condenser_vapor_fraction*D) if j == 0 else (L[j],V[j]))
                 for i,c in enumerate(self.comps):
                     add(row+i,col,-(liquid*dx[c]+vapor*dy[c])/self.scales[c])
                     if j > 0:
@@ -238,10 +272,15 @@ class MurphreeProbe:
                     if 1 <= j < self.N-1:
                         add(self.efficiency_row(j)+i,col,dy[c]-self.efficiencies[j]*dyeq[c])
                     if 2 <= j < self.N:
-                        add(self.efficiency_row(j-1)+i,col,-(1-self.efficiencies[j-1])*dy[c])
+                        _,weight = incoming_vapor(self,j-1,V[j],props[j]['y'])
+                        add(self.efficiency_row(j-1)+i,col,-(1-self.efficiencies[j-1])*weight*dy[c])
             for col,flow,is_liquid in ((self.L_start+j,L[j],True),(self.V_start+j,V[j],False)):
-                comp = s['x'][j] if is_liquid or j == 0 else props[j]['y']
-                h = props[j]['hL'] if is_liquid or j == 0 else props[j]['hV']
+                comp = s['x'][j] if is_liquid else props[j]['y']
+                h = props[j]['hL'] if is_liquid else props[j]['hV']
+                if not is_liquid and j == 0:
+                    fraction = self.condenser_vapor_fraction
+                    comp = {c:(1-fraction)*s['x'][0][c]+fraction*props[0]['y'][c] for c in self.comps}
+                    h = (1-fraction)*props[0]['hL']+fraction*props[0]['hV']
                 for i,c in enumerate(self.comps):
                     add(row+i,col,-flow*comp[c]/self.scales[c])
                     neighbor = j+1 if is_liquid else j-1
@@ -251,6 +290,12 @@ class MurphreeProbe:
                 neighbor = j+1 if is_liquid else j-1
                 if 0 <= neighbor < self.N:
                     add(neighbor*(self.nc+2)+self.nc,col,flow*h/self.energy_scale)
+                if not is_liquid and 2 <= j < self.N:
+                    yin,_ = incoming_vapor(self,j-1,V[j],props[j]['y'])
+                    total = V[j]+self.feed_vapor_flow[j-1]
+                    for i,c in enumerate(self.comps[:-1]):
+                        add(self.efficiency_row(j-1)+i,col,
+                            -(1-self.efficiencies[j-1])*V[j]*(props[j]['y'][c]-yin[c])/total)
         add(self.core_rows-2,self.V_start,D/self.flow_scale)
         add(self.core_rows-1,self.L_start,L[0]/self.flow_scale)
         add(self.core_rows-1,self.V_start,-self.RR*D/self.flow_scale)
@@ -261,17 +306,22 @@ class MurphreeProbe:
     def audit(self, solution):
         s = self.decode(solution['x'])
         p = [self.properties(j,s) for j in range(self.N)]
-        maximum = max(abs(p[j]['y'][c]-p[j+1]['y'][c]
-                    -self.efficiencies[j]*(p[j]['equilibrium']['y'][c]-p[j+1]['y'][c]))
-                    for j in range(1,self.N-1) for c in self.comps)
+        maximum = 0.
+        for j in range(1,self.N-1):
+            yin,_ = incoming_vapor(self,j,s['V'][j+1],p[j+1]['y'])
+            maximum = max(maximum,max(abs(p[j]['y'][c]-yin[c]
+                -self.efficiencies[j]*(p[j]['equilibrium']['y'][c]-yin[c])) for c in self.comps))
+        fraction = self.condenser_vapor_fraction
+        product_x = {c:(1-fraction)*s['x'][0][c]+fraction*p[0]['y'][c] for c in self.comps}
+        product_h = (1-fraction)*p[0]['hL']+fraction*p[0]['hV']
         balances = {c:float(sum(f['F']*f['z'][c] for f in self.feeds)
-                    -s['V'][0]*s['x'][0][c]-s['L'][-1]*s['x'][-1][c]) for c in self.comps}
+                    -s['V'][0]*product_x[c]-s['L'][-1]*s['x'][-1][c]) for c in self.comps}
         energy = (sum(f['F']*f['H'] for f in self.feeds)+s['Q_cond']+s['Q_reb']
-                  -s['V'][0]*p[0]['hL']-s['L'][-1]*p[-1]['hL'])
+                  -s['V'][0]*product_h-s['L'][-1]*p[-1]['hL'])
         return {'max_murphree_residual':float(maximum),
                 'component_balance_kmol_h':balances,'energy_balance_kJ_h':float(energy),
                 'relative_energy_balance':float(abs(energy)/self.energy_scale),
-                'distillate_x':s['x'][0],'bottoms_x':s['x'][-1],
+                'distillate_x':product_x,'bottoms_x':s['x'][-1],
                 'top_C':float(s['T'][0]-273.15),'bottom_C':float(s['T'][-1]-273.15),
                 'condenser_kW':float(s['Q_cond']/3600.),'reboiler_kW':float(s['Q_reb']/3600.),
                 'temperatures_K':list(map(float,s['T'])),
@@ -286,10 +336,19 @@ def prepare(case):
         method,z,T,RR,cut = 'UNIFAC',{'ethanol':.1,'water':.9},353.15,4.,.11
     else:
         method,z,T,RR,cut = 'NRTL',{'methanol':.4,'water':.6},298.15,2.,.35
+    if case == 'gamma_phi_methanol_water_20':
+        method = 'NRTL-RK'
+    if case == 'eos_partial_vapor_20':
+        method,z,T,RR,cut = 'PR',{'benzene':.5,'toluene':.5},425.,2.,.45
+    vapor_feed = case.startswith('vapor_') or 'partial_vapor' in case
+    if vapor_feed and method != 'PR':
+        T,cut = 400.,.45
+    condenser = 'partial' if 'partial' in case else 'total'
+    fraction = 1. if condenser == 'partial' else 0.
     t = create_thermodynamics(list(z),method)
-    f = t.calculate_state(T,1.,100.,z,phase='liquid',flash=False)
+    f = t.calculate_state(T,1.,100.,z,phase='vapor' if vapor_feed else 'liquid',flash=False)
     params = {'N_stages':N,'feed_stage':N//2,'reflux_ratio':RR,'D_to_F':cut,
-              'P_condenser':1.,'P_drop_per_stage':0.,'initializer':'estimate'}
+              'P_condenser':1.,'P_drop_per_stage':0.,'initializer':'estimate','condenser_type':condenser}
     if case.startswith('subcooled'):
         params['condenser_subcooling'] = 5.
     u = RigorousDistillation('PROBE',t,params)
@@ -300,8 +359,8 @@ def prepare(case):
     energy_scale = max(abs(f.F*f.H),f.F*50000.,1.)
     scales = {c:max(f.F*z[c],f.F*1e-4) for c in comps}
     spec = {'kind':'molar','value':f.F*cut}
-    initial = u._initial_guess(inlet,comps,z,N,N//2,RR,q,[1.]*N,'total',0.,spec,[],Tmin,Tmax)
-    base = u._build_mesh_model(inlet,feeds,comps,z,N,N//2-1,RR,[1.]*N,'total',0.,[],spec,
+    initial = u._initial_guess(inlet,comps,z,N,N//2,RR,q,[1.]*N,condenser,fraction,spec,[],Tmin,Tmax)
+    base = u._build_mesh_model(inlet,feeds,comps,z,N,N//2-1,RR,[1.]*N,condenser,fraction,[],spec,
                                f.F,energy_scale,scales,Tmin,Tmax)
     initial['T'][0] = base['condenser_boundary'].seed_temperature(initial['x'][0],initial['T'][0])
     core = u._pack_variables(initial['T'],initial['x'],initial['L'],initial['V'],
@@ -357,7 +416,10 @@ def worker(case, output, repeats):
                     if variant == 'native':
                         state = base['decode'](solved['x'])
                         native_state = state if solved['success'] else None
-                        row['distillate_x'],row['bottoms_x'] = state['x'][0],state['x'][-1]
+                        ptop = base['stage_properties'](0,state['T'][0],state['x'][0])
+                        row['distillate_x'] = {c:(1-probe.condenser_vapor_fraction)*state['x'][0][c]
+                            +probe.condenser_vapor_fraction*ptop['y'][c] for c in probe.comps}
+                        row['bottoms_x'] = state['x'][-1]
                     else:
                         row.update(probe.audit(solved))
                         if solved['success']:
@@ -410,7 +472,7 @@ def main():
                 'worker_timeout_seconds':args.timeout,'threads':1,
                 'seed':'deterministic; no RNG','timing':'raw sparse MESH solve; excludes setup and warm-up',
                 'initialization':'same fresh generic equilibrium profile for every solve',
-                'options':'one scalar per tray, total condenser, liquid feed, no side draws'}
+                'options':'one scalar per tray; total/partial condensers; liquid/vapor feeds; no side draws'}
     (args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     statuses = {}
     for case in args.cases:

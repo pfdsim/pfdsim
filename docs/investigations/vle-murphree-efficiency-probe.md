@@ -8,8 +8,9 @@ The maintained script is
 thermodynamics, the total-condenser boundary, and sparse damped Newton solver.
 Only interior trays receive efficiencies; the condenser and reboiler remain
 unchanged. Liquid feeds, total condensers, and single-liquid VLE are considered.
-Vapor feeds, side draws, partial/mixed condensers, gamma-phi/EOS methods, and
-VLLE were not evaluated.
+The initial run below did not evaluate vapor feeds, side draws, partial/mixed
+condensers, gamma-phi/EOS methods, or VLLE. The follow-up at the end extends
+the boundary/EOS coverage; a separate report covers VLLE.
 
 Each interior tray carries an independent outgoing vapor composition and obeys
 
@@ -117,3 +118,32 @@ reported run uses the corrected Jacobian and passed all validation gates.
 The evidence supports numerical feasibility for these VLE cases, with a
 moderate overhead. It is not evidence yet for VLLE efficiencies or all column
 boundary conditions.
+
+## Additional VLE boundary/EOS probes
+
+The script was extended to include partial condensers, fully vaporized feeds,
+NRTL-RK, and a Peng-Robinson benzene/toluene case with both a partial condenser
+and vapor feed. Feed vapor and rising vapor are mixed on a molar-flow basis
+before applying the efficiency relation. The analytic flow derivatives include
+the changing weight of that mixture; feed mass/enthalpy remain counted once.
+Actual outgoing-vapor enthalpy is recalculated at its actual composition.
+
+All 105 measured solves and 35 warm-ups passed in the five additional cases.
+Maximum MESH residual was `9.2874e-8`; maximum E=1/native stage-composition
+difference was `5.5876e-8`. Jacobian checks remained below `2.597e-6`.
+
+| Additional case | Native, ms | E=0.7, ms | E=0.7/native |
+|---|---:|---:|---:|
+| NRTL, partial condenser | 47.41 | 57.72 | 1.217 |
+| NRTL, vapor feed | 129.49 | 117.95 | 0.911 |
+| NRTL, partial condenser + vapor feed | 126.79 | 138.29 | 1.091 |
+| NRTL-RK, total condenser | 70.96 | 90.54 | 1.276 |
+| PR, partial condenser + vapor feed | 57.54 | 71.29 | 1.239 |
+
+The NRTL vapor-feed cases use a 400 K fully vaporized feed and D/F=0.45.
+The PR case uses a 425 K fully vaporized 50/50 benzene/toluene feed, RR=2,
+and D/F=0.45. All have 20 stages, a halfway feed stage, and 1 bar pressure.
+
+Outputs: `/tmp/pfdsim-vle-efficiency-extra-boundaries-20261002/`.
+For the liquid-equilibrated VLLE extension, see
+`docs/investigations/vlle-murphree-efficiency-probe.md`.
