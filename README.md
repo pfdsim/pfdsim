@@ -23,7 +23,8 @@ flow diagrams from the same input.
   optional online lookup, persistent caching, and source/quality diagnostics.
 - **Separation equipment:** flashes and decanters; shortcut and rigorous
   distillation, extraction, absorption, and stripping; competitive molecular-
-  sieve adsorption. Rigorous columns include coupled VLLE overhead routing.
+  sieve adsorption. Rigorous columns include coupled VLLE overhead routing
+  and vapor Murphree stage efficiencies.
 - **Reaction engineering:** conversion and equilibrium reactors, kinetic
   CSTRs, batch/semi-batch reactors, adaptive PFRs, and catalyst packed beds
   with effectiveness and hydraulic models.
