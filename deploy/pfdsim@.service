@@ -1,0 +1,22 @@
+[Unit]
+Description=PFDSIM process laboratory for %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=%i
+Group=www-data
+WorkingDirectory=~
+Environment=PFDSIM_PROXY_HOPS=1
+Environment=PFDSIM_SECURE_COOKIES=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=bash -c 'cd pfdsim && exec .venv/bin/gunicorn --config gunicorn.conf.py wsgi:app'
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+TimeoutStopSec=30
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

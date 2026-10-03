@@ -10,9 +10,10 @@ IGNORE_DIR.mkdir(parents=True, exist_ok=True)
 
 # Server
 bind = "127.0.0.1:8002"
-workers = 4
+workers = 2
+threads = 4
 timeout = 60
-worker_class = "sync"
+worker_class = "gthread"
 forwarded_allow_ips = "127.0.0.1"
 
 # Logging
