@@ -90,5 +90,7 @@ pfdsim = [
     "examples/*.pfd",
     "examples/*.pfr",
     "static/js/*.js",
+    "static/css/*.css",
+    "static/*.svg",
     "templates/*.html",
 ]

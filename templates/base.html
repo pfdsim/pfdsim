@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#09131c" />
+    <title>{% block title %}PFDSIM · Process Laboratory{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/laboratory.css') }}"
+    />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='favicon.svg') }}"
+      type="image/svg+xml"
+    />
+  </head>
+  <body>
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="PFDSIM title screen"
+        ><span class="brand-mark">P</span
+        ><span>PFDSIM<small>PROCESS LABORATORY</small></span></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="/editor">Workspace</a><a href="/vle-chart">Phase atlas</a
+        ><a href="/settings">Settings</a>
+      </nav>
+      <span class="system-label"
+        ><i></i><span id="connection-status">READY</span></span
+      >
+      <div class="account-status">
+        <small id="compute-budget">Checking CPU budget…</small
+        ><button id="account-button">Guest · sign in</button>
+      </div>
+    </header>
+    {% block content %}{% endblock %}
+    <dialog id="modal">
+      <div class="dialog-header">
+        <h2 id="modal-title"></h2>
+        <button id="modal-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div id="modal-content"></div>
+    </dialog>
+    <div id="notifications" role="status" aria-live="polite"></div>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
