@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
+from tests.cache_isolation import empty_runtime_cache
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -28,6 +29,7 @@ from thermodynamics import IdealThermodynamics, create_thermodynamics
 
 from physical_constants import R_J_MOL_K
 
+@empty_runtime_cache
 class PropertyResolutionSystemTests(unittest.TestCase):
     def assertClose(self, actual, expected, *, rel=1e-8, abs_tol=1e-12):
         self.assertTrue(

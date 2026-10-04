@@ -7,7 +7,7 @@ from chemical_properties import ChemicalDatabase, OnlinePropertyFetcher, SmilesR
 from property_resolver import PropertyResolver, get_property_resolver
 from property_resolution.runtime_locks import runtime_lock
 from thermodynamics_models import interaction_estimation
-from tests.cache_isolation import isolated_runtime_caches
+from tests.cache_isolation import empty_runtime_cache, isolated_runtime_caches
 
 
 @pytest.mark.parametrize('attempt', [0, 1])
@@ -24,6 +24,26 @@ def test_pytest_functions_start_without_previous_aliases(attempt):
 
 
 class RuntimeCacheIsolationTests(unittest.TestCase):
+    def test_source_baseline_is_copied_and_cannot_be_poisoned_by_a_test(self):
+        key = 'phase_nist_v9_71-36-3'
+        with isolated_runtime_caches() as first_root:
+            resolver = PropertyResolver()
+            expected = resolver._get_cache(key)
+            self.assertIsNotNone(expected)
+            self.assertIn('nist', expected['_sources']['Tb'])
+            resolver._set_cache(key, {'Tb': 1.0, 'source': 'poisoned test'})
+        with isolated_runtime_caches() as second_root:
+            self.assertNotEqual(first_root, second_root)
+            self.assertEqual(PropertyResolver()._get_cache(key), expected)
+
+    def test_empty_scope_still_exercises_real_cache_misses(self):
+        with isolated_runtime_caches(seeded=False):
+            self.assertIsNone(PropertyResolver()._get_cache('phase_nist_v9_71-36-3'))
+
+    @empty_runtime_cache
+    def test_unittest_empty_marker_is_honored(self):
+        self.assertIsNone(PropertyResolver()._get_cache('phase_nist_v9_71-36-3'))
+
     def test_all_default_cache_owners_use_the_active_directory(self):
         with isolated_runtime_caches() as root:
             database = ChemicalDatabase(enable_online=True)

@@ -397,4 +397,9 @@ class ActivityFitStore:
                     },
                 }
             )
-        return records
+        # Publication evaluates a candidate appended to existing fits, whereas
+        # a full rebuild starts from newest-first database listings. Export a
+        # single stable order so both paths produce identical runtime tables.
+        return sorted(records, key=lambda record: (
+            record['cas1'], record['cas2'], record['user_fit_id'],
+        ))

@@ -10,6 +10,7 @@ import unittest
 import warnings
 from pathlib import Path
 from unittest.mock import patch
+from tests.cache_isolation import empty_runtime_cache
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -47,6 +48,7 @@ def relative_component_balance(inlets, outlets):
     )
 
 
+@empty_runtime_cache
 class PropertyLookupCacheTests(unittest.TestCase):
     def test_smiles_cache_schema_version_invalidates_legacy_rows(self):
         cache_path = Path(tempfile.mkdtemp()) / "smiles.sqlite"

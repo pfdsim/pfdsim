@@ -9,8 +9,10 @@ from unittest.mock import patch
 from property_resolution.common import OnlineAttemptState, PropertyResolutionResult
 from property_resolution.resolver import PropertyResolver
 from tests.live_provider import run_optional_live_provider
+from tests.cache_isolation import empty_runtime_cache
 
 
+@empty_runtime_cache
 class PhasePointCacheTests(unittest.TestCase):
     @staticmethod
     def fixture_props():

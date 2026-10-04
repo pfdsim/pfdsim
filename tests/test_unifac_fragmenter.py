@@ -3,6 +3,9 @@ import json
 import os
 import sys
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -221,20 +224,44 @@ class NativeUNIFACFragmenterTests(unittest.TestCase):
     )
     def test_flask_api_routes_explicit_smiles_to_native_fragmenter(self):
         from app import app
+        from web_jobs import JobStore, run_calculation
 
-        client = app.test_client()
         cases = (
             ({'smiles': 'OCC(O)CO', 'variant': 'UNIFNIST'}, {'204': 1}),
             ({'smiles': 'C1CCCCC1', 'variant': 'UNIFDMD'}, {'78': 6}),
             ({'smiles': 'n1ccccc1', 'variant': 'UNIFAC'}, {'37': 1}),
         )
-        for payload, expected in cases:
-            with self.subTest(variant=payload['variant']):
-                response = client.post('/api/unifac-groups', json=payload)
-                body = response.get_json()
-                self.assertEqual(response.status_code, 200, body)
-                self.assertEqual(body['groups'], expected)
-                self.assertEqual(body['source'], 'native_smiles')
+        with TemporaryDirectory() as directory, patch.object(
+            JobStore, 'ensure_worker', return_value=None,
+        ), patch.dict(app.config, {
+            'TESTING': True,
+            'JOB_DIRECTORY': Path(directory),
+            'ACTIVITY_FITS_PATH': Path(directory)/'activity-fits.sqlite',
+        }):
+            client = app.test_client()
+            session_response = client.get('/api/session')
+            self.assertEqual(session_response.status_code, 200)
+            token = session_response.get_json()['csrf_token']
+            store = JobStore(directory, activity_fits_path=app.config['ACTIVITY_FITS_PATH'])
+            for payload, expected in cases:
+                with self.subTest(variant=payload['variant']):
+                    response = client.post(
+                        '/api/unifac-groups', json=payload,
+                        headers={'X-CSRF-Token': token},
+                    )
+                    body = response.get_json()
+                    self.assertEqual(response.status_code, 202, body)
+                    identifier = body['job_id']
+                    self.assertEqual(store.get(identifier)['kind'], 'groups')
+                    # Execute the real queued calculation in this test process
+                    # instead of leaving detached workers behind in the suite.
+                    run_calculation(store, identifier, {})
+                    completed = client.get(f'/api/jobs/{identifier}')
+                    result = completed.get_json()
+                    self.assertEqual(completed.status_code, 200, result)
+                    self.assertEqual(result['job']['status'], 'completed', result)
+                    self.assertEqual(result['job']['output']['groups'], expected)
+                    self.assertEqual(result['job']['output']['source'], 'native_smiles')
 
     def test_simulator_routes_pfd_smiles_using_selected_variant(self):
         from simulator import Simulator

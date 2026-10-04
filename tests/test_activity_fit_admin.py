@@ -192,6 +192,31 @@ def test_builder_consumes_published_fits_with_full_provenance(tmp_path, fitted):
     assert store.get(identifier)["result"]["points"] == fitted["points"]
 
 
+def test_candidate_publication_and_full_rebuild_export_identical_order(tmp_path, fitted):
+    store = ActivityFitStore(tmp_path/'user_activity_fits.sqlite')
+    first = store.submit('user:root', 'ethanol', {'citation': 'First source'}, fitted)['id']
+    store.review(first, 'user:root', 'approve', 'Reviewed', expected_version=1)
+    store.publication_state(first, 'user:root', 'publishing', {})
+    store.publication_state(first, 'user:root', 'published', {})
+
+    observations, _, _ = synthetic(
+        settings={'components': ['methanol', 'water']}, kinds=('GAMMA_INF', 'HE'),
+    )
+    second_fit = fit_interactions(observations)
+    second = store.submit('user:root', 'methanol', {'citation': 'Second source'}, second_fit)['id']
+    store.review(second, 'user:root', 'approve', 'Reviewed', expected_version=1)
+    base = {'metadata': {}, 'interactions': []}
+    candidate = builder.apply_user_activity_overlay(
+        deepcopy(base), 'NRTL', user_fits_path=store.path, candidate=second,
+    )
+    store.publication_state(second, 'user:root', 'publishing', {})
+    store.publication_state(second, 'user:root', 'published', {})
+    rebuilt = builder.apply_user_activity_overlay(deepcopy(base), 'NRTL', user_fits_path=store.path)
+    assert candidate == rebuilt
+    assert {record['user_fit_id'] for record in rebuilt['interactions']} == {first, second}
+    assert all('fit_provenance' in record for record in rebuilt['interactions'])
+
+
 def test_atomic_builder_publication_backup_withdrawal_and_supersession(
     tmp_path, fitted, monkeypatch
 ):

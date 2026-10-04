@@ -13,6 +13,7 @@ from property_resolution.phase_point_candidates import (
 )
 from property_resolution.resolver import PropertyResolver
 from tests.live_provider import run_optional_live_provider
+from tests.cache_isolation import empty_runtime_cache
 
 
 class MeltingPointFormatTests(unittest.TestCase):
@@ -334,6 +335,7 @@ class MeltingPointFormatTests(unittest.TestCase):
         self.assertEqual(len(result['_phase_candidates']['Pt']), 1)
 
 
+@empty_runtime_cache
 class MeltingPointResolutionTests(unittest.TestCase):
     ROOT = Path(__file__).resolve().parents[1]
 

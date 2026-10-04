@@ -7,6 +7,7 @@ from urllib.error import URLError
 import warnings
 
 from property_resolution.common import OnlineAttemptState
+from .network_policy import allow_live_providers
 
 
 @dataclass(frozen=True)
@@ -40,7 +41,7 @@ def run_optional_live_provider(
 ) -> OptionalLiveProviderResult:
     """Run a live check, warning only for genuine transient connectivity."""
     try:
-        with resolver._online_attempt_scope(True) as attempt:
+        with allow_live_providers('pubchem', 'nist'), resolver._online_attempt_scope(True) as attempt:
             value = operation()
     except Exception as error:
         if not _caused_by_dns_failure(error):

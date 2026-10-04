@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from tests.cache_isolation import empty_runtime_cache, real_xtb_dependencies
 
 import numpy as np
 
@@ -347,7 +348,9 @@ class IdealGasCpKernelTests(unittest.TestCase):
         self.assertIn('general-species validation tier', argon.notes)
 
 
+@empty_runtime_cache
 class IdealGasCpResolverTests(unittest.TestCase):
+    @real_xtb_dependencies
     def test_xtb_dependency_versions_are_discovered_once_per_process(self):
         resolver = PropertyResolver()
         _installed_xtb_rrho_dependency_state.cache_clear()

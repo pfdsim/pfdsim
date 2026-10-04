@@ -4,6 +4,9 @@ import os
 import sys
 import unittest
 import warnings
+from contextlib import closing
+from pathlib import Path
+import sqlite3
 
 from scipy.optimize import brentq, least_squares
 
@@ -62,6 +65,22 @@ from scripts.activity_fitting.prepare_eg_glycerol_activity_parameters import (
 
 
 from physical_constants import R_J_MOL_K
+from activity_fit_store import DEFAULT_ACTIVITY_FITS_PATH
+from tests.fit_source_comparison import assert_fit_source_equal
+
+
+def published_user_fits(model):
+    """Read the configured source store without creating or changing it."""
+    path = Path(os.environ.get('PFDSIM_ACTIVITY_FITS_PATH', DEFAULT_ACTIVITY_FITS_PATH))
+    if not path.is_file():
+        return {}
+    with closing(sqlite3.connect(path.resolve().as_uri()+'?mode=ro', uri=True)) as database:
+        database.row_factory = sqlite3.Row
+        rows = database.execute(
+            "SELECT id,source,owner,reviewed_by,created,model,result,cas1,cas2 "
+            "FROM fits WHERE status='published' AND model=?", (model,),
+        ).fetchall()
+    return {row['id']: dict(row) for row in rows}
 
 
 class InteractionParameterTests(unittest.TestCase):
@@ -990,8 +1009,15 @@ class InteractionParameterTests(unittest.TestCase):
             places=6,
         )
         nrtl_payload = load_data("nrtl_binary_interactions_cas.json")
+        published_nrtl = published_user_fits('NRTL')
         self.assertEqual(nrtl_payload["metadata"]["skipped_records"], 0)
-        self.assertEqual(nrtl_payload["metadata"]["converted_records"], 488)
+        self.assertEqual(nrtl_payload["metadata"]["converted_records"],
+                         488 + len(published_nrtl))
+        self.assertEqual(len(nrtl_payload['interactions']),
+                         nrtl_payload['metadata']['converted_records'])
+        runtime_fit_ids = [record['user_fit_id'] for record in nrtl_payload['interactions']
+                           if record.get('user_fit_id')]
+        self.assertCountEqual(runtime_fit_ids, published_nrtl.keys())
         self.assertEqual(nrtl_payload["metadata"]["base_converted_records"], 340)
         self.assertEqual(nrtl_payload["metadata"]["supplemental_records"], 143)
         self.assertEqual(nrtl_payload["metadata"]["supplemental_new_pairs"], 106)
@@ -1556,7 +1582,7 @@ class InteractionParameterTests(unittest.TestCase):
         )
         with open(source_path, encoding="utf-8") as handle:
             committed = json.load(handle)
-        self.assertEqual(built, committed)
+        assert_fit_source_equal(self, built, committed)
 
     def test_moreau_ovejero_fit_matches_committed_source(self):
         built = build_moreau_ovejero_payload()
@@ -1569,7 +1595,7 @@ class InteractionParameterTests(unittest.TestCase):
         )
         with open(source_path, encoding="utf-8") as handle:
             committed = json.load(handle)
-        self.assertEqual(built, committed)
+        assert_fit_source_equal(self, built, committed)
 
     def test_moreau_toluene_fit_matches_committed_source(self):
         built = build_moreau_toluene_payload()
@@ -1595,7 +1621,7 @@ class InteractionParameterTests(unittest.TestCase):
         )
         with open(source_path, encoding="utf-8") as handle:
             committed = json.load(handle)
-        self.assertEqual(built, committed)
+        assert_fit_source_equal(self, built, committed)
 
     def test_eg_glycerol_preparation_matches_committed_source(self):
         built = build_eg_glycerol_activity_payload()
@@ -2296,14 +2322,29 @@ class InteractionParameterTests(unittest.TestCase):
         resolved, unresolved = resolve_component_ids()
         for model in ("NRTL", "UNIQUAC"):
             with self.subTest(model=model):
+                published = published_user_fits(model)
                 payload = build_interaction_payload(
                     f"{model.lower()}_binary_interactions.json",
                     resolved,
                     unresolved,
                 )
                 for record in payload["interactions"]:
+                    allowed = set()
+                    if record.get('user_fit_id') in published:
+                        fit = published[record['user_fit_id']]
+                        self.assertEqual(record['fit_status'], 'admin_published_user_fit')
+                        self.assertEqual((record['cas1'], record['cas2']),
+                                         (fit['cas1'], fit['cas2']))
+                        self.assertEqual(record['fit_provenance'], {
+                            'source': json.loads(fit['source']),
+                            'owner': fit['owner'],
+                            'reviewed_by': fit['reviewed_by'],
+                            'created': fit['created'],
+                            'model': json.loads(fit['result'])['method'],
+                        })
+                        allowed.add('fit_provenance')
                     self.assertFalse(
-                        forbidden & set(record),
+                        (forbidden - allowed) & set(record),
                         msg=f"{model} {record.get('comment', '')}",
                     )
 
