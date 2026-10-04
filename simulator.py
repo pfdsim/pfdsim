@@ -300,13 +300,15 @@ class Simulator:
                         break
         return canonical_lyngby_method(selected)
 
-    def initialize(self, thermo_method: Optional[str] = None) -> "Simulator":
+    def initialize(self, thermo_method: Optional[str] = None, *, property_methods: Optional[list[str]] = None) -> "Simulator":
         """
         Initialize deterministic resources required by this simulation.
 
         Args:
             thermo_method: Thermodynamic/property method (for example 'IDEAL',
                 'PR', 'PSRK', 'UNIFAC', 'UNIQUAC-RK', or 'NRTL-BV')
+            property_methods: Additional intended model contexts whose explicit
+                component overrides must survive property-only initialization.
 
         Returns:
             This simulator, fully initialized but not solved.
@@ -315,6 +317,9 @@ class Simulator:
             from .thermodynamics import create_thermodynamics
         else:
             from thermodynamics import create_thermodynamics
+        if property_methods is not None and (not isinstance(property_methods,(list,tuple)) or any(not isinstance(method,str) or not method.strip() for method in property_methods)):
+            raise ValueError("property_methods must be a list of intended thermodynamic model names.")
+        property_context = tuple(sorted({canonical_lyngby_method(str(method).strip().upper().replace('_','-')) for method in property_methods or ()}))
 
         selected_phase_model = str(
             getattr(self.pfd.metadata, "fluid_phase_model", "VLE") or "VLE"
@@ -323,6 +328,7 @@ class Simulator:
             thermo_method is None
             and self._initialized
             and self._initialized_fluid_phase_model == selected_phase_model
+            and getattr(self,"_initialized_property_methods",()) == property_context
         ):
             return self
         selected_method = self._resolve_thermo_method(thermo_method)
@@ -336,12 +342,14 @@ class Simulator:
             and self._initialized_thermo_method == selected_method
             and self._initialized_thermo_options == selected_options
             and self._initialized_fluid_phase_model == selected_phase_model
+            and getattr(self,"_initialized_property_methods",()) == property_context
         ):
             return self
 
         # A different explicit method is a deliberate reconfiguration. Clear
         # only derived runtime state; the parsed PFD remains immutable input.
         self._initialized = False
+        self._initialized_property_methods = property_context
         self._initialized_thermo_method = None
         self._initialized_thermo_options = {}
         self._initialized_fluid_phase_model = None
@@ -359,26 +367,11 @@ class Simulator:
                 for scope in getattr(self.pfd, "thermo_scopes", [])
             },
         }
-        scope_parents = {
-            scope.name: (str(scope.inherit) if scope.inherit else None)
-            for scope in getattr(self.pfd, "thermo_scopes", [])
-        }
-
-        def thermo_scope_lineage(scope_name: str) -> list[str]:
-            if scope_name == "global":
-                return ["global"]
-            lineage = []
-            current = scope_name
-            while current and current != "global":
-                lineage.append(current)
-                current = scope_parents.get(current)
-            if current == "global":
-                lineage.append("global")
-            return list(reversed(lineage))
+        thermo_scope_lineage = self.pfd.thermo_scope_lineage
 
         normalized_thermo_methods = {
             method.replace("_", "-") for method in self.thermo_scope_methods.values()
-        }
+        } | set(property_context)
         uses_mathias_copeman = any(
             method.endswith("-MC") or method in {"PSRK", "PREDICTIVE-SRK", "RKSMHV2"}
             for method in normalized_thermo_methods
@@ -1615,27 +1608,7 @@ class Simulator:
                 # numbering. Pre-fragmenting with the global method would
                 # pass incorrect numeric IDs into a Lyngby/other-model scope.
 
-        def effective_scoped_records(records: list[dict], scope: str) -> list[dict]:
-            """Return isolated/inherited records with nearest-scope precedence."""
-            effective = {}
-            for level in thermo_scope_lineage(scope):
-                local = {}
-                for record in records:
-                    if record.get("scope", "global") != level:
-                        continue
-                    pair = tuple(
-                        sorted(
-                            (
-                                str(record.get("component1") or ""),
-                                str(record.get("component2") or ""),
-                            )
-                        )
-                    )
-                    key = (str(record.get("model") or ""), pair)
-                    local.setdefault(key, []).append(record)
-                for key, values in local.items():
-                    effective[key] = values
-            return [dict(record) for values in effective.values() for record in values]
+        effective_scoped_records = self.pfd.effective_scoped_records
 
         def unit_scope_name(unit) -> str:
             return next(

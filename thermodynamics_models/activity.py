@@ -2407,6 +2407,24 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 return True, x1, x2, beta
         return False, dict(z), dict(z), 0.0
 
+    def binary_liquid_coexistence(
+        self, T: float, max_iter: int = 100, tol: float = 1e-8
+    ) -> Optional[tuple[dict, dict]]:
+        """Find binary coexistence endpoints independently of an overall feed.
+
+        Binodal/invariant diagnostics need the phase compositions even when
+        an equimolar feed lies outside the miscibility gap. Use the same
+        chemical-potential solver as ordinary feed flashes.
+        """
+        self._validate_lle_solver_controls(max_iter, tol)
+        if len(self.components) != 2:
+            raise ValueError("Liquid coexistence endpoints require a binary model.")
+        split, first, second, _ = self._binary_liquid_liquid_equilibrium(
+            dict.fromkeys(self.components, 0.5), T, max_iter, tol,
+            require_feed=False,
+        )
+        return (first, second) if split else None
+
     def _binary_liquid_liquid_equilibrium(
         self,
         composition: dict[str, float],
@@ -2414,6 +2432,8 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         max_iter: int,
         tol: float,
         prefer_adaptive_starts: bool = False,
+        *,
+        require_feed: bool = True,
     ) -> Optional[tuple[bool, dict, dict, float]]:
 
         comps = list(composition.keys())
@@ -2509,11 +2529,11 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 if abs(x_a_1 - x_a_2) < phase_tolerance:
                     continue
                 x_low, x_high = sorted((x_a_1, x_a_2))
-                contains_feed = x_low - 1e-9 <= z_a <= x_high + 1e-9
+                contains_feed = not require_feed or x_low - 1e-9 <= z_a <= x_high + 1e-9
                 best_contains_feed = False
                 if best_local is not None:
                     best_low, best_high = sorted((best_local[1], best_local[2]))
-                    best_contains_feed = best_low - 1e-9 <= z_a <= best_high + 1e-9
+                    best_contains_feed = not require_feed or best_low - 1e-9 <= z_a <= best_high + 1e-9
                 if (
                     best_local is None
                     or (contains_feed and not best_contains_feed)
@@ -2539,11 +2559,12 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 return None
             _, x_a_1, x_a_2 = candidate
             x_low, x_high = sorted((x_a_1, x_a_2))
-            if z_a < x_low - 1e-9 or z_a > x_high + 1e-9:
+            feed = z_a if require_feed else 0.5 * (x_low + x_high)
+            if feed < x_low - 1e-9 or feed > x_high + 1e-9:
                 return None
             phase1 = phase(x_high)
             phase2 = phase(x_low)
-            beta = min(max((z_a - x_high) / (x_low - x_high), 0.0), 1.0)
+            beta = min(max((feed - x_high) / (x_low - x_high), 0.0), 1.0)
             if beta <= 1e-10 or beta >= 1.0 - 1e-10:
                 return None
             return True, phase1, phase2, beta

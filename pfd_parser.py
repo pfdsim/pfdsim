@@ -1515,9 +1515,11 @@ class Component:
                 )
                 + "}"
             )
-        text = str(value)
+        # PFD records are line-oriented. Keep printable metadata on one line;
+        # its original formatting remains in the structured document/provenance.
+        text = " ".join(str(value).splitlines())
         if (
-            any(char in text for char in ",|[]{}")
+            any(char in text for char in ",|[]{}\"'")
             or text != text.strip()
             or " " in text
         ):
@@ -1888,6 +1890,38 @@ class ProcessFlowDiagram:
             if scope.name == name:
                 return scope
         return None
+
+    def thermo_scope_lineage(self, name: str) -> list[str]:
+        """Return explicitly inherited scopes, from the furthest ancestor."""
+        lineage = []
+        current = name
+        while current:
+            if current.lower() == "global":
+                current = "global"
+            if current in lineage:
+                raise ValueError("Thermodynamic scope inheritance cycle: " + " -> ".join(lineage + [current]))
+            lineage.append(current)
+            if current == "global":
+                break
+            scope = self.get_thermo_scope(current)
+            if scope is None:
+                raise ValueError(f"Thermodynamic scope {current!r} does not exist.")
+            current = scope.inherit
+        return list(reversed(lineage))
+
+    def effective_scoped_records(self, records: list[dict], scope: str) -> list[dict]:
+        """Select pair/model records with nearest-scope precedence."""
+        effective = {}
+        for level in self.thermo_scope_lineage(scope):
+            local = {}
+            for record in records:
+                if (record.get("scope") or "global") != level:
+                    continue
+                pair = tuple(sorted((str(record.get("component1") or ""), str(record.get("component2") or ""))))
+                key = (str(record.get("model") or ""), pair)
+                local.setdefault(key, []).append(record)
+            effective.update(local)
+        return [dict(record) for values in effective.values() for record in values]
 
     def get_reaction_definition(self, name: str) -> Optional[NamedReaction]:
         for definition in self.reaction_definitions:
