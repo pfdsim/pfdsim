@@ -24,7 +24,7 @@ else:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="pfdsim",
-        description="Run a pfdsim process flow diagram.",
+        description="Run a pfdsim process flow diagram. Use 'pfdsim fit --help' for parameter fitting.",
     )
     parser.add_argument("file", type=Path, help="input .pfd file")
     parser.add_argument(
@@ -172,6 +172,13 @@ def _print_summary(sim: Simulator) -> None:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "fit":
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .fit_cli import main as fit_main
+        else:
+            from fit_cli import main as fit_main
+        return fit_main(argv[1:])
     parser = _build_parser()
     args = parser.parse_args(argv)
     input_path = args.file.expanduser()
