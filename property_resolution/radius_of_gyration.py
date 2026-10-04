@@ -27,8 +27,8 @@ class RadiusOfGyrationMixin:
         return self._resolve_gyration_radius(
             identifier,
             props,
-            quantity='radius_of_gyration',
-            aliases=('R', 'Rg', 'R_g', 'radius_of_gyration_A'),
+            quantity="radius_of_gyration",
+            aliases=("R", "Rg", "R_g", "radius_of_gyration_A"),
             allow_online=allow_online,
         )
 
@@ -38,19 +38,21 @@ class RadiusOfGyrationMixin:
         props: Optional[dict[str, Any]] = None,
         *,
         allow_online: bool = True,
+        allow_estimation: bool = False,
     ) -> PropertyResolutionResult:
         """Resolve Thompson's HOC mean radius of gyration ``R'`` [angstrom]."""
         return self._resolve_gyration_radius(
             identifier,
             props,
-            quantity='modified_radius_of_gyration',
+            quantity="modified_radius_of_gyration",
             aliases=(
-                'thompson_radius_of_gyration',
-                'radius_of_gyration_prime',
-                'R_prime',
-                'R_HOC',
+                "thompson_radius_of_gyration",
+                "radius_of_gyration_prime",
+                "R_prime",
+                "R_HOC",
             ),
             allow_online=allow_online,
+            allow_estimation=allow_estimation,
         )
 
     def resolve_radii_of_gyration(
@@ -63,12 +65,12 @@ class RadiusOfGyrationMixin:
         """Resolve both conventional ``R_g`` and Thompson ``R'`` radii."""
         coerced = self._coerce_props(identifier, props, allow_online=allow_online)
         return {
-            'radius_of_gyration': self.resolve_radius_of_gyration(
+            "radius_of_gyration": self.resolve_radius_of_gyration(
                 identifier,
                 coerced,
                 allow_online=allow_online,
             ),
-            'modified_radius_of_gyration': self.resolve_modified_radius_of_gyration(
+            "modified_radius_of_gyration": self.resolve_modified_radius_of_gyration(
                 identifier,
                 coerced,
                 allow_online=allow_online,
@@ -83,10 +85,11 @@ class RadiusOfGyrationMixin:
         quantity: str,
         aliases: tuple[str, ...],
         allow_online: bool,
+        allow_estimation: bool = False,
     ) -> PropertyResolutionResult:
         props = self._coerce_props(identifier, props, allow_online=allow_online)
         for key in (quantity, *aliases):
-            provided = self._source_result_for_value(props, key, units='angstrom')
+            provided = self._source_result_for_value(props, key, units="angstrom")
             if provided is None:
                 continue
             try:
@@ -100,9 +103,9 @@ class RadiusOfGyrationMixin:
                     f"Invalid provided {quantity} for {identifier!r}: expected "
                     "a finite nonnegative value in angstrom"
                 )
-            notes = str(provided.notes or '')
-            if 'angstrom' not in notes.lower():
-                notes = f"{notes}; units angstrom" if notes else 'units angstrom'
+            notes = str(provided.notes or "")
+            if "angstrom" not in notes.lower():
+                notes = f"{notes}; units angstrom" if notes else "units angstrom"
             return PropertyResolutionResult(
                 value=value,
                 source=provided.source,
@@ -111,16 +114,38 @@ class RadiusOfGyrationMixin:
                 notes=notes,
             )
 
-        radii, geometry_note = self._gyration_radii_from_shared_geometry(
-            identifier,
-            props,
-            allow_online=allow_online,
-        )
+        estimated = False
+        try:
+            radii, geometry_note = self._gyration_radii_from_shared_geometry(
+                identifier, props, allow_online=allow_online
+            )
+        except PropertyResolutionError:
+            if not allow_estimation:
+                raise
+            from .molecular_geometry import lowest_energy_forcefield_conformer
+
+            structure = self._resolve_smiles_result(
+                identifier, props, allow_online=allow_online
+            )
+            if structure is None or not structure.value:
+                raise PropertyResolutionError(
+                    f"Cannot estimate HOC modified radius for {identifier!r}: provide Rprime_A or an identifiable molecular structure."
+                )
+            molecule, conformer = lowest_energy_forcefield_conformer(
+                str(structure.value),
+                self._validated_dipole_molecule(str(structure.value)),
+            )
+            radii = self._radii_from_mass_positions(
+                [atom.GetMass() for atom in molecule.GetAtoms()],
+                conformer.GetPositions(),
+            )
+            geometry_note = "deterministic ETKDG/MMFF or UFF conformer estimate; no quantum geometry backend"
+            estimated = True
         conventional, modified, linear = radii
-        value = conventional if quantity == 'radius_of_gyration' else modified
+        value = conventional if quantity == "radius_of_gyration" else modified
         definition = (
-            'mass-weighted root-mean-square distance from the center of mass'
-            if quantity == 'radius_of_gyration'
+            "mass-weighted root-mean-square distance from the center of mass"
+            if quantity == "radius_of_gyration"
             else (
                 "Thompson R' from the two nonzero principal moments (linear molecule)"
                 if linear
@@ -129,12 +154,18 @@ class RadiusOfGyrationMixin:
         )
         return PropertyResolutionResult(
             value=value,
-            source='calculated',
-            method=f'gfn2_xtb_geometry_{quantity}',
-            quality=GYRATION_GEOMETRY_QUALITY,
+            source="calculated",
+            method=f"forcefield_estimate_{quantity}"
+            if estimated
+            else f"gfn2_xtb_geometry_{quantity}",
+            quality=0.55 if estimated else GYRATION_GEOMETRY_QUALITY,
             notes=(
-                f'{definition}; {geometry_note}; computed-geometry radius '
-                'benchmark approximately 4% MAE; units angstrom'
+                f"{definition}; {geometry_note}; "
+                + (
+                    "low-quality supporting-property estimate; units angstrom"
+                    if estimated
+                    else "computed-geometry radius benchmark approximately 4% MAE; units angstrom"
+                )
             ),
         )
 
@@ -152,7 +183,8 @@ class RadiusOfGyrationMixin:
         )
         smiles = (
             str(smiles_result.value).strip()
-            if smiles_result is not None and smiles_result.value else ''
+            if smiles_result is not None and smiles_result.value
+            else ""
         )
         if not smiles:
             raise PropertyResolutionError(
@@ -166,21 +198,20 @@ class RadiusOfGyrationMixin:
                 f"Cannot determine radii of gyration for {identifier!r}: {error}"
             ) from error
 
-        identity = f'smiles:{smiles}'
+        identity = f"smiles:{smiles}"
         cache_key = (str(self.CACHE_DIR), identity)
-        cache = getattr(self, '_gyration_radii_cache', None)
+        cache = getattr(self, "_gyration_radii_cache", None)
         if cache is None:
             cache = self._gyration_radii_cache = {}
         cached = cache.get(cache_key)
         if cached is not None:
-            return cached, 'shared cached GFN2-xTB optimized geometry'
+            return cached, "shared cached GFN2-xTB optimized geometry"
 
-        geometry_record = self._load_dipole_artifact(identity, 'geometry_xtb')
+        geometry_record = self._load_dipole_artifact(identity, "geometry_xtb")
         had_cached_geometry = isinstance(geometry_record, dict)
         dependencies = self._dipole_dependency_state()
-        if (
-            not had_cached_geometry
-            and not self._backend_is_available('xtb', dependencies)
+        if not had_cached_geometry and not self._backend_is_available(
+            "xtb", dependencies
         ):
             raise PropertyResolutionError(
                 f"Cannot determine radii of gyration for {identifier!r}: "
@@ -203,24 +234,30 @@ class RadiusOfGyrationMixin:
             cache.clear()
         cache[cache_key] = radii
         geometry_note = (
-            'shared cached GFN2-xTB optimized geometry'
+            "shared cached GFN2-xTB optimized geometry"
             if had_cached_geometry
-            else 'new GFN2-xTB optimized geometry cached before evaluation'
+            else "new GFN2-xTB optimized geometry cached before evaluation"
         )
         return radii, geometry_note
 
     @staticmethod
     def _radii_from_atoms(atoms) -> tuple[float, float, bool]:
         """Return ``(R_g, R_prime, linear)`` from atomic masses and positions."""
-        masses = np.asarray(atoms.get_masses(), dtype=float)
-        positions = np.asarray(atoms.positions, dtype=float)
+        return RadiusOfGyrationMixin._radii_from_mass_positions(
+            atoms.get_masses(), atoms.positions
+        )
+
+    @staticmethod
+    def _radii_from_mass_positions(masses, positions) -> tuple[float, float, bool]:
+        masses = np.asarray(masses, dtype=float)
+        positions = np.asarray(positions, dtype=float)
         if (
             positions.shape != (len(masses), 3)
             or not np.all(np.isfinite(positions))
             or not np.all(np.isfinite(masses))
             or np.any(masses <= 0.0)
         ):
-            raise ValueError('optimized geometry has invalid masses or coordinates')
+            raise ValueError("optimized geometry has invalid masses or coordinates")
         total_mass = float(np.sum(masses))
         center = np.sum(masses[:, None] * positions, axis=0) / total_mass
         centered = positions - center
@@ -243,15 +280,17 @@ class RadiusOfGyrationMixin:
             return conventional, 0.0, True
         linear = float(moments[0]) <= 1.0e-6 * largest
         if linear:
-            modified = math.sqrt(
-                math.sqrt(float(moments[1] * moments[2])) / total_mass
-            )
+            modified = math.sqrt(math.sqrt(float(moments[1] * moments[2])) / total_mass)
         else:
             geometric_moment = float(np.prod(moments)) ** (1.0 / 3.0)
             modified = math.sqrt(2.0 * math.pi * geometric_moment / total_mass)
-        if not all(math.isfinite(value) and value >= 0.0 for value in (conventional, modified)):
-            raise ValueError('calculated gyration radius was not finite and nonnegative')
+        if not all(
+            math.isfinite(value) and value >= 0.0 for value in (conventional, modified)
+        ):
+            raise ValueError(
+                "calculated gyration radius was not finite and nonnegative"
+            )
         return conventional, modified, linear
 
 
-__all__ = ['RadiusOfGyrationMixin']
+__all__ = ["RadiusOfGyrationMixin"]

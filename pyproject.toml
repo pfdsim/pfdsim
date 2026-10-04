@@ -20,6 +20,7 @@ dependencies = [
     "rdkit>=2026.3",
     "py2opsin>=1.2",
     "chemicals>=1.5",
+    "ase>=3.29.0",
 ]
 
 [project.optional-dependencies]

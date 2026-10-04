@@ -210,16 +210,27 @@ def _props_dict(props: object) -> dict:
     }
 
 
-def hoc_association_group(component: str, props: object) -> str:
+def hoc_association_group(component: str, props: object, *, chemical_database=None, allow_online=True, resolver_properties=None, include_features=False):
     """Return the generalized HOC group represented in SI Tables IV/V."""
     cas = str(getattr(props, 'CAS', '') or '').strip()
+    def result(group,acid=False):
+        return {"group":group,"has_carboxylic_acid":acid} if include_features else group
     special = _HOC_IDENTITY_GROUPS.get(cas)
     if special is not None:
-        return special
+        return result(special,special=='organic acid')
 
     smiles = str(getattr(props, 'smiles', '') or '').strip()
+    if not smiles and chemical_database is not None:
+        try:
+            identity = cas or getattr(props,'name',None) or component
+            structure = chemical_database.resolve_smiles_info(identity,fetch_online=allow_online,props=resolver_properties or props)
+        except Exception:
+            structure = None
+        if structure is not None and structure.smiles:
+            smiles=str(structure.smiles)
+            props.smiles=smiles
     if not smiles:
-        return 'unclassified'
+        return result('unclassified')
     try:
         from rdkit import Chem
 
@@ -227,7 +238,7 @@ def hoc_association_group(component: str, props: object) -> str:
     except Exception:
         molecule = None
     if molecule is None or len(Chem.GetMolFrags(molecule)) != 1:
-        return 'unclassified'
+        return result('unclassified')
 
     elements = {atom.GetSymbol() for atom in molecule.GetAtoms()}
 
@@ -281,23 +292,23 @@ def hoc_association_group(component: str, props: object) -> str:
     # multifunctional prescription. Multiple copies or distinct groups are
     # therefore deliberately left unclassified.
     if len(flags) == 1 and flags[0][1] == 1:
-        return flags[0][0]
+        return result(flags[0][0],acid_count>0)
     if flags:
-        return 'multifunctional'
+        return result('multifunctional',acid_count>0)
 
     total_hydrogens = sum(atom.GetTotalNumHs() for atom in molecule.GetAtoms())
     if elements <= {'C', 'F'} and 'C' in elements and total_hydrogens == 0:
-        return 'perfluorocarbon'
+        return result('perfluorocarbon')
     if elements <= {'C', 'H'} and 'C' in elements:
         if any(atom.GetIsAromatic() for atom in molecule.GetAtoms()):
-            return 'aromatic hydrocarbon'
+            return result('aromatic hydrocarbon')
         if any(
             bond.GetBondType() == Chem.BondType.DOUBLE
             for bond in molecule.GetBonds()
         ):
-            return 'olefin'
-        return 'hydrocarbon'
-    return 'unclassified'
+            return result('olefin')
+        return result('hydrocarbon')
+    return result('unclassified')
 
 
 class HaydenOConnellSecondVirialProvider:
@@ -360,17 +371,7 @@ class HaydenOConnellSecondVirialProvider:
                 raise ThermodynamicsError(
                     f"HOC second virial provider has no properties for '{component}'"
                 )
-            if not getattr(props, 'smiles', None) and chemical_database is not None:
-                try:
-                    structure = chemical_database.resolve_smiles_info(
-                        component,
-                        fetch_online=allow_online,
-                        props=(resolver_properties or {}).get(component) or props,
-                    )
-                except Exception:
-                    structure = None
-                if structure is not None and structure.smiles:
-                    props.smiles = str(structure.smiles)
+            group = hoc_association_group(component,props,chemical_database=chemical_database,allow_online=allow_online,resolver_properties=(resolver_properties or {}).get(component))
 
             known = dict(
                 (resolver_properties or {}).get(component) or _props_dict(props)
@@ -422,7 +423,6 @@ class HaydenOConnellSecondVirialProvider:
                     f"HOC Tc and Pc for '{component}' must be finite and positive"
                 )
 
-            group = hoc_association_group(component, props)
             if cas == '74-86-2':
                 group = 'carbon dioxide'
             provided_eta = getattr(props, 'hoc_eta', None)

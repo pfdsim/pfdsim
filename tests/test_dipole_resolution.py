@@ -20,6 +20,14 @@ class DipoleResolutionTests(unittest.TestCase):
         self.resolver = PropertyResolver()
         self.resolver.CACHE_DIR = Path(self.temporary_directory.name)
 
+    def available_backends(self):
+        """Declare availability only where the calculation itself is mocked."""
+        return patch.object(
+            DipoleMomentMixin,
+            "_dipole_dependency_state",
+            return_value=dict.fromkeys(("tblite", "ase", "pyscf"), "test"),
+        )
+
     def test_resolver_construction_does_not_eagerly_resolve_dipole(self):
         with patch.object(
             DipoleMomentMixin,
@@ -88,7 +96,7 @@ class DipoleResolutionTests(unittest.TestCase):
 
     def test_default_computational_backend_is_gfn2_xtb(self):
         props = {"CAS": "999-99-9", "name": "test ether", "smiles": "CCOCC"}
-        with patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
+        with self.available_backends(), patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
             DipoleMomentMixin,
             "_xtb_optimized_geometry",
             return_value=(object(), 0, 1),
@@ -114,7 +122,7 @@ class DipoleResolutionTests(unittest.TestCase):
 
     def test_use_pvdz_selects_pbe0_backend(self):
         props = {"CAS": "999-99-9", "name": "test ketone", "smiles": "CCC(=O)C"}
-        with patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
+        with self.available_backends(), patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
             DipoleMomentMixin,
             "_xtb_optimized_geometry",
             return_value=(object(), 0, 1),
@@ -151,7 +159,7 @@ class DipoleResolutionTests(unittest.TestCase):
             ("nitro", "CCC[N+](=O)[O-]", 3.5, "nitro_dipole_heuristic"),
             ("sulfoxide", "CCS(=O)CC", 4.0, "sulfoxide_dipole_heuristic"),
         )
-        with patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
+        with self.available_backends(), patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
             DipoleMomentMixin,
             "_xtb_optimized_geometry",
             side_effect=ImportError("optional backend absent"),
@@ -316,7 +324,7 @@ class DipoleResolutionTests(unittest.TestCase):
 
     def test_cached_pvdz_result_overrides_later_default_xtb_request(self):
         props = {"CAS": "999-99-9", "name": "test ketone", "smiles": "CCC(=O)C"}
-        with patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
+        with self.available_backends(), patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
             DipoleMomentMixin,
             "_xtb_optimized_geometry",
             return_value=(object(), 0, 1),
@@ -486,7 +494,7 @@ class DipoleResolutionTests(unittest.TestCase):
     def test_computed_result_is_persistent_across_resolvers(self):
         props = {"CAS": "999-99-9", "name": "test ether", "smiles": "CCOCC"}
         first_resolver = self.resolver
-        with patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
+        with self.available_backends(), patch.object(DipoleMomentMixin, "_nist_dipole", return_value=None), patch.object(
             DipoleMomentMixin,
             "_xtb_optimized_geometry",
             return_value=(object(), 0, 1),

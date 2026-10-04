@@ -81,6 +81,7 @@ class DipoleMomentMixin:
         *,
         use_pvdz: bool = False,
         allow_online: bool = True,
+        allow_estimation: bool = True,
     ) -> PropertyResolutionResult:
         """Resolve a permanent molecular dipole magnitude in Debye.
 
@@ -123,6 +124,8 @@ class DipoleMomentMixin:
         experimental = self._nist_dipole(identifier, props, cas=cas)
         if experimental is not None:
             return experimental
+        if not allow_estimation:
+            raise PropertyResolutionError(f"No experimental dipole is available for {identifier!r}; provide dipole_moment or enable estimation.")
 
         smiles_result = self._resolve_smiles_result(
             identifier,
@@ -558,45 +561,14 @@ class DipoleMomentMixin:
         from ase import Atoms
         from ase.optimize import BFGS
         from rdkit import Chem
-        from rdkit.Chem import AllChem
+        from .molecular_geometry import lowest_energy_forcefield_conformer
         from tblite.ase import TBLite
 
         molecule = DipoleMomentMixin._validated_dipole_molecule(smiles)
         charge = int(Chem.GetFormalCharge(molecule))
         unpaired = sum(atom.GetNumRadicalElectrons() for atom in molecule.GetAtoms())
         multiplicity = int(unpaired) + 1
-        molecule = Chem.AddHs(molecule)
-        parameters = AllChem.ETKDGv3()
-        parameters.randomSeed = int(hashlib.sha256(smiles.encode()).hexdigest()[:7], 16)
-        parameters.pruneRmsThresh = 0.25
-        conformer_ids = list(AllChem.EmbedMultipleConfs(molecule, numConfs=10, params=parameters))
-        if not conformer_ids:
-            raise RuntimeError("RDKit could not generate a conformer")
-
-        energies = []
-        if AllChem.MMFFHasAllMoleculeParams(molecule):
-            properties = AllChem.MMFFGetMoleculeProperties(molecule)
-            for conformer_id in conformer_ids:
-                forcefield = AllChem.MMFFGetMoleculeForceField(
-                    molecule,
-                    properties,
-                    confId=conformer_id,
-                )
-                if forcefield is None:
-                    continue
-                forcefield.Minimize(maxIts=500)
-                energies.append((forcefield.CalcEnergy(), conformer_id))
-        else:
-            for conformer_id in conformer_ids:
-                forcefield = AllChem.UFFGetMoleculeForceField(molecule, confId=conformer_id)
-                if forcefield is None:
-                    continue
-                forcefield.Minimize(maxIts=500)
-                energies.append((forcefield.CalcEnergy(), conformer_id))
-        if not energies:
-            raise RuntimeError("RDKit could not rank generated conformers")
-
-        conformer = molecule.GetConformer(min(energies)[1])
+        molecule,conformer = lowest_energy_forcefield_conformer(smiles,molecule)
         atoms = Atoms(
             [atom.GetSymbol() for atom in molecule.GetAtoms()],
             positions=np.asarray(conformer.GetPositions()),

@@ -934,6 +934,7 @@ name = "pfdsim"
 version = "0.3.1"
 source = { editable = "." }
 dependencies = [
+    { name = "ase" },
     { name = "chemicals" },
     { name = "coolprop" },
     { name = "numba" },
@@ -973,6 +974,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "ase", specifier = ">=3.29.0" },
     { name = "cairosvg", marker = "extra == 'render'", specifier = ">=2.7" },
     { name = "chemicals", specifier = ">=1.5" },
     { name = "coolprop", specifier = ">=7.2,<8.0" },
