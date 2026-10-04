@@ -54,6 +54,13 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
         "inverse_square_cubic": 4,
     }
 
+    def _snapshot_activity_database_interactions(self, lookup):
+        """Keep one package's parameters stable across a live table publication."""
+        self._database_activity_interactions = {
+            (first,second):lookup(self.component_cas.get(first),self.component_cas.get(second))
+            for first in self.components for second in self.components if first != second
+        }
+
     def __init__(
         self,
         components: list[str],

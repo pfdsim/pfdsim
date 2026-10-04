@@ -123,6 +123,11 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         self.component_cas = {
             comp: cas_for_component(comp, self.props.get(comp)) for comp in components
         }
+        if __package__ and __package__.split(".",1)[0] == "pfdsim":
+            from ..interaction_parameters import nrtl_binary_interaction
+        else:
+            from interaction_parameters import nrtl_binary_interaction
+        self._snapshot_activity_database_interactions(nrtl_binary_interaction)
         self._nrtl_interaction_overrides = _interaction_override_map(
             interaction_overrides,
             "NRTL",
@@ -182,12 +187,10 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
     ) -> Optional[dict]:
         if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from ..interaction_parameters import (
-                nrtl_binary_interaction,
                 orient_nrtl_interaction,
             )
         else:
             from interaction_parameters import (
-                nrtl_binary_interaction,
                 orient_nrtl_interaction,
             )
 
@@ -207,10 +210,7 @@ class NRTLThermodynamics(ActivityCoefficientThermodynamics):
         )
         if estimated is not None:
             return estimated
-        database = nrtl_binary_interaction(
-            self.component_cas.get(comp_i),
-            self.component_cas.get(comp_j),
-        )
+        database = self._database_activity_interactions.get((comp_i,comp_j))
         if database is not None:
             return database
         return None
@@ -545,6 +545,11 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         self.component_cas = {
             comp: cas_for_component(comp, self.props.get(comp)) for comp in components
         }
+        if __package__ and __package__.split(".",1)[0] == "pfdsim":
+            from ..interaction_parameters import uniquac_binary_interaction
+        else:
+            from interaction_parameters import uniquac_binary_interaction
+        self._snapshot_activity_database_interactions(uniquac_binary_interaction)
         self._uniquac_interaction_overrides = _interaction_override_map(
             interaction_overrides,
             "UNIQUAC",
@@ -623,12 +628,10 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
     ) -> Optional[dict]:
         if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from ..interaction_parameters import (
-                uniquac_binary_interaction,
                 orient_uniquac_interaction,
             )
         else:
             from interaction_parameters import (
-                uniquac_binary_interaction,
                 orient_uniquac_interaction,
             )
 
@@ -648,10 +651,7 @@ class UNIQUACThermodynamics(ActivityCoefficientThermodynamics):
         )
         if estimated is not None:
             return estimated
-        database = uniquac_binary_interaction(
-            self.component_cas.get(comp_i),
-            self.component_cas.get(comp_j),
-        )
+        database = self._database_activity_interactions.get((comp_i,comp_j))
         if database is not None:
             return database
         return None

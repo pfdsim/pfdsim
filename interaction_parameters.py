@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -15,7 +16,34 @@ else:
     from chemical_properties import ChemicalProperties
 
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(os.environ.get("PFDSIM_INTERACTION_DATA_DIR",Path(__file__).parent / "data"))
+_RUNTIME_TABLE_VERSION = None
+
+
+def interaction_table_version():
+    """File generation identity shared by package initialization and web jobs."""
+    values = []
+    for name in ("nrtl_binary_interactions_cas.json", "uniquac_binary_interactions_cas.json", "uniquac_rq_cas.json"):
+        try:
+            state = (DATA_DIR/name).stat()
+        except FileNotFoundError:
+            values.append((str(DATA_DIR/name),None,None))
+        else:
+            values.append((str(DATA_DIR/name),state.st_mtime_ns,state.st_size))
+    return tuple(values)
+
+
+def refresh_interaction_tables():
+    global _RUNTIME_TABLE_VERSION
+    version = interaction_table_version()
+    if version != _RUNTIME_TABLE_VERSION:
+        _nrtl_interactions.cache_clear()
+        _uniquac_interactions.cache_clear()
+        _uniquac_rq_payload.cache_clear()
+        _uniquac_rq_components.cache_clear()
+        _uniquac_rq_aliases.cache_clear()
+        _RUNTIME_TABLE_VERSION = version
+    return version
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K = 10.0
 

@@ -315,8 +315,11 @@ class Simulator:
         """
         if __package__ and __package__.split(".", 1)[0] == "pfdsim":
             from .thermodynamics import create_thermodynamics
+            from .interaction_parameters import refresh_interaction_tables
         else:
             from thermodynamics import create_thermodynamics
+            from interaction_parameters import refresh_interaction_tables
+        table_version = refresh_interaction_tables()
         if property_methods is not None and (not isinstance(property_methods,(list,tuple)) or any(not isinstance(method,str) or not method.strip() for method in property_methods)):
             raise ValueError("property_methods must be a list of intended thermodynamic model names.")
         property_context = tuple(sorted({canonical_lyngby_method(str(method).strip().upper().replace('_','-')) for method in property_methods or ()}))
@@ -328,6 +331,7 @@ class Simulator:
             thermo_method is None
             and self._initialized
             and self._initialized_fluid_phase_model == selected_phase_model
+            and getattr(self,"_initialized_interaction_version",None) == table_version
             and getattr(self,"_initialized_property_methods",()) == property_context
         ):
             return self
@@ -342,6 +346,7 @@ class Simulator:
             and self._initialized_thermo_method == selected_method
             and self._initialized_thermo_options == selected_options
             and self._initialized_fluid_phase_model == selected_phase_model
+            and getattr(self,"_initialized_interaction_version",None) == table_version
             and getattr(self,"_initialized_property_methods",()) == property_context
         ):
             return self
@@ -349,6 +354,7 @@ class Simulator:
         # A different explicit method is a deliberate reconfiguration. Clear
         # only derived runtime state; the parsed PFD remains immutable input.
         self._initialized = False
+        self._initialized_interaction_version = table_version
         self._initialized_property_methods = property_context
         self._initialized_thermo_method = None
         self._initialized_thermo_options = {}

@@ -4,10 +4,14 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
+import fcntl
 import json
 import math
+import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 from statistics import median
 from typing import Any, Optional
@@ -18,6 +22,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from physical_constants import R_J_MOL_K
+from activity_fit_store import ActivityFitStore, DEFAULT_ACTIVITY_FITS_PATH
 
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
@@ -309,7 +314,38 @@ def load_json(path: Path) -> dict[str, Any]:
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    atomic_write_bytes(path,(json.dumps(payload,indent=2,sort_keys=True)+"\n").encode())
+
+
+def atomic_write_bytes(path, content):
+    import stat
+
+    path.parent.mkdir(parents=True,exist_ok=True)
+    mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o644
+    descriptor, pending = tempfile.mkstemp(prefix=path.name+".",suffix=".pending",dir=path.parent)
+    try:
+        with os.fdopen(descriptor,"wb") as file:
+            os.fchmod(file.fileno(), mode)
+            file.write(content); file.flush(); os.fsync(file.fileno())
+        os.replace(pending,path)
+    finally:
+        # A failed write's partial staging file is never a runtime artifact.
+        Path(pending).unlink(missing_ok=True)
+
+
+def interaction_output_directory():
+    return Path(os.environ.get("PFDSIM_INTERACTION_DATA_DIR",DATA))
+
+
+@contextmanager
+def activity_publication_lock(runtime_directory):
+    # Different provenance stores can rebuild the same runtime tables. Lock
+    # their shared destination, rather than the independently selected source.
+    parent = Path(runtime_directory)
+    parent.mkdir(parents=True,exist_ok=True)
+    with (parent/"activity-fit-publish.lock").open("a") as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        yield
 
 
 def load_record_identity_overrides() -> dict[str, dict[str, dict]]:
@@ -2866,6 +2902,7 @@ def build_interaction_payload(
     source_name: str,
     resolved: dict[str, dict],
     unresolved: list[dict],
+    *, user_fits_path=None, user_fit_candidate=None, exclude_user_fit=None,
 ) -> dict:
     records, skipped = convert_records(source_name, resolved)
     base_pairs = {tuple(sorted((record["cas1"], record["cas2"]))) for record in records}
@@ -3276,7 +3313,107 @@ def build_interaction_payload(
     for key in ("source", "units"):
         if key in source_payload:
             payload["metadata"][key] = source_payload[key]
+    if acid_model:
+        apply_user_activity_overlay(payload, acid_model, user_fits_path=user_fits_path,
+                                    candidate=user_fit_candidate, exclude=exclude_user_fit)
     return payload
+
+
+def apply_user_activity_overlay(payload, model, *, user_fits_path=None, candidate=None, exclude=None):
+    """Authoritative overlay used by full builds and web administrator publishing."""
+    import os
+    path = Path(user_fits_path or os.environ.get("PFDSIM_ACTIVITY_FITS_PATH",DEFAULT_ACTIVITY_FITS_PATH))
+    if not path.exists():
+        return payload
+    records = ActivityFitStore(path).runtime_records(model,candidate=candidate,exclude=exclude)
+    if not records:
+        return payload
+    pairs = {tuple(sorted((record["cas1"],record["cas2"]))) for record in records}
+    remaining = [record for record in payload["interactions"] if tuple(sorted((record["cas1"],record["cas2"]))) not in pairs]
+    payload["metadata"].update(user_activity_fit_records=len(records),user_activity_fit_replaced_records=len(payload["interactions"])-len(remaining))
+    payload["interactions"] = remaining + records
+    payload["metadata"]["converted_records"] = len(payload["interactions"])
+    return payload
+
+
+def validate_activity_provenance_store(target, user_fits_path):
+    """Never rebuild away published fits whose provenance is in another store."""
+    if not target.exists():
+        return
+    previous = {
+        item["user_fit_id"]
+        for item in load_json(target).get("interactions", [])
+        if item.get("user_fit_id")
+    }
+    if not previous:
+        return
+    path = Path(user_fits_path)
+    known = set()
+    if path.is_file():
+        with ActivityFitStore(path).connect() as db:
+            known = {row["id"] for row in db.execute("SELECT id FROM fits")}
+    missing = previous - known
+    if missing:
+        raise ValueError(
+            "The runtime table contains published user fits missing from this "
+            "provenance store. Use the store containing their review history "
+            "or choose a separate PFDSIM_INTERACTION_DATA_DIR before rebuilding. "
+            "Missing fit IDs: " + ", ".join(sorted(missing))
+        )
+
+
+def publish_user_fit(identifier, *, user_fits_path, actor, action="publish", notes="", progress=None):
+    """Rebuild one activity table atomically, retaining its previous artifact."""
+    import hashlib
+    import shutil
+    import time
+    from thermodynamics_models.interaction_fitting import validate_runtime_inclusion
+
+    store = ActivityFitStore(user_fits_path)
+    record = store.get(identifier)
+    model = record["model"]
+    if model not in ("NRTL","UNIQUAC") or action not in ("publish","withdraw"):
+        raise ValueError("Choose NRTL/UNIQUAC publication or withdrawal.")
+    if action == "publish":
+        validate_runtime_inclusion(record["result"])
+    elif record["status"] != "published":
+        raise ValueError("Only published fits can be withdrawn.")
+    target = interaction_output_directory()/f"{model.lower()}_binary_interactions_cas.json"
+    target.parent.mkdir(parents=True,exist_ok=True)
+    with activity_publication_lock(target.parent):
+        record = store.get(identifier)
+        validate_activity_provenance_store(target, store.path)
+        if action == "withdraw" and record["status"] != "published":
+            raise ValueError("Only published fits can be withdrawn.")
+        if action == "publish":
+            store.publication_state(identifier,actor,"publishing",{"notes":notes})
+        try:
+            if progress:
+                progress(f"Rebuilding the shared {model} interaction table")
+            resolved, unresolved = resolve_component_ids()
+            payload = build_interaction_payload(f"{model.lower()}_binary_interactions.json",resolved,unresolved,
+                                               user_fits_path=store.path, user_fit_candidate=identifier if action=="publish" else None,
+                                               exclude_user_fit=identifier if action=="withdraw" else None)
+            encoded = (json.dumps(payload,indent=2,sort_keys=True)+"\n").encode()
+            archive = store.path.parent/"runtime_snapshots"
+            archive.mkdir(parents=True,exist_ok=True)
+            backup = None
+            if target.exists():
+                backup = archive/f"{target.name}.{time.time_ns()}.bak"
+                shutil.copy2(target,backup)
+            atomic_write_bytes(target,encoded)
+            details = {"notes":notes,"runtime_file":target.name,"runtime_sha256":hashlib.sha256(encoded).hexdigest(),"backup":backup.relative_to(store.path.parent).as_posix() if backup else None}
+            try:
+                store.publication_state(identifier,actor,"published" if action=="publish" else "withdrawn",details)
+            except Exception:
+                if backup:
+                    atomic_write_bytes(target,backup.read_bytes())
+                raise
+            return {"success":True,"id":identifier,"status":"published" if action=="publish" else "revoked",**details}
+        except Exception as error:
+            if action == "publish":
+                store.publication_state(identifier,actor,"publish_failed",{"error":str(error)})
+            raise
 
 
 def write_interaction_file(
@@ -3284,9 +3421,14 @@ def write_interaction_file(
     source_name: str,
     resolved: dict[str, dict],
     unresolved: list[dict],
+    *, user_fits_path=None,
 ) -> None:
-    payload = build_interaction_payload(source_name, resolved, unresolved)
-    write_json(DATA / output_name, payload)
+    target = interaction_output_directory() / output_name
+    if source_name in ("nrtl_binary_interactions.json", "uniquac_binary_interactions.json"):
+        path = user_fits_path or os.environ.get("PFDSIM_ACTIVITY_FITS_PATH", DEFAULT_ACTIVITY_FITS_PATH)
+        validate_activity_provenance_store(target, path)
+    payload = build_interaction_payload(source_name, resolved, unresolved,user_fits_path=user_fits_path)
+    write_json(target, payload)
 
 
 def main() -> None:
@@ -3295,28 +3437,20 @@ def main() -> None:
         "--chemicals-path",
         help="Optional temporary path containing the chemicals package, used only for identity resolution gaps.",
     )
+    parser.add_argument("--user-fits-path",type=Path,help="Optional user_activity_fits.sqlite source; defaults to PFDSIM_ACTIVITY_FITS_PATH or the maintained source directory")
     args = parser.parse_args()
-
-    resolved, unresolved = resolve_component_ids(args.chemicals_path)
-    write_json(DATA / "interaction_component_cas_index.json", component_index(resolved))
-    write_interaction_file(
-        "eos_binary_interactions_cas.json",
-        "eos_binary_interactions.json",
-        resolved,
-        unresolved,
-    )
-    write_interaction_file(
-        "nrtl_binary_interactions_cas.json",
-        "nrtl_binary_interactions.json",
-        resolved,
-        unresolved,
-    )
-    write_interaction_file(
-        "uniquac_binary_interactions_cas.json",
-        "uniquac_binary_interactions.json",
-        resolved,
-        unresolved,
-    )
+    user_fits_path = args.user_fits_path or Path(os.environ.get("PFDSIM_ACTIVITY_FITS_PATH",DEFAULT_ACTIVITY_FITS_PATH))
+    with activity_publication_lock(interaction_output_directory()):
+        for prefix in ("nrtl", "uniquac"):
+            validate_activity_provenance_store(
+                interaction_output_directory() / f"{prefix}_binary_interactions_cas.json",
+                user_fits_path,
+            )
+        resolved, unresolved = resolve_component_ids(args.chemicals_path)
+        write_json(interaction_output_directory() / "interaction_component_cas_index.json", component_index(resolved))
+        for prefix in ("eos", "nrtl", "uniquac"):
+            write_interaction_file(f"{prefix}_binary_interactions_cas.json",f"{prefix}_binary_interactions.json",
+                                   resolved,unresolved,user_fits_path=user_fits_path)
 
     unresolved_ids = {item["source_component_id"] for item in unresolved}
     skipped_total = 0
@@ -3325,7 +3459,7 @@ def main() -> None:
         "nrtl_binary_interactions_cas.json",
         "uniquac_binary_interactions_cas.json",
     ):
-        skipped_total += load_json(DATA / output_name)["metadata"]["skipped_records"]
+        skipped_total += load_json(interaction_output_directory() / output_name)["metadata"]["skipped_records"]
     print(
         f"Resolved {len(resolved)} source component IDs; "
         f"unresolved={len(unresolved_ids)}; skipped_records={skipped_total}"

@@ -54,7 +54,7 @@ ACTIVITY_HOC_METHOD_ALIASES = {
 }
 
 
-def create_thermodynamics(components: list[str], 
+def create_thermodynamics(components: list[str],
                           method: str = 'IDEAL',
                           db: Optional[ChemicalDatabase] = None,
                           unifac_groups: Optional[dict] = None,
@@ -117,6 +117,11 @@ def create_thermodynamics(components: list[str],
     Returns:
         Thermodynamics calculator instance
     """
+    if __package__.split(".", 1)[0] == "pfdsim":
+        from ..interaction_parameters import refresh_interaction_tables
+    else:
+        from interaction_parameters import refresh_interaction_tables
+    refresh_interaction_tables()
     declared_method = canonical_lyngby_method(str(method).strip().upper().replace('_', '-'))
     options = {
         str(name).strip().lower(): value

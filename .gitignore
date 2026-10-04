@@ -24,6 +24,10 @@ data/reference/ignore
 # App/runtime caches
 .property_cache/
 data/runtime/
+activity-fit-publish.lock
+data/source/activity_fitting/*.sqlite-journal
+data/source/activity_fitting/*.sqlite-wal
+data/source/activity_fitting/*.sqlite-shm
 
 # Test, lint, packaging, and build artifacts
 .pytest_cache/
