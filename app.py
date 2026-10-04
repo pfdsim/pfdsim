@@ -127,7 +127,12 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 def jobs():
-    return JobStore(app.config["JOB_DIRECTORY"])
+    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+        from .activity_fit_store import DEFAULT_ACTIVITY_FITS_PATH
+    else:
+        from activity_fit_store import DEFAULT_ACTIVITY_FITS_PATH
+    path = app.config.get("ACTIVITY_FITS_PATH") or (Path(app.config["JOB_DIRECTORY"])/"user_activity_fits.sqlite" if app.config.get("TESTING") else os.environ.get("PFDSIM_ACTIVITY_FITS_PATH", DEFAULT_ACTIVITY_FITS_PATH))
+    return JobStore(app.config["JOB_DIRECTORY"], activity_fits_path=path)
 
 
 def guest_principal():
@@ -195,8 +200,10 @@ def api_session():
 def api_account():
     data = body()
     store = jobs()
-    method = store.register if request.path.endswith("/register") else store.login
-    user = method(data.get("username"), data.get("password"), guest_principal())
+    if request.path.endswith("/register"):
+        user = store.register(data.get("username"), data.get("password"), guest_principal(), setup_token=data.get("setup_token"))
+    else:
+        user = store.login(data.get("username"), data.get("password"), guest_principal())
     guest_id = session.get("guest_id")
     if guest_id:
         with store.connect() as db:
@@ -204,6 +211,7 @@ def api_account():
                 "UPDATE jobs SET owner=? WHERE owner=?",
                 ("user:" + user["id"], "guest:" + guest_id),
             )
+        activity_fit_store().claim_owner("guest:" + guest_id, "user:" + user["id"])
     session.clear()
     if guest_id:
         session["guest_id"] = guest_id
@@ -332,6 +340,183 @@ def index():
 @app.route("/vle-chart")
 def vle_chart_page():
     return render_template("vle_chart.html")
+
+
+@app.get("/parameter-fitting")
+def fitting_page():
+    return render_template("parameter_fitting.html")
+
+
+def fitting_module():
+    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+        from .thermodynamics_models import interaction_fitting
+    else:
+        from thermodynamics_models import interaction_fitting
+    return interaction_fitting
+
+
+def activity_fit_store():
+    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+        from .activity_fit_store import ActivityFitStore
+    else:
+        from activity_fit_store import ActivityFitStore
+    return ActivityFitStore(jobs().activity_fits_path)
+
+
+def require_fit_admin():
+    _, _, _, user = identity()
+    if not user or not user.get("is_admin"):
+        from werkzeug.exceptions import Forbidden
+        raise Forbidden("An administrator account is required.")
+    return user
+
+
+@app.get("/api/fitting/admin/submissions")
+def api_fit_admin_list():
+    require_fit_admin()
+    return respond({"success":True,"submissions":activity_fit_store().list()})
+
+
+@app.get("/api/fitting/admin/submissions/<identifier>")
+def api_fit_admin_detail(identifier):
+    require_fit_admin()
+    return respond({"success":True,"submission":activity_fit_store().get(identifier)})
+
+
+@app.post("/api/fitting/admin/review")
+def api_fit_admin_review():
+    user = require_fit_admin()
+    data = body()
+    reviewed = activity_fit_store().review(data.get("id"), "user:"+user["id"], data.get("action"),data.get("notes"),expected_version=data.get("version"))
+    return respond({"success":True,"submission":reviewed})
+
+
+@app.post("/api/fitting/admin/publish")
+def api_fit_admin_publish():
+    user = require_fit_admin()
+    data = body()
+    store = activity_fit_store()
+    if data.get("job_id") or data.get("result"):
+        result = completed_fit(data["job_id"]) if data.get("job_id") else data["result"]
+        fitting_module().normalize_fit_request(result.get("request"))
+        fitting_module().export_fit(result)
+        identifier = data.get("job_id") or "local:"+hashlib.sha256(json.dumps(result,sort_keys=True,allow_nan=False).encode()).hexdigest()
+        submitted = store.submit("user:"+user["id"],identifier,data.get("source"),result)
+        record = store.get(submitted["id"])
+        if record["status"] not in ("approved","published"):
+            record = store.review(record["id"],"user:"+user["id"],"approve",data.get("notes") or "Direct administrator publication", expected_version=record["version"])
+    else:
+        record = store.get(data.get("id"))
+    if record["status"] not in ("approved","published","publishing"):
+        raise ValueError("Approve this fit before publication.")
+    from_store = jobs()
+    with from_store.connect() as db:
+        queued = db.execute("SELECT id,payload FROM jobs WHERE kind='fit_publish' AND status IN ('queued','running')").fetchall()
+    for job_id, payload in queued:
+        if json.loads(payload).get("id") == record["id"] and from_store.get(job_id)["status"] in ("queued","running"):
+            raise ValueError("Publication for this fit is already queued or running. Wait for it to finish, or cancel it before requesting recovery.")
+    return submit("fit_publish", {"id":record["id"],"actor":"user:"+user["id"],"activity_fits_path":str(store.path),"action":"publish","notes":data.get("notes","")})
+
+
+@app.post("/api/fitting/admin/withdraw")
+def api_fit_admin_withdraw():
+    user = require_fit_admin()
+    data = body()
+    record = activity_fit_store().get(data.get("id"))
+    if record["status"] != "published":
+        raise ValueError("Choose a published fit to withdraw.")
+    return submit("fit_publish", {"id":record["id"],"actor":"user:"+user["id"],"activity_fits_path":str(activity_fit_store().path),"action":"withdraw","notes":data.get("notes","")})
+
+
+@app.get("/api/fitting/catalog")
+def api_fitting_catalog():
+    return respond({"success": True, **fitting_module().fitting_catalog()})
+
+
+@app.get("/api/fitting/sessions")
+def api_fit_sessions():
+    user=identity()[3]
+    if not user:
+        return respond({"success":False,"error":"Sign in to access account fitting sessions."},401)
+    return respond({"success":True,"sessions":jobs().saved_documents("fit_sessions",user["id"])})
+
+
+@app.post("/api/fitting/sessions/<identifier>")
+def api_save_fit_session(identifier):
+    user=identity()[3]
+    if not user:
+        return respond({"success":False,"error":"Sign in to save fitting sessions to your account."},401)
+    data=body()
+    return respond({"success":True,**jobs().save_fit_session(user["id"],identifier,data.get("version"),data.get("document"))})
+
+
+@app.post("/api/fitting/parse")
+def api_fitting_parse():
+    data = body()
+    return respond({"success": True, **fitting_module().inspect_observations(data.get("observations"),
+                    import_options=data.get("import_options"), components=data.get("components"))})
+
+
+@app.post("/api/fitting")
+def api_fitting():
+    return submit("fit", fitting_module().normalize_fit_request(body()))
+
+
+@app.post("/api/fitting/prefill")
+def api_fitting_prefill():
+    data = body()
+    data.update(model="UNIQUAC", fit_alpha=False, form="constant", cv={"method": "none"},
+                observations=[{"kind": "GAMMA_INF", "T_K": 298.15, "gamma1_inf": 1}])
+    data.pop("rq", None)
+    data.pop("initial", None)
+    data.pop("bounds", None)
+    data.pop("vapor_parameters", None)
+    data["extrapolation"] = "unrestricted"
+    return submit("fit_prefill", fitting_module().normalize_fit_request(data))
+
+
+def completed_fit(identifier):
+    job = jobs().get(identifier)
+    if not job or not owns_job(job) or job["kind"] != "fit" or job["status"] != "completed":
+        raise ValueError("Choose one of your completed fitting jobs.")
+    return job["output"]
+
+
+@app.post("/api/fitting/export")
+def api_fitting_export():
+    data = body()
+    if data.get("result") is not None:
+        result = data["result"]
+        if not isinstance(result, dict) or result.get("schema_version") != 1:
+            raise ValueError("Provide a PFDSim fit report.")
+        fitting_module().normalize_fit_request(result.get("request"))
+    else:
+        result = completed_fit(data.get("job_id"))
+    return respond({"success": True, **fitting_module().export_fit(result, pfd_text=data.get("pfd_text"),
+                    scope=data.get("scope", "global"), component_map=data.get("component_map"))})
+
+
+@app.post("/api/fitting/submit")
+def api_fitting_submit():
+    data = body()
+    identifier = data.get("job_id")
+    if identifier and jobs().get(identifier) is not None:
+        result = completed_fit(identifier)
+    else:
+        result = data.get("result")
+        if not isinstance(result, dict) or result.get("schema_version") != 1:
+            raise ValueError("Provide a completed fitting job or a PFDSim CLI fit report.")
+        fitting_module().normalize_fit_request(result.get("request"))
+        fitting_module().export_fit(result)
+        result = {**result, "submission_origin": "external_report_pending_review"}
+        identifier = "local:" + hashlib.sha256(json.dumps(result, sort_keys=True, allow_nan=False).encode()).hexdigest()
+    submission = jobs().submit_fit(identity()[0], identifier, data.get("source"), result)
+    return respond({"success": True, "submission": submission}, 201)
+
+
+@app.get("/api/fitting/submissions")
+def api_fitting_submissions():
+    return respond({"success": True, "submissions": jobs().fit_submissions(identity()[0])})
 
 
 @app.get("/api/config")

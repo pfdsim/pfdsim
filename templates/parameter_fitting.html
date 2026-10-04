@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Parameter fitting · PFDSIM{% endblock %}
+{% block content %}
+<main class="atlas-screen fitting-screen">
+  <div class="page-heading"><div><p class="eyebrow">CONNECT MEASUREMENTS TO YOUR MODEL</p>
+    <h1>Parameter fitting</h1><p>Fit binary NRTL or UNIQUAC parameters to one or several kinds of experimental data.</p>
+  </div><a href="/vle-chart">Explore phase diagrams ↗</a></div>
+  <section id="fit-admin" class="panel-card fit-workbench" hidden>
+    <h2>Administrator fit review</h2><p>Approved fits remain in this list with their results and exports. Publish to runtime is a separate action that rebuilds the shared tables and retains a previous snapshot and review history.</p>
+    <button id="fit-admin-refresh" type="button">Refresh review queue</button><div id="fit-admin-list" class="fit-table-scroll"></div>
+    <p id="fit-admin-status" role="status"></p>
+  </section>
+  <div class="atlas-layout">
+    <section class="atlas-controls panel-card">
+      <form id="fit-form">
+        <label class="field"><span class="field-label">Component definitions</span><select id="fit-project"><option value="">Independent mixture</option></select></label>
+        <button type="button" id="fit-import">Import an existing PFD</button><input type="file" id="fit-pfd-file" accept=".pfd" hidden>
+        <label class="field"><span class="field-label">Thermodynamic scope</span><select id="fit-scope"><option value="global">Global</option></select></label>
+        <label class="field"><span class="field-label">Component 1</span><input id="fit-comp1" value="ethanol" required placeholder="Name, CAS, formula or PFD symbol"></label>
+        <label class="field"><span class="field-label">Component 2</span><input id="fit-comp2" value="water" required></label>
+        <label class="field"><span class="field-label">Liquid model</span><select id="fit-model"><option>NRTL</option><option>UNIQUAC</option></select></label>
+        <label class="field"><span class="field-label">Vapor treatment</span><select id="fit-vapor"></select></label>
+        <p class="field-help">Vapor fugacity and pure-liquid reference corrections use the selected PFDSim model. Vapor parameters can also be fitted below.</p>
+        <label class="field"><span class="field-label">Temperature law</span><select id="fit-law"></select></label>
+        <p id="fit-equation" class="field-help"></p>
+        <div id="fit-alpha-controls">
+          <label class="field"><span class="field-label">NRTL α (fixed value or initial guess)</span><input id="fit-alpha" type="number" min="0.01" max="1" step="0.01" value="0.3"></label>
+          <label><input id="fit-free-alpha" type="checkbox"> Fit α within 0.01–1</label>
+        </div>
+        <div id="fit-rq-controls" hidden>
+          <p>UNIQUAC structural parameters</p><button type="button" id="fit-prefill">Prefill R/Q from PFDSim</button>
+          <p class="field-help">Leave all four values blank to use PFDSim automatically, or enter all four. Export includes the values used.</p>
+          <div class="fit-rq-grid">
+            <label class="field"><span class="field-label">R₁</span><input id="fit-r1" type="number" min="0.000001" step="any"></label>
+            <label class="field"><span class="field-label">Q₁</span><input id="fit-q1" type="number" min="0.000001" step="any"></label>
+            <label class="field"><span class="field-label">R₂</span><input id="fit-r2" type="number" min="0.000001" step="any"></label>
+            <label class="field"><span class="field-label">Q₂</span><input id="fit-q2" type="number" min="0.000001" step="any"></label>
+          </div>
+        </div>
+        <details class="structured-group" id="fit-psat-controls"><summary>Custom saturation pressure / obscure components</summary>
+          <div class="fit-property-heading"><span id="fit-vapor-requirements" class="field-help"></span><button id="fit-property-help" class="fit-question-button" type="button" aria-label="Help with saturation pressure and supporting properties" title="Saturation pressure and supporting properties">?</button></div>
+          <label id="fit-estimate-properties-row" class="fit-checkbox-row"><input id="fit-estimate-properties" type="checkbox" checked><span>Allow property estimates</span></label>
+          <label id="fit-hoc-eta-default-row" class="fit-checkbox-row"><input id="fit-hoc-eta-default" type="checkbox" checked><span>Allow HOC η = 0 when unavailable</span></label>
+          <div id="fit-psat-fields"></div>
+        </details>
+        <template id="fit-property-help-content">
+          <p>Use PFDSim’s property basis or supply Antoine, DIPPR 101 or canonical Psat for either component. Correlations and entered or resolved supporting properties travel with the exported PFD.</p>
+          <p>Supporting properties may be resolved or estimated with warnings. Dipole estimates are allowed. Fields shown by default depend on the active vapor-equilibrium objectives and correction model; additional overrides remain available if needed.</p>
+          <p>Only vapor-equilibrium objectives require Psat. Psat must be non-estimated with quality ≥0.9 throughout the target temperature region. Canonical Psat can also need Tc/Pc anchors; if they cannot be resolved, enter them under Additional property overrides. Antoine supports Celsius/Kelvin denominators and absolute pressure units; DIPPR uses Kelvin and natural log, and canonical forms use Kelvin and ln(P/bar).</p>
+          <p>HOC uses dipole, modified radius and association η. Enter η to override its group estimate or the warned zero default. These policies are hidden when the current objectives or correction model do not use them; hiding a field preserves its entered value.</p>
+        </template>
+        <details class="structured-group"><summary>Objective weights</summary>
+          <p class="field-help">Each weight multiplies its sum of squared scaled residuals. Zero excludes unpinned rows of that kind. Row weights multiply these weights.</p><div id="fit-weights"></div>
+        </details>
+        <details class="structured-group"><summary>Vapor parameters</summary><div id="fit-vapor-parameters"></div></details>
+        <details class="structured-group"><summary>Cross-validation</summary>
+          <label class="field"><span class="field-label">Validation method</span><select id="fit-cv"><option value="none">No cross-validation</option><option value="kfold">Seeded K-fold</option><option value="leave_temperature_out">Leave one temperature out</option><option value="leave_group_out">Leave one source/group out</option></select></label>
+          <label class="field"><span class="field-label">K-fold count</span><input id="fit-folds" type="number" min="2" max="20" value="5"></label>
+          <p class="field-help">Each fold is fitted independently. Pinned points stay in every training fold and are excluded from held-out scores. Use group labels to keep related measurements together.</p>
+        </details>
+        <details class="structured-group"><summary>Advanced controls</summary>
+          <label class="field"><span class="field-label">Reference temperature / K</span><input id="fit-tref" type="number" min="1" step="any" value="298.15"></label>
+          <label class="field"><span class="field-label">Independent starting guesses</span><input id="fit-starts" type="number" min="1" max="10" value="3"></label>
+          <label class="field"><span class="field-label">Maximum evaluations per start</span><input id="fit-evaluations" type="number" min="1" max="5000" value="500"></label>
+          <label class="field"><span class="field-label">Random seed</span><input id="fit-seed" type="number" min="0" value="1729"></label>
+          <label class="field"><span class="field-label">Outside the calibration range</span><select id="fit-extrapolation"><option value="unrestricted">Continue the fitted law</option><option value="constant_inverse">Tangent A+B/T continuation</option><option value="inverse_linear_quadratic">Tangent M/T+N/T² continuation</option><option value="inverse_square_cubic">Tangent M/T²+N/T³ continuation</option></select></label>
+          <label><input id="fit-online" type="checkbox"> Allow online property lookup</label>
+          <label class="field"><span class="field-label">Residual scales / uncertainty defaults (JSON)</span><textarea id="fit-scales" rows="4"></textarea></label>
+          <label class="field"><span class="field-label">Initial coefficients (JSON, optional)</span><textarea id="fit-initial" rows="2" placeholder='{"12.inverse": 500, "21.inverse": 200}'></textarea></label>
+          <label class="field"><span class="field-label">Coefficient bounds (JSON, optional)</span><textarea id="fit-bounds" rows="2" placeholder='{"12.inverse": [-5000, 5000]}'></textarea></label>
+        </details>
+        <div class="form-actions fit-run-actions"><button class="primary" id="fit-run" type="submit">Fit parameters</button><button id="fit-reset" type="button">Reset settings</button><button id="fit-saved-sessions" type="button">Saved fits</button><button id="fit-cancel" type="button" disabled>Cancel</button></div>
+        <p id="fit-progress" role="status" aria-live="polite">Paste observations to begin.</p>
+      </form>
+    </section>
+    <section class="panel-card fit-workbench">
+      <div class="fit-panel-heading"><h2>Experimental observations</h2><button id="fit-help" class="fit-question-button" type="button" aria-label="Help with input fields, uncertainty and validation" title="Data help">?</button></div>
+      <p>Paste a webpage, book or paper table, with or without headings, or enter an observation below. Imported data is added to the existing observations. Ambiguous columns and units can be resolved in a popup.</p>
+      <label class="field"><span class="field-label">Input method</span><select id="fit-input-method"><option value="paste">Paste a table</option><option value="manual">Enter an observation</option></select></label>
+      <div class="fit-data-toolbar"><label class="field"><span class="field-label">Data type</span><select id="fit-data-kind"><option value="AUTO">Auto detect</option></select></label><button id="fit-example" type="button">Show input example</button><button id="fit-clear" type="button">Clear observations</button><button id="fit-parse" class="primary" type="button">Parse and add</button><button id="fit-set-uncertainty" type="button">Set uncertainty</button></div>
+      <div id="fit-paste-controls"><label class="field"><span class="field-label">Paste data</span><textarea id="fit-input" rows="8" spellcheck="false" placeholder="Temp.&#10;°C&#9;% by mole acetone&#10;liquid&#9;vapor&#10;87.8&#9;1.0&#9;33.5"></textarea></label>
+      </div>
+      <div id="fit-manual-controls" hidden><div id="fit-manual-fields" class="fit-entry-grid"></div><label><input id="fit-manual-validation-only" type="checkbox"> Validation-only observation</label></div>
+      <div id="fit-sigma-home"><div class="structured-group" id="fit-sigma-controls" hidden>
+        <p class="field-help">Fill the scales you want to set. They apply to new observations; Apply σ also updates the selected existing set. Empty fields preserve existing row settings and use the model defaults for new rows. These are residual scales, not automatically converted temperature/composition measurement errors.</p>
+        <div id="fit-set-sigma" class="fit-entry-grid"></div>
+        <label class="field"><span class="field-label">Apply to</span><select id="fit-sigma-target"><option value="all">All observations</option></select></label><button id="fit-apply-sigma" type="button">Apply σ to this set</button>
+      </div></div>
+      <template id="fit-help-content">
+        <p>For several measurement columns sharing one composition axis, choose <strong>Repeated series / multicolumn</strong> in the interpretation popup. Assign shared columns and each series’ measurements, then supply its temperature or pressure and units. Repeated columns are expanded only after you explicitly select that mode.</p>
+        <p>Every row needs <code>kind</code> and <code>T_K</code> or <code>T_C</code>. VLE needs <code>P_bar</code> (or <code>P_kPa</code>/<code>P_atm</code>) and <code>x1</code>; <code>y1</code> is optional. LLE needs <code>x1_alpha</code> and <code>x1_beta</code>. HE needs <code>x1</code> and <code>HE_J_mol</code> or <code>HE_kJ_mol</code>. GAMMA_INF needs <code>gamma1_inf</code> and/or <code>gamma2_inf</code>. AZEOTROPE needs <code>x1</code> and pressure; vapor and liquid compositions coincide. UCST/LCST need temperature; <code>x1</code> is optional and otherwise fitted.</p>
+        <p><code>weight</code> upweights a row. <code>pin: true</code> requires every scaled residual for that row to lie within <code>pin_tolerance</code> (default 10⁻⁵), including phase-stability conditions. Incompatible pins fail explicitly. Pins constrain model predictions at the supplied coordinates; they do not fix model coefficients.</p>
+        <p><code>sigma</code> overrides a residual scale: a number for all residuals in that row, or an object with keys shown under Advanced controls. HE scales are J/mol; activity and fugacity scales are logarithmic. Critical curvature and third derivative scales refer to dimensionless g/RT. Critical points also require positive fourth derivative and the correct UCST/LCST temperature direction. <code>source</code> records provenance and <code>group</code> controls grouped validation.</p>
+        <p>Multi-term temperature laws generally need multiple measurement temperatures or additional caloric data. The fit reports rank deficiency when coefficients are not uniquely determined. For joint HE fitting, choose a temperature-dependent law. Examples illustrate the format and are not experimental reference data.</p>
+        <p>VLLE / heteroazeotrope points need temperature and pressure, with optional shared vapor composition. Supply both liquid endpoints or leave both blank to infer the coexisting phases. They have a separate objective weight.</p>
+        <p>Validation-only observations are never fitted or pinned. They appear separately in plots and physical error metrics, and are excluded from training and cross-validation folds.</p>
+      </template>
+      <p id="fit-data-summary"></p><div id="fit-table" class="fit-table-scroll"></div>
+      <section id="fit-results" hidden>
+        <h2>Fit assessment</h2><p id="fit-result-status"></p><div id="fit-warnings" role="status"></div>
+        <h3>Physical errors</h3><div id="fit-physical-metrics" class="fit-table-scroll"></div>
+        <h3>Predicted and observed objectives</h3><div id="fit-objective-plots"></div>
+        <div id="fit-points" class="fit-table-scroll"></div>
+        <details class="structured-group"><summary>Diagnostic data · scaled residuals and objective scores</summary><div id="fit-objectives"></div><div id="fit-plot"></div><div id="fit-diagnostic-points" class="fit-table-scroll"></div></details>
+        <details class="structured-group"><summary>Cross-validation results</summary><div id="fit-validation"></div></details>
+        <details class="structured-group"><summary>Coefficients and solver diagnostics</summary><pre id="fit-coefficients"></pre></details>
+        <h2>Export and apply</h2>
+        <label class="field"><span class="field-label">Individual PFD entries</span><textarea id="fit-entry" rows="6" readonly></textarea></label>
+        <p class="field-help">For UNIQUAC, the R/Q component definitions are included in the complete PFD export. The selected vapor method appears there too.</p>
+        <div class="form-actions"><button id="fit-copy" type="button">Copy entries</button><button id="fit-download" type="button">Download fitted mixture PFD</button><button id="fit-report" type="button">Download full fit report</button></div>
+        <label class="field"><span class="field-label">Apply to existing PFD</span><select id="fit-export-project"><option value="">Choose a laboratory</option></select></label>
+        <div class="form-actions"><button id="fit-export-import" type="button">Choose PFD file</button><input id="fit-export-file" type="file" accept=".pfd" hidden></div>
+        <label class="field"><span class="field-label">Destination scope</span><select id="fit-export-scope"><option value="global">Global</option></select></label>
+        <div id="fit-export-map"></div><p class="field-help">Applying changes the selected scope's method and this pair’s coefficients. Entered Psat, pure-fluid properties, R/Q and VDM definitions apply to the component globally and therefore also affect other scopes using it.</p>
+        <div class="form-actions"><button id="fit-apply" type="button">Apply to laboratory</button><button id="fit-merged-download" type="button">Download updated PFD</button></div>
+        <h2>Submit for general inclusion</h2>
+        <p>Submit the observations, model settings, coefficients and diagnostics with their source for review. Submission does not automatically modify PFDSim’s reference database.</p>
+        <label class="field"><span class="field-label">Source citation (required for submission only)</span><textarea id="fit-source" rows="2" placeholder="Authors, title, journal/year, tables or dataset"></textarea></label>
+        <label class="field"><span class="field-label">Source URL</span><input id="fit-source-url" type="url"></label>
+        <label class="field"><span class="field-label">DOI</span><input id="fit-source-doi"></label>
+        <label class="field"><span class="field-label">Notes / data processing</span><textarea id="fit-source-notes" rows="2"></textarea></label>
+        <button id="fit-submit" type="button">Submit fit for review</button><p id="fit-submission-status" role="status"></p>
+        <button id="fit-admin-direct" type="button" hidden>Publish this fit to runtime · administrator</button>
+      </section>
+    </section>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}<link rel="stylesheet" href="{{ url_for('static', filename='css/parameter-fitting.css') }}"><script type="module" src="{{ url_for('static', filename='js/parameter-fitting.js') }}"></script>{% endblock %}

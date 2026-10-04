@@ -1,0 +1,37 @@
+.fitting-screen .atlas-layout { grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); align-items: start; }
+.fit-workbench { min-width: 0; padding: 24px; }
+.fit-workbench h2 { margin-top: 24px; }
+.fit-panel-heading, .fit-property-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.fit-panel-heading h2 { margin: 0 0 16px; }
+.fit-question-button { display: inline-flex; justify-content: center; align-items: center; width: 30px; height: 30px; min-width: 30px; flex: 0 0 30px; border-radius: 50%; padding: 0; font-size: 17px; font-weight: 600; line-height: 1; }
+.fit-property-heading { align-items: center; margin: 10px 0; }
+.fit-property-heading .field-help { margin: 0; }
+.fit-checkbox-row { display: flex; align-items: flex-start; gap: 9px; margin: 10px 0; font-size: 13px; line-height: 1.5; }
+.fit-checkbox-row[hidden] { display: none; }
+.fit-checkbox-row input[type="checkbox"] { flex: 0 0 18px; width: 18px; height: 18px; margin: 1px 0 0; padding: 0; }
+.fit-run-actions { flex-wrap: wrap; gap: 8px; }
+.fit-data-toolbar { display: flex; gap: 8px; align-items: flex-end; margin: 14px 0; flex-wrap: wrap; }
+.fit-data-toolbar .field { margin: 0; min-width: 140px; }
+.fit-objective-card { margin: 20px 0; padding: 12px; border: 1px solid var(--border, #36505a); border-radius: 8px; }
+.fit-objective-card svg { width: 100%; max-height: 420px; }
+.fit-objective-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; }
+.fit-objective-legend span { display: flex; gap: 5px; align-items: center; }
+.fit-objective-legend i { width: 16px; height: 3px; display: inline-block; }
+.fit-workbench textarea, .fitting-screen .atlas-controls textarea { width: 100%; resize: vertical; font-family: ui-monospace, monospace; }
+.fit-table-scroll { overflow-x: auto; margin: 16px 0; max-height: 520px; overflow-y: auto; }
+.fit-table-scroll table, #fit-objectives table, #fit-validation table { border-collapse: collapse; width: 100%; }
+.fit-table-scroll td, .fit-table-scroll th, #fit-objectives td, #fit-objectives th, #fit-validation td, #fit-validation th { padding: 8px; border-bottom: 1px solid var(--border, #36505a); text-align: left; }
+.fit-table-scroll input:not([type=checkbox]) { min-width: 90px; width: 110px; }
+.fit-table-scroll .fit-coordinate { min-width: 240px; width: 260px; }
+.fit-rq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fit-entry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.fit-import-preview { overflow-x: auto; max-height: 300px; overflow-y: auto; }
+.fit-import-preview table { border-collapse: collapse; width: 100%; }
+.fit-import-preview td, .fit-import-preview th { padding: 6px; border-bottom: 1px solid var(--border, #36505a); text-align: left; }
+.fit-import-preview tr[data-excluded="true"] { opacity: 0.6; }
+.fit-error { color: var(--danger, #ff8996); }
+.fit-workbench pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.fit-workbench .form-actions { flex-wrap: wrap; gap: 8px; }
+#fit-plot svg { width: 100%; max-height: 360px; }
+#fit-objectives, #fit-validation { overflow-x: auto; }
+@media (max-width: 1000px) { .fitting-screen .atlas-layout { grid-template-columns: 1fr; } }

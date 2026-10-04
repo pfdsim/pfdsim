@@ -38,6 +38,7 @@ def preview():
 from pathlib import Path
 from app import app
 app.config['JOB_DIRECTORY']=Path(sys.argv[1])
+app.config['ACTIVITY_FITS_PATH']=Path(sys.argv[1])/'user_activity_fits.sqlite'
 app.run(host='127.0.0.1',port=int(sys.argv[2]))
 """
     if "--gunicorn" in sys.argv:
@@ -46,6 +47,7 @@ from pathlib import Path
 from app import app
 from gunicorn.app.base import BaseApplication
 app.config['JOB_DIRECTORY']=Path(sys.argv[1])
+app.config['ACTIVITY_FITS_PATH']=Path(sys.argv[1])/'user_activity_fits.sqlite'
 class Preview(BaseApplication):
     def load_config(self):
         for key,value in {'bind':'127.0.0.1:'+sys.argv[2],'workers':2,'threads':4,'worker_class':'gthread','timeout':60}.items():

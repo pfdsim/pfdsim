@@ -35,6 +35,7 @@ import {
 const state = {
   pfd: null,
   text: "",
+  savedText: null,
   pending: false,
   id: null,
   filename: "process.pfd",
@@ -345,6 +346,10 @@ function snapshot() {
 function stash() {
   if (!state.pfd || !state.id) return;
   const library = readLocal("pfdsim.laboratories.v1", {});
+  if (state.savedText !== null && library[state.id] && library[state.id].text !== state.savedText) {
+    $("save-status").textContent = "Laboratory changed in another tab · reopen it or export this tab's work";
+    return false;
+  }
   library[state.id] = {
     ...library[state.id],
     ...snapshot(),
@@ -353,9 +358,9 @@ function stash() {
     job: state.job,
     lastJob: state.lastJob,
   };
-  const saved =
-    writeLocal("pfdsim.laboratories.v1", library) &&
-    writeLocal("pfdsim.last.v1", state.id);
+  const librarySaved = writeLocal("pfdsim.laboratories.v1", library);
+  if (librarySaved) state.savedText = state.text;
+  const saved = librarySaved && writeLocal("pfdsim.last.v1", state.id);
   $("save-status").textContent = saved
     ? state.pending
       ? "Text draft saved locally"
@@ -380,6 +385,9 @@ function restore(saved) {
 }
 function ensureEditable() {
   if (state.busy) throw new Error("Wait for the current edit to finish.");
+  const latest = readLocal("pfdsim.laboratories.v1", {})[state.id];
+  if (state.savedText !== null && latest && latest.text !== state.savedText)
+    throw new Error("This laboratory changed in another tab. Reopen it to load the updated definitions, or export this tab’s work first.");
   if (state.pending)
     throw new Error(
       "Apply or discard your source edits before changing the diagram.",
@@ -1487,6 +1495,7 @@ async function loadProject(data, saveCurrent = true) {
   Object.assign(state, {
     pfd: data.pfd,
     text: data.text,
+    savedText: data.text,
     pending: data.pending || false,
     filename: data.filename || "process.pfd",
   });

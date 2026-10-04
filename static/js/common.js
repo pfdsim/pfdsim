@@ -21,8 +21,13 @@ export function toast(message, error = false) {
     { class: `toast${error ? " error" : ""}` },
     message,
   );
+  placeNotifications();
   $("notifications").append(node);
   setTimeout(() => node.remove(), error ? 10000 : 5000);
+}
+function placeNotifications(){
+  const host=$("modal").open?$("modal"):document.body;
+  if($("notifications").parentElement!==host)host.append($("notifications"));
 }
 let sessionState = null,
   sessionRequest = null;
@@ -75,7 +80,9 @@ export function modal(title, content) {
   $("modal-title").textContent = title;
   $("modal-content").replaceChildren(content);
   if (!$("modal").open) $("modal").showModal();
+  placeNotifications();
 }
+$("modal").addEventListener("close",placeNotifications);
 $("modal-close").onclick = () => $("modal").close();
 export function confirmAction(title, message, action, label = "Continue") {
   const box = element("div");
@@ -239,6 +246,11 @@ function accountDialog(active = "login") {
             mode === "register" ? "new-password" : "current-password",
           name: "password",
         });
+      const setupToken = element("input", { type: "password", autocomplete: "off", name: "setup_token" });
+      const tokenLabel = element("label", { class: "field" });
+      tokenLabel.append(element("span", { class: "field-label" }, "Root setup token · from the server"), setupToken);
+      tokenLabel.hidden = true;
+      username.oninput = () => { tokenLabel.hidden = mode !== "register" || username.value.toLowerCase() !== "root"; setupToken.required = !tokenLabel.hidden; };
       for (const [title, input] of [
         ["Username", username],
         ["Password", password],
@@ -247,6 +259,7 @@ function accountDialog(active = "login") {
         label.append(element("span", { class: "field-label" }, title), input);
         form.append(label);
       }
+      form.append(tokenLabel);
       if (mode === "register")
         form.append(
           element(
@@ -273,6 +286,7 @@ function accountDialog(active = "login") {
           await api(`/api/account/${mode}`, {
             username: username.value,
             password: password.value,
+            ...(mode === "register" && username.value.toLowerCase() === "root" ? { setup_token: setupToken.value } : {}),
           });
           location.reload();
         } catch (failure) {

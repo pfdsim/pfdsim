@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from contextlib import contextmanager
 import json
+import os
 from pathlib import Path
 import re
 import secrets
@@ -12,6 +13,11 @@ import sqlite3
 import time
 
 from werkzeug.security import check_password_hash, generate_password_hash
+
+if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+    from .activity_fit_store import ActivityFitStore
+else:
+    from activity_fit_store import ActivityFitStore
 
 GUEST_CPU_SECONDS = 300
 ACCOUNT_CPU_SECONDS = 900
@@ -26,10 +32,11 @@ class AccessLimit(ValueError):
 
 
 class WebStore:
-    def __init__(self, directory):
+    def __init__(self, directory, *, activity_fits_path=None):
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.path = self.directory / "web.sqlite"
+        self.activity_fits_path = Path(activity_fits_path or self.directory / "user_activity_fits.sqlite")
         with self.connect() as db:
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS users (
@@ -38,14 +45,32 @@ class WebStore:
                 CREATE TABLE IF NOT EXISTS flowsheets (
                     id TEXT PRIMARY KEY, owner TEXT, version INTEGER,
                     updated REAL, document TEXT);
+                CREATE TABLE IF NOT EXISTS fit_sessions (
+                    id TEXT PRIMARY KEY, owner TEXT, version INTEGER,
+                    updated REAL, document TEXT);
                 CREATE TABLE IF NOT EXISTS usage (
                     principal TEXT, day TEXT, cpu_seconds REAL,
                     PRIMARY KEY (principal,day));
                 CREATE TABLE IF NOT EXISTS auth_attempts (
                     principal TEXT, timestamp REAL);
+                CREATE TABLE IF NOT EXISTS account_roles (
+                    user_id TEXT PRIMARY KEY, role TEXT NOT NULL);
                 CREATE INDEX IF NOT EXISTS auth_attempts_principal
                     ON auth_attempts(principal,timestamp);
             """)
+        # A generated local token is never sent through HTTP. Claiming root
+        # consumes the credential by committing its role in the same transaction.
+        with self.connect() as db:
+            root_exists = db.execute("SELECT 1 FROM users WHERE username='root'").fetchone()
+        self.root_token_path = self.directory / "root-setup-token"
+        if not root_exists and not os.environ.get("PFDSIM_ROOT_SETUP_TOKEN"):
+            try:
+                descriptor = os.open(self.root_token_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            except FileExistsError:
+                pass
+            else:
+                with os.fdopen(descriptor,"w") as file:
+                    file.write(secrets.token_urlsafe(32)+"\n")
 
     @contextmanager
     def connect(self):
@@ -59,6 +84,13 @@ class WebStore:
     @staticmethod
     def day():
         return datetime.now(timezone.utc).date().isoformat()
+
+    def submit_fit(self, owner, job_id, source, result):
+        """Persist a sourced review artifact independently of job expiration."""
+        return ActivityFitStore(self.activity_fits_path).submit(owner,job_id,source,result)
+
+    def fit_submissions(self, owner):
+        return ActivityFitStore(self.activity_fits_path).list(owner)
 
     def quota(self, principal, limit):
         day = self.day()
@@ -105,7 +137,7 @@ class WebStore:
                 )
             db.execute("INSERT INTO auth_attempts VALUES (?,?)", (principal, now))
 
-    def register(self, username, password, principal):
+    def register(self, username, password, principal, *, setup_token=None):
         self.auth_throttle(principal)
         if not isinstance(username, str) or not re.fullmatch(
             r"[A-Za-z0-9_.-]{3,32}", username
@@ -119,6 +151,13 @@ class WebStore:
         password_hash = generate_password_hash(password, method="scrypt")
         try:
             with self.connect() as db:
+                db.execute("BEGIN IMMEDIATE")
+                if username.casefold() == "root":
+                    if db.execute("SELECT 1 FROM users WHERE username='root'").fetchone():
+                        raise StorageConflict("The root account has already been claimed.")
+                    expected = os.environ.get("PFDSIM_ROOT_SETUP_TOKEN") or self.root_token_path.read_text().strip()
+                    if len(expected)<32 or not isinstance(setup_token,str) or not secrets.compare_digest(setup_token,expected):
+                        raise ValueError("The root account requires the one-time setup token from the server’s root-setup-token file.")
                 db.execute(
                     "INSERT INTO users VALUES (?,?,?,?,?)",
                     (
@@ -129,9 +168,11 @@ class WebStore:
                         time.time(),
                     ),
                 )
+                if username.casefold() == "root":
+                    db.execute("INSERT INTO account_roles VALUES (?,?)", (identifier,"admin"))
         except sqlite3.IntegrityError as error:
             raise StorageConflict("That username is already in use.") from error
-        return {"id": identifier, "username": username}
+        return self.user(identifier)
 
     def login(self, username, password, principal):
         self.auth_throttle(principal)
@@ -148,19 +189,25 @@ class WebStore:
             ).fetchone()
         if row is None or not check_password_hash(row[2], password):
             raise ValueError("Invalid username or password.")
-        return {"id": row[0], "username": row[1]}
+        return self.user(row[0])
 
     def user(self, identifier):
         with self.connect() as db:
             row = db.execute(
                 "SELECT id,display_name FROM users WHERE id=?", (identifier,)
             ).fetchone()
-        return {"id": row[0], "username": row[1]} if row else None
+            role = db.execute("SELECT role FROM account_roles WHERE user_id=?", (identifier,)).fetchone()
+        return {"id": row[0], "username": row[1], "is_admin": bool(role and role[0] == "admin")} if row else None
 
     def flowsheets(self, owner):
+        return self.saved_documents("flowsheets",owner)
+
+    def saved_documents(self, table, owner):
+        if table not in ("flowsheets","fit_sessions"):
+            raise ValueError("Unknown saved-document collection.")
         with self.connect() as db:
             rows = db.execute(
-                "SELECT id,version,updated,document FROM flowsheets WHERE owner=? ORDER BY updated DESC",
+                f"SELECT id,version,updated,document FROM {table} WHERE owner=? ORDER BY updated DESC",
                 (owner,),
             ).fetchall()
         return [
@@ -174,16 +221,6 @@ class WebStore:
         ]
 
     def save_flowsheet(self, owner, identifier, expected_version, document):
-        if not isinstance(identifier, str) or not re.fullmatch(
-            r"[a-zA-Z0-9_-]{8,80}", identifier
-        ):
-            raise ValueError("Invalid laboratory identifier.")
-        if (
-            isinstance(expected_version, bool)
-            or not isinstance(expected_version, int)
-            or expected_version < 0
-        ):
-            raise ValueError("A nonnegative saved version is required.")
         if (
             not isinstance(document, dict)
             or not isinstance(document.get("text"), str)
@@ -202,24 +239,44 @@ class WebStore:
             key: document.get(key)
             for key in ("pfd", "text", "pending", "filename", "job", "lastJob", "layout")
         }
+        return self.save_document("flowsheets",owner,identifier,expected_version,document)
+
+    def save_document(self, table, owner, identifier, expected_version, document):
+        if table not in ("flowsheets","fit_sessions"):
+            raise ValueError("Unknown saved-document collection.")
+        if not isinstance(identifier,str) or not re.fullmatch(r"[a-zA-Z0-9_-]{8,80}",identifier):
+            raise ValueError("Invalid saved-document identifier.")
+        if isinstance(expected_version,bool) or not isinstance(expected_version,int) or expected_version<0:
+            raise ValueError("A nonnegative saved version is required.")
         encoded = json.dumps(document, allow_nan=False)
         now = time.time() * 1000
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             current = db.execute(
-                "SELECT owner,version FROM flowsheets WHERE id=?", (identifier,)
+                f"SELECT owner,version FROM {table} WHERE id=?", (identifier,)
             ).fetchone()
             if current is not None and current[0] != owner:
                 raise StorageConflict(
-                    "This laboratory belongs to another account. Save a new copy."
+                    "This saved document belongs to another account. Save a new copy."
                 )
             if (current[1] if current else 0) != expected_version:
                 raise StorageConflict(
-                    "Another session saved this laboratory. Your local draft is safe; open the saved laboratory list to review both versions."
+                    "Another session saved this document. Your local draft is safe; reload the saved list or save a new copy."
                 )
             version = expected_version + 1
             db.execute(
-                "INSERT INTO flowsheets VALUES (?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,updated=excluded.updated,document=excluded.document",
+                f"INSERT INTO {table} VALUES (?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,updated=excluded.updated,document=excluded.document",
                 (identifier, owner, version, now, encoded),
             )
         return {"id": identifier, "version": version, "updated": now}
+
+    def save_fit_session(self,owner,identifier,expected_version,document):
+        if not isinstance(document,dict) or document.get("type")!="pfdsim_fit_session" or document.get("schema_version")!=1:
+            raise ValueError("Provide a PFDSim fitting-session document.")
+        if not isinstance(document.get("name"),str) or not document["name"].strip() or len(document["name"])>120:
+            raise ValueError("Give the fitting session a name of 1–120 characters.")
+        state=document.get("state")
+        if not isinstance(state,dict) or not isinstance(state.get("controls"),dict) or not isinstance(state.get("observations"),list):
+            raise ValueError("A fitting session must contain its controls and observation data.")
+        document={"type":"pfdsim_fit_session","schema_version":1,"name":document["name"].strip(),"state":state}
+        return self.save_document("fit_sessions",owner,identifier,expected_version,document)

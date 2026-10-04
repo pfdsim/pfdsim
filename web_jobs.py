@@ -127,8 +127,8 @@ def finite_json(value):
 
 
 class JobStore(WebStore):
-    def __init__(self, directory, *, capacity=2, deadline=1800):
-        super().__init__(directory)
+    def __init__(self, directory, *, capacity=2, deadline=1800, activity_fits_path=None):
+        super().__init__(directory, activity_fits_path=activity_fits_path)
         self.capacity = capacity
         self.deadline = deadline
         with self.connect() as db:
@@ -416,6 +416,36 @@ def calculate_chart(payload, progress, simulators):
     }
 
 
+def calculate_fit(payload, progress, simulators=None):
+    from thermodynamics_models.interaction_fitting import fit_interactions
+
+    return fit_interactions(payload, progress=progress)
+
+
+def calculate_fit_prefill(payload, progress, simulators=None):
+    from thermodynamics_models.interaction_fitting import prepare_fit
+
+    progress("Resolving component definitions and UNIQUAC structural parameters")
+    problem = prepare_fit(payload)
+    return {
+        "success": True,
+        "components": list(problem.components),
+        "identifiers": payload["components"],
+        "component_names": [problem.thermo.props[c].name for c in problem.components],
+        "rq": [{"r": problem.thermo.r[c], "q": problem.thermo.q[c]} for c in problem.components],
+        "warnings": problem.thermo.warnings,
+    }
+
+
+def calculate_fit_publish(payload, progress, simulators=None):
+    from scripts.build_cas_interaction_parameters import publish_user_fit
+    result = publish_user_fit(payload["id"],user_fits_path=payload["activity_fits_path"],actor=payload["actor"],
+                              action=payload["action"],notes=payload.get("notes",""),progress=progress)
+    if simulators is not None:
+        simulators.clear()
+    return result
+
+
 def calculate_groups(payload, progress, simulators=None):
     from chemical_properties import get_database
     from unifac import get_unifac_groups, parse_smiles_to_unifac, RDKIT_AVAILABLE
@@ -522,6 +552,9 @@ def run_calculation(store, identifier, simulators):
             "simulation": calculate_simulation,
             "chart": calculate_chart,
             "groups": calculate_groups,
+            "fit": calculate_fit,
+            "fit_prefill": calculate_fit_prefill,
+            "fit_publish": calculate_fit_publish,
         }[kind]
         output = calculate(json.loads(raw_payload), progress, simulators)
         if account():
