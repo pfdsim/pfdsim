@@ -271,6 +271,20 @@ class VaporPressureMixin:
         )
         return runtime.evaluator(float(T))
 
+    def vapor_pressure_quality_samples(self,symbol,Tmin,Tmax,props=None,allow_online=True):
+        """Public regional quality/provenance audit for a canonical Psat curve."""
+        allow_online = self._props_allow_online(props,allow_online)
+        props = self._coerce_props(symbol,props,allow_online=allow_online)
+        runtime = self._canonical_vapor_pressure_runtime(symbol,props,allow_online=allow_online,minimum_pressure_bar=self._canonical_minimum_pressure_bar(props,None))
+        boundaries = {float(Tmin),float(Tmax)}
+        for segment in runtime.curve.provenance:
+            for temperature in (segment.T_min,segment.T_max):
+                if Tmin<temperature<Tmax:
+                    boundaries.add(float(temperature))
+        ordered = sorted(boundaries)
+        temperatures = sorted(boundaries | {(a+b)/2 for a,b in zip(ordered,ordered[1:])})
+        return [(T,runtime.evaluator(T)) for T in temperatures]
+
     def resolve_vapor_pressure_coefficients(
         self,
         symbol: str,

@@ -1,6 +1,7 @@
 from .common import *
 
 from contextlib import contextmanager
+from .log_correlations import dippr101_log_value
 
 
 class PropertyResolverBase:
@@ -784,13 +785,7 @@ class PropertyResolverBase:
                     # the Arrhenius-with-log form. General log-property correlation
                     # used for e.g. liquid viscosity ('mul', Pa*s) or vapor
                     # pressure; returns the property in its stored units.
-                    exponent_E = coeffs.get('E', 1.0)
-                    value = math.exp(
-                        coeffs.get('A', 0.0)
-                        + coeffs.get('B', 0.0) / T
-                        + coeffs.get('C', 0.0) * math.log(T)
-                        + coeffs.get('D', 0.0) * T ** exponent_E
-                    )
+                    value = math.exp(dippr101_log_value(T, coeffs))
                     return value, correlation
 
                 if equation == 'dippr_eq100':

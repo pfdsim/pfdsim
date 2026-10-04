@@ -96,6 +96,7 @@ _ANTOINE_OVERRIDE_FIELDS = (
 )
 
 _PSAT_EQUATION_COEFFICIENTS = {
+    "dippr_eq101": (tuple("ABCDE"), frozenset("ABCDE")),
     "poly_x": (("A",), frozenset("ABCDEF")),
     "exp_poly_x": (("A",), frozenset("ABCDEF")),
     "reduced_vapor_pressure": (("A", "B", "C", "D"), frozenset("ABCD")),

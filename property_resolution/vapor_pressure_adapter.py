@@ -11,6 +11,7 @@ from typing import Any, Callable, Mapping, Optional
 
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
+from .log_correlations import dippr101_log_value, dippr101_log_derivative
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..pressure_standards import NORMAL_BOILING_PRESSURE_BAR
@@ -5037,6 +5038,7 @@ _CANONICAL_PSAT_EQUATIONS = {
     "canonical_psat_ah": CanonicalPsatForm.AH,
 }
 _SUPPORTED_PINNED_PSAT_EQUATIONS = frozenset({
+    "dippr_eq101",
     "poly_x",
     "exp_poly_x",
     "reduced_vapor_pressure",
@@ -5082,6 +5084,8 @@ def _required_coefficients(
         required = ["A", "B", "C", "D", "E", "F"]
     elif equation == "reduced_vapor_pressure":
         required = ["A", "B", "C", "D"]
+    elif equation == "dippr_eq101":
+        required = list("ABCDE")
     else:
         required = ["A"]
     if form in {CanonicalPsatForm.AG, CanonicalPsatForm.AH}:
@@ -5118,6 +5122,9 @@ def _psat_correlation_functions(
     correlation: Mapping[str, Any],
     component: Any,
 ) -> tuple[Callable[[float], float], Callable[[float], float]]:
+    if equation == "dippr_eq101":
+        return (lambda T: dippr101_log_value(T, coefficients),
+                lambda T: dippr101_log_derivative(T, coefficients))
     if equation in _CANONICAL_PSAT_EQUATIONS:
         form = _CANONICAL_PSAT_EQUATIONS[equation]
         inverse_power = _canonical_inverse_power(
