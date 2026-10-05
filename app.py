@@ -767,13 +767,17 @@ def api_unit_templates():
 
 def submit(kind, payload):
     owner, principal, limit, _ = identity()
+    store = jobs()
     try:
-        identifier = jobs().submit(
+        identifier = store.submit(
             kind, payload, owner=owner, principal=principal, cpu_limit=limit
         )
     except RuntimeError as error:
         return respond({"success": False, "error": str(error)}, 429)
-    return respond({"success": True, "job_id": identifier, "status": "queued"}, 202)
+    return respond({
+        "success": True, "job_id": identifier, "status": "queued",
+        "quota": store.quota(principal, limit),
+    }, 202)
 
 
 def flowsheet_payload(pfd):

@@ -21,6 +21,7 @@ else:
 
 GUEST_CPU_SECONDS = 300
 ACCOUNT_CPU_SECONDS = 900
+ACCOUNT_CPU_GRACE_SECONDS = 15
 
 
 class StorageConflict(ValueError):
@@ -92,9 +93,24 @@ class WebStore:
     def fit_submissions(self, owner):
         return ActivityFitStore(self.activity_fits_path).list(owner)
 
+    @staticmethod
+    def _cpu_allowance(db, principal, limit):
+        """Resolve account limits and running-job grace from the stored identity."""
+        if principal.startswith("user:"):
+            user = db.execute(
+                "SELECT username FROM users WHERE id=?",
+                (principal.removeprefix("user:"),),
+            ).fetchone()
+            if user:
+                if user[0] == "root":
+                    return None, 0
+                return limit, ACCOUNT_CPU_GRACE_SECONDS
+        return limit, 0
+
     def quota(self, principal, limit):
         day = self.day()
         with self.connect() as db:
+            limit, grace = self._cpu_allowance(db, principal, limit)
             row = db.execute(
                 "SELECT cpu_seconds FROM usage WHERE principal=? AND day=?",
                 (principal, day),
@@ -104,15 +120,19 @@ class WebStore:
             "day": day,
             "limit_seconds": limit,
             "used_seconds": used,
-            "remaining_seconds": max(0.0, limit - used),
+            "remaining_seconds": None if limit is None else max(0.0, limit - used),
+            "grace_seconds": grace,
             "reset_timezone": "UTC",
         }
 
-    def charge(self, principal, limit, seconds, *, day=None):
+    def charge(self, principal, limit, seconds, *, day=None, allow_grace=False):
         """Serialize debits across both computation workers, never HTTP workers."""
         day = day or self.day()
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
+            limit, grace = self._cpu_allowance(db, principal, limit)
+            if limit is not None and allow_grace:
+                limit += grace
             db.execute(
                 "INSERT INTO usage VALUES (?,?,?) ON CONFLICT(principal,day) DO UPDATE SET cpu_seconds=cpu_seconds+excluded.cpu_seconds",
                 (principal, day, max(0.0, seconds)),
@@ -121,7 +141,7 @@ class WebStore:
                 "SELECT cpu_seconds FROM usage WHERE principal=? AND day=?",
                 (principal, day),
             ).fetchone()[0]
-        return used >= limit
+        return limit is not None and used >= limit
 
     def auth_throttle(self, principal):
         now = time.time()

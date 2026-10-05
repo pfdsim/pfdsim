@@ -197,10 +197,13 @@ class JobStore(WebStore):
     ):
         # Reap dead children before admission. The transaction then serializes
         # admission across every HTTP worker.
-        if self.quota(principal, cpu_limit)["remaining_seconds"] <= 0:
+        quota = self.quota(principal, cpu_limit)
+        remaining = quota["remaining_seconds"]
+        if remaining is not None and remaining <= 0:
             raise AccessLimit(
                 "Your daily computation allowance is exhausted. It resets at 00:00 UTC."
             )
+        cpu_limit = quota["limit_seconds"]
         with self.connect() as db:
             ids = db.execute(
                 "SELECT id FROM jobs WHERE status IN ('queued','running')"
@@ -489,7 +492,8 @@ def run_calculation(store, identifier, simulators):
     if row is None or row[2] in TERMINAL:
         return
     kind, raw_payload, _, principal, cpu_limit = row
-    if store.quota(principal, cpu_limit)["remaining_seconds"] <= 0:
+    remaining = store.quota(principal, cpu_limit)["remaining_seconds"]
+    if remaining is not None and remaining <= 0:
         store.update(
             identifier,
             status="failed",
@@ -508,7 +512,9 @@ def run_calculation(store, identifier, simulators):
         nonlocal charged
         with accounting_lock:
             current = meter.cpu_seconds()
-            exhausted = store.charge(principal, cpu_limit, max(0.0, current - charged))
+            exhausted = store.charge(
+                principal, cpu_limit, max(0.0, current - charged), allow_grace=True
+            )
             charged = current
             store.update(identifier, cpu_seconds=current)
             return exhausted

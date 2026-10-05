@@ -31,6 +31,19 @@ function placeNotifications(){
 }
 let sessionState = null,
   sessionRequest = null;
+const cpuWarningTimes = new Map();
+const CPU_WARNING_COOLDOWN_MS = 60_000;
+function warnLowComputeBudget(quota) {
+  const remaining = quota.remaining_seconds;
+  if (remaining === null || remaining >= 60) return;
+  const key = `pfdsim.compute-warning.v1.${sessionState.user?.id || "guest"}`;
+  const now = Date.now();
+  const last = Math.max(readLocal(key, 0), cpuWarningTimes.get(key) || 0);
+  if (now - last < CPU_WARNING_COOLDOWN_MS) return;
+  cpuWarningTimes.set(key, now);
+  writeLocal(key, now);
+  toast("Less than 1 CPU minute remains in your daily allowance.");
+}
 export async function getSession(refresh = false) {
   if (!refresh && sessionState) return sessionState;
   if (!sessionRequest)
@@ -72,7 +85,14 @@ export async function api(path, data, options = {}) {
   }
   if (result.csrf_token) {
     sessionState = result;
+  } else if (result.quota && sessionState) {
+    sessionState = { ...sessionState, quota: result.quota };
+  }
+  if (result.quota) {
     renderAccountStatus();
+  }
+  if (response.status === 202 && result.job_id && result.quota) {
+    warnLowComputeBudget(result.quota);
   }
   return result;
 }
@@ -200,18 +220,28 @@ function renderAccountStatus() {
   if (!sessionState || !$("account-button")) return;
   $("account-button").textContent =
     sessionState.user?.username || "Guest · sign in";
+  if (sessionState.quota.limit_seconds === null) {
+    $("compute-budget").textContent = "Unlimited CPU usage";
+    $("compute-budget").title = "Backend compute only. No daily CPU limit.";
+    return;
+  }
   const remaining = sessionState.quota.remaining_seconds;
   $("compute-budget").textContent =
     `${Math.floor(remaining / 60)}m ${Math.floor(remaining % 60)}s CPU left`;
   $("compute-budget").title =
-    `Backend compute only. ${sessionState.quota.limit_seconds / 60} minutes per day. Resets at 00:00 UTC.`;
+    `Backend compute only. ${sessionState.quota.limit_seconds / 60} minutes per day. Resets at 00:00 UTC.` +
+    (sessionState.quota.grace_seconds > 0
+      ? ` Running work may use up to ${sessionState.quota.grace_seconds} additional CPU seconds; new tasks require remaining allowance.`
+      : "");
 }
 function accountDialog(active = "login") {
   const box = element("div");
   const description = element(
     "p",
     {},
-    "Guest: 5 CPU minutes per day. Account: 15 CPU minutes per day, with laboratories autosaved to your account. Budgets reset at 00:00 UTC. Waiting and web requests do not count.",
+    sessionState?.quota.limit_seconds === null
+      ? "Root has unlimited daily CPU usage, with laboratories autosaved to your account. Waiting and web requests do not count."
+      : "Guest: 5 CPU minutes per day. Account: 15 CPU minutes per day, with up to 15 additional CPU seconds for work already running and laboratories autosaved to your account. Budgets reset at 00:00 UTC. Waiting and web requests do not count.",
   );
   box.append(description);
   if (sessionState?.user) {
