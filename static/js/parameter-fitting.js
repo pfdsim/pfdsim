@@ -237,6 +237,12 @@ const manualRoles = {
   VLLE:["temperature","pressure","x1_alpha","x1_beta","y1"],
 };
 function dataKind() { return $("fit-data-kind").value === "AUTO" ? "VLE" : $("fit-data-kind").value; }
+function importOptionsForKind(options, kind) {
+  const retained = new Set(["table", "column_count", "row_count", "layout", "exclude_rows", "cell_edits"]);
+  const result = Object.fromEntries(Object.entries(options).filter(([key]) => retained.has(key)));
+  if (kind !== "AUTO") result.kind = kind;
+  return result;
+}
 function vaporPropertiesApplicable() {
   const vaporKinds=["VLE","AZEOTROPE","VLLE"];
   if(observations.some(row=>vaporKinds.includes(row.kind)&&(row.pin||row.validation_only||(row.weight??1)*Number($(`fit-weight-${row.kind}`).value)>0)))return true;
@@ -407,15 +413,23 @@ function importPreview(text, initial, initialOptions) {
     const repeated=element("button",{type:"button",id:"fit-import-repeated"},"Repeated series / multicolumn");
     const add = element("button", { type: "button", class: "primary", id: "fit-import-add" }, "Review and add"), cancel = element("button", { type: "button" }, "Cancel");
     let proposal = initial, finished = false, revision = 0;
-    let seriesMode=Array.isArray(initial.series),seriesSpecs=structuredClone(initial.series||[]),assignments=initial.columns.map(column=>initial.shared_columns?.includes(column.index)?"shared":String(seriesSpecs.findIndex(spec=>spec.columns?.includes(column.index))));
+    function seriesAssignments(value) {
+      return value.columns.map(column => {
+        if (value.shared_columns?.includes(column.index)) return "shared";
+        const group = value.series?.findIndex(spec => spec.columns?.includes(column.index)) ?? -1;
+        return group < 0 ? "ignore" : String(group);
+      });
+    }
+    let seriesMode=Array.isArray(initial.series),seriesSpecs=structuredClone(initial.series||[]),assignments=seriesAssignments(initial);
     let seriesInputs=[];
-    let seriesPreset="",singleMapping=initial.columns.map(column=>column.role);
+    let seriesPreset=seriesMode ? initial.series_inferred ? "detected" : "custom" : "",singleMapping=initial.columns.map(column=>column.role);
     const options = { ...initial.settings, ...initialOptions, table: initial.table, mapping: initial.columns.map(column => column.role) };
     let cellEdits = new Map((initial.cell_edits || initialOptions.cell_edits || []).map(edit => [`${edit.row}:${edit.column}`, edit]));
     const inputs = {};
     const changedControls = new Set();
     function capture() {
       const result = { ...options, cell_edits: Array.from(cellEdits.values()), mapping: Array.from(mappingContainer.querySelectorAll("select[data-field-role]"), select => select.value) };
+      result.infer_series = seriesMode;
       for (const [key, control] of Object.entries(inputs)) {
         if (["pressure", "temperature", "row_count", "column_count", "composition_component", "table"].includes(key)) result[key] = control.value === "" ? null : Number(control.value);
         else result[key] = control.value;
@@ -439,7 +453,8 @@ function importPreview(text, initial, initialOptions) {
         });
         result.mapping=result.mapping.map((role,index)=>groups[index]==="ignore"?"ignore":role);
       }else{delete result.series;delete result.shared_columns;}
-      pendingImport={text,options:structuredClone(result)};saveDraft();return result;
+      const captured = result.kind === proposal.settings.kind ? result : importOptionsForKind(result, result.kind);
+      pendingImport={text,options:structuredClone(captured)};saveDraft();return captured;
     }
     async function refresh() {
       const ticket = ++revision;
@@ -475,23 +490,31 @@ function importPreview(text, initial, initialOptions) {
       seriesPreset=preset;
       if(!preset){seriesSpecs=[];renderSeries();add.disabled=true;return;}
       const width=proposal.columns.length,roles=Array(width).fill("ignore");assignments=Array(width).fill("ignore");seriesSpecs=[];
-      const create=(columns,condition)=>{const index=seriesSpecs.length;seriesSpecs.push({name:`Series ${index+1}`,columns,...seriesHints(columns,condition)});columns.forEach(column=>assignments[column]=String(index));};
-      if(preset==="HE"){
+      const create=(columns,condition,defaults={})=>{const index=seriesSpecs.length;seriesSpecs.push({name:`Series ${index+1}`,columns,...seriesHints(columns,condition),...defaults});columns.forEach(column=>assignments[column]=String(index));};
+      const detected = proposal.series_suggestion;
+      if (detected && (preset === "detected" || preset === "TxyTriples" && detected.layout === "TxyGroups" || preset === "PxyTriples" && detected.layout === "PxyGroups")) {
+        inputs.kind.value = "VLE";
+        detected.mapping.forEach((role, index) => roles[index] = role);
+        const condition = detected.layout === "TxyGroups" ? "pressure" : "temperature";
+        for (const spec of detected.series) create(spec.columns, condition, structuredClone(spec));
+      }else if(preset==="HE"){
         inputs.kind.value="HE";roles[0]="x1";assignments[0]="shared";
         for(let column=1;column<width;column++){roles[column]="enthalpy";create([column],"temperature");}
       }else if(["Txy","Tx","Pxy","Px"].includes(preset)){
         inputs.kind.value="VLE";roles[0]="x1";assignments[0]="shared";
         const stride=["Tx","Px"].includes(preset)?1:2,measured=preset.startsWith("T")?"temperature":"pressure",condition=measured==="temperature"?"pressure":"temperature";
         for(let column=1;column<width;column+=stride){const columns=[column];roles[column]=measured;if(stride===2&&column+1<width){columns.push(column+1);roles[column+1]="y1";}create(columns,condition);}
-      }else if(preset==="TxyTriples"){
+      }else if(["TxyTriples", "PxyTriples"].includes(preset)){
         inputs.kind.value="VLE";
-        for(let column=0;column<width;column+=3){const columns=[];for(let offset=0;offset<3&&column+offset<width;offset++){roles[column+offset]=["temperature","x1","y1"][offset];columns.push(column+offset);}create(columns,"pressure");}
+        const axis = preset === "TxyTriples" ? "temperature" : "pressure", condition = axis === "temperature" ? "pressure" : "temperature";
+        const usable = proposal.columns.filter(column => !["calculated column", "uncertainty column"].includes(column.reason)).map(column => column.index);
+        for(let start=0;start<usable.length;start+=3){const columns=usable.slice(start,start+3);columns.forEach((column,offset)=>roles[column]=[axis,"x1","y1"][offset]);create(columns,condition);}
       }else{
         proposal.columns.forEach((column,index)=>roles[index]=column.role);
         seriesSpecs=[{name:"Series 1",columns:[]},{name:"Series 2",columns:[]}];
         proposal.columns.forEach((column,index)=>{assignments[index]=["x1","temperature","pressure"].includes(column.role)&&roles.filter(role=>role===column.role).length===1?"shared":"0";});
       }
-      proposal={...proposal,columns:proposal.columns.map((column,index)=>({...column,role:roles[index]}))};
+      proposal={...proposal,settings:{...proposal.settings,kind:inputs.kind.value},columns:proposal.columns.map((column,index)=>({...column,role:roles[index]}))};
       renderSeries();renderMappings();refresh();
     }
     function renderSeries(){
@@ -499,7 +522,8 @@ function importPreview(text, initial, initialOptions) {
       repeated.textContent=seriesMode?"Use single-series mode":"Repeated series / multicolumn";
       if(!seriesMode)return;
       seriesContainer.append(element("h3",{},"Repeated-series layout"),element("p",{class:"field-help"},"Shared columns are reused. Assign each other column to one series, then specify its conditions. Nothing is added until every selected series is ready."));
-      const layout=choose([["","Choose a layout"],["HE","Shared x + HE columns at different temperatures"],["Txy","Shared x + repeated T / vapor pairs"],["Tx","Shared x + temperature columns at different pressures"],["Pxy","Shared x + repeated P / vapor pairs"],["Px","Shared x + pressure columns at different temperatures"],["TxyTriples","Repeated temperature / liquid / vapor triples"],["custom","Custom column groups"]],seriesPreset,"fit-import-series-layout");
+      const detectedChoice = proposal.series_suggestion ? [["detected", proposal.series_suggestion.layout === "TxyGroups" ? "Recognized temperature / liquid / vapor groups" : "Recognized pressure / liquid / vapor groups"]] : [];
+      const layout=choose([["","Choose a layout"],...detectedChoice,["HE","Shared x + HE columns at different temperatures"],["Txy","Shared x + repeated T / vapor pairs"],["Tx","Shared x + temperature columns at different pressures"],["Pxy","Shared x + repeated P / vapor pairs"],["Px","Shared x + pressure columns at different temperatures"],["TxyTriples","Repeated temperature / liquid / vapor triples"],["PxyTriples","Repeated pressure / liquid / vapor triples"],["custom","Custom column groups"]],seriesPreset,"fit-import-series-layout");
       layout.onchange=()=>presetSeries(layout.value);seriesContainer.append(labeled("Layout",layout));
       if(!seriesSpecs.length){add.disabled=true;return;}
       const count=element("input",{id:"fit-import-series-count",type:"number",min:1,max:30,step:1});count.value=seriesSpecs.length;
@@ -507,7 +531,7 @@ function importPreview(text, initial, initialOptions) {
       seriesContainer.append(labeled("Number of series",count));
       seriesSpecs.forEach((spec,index)=>{
         const row=element("div",{class:"structured-group"}),grid=element("div",{class:"fit-entry-grid"});row.append(element("h4",{},`Series ${index+1}`));const nodes={};seriesInputs.push(nodes);
-        function field(key,label,choices){const node=choices?choose(choices,spec[key]??"",`fit-import-series-${index}-${key}`):element("input",{id:`fit-import-series-${index}-${key}`,type:key==="name"?"text":"number",step:"any"});if(!choices)node.value=spec[key]??"";nodes[key]=node;node.onchange=guarded(refresh);grid.append(labeled(label,node));}
+        function field(key,label,choices){const node=choices?choose(choices,spec[key]??"",`fit-import-series-${index}-${key}`):element("input",{id:`fit-import-series-${index}-${key}`,type:key==="name"?"text":"number",step:"any"});if(!choices)node.value=spec[key]??"";nodes[key]=node;node.oninput=()=>{++revision;};node.onchange=guarded(refresh);grid.append(labeled(label,node));}
         field("name","Name");
         field("temperature","Temperature · if not in a data column");field("temperature_unit","Temperature unit",[["","Use common unit"],...temperatureUnits]);
         if(["VLE","VLLE","AZEOTROPE","LLE"].includes(inputs.kind.value)){field("pressure","Pressure · if not in a data column");field("pressure_unit","Pressure unit",[["","Use common unit"],...pressureUnits]);}
@@ -520,7 +544,8 @@ function importPreview(text, initial, initialOptions) {
       if(seriesMode){seriesMode=false;seriesSpecs=[];proposal={...proposal,columns:proposal.columns.map((column,index)=>({...column,role:singleMapping[index]||"ignore"}))};renderSeries();renderMappings();refresh();return;}
       seriesMode=true;singleMapping=Array.from(mappingContainer.querySelectorAll("select[data-field-role]"),select=>select.value);
       const roles=singleMapping;
-      if(inputs.kind.value==="HE")presetSeries("HE");
+      if(proposal.series_suggestion)presetSeries("detected");
+      else if(inputs.kind.value==="HE")presetSeries("HE");
       else if(roles.filter(role=>role==="temperature").length>1&&roles.filter(role=>role==="x1").length===1)presetSeries(roles.filter(role=>role==="y1").length>1?"Txy":"Tx");
       else{seriesSpecs=[];renderSeries();renderMappings();messages.replaceChildren(element("p",{class:"field-help"},"Choose a repeated-series layout and fill its conditions."));add.disabled=true;}
     };
@@ -530,7 +555,7 @@ function importPreview(text, initial, initialOptions) {
       if (ticket !== revision || finished) return;
       proposal = updated;
       cellEdits = new Map((updated.cell_edits || []).map(edit => [`${edit.row}:${edit.column}`, edit]));
-      seriesMode=false;seriesSpecs=[];assignments=[];renderSeries();
+      seriesMode=Array.isArray(updated.series);seriesSpecs=structuredClone(updated.series||[]);assignments=seriesAssignments(updated);seriesPreset=seriesMode ? updated.series_inferred ? "detected" : "custom" : "";
       for (const key of Object.keys(options)) delete options[key];
       Object.assign(options, updated.settings, { table: updated.table });
       for (const [key, node] of Object.entries(inputs)) {
@@ -541,7 +566,7 @@ function importPreview(text, initial, initialOptions) {
         else if (key === "mw1" || key === "mw2") node.value = updated.settings.molecular_weights?.[key === "mw1" ? 0 : 1] ?? "";
         else node.value = updated.settings[key] ?? "";
       }
-      renderMappings(); display();
+      renderSeries(); renderMappings(); display();
     }
     function display() {
       messages.replaceChildren(...proposal.notes.map(note => element("p", { class: "field-help" }, note)), ...proposal.issues.map(issue => element("p", { class: "fit-error" }, issue)));
@@ -581,9 +606,13 @@ function importPreview(text, initial, initialOptions) {
     function control(key, label, choices, value) {
       const node = choices ? choose(choices, value, `fit-import-${key}`) : element("input", { id: `fit-import-${key}`, type: "number", step: "any" });
       if (!choices) node.value = value ?? "";
-      inputs[key] = node; node.onchange = guarded(() => { changedControls.add(key); return refresh(); }); controls.append(labeled(label, node)); return node;
+      inputs[key] = node; node.oninput = () => { ++revision; }; node.onchange = guarded(() => { changedControls.add(key); return refresh(); }); controls.append(labeled(label, node)); return node;
     }
-    control("kind", "Observation kind", catalog.kinds.map(kind => [kind, labels[kind]]), options.kind);
+    const kindControl = control("kind", "Observation kind", catalog.kinds.map(kind => [kind, labels[kind]]), options.kind);
+    kindControl.onchange = guarded(async () => {
+      changedControls.clear();
+      await reshape(importOptionsForKind(capture(), kindControl.value));
+    });
     control("temperature_unit", "Temperature unit · confirm if suggested", temperatureUnits, options.temperature_unit);
     control("temperature", "Common temperature (if absent from rows)", null, options.temperature);
     control("pressure_unit", "Pressure unit", [["", "Choose if unknown"], ...pressureUnits], options.pressure_unit || "");
@@ -620,15 +649,28 @@ function importPreview(text, initial, initialOptions) {
     }
     repeated.hidden=proposal.series_available===false;
     footer.append(add, cancel); box.append(controls,repeated,seriesContainer,element("h3", {}, "Column meanings"), mappingContainer, messages, preview, footer);
-    cancel.onclick = () => $("modal").close();
+    const dialog = $("modal"), closeButton = $("modal-close");
+    function finishPreview(value, preserveDraft = false) {
+      if (finished) return;
+      if (preserveDraft) capture();
+      finished = true;
+      dialog.removeEventListener("close", dismissPreview);
+      dialog.removeEventListener("cancel", dismissPreview);
+      closeButton.removeEventListener("click", dismissPreview);
+      resolve(value);
+    }
+    function dismissPreview() { finishPreview(null, true); }
+    cancel.onclick = () => { dismissPreview(); dialog.close(); };
     add.onclick = guarded(async () => {
       // Revalidate the current controls, including edits that have not blurred.
       ++revision; add.disabled = true;
       const updated = await api("/api/fitting/parse", { observations: text, components: componentNames(), import_options: capture() });
       proposal = updated; display(); if (!proposal.ready) return;
-      finished = true; $("modal").close(); resolve(proposal);
+      finishPreview(proposal); dialog.close();
     });
-    $("modal").addEventListener("close", () => { if (!finished) {capture(); finished = true; resolve(null); } }, { once: true });
+    dialog.addEventListener("close", dismissPreview);
+    dialog.addEventListener("cancel", dismissPreview);
+    closeButton.addEventListener("click", dismissPreview);
     modal("Interpret pasted observations", box); display();
   });
 }
@@ -889,7 +931,7 @@ async function initialize() {
   fields.forEach(name => $(`fit-${name}`).addEventListener("change", saveDraft));
   $("fit-model").addEventListener("change", updateModel); $("fit-law").addEventListener("change", updateModel);
   $("fit-vapor").addEventListener("change", () => { renderVaporParameters(); renderPsat();saveDraft(); });
-  $("fit-input").addEventListener("input", () => { inputDirty = true; saveDraft(); });
+  $("fit-input").addEventListener("input", () => { pendingImport = null; inputDirty = true; saveDraft(); });
   $("fit-parse").onclick = guarded(parseInput);
   const sessionLibrary=fittingSessionLibrary({capture:captureFitState,restore:restoreFitState,canOpen:()=>!activeJob});
   $("fit-saved-sessions").onclick=guarded(()=>sessionLibrary.open());
@@ -911,7 +953,13 @@ async function initialize() {
   };
   $("fit-manual-validation-only").onchange = ()=>{manualValues.validation_only=$("fit-manual-validation-only").checked;saveDraft();};
   $("fit-input-method").addEventListener("change", () => {if($("fit-input-method").value==="manual"&&$("fit-data-kind").value==="AUTO")$("fit-data-kind").value="VLE";renderManual();renderPsat();saveDraft();});
-  $("fit-data-kind").addEventListener("change", ()=>{renderManual();renderPsat();});
+  $("fit-data-kind").addEventListener("change", () => {
+    if (pendingImport) {
+      pendingImport = { ...pendingImport, options: importOptionsForKind(pendingImport.options, $("fit-data-kind").value) };
+      $("fit-progress").textContent = "Data type changed; review column assignments and conditions again. Cell edits are preserved.";
+    }
+    renderManual(); renderPsat(); saveDraft();
+  });
   $("fit-clear").onclick = clearObservationsPopup;
   $("fit-apply-sigma").onclick = guarded(() => {
     const sigma = sigmaOverrides(); if (!Object.keys(sigma).length) throw new Error("Fill at least one uncertainty scale first.");

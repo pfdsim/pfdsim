@@ -86,6 +86,15 @@ def test_missing_values_corrections_and_flat_dimensions_http(client):
     assert len(response.get_json()["observations"]) == 2
 
 
+@pytest.mark.parametrize("axis", ["T", "P"])
+def test_grouped_vle_table_http_preserves_conditions_and_ignores_fitted_values(client, axis):
+    from .test_grouped_vle_import import grouped_table, assert_grouped_points
+
+    response = client.post("/api/fitting/parse", json={"observations": grouped_table(axis, junk=True)})
+    assert response.status_code == 200
+    assert_grouped_points(response.get_json(), axis)
+
+
 def test_worker_uses_shared_fitting_and_prefill():
     data = request(
         model="UNIQUAC",

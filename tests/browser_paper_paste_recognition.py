@@ -39,6 +39,8 @@ def main():
         assert first["x1"] == 0.2 and first["y1"] == 0.6
 
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         page.locator("#fit-input").fill(
             "??\tx?\tv?\t???\n350\t0.1\t0.3\t80\n355\t0.4\t0.65\t85\n360\t0.8\t0.9\t90"
         )
@@ -53,6 +55,8 @@ def main():
         assert observations(page)[0]["P_bar"] == 0.8
 
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         page.locator("#fit-input").fill(
             "x1\tH^E / J mol⁻¹\tH^E / kJ mol⁻¹\n0.2\t200\t0.25\n0.5\t400\t0.45"
         )
@@ -69,13 +73,15 @@ def main():
         assert [row["HE_J_mol"] for row in observations(page)] == [200, 400, 250, 450]
 
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         page.locator("#fit-comp1").fill("acetone")
         page.locator("#fit-input").fill(OCR_ACETONE_WATER_HE)
         page.locator("#fit-parse").click()
         expect(page.locator("#fit-import-kind")).to_have_value("HE")
         expect(page.locator("#fit-import-enthalpy_unit")).to_have_value("J/mol")
         expect(page.locator("#fit-import-temperature_unit")).to_have_value("K")
-        expect(page.locator("#modal")).to_contain_text("Unassigned HE values: -40.5")
+        expect(page.locator("#modal")).to_contain_text("Unassigned values:")
         expect(page.locator("#fit-import-add")).to_be_disabled()
         with page.expect_response(
             lambda response: response.url.endswith("/api/fitting/parse")

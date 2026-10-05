@@ -11,6 +11,7 @@ import csv
 from html import unescape
 from html.parser import HTMLParser
 import json
+import io
 import math
 import re
 import unicodedata
@@ -394,7 +395,7 @@ def _align_pdf_signs(cells, width):
     return aligned, None
 
 
-def _table_blocks(lines, *, expected_width=None):
+def _table_blocks(lines, *, expected_width=None, line_numbers=None):
     """Keep rectangular numeric blocks and nearby headings, not surrounding prose."""
     blocks, pending, active = [], [], None
     extracted = [_split_line(line) if isinstance(line, str) else line for line in lines]
@@ -411,6 +412,7 @@ def _table_blocks(lines, *, expected_width=None):
     }
     fallback_width = next(iter(clean_widths)) if len(clean_widths) == 1 else None
     for index, cells in enumerate(extracted):
+        line_number = line_numbers[index] if line_numbers else index + 1
         if cells and all(re.fullmatch(r"\s*:?-{3,}:?\s*", cell) for cell in cells):
             continue
         alignment_issue = None
@@ -475,7 +477,7 @@ def _table_blocks(lines, *, expected_width=None):
                 active.setdefault("ambiguous_rows", []).append(
                     {
                         "row": len(active["rows"]),
-                        "line": index + 1,
+                        "line": line_number,
                         "values": unassigned,
                         "reason": alignment_issue,
                     }
@@ -486,14 +488,14 @@ def _table_blocks(lines, *, expected_width=None):
                     active["ambiguous_rows"].append(
                         {
                             "row": len(active["rows"]),
-                            "line": index + 1,
+                            "line": line_number,
                             "values": cells[1:],
                             "reason": f"Extracted {len(cells) - 1} HE values for {width - 1} temperature columns; their column positions are ambiguous.",
                         }
                     )
                 cells = cells[:width] + [""] * max(0, width - len(cells))
             active["rows"].append(cells)
-            active["line_numbers"].append(index + 1)
+            active["line_numbers"].append(line_number)
         else:
             if active:
                 blocks.append(active)
@@ -535,6 +537,30 @@ def _clean_label(label):
     )
 
 
+def _assigned_conditions(text):
+    """Extract constant conditions, including units written before the value."""
+    annotations = []
+    for field, label, units in (
+        ("pressure", "pressure|p", "mmhg|torr|kpa|mpa|atm|bar|psi|pa"),
+        ("temperature", "temperature|temp|t", "kelvin|celsius|fahrenheit|°?\\s*[ckf]"),
+    ):
+        pattern = (
+            rf"\b(?:{label})\s*"
+            rf"(?:(?:[_/,(\[:]\s*)*({units})(?![a-z])\s*[)\]]*\s*)?"
+            rf"(?:=|:|≈|~|\bat\b)\s*({_NUM})\s*(?:[([]\s*({units})\s*[)\]]|({units}))?(?![a-z])"
+        )
+        for match in re.finditer(pattern, text, re.I):
+            before, number, bracketed, after = match.groups()
+            declared = {
+                unit.replace(" ", "").lower()
+                for unit in (before, bracketed, after)
+                if unit
+            }
+            for unit in declared or {None}:
+                annotations.append((field, number, unit, match.span()))
+    return annotations
+
+
 def _field(label):
     """Map descriptive headers to roles; never relabel calculated data as measured."""
     label = label.strip()
@@ -542,23 +568,32 @@ def _field(label):
         return _CANONICAL[label], "explicit"
     lower = _clean_label(label)
     compact = re.sub(r"[^a-z0-9]", "", lower)
+    annotations = lower.replace("_", " ")
     if re.search(
-        r"\b(calc(?:ulated)?|predicted|fitted|theoretical|model)\b|\bcal\b(?!\s*(?:/|mol\b))",
-        lower,
+        r"\b(calc(?:ulated)?|predicted|fit(?:ted)?|theoretical|model)\b|\bcal\b(?!\s*(?:/|mol\b))",
+        annotations,
+    ) or compact.endswith(
+        ("calc", "calculated", "fit", "fitted", "predicted", "model")
     ):
         return "ignore", "calculated column"
     if re.search(
         r"\b(?:uncertaint(?:y|ies)|std\.?|standard deviation|error)\b|^(?:u|sigma|σ)\s*[(\[]|^δ\s*[tpxy]",
-        lower,
+        annotations,
     ):
         return "ignore", "uncertainty column"
+    conditions = _assigned_conditions(lower)
+    for start, end in sorted({item[3] for item in conditions}, reverse=True):
+        lower = lower[:start] + " " + lower[end:]
+    compact = re.sub(r"[^a-z0-9]", "", lower)
     if (
         "enthalpy" in lower
         or re.search(r"h\s*(?:_?m\s*)?(?:\^\s*e|e\b)", lower)
         or compact.startswith("he")
     ):
         return "enthalpy", "header"
-    if re.search(r"\b(temp(?:erature)?|t)\b", lower) or compact in ("tc", "tk", "tf"):
+    if re.search(r"\b(temp(?:erature)?|t)\b", lower) or re.fullmatch(
+        r"(?:temperature|temp|t)[ckf]", compact
+    ):
         return "temperature", "header"
     if re.search(r"\b(pressure|p)\b", lower) or compact in (
         "pbar",
@@ -595,17 +630,23 @@ def _field(label):
         return "x1", "header"
     if re.search(r"\b(mole|mass|mol|weight)\s+fraction\b", lower):
         return "x1", "header"
-    return "ignore", "unrecognized header"
+    fields = {item[0] for item in conditions}
+    return (
+        (fields.pop(), "condition heading")
+        if len(fields) == 1
+        else ("ignore", "unrecognized header")
+    )
 
 
 def _units(text):
     lower = _clean_label(text)
     result = {}
-    if re.search(r"°\s*c|celsius|t_c\b|t\s*[/([]?\s*c\b", lower):
+    temperature_label = r"\b(?:temperature|temp|t)[^a-z0-9]*"
+    if re.search(rf"°\s*c|celsius|{temperature_label}c\b", lower):
         result["temperature_unit"] = "C"
-    elif re.search(r"°\s*f|fahrenheit|t_f\b", lower):
+    elif re.search(rf"°\s*f|fahrenheit|{temperature_label}f\b", lower):
         result["temperature_unit"] = "F"
-    elif re.search(r"kelvin|t_k\b|t\s*[/([]?\s*k\b", lower):
+    elif re.search(rf"°\s*k|kelvin|{temperature_label}k\b", lower):
         result["temperature_unit"] = "K"
     for unit in ("mmhg", "torr", "kpa", "mpa", "atm", "bar", "psi", "pa"):
         if re.search(rf"(?<![a-z]){unit}(?![a-z])", lower) or f"p_{unit}" in lower:
@@ -646,22 +687,33 @@ def _units(text):
 
 def _context_defaults(text):
     result = {}
+    text = _clean_label(text)
+    assigned = _assigned_conditions(text)
     for field, pattern in (
         (
             "pressure",
-            rf"(?:\bat\s+|\bp\s*=\s*)?({_NUM})\s*(bar|kpa|mpa|pa|atm|mmhg|torr|psi)\b",
+            rf"(?:\bat\s+|\bp\s*=\s*)?({_NUM})\s*[([]?\s*(bar|kpa|mpa|pa|atm|mmhg|torr|psi)\b",
         ),
         (
             "temperature",
-            rf"(?:\bat\s+|\bt\s*=\s*)({_NUM})\s*(°?\s*[ckf]|kelvin|celsius|fahrenheit)\b",
+            rf"({_NUM})\s*[([]?\s*(°?\s*k|°\s*[cf]|kelvin|celsius|fahrenheit)\b",
         ),
     ):
-        matches = re.findall(pattern, text, re.I)
+        matches = re.findall(pattern, text, re.I) + [
+            (number, unit) for found, number, unit, _ in assigned if found == field
+        ]
         values = {
-            (cell_number(number), unit.replace(" ", "").lower())
+            (
+                cell_number(number),
+                unit.replace(" ", "").replace("°", "").lower() if unit else None,
+            )
             for number, unit in matches
         }
-        units = {unit for number, unit in values if number is not None}
+        units = {
+            unit for number, unit in values if number is not None and unit is not None
+        }
+        if any(unit is None for number, unit in values):
+            result[field + "_unit"] = None
         if len(units) == 1:
             unit = units.pop()
             result[field + "_unit"] = (
@@ -890,7 +942,10 @@ def _headers(block, width):
         if all(re.fullmatch(r"\s*:?-+:?\s*", cell) for cell in row):
             continue
         if len(row) == width:
-            if not any(_field(cell)[0] != "ignore" or _units(cell) for cell in row):
+            if not any(
+                _field(cell)[0] != "ignore" or _units(cell) or _context_defaults(cell)
+                for cell in row
+            ):
                 continue
             for index, cell in enumerate(row):
                 combined[index] += " " + cell
@@ -910,6 +965,68 @@ def _headers(block, width):
     return [text.strip() for text in combined]
 
 
+def _column_field_info(block, headers):
+    """The specific measurement heading takes precedence over its group caption."""
+    if block.get("column_headers"):
+        return [_field(header) for header in headers]
+    fields = []
+    for index, header in enumerate(headers):
+        field = _field(header)
+        if field[1] in ("calculated column", "uncertainty column"):
+            fields.append(field)
+            continue
+        if field[1] == "condition heading":
+            field = ("ignore", "condition heading")
+        for row in reversed(block["headers"]):
+            if len(row) != len(headers):
+                continue
+            candidate = _field(row[index])
+            if (
+                candidate[0] != "ignore"
+                and candidate[1] != "condition heading"
+                or candidate[1] in ("calculated column", "uncertainty column")
+            ):
+                field = candidate
+                break
+        fields.append(field)
+    return fields
+
+
+def _repeated_vle_series(mapping, headers):
+    """Recognize complete measured groups while leaving intervening junk ignored."""
+    active = [(index, role) for index, role in enumerate(mapping) if role != "ignore"]
+    axes = {role for _, role in active} & {"temperature", "pressure"}
+    if len(axes) != 1 or any(role not in (*axes, "x1", "y1") for _, role in active):
+        return None
+    axis = axes.pop()
+    groups, columns, roles = [], [], set()
+    for index, role in active:
+        if role in roles:
+            groups.append((columns, roles))
+            columns, roles = [], set()
+        columns.append(index)
+        roles.add(role)
+    groups.append((columns, roles))
+    if len(groups) < 2 or any(not {axis, "x1"} <= fields for _, fields in groups):
+        return None
+    condition = "pressure" if axis == "temperature" else "temperature"
+    series = []
+    for number, (columns, _) in enumerate(groups):
+        hints = [_series_header_hint(headers[index]) for index in columns]
+        spec = {"name": f"Series {number + 1}", "columns": columns}
+        for key in (condition, condition + "_unit"):
+            values = {hint[key] for hint in hints if key in hint}
+            if len(values) == 1:
+                spec[key] = values.pop()
+        series.append(spec)
+    return {
+        "series": series,
+        "mapping": mapping,
+        "shared_columns": [],
+        "layout": "TxyGroups" if axis == "temperature" else "PxyGroups",
+    }
+
+
 def _column_settings(label, role):
     """Only a column's own quantity can supply its unit or component index."""
     keys = {
@@ -923,9 +1040,14 @@ def _column_settings(label, role):
     }.get(role, set())
     settings = {key: value for key, value in _units(label).items() if key in keys}
     if role in ("x1", "y1", "x1_alpha", "x1_beta"):
-        indexed = re.match(r"[xyw]([12])(?:\b|[′″'\"αβ])", _clean_label(label))
+        indexed = list(
+            re.finditer(
+                r"(?<![a-z0-9])[xyw]\s*[_,(\[]?\s*([12])(?=\b|[′″'\"]|alpha|beta)",
+                _clean_label(label),
+            )
+        )
         if indexed:
-            settings["composition_component"] = int(indexed[1])
+            settings["composition_component"] = int(indexed[-1][1])
     if role in ("gamma1_inf", "gamma2_inf"):
         if re.match(r"ln\s*[(]?\s*gamma", _clean_label(label)):
             settings["logarithm"] = "natural"
@@ -945,6 +1067,28 @@ def tabular_matrix(value):
         and all(isinstance(row, list) for row in rows)
         else None
     )
+
+
+def _quoted_delimited_rows(text):
+    if not re.search(r'(?m)(?:^|[,\t;])[ \t]*"', text):
+        return None
+    try:
+        dialect = csv.Sniffer().sniff(text[:8192], delimiters=",\t;")
+    except csv.Error:
+        return None
+    reader = csv.reader(io.StringIO(text), dialect, strict=True)
+    rows, line_numbers = [], []
+    try:
+        while True:
+            line = reader.line_num + 1
+            row = next(reader, None)
+            if row is None:
+                break
+            rows.append([cell.strip() for cell in row])
+            line_numbers.append(line)
+    except csv.Error:
+        return None
+    return (rows, line_numbers) if any(len(row) > 1 for row in rows) else None
 
 
 def _default_kind(value, kind):
@@ -991,11 +1135,14 @@ def interpret_paste(value, *, options=None, components=None):
         "series",
         "shared_columns",
         "cell_edits",
+        "infer_series",
     }
     if not isinstance(options, dict) or options.keys() - allowed:
         raise ValueError(
             "Unknown import options; use the column/units controls in the import preview."
         )
+    if "infer_series" in options and not isinstance(options["infer_series"], bool):
+        raise ValueError("infer_series must be true or false.")
     if not isinstance(value, str):
         matrix = tabular_matrix(value)
         if matrix is not None:
@@ -1048,11 +1195,13 @@ def interpret_paste(value, *, options=None, components=None):
         parser.feed(text)
         blocks = [block for table in parser.tables for block in _table_blocks(table)]
     else:
+        quoted_csv = _quoted_delimited_rows(text)
         blocks = _table_blocks(
-            text.splitlines(),
+            quoted_csv[0] if quoted_csv else text.splitlines(),
             expected_width=len(options["mapping"])
             if isinstance(options.get("mapping"), list)
             else None,
+            line_numbers=quoted_csv[1] if quoted_csv else None,
         )
     if not blocks:
         raise ValueError(
@@ -1138,7 +1287,9 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
     width = len(rows[0])
     headers = _headers(block, width)
     context = "\n".join("\t".join(row) for row in block["headers"])
-    mapping = [_field(label)[0] for label in headers]
+    field_info = _column_field_info(block, headers)
+    mapping = [field[0] for field in field_info]
+    header_series = _repeated_vle_series(mapping, headers)
     notes, issues = [], list(flattened_issues)
     issues.extend(
         _alignment_issues(
@@ -1184,7 +1335,9 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
         suggested["composition_component"] = matching[0] if len(matching) == 1 else None
     else:
         suggested.setdefault("composition_component", 1)
-    if re.search(r"vlle|hetero.?azeotrop", context, re.I) or {
+    if header_series:
+        kind = "VLE"
+    elif re.search(r"vlle|hetero.?azeotrop", context, re.I) or {
         "x1_alpha",
         "x1_beta",
         "y1",
@@ -1225,11 +1378,12 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
     excluded_columns = {
         index
         for index, header in enumerate(headers)
-        if _field(header)[1] in ("calculated column", "uncertainty column")
+        if field_info[index][1] in ("calculated column", "uncertainty column")
     }
     candidates = _rank_temperature_pair(rows, mapping, excluded_columns)
     if (
-        kind in ("VLE", "AZEOTROPE")
+        not header_series
+        and kind in ("VLE", "AZEOTROPE")
         and candidates
         and (
             not explicit_header
@@ -1405,6 +1559,7 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
                 "series",
                 "shared_columns",
                 "cell_edits",
+                "infer_series",
             )
         }
     )
@@ -1419,6 +1574,20 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
     column_settings = [
         _column_settings(header, role) for header, role in zip(headers, mapping)
     ]
+    detected_series = _repeated_vle_series(mapping, headers)
+    if detected_series and settings["kind"] == "VLE":
+        condition = (
+            "pressure" if detected_series["layout"] == "TxyGroups" else "temperature"
+        )
+        unit_key = condition + "_unit"
+        for spec in detected_series["series"]:
+            if spec.get(unit_key) is None and options.get(unit_key):
+                spec[unit_key] = options[unit_key]
+        if unit_key not in options and any(
+            condition in spec and spec.get(unit_key) is None
+            for spec in detected_series["series"]
+        ):
+            settings[unit_key] = None
     exclude_rows = options.get("exclude_rows", [])
     if not isinstance(exclude_rows, list) or any(
         isinstance(index, bool)
@@ -1439,6 +1608,30 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
             mapping=mapping,
             settings=settings,
             notes=notes,
+            suggestion=header_series,
+        )
+    if (
+        detected_series
+        and settings["kind"] == "VLE"
+        and options.get("infer_series", True)
+    ):
+        return _interpret_repeated(
+            block,
+            options={
+                **options,
+                "series": detected_series["series"],
+                "shared_columns": [],
+            },
+            components=components,
+            value=value,
+            table_index=table_index,
+            blocks=blocks,
+            headers=headers,
+            mapping=mapping,
+            settings=settings,
+            notes=notes,
+            suggestion=header_series,
+            inferred=True,
         )
     compositions = [
         i
@@ -1522,10 +1715,15 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
         if role == "enthalpy"
     ):
         issues.append("Choose the excess-enthalpy unit.")
-    if "pressure" in mapping and any(
-        {**settings, **column_settings[index], **options}.get("pressure_unit") is None
-        for index, role in enumerate(mapping)
-        if role == "pressure"
+    if (
+        any(
+            not {**settings, **column_settings[index], **options}.get("pressure_unit")
+            for index, role in enumerate(mapping)
+            if role == "pressure"
+        )
+        or settings["kind"] in ("VLE", "AZEOTROPE", "VLLE", "LLE")
+        and settings.get("pressure") is not None
+        and not settings.get("pressure_unit")
     ):
         issues.append(
             "Choose the pressure unit; the magnitude alone does not identify it."
@@ -1690,6 +1888,7 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
                 "label": headers[index] or f"Column {index + 1}",
                 "role": mapping[index],
                 "settings": column_settings[index],
+                "reason": field_info[index][1],
             }
             for index in range(width)
         ],
@@ -1717,18 +1916,13 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
         "cell_edits": edits,
         "series_available": len(rows[0]) > 2,
         "series_header_hints": _series_header_hints(headers, rows),
+        "series_suggestion": header_series,
     }
 
 
 def _series_header_hint(label):
     hint = {**_context_defaults(label), **_units(label)}
-    match = re.search(rf"({_NUM})\s*(K|°\s*C|°\s*F)\b", label, re.I)
-    if match:
-        hint.update(
-            temperature=cell_number(match[1]),
-            temperature_unit=match[2].replace("°", "").replace(" ", "").upper(),
-        )
-    elif cell_number(label) is not None:
+    if cell_number(label) is not None:
         hint["condition_value"] = cell_number(label)
     return hint
 
@@ -1773,6 +1967,8 @@ def _interpret_repeated(
     mapping,
     settings,
     notes,
+    suggestion=None,
+    inferred=False,
 ):
     """Project explicit series into the existing single-series conversion path."""
     series = options["series"]
@@ -2045,7 +2241,9 @@ def _interpret_repeated(
         index for index in range(width) if index not in used and index not in shared
     ]
     notes = list(notes) + [
-        f"Repeated-series mode is explicit: {len(series)} series share {len(shared)} columns."
+        f"Recognized {len(series)} VLE series from the measured column headings; review their conditions."
+        if inferred
+        else f"Repeated-series mode is explicit: {len(series)} series share {len(shared)} columns."
     ]
     if excluded:
         notes.append(
@@ -2057,6 +2255,7 @@ def _interpret_repeated(
             + ", ".join(str(index + 1) for index in ignored)
             + "."
         )
+    field_info = _column_field_info(block, headers)
     return {
         "structured": False,
         "ready": not issues,
@@ -2066,6 +2265,8 @@ def _interpret_repeated(
                 "index": index,
                 "label": headers[index] or f"Column {index + 1}",
                 "role": mapping[index],
+                "settings": _column_settings(headers[index], mapping[index]),
+                "reason": field_info[index][1],
             }
             for index in range(width)
         ],
@@ -2090,6 +2291,8 @@ def _interpret_repeated(
         "series_available": True,
         "series": series,
         "shared_columns": shared,
+        "series_inferred": inferred,
+        "series_suggestion": suggestion,
         "series_reports": reports,
         "observation_sources": lineage,
         "series_header_hints": [_series_header_hint(header) for header in headers],
