@@ -29,8 +29,20 @@
         ><i></i><span id="connection-status">READY</span></span
       >
       <div class="account-status">
-        <small id="compute-budget">Checking CPU budget…</small
-        ><button id="account-button">Guest · sign in</button>
+        <details id="compute-budget-menu" class="compute-budget-menu">
+          <summary id="compute-budget-toggle" aria-controls="compute-budget-panel">
+            <span id="compute-budget">Checking CPU budget…</span>
+            <span class="compute-budget-arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div id="compute-budget-panel" class="compute-budget-panel">
+            <h3>Recent compute</h3>
+            <p id="compute-usage-summary" aria-live="polite">Open to view recent usage.</p>
+            <ul id="compute-usage-list" class="compute-usage-list"></ul>
+            <p class="compute-usage-note">Latest 5 tasks from the past 24 hours.</p>
+            <button id="compute-more-info" type="button">More info</button>
+          </div>
+        </details>
+        <button id="account-button">Guest · sign in</button>
       </div>
     </header>
     {% block content %}{% endblock %}

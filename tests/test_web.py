@@ -31,13 +31,16 @@ def client(tmp_path, monkeypatch):
     return client
 
 
-@pytest.mark.parametrize("path", ["/", "/editor", "/settings", "/vle-chart"])
+@pytest.mark.parametrize("path", ["/", "/editor", "/settings", "/vle-chart", "/parameter-fitting"])
 def test_screens_use_local_assets(client, path):
     response = client.get(path)
     assert response.status_code == 200
     assert b"/static/css/laboratory.css" in response.data
     assert b"cdn.jsdelivr" not in response.data
     assert b"fonts.googleapis" not in response.data
+    assert b'<details id="compute-budget-menu"' in response.data
+    assert b'<summary id="compute-budget-toggle"' in response.data
+    assert b'id="compute-more-info"' in response.data
 
 
 def test_templates_follow_current_registry(client):

@@ -195,6 +195,17 @@ def api_session():
     )
 
 
+@app.get("/api/usage")
+def api_usage():
+    owner, principal, limit, _ = identity()
+    store = jobs()
+    return respond({
+        "success": True,
+        "quota": store.quota(principal, limit),
+        "recent_jobs": store.recent_usage(owner, principal),
+    })
+
+
 @app.post("/api/account/register")
 @app.post("/api/account/login")
 def api_account():

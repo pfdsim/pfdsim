@@ -97,8 +97,80 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
-.account-status small {
+.compute-budget-menu {
+  position: relative;
+}
+.compute-budget-menu > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 0;
   font: 9px var(--mono);
+  cursor: pointer;
+  list-style: none;
+  outline-offset: 4px;
+}
+.compute-budget-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.compute-budget-menu > summary:hover {
+  color: var(--accent);
+}
+.compute-budget-arrow {
+  font-size: 13px;
+}
+.compute-budget-menu[open] .compute-budget-arrow {
+  transform: rotate(180deg);
+}
+.compute-budget-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 6;
+  width: min(320px, calc(100vw - 56px));
+  max-height: min(420px, 60dvh);
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  font-size: 12px;
+}
+.compute-budget-panel h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+.compute-budget-panel p {
+  margin: 10px 0;
+  line-height: 1.5;
+}
+.compute-usage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.compute-usage-list li {
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+}
+.compute-usage-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.compute-usage-row span:last-child {
+  white-space: nowrap;
+  font-family: var(--mono);
+}
+.compute-usage-detail,
+.compute-usage-note {
+  color: var(--muted);
+  font-size: 10px;
+}
+.compute-usage-detail {
+  display: block;
+  margin-top: 4px;
 }
 .account-status button {
   font-size: 11px;
@@ -1624,7 +1696,7 @@ body[data-motion="off"] * {
   .account-status {
     gap: 6px;
   }
-  .account-status small {
+  .compute-budget-menu > summary {
     font-size: 8px;
   }
 }
@@ -1632,6 +1704,10 @@ body[data-motion="off"] * {
   .account-status {
     width: 100%;
     justify-content: space-between;
+  }
+  .compute-budget-panel {
+    left: 0;
+    right: auto;
   }
   .workspace {
     min-height: calc(100dvh - 108px);

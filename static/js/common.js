@@ -234,16 +234,85 @@ function renderAccountStatus() {
       ? ` Running work may use up to ${sessionState.quota.grace_seconds} additional CPU seconds; new tasks require remaining allowance.`
       : "");
 }
+function rateLimitDialog() {
+  const box = element("div");
+  box.append(element("p", {}, "PFDSim is free software. I won't charge for subscriptions, but I need to ensure fair usage for everyone."));
+  const limits = element("ul");
+  for (const text of [
+    "Guests get 5 CPU minutes (300 seconds) per day.",
+    "Signed-in accounts get 15 CPU minutes (900 seconds) per day.",
+    "Signed-in accounts may use up to 15 additional CPU seconds for work already running. New tasks cannot start once the daily allowance is exhausted.",
+    "Daily allowances reset at 00:00 UTC.",
+  ]) limits.append(element("li", {}, text));
+  box.append(limits);
+  if (sessionState.quota.limit_seconds === null)
+    box.append(element("p", {}, "Your account has unlimited daily CPU usage."));
+  box.append(element("p", {}, "Only CPU time spent on backend calculations counts. Waiting and web requests do not count. Each task has a 30-minute time limit."));
+  const contact = element("p", {}, "If you need more usage, email ");
+  contact.append(
+    element("a", { href: "mailto:pfdsim@chemicalprocess.org" }, "pfdsim@chemicalprocess.org"),
+    element("span", {}, " to request a higher allowance."),
+  );
+  box.append(contact);
+  modal("Usage and rate limits", box);
+}
+
+const computeMenu = $("compute-budget-menu");
+if (computeMenu) {
+  let requestVersion = 0;
+  computeMenu.addEventListener("toggle", async () => {
+    if (!computeMenu.open) return;
+    const version = ++requestVersion;
+    const summary = $("compute-usage-summary"), list = $("compute-usage-list");
+    summary.textContent = "Loading recent compute…";
+    list.replaceChildren();
+    try {
+      await getSession(true);
+      const { quota, recent_jobs } = await api("/api/usage");
+      if (!computeMenu.open || version !== requestVersion) return;
+      summary.textContent = `Used today: ${formatNumber(quota.used_seconds)} CPU seconds.`;
+      if (!recent_jobs.length) {
+        list.append(element("li", {}, "No recent tasks for this account or session."));
+      }
+      const labels = {
+        simulation: "Simulation", chart: "Phase chart", groups: "UNIFAC groups",
+        fit: "Parameter fitting", fit_prefill: "Fitting prefill", fit_publish: "Parameter publication",
+      };
+      for (const job of recent_jobs) {
+        const row = element("li"), heading = element("div", { class: "compute-usage-row" });
+        heading.append(
+          element("span", {}, labels[job.kind] || job.kind),
+          element("span", {}, `${formatNumber(job.cpu_seconds)} CPU s`),
+        );
+        const when = new Date(job.created * 1000).toLocaleString(undefined, {
+          month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+        row.append(heading, element("span", { class: "compute-usage-detail" }, `${job.status} · ${when}`));
+        list.append(row);
+      }
+    } catch {
+      if (computeMenu.open && version === requestVersion)
+        summary.textContent = "Recent usage is unavailable. You can still view rate-limit information.";
+    }
+  });
+  document.addEventListener("click", (event) => {
+    if (!computeMenu.contains(event.target)) computeMenu.open = false;
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && computeMenu.open) {
+      computeMenu.open = false;
+      $("compute-budget-toggle").focus();
+    }
+  });
+  $("compute-more-info").onclick = guarded(async () => {
+    computeMenu.open = false;
+    await getSession(true);
+    rateLimitDialog();
+  });
+}
+
 function accountDialog(active = "login") {
   const box = element("div");
-  const description = element(
-    "p",
-    {},
-    sessionState?.quota.limit_seconds === null
-      ? "Root has unlimited daily CPU usage, with laboratories autosaved to your account. Waiting and web requests do not count."
-      : "Guest: 5 CPU minutes per day. Account: 15 CPU minutes per day, with up to 15 additional CPU seconds for work already running and laboratories autosaved to your account. Budgets reset at 00:00 UTC. Waiting and web requests do not count.",
-  );
-  box.append(description);
   if (sessionState?.user) {
     box.append(element("h3", {}, `Signed in as ${sessionState.user.username}`));
     const logout = element("button", {}, "Sign out");

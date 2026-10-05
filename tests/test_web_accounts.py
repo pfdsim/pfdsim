@@ -309,6 +309,59 @@ def test_job_start_reports_fresh_quota_for_budget_warning(clients, monkeypatch, 
     assert quota["used_seconds"] == limit - 59
 
 
+@pytest.mark.parametrize("name", ["PFDSim", "root"])
+def test_usage_history_is_private_recent_and_bounded(clients, monkeypatch, name):
+    first, second = clients
+    store = web.jobs()
+    credentials = {"setup_token": store.root_token_path.read_text().strip()} if name == "root" else {}
+    signed_in = account(first, name, **credentials)
+    other = account(second, "OtherLab")
+    owner = principal = "user:" + signed_in["user"]["id"]
+    other_owner = "user:" + other["user"]["id"]
+    now = time.time()
+    records = [
+        (f"own-{i}", owner, principal, now - i, ("running", "failed", "cancelled", "completed", "queued")[i % 5], i + 1)
+        for i in range(7)
+    ]
+    records.extend([
+        ("old", owner, principal, now - 86401, "completed", 100),
+        ("other", other_owner, other_owner, now, "completed", 100),
+        ("guest-claimed", owner, "guest:shared-ip", now, "completed", 100),
+    ])
+    with store.connect() as db:
+        db.executemany(
+            """INSERT INTO jobs (id, owner, principal, created, updated, status, cpu_seconds, kind, payload, output)
+               VALUES (?, ?, ?, ?, ?, ?, ?, 'simulation', 'private input', 'private output')""",
+            [(identifier, row_owner, row_principal, created, created, status, cpu)
+             for identifier, row_owner, row_principal, created, status, cpu in records],
+        )
+    monkeypatch.setattr(JobStore, "ensure_worker", lambda *args: pytest.fail("Usage inspection must not start workers"))
+    response = first.get("/api/usage?owner=" + other_owner)
+    assert response.status_code == 200
+    jobs = response.get_json()["recent_jobs"]
+    assert [job["cpu_seconds"] for job in jobs] == [1, 2, 3, 4, 5]
+    assert [job["status"] for job in jobs] == ["running", "failed", "cancelled", "completed", "queued"]
+    assert all(set(job) == {"kind", "status", "created", "cpu_seconds"} for job in jobs)
+    assert second.get("/api/usage").get_json()["recent_jobs"][0]["cpu_seconds"] == 100
+    with store.connect() as db:
+        assert db.execute("SELECT status FROM jobs WHERE id='own-0'").fetchone()[0] == "running"
+
+
+def test_guest_usage_history_is_session_private_and_not_account_billed(clients, monkeypatch):
+    first, second = clients
+    monkeypatch.setattr(JobStore, "ensure_worker", lambda *args: None)
+    first_id = first.post("/api/simulate", json={"text": "PROCESS: First guest\n"}).get_json()["job_id"]
+    second_id = second.post("/api/simulate", json={"text": "PROCESS: Second guest\n"}).get_json()["job_id"]
+    store = web.jobs()
+    store.update(first_id, status="completed", cpu_seconds=2)
+    store.update(second_id, status="completed", cpu_seconds=3)
+    assert [job["cpu_seconds"] for job in first.get("/api/usage").get_json()["recent_jobs"]] == [2]
+    assert [job["cpu_seconds"] for job in second.get("/api/usage").get_json()["recent_jobs"]] == [3]
+    account(first)
+    assert first.get("/api/usage").get_json()["recent_jobs"] == []
+    assert first.get("/api/jobs/" + first_id).status_code == 200
+
+
 def test_cpu_meter_excludes_waiting_and_counts_running_cpu():
     meter = ComputationMeter()
     meter.start()

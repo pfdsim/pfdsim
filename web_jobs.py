@@ -143,6 +143,18 @@ class JobStore(WebStore):
                 "CREATE TABLE IF NOT EXISTS affinities (fingerprint TEXT PRIMARY KEY, slot INTEGER)"
             )
 
+    def recent_usage(self, owner, principal):
+        """Return private CPU usage for the latest five tasks in the past day."""
+        with self.connect() as db:
+            db.row_factory = sqlite3.Row
+            rows = db.execute(
+                """SELECT kind, status, created, COALESCE(cpu_seconds, 0) AS cpu_seconds
+                   FROM jobs WHERE owner=? AND principal=? AND created>=?
+                   ORDER BY created DESC, id DESC LIMIT 5""",
+                (owner, principal, time.time() - 86400),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
     def get(self, identifier):
         with self.connect() as db:
             db.row_factory = sqlite3.Row
