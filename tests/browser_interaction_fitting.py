@@ -137,6 +137,8 @@ def main():
         page.reload()
         expect(page.locator("#fit-table tbody tr")).to_have_count(34)
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         expect(page.locator("#fit-table tbody tr")).to_have_count(0)
         page.locator("#fit-input-method").select_option("paste")
         page.locator("#fit-comp1").fill("ethanol")

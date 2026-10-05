@@ -1,7 +1,7 @@
 // Observation editing uses one append implementation for pasted and manual data.
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-function nextId(rows) {
-  return String(Math.max(0, ...rows.map(row => /^\d+$/.test(String(row.id)) ? Number(row.id) : 0)) + 1);
+function nextId(rows, reservedIds = []) {
+  return String(Math.max(0, ...[...rows.map(row => row.id), ...reservedIds].map(id => /^\d+$/.test(String(id)) ? Number(id) : 0)) + 1);
 }
 export function mergeSigma(current, overrides) {
   if (!Object.keys(overrides).length) return structuredClone(current ?? {});
@@ -21,13 +21,14 @@ export function repairObservationIds(existing) {
   }
   return { rows, renames };
 }
-export function appendObservations(existing, incoming, sigma = {}) {
+export function appendObservations(existing, incoming, sigma = {}, reservedIds = []) {
   const rows = structuredClone(existing), added = [], sourceIds = [];
   for (const original of incoming) {
     const row = structuredClone(original), old = String(row.id ?? "");
+    // Cleared rows can remain in import history; don't assign their IDs to new rows.
     // Meaningful named source IDs can be retained; generated numeric/UUID IDs
     // become short, unique numbers across successive imports.
-    row.id = old && !uuid.test(old) && !/^\d+$/.test(old) && !rows.some(item => item.id === old) ? old : nextId(rows);
+    row.id = old && !uuid.test(old) && !/^\d+$/.test(old) && !reservedIds.includes(old) && !rows.some(item => item.id === old) ? old : nextId(rows, reservedIds);
     if (!row.source && row.group === old) row.group = row.id;
     row.sigma = mergeSigma(row.sigma, sigma);
     rows.push(row); added.push(row.id); sourceIds.push({ source_id: old, observation_id: row.id });

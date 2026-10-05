@@ -138,7 +138,7 @@ function renderObservations() {
   const counts = {};
   observations.forEach(row => counts[row.kind] = (counts[row.kind] || 0)+1);
   $("fit-data-summary").textContent = `${observations.length} observations · ${Object.entries(counts).map(([kind, count]) => `${kind}: ${count}`).join(" · ")}`;
-  const editable = observations.map((row, index) => {
+  const editable = observations.map(row => {
     const select = element("select", { "aria-label": `Observation ${row.id} kind` });
     for (const kind of catalog.kinds) select.append(element("option", { value: kind }, kind)); select.value = row.kind;
     select.onchange = () => {
@@ -172,11 +172,63 @@ function renderObservations() {
     const sigma = element("input", { type: "text", "aria-label": `Observation ${row.id} sigma` }); sigma.value = JSON.stringify(row.sigma ?? {});
     sigma.oninput = () => { try { if (missingValue(sigma.value)) delete row.sigma; else row.sigma = JSON.parse(sigma.value); sigma.setCustomValidity(""); saveDraft(); } catch { sigma.setCustomValidity("Enter a number, JSON object, or missing indicator for sigma."); } };
     const remove = element("button", { type: "button", "aria-label": `Remove observation ${row.id}` }, "Remove");
-    remove.onclick = () => { observations.splice(index, 1); renderObservations(); renderSetOptions(); saveDraft(); };
+    remove.onclick = () => removeObservationIds(new Set([row.id]));
     return [row.id, select, input("T_K"), coordinateInput, input("weight"), pin, validation,input("pin_tolerance"), sigma, input("source", "text"), input("group", "text"), remove];
   });
   $("fit-table").replaceChildren(table(["ID", "Kind", "T / K", "Measurements", "Weight", "Hard pin", "Validation only", "Pin tolerance", "σ", "Source", "CV group", ""], editable));
   renderPsat();
+}
+function removeObservationIds(ids, all = false) {
+  observations = observations.filter(row => !ids.has(row.id));
+  for (const field of ["initial", "bounds"]) {
+    const node = $(`fit-${field}`);
+    try {
+      const values = JSON.parse(node.value);
+      if (!values || Array.isArray(values) || typeof values !== "object") continue;
+      let changed = false;
+      for (const key of Object.keys(values)) {
+        const dot = key.indexOf(".");
+        if (["critical_x1", "vlle_xa", "vlle_gap"].includes(key.slice(0, dot)) && (all || ids.has(key.slice(dot+1)))) {
+          delete values[key]; changed = true;
+        }
+      }
+      if (changed) node.value = JSON.stringify(values, null, 2);
+    } catch { /* Preserve unfinished JSON as an editable draft. */ }
+  }
+  if (all) {
+    observationSets = []; importReports = []; $("fit-input").value = ""; inputDirty = false; pendingImport = null;
+    for (const role of new Set(Object.values(manualRoles).flat())) delete manualValues[role];
+    renderManual();
+  }
+  renderObservations(); renderSetOptions(); saveDraft();
+}
+function clearObservationsPopup() {
+  const box = element("div"), select = element("select", { id: "fit-clear-kind" });
+  select.append(element("option", { value: "" }, "Choose observations to clear"));
+  select.append(element("option", { value: "all" }, `All observations (${observations.length})`));
+  for (const kind of catalog.kinds) {
+    const count = observations.filter(row => row.kind === kind).length;
+    const option = element("option", { value: kind }, `${kind} · ${labels[kind]} (${count})`);
+    option.disabled = !count; select.append(option);
+  }
+  const description = element("p", { role: "status", "aria-live": "polite" }, "Choose one type or all observations. Other observation types are preserved when clearing one type.");
+  const clear = element("button", { id: "fit-clear-confirm", type: "button", class: "primary" }, "Clear observations");
+  clear.disabled = true;
+  select.onchange = () => {
+    const all = select.value === "all", count = observations.filter(row => all || row.kind === select.value).length;
+    clear.disabled = !select.value || !all && !count;
+    clear.textContent = all ? "Clear all observations" : select.value ? `Clear ${select.value} observations` : "Clear observations";
+    description.textContent = all ? `Clear all ${count} observations and unfinished pasted/manual input.` : select.value ? `Clear ${count} ${select.value} observations. Keep other types and unfinished input.` : "Choose one type or all observations.";
+  };
+  clear.onclick = () => {
+    const all = select.value === "all", removed = observations.filter(row => all || row.kind === select.value);
+    removeObservationIds(new Set(removed.map(row => row.id)), all);
+    $("fit-progress").textContent = all ? "Observations cleared." : `Cleared ${removed.length} ${select.value} observations; ${observations.length} remain.`;
+    $("modal").close();
+  };
+  const cancel = element("button", { type: "button" }, "Cancel"); cancel.onclick = () => $("modal").close();
+  const actions = element("div", { class: "form-actions" }); actions.append(clear, cancel);
+  box.append(labeled("Observation type", select), description, actions); modal("Clear observations", box);
 }
 const manualRoles = {
   VLE: ["temperature", "pressure", "x1", "y1"], LLE: ["temperature", "x1_alpha", "x1_beta"],
@@ -327,7 +379,8 @@ function renderSetOptions() {
   $("fit-apply-sigma").disabled = !observations.length;
 }
 function addParsed(proposal, mode) {
-  const appended = appendObservations(observations, proposal.observations, sigmaOverrides());
+  const reservedIds = [...observationSets.flatMap(set => set.ids), ...importReports.flatMap(report => report.observation_ids || [])];
+  const appended = appendObservations(observations, proposal.observations, sigmaOverrides(), reservedIds);
   observations = appended.rows;
   const id = `set-${observationSets.length+1}`, name = `${mode === "manual" ? "Manual entry" : "Imported table"} ${observationSets.length+1}`;
   if(proposal.series_reports?.length){
@@ -859,12 +912,7 @@ async function initialize() {
   $("fit-manual-validation-only").onchange = ()=>{manualValues.validation_only=$("fit-manual-validation-only").checked;saveDraft();};
   $("fit-input-method").addEventListener("change", () => {if($("fit-input-method").value==="manual"&&$("fit-data-kind").value==="AUTO")$("fit-data-kind").value="VLE";renderManual();renderPsat();saveDraft();});
   $("fit-data-kind").addEventListener("change", ()=>{renderManual();renderPsat();});
-  $("fit-clear").onclick = () => {
-    observations = []; observationSets = []; importReports = []; $("fit-input").value = ""; inputDirty = false;pendingImport=null;
-    for (const role of manualRoles[dataKind()]) delete manualValues[role];
-    renderManual();
-    renderObservations(); renderSetOptions(); saveDraft(); $("fit-progress").textContent = "Observations cleared.";
-  };
+  $("fit-clear").onclick = clearObservationsPopup;
   $("fit-apply-sigma").onclick = guarded(() => {
     const sigma = sigmaOverrides(); if (!Object.keys(sigma).length) throw new Error("Fill at least one uncertainty scale first.");
     const target = $("fit-sigma-target").value;

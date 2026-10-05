@@ -81,6 +81,8 @@ def main():
         assert len(document["state"]["observations"]) == 95
         page.locator("#modal-close").click()
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         page.locator("#fit-reset").click()
         open_saved(page, "Five HE temperatures")
         expect(page.locator("#fit-table tbody tr")).to_have_count(95)
@@ -89,12 +91,16 @@ def main():
         page.reload()
         expect(page.locator("#fit-table tbody tr")).to_have_count(95)
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         open_sessions(page)
         page.locator("#fit-session-file").set_input_files(artifact)
         expect(page.locator("#fit-table tbody tr")).to_have_count(95)
         # An unresolved repeated-series popup can be resumed after reload and
         # is included when saving the complete fitting state.
         page.locator("#fit-clear").click()
+        page.locator("#fit-clear-kind").select_option("all")
+        page.locator("#fit-clear-confirm").click()
         page.locator("#fit-input").fill(HE_PASTE)
         page.locator("#fit-parse").click()
         page.locator("#fit-import-repeated").click()
