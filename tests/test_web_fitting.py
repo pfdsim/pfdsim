@@ -61,6 +61,31 @@ def test_page_catalog_parser_and_admission(client):
     )
 
 
+def test_missing_values_corrections_and_flat_dimensions_http(client):
+    response = client.post("/api/fitting/parse", json={
+        "observations": [{"kind": "GAMMA_INF", "T_K": 300, "gamma1_inf": 2, "gamma2_inf": None}],
+    })
+    assert response.status_code == 200
+    assert "gamma2_inf" not in response.get_json()["observations"][0]
+    source = "kind,T_K,x1,HE_J_mol\nHE,300,.2,?"
+    response = client.post("/api/fitting/parse", json={"observations": source})
+    assert response.status_code == 200 and not response.get_json()["ready"]
+    response = client.post("/api/fitting/parse", json={"observations": source, "import_options": {
+        "cell_edits": [{"row": 0, "column": 3, "value": "-20"}],
+    }})
+    assert response.status_code == 200 and response.get_json()["ready"]
+    assert response.get_json()["observations"][0]["HE_J_mol"] == -20
+    source = "300 2 ? 310 None 3"
+    response = client.post("/api/fitting/parse", json={"observations": source})
+    assert response.status_code == 200 and response.get_json()["dimensions_needed"]
+    response = client.post("/api/fitting/parse", json={"observations": source, "import_options": {
+        "kind": "GAMMA_INF", "row_count": 2, "column_count": 3, "temperature_unit": "K",
+        "mapping": ["temperature", "gamma1_inf", "gamma2_inf"], "layout": "rows",
+    }})
+    assert response.status_code == 200 and response.get_json()["ready"]
+    assert len(response.get_json()["observations"]) == 2
+
+
 def test_worker_uses_shared_fitting_and_prefill():
     data = request(
         model="UNIQUAC",

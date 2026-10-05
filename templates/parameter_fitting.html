@@ -95,6 +95,7 @@
         <p>VLLE / heteroazeotrope points need temperature and pressure, with optional shared vapor composition. Supply both liquid endpoints or leave both blank to infer the coexisting phases. They have a separate objective weight.</p>
         <p>Validation-only observations are never fitted or pinned. They appear separately in plots and physical error metrics, and are excluded from training and cross-validation folds.</p>
       </template>
+      <p class="field-help">Missing values: leave a cell blank or use ?, None, null, NA/N/A, NaN, a dash, an ellipsis, or “missing”, “unknown”, “not measured”, or “not reported”. Required fitting conditions must still be supplied; optional measurements may be omitted.</p>
       <p id="fit-data-summary"></p><div id="fit-table" class="fit-table-scroll"></div>
       <section id="fit-results" hidden>
         <h2>Fit assessment</h2><p id="fit-result-status"></p><div id="fit-warnings" role="status"></div>

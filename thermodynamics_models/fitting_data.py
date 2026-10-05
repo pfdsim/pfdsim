@@ -63,11 +63,53 @@ _NUM = r"[+−–-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:[eE][+−–-]?\d+)?"
 _SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺", "0123456789-+")
 ENTHALPY_UNITS = {"J/mol": 1.0, "kJ/mol": 1000.0, "cal/mol": 4.184, "kcal/mol": 4184.0}
 KINDS = ("VLE", "LLE", "HE", "GAMMA_INF", "AZEOTROPE", "VLLE", "UCST", "LCST")
+MISSING_TOKENS = frozenset(
+    (
+        "",
+        "?",
+        "??",
+        "-",
+        "--",
+        "—",
+        "–",
+        "−",
+        "..",
+        "...",
+        "…",
+        "none",
+        "null",
+        "nil",
+        "na",
+        "n/a",
+        "n.a.",
+        "nan",
+        "<na>",
+        "#n/a",
+        "nd",
+        "n.d.",
+        "missing",
+        "unknown",
+        "unavailable",
+        "not available",
+        "not measured",
+        "not reported",
+    )
+)
+
+
+def is_missing_cell(cell):
+    """Recognize explicit absence without treating arbitrary bad data as missing."""
+    return (
+        cell is None
+        or isinstance(cell, str)
+        and " ".join(cell.split()).casefold() in MISSING_TOKENS
+    )
 
 
 def cell_number(cell):
     """Parse nominal values, scientific notation and common PDF footnotes."""
     value = unescape(str(cell)).strip().replace("−", "-").replace("–", "-")
+    value = re.sub(r"^([+-])\s+(?=\d|\.\d)", r"\1", value)
     value = re.sub(r"\[\d+\]|[†‡*]+$", "", value).strip()
     value = re.sub(r"(?<=\d)\s*\(\d+\)$", "", value)
     value = re.split(r"\s*(?:±|\+/-)\s*", value)[0]
@@ -160,6 +202,8 @@ class _HTMLTables(HTMLParser):
 
 def _split_line(line):
     line = line.strip(" \r\n")
+    if not line:
+        return []
     if "|" in line:
         line = line.strip()
         if line.startswith("|"):
@@ -171,22 +215,22 @@ def _split_line(line):
         return [cell.strip() for cell in line.split("\t")]
     if ";" in line:
         return next(csv.reader([line], delimiter=";"))
-    # Decimal commas and separated PDF minus signs are numeric cells, not CSV.
-    numeric_line = re.sub(r"(?<!\S)[−–-]\s+(?=\d)", "-", line)
-    numeric_line = re.sub(r"(?<=\d)\s+\.\s+(?=\d)", ".", numeric_line)
-    words = numeric_line.split()
-    if len(words) > 1 and all(cell_number(word) is not None for word in words):
+    # Keep standalone signs until the expected table width is known.
+    numeric_line = re.sub(r"(?<=\d)\s+\.\s+(?=\d)", ".", line)
+    words = re.findall(
+        r"\bnot\s+(?:available|measured|reported)\b|\S+", numeric_line, re.I
+    )
+    if len(words) > 1 and all(
+        cell_number(word) is not None or is_missing_cell(word) for word in words
+    ):
         return words
     if "," in line and not re.fullmatch(_NUM, line):
         return next(csv.reader([line]))
-    words = numeric_line.split()
     if len(words) > 1 and (
         sum(cell_number(word) is not None for word in words) >= 2
         or cell_number(words[0]) is not None
         and all(
-            cell_number(word) is not None
-            or word.lower() in {"-", "—", "–", "na", "n/a", "nan", "…", "..."}
-            for word in words[1:]
+            cell_number(word) is not None or is_missing_cell(word) for word in words[1:]
         )
     ):
         return words
@@ -230,14 +274,14 @@ def _is_data(cells, headers=()):
                 "gamma2_inf",
             }
             if any(
-                role in numeric_roles and cell_number(cell) is not None
+                role in numeric_roles
+                and (cell_number(cell) is not None or is_missing_cell(cell))
                 for role, cell in zip(roles, cells)
             ):
                 return True
-    numeric_or_missing = numbers > 0 and all(
+    numeric_or_missing = (numbers > 0 or bool(headers)) and all(
         cell_number(cell) is not None
-        or str(cell).strip().lower()
-        in {"", "-", "—", "–", "na", "n/a", "nan", "…", "..."}
+        or is_missing_cell(cell)
         or str(cell).strip().upper() in KINDS
         for cell in cells
     )
@@ -307,10 +351,92 @@ def _repeated_header_layout(headers):
     return explicit
 
 
-def _table_blocks(lines):
+def _header_width(headers):
+    expanded = _repeated_header_layout(headers)
+    return (
+        len(expanded)
+        if expanded
+        else next(
+            (
+                len(header)
+                for header in reversed(headers)
+                if sum(_field(cell)[0] != "ignore" for cell in header) >= 2
+            ),
+            None,
+        )
+    )
+
+
+def _align_pdf_signs(cells, width):
+    """Join detached negatives only when column count determines every sign."""
+    candidates = {
+        index
+        for index, cell in enumerate(cells[:-1])
+        if cell in ("-", "−", "–")
+        and cell_number(cells[index + 1]) is not None
+        and not cells[index + 1].startswith(("-", "−", "–", "+"))
+    }
+    extra = len(cells) - width
+    if extra <= 0 or not candidates:
+        return cells, None
+    if extra > len(candidates):
+        return cells, None
+    if extra < len(candidates):
+        return (
+            cells,
+            "Standalone dashes could be missing cells or detached negative signs; confirm the column alignment.",
+        )
+    aligned = []
+    for index, cell in enumerate(cells):
+        if index in candidates:
+            continue
+        aligned.append("-" + cell if index - 1 in candidates else cell)
+    return aligned, None
+
+
+def _table_blocks(lines, *, expected_width=None):
     """Keep rectangular numeric blocks and nearby headings, not surrounding prose."""
     blocks, pending, active = [], [], None
-    for index, cells in enumerate(lines):
+    extracted = [_split_line(line) if isinstance(line, str) else line for line in lines]
+    flattened_column = all(
+        len(cells) == 1
+        and (cell_number(cells[0]) is not None or is_missing_cell(cells[0]))
+        for cells in extracted
+        if cells
+    ) and any(cells and cell_number(cells[0]) is not None for cells in extracted)
+    clean_widths = {
+        len(cells)
+        for cells in extracted
+        if len(cells) > 1 and all(cell_number(cell) is not None for cell in cells)
+    }
+    fallback_width = next(iter(clean_widths)) if len(clean_widths) == 1 else None
+    for index, cells in enumerate(extracted):
+        if cells and all(re.fullmatch(r"\s*:?-{3,}:?\s*", cell) for cell in cells):
+            continue
+        alignment_issue = None
+        if (
+            (len(lines) > 1 or pending)
+            and isinstance(lines[index], str)
+            and not any(delimiter in lines[index] for delimiter in ("\t", "|", ";"))
+            and (
+                "," not in lines[index]
+                or all(
+                    cell_number(word) is not None or is_missing_cell(word)
+                    for word in lines[index].split()
+                )
+            )
+        ):
+            headers = active["headers"] if active else pending
+            width = (
+                expected_width
+                or _header_width(headers)
+                or (len(active["rows"][0]) if active else fallback_width)
+            )
+            if width:
+                cells, alignment_issue = _align_pdf_signs(cells, width)
+                if alignment_issue:
+                    unassigned = list(cells)
+                    cells = cells[:width] + [""] * max(0, width - len(cells))
         if (
             cells
             and _field(cells[0])[0] == "temperature"
@@ -321,7 +447,12 @@ def _table_blocks(lines):
                 active = None
             pending.append(cells)
             continue
-        if cells and _is_data(cells, active["headers"] if active else pending):
+        if cells and (
+            _is_data(cells, active["headers"] if active else pending)
+            or len(cells) == 1
+            and is_missing_cell(cells[0])
+            and (flattened_column or active and len(active["rows"][0]) == 1)
+        ):
             if (
                 active is None
                 or not active.get("column_headers")
@@ -340,6 +471,15 @@ def _table_blocks(lines):
                     active["column_headers"] = expanded
                     active["ambiguous_rows"] = []
                 pending = []
+            if alignment_issue:
+                active.setdefault("ambiguous_rows", []).append(
+                    {
+                        "row": len(active["rows"]),
+                        "line": index + 1,
+                        "values": unassigned,
+                        "reason": alignment_issue,
+                    }
+                )
             if active.get("column_headers"):
                 width = len(active["column_headers"])
                 if len(cells) != width:
@@ -369,6 +509,7 @@ def _table_blocks(lines):
         block
         for block in blocks
         if len(block["rows"]) >= 2
+        or len(block["rows"][0]) > 1
         or any(
             _field(label)[0] != "ignore"
             for header in block["headers"]
@@ -633,18 +774,70 @@ def _rank_temperature_pair(rows, mapping=None, excluded=()):
     return sorted(candidates, reverse=True)
 
 
-def _flattened(block, options):
-    values = [row[0] for row in block["rows"]]
-    count = options.get("column_count")
-    if count is not None:
+def _table_dimension(value, name, maximum):
+    if value is None:
+        return None
+    try:
+        number = float(value)
         if (
-            isinstance(count, bool)
-            or int(count) != float(count)
-            or not 1 <= int(count) <= 20
+            isinstance(value, bool)
+            or not math.isfinite(number)
+            or not number.is_integer()
+            or not 1 <= number <= maximum
         ):
-            raise ValueError("column_count must be an integer between 1 and 20.")
-        count = int(count)
-    else:
+            raise ValueError
+        return int(number)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError(
+            f"{name} must be an integer between 1 and {maximum}."
+        ) from error
+
+
+def _flattened(block, options):
+    single_line = len(block["rows"]) == 1 and len(block["rows"][0]) > 1
+    values = (
+        list(block["rows"][0]) if single_line else [row[0] for row in block["rows"]]
+    )
+    count = _table_dimension(options.get("column_count"), "column_count", 30)
+    row_count = _table_dimension(options.get("row_count"), "row_count", 2000)
+
+    def pending(issue):
+        return {
+            **block,
+            "rows": [[" ".join(values)]],
+            "flattened": True,
+            "dimensions_needed": True,
+            "row_count": row_count,
+            "column_count": count,
+            "value_count": len(values),
+        }, [issue]
+
+    if single_line and (count is None or row_count is None):
+        return pending(
+            "This paste is a table flattened onto one line. Enter its row and column counts and choose whether values run across rows or down columns."
+        )
+    if row_count is not None and count is not None:
+        values, alignment_issue = _align_pdf_signs(values, row_count * count)
+        if alignment_issue:
+            return {
+                **block,
+                "rows": [[""] * count for _ in range(row_count)],
+                "flattened": True,
+                "row_count": row_count,
+                "column_count": count,
+                "value_count": len(values),
+                "layout": options.get("layout", "rows"),
+                "ambiguous_rows": [
+                    {
+                        "row": index,
+                        "line": 1,
+                        "values": values,
+                        "reason": alignment_issue,
+                    }
+                    for index in range(row_count)
+                ],
+            }, []
+    if count is None:
         context = " ".join(" ".join(row) for row in block["headers"])
         count = (
             1
@@ -656,10 +849,14 @@ def _flattened(block, options):
             if re.search(r"enthalpy|gamma|γ", context, re.I)
             else 3
         )
+    if row_count is not None and len(values) != row_count * count:
+        return pending(
+            f"The {len(values)} values do not fill {row_count} rows × {count} columns. Correct the dimensions or the source values."
+        )
     if len(values) % count:
-        return block, [
+        return pending(
             f"{len(values)} one-cell lines do not divide into {count} columns. Set the column count or exclude incomplete rows."
-        ]
+        )
     row_layout = [values[i : i + count] for i in range(0, len(values), count)]
     col_layout = np.array(values, dtype=object).reshape(count, -1).T.tolist()
     layout = options.get("layout")
@@ -679,6 +876,9 @@ def _flattened(block, options):
         "line_numbers": list(range(1, len(row_layout) + 1)),
         "flattened": True,
         "layout": layout,
+        "row_count": len(row_layout),
+        "column_count": count,
+        "value_count": len(values),
     }, []
 
 
@@ -786,9 +986,11 @@ def interpret_paste(value, *, options=None, components=None):
         "molecular_weights",
         "exclude_rows",
         "column_count",
+        "row_count",
         "layout",
         "series",
         "shared_columns",
+        "cell_edits",
     }
     if not isinstance(options, dict) or options.keys() - allowed:
         raise ValueError(
@@ -827,8 +1029,8 @@ def interpret_paste(value, *, options=None, components=None):
             "issues": [],
             "excluded": [],
         }
-    text = value.strip()
-    if not text or len(text) > 1_000_000:
+    text = value.strip(" \r\n")
+    if not text.strip() or len(text) > 1_000_000:
         raise ValueError("Paste a table of at most one million characters.")
     if text.startswith("```"):
         lines = text.splitlines()
@@ -846,10 +1048,12 @@ def interpret_paste(value, *, options=None, components=None):
         parser.feed(text)
         blocks = [block for table in parser.tables for block in _table_blocks(table)]
     else:
-        lines = [
-            _split_line(line) if line.strip() else [] for line in text.splitlines()
-        ]
-        blocks = _table_blocks(lines)
+        blocks = _table_blocks(
+            text.splitlines(),
+            expected_width=len(options["mapping"])
+            if isinstance(options.get("mapping"), list)
+            else None,
+        )
     if not blocks:
         raise ValueError(
             "No numeric table found. Paste the table, including any headings or captions; columns may also be separated by spaces or newlines."
@@ -875,11 +1079,62 @@ def interpret_paste(value, *, options=None, components=None):
 
 def _interpret_table(block, *, options, components, value, table_index, blocks):
     flattened_issues = []
-    if len(block["rows"][0]) == 1 and len(block["rows"]) > 1:
+    header_width = _header_width(block["headers"])
+    if (len(block["rows"][0]) == 1 and len(block["rows"]) > 1) or (
+        len(block["rows"]) == 1
+        and len(block["rows"][0]) > 1
+        and not block.get("layout")
+        and not block.get("ambiguous_rows")
+        and ("series" not in options or "row_count" in options)
+        and (
+            "row_count" in options
+            or not any(
+                _field(cell)[0] != "ignore"
+                for header in block["headers"]
+                for cell in header
+            )
+            or header_width
+            and len(block["rows"][0]) >= 2 * header_width
+        )
+    ):
         block, flattened_issues = _flattened(block, options)
     rows = block["rows"]
     if len(rows) > 2000 or len(rows[0]) > 30:
         raise ValueError("Import at most 2000 rows and 30 columns at a time.")
+    edits = options.get("cell_edits", [])
+    if not isinstance(edits, list) or len(edits) > 60000:
+        raise ValueError(
+            "cell_edits must be an array of at most 60000 cell corrections."
+        )
+    if edits:
+        rows = [list(row) for row in rows]
+        for edit in edits:
+            if (
+                not isinstance(edit, dict)
+                or set(edit) != {"row", "column", "value"}
+                or any(
+                    isinstance(edit[key], bool) or not isinstance(edit[key], int)
+                    for key in ("row", "column")
+                )
+                or not 0 <= edit["row"] < len(rows)
+                or not 0 <= edit["column"] < len(rows[edit["row"]])
+                or not isinstance(edit["value"], str)
+                or len(edit["value"]) > 1000
+            ):
+                raise ValueError(
+                    "Each cell edit needs valid zero-based row/column indices and a text value of at most 1000 characters."
+                )
+            rows[edit["row"]][edit["column"]] = edit["value"]
+        block = {**block, "rows": rows}
+        corrected = {(edit["row"], edit["column"]) for edit in edits}
+        block["ambiguous_rows"] = [
+            item
+            for item in block.get("ambiguous_rows", [])
+            if not all(
+                (item["row"], column) in corrected
+                for column in range(len(rows[item["row"]]))
+            )
+        ]
     width = len(rows[0])
     headers = _headers(block, width)
     context = "\n".join("\t".join(row) for row in block["headers"])
@@ -1145,13 +1400,15 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
                 "mapping",
                 "exclude_rows",
                 "column_count",
+                "row_count",
                 "layout",
                 "series",
                 "shared_columns",
+                "cell_edits",
             )
         }
     )
-    if "mapping" in options:
+    if "mapping" in options and not block.get("dimensions_needed"):
         mapping = options["mapping"]
         if (
             not isinstance(mapping, list)
@@ -1338,6 +1595,8 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
                     ):
                         observation[role] = cell
                         continue
+                    if is_missing_cell(cell):
+                        continue
                     number = cell_number(cell)
                     if number is None:
                         raise ValueError(f"Column {column + 1} is not a numeric value.")
@@ -1444,6 +1703,10 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
             for i, item in enumerate(blocks)
         ],
         "flattened": block.get("flattened", False),
+        "dimensions_needed": block.get("dimensions_needed", False),
+        "row_count": block.get("row_count"),
+        "column_count": block.get("column_count"),
+        "value_count": block.get("value_count"),
         "layout": block.get("layout", "rows"),
         "reference_component": reference,
         "notes": notes,
@@ -1451,6 +1714,7 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
         "excluded": excluded,
         "raw_observations": raw_observations if not issues else None,
         "original_text": value,
+        "cell_edits": edits,
         "series_available": len(rows[0]) > 2,
         "series_header_hints": _series_header_hints(headers, rows),
     }
@@ -1580,7 +1844,6 @@ def _interpret_repeated(
     raw, issues, reports, lineage, excluded = [], [], [], [], []
     issues.extend(_alignment_issues(ambiguous_rows, options.get("exclude_rows", [])))
     used = set()
-    missing_tokens = {"", "-", "—", "–", "na", "n/a", "nan", "…", "..."}
     required = {
         "HE": {"x1", "enthalpy"},
         "VLE": {"x1"},
@@ -1631,7 +1894,7 @@ def _interpret_repeated(
             absent = {
                 role
                 for role, cell in zip(roles, cells)
-                if role != "ignore" and cell.lower() in missing_tokens
+                if role != "ignore" and is_missing_cell(cell)
             }
             mandatory = (
                 required.get(child_settings["kind"], set())
@@ -1659,9 +1922,7 @@ def _interpret_repeated(
                     }
                 )
                 continue
-            projected.append(
-                ["" if cell.lower() in missing_tokens else cell for cell in cells]
-            )
+            projected.append(cells)
             row_indices.append(row_index)
         child_options = {
             key: val for key, val in child_settings.items() if key in conditions
@@ -1705,6 +1966,7 @@ def _interpret_repeated(
             "headers": [[headers[index] for index in selected]],
             "rows": projected,
             "line_numbers": [line_numbers[index] for index in row_indices],
+            "layout": "rows",
         }
         child = _interpret_table(
             child_block,
@@ -1824,6 +2086,7 @@ def _interpret_repeated(
         "excluded": excluded,
         "raw_observations": raw if not issues else None,
         "original_text": value,
+        "cell_edits": options.get("cell_edits", []),
         "series_available": True,
         "series": series,
         "shared_columns": shared,

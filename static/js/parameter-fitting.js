@@ -118,6 +118,22 @@ function table(headers, rows) {
   for (const cells of rows) { const row = element("tr"); for (const cell of cells) { const td = element("td"); td.append(cell instanceof Node ? cell : document.createTextNode(String(cell))); row.append(td); } body.append(row); }
   node.append(body); return node;
 }
+function missingValue(value) {
+  return catalog.missing_tokens.includes(String(value ?? "").trim().toLowerCase().replace(/\s+/g, " "));
+}
+function measurementInput(value, attributes, changed) {
+  const node = element("input", { type: "text", inputmode: "decimal", placeholder: "Blank / ?", ...attributes });
+  node.value = value ?? "";
+  function validate() {
+    const text = node.value.trim(), missing = missingValue(text);
+    const valid = missing || /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text) && Number.isFinite(Number(text));
+    node.setCustomValidity(valid ? "" : "Enter a finite number or a missing indicator such as ?, None, N/A, or a blank.");
+    return missing ? undefined : valid ? Number(text) : node.value;
+  }
+  validate();
+  node.oninput = () => changed(validate(), node.value);
+  return node;
+}
 function renderObservations() {
   const counts = {};
   observations.forEach(row => counts[row.kind] = (counts[row.kind] || 0)+1);
@@ -131,8 +147,13 @@ function renderObservations() {
       row.kind = select.value; renderObservations(); saveDraft();
     };
     function input(key, type = "number") {
-      const node = element("input", { type, step: "any", "aria-label": `Observation ${row.id} ${key}` }); node.value = row[key] ?? "";
-      node.onchange = () => { if (node.value === "" && type === "number") delete row[key]; else row[key] = type === "number" ? Number(node.value) : node.value; if(key==="weight")renderPsat();saveDraft(); }; return node;
+      const attributes = { "aria-label": `Observation ${row.id} ${key}` };
+      if (type === "number") return measurementInput(row[key], attributes, value => {
+        if (value === undefined) delete row[key]; else row[key] = value;
+        if (key === "weight") renderPsat(); saveDraft();
+      });
+      const node = element("input", { type, ...attributes }); node.value = row[key] ?? "";
+      node.oninput = () => { row[key] = node.value; saveDraft(); }; return node;
     }
     const coordinateInput = element("div", { class: "fit-coordinate" });
     const coordinateKeys = {
@@ -149,7 +170,7 @@ function renderObservations() {
     const validation = element("input", { type:"checkbox", "aria-label":`Validation-only observation ${row.id}` }); validation.checked = !!row.validation_only;
     validation.onchange = () => { row.validation_only=validation.checked; if(row.validation_only)row.pin=false; renderObservations();saveDraft(); };
     const sigma = element("input", { type: "text", "aria-label": `Observation ${row.id} sigma` }); sigma.value = JSON.stringify(row.sigma ?? {});
-    sigma.onchange = () => { try { row.sigma = JSON.parse(sigma.value); sigma.setCustomValidity(""); saveDraft(); } catch { sigma.setCustomValidity("Enter a number or JSON object for sigma."); sigma.reportValidity(); } };
+    sigma.oninput = () => { try { if (missingValue(sigma.value)) delete row.sigma; else row.sigma = JSON.parse(sigma.value); sigma.setCustomValidity(""); saveDraft(); } catch { sigma.setCustomValidity("Enter a number, JSON object, or missing indicator for sigma."); } };
     const remove = element("button", { type: "button", "aria-label": `Remove observation ${row.id}` }, "Remove");
     remove.onclick = () => { observations.splice(index, 1); renderObservations(); renderSetOptions(); saveDraft(); };
     return [row.id, select, input("T_K"), coordinateInput, input("weight"), pin, validation,input("pin_tolerance"), sigma, input("source", "text"), input("group", "text"), remove];
@@ -255,8 +276,7 @@ function renderManual() {
   const container = $("fit-manual-fields"); container.replaceChildren();
   const kind = $("fit-data-kind").value === "AUTO" ? "VLE" : $("fit-data-kind").value;
   for (const role of manualRoles[kind]) {
-    const input = element("input", { id: `fit-manual-${role}`, type: "number", step: "any" }); input.value = manualValues[role] ?? "";
-    input.oninput = () => { manualValues[role] = input.value; saveDraft(); };
+    const input = measurementInput(manualValues[role], { id: `fit-manual-${role}` }, (value, text) => { manualValues[role] = text; saveDraft(); });
     container.append(labeled(catalog.import_fields[role] + (["y1", "gamma1_inf", "gamma2_inf"].includes(role) || kind==="VLLE"&&role.startsWith("x1_") || ["UCST", "LCST"].includes(kind) && role === "x1" ? " (optional)" : ""), input));
   }
   for (const [key, label, items, fallback] of [
@@ -338,12 +358,13 @@ function importPreview(text, initial, initialOptions) {
     let seriesInputs=[];
     let seriesPreset="",singleMapping=initial.columns.map(column=>column.role);
     const options = { ...initial.settings, ...initialOptions, table: initial.table, mapping: initial.columns.map(column => column.role) };
+    let cellEdits = new Map((initial.cell_edits || initialOptions.cell_edits || []).map(edit => [`${edit.row}:${edit.column}`, edit]));
     const inputs = {};
     const changedControls = new Set();
     function capture() {
-      const result = { ...options, mapping: Array.from(mappingContainer.querySelectorAll("select[data-field-role]"), select => select.value) };
+      const result = { ...options, cell_edits: Array.from(cellEdits.values()), mapping: Array.from(mappingContainer.querySelectorAll("select[data-field-role]"), select => select.value) };
       for (const [key, control] of Object.entries(inputs)) {
-        if (["pressure", "temperature", "column_count", "composition_component", "table"].includes(key)) result[key] = control.value === "" ? null : Number(control.value);
+        if (["pressure", "temperature", "row_count", "column_count", "composition_component", "table"].includes(key)) result[key] = control.value === "" ? null : Number(control.value);
         else result[key] = control.value;
       }
       if (inputs.mw1) { result.molecular_weights = [Number(inputs.mw1.value), Number(inputs.mw2.value)]; delete result.mw1; delete result.mw2; }
@@ -369,6 +390,7 @@ function importPreview(text, initial, initialOptions) {
     }
     async function refresh() {
       const ticket = ++revision;
+      add.disabled = true;
       try {
         const updated = await api("/api/fitting/parse", { observations: text, components: componentNames(), import_options: capture() });
         if (ticket !== revision || finished) return;
@@ -454,12 +476,14 @@ function importPreview(text, initial, initialOptions) {
       const updated = await api("/api/fitting/parse", { observations: text, components: componentNames(), import_options: newOptions });
       if (ticket !== revision || finished) return;
       proposal = updated;
+      cellEdits = new Map((updated.cell_edits || []).map(edit => [`${edit.row}:${edit.column}`, edit]));
       seriesMode=false;seriesSpecs=[];assignments=[];renderSeries();
       for (const key of Object.keys(options)) delete options[key];
       Object.assign(options, updated.settings, { table: updated.table });
       for (const [key, node] of Object.entries(inputs)) {
         if (key === "table") node.value = String(updated.table);
-        else if (key === "column_count") node.value = updated.columns.length;
+        else if (key === "column_count") node.value = updated.column_count ?? (updated.dimensions_needed ? "" : updated.columns.length);
+        else if (key === "row_count") node.value = updated.row_count ?? "";
         else if (key === "layout") node.value = updated.layout;
         else if (key === "mw1" || key === "mw2") node.value = updated.settings.molecular_weights?.[key === "mw1" ? 0 : 1] ?? "";
         else node.value = updated.settings[key] ?? "";
@@ -474,8 +498,28 @@ function importPreview(text, initial, initialOptions) {
         const ambiguous=proposal.ambiguous_rows?.find(item=>item.row===index);
         const excluded = proposal.excluded.find(item => item.row === index && (!seriesMode || proposal.series_reports?.every(series=>series.excluded?.some(exclusion=>exclusion.row===index))));
         checkbox.checked = !excluded || !!ambiguous&&excluded.reason!=="Excluded in the import preview."; checkbox.disabled = !!excluded?.reason.startsWith("Pure-component"); checkbox.title = ambiguous?.reason || excluded?.reason || "Include this source row";
-        const shown=ambiguous?cells.map((cell,column)=>column===0?cell:"?"):cells;
-        const alignment=ambiguous?element("span",{class:"fit-error"},`Unassigned HE values: ${ambiguous.values.join(", ")}`):"Aligned";
+        const shown = cells.map((cell, column) => {
+          const node = element("input", { type: "text", "aria-label": `Source row ${index+1} column ${column+1}`, maxlength: 1000, placeholder: "Blank / ?" });
+          node.disabled = !!proposal.dimensions_needed;
+          node.value = cellEdits.get(`${index}:${column}`)?.value ?? (ambiguous && column > 0 ? "" : cell);
+          node.oninput = () => {
+            ++revision; add.disabled = true;
+            if (!ambiguous) { cellEdits.set(`${index}:${column}`, { row: index, column, value: node.value }); capture(); }
+          };
+          if (!ambiguous) node.onchange = guarded(refresh);
+          return node;
+        });
+        let alignment = "Aligned";
+        if (ambiguous) {
+          alignment = element("div");
+          alignment.append(element("span", { class: "fit-error" }, `Unassigned values: ${ambiguous.values.join(", ")}`));
+          const confirm = element("button", { type: "button", "aria-label": `Confirm alignment of source row ${index+1}` }, "Confirm edited row");
+          confirm.onclick = guarded(async () => {
+            shown.forEach((node, column) => cellEdits.set(`${index}:${column}`, { row: index, column, value: node.value }));
+            await refresh();
+          });
+          alignment.append(confirm);
+        }
         checkbox.onchange = guarded(refresh); return [checkbox, ...shown,...(hasAmbiguousRows?[alignment]:[])];
       })));
       add.disabled = !proposal.ready; add.textContent = proposal.ready ? `Add ${proposal.observations.length} observations` : "Resolve the missing choices";
@@ -503,14 +547,15 @@ function importPreview(text, initial, initialOptions) {
       });
     }
     if (proposal.flattened) {
-      const count = control("column_count", "Columns in flattened PDF text", null, proposal.columns.length);
+      const count = control("column_count", "Columns in flattened PDF text", null, proposal.column_count ?? (proposal.dimensions_needed ? "" : proposal.columns.length));
+      const rows = control("row_count", "Rows in flattened PDF text (data rows only)", null, proposal.row_count);
       const layout = control("layout", "Flattened text order", [["rows", "Read across rows"], ["columns", "Read down columns"]], proposal.layout);
-      for (const node of [count, layout]) node.onchange = guarded(async () => {
-        const newOptions = capture(); delete newOptions.mapping; newOptions.exclude_rows = []; await reshape(newOptions);
+      for (const node of [count, rows, layout]) node.onchange = guarded(async () => {
+        const newOptions = capture(); delete newOptions.mapping; delete newOptions.cell_edits; newOptions.exclude_rows = []; await reshape(newOptions);
       });
     }
     renderMappings();renderSeries();
-    box.append(element("p", {}, `Review the interpretation. Adding this table preserves the ${observations.length} observations already entered.`));
+    box.append(element("p", {}, `Review the interpretation and edit cells as needed. Blank, ?, None, N/A, dashes, and other missing indicators mean absent data. Ambiguous rows require an explicit column alignment. Adding this table preserves the ${observations.length} observations already entered.`));
     if (proposal.reference_component) {
       box.append(element("p", {}, `The source labels these compositions as ${proposal.reference_component}.`));
       if (!definitionProject && !componentNames().some(name => name.toLowerCase() === proposal.reference_component.toLowerCase())) {
@@ -536,11 +581,11 @@ function importPreview(text, initial, initialOptions) {
 }
 async function parseInput() {
   const mode = $("fit-input-method").value;
-  let text = $("fit-input").value.trim(), options = $("fit-data-kind").value === "AUTO" ? {} : {kind:dataKind()};
+  let text = $("fit-input").value, options = $("fit-data-kind").value === "AUTO" ? {} : {kind:dataKind()};
   if(mode==="paste"&&pendingImport?.text===text)options={...pendingImport.options,...options};
   if (mode === "manual") {
       const kind = $("fit-data-kind").value === "AUTO" ? "VLE" : $("fit-data-kind").value;
-    const roles = manualRoles[kind].filter(role => String(manualValues[role] ?? "").trim() !== "");
+    const roles = manualRoles[kind].filter(role => !missingValue(manualValues[role]));
     if (!roles.length) throw new Error("Enter an observation in the textboxes first.");
     const required = { VLE: ["temperature", "pressure", "x1"], LLE: ["temperature", "x1_alpha", "x1_beta"], HE: ["temperature", "x1", "enthalpy"], GAMMA_INF: ["temperature"], AZEOTROPE: ["temperature", "pressure", "x1"], VLLE:["temperature","pressure"], UCST: ["temperature"], LCST: ["temperature"] }[kind];
     const missing = required.filter(role => !roles.includes(role));
@@ -550,7 +595,7 @@ async function parseInput() {
     options = { kind, mapping: roles, temperature_unit: manualValues.temperature_unit, pressure_unit: manualValues.pressure_unit || "bar", composition_basis: manualValues.composition_basis || "mole_fraction", composition_component: kind === "GAMMA_INF" ? 1 : Number(manualValues.composition_component), enthalpy_unit: manualValues.enthalpy_unit || "J/mol" };
     if ((manualValues.composition_basis || "").startsWith("mass")) options.molecular_weights = [Number(manualValues.mw1), Number(manualValues.mw2)];
   }
-  if (!text) throw new Error("Paste a table or enter an observation first.");
+  if (!text.trim()) throw new Error("Paste a table or enter an observation first.");
   let parsed;
   try{parsed=await api("/api/fitting/parse",{observations:text,components:componentNames(),import_options:options});}
   catch(error){

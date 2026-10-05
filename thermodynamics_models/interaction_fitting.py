@@ -17,7 +17,14 @@ from scipy.optimize import brentq, least_squares, minimize
 
 from .factory import create_thermodynamics
 from .common import ThermodynamicsError
-from .fitting_data import FIELD_LABELS, KINDS, interpret_paste, tabular_matrix
+from .fitting_data import (
+    FIELD_LABELS,
+    KINDS,
+    MISSING_TOKENS,
+    interpret_paste,
+    is_missing_cell,
+    tabular_matrix,
+)
 from .fitting_psat import PSAT_FORMS, apply_psat, normalize_psat, install_fitting_psat
 from .fitting_properties import (
     COMPONENT_FIELDS,
@@ -197,6 +204,9 @@ def parse_observations(value, *, import_options=None, components=None):
                 f"Observation {index + 1}: unknown fields {', '.join(sorted(unknown))}."
             )
         row = dict(raw)
+        for key in allowed - {"kind", "type", "pin", "validation_only", "source", "group", "id"}:
+            if key in row and is_missing_cell(row[key]):
+                del row[key]
         if (
             "kind" in row
             and "type" in row
@@ -2270,6 +2280,7 @@ def fitting_catalog():
         "vapors": list(VAPORS),
         "scales": SCALES,
         "import_fields": FIELD_LABELS,
+        "missing_tokens": sorted(MISSING_TOKENS),
         "psat_forms": PSAT_FORMS,
         "vapor_requirements": VAPOR_REQUIREMENTS,
         "example": [
