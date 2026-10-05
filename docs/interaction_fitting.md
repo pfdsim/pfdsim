@@ -340,7 +340,7 @@ principal-moment formula and shared starting-geometry implementation.
 
 | Vapor treatment | Supporting inputs |
 | --- | --- |
-| Ideal | No vapor correction constants; canonical Psat still uses Tc/Pc anchors |
+| Ideal | No vapor correction constants; supplied Psat is evaluated directly, otherwise normal canonical Psat uses Tc/Pc anchors |
 | RK | Tc, Pc |
 | PR | Tc, Pc, omega |
 | VDM | Library or component association definitions; generic associator estimates are warned |
@@ -378,8 +378,10 @@ optional `inverse_power`, and `source`. Forms are `antoine`, `dippr101`,
 `canonical_psat_af`, `canonical_psat_ag`, and `canonical_psat_ah`.
 `component_properties` accepts two objects using `MW`, `Tc_K`, `Pc_bar`,
 `Tb_K`, `omega`, `Vc_cm3_mol`, `Zc`, `dipole_D` (Debye), `hoc_eta`, `Rprime_A`
-(angstrom) and `smiles`. Unknown components need MW; canonical Psat construction
-uses Tc/Pc but the fitter can resolve/estimate those anchors with warnings when
+(angstrom) and `smiles`. Unknown components need MW. Supplied Antoine, DIPPR,
+canonical A–F and A–G are directly evaluated without critical anchors; A–H needs
+its actual Tc for the inverse-power term. Normal unsupplied Psat and vapor
+corrections can still need criticals, resolved/estimated with warnings when
 needed. Unresolvable supporting constants require an identifiable structure or
 entered values; they are never fabricated silently. Resolved supporting values
 are preserved in fit provenance and, where needed, in PFD component definitions.
@@ -412,12 +414,15 @@ snapshots with `type: pfdsim_fit_session` and `schema_version: 1`. Fitting-sessi
 storage is separate from sourced submissions and the administrator publication
 database; saving a session does not submit or publish it.
 
-The fit uses the authoritative runtime canonicalization/evaluation path, including
-its physical validation, source pinning, critical/boiling anchors and continuation
-policy. Antoine/DIPPR inputs become canonical runtime curves rather than a
-second fitting-only Psat implementation. Inconsistent anchors or a rejected
-canonical approximation fail explicitly. Custom definitions are fixed during
-interaction fitting; their coefficients are not simultaneously fitted.
+Within the fitter, supplied Antoine, DIPPR and canonical correlations are evaluated
+directly with their original coefficients and declared validity range. They are
+not canonically refitted, anchored to a critical/boiling point, clamped or
+extrapolated. An out-of-range evaluation raises an error. This is confined to the
+fitting context; shared Psat processing and PFD export retain their existing
+behavior. Components without a supplied correlation still use PFDSim's normal
+qualified Psat. Custom coefficients are fixed during interaction fitting; they
+are not simultaneously fitted. Direct evaluation is reapplied if fitting a vapor
+parameter rebuilds the fitter's thermodynamic package.
 
 The full PFD export preserves these definitions. Applying a fit copies explicitly
 entered Psat and pure-fluid properties into the destination component globally;

@@ -18,7 +18,7 @@ from scipy.optimize import brentq, least_squares, minimize
 from .factory import create_thermodynamics
 from .common import ThermodynamicsError
 from .fitting_data import FIELD_LABELS, KINDS, interpret_paste, tabular_matrix
-from .fitting_psat import PSAT_FORMS, apply_psat, normalize_psat
+from .fitting_psat import PSAT_FORMS, apply_psat, normalize_psat, install_fitting_psat
 from .fitting_properties import (
     COMPONENT_FIELDS,
     VAPOR_REQUIREMENTS,
@@ -720,6 +720,7 @@ def prepare_fit(request):
             thermo_options=binary.metadata.thermo_options,
         )
         thermo._resolver_known_props = deepcopy(base._resolver_known_props)
+        install_fitting_psat(thermo,binary)
         property_warnings.extend(thermo.warnings)
         property_records.extend(
             qualify_psat(
@@ -736,6 +737,8 @@ def prepare_fit(request):
         property_warnings.append(
             f"No vapor-equilibrium objective is present; {request['vapor']} is not needed and the liquid model is fitted independently."
         )
+    if not any(row["kind"] in VAPOR_OBJECTIVES for row in request["observations"]):
+        install_fitting_psat(thermo,binary)
     identities = [thermo.props[c].CAS or thermo.props[c].name.lower() for c in symbols]
     if len(set(identities)) != 2:
         raise ValueError("These identifiers resolve to the same chemical.")
@@ -1042,6 +1045,7 @@ class FitProblem:
                 thermo_options=self.definition.metadata.thermo_options,
             )
             self.thermo._resolver_known_props = deepcopy(previous._resolver_known_props)
+            install_fitting_psat(self.thermo,self.definition)
             self.last_vapor = deepcopy(vapor)
         else:
             mapping = (

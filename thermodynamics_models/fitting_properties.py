@@ -6,6 +6,7 @@ if __package__.split(".", 1)[0] == "pfdsim":
     from ..property_resolver import get_property_resolver
 else:
     from property_resolver import get_property_resolver
+from .fitting_psat import has_supplied_psat, supplied_psat_dependencies
 
 COMPONENT_FIELDS = {
     "MW": "molecular_weight",
@@ -94,7 +95,12 @@ def prepare_auxiliary_properties(thermo, definition, request):
     for component in thermo.components:
         props, known = thermo.props[component], thermo._resolver_known_props[component]
         identifier = props.CAS or props.name
-        required = {"Tc", "Pc"} | {
+        component_definition = definition.get_component(component)
+        required = (
+            supplied_psat_dependencies(component_definition)
+            if has_supplied_psat(component_definition)
+            else {"Tc", "Pc"}
+        ) | {
             COMPONENT_FIELDS[field]
             for field in VAPOR_REQUIREMENTS[vapor]["fields"]
             if field in ("Tc_K", "Pc_bar", "Vc_cm3_mol", "omega")
@@ -297,8 +303,13 @@ def qualify_psat(thermo, temperatures, request):
     for component in thermo.components:
         props, known = thermo.props[component], thermo._resolver_known_props[component]
         identifier = props.CAS or props.name
-        samples = resolver.vapor_pressure_quality_samples(
-            identifier, low, high, known, allow_online=request["online_lookup"]
+        direct = getattr(thermo, "_fitting_psat_evaluators", {}).get(component)
+        samples = (
+            direct.quality_samples(low, high)
+            if direct is not None
+            else resolver.vapor_pressure_quality_samples(
+                identifier, low, high, known, allow_online=request["online_lookup"]
+            )
         )
         for temperature, item in samples:
             tag = (str(item.method) + " " + str(item.source)).lower()
@@ -306,7 +317,8 @@ def qualify_psat(thermo, temperatures, request):
                 item.quality is None
                 or not math.isfinite(float(item.quality))
                 or item.quality < 0.9
-                or any(word in tag for word in _PSAT_ESTIMATED)
+                or direct is None
+                and any(word in tag for word in _PSAT_ESTIMATED)
             ):
                 raise ValueError(
                     f"Psat for {props.name} at {temperature:g} K has quality {item.quality!r} ({item.method}; {item.source}). Vapor-equilibrium fitting requires non-estimated Psat quality ≥0.9 throughout the target region; provide your own Psat correlation."
