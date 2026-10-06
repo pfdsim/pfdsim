@@ -5,6 +5,8 @@ import { SourceTextModule, SyntheticModule, createContext } from "node:vm";
 import { randomUUID } from "node:crypto";
 
 class Node {
+  get value() { return this._value; }
+  set value(value) { this._value = String(value ?? ""); }
   constructor(tag, attributes = {}, text = "") {
     this.tag = tag;
     Object.assign(this, attributes);
@@ -19,6 +21,7 @@ class Node {
   addEventListener(type, fn) { const entries = this.listeners.get(type) || new Set(); entries.add(fn); this.listeners.set(type, entries); }
   removeEventListener(type, fn) { this.listeners.get(type)?.delete(fn); }
   scrollIntoView() { this.scrolled = true; }
+  setCustomValidity(message) { this.validityMessage = message; }
 }
 const nodes = new Map();
 const element = (tag, attributes, text) => {
@@ -69,7 +72,7 @@ const exports = {
 const source = await readFile(new URL("../static/js/parameter-fitting.js", import.meta.url), "utf8");
 const sessionSource = await readFile(new URL("../static/js/fitting-sessions.js", import.meta.url), "utf8");
 const sessionModule = new SourceTextModule(sessionSource, { context });
-const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileTemperatureLaw }; export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms }; }", { context });
+const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileFitParameters, renderObservations, removeObservationIds }; export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
 const linked = new Map();
 async function link(path) {
   if (path === "./fitting-sessions.js") {
@@ -243,25 +246,99 @@ module.namespace.setLawCatalog({
   full: ["constant", "inverse", "anchored", "linear", "quadratic"],
 });
 node("fit-law").value = "constant_inverse_linear";
+node("fit-model").value = "NRTL";
+node("fit-free-alpha").checked = true;
+node("fit-vapor").value = "PR";
+for (const kind of ["UCST", "VLLE"]) node(`fit-weight-${kind}`).value = "1";
+module.namespace.setObservationRows([
+  { id: "paper", kind: "UCST", T_K: 300 },
+  { id: "paper", kind: "VLLE", T_K: 300, P_bar: 1 },
+]);
+const vaporGroup = {
+  dataset: { model: "PR", field: "kij", scale: "1" },
+  querySelector: selector => ({ checked: true, value: selector.includes('"lower"') ? -.5 : selector.includes('"upper"') ? .5 : .02 }),
+};
+node("fit-vapor-parameters").children = [vaporGroup];
 const starts = { "12.constant": .4, "12.inverse": 450, "12.anchored": -5, "21.constant": .7, "21.inverse": -11, "21.anchored": .6, alpha12: .55, "vapor.PR.kij": .02, "critical_x1.paper": .3, "12.typo": 2, "12.anchored.": 3 };
 node("fit-initial").value = JSON.stringify(starts);
 node("fit-bounds").value = JSON.stringify({ "12.anchored": [-6, 6], "21.inverse": [-30, 30], "vlle_xa.paper": [.01, .8] });
-module.namespace.reconcileTemperatureLaw();
+module.namespace.reconcileFitParameters();
 const expected = { ...starts }; delete expected["12.anchored"]; delete expected["21.anchored"];
 assert.deepEqual(JSON.parse(node("fit-initial").value), expected);
 assert.deepEqual(JSON.parse(node("fit-bounds").value), { "21.inverse": [-30, 30], "vlle_xa.paper": [.01, .8] });
 assert.ok(!("12.linear" in JSON.parse(node("fit-initial").value))); // Backend supplies zero; anchored C is not a D slope.
 node("fit-law").value = "full";
-module.namespace.reconcileTemperatureLaw();
+module.namespace.reconcileFitParameters();
 assert.deepEqual(JSON.parse(node("fit-initial").value), expected);
 node("fit-law").value = "constant";
-module.namespace.reconcileTemperatureLaw();
+module.namespace.reconcileFitParameters();
 delete expected["12.inverse"]; delete expected["21.inverse"];
 assert.deepEqual(JSON.parse(node("fit-initial").value), expected);
 assert.deepEqual(JSON.parse(node("fit-bounds").value), { "vlle_xa.paper": [.01, .8] });
 node("fit-initial").value = '{"12.constant":';
 node("fit-bounds").value = '[]';
-module.namespace.reconcileTemperatureLaw();
+module.namespace.reconcileFitParameters();
 assert.equal(node("fit-initial").value, '{"12.constant":');
 assert.equal(node("fit-bounds").value, '[]');
 console.log("Temperature-law changes preserve compatible seeds, bounds and auxiliary parameters; obsolete terms are removed without reinterpreting units.");
+
+function parameterDraft() {
+  node("fit-law").value = "constant_inverse";
+  node("fit-model").value = "NRTL";
+  node("fit-free-alpha").checked = true;
+  node("fit-vapor").value = "PR";
+  node("fit-vapor-parameters").children = [vaporGroup];
+  module.namespace.setObservationRows([
+    { id: "critical.with.dots", kind: "UCST", T_K: 300 },
+    { id: "invariant", kind: "VLLE", T_K: 300, P_bar: 1 },
+  ]);
+  const values = { "12.constant": 1, "21.inverse": 200, alpha12: .4, "vapor.PR.kij": .02,
+    "critical_x1.critical.with.dots": .3, "vlle_xa.invariant": .1, "vlle_gap.invariant": .8, typo: 9 };
+  node("fit-initial").value = JSON.stringify(values);
+  node("fit-bounds").value = JSON.stringify(Object.fromEntries(Object.keys(values).map(key => [key, [-1, 1]])));
+  return values;
+}
+for (const change of ["UNIQUAC", "fixed-alpha", "IDEAL", "fixed-vapor", "validation", "known-compositions", "disabled-data", "kind-change", "removed-rows"]) {
+  const expected = parameterDraft();
+  if (change === "UNIQUAC") { node("fit-model").value = "UNIQUAC"; delete expected.alpha12; }
+  if (change === "fixed-alpha") { node("fit-free-alpha").checked = false; delete expected.alpha12; }
+  if (change === "IDEAL") { node("fit-vapor").value = "IDEAL"; delete expected["vapor.PR.kij"]; }
+  if (change === "fixed-vapor") {
+    node("fit-vapor-parameters").children = [{ ...vaporGroup, querySelector: selector => ({ checked: !selector.includes('"fit"'), value: .02 }) }];
+    delete expected["vapor.PR.kij"];
+  }
+  if (["validation", "known-compositions", "disabled-data", "kind-change", "removed-rows"].includes(change)) {
+    module.namespace.setObservationRows(change === "removed-rows" ? [] : [
+      { id: "critical.with.dots", kind: change === "kind-change" ? "HE" : "UCST", T_K: 300,
+        ...(change === "validation" ? { validation_only: true } : change === "known-compositions" ? { x1: .4 } : change === "disabled-data" ? { weight: 0 } : {}) },
+      { id: "invariant", kind: change === "kind-change" ? "GAMMA_INF" : "VLLE", T_K: 300, P_bar: 1,
+        ...(change === "validation" ? { validation_only: true } : change === "known-compositions" ? { x1_alpha: .1, x1_beta: .9 } : change === "disabled-data" ? { weight: 0 } : {}) },
+    ]);
+    delete expected["critical_x1.critical.with.dots"];
+    delete expected["vlle_xa.invariant"];
+    delete expected["vlle_gap.invariant"];
+  }
+  module.namespace.reconcileFitParameters();
+  assert.deepEqual(JSON.parse(node("fit-initial").value), expected, change);
+  assert.deepEqual(Object.keys(JSON.parse(node("fit-bounds").value)).sort(), Object.keys(expected).sort(), change);
+}
+parameterDraft();
+node("fit-weight-UCST").value = "0";
+module.namespace.reconcileFitParameters();
+assert.ok(!("critical_x1.critical.with.dots" in JSON.parse(node("fit-initial").value)));
+node("fit-weight-UCST").value = "1";
+console.log("Model, alpha, vapor and observation changes remove obsolete optimizer parameters while preserving compatible entries and unknown-key diagnostics.");
+
+// Exercise the real observation controls, including their reconciliation hooks.
+parameterDraft();
+module.namespace.renderObservations();
+let control = descendants(node("fit-table")).find(item => item["aria-label"] === "Validation-only observation critical.with.dots");
+control.checked = true; control.onchange();
+assert.ok(!("critical_x1.critical.with.dots" in JSON.parse(node("fit-initial").value)));
+assert.ok(!("critical_x1.critical.with.dots" in JSON.parse(node("fit-bounds").value)));
+control = descendants(node("fit-table")).find(item => item["aria-label"] === "Observation invariant x1_alpha");
+control.value = "0.1"; control.oninput();
+assert.ok(!("vlle_xa.invariant" in JSON.parse(node("fit-initial").value)));
+assert.ok(!("vlle_gap.invariant" in JSON.parse(node("fit-bounds").value)));
+assert.equal(JSON.parse(node("fit-initial").value).alpha12, .4);
+console.log("Actual observation validation and composition controls reconcile initial values and bounds.");

@@ -468,8 +468,11 @@ scaled with Tref to keep optimization well conditioned. Default starts are
 deterministically seeded (`seed=1729`, `starts=3`), with `max_nfev=500` per start
 and constrained refinement where pins are present.
 
-Changing the temperature law keeps compatible initial values and bounds and
-removes coefficients for terms outside the selected law, with a notification.
+Changing the temperature law, model, alpha/vapor fitting controls or observations
+keeps compatible initial values and bounds and removes parameters that are no
+longer fitted, with a notification. This includes latent phase compositions when
+their observation is removed, disabled, marked validation-only or given explicit
+compositions.
 Unspecified new terms use zero starting values and the model's default bounds. The same
 reconciliation applies when restoring a draft or session; unrelated parameter
 keys and unfinished JSON remain editable and subject to normal validation.

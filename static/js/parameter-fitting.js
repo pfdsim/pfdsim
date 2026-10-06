@@ -15,6 +15,12 @@ let sessionLibrary;
 const fields = ["comp1", "comp2", "model", "vapor", "law", "alpha", "free-alpha", "r1", "q1", "r2", "q2", "cv", "folds", "tref", "starts", "evaluations", "seed", "extrapolation", "online", "scales", "initial", "bounds", "input", "source", "source-url", "source-doi", "source-notes", "input-method", "data-kind", "estimate-properties", "hoc-eta-default"];
 const labels = { VLE: "Vapor–liquid equilibrium", LLE: "Liquid–liquid equilibrium", HE: "Excess enthalpy", GAMMA_INF: "Infinite-dilution γ", AZEOTROPE: "Azeotrope", VLLE: "VLLE / heteroazeotrope", UCST: "Upper critical solution point", LCST: "Lower critical solution point" };
 const laws = { constant: "A", inverse: "B/T", constant_inverse: "A + B/T", constant_inverse_anchored: "A + B/T + C h(T)", constant_inverse_linear: "A + B/T + D T", full: "A + B/T + C h(T) + D T + E T²" };
+const vaporParameterDefinitions = {
+  VDM: [["VDM", "delta_H_residual_J_per_mol", "Cross-association ΔH / J mol⁻¹", 1000], ["VDM", "delta_S_residual_J_per_mol_K", "Cross-association ΔS / J mol⁻¹ K⁻¹", 10]],
+  HOC: [["HOC", "eta", "HOC cross-association η", 1]],
+  TSONOPOULOS: [["TSONOPOULOS", "kij", "Tsonopoulos kᵢⱼ", 1]],
+  PR: [["PR", "kij", "PR kᵢⱼ", 1]],
+};
 const enthalpyUnits = [["J/mol", "J/mol"], ["kJ/mol", "kJ/mol"], ["cal/mol", "cal/mol"], ["kcal/mol", "kcal/mol"]];
 const exampleRows = {
   VLE: { kind: "VLE", T_K: 350, P_bar: 1, x1: 0.3, y1: 0.6 },
@@ -42,9 +48,21 @@ function saveDraft() {
   if (!saved && !storageWarningShown) { storageWarningShown = true; toast("Browser storage could not save this fitting draft. Download the fit report before leaving this page.", true); }
   if (saved) storageWarningShown = false;
 }
-function reconcileTemperatureLaw() {
+function reconcileFitParameters() {
   const active = new Set(catalog.forms[$("fit-law").value]);
   const known = new Set(Object.values(catalog.forms).flat());
+  const knownVaporNames = new Set(Object.values(vaporParameterDefinitions).flat().map(([model, field]) => `vapor.${model}.${field}`));
+  const vaporNames = new Set(readVaporParameters()
+    .filter(spec => spec.fit && spec.model === $("fit-vapor").value)
+    .map(spec => `vapor.${spec.model}.${spec.field}`));
+  const training = observations.filter(row => !row.validation_only && (row.pin || (row.weight ?? 1) * Number($(`fit-weight-${row.kind}`).value) > 0));
+  const latentNames = new Set();
+  for (const row of training) {
+    if (["UCST", "LCST"].includes(row.kind) && missingValue(row.x1)) latentNames.add(`critical_x1.${row.id}`);
+    if (row.kind === "VLLE" && missingValue(row.x1_alpha) && missingValue(row.x1_beta)) {
+      latentNames.add(`vlle_xa.${row.id}`); latentNames.add(`vlle_gap.${row.id}`);
+    }
+  }
   const removed = [];
   for (const field of ["initial", "bounds"]) {
     const control = $(`fit-${field}`);
@@ -54,14 +72,18 @@ function reconcileTemperatureLaw() {
     if (!values || Array.isArray(values) || typeof values !== "object") continue;
     const obsolete = Object.keys(values).filter(key => {
       const parts = key.split(".");
-      return parts.length === 2 && ["12", "21"].includes(parts[0]) && known.has(parts[1]) && !active.has(parts[1]);
+      if (parts.length === 2 && ["12", "21"].includes(parts[0]) && known.has(parts[1])) return !active.has(parts[1]);
+      if (key === "alpha12") return $("fit-model").value !== "NRTL" || !$("fit-free-alpha").checked;
+      if (knownVaporNames.has(key)) return !vaporNames.has(key);
+      if (parts.length >= 2 && ["critical_x1", "vlle_xa", "vlle_gap"].includes(parts[0])) return !latentNames.has(key);
+      return false; // Keep unknown keys for the backend to diagnose, and unfinished JSON editable.
     });
     if (!obsolete.length) continue;
     for (const key of obsolete) delete values[key];
     control.value = JSON.stringify(values, null, 2);
     removed.push(`${field}: ${obsolete.join(", ")}`);
   }
-  if (removed.length) toast(`Removed parameters outside the selected temperature law (${removed.join("; ")}). Compatible values were kept; unspecified terms use default starting values and bounds.`);
+  if (removed.length) toast(`Removed parameters no longer fitted by the current settings or observations (${removed.join("; ")}). Compatible values were kept; unspecified terms use default starting values and bounds.`);
   return removed.length > 0;
 }
 function updateModel() {
@@ -103,12 +125,7 @@ function controlsRequest({ includePsat = true } = {}) {
   return request;
 }
 function renderVaporParameters(saved = []) {
-  const definitions = {
-    VDM: [["VDM", "delta_H_residual_J_per_mol", "Cross-association ΔH / J mol⁻¹", 1000], ["VDM", "delta_S_residual_J_per_mol_K", "Cross-association ΔS / J mol⁻¹ K⁻¹", 10]],
-    HOC: [["HOC", "eta", "HOC cross-association η", 1]],
-    TSONOPOULOS: [["TSONOPOULOS", "kij", "Tsonopoulos kᵢⱼ", 1]],
-    PR: [["PR", "kij", "PR kᵢⱼ", 1]],
-  }[$("fit-vapor").value] || [];
+  const definitions = vaporParameterDefinitions[$("fit-vapor").value] || [];
   const container = $("fit-vapor-parameters"); container.replaceChildren();
   if (!definitions.length) container.append(element("p", { class: "field-help" }, "This vapor treatment has no editable binary correction here."));
   for (const [model, field, label, scale] of definitions) {
@@ -124,7 +141,7 @@ function renderVaporParameters(saved = []) {
     }
     const fit = element("input", { type: "checkbox", "data-vapor": "fit" }); fit.checked = previous?.fit ?? false;
     const fitLabel = element("label"); fitLabel.append(fit, document.createTextNode(" Fit this vapor parameter jointly")); group.append(fitLabel);
-    group.onchange = saveDraft; container.append(group);
+    group.onchange = () => { reconcileFitParameters(); saveDraft(); }; container.append(group);
   }
 }
 function readVaporParameters() {
@@ -167,12 +184,13 @@ function renderObservations() {
     select.onchange = () => {
       const keys = Object.keys(exampleRows[select.value]);
       for (const key of ["P_bar", "x1", "y1", "x1_alpha", "x1_beta", "HE_J_mol", "gamma1_inf", "gamma2_inf"]) if (!keys.includes(key)) delete row[key];
-      row.kind = select.value; renderObservations(); saveDraft();
+      row.kind = select.value; reconcileFitParameters(); renderObservations(); saveDraft();
     };
     function input(key, type = "number") {
       const attributes = { "aria-label": `Observation ${row.id} ${key}` };
       if (type === "number") return measurementInput(row[key], attributes, value => {
         if (value === undefined) delete row[key]; else row[key] = value;
+        reconcileFitParameters();
         if (key === "weight") renderPsat(); saveDraft();
       });
       const node = element("input", { type, ...attributes }); node.value = row[key] ?? "";
@@ -189,9 +207,9 @@ function renderObservations() {
     }
     const pin = element("input", { type: "checkbox", "aria-label": `Pin observation ${row.id}` }); pin.checked = !!row.pin;
     pin.disabled = !!row.validation_only;
-    pin.onchange = () => { row.pin = pin.checked; renderPsat();saveDraft(); };
+    pin.onchange = () => { row.pin = pin.checked; reconcileFitParameters(); renderPsat();saveDraft(); };
     const validation = element("input", { type:"checkbox", "aria-label":`Validation-only observation ${row.id}` }); validation.checked = !!row.validation_only;
-    validation.onchange = () => { row.validation_only=validation.checked; if(row.validation_only)row.pin=false; renderObservations();saveDraft(); };
+    validation.onchange = () => { row.validation_only=validation.checked; if(row.validation_only)row.pin=false; reconcileFitParameters(); renderObservations();saveDraft(); };
     const sigma = element("input", { type: "text", "aria-label": `Observation ${row.id} sigma` }); sigma.value = JSON.stringify(row.sigma ?? {});
     sigma.oninput = () => { try { if (missingValue(sigma.value)) delete row.sigma; else row.sigma = JSON.parse(sigma.value); sigma.setCustomValidity(""); saveDraft(); } catch { sigma.setCustomValidity("Enter a number, JSON object, or missing indicator for sigma."); } };
     const remove = element("button", { type: "button", "aria-label": `Remove observation ${row.id}` }, "Remove");
@@ -203,21 +221,7 @@ function renderObservations() {
 }
 function removeObservationIds(ids, all = false) {
   observations = observations.filter(row => !ids.has(row.id));
-  for (const field of ["initial", "bounds"]) {
-    const node = $(`fit-${field}`);
-    try {
-      const values = JSON.parse(node.value);
-      if (!values || Array.isArray(values) || typeof values !== "object") continue;
-      let changed = false;
-      for (const key of Object.keys(values)) {
-        const dot = key.indexOf(".");
-        if (["critical_x1", "vlle_xa", "vlle_gap"].includes(key.slice(0, dot)) && (all || ids.has(key.slice(dot+1)))) {
-          delete values[key]; changed = true;
-        }
-      }
-      if (changed) node.value = JSON.stringify(values, null, 2);
-    } catch { /* Preserve unfinished JSON as an editable draft. */ }
-  }
+  reconcileFitParameters();
   if (all) {
     observationSets = []; importReports = []; $("fit-input").value = ""; inputDirty = false; pendingImport = null;
     for (const role of new Set(Object.values(manualRoles).flat())) delete manualValues[role];
@@ -928,8 +932,7 @@ function restoreFitState(state){
   const saved=assignFitState(state);
   for(const key of Object.keys(catalog.scales))$(`fit-sigma-${key}`).value=saved.sigmaValues?.[key]??"";
   repairFitObservationReferences();
-  reconcileTemperatureLaw();
-  renderManual();renderSetOptions();renderPsat();renderVaporParameters(saved.vaporParameters||[]);updateModel();renderObservations();
+  renderManual();renderSetOptions();renderPsat();renderVaporParameters(saved.vaporParameters||[]);reconcileFitParameters();updateModel();renderObservations();
   $("fit-results").hidden=!result;renderResult();scopes($("fit-scope"),definitionProject);
   if(saved.selectedScope)$("fit-scope").value=saved.selectedScope;
   if(saved.exportScope)$("fit-export-scope").value=saved.exportScope;
@@ -946,7 +949,7 @@ async function initialize() {
   $("fit-scales").value = JSON.stringify(catalog.scales, null, 2);
   for (const kind of catalog.kinds) {
     const label = element("label", { class: "field" }); label.append(element("span", { class: "field-label" }, labels[kind]));
-    const input = element("input", { id: `fit-weight-${kind}`, type: "number", min: 0, max: 1e12, step: "any", value: "1" }); input.onchange = ()=>{renderPsat();saveDraft();}; label.append(input); $("fit-weights").append(label);
+    const input = element("input", { id: `fit-weight-${kind}`, type: "number", min: 0, max: 1e12, step: "any", value: "1" }); input.onchange = ()=>{reconcileFitParameters();renderPsat();saveDraft();}; label.append(input); $("fit-weights").append(label);
     $("fit-data-kind").append(element("option", { value: kind }, labels[kind]));
   }
   let saved = readLocal(draftKey, null);
@@ -954,16 +957,15 @@ async function initialize() {
     saved=assignFitState(saved);
   }
   repairFitObservationReferences();
-  const reconciledLaw = reconcileTemperatureLaw();
   renderSigma(saved?.sigmaValues); renderManual(); renderSetOptions(); renderPsat();
-  renderVaporParameters(saved?.vaporParameters); updateModel(); renderObservations(); renderResult(); scopes($("fit-scope"), definitionProject);
+  renderVaporParameters(saved?.vaporParameters); const reconciledParameters = reconcileFitParameters(); updateModel(); renderObservations(); renderResult(); scopes($("fit-scope"), definitionProject);
   if(saved?.selectedScope)$("fit-scope").value=saved.selectedScope;
   if(saved?.exportScope)$("fit-export-scope").value=saved.exportScope;
   if(result)result.components.forEach((name,index)=>{if(saved?.exportMapping?.[name]&&$(`fit-map-${index}`))$(`fit-map-${index}`).value=saved.exportMapping[name];});
-  if (reconciledLaw) saveDraft();
-  fields.filter(name => name !== "law").forEach(name => $(`fit-${name}`).addEventListener("change", saveDraft));
+  if (reconciledParameters) saveDraft();
+  fields.filter(name => name !== "law").forEach(name => $(`fit-${name}`).addEventListener("change", () => { reconcileFitParameters(); saveDraft(); }));
   $("fit-model").addEventListener("change", updateModel);
-  $("fit-law").addEventListener("change", () => { reconcileTemperatureLaw(); updateModel(); saveDraft(); });
+  $("fit-law").addEventListener("change", () => { reconcileFitParameters(); updateModel(); saveDraft(); });
   $("fit-vapor").addEventListener("change", () => { renderVaporParameters(); renderPsat();saveDraft(); });
   $("fit-input").addEventListener("input", () => { pendingImport = null; inputDirty = true; saveDraft(); });
   $("fit-parse").onclick = guarded(parseInput);
