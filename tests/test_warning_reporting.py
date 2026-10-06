@@ -370,15 +370,15 @@ UNIT HEAT-1
         self.assertEqual(chloroform['cas'], '67-66-3')
         self.assertIn('Abrams and Prausnitz', chloroform['source'])
 
-        abrams_entries = {
-            'acetaldehyde': (1.90, 1.80, '75-07-0'),
-            'dimethylamine': (2.33, 2.09, '124-40-3'),
-            'furfural': (2.80, 2.58, '98-01-1'),
-            'aniline': (3.72, 2.83, '62-53-3'),
-            'triethylamine': (5.01, 4.26, '121-44-8'),
-            'n-hexadecane': (11.24, 9.26, '544-76-3'),
+        expected_entries = {
+            'acetaldehyde': (1.90, 1.80, '75-07-0', 'Abrams and Prausnitz'),
+            'dimethylamine': (2.33, 2.09, '124-40-3', 'Abrams and Prausnitz'),
+            'furfural': (2.80, 2.58, '98-01-1', 'Abrams and Prausnitz'),
+            'aniline': (3.72, 2.83, '62-53-3', 'Abrams and Prausnitz'),
+            'triethylamine': (5.01, 4.26, '121-44-8', 'Abrams and Prausnitz'),
+            'n-hexadecane': (11.2438, 9.256, '544-76-3', 'Thermochimica Acta 268 (1995) 45-68'),
         }
-        for name, (expected_r, expected_q, expected_cas) in abrams_entries.items():
+        for name, (expected_r, expected_q, expected_cas, expected_source) in expected_entries.items():
             with self.subTest(name=name):
                 entry = uniquac_rq_for_component(
                     name,
@@ -388,7 +388,7 @@ UNIT HEAT-1
                 self.assertAlmostEqual(entry['r'], expected_r)
                 self.assertAlmostEqual(entry['q'], expected_q)
                 self.assertEqual(entry['cas'], expected_cas)
-                self.assertIn('Abrams and Prausnitz', entry['source'])
+                self.assertIn(expected_source, entry['source'])
 
         propylene_oxide = uniquac_rq_for_component(
             'propylene oxide',
