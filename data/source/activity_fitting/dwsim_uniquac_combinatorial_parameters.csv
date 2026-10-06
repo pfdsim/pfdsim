@@ -8,7 +8,7 @@ DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Hydrogen,1333-74-0,H2,37,0,0
 DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Hydrogen sulfide,7783-06-4,H2S,17,1.234,1.241
 DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Isobutane,75-28-5,C4H10,5,3.1502,2.772
 DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Isopentane,78-78-4,C5H12,7,3.82,3.31
-DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Isopropanol,67-63-0,C3H7OH,28,2.78,2.51
+Fluid Phase Equilibria 300 (2011) 162-171,Isopropanol,67-63-0,C3H7OH,28,2.7792,2.508
 DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,M-xylene,108-38-3,C8H10,21,4.66,3.54
 DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Methane,74-82-8,CH4,1,1.1239,1.152
 DWSIM.Thermodynamics/Assets/Databases/dwsim.xml,Methanol,67-56-1,CH3OH,26,1.43,1.43

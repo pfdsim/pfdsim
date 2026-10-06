@@ -62,12 +62,14 @@
     "20292084": "20292-08-4",
     "21": "108-38-3",
     "22": "106-42-3",
+    "224trimethylpentane": "540-84-1",
     "23": "100-41-4",
     "24": "108-95-2",
     "26": "67-56-1",
     "27": "64-17-5",
     "28": "67-63-0",
     "2butanol": "78-92-2",
+    "2butanone": "78-93-3",
     "2ethyl1hexanol": "104-76-7",
     "2ethylhexyldodecanoate": "20292-08-4",
     "2methoxyethanol": "109-86-4",
@@ -79,6 +81,7 @@
     "3methyl1butanol": "123-51-3",
     "4": "106-97-8",
     "5": "75-28-5",
+    "540841": "540-84-1",
     "544763": "544-76-3",
     "56235": "56-23-5",
     "56815": "56-81-5",
@@ -117,6 +120,7 @@
     "79094": "79-09-4",
     "79107": "79-10-7",
     "79209": "79-20-9",
+    "79243": "79-24-3",
     "8": "110-54-3",
     "9": "142-82-5",
     "95476": "95-47-6",
@@ -182,6 +186,7 @@
     "methylstyrene": "98-83-9",
     "mxylene": "108-38-3",
     "nitricacid": "7697-37-2",
+    "nitroethane": "79-24-3",
     "nitrogen": "7727-37-9",
     "nonane": "111-84-2",
     "octane": "111-65-9",
@@ -400,8 +405,8 @@
       "cas": "107-92-6",
       "formula": "C4H8O2",
       "name": "Butyric acid",
-      "q": 3.15242,
-      "r": 3.5514,
+      "q": 3.152,
+      "r": 3.5512,
       "records": [
         {
           "formula": "C4H8O2",
@@ -416,9 +421,16 @@
           "q": 3.15242,
           "r": 3.5514,
           "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+        },
+        {
+          "formula": "C4H8O2",
+          "name": "Butyric acid",
+          "q": 3.152,
+          "r": 3.5512,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "ester_uniquac_combinatorial_parameters.json; Nasouri Gazani, M.; Ghanadzadeh Gilani, A.; Shekarsaraee, S. Liquid-Liquid Equilibria for (Water + Propionic Acid or Butyric Acid + 2-Octanol) at 298.2, 308.2, and 318.2 K. J. Chem. Eng. Data 2025, 70(1), 500-511."
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "108-10-1": {
       "aliases": [
@@ -1253,6 +1265,27 @@
       ],
       "source": "water_nonwater_binary_parameters_curated.json; Omota et al. 2003 Table 7"
     },
+    "540-84-1": {
+      "aliases": [
+        "2,2,4-Trimethylpentane",
+        "C8H18"
+      ],
+      "cas": "540-84-1",
+      "formula": "C8H18",
+      "name": "2,2,4-Trimethylpentane",
+      "q": 5.008,
+      "r": 5.8463,
+      "records": [
+        {
+          "formula": "C8H18",
+          "name": "2,2,4-Trimethylpentane",
+          "q": 5.008,
+          "r": 5.8463,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
+        }
+      ],
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
+    },
     "544-76-3": {
       "aliases": [
         "C16H34",
@@ -1261,8 +1294,8 @@
       "cas": "544-76-3",
       "formula": "C16H34",
       "name": "n-Hexadecane",
-      "q": 9.26,
-      "r": 11.24,
+      "q": 9.256,
+      "r": 11.2438,
       "records": [
         {
           "formula": "C16H34",
@@ -1270,9 +1303,16 @@
           "q": 9.26,
           "r": 11.24,
           "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+        },
+        {
+          "formula": "C16H34",
+          "name": "n-Hexadecane",
+          "q": 9.256,
+          "r": 11.2438,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "Abrams and Prausnitz (1975), AIChE J. 21, 116-128"
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "56-23-5": {
       "aliases": [
@@ -1360,8 +1400,8 @@
       "cas": "6032-29-7",
       "formula": "C5H12O",
       "name": "2-Pentanol",
-      "q": 3.556,
-      "r": 4.283,
+      "q": 3.588,
+      "r": 4.1279,
       "records": [
         {
           "formula": "C5H12O",
@@ -1369,9 +1409,16 @@
           "q": 3.556,
           "r": 4.283,
           "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+        },
+        {
+          "formula": "C5H12O",
+          "name": "2-Pentanol",
+          "q": 3.588,
+          "r": 4.1279,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "ester_uniquac_combinatorial_parameters.json; Zhang, J.; Liu, Y.; Meng, N.; Li, W.; Zhang, M. Isobaric Vapor-Liquid Equilibria of Binary Systems (Propyl Acetate + n-Pentanol), (Propyl Acetate + 1-Methyl-1-butanol), and (Propyl Acetate + 3-Methyl-1-butanol) at 101.3 kPa. J. Chem. Eng. Data 2013, 58(11), 3254-3258."
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "62-53-3": {
       "aliases": [
@@ -1498,9 +1545,9 @@
       },
       "formula": "CH3OH",
       "name": "Methanol",
-      "q": 1.43,
+      "q": 1.432,
       "q_prime": 0.95,
-      "r": 1.43,
+      "r": 1.4311,
       "records": [
         {
           "dwsim_id": "26",
@@ -1516,9 +1563,16 @@
           "q": 1.432,
           "r": 1.4311,
           "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        },
+        {
+          "formula": "CH3OH",
+          "name": "Methanol",
+          "q": 1.432,
+          "r": 1.4311,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "67-63-0": {
       "aliases": [
@@ -1544,17 +1598,17 @@
       },
       "formula": "C3H7OH",
       "name": "Isopropanol",
-      "q": 2.51,
+      "q": 2.508,
       "q_prime": 0.89,
-      "r": 2.78,
+      "r": 2.7792,
       "records": [
         {
           "dwsim_id": "28",
           "formula": "C3H7OH",
           "name": "Isopropanol",
-          "q": 2.51,
-          "r": 2.78,
-          "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+          "q": 2.508,
+          "r": 2.7792,
+          "source": "Fluid Phase Equilibria 300 (2011) 162-171"
         },
         {
           "formula": "C3H8O",
@@ -1564,7 +1618,7 @@
           "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
         }
       ],
-      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+      "source": "Fluid Phase Equilibria 300 (2011) 162-171"
     },
     "67-64-1": {
       "aliases": [
@@ -1905,9 +1959,9 @@
       },
       "formula": "CH3CN",
       "name": "Acetonitrile",
-      "q": 1.72,
+      "q": 1.724,
       "q_prime": 1.0559752180195185,
-      "r": 1.87,
+      "r": 1.8701,
       "records": [
         {
           "formula": "CH3CN",
@@ -1922,9 +1976,16 @@
           "q": 1.724,
           "r": 1.8701,
           "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+        },
+        {
+          "formula": "CH3CN",
+          "name": "Acetonitrile",
+          "q": 1.724,
+          "r": 1.8701,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "User-provided paper"
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "75-07-0": {
       "aliases": [
@@ -2209,8 +2270,8 @@
       "cas": "78-92-2",
       "formula": "C4H10O",
       "name": "2-Butanol",
-      "q": 3.04,
-      "r": 3.45,
+      "q": 3.048,
+      "r": 3.4535,
       "records": [
         {
           "formula": "C4H10O",
@@ -2218,21 +2279,29 @@
           "q": 3.04,
           "r": 3.45,
           "source": "ester_uniquac_combinatorial_parameters.json; Ghanadzadeh Gilani, H.; Golpour, M.; Abbasi Souraki, B. Ternary equilibrium data of mixtures consisting of 2-butanol, water, and heavy alcohols at T = 298.2 K. J. Chem. Thermodyn. 2012, 49, 39-45."
+        },
+        {
+          "formula": "C4H10O",
+          "name": "2-Butanol",
+          "q": 3.048,
+          "r": 3.4535,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "ester_uniquac_combinatorial_parameters.json; Ghanadzadeh Gilani, H.; Golpour, M.; Abbasi Souraki, B. Ternary equilibrium data of mixtures consisting of 2-butanol, water, and heavy alcohols at T = 298.2 K. J. Chem. Thermodyn. 2012, 49, 39-45."
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "78-93-3": {
       "aliases": [
+        "2-Butanone",
         "36",
         "C4H8O",
         "Methyl ethyl ketone"
       ],
       "cas": "78-93-3",
       "formula": "C4H8O",
-      "name": "Methyl ethyl ketone",
-      "q": 2.88,
-      "r": 3.25,
+      "name": "2-Butanone",
+      "q": 2.876,
+      "r": 3.2479,
       "records": [
         {
           "dwsim_id": "36",
@@ -2241,9 +2310,16 @@
           "q": 2.88,
           "r": 3.25,
           "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+        },
+        {
+          "formula": "C4H8O",
+          "name": "2-Butanone",
+          "q": 2.876,
+          "r": 3.2479,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "DWSIM.Thermodynamics/Assets/Databases/dwsim.xml"
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "79-09-4": {
       "aliases": [
@@ -2254,7 +2330,7 @@
       "formula": "C3H6O2",
       "name": "Propionic acid",
       "q": 2.612,
-      "r": 2.877,
+      "r": 2.8768,
       "records": [
         {
           "formula": "C3H6O2",
@@ -2262,9 +2338,16 @@
           "q": 2.612,
           "r": 2.877,
           "source": "User-provided paper"
+        },
+        {
+          "formula": "C3H6O2",
+          "name": "Propionic acid",
+          "q": 2.612,
+          "r": 2.8768,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
         }
       ],
-      "source": "User-provided paper"
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "79-10-7": {
       "aliases": [
@@ -2322,6 +2405,27 @@
         }
       ],
       "source": "Nagata and Gmehling, Thermochimica Acta 175 (1991) 281-292, Table 1"
+    },
+    "79-24-3": {
+      "aliases": [
+        "C2H5NO2",
+        "Nitroethane"
+      ],
+      "cas": "79-24-3",
+      "formula": "C2H5NO2",
+      "name": "Nitroethane",
+      "q": 2.408,
+      "r": 2.6829,
+      "records": [
+        {
+          "formula": "C2H5NO2",
+          "name": "Nitroethane",
+          "q": 2.408,
+          "r": 2.6829,
+          "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
+        }
+      ],
+      "source": "thermochimica_acta_1995_rq.json; Thermochimica Acta 268 (1995) 45-68"
     },
     "95-47-6": {
       "aliases": [
@@ -2421,7 +2525,7 @@
   "metadata": {
     "ambiguous_alias_count": 0,
     "ambiguous_aliases": [],
-    "component_count": 80,
+    "component_count": 82,
     "description": "CAS-keyed UNIQUAC pure-component r/q parameters.",
     "key_basis": "CAS",
     "source_files": [
@@ -2434,7 +2538,8 @@
       "data/source/activity_fitting/ester_uniquac_combinatorial_parameters.json",
       "data/source/activity_fitting/assorted_alcohols_ethers.json",
       "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
-      "data/source/activity_fitting/eg_glycerol_activity_parameters.json"
+      "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
+      "data/source/activity_fitting/thermochimica_acta_1995_rq.json"
     ]
   }
 }

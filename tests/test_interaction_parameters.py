@@ -1236,20 +1236,32 @@ class InteractionParameterTests(unittest.TestCase):
             runtime_text = handle.read()
         built_text = json.dumps(built, indent=2, sort_keys=True) + "\n"
         self.assertEqual(built_text, runtime_text)
-        self.assertEqual(built["metadata"]["component_count"], 80)
+        self.assertEqual(built["metadata"]["component_count"], 82)
+        provided = {
+            "methanol": (1.4311, 1.4320),
+            "2-butanol": (3.4535, 3.0480),
+            "2-pentanol": (4.1279, 3.5880),
+            "propionic acid": (2.8768, 2.6120),
+            "butyric acid": (3.5512, 3.1520),
+            "acetonitrile": (1.8701, 1.7240),
+            "2-butanone": (3.2479, 2.8760),
+            "nitroethane": (2.6829, 2.4080),
+            "2,2,4-trimethylpentane": (5.8463, 5.0080),
+            "n-hexadecane": (11.2438, 9.2560),
+        }
         expected = {
-            "2-butanol": (3.45, 3.04),
+            **provided,
             "n-propyl acetate": (4.153, 3.656),
             "1-pentanol": (4.1287, 3.592),
-            "2-pentanol": (4.283, 3.556),
             "3-methyl-1-butanol": (4.273, 3.478),
-            "butyric acid": (3.5514, 3.15242),
             "2-octanol": (6.15128, 5.20828),
             "ethyl propanoate": (4.1535, 3.6559),
             "ethyl butanoate": (4.8279, 4.19632),
             "diisopropyl ether": (4.7421, 4.088),
             "anisole": (4.1668, 3.208),
             "isopropyl acetate": (4.1523, 3.652),
+            "isopropanol": (2.7792, 2.508),
+            "2-propanol": (2.7792, 2.508),
             "2-methoxyethanol": (3.4938, 3.368),
             "tetrahydrofuran": (2.9415, 2.72),
             "dipropyl ether": (4.7437, 4.096),
@@ -1264,6 +1276,14 @@ class InteractionParameterTests(unittest.TestCase):
                 self.assertAlmostEqual(record["r"], expected_r, places=8)
                 self.assertAlmostEqual(record["q"], expected_q, places=8)
                 self.assertNotIn("estimated", record["source"].lower())
+                if component in provided:
+                    self.assertIn(
+                        "Thermochimica Acta 268 (1995) 45-68", record["source"]
+                    )
+                if component in {"isopropanol", "2-propanol"}:
+                    self.assertEqual(
+                        record["source"], "Fluid Phase Equilibria 300 (2011) 162-171"
+                    )
 
         # The assorted source fills gaps only; established records retain
         # their pre-existing database values even when the fit source lists
@@ -1294,7 +1314,7 @@ class InteractionParameterTests(unittest.TestCase):
                 }
             ],
         )
-        self.assertAlmostEqual(uniquac_rq_for_component("methanol")["r"], 1.43)
+        self.assertAlmostEqual(uniquac_rq_for_component("methanol")["r"], 1.4311)
         self.assertAlmostEqual(uniquac_rq_for_component("1-butanol")["q"], 3.052)
 
     def test_curated_water_nonwater_records_are_active_and_ranges_are_valid(self):

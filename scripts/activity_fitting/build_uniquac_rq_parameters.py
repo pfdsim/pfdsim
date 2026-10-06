@@ -77,6 +77,8 @@ def valid_cas(value: Any) -> Optional[str]:
 
 
 def source_priority(source: str) -> tuple[int, str]:
+    if "thermochimica_acta_1995_rq.json" in source:
+        return (-4, source)
     if "water_nonwater_binary_parameters_curated" in source:
         return (-3, source)
     if "ethanol_water_interactions" in source:
@@ -444,6 +446,16 @@ def curated_water_nonwater_rq_records() -> list[dict]:
     return records
 
 
+def thermochimica_1995_rq_records() -> list[dict]:
+    filename = "thermochimica_acta_1995_rq.json"
+    payload = load_json(SOURCE_DATA / filename)
+    source = f"{filename}; {payload['metadata']['source']}"
+    return [
+        {**item, "source": source}
+        for item in payload["components"]
+    ]
+
+
 def apply_extended_metadata(
     components: dict[str, dict], aliases: dict[str, Optional[str]], records: list[dict]
 ) -> None:
@@ -486,6 +498,8 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
     assorted_records = assorted_alcohol_ether_rq_records(set(components))
     for record in assorted_records:
         add_record(components, aliases, record)
+    for record in thermochimica_1995_rq_records():
+        add_record(components, aliases, record)
 
     ambiguous_aliases = sorted(key for key, cas in aliases.items() if cas is None)
     payload = {
@@ -503,6 +517,7 @@ def build_uniquac_rq_payload() -> dict[str, Any]:
                 "data/source/activity_fitting/assorted_alcohols_ethers.json",
                 "data/source/activity_fitting/water_nonwater_binary_parameters_curated.json",
                 "data/source/activity_fitting/eg_glycerol_activity_parameters.json",
+                "data/source/activity_fitting/thermochimica_acta_1995_rq.json",
             ],
             "component_count": len(components),
             "ambiguous_alias_count": len(ambiguous_aliases),

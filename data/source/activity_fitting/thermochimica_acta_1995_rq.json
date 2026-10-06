@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "description": "User-provided UNIQUAC pure-component r/q parameters.",
+    "source": "Thermochimica Acta 268 (1995) 45-68",
+    "notes": [
+      "These r/q values take precedence over the older structural-parameter sources.",
+      "q-prime values are excluded."
+    ]
+  },
+  "components": [
+    {
+      "name": "Methanol",
+      "cas": "67-56-1",
+      "formula": "CH3OH",
+      "r": 1.4311,
+      "q": 1.4320
+    },
+    {
+      "name": "2-Butanol",
+      "cas": "78-92-2",
+      "formula": "C4H10O",
+      "r": 3.4535,
+      "q": 3.0480
+    },
+    {
+      "name": "2-Pentanol",
+      "cas": "6032-29-7",
+      "formula": "C5H12O",
+      "r": 4.1279,
+      "q": 3.5880
+    },
+    {
+      "name": "Propionic acid",
+      "cas": "79-09-4",
+      "formula": "C3H6O2",
+      "r": 2.8768,
+      "q": 2.6120
+    },
+    {
+      "name": "Butyric acid",
+      "cas": "107-92-6",
+      "formula": "C4H8O2",
+      "r": 3.5512,
+      "q": 3.1520
+    },
+    {
+      "name": "Acetonitrile",
+      "cas": "75-05-8",
+      "formula": "CH3CN",
+      "r": 1.8701,
+      "q": 1.7240
+    },
+    {
+      "name": "2-Butanone",
+      "cas": "78-93-3",
+      "formula": "C4H8O",
+      "r": 3.2479,
+      "q": 2.8760
+    },
+    {
+      "name": "Nitroethane",
+      "cas": "79-24-3",
+      "formula": "C2H5NO2",
+      "r": 2.6829,
+      "q": 2.4080
+    },
+    {
+      "name": "2,2,4-Trimethylpentane",
+      "cas": "540-84-1",
+      "formula": "C8H18",
+      "r": 5.8463,
+      "q": 5.0080
+    },
+    {
+      "name": "n-Hexadecane",
+      "cas": "544-76-3",
+      "formula": "C16H34",
+      "r": 11.2438,
+      "q": 9.2560
+    }
+  ]
+}
