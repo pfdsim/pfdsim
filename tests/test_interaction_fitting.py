@@ -17,6 +17,7 @@ from thermodynamics_models.interaction_fitting import (
     normalize_fit_request,
     parse_observations,
     prepare_fit,
+    validate_runtime_inclusion,
 )
 
 
@@ -146,6 +147,90 @@ def test_joint_fit_reproduces_runtime_and_export(model):
     if model == "UNIQUAC":
         assert result["rq"] == settings["rq"]
         assert thermo.r[reference.components[0]] == 2.2
+
+
+@pytest.mark.parametrize("model", ["NRTL", "UNIQUAC"])
+@pytest.mark.parametrize("form", ["constant", "inverse", "constant_inverse"])
+def test_single_temperature_fit_exports_a_usable_model(model, form):
+    data = request(model=model, form=form)
+    reference = prepare_fit(data)
+    truth = np.array([0.4, 1.5, -0.2, 0.8] if form == "constant_inverse" else [0.4, 0.8])
+    reference.install(truth)
+    gamma1 = reference.checked_gamma(300, 0)[reference.components[0]]
+    gamma2 = reference.checked_gamma(300, 1)[reference.components[1]]
+    data["observations"] = [{"kind": "GAMMA_INF", "T_K": 300,
+                             "gamma1_inf": gamma1, "gamma2_inf": gamma2}]
+    if form == "constant_inverse":
+        data["observations"].extend(
+            {"kind": "HE", "T_K": 300, "x1": x,
+             "HE_J_mol": reference.thermo.excess_enthalpy(reference.composition(x), 300)}
+            for x in (0.2, 0.5, 0.8)
+        )
+    data["initial"] = dict(zip(reference.names, truth * reference.scales))
+    result = fit_interactions(data)
+    assert result["success"], result["warnings"]
+    assert result["optimizer"]["objective"] < 1e-8
+    assert result["parameters"]["Tmin_K"] == result["parameters"]["Tmax_K"] == 300
+    assert validate_runtime_inclusion(result)["component_cas"] == ["64-17-5", "7732-18-5"]
+    restored = Simulator.from_string(result["pfd_text"]).initialize().thermo
+    for T in (290, 300, 310):
+        composition = reference.composition(0.4)
+        assert restored.activity_coefficients(T, composition) == pytest.approx(
+            reference.checked_gamma(T, 0.4), rel=1e-6
+        )
+        assert restored.excess_enthalpy(composition, T) == pytest.approx(
+            reference.thermo.excess_enthalpy(composition, T), abs=1e-4
+        )
+
+
+@pytest.mark.parametrize("form", ["constant_inverse", "constant_inverse_anchored", "constant_inverse_linear", "full"])
+@pytest.mark.parametrize("kinds", [("GAMMA_INF",), ("HE",), ("GAMMA_INF", "HE")])
+def test_single_temperature_form_requires_independent_value_and_derivative(form, kinds):
+    rows = {
+        "GAMMA_INF": {"kind": "GAMMA_INF", "T_K": 300, "gamma1_inf": 2},
+        "HE": {"kind": "HE", "T_K": 300, "x1": 0.5, "HE_J_mol": 100},
+    }
+    data = request(form=form, observations=[rows[kind] for kind in kinds])
+    if form == "constant_inverse" and len(kinds) == 2:
+        assert normalize_fit_request(data)["form"] == form
+    else:
+        with pytest.raises(ValueError, match="single-temperature fit"):
+            normalize_fit_request(data)
+
+
+@pytest.mark.parametrize("disabled", ["validation_only", "weight", "objective_weight"])
+def test_unfitted_data_cannot_identify_single_temperature_second_term(disabled):
+    data = request(observations=[
+        {"kind": "GAMMA_INF", "T_K": 300, "gamma1_inf": 2},
+        {"kind": "HE", "T_K": 300, "x1": 0.5, "HE_J_mol": 100},
+        {"kind": "GAMMA_INF", "T_K": 350, "gamma1_inf": 3, "validation_only": True},
+    ])
+    if disabled == "objective_weight":
+        data["weights"] = {"HE": 0}
+    else:
+        data["observations"][1][disabled] = True if disabled == "validation_only" else 0
+    with pytest.raises(ValueError, match="single-temperature fit"):
+        normalize_fit_request(data)
+
+
+@pytest.mark.parametrize("kind", ["UCST", "LCST"])
+def test_single_temperature_critical_and_caloric_constraints_allow_two_terms(kind):
+    data = request(observations=[
+        {"kind": kind, "T_K": 300, "x1": 0.5},
+        {"kind": "HE", "T_K": 300, "x1": 0.5, "HE_J_mol": 100},
+    ])
+    assert normalize_fit_request(data)["form"] == "constant_inverse"
+
+
+def test_single_temperature_hard_pins_identify_two_terms_with_zero_objective_weights():
+    data, reference, truth = synthetic(kinds=("GAMMA_INF", "HE"))
+    data["observations"] = [dict(row, pin=True) for row in data["observations"] if row["T_K"] == 300]
+    data["weights"] = {"HE": 0, "GAMMA_INF": 0}
+    data["initial"] = dict(zip(reference.names, truth * reference.scales))
+    result = fit_interactions(data)
+    assert result["success"], result["warnings"]
+    assert all(point["pin_satisfied"] for point in result["points"])
+    assert validate_runtime_inclusion(result)["component_cas"] == ["64-17-5", "7732-18-5"]
 
 
 def test_missing_vapor_compositions_and_fitted_alpha():
@@ -351,7 +436,7 @@ def test_cli_writes_entry_and_pfd_without_replacing_inputs(tmp_path):
 
 
 def test_zero_objective_weight_does_not_disable_pin():
-    data = request(weights={"GAMMA_INF": 0})
+    data = request(form="constant", weights={"GAMMA_INF": 0})
     data["observations"][0]["pin"] = True
     normalized = normalize_fit_request(data)
     assert len(normalized["observations"]) == 1
@@ -371,11 +456,15 @@ def test_joint_vapor_parameter_fit_round_trips():
             }
         ],
     )
-    data["observations"] = [{"kind": "VLE", "T_K": 320, "P_bar": 1, "x1": 0.5}]
+    data["observations"] = [
+        {"kind": "VLE", "T_K": T, "P_bar": 1, "x1": 0.5}
+        for T in (320, 350)
+    ]
     problem = prepare_fit(data)
     truth = np.array([0.4, 1.5, -0.2, 0.8, 0.08])
     rows = []
-    for T in (320, 350):
+    # Every two-fold training partition retains at least two temperatures.
+    for T in (310, 330, 350):
         problem.install(truth)
         rows.append(
             {

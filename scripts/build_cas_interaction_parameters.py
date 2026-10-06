@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
 
 from physical_constants import R_J_MOL_K
 from activity_fit_store import ActivityFitStore, DEFAULT_ACTIVITY_FITS_PATH
+from interaction_parameters import activity_interaction_temperature_range
 
 DATA = ROOT / "data"
 SOURCE_DATA = DATA / "source"
@@ -2382,11 +2383,9 @@ def supplemental_curated_water_nonwater_records(
                 )
             if not (CAS_RE.match(cas1) and CAS_RE.match(cas2)) or cas1 == cas2:
                 raise ValueError(f"Invalid curated {model_key} CAS pair {cas1}/{cas2}")
-            low = float(record["Tmin_K"])
-            high = float(record["Tmax_K"])
-            if not (0.0 < low < high):
+            if activity_interaction_temperature_range(record) is None:
                 raise ValueError(
-                    f"Invalid curated {model_key} temperature range for {pair}"
+                    f"Curated {model_key} temperature range requires Tmin_K and Tmax_K for {pair}"
                 )
             extrapolation = record.get("extrapolation", "unrestricted")
             if not isinstance(extrapolation, str):

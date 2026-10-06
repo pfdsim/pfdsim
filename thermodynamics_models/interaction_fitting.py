@@ -582,10 +582,19 @@ def normalize_fit_request(request):
     temperatures = [
         row["T_K"] for row in result["observations"] if not row["validation_only"]
     ]
-    if policy != "unrestricted" and min(temperatures) == max(temperatures):
-        raise ValueError(
-            "Tangent extrapolation requires measurements at multiple temperatures."
-        )
+    if min(temperatures) == max(temperatures):
+        training_kinds = {
+            row["kind"] for row in result["observations"] if not row["validation_only"]
+        }
+        has_value_and_derivative = "HE" in training_kinds and bool(training_kinds - {"HE"})
+        term_count = len(FORMS[result["form"]])
+        if term_count > (2 if has_value_and_derivative else 1):
+            raise ValueError(
+                "A single-temperature fit permits one term, or two terms when "
+                "training data include both equilibrium/activity values and HE "
+                "(the temperature derivative). More terms require training "
+                "measurements at multiple temperatures."
+            )
     if result["form"] == "constant" and any(
         row["kind"] == "HE" and not row["validation_only"] and abs(row["HE_J_mol"]) > 0
         for row in result["observations"]
@@ -2199,19 +2208,25 @@ def validate_runtime_inclusion(result):
         "vapor_parameters",
         "initial",
         "bounds",
+        "weights",
         "import_options",
     ):
         canonical_request.pop(key, None)
     temperatures = sorted({row["T_K"] for row in original.request["observations"]})
     # Reuse the liquid-only initialization path. These rows configure temperature
-    # coverage only; no regression or measurement audit uses their placeholder
-    # gamma values. In particular, do not qualify shared Psat at these temperatures:
+    # coverage and retain the original availability of caloric constraints; no
+    # regression or measurement audit uses their placeholder values. In
+    # particular, do not qualify shared Psat at these temperatures:
     # a liquid mixture can exist below a pure component's freezing point.
     canonical_request["vapor"] = "IDEAL"
     canonical_request["observations"] = [
         {"kind": "GAMMA_INF", "T_K": T, "gamma1_inf": 1.0}
         for T in temperatures
     ]
+    if any(row["kind"] == "HE" and not row["validation_only"] for row in original.request["observations"]):
+        canonical_request["observations"].append(
+            {"kind": "HE", "T_K": temperatures[0], "x1": 0.5, "HE_J_mol": 0.0}
+        )
     standard = prepare_fit(canonical_request)
     if original.model == "UNIQUAC":
         for i in range(2):

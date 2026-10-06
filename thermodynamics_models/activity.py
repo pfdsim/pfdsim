@@ -17,10 +17,12 @@ from .base import FluidPhaseEquilibrium, IdealThermodynamics, StreamState
 from .henry import AqueousEquilibriumContext
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+    from ..interaction_parameters import activity_interaction_temperature_range
     from ..temperature_target import (
         solve_temperature_residual as _solve_temperature_target,
     )
 else:
+    from interaction_parameters import activity_interaction_temperature_range
     from temperature_target import (
         solve_temperature_residual as _solve_temperature_target,
     )
@@ -98,30 +100,18 @@ class ActivityCoefficientThermodynamics(IdealThermodynamics):
                 + ", ".join(sorted(modes))
             )
         mode = modes[policy]
+        try:
+            bounds = activity_interaction_temperature_range(record)
+        except ValueError as error:
+            raise ThermodynamicsError(str(error)) from error
         if mode == 0:
             return mode, -math.inf, math.inf
-        if record.get("Tmin_K") is None or record.get("Tmax_K") is None:
+        if bounds is None:
             raise ThermodynamicsError(
                 f"Activity interaction extrapolation={policy} requires "
                 "Tmin_K and Tmax_K"
             )
-        try:
-            low = float(record["Tmin_K"])
-            high = float(record["Tmax_K"])
-        except (TypeError, ValueError) as error:
-            raise ThermodynamicsError(
-                "Activity interaction Tmin_K and Tmax_K must be numeric"
-            ) from error
-        if (
-            not math.isfinite(low)
-            or not math.isfinite(high)
-            or low <= 0.0
-            or high <= low
-        ):
-            raise ThermodynamicsError(
-                f"Activity interaction extrapolation={policy} requires finite "
-                "0 < Tmin_K < Tmax_K"
-            )
+        low, high = bounds
         return mode, low, high
 
     @staticmethod

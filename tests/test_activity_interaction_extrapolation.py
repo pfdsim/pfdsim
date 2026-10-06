@@ -89,7 +89,7 @@ class ActivityInteractionExtrapolationTests(unittest.TestCase):
                     {key: value for key, value in base.items() if key != "Tmin_K"},
                     "requires Tmin_K and Tmax_K",
                 ),
-                (base | {"Tmin_K": 350.0, "Tmax_K": 300.0}, "0 < Tmin_K < Tmax_K"),
+                (base | {"Tmin_K": 350.0, "Tmax_K": 300.0}, "0 < Tmin_K <= Tmax_K"),
                 (base | {"extrapolation": "unknown"}, "must be one of"),
             )
             for record, message in cases:
@@ -100,6 +100,24 @@ class ActivityInteractionExtrapolationTests(unittest.TestCase):
                             model,
                             interaction_overrides=[record],
                         )
+
+    def test_single_temperature_range_accepts_energy_and_tau_records(self):
+        for model in ("NRTL", "UNIQUAC"):
+            for mode in ("unrestricted", "clamp", "constant_inverse", "inverse_linear_quadratic", "inverse_square_cubic"):
+                for energy in (False, True):
+                    with self.subTest(model=model, mode=mode, energy=energy):
+                        record = self._record(model, "water", "ethanol", extrapolation=mode)
+                        record["Tmax_K"] = record["Tmin_K"]
+                        if energy:
+                            record = {key: value for key, value in record.items() if not key.startswith("tau")}
+                            record.update(a12_cal_per_mol=70, a21_cal_per_mol=35)
+                        thermo = create_thermodynamics(
+                            ["water", "ethanol"], model, interaction_overrides=[record]
+                        )
+                        for temperature in (290, 300, 310):
+                            gamma = thermo.activity_coefficients(temperature, {"water": 0.4, "ethanol": 0.6})
+                            self.assertTrue(all(math.isfinite(value) and value > 0 for value in gamma.values()))
+                            self.assertTrue(math.isfinite(thermo.excess_enthalpy({"water": 0.4, "ethanol": 0.6}, temperature)))
 
     def test_tangent_regularizations_are_c1_and_match_compiled_backends(self):
         for model in ("NRTL", "UNIQUAC"):

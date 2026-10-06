@@ -1198,7 +1198,7 @@ class PFDComponentPropertyTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(
             SimulationError,
-            "requires 0 < Tmin_K < Tmax_K",
+            "requires finite 0 < Tmin_K <= Tmax_K",
         ):
             Simulator.from_string(reversed_range).initialize()
 

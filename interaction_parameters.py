@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 from functools import lru_cache
@@ -46,6 +47,19 @@ def refresh_interaction_tables():
     return version
 CAS_RE = re.compile(r"^\d{2,7}-\d{2}-\d$")
 EOS_SINGLE_TEMPERATURE_HALF_WIDTH_K = 10.0
+
+
+def activity_interaction_temperature_range(record: dict) -> tuple[float, float] | None:
+    """Validate activity coverage without inferring how coefficients were fitted."""
+    if record.get("Tmin_K") is None or record.get("Tmax_K") is None:
+        return None
+    try:
+        low, high = float(record["Tmin_K"]), float(record["Tmax_K"])
+    except (TypeError, ValueError) as error:
+        raise ValueError("Activity interaction Tmin_K and Tmax_K must be numeric") from error
+    if not math.isfinite(low) or not math.isfinite(high) or not 0 < low <= high:
+        raise ValueError("Activity interaction requires finite 0 < Tmin_K <= Tmax_K")
+    return low, high
 
 
 def canonical_eos_model_key(model: str) -> str:

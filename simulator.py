@@ -1030,18 +1030,16 @@ class Simulator:
                         f"{model} extrapolation={record['extrapolation']} "
                         "requires Tmin_K and Tmax_K."
                     )
-                if (
-                    "Tmin_K" in record
-                    and "Tmax_K" in record
-                    and not (
-                        math.isfinite(record["Tmin_K"])
-                        and math.isfinite(record["Tmax_K"])
-                        and 0.0 < record["Tmin_K"] < record["Tmax_K"]
-                    )
-                ):
-                    raise SimulationError(
-                        f"{model} INTERACTION_PARAMETERS requires 0 < Tmin_K < Tmax_K."
-                    )
+
+            def validate_activity_range(record):
+                if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+                    from .interaction_parameters import activity_interaction_temperature_range
+                else:
+                    from interaction_parameters import activity_interaction_temperature_range
+                try:
+                    activity_interaction_temperature_range(record)
+                except ValueError as error:
+                    raise SimulationError(str(error)) from error
 
             for item in getattr(self.pfd, "interaction_parameters", []):
                 model = normalize_interaction_model(item.model)
@@ -1190,6 +1188,7 @@ class Simulator:
                             )
                         record["a12_cal_per_mol"] = numeric(a12, "a12")
                         record["a21_cal_per_mol"] = numeric(a21, "a21")
+                    validate_activity_range(record)
                     overrides.append(record)
                     continue
 
@@ -1233,6 +1232,7 @@ class Simulator:
                             )
                         record["a12_cal_per_mol"] = numeric(a12, "a12")
                         record["a21_cal_per_mol"] = numeric(a21, "a21")
+                    validate_activity_range(record)
                     overrides.append(record)
                     continue
 

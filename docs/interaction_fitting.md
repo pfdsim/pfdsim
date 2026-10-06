@@ -448,6 +448,15 @@ law predicts zero excess enthalpy and cannot fit nonzero HE. Multiple terms
 need enough independent temperature/caloric information; rank diagnostics
 identify locally underdetermined fits.
 
+When all training observations share one temperature, use `constant` or
+`inverse`. `constant_inverse` is also allowed when training data include both
+equilibrium/activity values and HE: the value and its temperature derivative
+provide two independent constraints. Forms with three or more terms still
+require multiple training temperatures. Validation-only points and disabled
+objectives do not supply fitting constraints. Raw interaction records and PFD
+exports allow `Tmin_K = Tmax_K`; that range describes coverage, not how many
+independent constraints were used to fit the coefficients.
+
 Parameter names for `initial` and `bounds` are `12.constant`, `12.inverse`,
 `12.anchored`, `12.linear`, `12.quadratic` and the corresponding `21.*` names,
 restricted to the selected form. Their values are physical coefficients, not
