@@ -954,28 +954,6 @@
       "tau21_d": -418.999
     },
     {
-      "Tmax_K": 335.7,
-      "Tmin_K": 307.7,
-      "alpha12": 0.3,
-      "cas1": "60-29-7",
-      "cas2": "67-56-1",
-      "comment": "diethyl ether/methanol recommended temperature-dependent NRTL literature interaction",
-      "component1": "diethyl ether",
-      "component2": "methanol",
-      "fit_status": "recommended_literature_interaction",
-      "fit_vapor_treatment": {
-        "certainty": "inferred_not_confirmed_for_every_source",
-        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
-        "type": "likely_HOC_or_equivalent_association_correction"
-      },
-      "source": "assorted_alcohols_ethers.json; gao_2012",
-      "source_file": "data/source/activity_fitting/assorted_alcohols_ethers.json",
-      "tau12_c": -0.557447,
-      "tau12_d": 710.993,
-      "tau21_c": -0.412573,
-      "tau21_d": 93.9489
-    },
-    {
       "Tmax_K": 338.15,
       "Tmin_K": 318.15,
       "alpha12": 0.47,
@@ -3523,18 +3501,6 @@
       "source_id2": "1181"
     },
     {
-      "a12_cal_per_mol": 429.8705,
-      "a21_cal_per_mol": 727.649,
-      "alpha12": 0.2925,
-      "cas1": "67-64-1",
-      "cas2": "110-82-7",
-      "comment": "Acetone/CycloHexane p213 1/3+4",
-      "component1": "Acetone",
-      "component2": "Cyclohexane",
-      "source_id1": "1051",
-      "source_id2": "137"
-    },
-    {
       "a12_cal_per_mol": -247.9492,
       "a21_cal_per_mol": 727.5102,
       "alpha12": 0.295,
@@ -5951,18 +5917,6 @@
       "source_id2": "507"
     },
     {
-      "a12_cal_per_mol": 1324.9767,
-      "a21_cal_per_mol": 814.1435,
-      "alpha12": 0.5663,
-      "cas1": "7732-18-5",
-      "cas2": "67-64-1",
-      "comment": "Water/Acetone 1/1a",
-      "component1": "H2O",
-      "component2": "Acetone",
-      "source_id1": "1921",
-      "source_id2": "1051"
-    },
-    {
       "a12_cal_per_mol": 653.9718,
       "a21_cal_per_mol": 1883.6007,
       "alpha12": 0.3607,
@@ -6819,20 +6773,6 @@
       "tau21_d": -590.0
     },
     {
-      "alpha12": 0.3,
-      "cas1": "7732-18-5",
-      "cas2": "67-64-1",
-      "comment": "Water/Acetone supplemental NRTL matrix; tau_ij = a_ij + b_ij/T",
-      "component1": "Water",
-      "component2": "Acetone",
-      "source": "User-supplied NRTL temperature-dependent matrix",
-      "source_file": "data/source/activity_fitting/nrtl_temperature_matrix_interactions.json",
-      "tau12_c": 0.054,
-      "tau12_d": 420.0,
-      "tau21_c": 6.398,
-      "tau21_d": -1809.0
-    },
-    {
       "Tmax_K": 453.15,
       "Tmin_K": 279.15,
       "alpha12": 0.2,
@@ -7244,6 +7184,334 @@
       "source": "DWSIM ChemSepIPD nrtl.ipd",
       "source_file": "nrtl.ipd",
       "source_line": 275
+    },
+    {
+      "Tmax_K": 388.15,
+      "Tmin_K": 298.15,
+      "alpha12": 0.55,
+      "cas1": "60-29-7",
+      "cas2": "67-56-1",
+      "comment": "Direct root administrator publication",
+      "component1": "Diethyl Ether",
+      "component2": "Methanol",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791250977.1644893,
+        "model": "NRTL-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393; J. Chem. Thermodynamics 1982, 14, 251-258",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "source": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393; J. Chem. Thermodynamics 1982, 14, 251-258",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -0.6059924536712672,
+      "tau12_d": 505.4127840270402,
+      "tau12_e": -3.9695870010678584,
+      "tau12_f": 0,
+      "tau12_g": 0,
+      "tau21_c": 0.7211957295839935,
+      "tau21_d": -20.359312754448577,
+      "tau21_e": 0.5409898896269962,
+      "tau21_f": 0,
+      "tau21_g": 0,
+      "tau_tref": 298.15,
+      "user_fit_id": "2W5qsh9vhS76TE5loqoCJtb_aOX6CHi2"
+    },
+    {
+      "Tmax_K": 388.3,
+      "Tmin_K": 298.06,
+      "alpha12": 0.3,
+      "cas1": "60-29-7",
+      "cas2": "67-64-1",
+      "comment": "Direct root administrator publication",
+      "component1": "Diethyl Ether",
+      "component2": "Acetone",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791169548.8297055,
+        "model": "NRTL-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+          "doi": "10.1021/je00043a026",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "source": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -0.5341902441529803,
+      "tau12_d": 364.40330421957214,
+      "tau12_e": 0,
+      "tau12_f": 0,
+      "tau12_g": 0,
+      "tau21_c": 0.0722778815759888,
+      "tau21_d": 9.019352503722239,
+      "tau21_e": 0,
+      "tau21_f": 0,
+      "tau21_g": 0,
+      "tau_tref": 298.15,
+      "user_fit_id": "IYK72jwNx09g0nfMjw1syBkRT0DgJt5o"
+    },
+    {
+      "Tmax_K": 388.17,
+      "Tmin_K": 298.14,
+      "alpha12": 0.64,
+      "cas1": "60-29-7",
+      "cas2": "75-05-8",
+      "comment": "Direct root administrator publication",
+      "component1": "Diethyl Ether",
+      "component2": "Acetonitrile",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791169809.780774,
+        "model": "NRTL-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+          "doi": "10.1021/je00043a026",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "source": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -0.6074706792231744,
+      "tau12_d": 481.75344561614884,
+      "tau12_e": 0,
+      "tau12_f": 0,
+      "tau12_g": 0,
+      "tau21_c": 0.2357048391302165,
+      "tau21_d": 144.6612149310505,
+      "tau21_e": 0,
+      "tau21_f": 0,
+      "tau21_g": 0,
+      "tau_tref": 298.15,
+      "user_fit_id": "jouDCw-1eX2Tjiryxf16FOQ5Edt0rz3H"
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 273.15,
+      "alpha12": 0.3,
+      "cas1": "67-64-1",
+      "cas2": "110-82-7",
+      "comment": "Approved by administrator.",
+      "component1": "Acetone",
+      "component2": "Cyclohexane",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791181088.4677305,
+        "model": "NRTL",
+        "owner": "guest:Hz1CLmm_lst3VrQiaaI1P7B6bOfTl1Cd",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212; Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212; Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": 0.05109841778264222,
+      "tau12_d": 307.08999843893423,
+      "tau12_e": 3.6972050548636184,
+      "tau12_f": 0.0,
+      "tau12_g": 0.0,
+      "tau21_c": -1.6455462848163271,
+      "tau21_d": 783.434562502954,
+      "tau21_e": -1.5261672507283366,
+      "tau21_f": 0.0,
+      "tau21_g": 0.0,
+      "tau_tref": 298.15,
+      "user_fit_id": "zwcF3l0OVqjjl6oySMNtXsxyq_arTUjC"
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 283.15,
+      "alpha12": 0.3,
+      "cas1": "67-64-1",
+      "cas2": "67-63-0",
+      "comment": "Approved by administrator.",
+      "component1": "Acetone",
+      "component2": "2-Propanol",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791093413.2964182,
+        "model": "NRTL",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Chem. Eng, Data 1989, 34, 168-171\nB. L6wen, S. Schulz/Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "J. Chem. Eng, Data 1989, 34, 168-171\nB. L6wen, S. Schulz/Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -0.5069244283037613,
+      "tau12_d": 317.8539957167421,
+      "tau12_e": -0.6685263470713446,
+      "tau12_f": 0.0,
+      "tau12_g": 0.0,
+      "tau21_c": -1.4314183002616452,
+      "tau21_d": 554.8153835654928,
+      "tau21_e": 2.6314874351758886,
+      "tau21_f": 0.0,
+      "tau21_g": 0.0,
+      "tau_tref": 298.15,
+      "user_fit_id": "pGiMKogaEz8UcNCI49f5_5CRgDLX74lz"
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 283.15,
+      "alpha12": 0.3,
+      "cas1": "67-64-1",
+      "cas2": "71-23-8",
+      "comment": "1",
+      "component1": "Acetone",
+      "component2": "1-Propanol",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791091251.5416126,
+        "model": "NRTL",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Chem. Eng, Data 1989, 34, 168-171\nThermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "J. Chem. Eng, Data 1989, 34, 168-171\nThermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -1.7235055189457689,
+      "tau12_d": 552.1664460680236,
+      "tau12_e": 0.0,
+      "tau12_f": 0.0,
+      "tau12_g": 0.0,
+      "tau21_c": 0.2996243490152118,
+      "tau21_d": 136.14396605293038,
+      "tau21_e": 0.0,
+      "tau21_f": 0.0,
+      "tau21_g": 0.0,
+      "tau_tref": 298.15,
+      "user_fit_id": "5fDfA5_yU3XXPYMoy4fuPRRk-3BG2xmV"
+    },
+    {
+      "Tmax_K": 348.16,
+      "Tmin_K": 273.15,
+      "alpha12": 0.3,
+      "cas1": "67-64-1",
+      "cas2": "75-09-2",
+      "comment": "Direct root administrator publication",
+      "component1": "Acetone",
+      "component2": "Dichloromethane",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791171826.060703,
+        "model": "NRTL-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Khurma et al., J. Chem. Eng. Data 28 (1983) 412\u2013419, DOI 10.1021/je00034a020; Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "source": "Khurma et al., J. Chem. Eng. Data 28 (1983) 412\u2013419, DOI 10.1021/je00034a020; Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": 3.3315009950419556,
+      "tau12_d": -1240.8681427196523,
+      "tau12_e": 0,
+      "tau12_f": 0,
+      "tau12_g": 0,
+      "tau21_c": -2.852897266721273,
+      "tau21_d": 940.627303212095,
+      "tau21_e": 0,
+      "tau21_f": 0,
+      "tau21_g": 0,
+      "tau_tref": 298.15,
+      "user_fit_id": "jKN7fU7RMPBmLEzFmss2wSTwpA-zMA_k"
+    },
+    {
+      "Tmax_K": 368.95,
+      "Tmin_K": 283.15,
+      "alpha12": 0.3,
+      "cas1": "67-64-1",
+      "cas2": "7732-18-5",
+      "comment": "Direct root administrator publication",
+      "component1": "Acetone",
+      "component2": "Water",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791229341.0733676,
+        "model": "NRTL",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Chem. Eng. Data 1993, 38, 522-526; Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "J. Chem. Eng. Data 1993, 38, 522-526; Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -2.162979366948706,
+      "tau12_d": 1023.1660523516829,
+      "tau12_e": 0,
+      "tau12_f": 0,
+      "tau12_g": 0,
+      "tau21_c": 4.643857432027086,
+      "tau21_d": -1067.0531908563414,
+      "tau21_e": 0,
+      "tau21_f": 0,
+      "tau21_g": 0,
+      "tau_tref": 298.15,
+      "user_fit_id": "lTxbyvBQAejZdPiu6Dq3YIdxYSFyRbS0"
     }
   ],
   "metadata": {
@@ -7257,7 +7525,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 340,
-    "converted_records": 488,
+    "converted_records": 492,
     "curated_water_nonwater_records": 29,
     "curated_water_nonwater_replaced_pairs": 3,
     "curated_water_nonwater_replaced_records": 5,
@@ -7301,6 +7569,8 @@
         "source_component_id": "51"
       }
     ],
+    "user_activity_fit_records": 8,
+    "user_activity_fit_replaced_records": 4,
     "water_organic_overlay_records": 7,
     "water_organic_overlay_replaced_pairs": 3,
     "water_organic_overlay_replaced_records": 4

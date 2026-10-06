@@ -1072,29 +1072,6 @@
       "use_q_prime": false
     },
     {
-      "Tmax_K": 335.7,
-      "Tmin_K": 307.7,
-      "cas1": "60-29-7",
-      "cas2": "67-56-1",
-      "comment": "diethyl ether/methanol recommended temperature-dependent UNIQUAC literature interaction",
-      "component1": "diethyl ether",
-      "component2": "methanol",
-      "fit_status": "recommended_literature_interaction",
-      "fit_vapor_treatment": {
-        "certainty": "inferred_not_confirmed_for_every_source",
-        "note": "The underlying alcohol/ether VLE reductions likely used Hayden-O'Connell or an equivalent association-aware vapor treatment, but this is not confirmed uniformly across all contributing sources.",
-        "type": "likely_HOC_or_equivalent_association_correction"
-      },
-      "model_variant": "standard_uniquac",
-      "source": "assorted_alcohols_ethers.json; gao_2012",
-      "source_file": "data/source/activity_fitting/assorted_alcohols_ethers.json",
-      "tau12_a": 3.34369,
-      "tau12_b": -1594.29,
-      "tau21_a": -0.468566,
-      "tau21_b": 272.819,
-      "use_q_prime": false
-    },
-    {
       "Tmax_K": 338.15,
       "Tmin_K": 318.15,
       "cas1": "108-20-3",
@@ -2676,17 +2653,6 @@
       "component2": "Phenol",
       "source_id1": "1051",
       "source_id2": "1181"
-    },
-    {
-      "a12_cal_per_mol": -77.5361,
-      "a21_cal_per_mol": 543.595,
-      "cas1": "67-64-1",
-      "cas2": "110-82-7",
-      "comment": "Acetone/CycloHexane p213 1/3+4",
-      "component1": "Acetone",
-      "component2": "Cyclohexane",
-      "source_id1": "1051",
-      "source_id2": "137"
     },
     {
       "a12_cal_per_mol": -315.279,
@@ -4769,17 +4735,6 @@
       "component2": "1-Propanol",
       "source_id1": "1864",
       "source_id2": "1103"
-    },
-    {
-      "a12_cal_per_mol": -110.3829,
-      "a21_cal_per_mol": 698.7989,
-      "cas1": "7732-18-5",
-      "cas2": "67-64-1",
-      "comment": "Water/Acetone (Kato et al.)",
-      "component1": "H2O",
-      "component2": "Acetone",
-      "source_id1": "1921",
-      "source_id2": "1051"
     },
     {
       "a12_cal_per_mol": 752.9217,
@@ -7930,6 +7885,342 @@
       "source": "DWSIM ChemSepIPD uniquac.ipd",
       "source_file": "uniquac.ipd",
       "source_line": 309
+    },
+    {
+      "Tmax_K": 388.15,
+      "Tmin_K": 298.15,
+      "cas1": "60-29-7",
+      "cas2": "67-56-1",
+      "comment": "Direct root administrator publication",
+      "component1": "Diethyl Ether",
+      "component2": "Methanol",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791251791.2964587,
+        "model": "UNIQUAC-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393; J. Chem. Thermodynamics 1982, 14, 251-258",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393; J. Chem. Thermodynamics 1982, 14, 251-258",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": -0.11453097886529069,
+      "tau12_b": -398.73177458617164,
+      "tau12_c": 2.930471779445702,
+      "tau12_d": 0,
+      "tau12_e": 0,
+      "tau21_a": -0.009795820698358328,
+      "tau21_b": 72.15117416416896,
+      "tau21_c": -0.5378943033281084,
+      "tau21_d": 0,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "E67JjIRymQ5BnmHGe0ig31jtiS4GBFIE"
+    },
+    {
+      "Tmax_K": 388.3,
+      "Tmin_K": 298.06,
+      "cas1": "60-29-7",
+      "cas2": "67-64-1",
+      "comment": "Direct root administrator publication",
+      "component1": "Diethyl Ether",
+      "component2": "Acetone",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791169605.5327291,
+        "model": "UNIQUAC-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+          "doi": "10.1021/je00043a026",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": 0.07150678176726563,
+      "tau12_b": -196.37944828559515,
+      "tau12_c": 0,
+      "tau12_d": 0,
+      "tau12_e": 0,
+      "tau21_a": 0.11293268149865296,
+      "tau21_b": 29.590862091103716,
+      "tau21_c": 0,
+      "tau21_d": 0,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "Dkp_tM7kUwLQ4pQ6c7TkfIFT6vOaRil5"
+    },
+    {
+      "Tmax_K": 388.17,
+      "Tmin_K": 298.14,
+      "cas1": "60-29-7",
+      "cas2": "75-05-8",
+      "comment": "Direct root administrator publication",
+      "component1": "Diethyl Ether",
+      "component2": "Acetonitrile",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791169870.3706896,
+        "model": "UNIQUAC-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+          "doi": "10.1021/je00043a026",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "Srivastava, Natarajan & Smith, J. Chem. Eng. Data 31 (1986) 89\u201393",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": -0.09850868006660674,
+      "tau12_b": -291.16630880849146,
+      "tau12_c": 0,
+      "tau12_d": 0,
+      "tau12_e": 0,
+      "tau21_a": 0.09236957331923723,
+      "tau21_b": 29.37147215231074,
+      "tau21_c": 0,
+      "tau21_d": 0,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "75gVW47WyjALoZXbzKvgFiglPhWuxb1h"
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 273.15,
+      "cas1": "67-64-1",
+      "cas2": "110-82-7",
+      "comment": "Approved by administrator.",
+      "component1": "Acetone",
+      "component2": "Cyclohexane",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791181212.5337088,
+        "model": "UNIQUAC",
+        "owner": "guest:Hz1CLmm_lst3VrQiaaI1P7B6bOfTl1Cd",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212; Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212; Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": 0.09488607660395405,
+      "tau12_b": -40.464307650076414,
+      "tau12_c": -1.323846257100036,
+      "tau12_d": 0.0,
+      "tau12_e": 0.0,
+      "tau21_a": 0.46110325358869564,
+      "tau21_b": -348.05270477333414,
+      "tau21_c": 1.2585229828044306,
+      "tau21_d": 0.0,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "4xj_8viVecu9aTi0mb8qHtypzPF5N6qE"
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 283.15,
+      "cas1": "67-64-1",
+      "cas2": "67-63-0",
+      "comment": "Direct root administrator publication",
+      "component1": "Acetone",
+      "component2": "2-Propanol",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791152877.886237,
+        "model": "UNIQUAC",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Chem. Eng, Data 1989, 34, 168-171\nB. Lowen, S. Schulz/Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "J. Chem. Eng, Data 1989, 34, 168-171\nB. Lowen, S. Schulz/Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": -0.979540131780668,
+      "tau12_b": 81.98411938476646,
+      "tau12_c": 0,
+      "tau12_d": 0.0018127759414233629,
+      "tau12_e": 0,
+      "tau21_a": 2.401230141303247,
+      "tau21_b": -527.1195308357338,
+      "tau21_c": 0,
+      "tau21_d": -0.002914681328528218,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "R05zBvsy_h0M5rMxlWZ83l9dTpE_RL4H"
+    },
+    {
+      "Tmax_K": 363.15,
+      "Tmin_K": 283.15,
+      "cas1": "67-64-1",
+      "cas2": "71-23-8",
+      "comment": "Direct root administrator publication",
+      "component1": "Acetone",
+      "component2": "1-Propanol",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791153214.6667778,
+        "model": "UNIQUAC",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Chem. Eng, Data 1989, 34, 168-171\nB. Lowen, S. Schulz/Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "J. Chem. Eng, Data 1989, 34, 168-171\nB. Lowen, S. Schulz/Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": 0.9291842153572925,
+      "tau12_b": -253.96392394848144,
+      "tau12_c": 0,
+      "tau12_d": 0,
+      "tau12_e": 0,
+      "tau21_a": -0.4570978887857609,
+      "tau21_b": -0.746599234134457,
+      "tau21_c": 0,
+      "tau21_d": 0,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "YZg9RfWJrh6s-w-0METVK-q8QSJ6GejO"
+    },
+    {
+      "Tmax_K": 348.16,
+      "Tmin_K": 273.15,
+      "cas1": "67-64-1",
+      "cas2": "75-09-2",
+      "comment": "Direct root administrator publication",
+      "component1": "Acetone",
+      "component2": "Dichloromethane",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791171882.2043688,
+        "model": "UNIQUAC-RK",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Khurma et al., J. Chem. Eng. Data 28 (1983) 412\u2013419, DOI 10.1021/je00034a020; Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "RK"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "Khurma et al., J. Chem. Eng. Data 28 (1983) 412\u2013419, DOI 10.1021/je00034a020; Nath & Dixit, Fluid Phase Equilibria 60 (1990) 205\u2013212",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": -2.0182413611260728,
+      "tau12_b": 689.9347051674872,
+      "tau12_c": 0,
+      "tau12_d": 0,
+      "tau12_e": 0,
+      "tau21_a": 1.5459145232226228,
+      "tau21_b": -466.1928336235738,
+      "tau21_c": 0,
+      "tau21_d": 0,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "fLBM1BdBoPSjs2lXZMTtrimBLBZEqpTa"
+    },
+    {
+      "Tmax_K": 368.95,
+      "Tmin_K": 283.15,
+      "cas1": "67-64-1",
+      "cas2": "7732-18-5",
+      "comment": "Direct root administrator publication",
+      "component1": "Acetone",
+      "component2": "Water",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791229517.468349,
+        "model": "UNIQUAC",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Chem. Eng. Data 1993, 38, 522-526; Thermochimica Acta 262 (1995) 69-82",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "J. Chem. Eng. Data 1993, 38, 522-526; Thermochimica Acta 262 (1995) 69-82",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": 1.5437621400293091,
+      "tau12_b": -1013.782827937626,
+      "tau12_c": 0,
+      "tau12_d": 0,
+      "tau12_e": 0,
+      "tau21_a": -0.661287069838715,
+      "tau21_b": 321.18995965755937,
+      "tau21_c": 0,
+      "tau21_d": 0,
+      "tau21_e": 0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "aW0ZHPBokHE0MkUfHRaSVPt16l6S3ZSO"
     }
   ],
   "metadata": {
@@ -7943,7 +8234,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 318,
-    "converted_records": 473,
+    "converted_records": 478,
     "curated_water_nonwater_records": 33,
     "curated_water_nonwater_replaced_pairs": 3,
     "curated_water_nonwater_replaced_records": 4,
@@ -7987,6 +8278,8 @@
         "source_component_id": "51"
       }
     ],
+    "user_activity_fit_records": 8,
+    "user_activity_fit_replaced_records": 3,
     "water_organic_overlay_records": 7,
     "water_organic_overlay_replaced_pairs": 2,
     "water_organic_overlay_replaced_records": 3

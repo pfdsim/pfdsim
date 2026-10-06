@@ -5,8 +5,10 @@ import sys
 import unittest
 import warnings
 from contextlib import closing
+from functools import lru_cache
 from pathlib import Path
 import sqlite3
+from tempfile import TemporaryDirectory
 
 from scipy.optimize import brentq, least_squares
 
@@ -25,6 +27,8 @@ from interaction_parameters import (
     cas_for_component,
     eos_binary_interaction,
     nrtl_binary_interaction,
+    orient_nrtl_interaction,
+    orient_uniquac_interaction,
     uniquac_binary_interaction,
     uniquac_rq_for_component,
 )
@@ -81,6 +85,17 @@ def published_user_fits(model):
             "FROM fits WHERE status='published' AND model=?", (model,),
         ).fetchall()
     return {row['id']: dict(row) for row in rows}
+
+
+@lru_cache(maxsize=2)
+def sourced_activity_payload(model):
+    """Build the maintained source baseline independently of user publications."""
+    resolved, unresolved = resolve_component_ids()
+    with TemporaryDirectory() as directory:
+        return build_interaction_payload(
+            f"{model.lower()}_binary_interactions.json", resolved, unresolved,
+            user_fits_path=Path(directory) / "absent.sqlite",
+        )
 
 
 class InteractionParameterTests(unittest.TestCase):
@@ -850,7 +865,19 @@ class InteractionParameterTests(unittest.TestCase):
             for record in payload["interactions"]
             if record.get("source") == "User-supplied NRTL temperature-dependent matrix"
         ]
-        self.assertEqual(len(matrix_records), 25)
+        published_pairs = {
+            frozenset((fit['cas1'], fit['cas2']))
+            for fit in published_user_fits('NRTL').values()
+        }
+        baseline_matrix = [
+            record for record in sourced_activity_payload('NRTL')['interactions']
+            if record.get('source') == 'User-supplied NRTL temperature-dependent matrix'
+        ]
+        self.assertEqual(len(baseline_matrix), 25)
+        self.assertEqual(len(matrix_records), sum(
+            frozenset((record['cas1'], record['cas2'])) not in published_pairs
+            for record in baseline_matrix
+        ))
         self.assertTrue(
             all(
                 record.get("source_file")
@@ -1010,9 +1037,19 @@ class InteractionParameterTests(unittest.TestCase):
         )
         nrtl_payload = load_data("nrtl_binary_interactions_cas.json")
         published_nrtl = published_user_fits('NRTL')
+        published_nrtl_pairs = {
+            frozenset((fit['cas1'], fit['cas2'])) for fit in published_nrtl.values()
+        }
+        nrtl_baseline = sourced_activity_payload('NRTL')
+        self.assertEqual(nrtl_baseline['metadata']['converted_records'], 488)
+        nrtl_replaced = sum(
+            frozenset((record['cas1'], record['cas2'])) in published_nrtl_pairs
+            for record in nrtl_baseline['interactions']
+        )
         self.assertEqual(nrtl_payload["metadata"]["skipped_records"], 0)
         self.assertEqual(nrtl_payload["metadata"]["converted_records"],
-                         488 + len(published_nrtl))
+                         488 + len(published_nrtl) - nrtl_replaced)
+        self.assertEqual(nrtl_payload['metadata'].get('user_activity_fit_replaced_records', 0), nrtl_replaced)
         self.assertEqual(len(nrtl_payload['interactions']),
                          nrtl_payload['metadata']['converted_records'])
         runtime_fit_ids = [record['user_fit_id'] for record in nrtl_payload['interactions']
@@ -1077,8 +1114,24 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertEqual(len(nrtl_pxylene[0]["duplicate_records"]), 2)
         self.assertIsNotNone(nrtl_binary_interaction("106-99-0", "67-56-1"))
         uniquac_payload = load_data("uniquac_binary_interactions_cas.json")
+        published_uniquac = published_user_fits('UNIQUAC')
+        published_uniquac_pairs = {
+            frozenset((fit['cas1'], fit['cas2'])) for fit in published_uniquac.values()
+        }
+        uniquac_baseline = sourced_activity_payload('UNIQUAC')
+        self.assertEqual(uniquac_baseline['metadata']['converted_records'], 473)
+        uniquac_replaced = sum(
+            frozenset((record['cas1'], record['cas2'])) in published_uniquac_pairs
+            for record in uniquac_baseline['interactions']
+        )
         self.assertEqual(uniquac_payload["metadata"]["skipped_records"], 0)
-        self.assertEqual(uniquac_payload["metadata"]["converted_records"], 473)
+        self.assertEqual(uniquac_payload["metadata"]["converted_records"],
+                         473 + len(published_uniquac) - uniquac_replaced)
+        self.assertEqual(uniquac_payload['metadata'].get('user_activity_fit_replaced_records', 0), uniquac_replaced)
+        self.assertCountEqual(
+            [record['user_fit_id'] for record in uniquac_payload['interactions'] if record.get('user_fit_id')],
+            published_uniquac.keys(),
+        )
         self.assertEqual(uniquac_payload["metadata"]["base_converted_records"], 318)
         self.assertEqual(uniquac_payload["metadata"]["supplemental_records"], 137)
         self.assertEqual(uniquac_payload["metadata"]["supplemental_new_pairs"], 102)
@@ -2229,17 +2282,29 @@ class InteractionParameterTests(unittest.TestCase):
                         if tuple(sorted((record["cas1"], record["cas2"]))) == pair
                     ]
                     self.assertEqual(len(matches), 1)
+                ether_methanol = next(
+                    record for record in records
+                    if {record['cas1'], record['cas2']} == {'60-29-7', '67-56-1'}
+                )
+                published = next((fit for fit in published_user_fits(model).values()
+                                  if {fit['cas1'], fit['cas2']} == {'60-29-7', '67-56-1'}), None)
+                expected = json.loads(published['result'])['parameters'] if published else ether_methanol
+                expected = (orient_nrtl_interaction if model == 'NRTL' else orient_uniquac_interaction)(
+                    expected, reverse=(published['cas1'] if published else ether_methanol['cas1']) != '60-29-7',
+                )
+                runtime = (nrtl_binary_interaction if model == 'NRTL' else uniquac_binary_interaction)('60-29-7', '67-56-1')
+                for field, value in expected.items():
+                    if field != 'comment':
+                        self.assertEqual(runtime[field], value)
                 if model == "NRTL":
-                    runtime = nrtl_binary_interaction("60-29-7", "67-56-1")
-                    self.assertAlmostEqual(runtime["tau12_c"], -0.557447)
-                    self.assertAlmostEqual(runtime["tau12_d"], 710.993)
+                    self.assertAlmostEqual(ether_methanol["tau12_c"], -0.557447)
+                    self.assertAlmostEqual(ether_methanol["tau12_d"], 710.993)
                     zero_runtime = nrtl_binary_interaction("110-54-3", "142-96-1")
                     self.assertEqual(zero_runtime["tau12_c"], 0.0)
                     self.assertEqual(zero_runtime["tau21_c"], 0.0)
                 else:
-                    runtime = uniquac_binary_interaction("60-29-7", "67-56-1")
-                    self.assertAlmostEqual(runtime["tau12_a"], 3.34369)
-                    self.assertAlmostEqual(runtime["tau12_b"], -1594.29)
+                    self.assertAlmostEqual(ether_methanol["tau12_a"], 3.34369)
+                    self.assertAlmostEqual(ether_methanol["tau12_b"], -1594.29)
                     zero_runtime = uniquac_binary_interaction("110-54-3", "142-96-1")
                     self.assertEqual(zero_runtime["tau12_a"], 0.0)
                     self.assertEqual(zero_runtime["tau21_a"], 0.0)
