@@ -459,6 +459,12 @@ scaled with Tref to keep optimization well conditioned. Default starts are
 deterministically seeded (`seed=1729`, `starts=3`), with `max_nfev=500` per start
 and constrained refinement where pins are present.
 
+Changing the temperature law keeps compatible initial values and bounds and
+removes coefficients for terms outside the selected law, with a notification.
+Unspecified new terms use zero starting values and the model's default bounds. The same
+reconciliation applies when restoring a draft or session; unrelated parameter
+keys and unfinished JSON remain editable and subject to normal validation.
+
 Vapor treatments are `IDEAL`, `RK`, `PR`, `VDM`, `TSONOPOULOS`, `PITZER-CURL`,
 `ABBOTT` and `HOC`. They retain their runtime physical-property requirements.
 Optional joint vapor-parameter fitting supports PR kij, Tsonopoulos kij, HOC
@@ -619,7 +625,12 @@ saved status and **Publish to runtime**. Approval alone does not publish or
 remove the data. The queue includes compound names, model and objective types
 for pending, approved, published and rejected fits. **View fit assessment**,
 **Download fit result**, **Download fitted PFD** and **Download full provenance**
-make the stored data directly accessible. Failed review requests are shown next
+make the stored data directly accessible. **View fit assessment** loads the complete
+fit into the editable page, including observations, model controls, fitting and
+property definitions, and results. It uses the fitted coefficients as starting
+values for another regression. Unsaved work prompts you to save, continue without
+a named save, or cancel; the previous draft remains recoverable in Saved fitting
+sessions. You can then paste additional measurements and refit. Failed review requests are shown next
 to the dialog actions; shared notifications also appear above modal backdrops.
 Publication is a queued, cancellable job using existing compute accounting.
 
@@ -644,12 +655,18 @@ publication can be explicitly recovered by an admin once its prior job has ended
 an isolated deployment; the publisher and runtime lookup honor it together.
 
 Publication verifies CAS identities, coefficient/export agreement, phase/pin
-checks and compatibility with the shared property basis. A fit that requires
-different global UNIQUAC R/Q, Psat or vapor corrections remains stored and can
-be used through its complete PFD. Its pure-fluid/structural/vapor basis must be
-curated before liquid coefficients can safely enter the common runtime tables;
-publishing does not silently discard those dependencies. General publication
-requires the repository's maintained builder and source collections.
+checks on the original fitting basis, and agreement of liquid activities and
+excess enthalpy with the published model. Different Psat curves, deliberate
+range extensions and vapor corrections used to reduce measurements do not block
+publication of liquid coefficients. The review shows the fitting Psat sources,
+sampled pressures, validity notes and supplied definitions; the complete fitting
+basis remains in provenance and PFD exports. Simulations use their own Psat and
+vapor definitions, so publication does not promise identical VLE pressures.
+In particular, a mixture's liquid activity model is not restricted by a pure
+component's freezing point or shared Psat lower bound. Custom UNIQUAC R/Q must
+still agree with the shared structural parameters because they change the
+published activity law itself. General publication requires the repository's
+maintained builder and source collections.
 
 ## Validation
 

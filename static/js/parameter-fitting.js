@@ -2,7 +2,7 @@ import { $, api, element, svgElement, guarded, toast, modal, pollJob, getSession
 import { initializeLibrary, queueCloud } from "./persistence.js";
 import { appendObservations, repairObservationIds, mergeSigma } from "./fitting-observations.js";
 import { renderObjectivePlots } from "./fitting-plots.js";
-import { fittingSessionLibrary } from "./fitting-sessions.js";
+import { fittingSessionLibrary, fittingSessionFromResult } from "./fitting-sessions.js";
 
 const draftKey = "pfdsim.fitting.v1";
 let catalog, observations = [], inputDirty = true, result = null, jobId = null, activeJob = null;
@@ -11,6 +11,7 @@ let storageWarningShown = false;
 let observationSets = [], importReports = [], manualValues = {};
 let psatValues = [{}, {}];
 let pendingImport = null;
+let sessionLibrary;
 const fields = ["comp1", "comp2", "model", "vapor", "law", "alpha", "free-alpha", "r1", "q1", "r2", "q2", "cv", "folds", "tref", "starts", "evaluations", "seed", "extrapolation", "online", "scales", "initial", "bounds", "input", "source", "source-url", "source-doi", "source-notes", "input-method", "data-kind", "estimate-properties", "hoc-eta-default"];
 const labels = { VLE: "Vapor–liquid equilibrium", LLE: "Liquid–liquid equilibrium", HE: "Excess enthalpy", GAMMA_INF: "Infinite-dilution γ", AZEOTROPE: "Azeotrope", VLLE: "VLLE / heteroazeotrope", UCST: "Upper critical solution point", LCST: "Lower critical solution point" };
 const laws = { constant: "A", inverse: "B/T", constant_inverse: "A + B/T", constant_inverse_anchored: "A + B/T + C h(T)", constant_inverse_linear: "A + B/T + D T", full: "A + B/T + C h(T) + D T + E T²" };
@@ -40,6 +41,28 @@ function saveDraft() {
   const saved = writeLocal(draftKey,captureFitState());
   if (!saved && !storageWarningShown) { storageWarningShown = true; toast("Browser storage could not save this fitting draft. Download the fit report before leaving this page.", true); }
   if (saved) storageWarningShown = false;
+}
+function reconcileTemperatureLaw() {
+  const active = new Set(catalog.forms[$("fit-law").value]);
+  const known = new Set(Object.values(catalog.forms).flat());
+  const removed = [];
+  for (const field of ["initial", "bounds"]) {
+    const control = $(`fit-${field}`);
+    let values;
+    try { values = JSON.parse(control.value); }
+    catch { continue; } // Keep unfinished JSON editable.
+    if (!values || Array.isArray(values) || typeof values !== "object") continue;
+    const obsolete = Object.keys(values).filter(key => {
+      const parts = key.split(".");
+      return parts.length === 2 && ["12", "21"].includes(parts[0]) && known.has(parts[1]) && !active.has(parts[1]);
+    });
+    if (!obsolete.length) continue;
+    for (const key of obsolete) delete values[key];
+    control.value = JSON.stringify(values, null, 2);
+    removed.push(`${field}: ${obsolete.join(", ")}`);
+  }
+  if (removed.length) toast(`Removed parameters outside the selected temperature law (${removed.join("; ")}). Compatible values were kept; unspecified terms use default starting values and bounds.`);
+  return removed.length > 0;
 }
 function updateModel() {
   $("fit-alpha-controls").hidden = $("fit-model").value !== "NRTL";
@@ -824,17 +847,24 @@ async function reviewFit(id,loadedSubmission=null) {
   const box = element("div");
   box.append(element("h3", {}, `${submission.result.component_names.join(" / ")} · ${submission.model}`));
   box.append(element("p", {}, `Status: ${submission.status}. Source: ${submission.source.citation}`));
+  const psatRecords = (submission.result.property_provenance || []).filter(record => record.property === "Psat");
+  if (psatRecords.length || submission.result.request.psat?.some(Boolean)) {
+    box.append(element("h4", {}, "Fitting saturation-pressure basis"));
+    box.append(element("p", {}, "Supplied Psat corrections and extended temperature ranges are retained for review and do not block publication. Publication activates liquid activity parameters; simulations use their own saturation-pressure and vapor definitions."));
+    if (psatRecords.length) box.append(table(["Component", "Temperature (K)", "Psat (bar)", "Source", "Validity and assessment"], psatRecords.map(record => {
+      const index = submission.result.components.indexOf(record.component);
+      return [submission.result.component_names[index] || record.component, formatNumber(record.T_K), formatNumber(record.value), record.source, record.notes];
+    })));
+  }
   const status=element("p",{id:"fit-admin-review-status",role:"status","aria-live":"polite"},submission.status==="approved"?"Approved and saved. This fit remains in the review queue; Publish to runtime activates it in the shared tables.":`Current status: ${submission.status}.`);
-  const details = element("pre"); details.textContent = JSON.stringify({ source: submission.source, objective_scores: submission.result.objectives, weights: submission.result.request.weights, parameters: submission.result.parameters, warnings: submission.result.warnings, cross_validation: submission.result.cross_validation, review_history: submission.events }, null, 2); box.append(details);
+  const details = element("pre"); details.textContent = JSON.stringify({ source: submission.source, objective_scores: submission.result.objectives, weights: submission.result.request.weights, parameters: submission.result.parameters, fitting_psat_definitions: submission.result.request.psat, property_provenance: submission.result.property_provenance, warnings: submission.result.warnings, cross_validation: submission.result.cross_validation, review_history: submission.events }, null, 2); box.append(details);
   const notes = element("textarea", { rows: 3, id: "fit-admin-review-notes", placeholder: "Optional review notes" }); notes.value=submission.review_notes||"";box.append(labeled("Review notes (optional)", notes),status);
   const actions = element("div", { class: "form-actions" });
   const artifact = element("button", { type: "button" }, "Download full provenance"); artifact.onclick = () => download(JSON.stringify(submission, null, 2), `activity-fit-${id}.json`, "application/json"); actions.append(artifact);
   const report=element("button",{type:"button"},"Download fit result");report.onclick=()=>download(JSON.stringify(submission.result,null,2),`fit-result-${id}.json`,"application/json");actions.append(report);
   const pfd=element("button",{type:"button"},"Download fitted PFD");pfd.onclick=guarded(async()=>{const exported=await api("/api/fitting/export",{result:submission.result});download(exported.pfd_text,`fitted-mixture-${id}.pfd`);});actions.append(pfd);
-  const view=element("button",{type:"button"},"View fit assessment");view.onclick=guarded(()=>{
-    const snapshot=captureFitState();
-    if(!writeLocal("pfdsim.fit-session-previous.v1",{type:"pfdsim_fit_session",schema_version:1,name:"Previous unsaved draft",state:snapshot}))throw new Error("Save or download the current session before opening this fit; browser draft storage is unavailable.");
-    result=structuredClone(submission.result);jobId=null;renderResult();saveDraft();$("modal").close();$("fit-results").scrollIntoView({behavior:"smooth",block:"start"});
+  const view=element("button",{type:"button"},"View fit assessment");view.onclick=guarded(async()=>{
+    if(await sessionLibrary.openReviewedFit(fittingSessionFromResult(submission.result, submission.source)))$("fit-results").scrollIntoView({behavior:"smooth",block:"start"});
   });actions.append(view);
   if (!["published", "publishing"].includes(submission.status)) {
     for (const [action, label] of [["approve", "Approve"], ["reject", "Reject"]]) {
@@ -898,6 +928,7 @@ function restoreFitState(state){
   const saved=assignFitState(state);
   for(const key of Object.keys(catalog.scales))$(`fit-sigma-${key}`).value=saved.sigmaValues?.[key]??"";
   repairFitObservationReferences();
+  reconcileTemperatureLaw();
   renderManual();renderSetOptions();renderPsat();renderVaporParameters(saved.vaporParameters||[]);updateModel();renderObservations();
   $("fit-results").hidden=!result;renderResult();scopes($("fit-scope"),definitionProject);
   if(saved.selectedScope)$("fit-scope").value=saved.selectedScope;
@@ -923,17 +954,20 @@ async function initialize() {
     saved=assignFitState(saved);
   }
   repairFitObservationReferences();
+  const reconciledLaw = reconcileTemperatureLaw();
   renderSigma(saved?.sigmaValues); renderManual(); renderSetOptions(); renderPsat();
   renderVaporParameters(saved?.vaporParameters); updateModel(); renderObservations(); renderResult(); scopes($("fit-scope"), definitionProject);
   if(saved?.selectedScope)$("fit-scope").value=saved.selectedScope;
   if(saved?.exportScope)$("fit-export-scope").value=saved.exportScope;
   if(result)result.components.forEach((name,index)=>{if(saved?.exportMapping?.[name]&&$(`fit-map-${index}`))$(`fit-map-${index}`).value=saved.exportMapping[name];});
-  fields.forEach(name => $(`fit-${name}`).addEventListener("change", saveDraft));
-  $("fit-model").addEventListener("change", updateModel); $("fit-law").addEventListener("change", updateModel);
+  if (reconciledLaw) saveDraft();
+  fields.filter(name => name !== "law").forEach(name => $(`fit-${name}`).addEventListener("change", saveDraft));
+  $("fit-model").addEventListener("change", updateModel);
+  $("fit-law").addEventListener("change", () => { reconcileTemperatureLaw(); updateModel(); saveDraft(); });
   $("fit-vapor").addEventListener("change", () => { renderVaporParameters(); renderPsat();saveDraft(); });
   $("fit-input").addEventListener("input", () => { pendingImport = null; inputDirty = true; saveDraft(); });
   $("fit-parse").onclick = guarded(parseInput);
-  const sessionLibrary=fittingSessionLibrary({capture:captureFitState,restore:restoreFitState,canOpen:()=>!activeJob});
+  sessionLibrary=fittingSessionLibrary({capture:captureFitState,restore:restoreFitState,canOpen:()=>!activeJob});
   $("fit-saved-sessions").onclick=guarded(()=>sessionLibrary.open());
   $("fit-help").onclick = () => {const content=element("div");content.append($("fit-help-content").content.cloneNode(true));modal("Input fields, uncertainty and validation",content);};
   $("fit-property-help").onclick = () => {const content=element("div");content.append($("fit-property-help-content").content.cloneNode(true));modal("Psat and supporting-property help",content);};

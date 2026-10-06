@@ -4,6 +4,7 @@ from copy import deepcopy
 from contextlib import contextmanager
 import json
 
+import numpy as np
 import pytest
 
 import app as web
@@ -12,9 +13,10 @@ from web_jobs import JobStore
 from scripts import build_cas_interaction_parameters as builder
 from thermodynamics_models.interaction_fitting import (
     fit_interactions,
+    prepare_fit,
     validate_runtime_inclusion,
 )
-from .test_interaction_fitting import synthetic
+from .test_interaction_fitting import request, synthetic
 
 
 @pytest.fixture(scope="module")
@@ -371,6 +373,82 @@ def test_publication_rechecks_coefficients_and_requires_portable_rq(fitted):
     custom = fit_interactions(settings)
     with pytest.raises(ValueError, match="custom UNIQUAC R/Q"):
         validate_runtime_inclusion(custom)
+
+
+@pytest.mark.parametrize("model", ["NRTL", "UNIQUAC"])
+@pytest.mark.parametrize("basis", ["pressure_correction", "subcooled_liquid"])
+def test_publication_accepts_reviewed_psat_basis_without_changing_it(
+    tmp_path, monkeypatch, model, basis,
+):
+    if basis == "pressure_correction":
+        components = ["acetone", "water"]
+        psat = [{
+            "form": "antoine",
+            "coefficients": {"A": 4.296305, "B": 1230.4062, "C": -43.24334},
+            "temperature_unit": "K", "pressure_unit": "bar",
+            "Tmin_K": 273, "Tmax_K": 400,
+            "source": "Source pressure correction",
+        }, None]
+        temperatures = (300, 350)
+    else:
+        components = ["acetone", "cyclohexane"]
+        psat = [None, {
+            "form": "canonical_psat_af",
+            "coefficients": {
+                "A": 248.67589730698694, "B": -9896.656129531802,
+                "C": -43.13132713304277, "D": 0.11134395321363802,
+                "E": -5.645824565305427e-05, "F": 1.9410217270456763e-14,
+            },
+            "temperature_unit": "K", "pressure_unit": "bar",
+            "Tmin_K": 273, "Tmax_K": 400,
+            "source": "Subcooled liquid Psat range extension",
+        }]
+        temperatures = (273.15, 300)
+    data = request(components=components, model=model, psat=psat)
+    original = prepare_fit(data)
+    values = np.array([0.2, 0.3, 0.1, 0.2])
+    original.install(values)
+    data["initial"] = dict(zip(original.names, values * original.scales))
+    data["observations"] = []
+    for T in temperatures:
+        for x in (0.2, 0.5, 0.8):
+            point = original.predict_vle(x, T=T)
+            data["observations"].append({
+                "kind": "VLE", "T_K": T, "x1": x,
+                "P_bar": point["P_bar"], "y1": point["y1"],
+            })
+    data["observations"][0]["pin"] = True
+    result = fit_interactions(data)
+    assert result["success"]
+    assert result["points"][0]["pin_satisfied"]
+    assert validate_runtime_inclusion(result)["property_basis"] == "shared_liquid_activity_verified"
+
+    # Exercise the real publication builder in isolation, retaining custom Psat
+    # in provenance while publishing only the unchanged liquid coefficients.
+    runtime = tmp_path / "runtime"
+    monkeypatch.setenv("PFDSIM_INTERACTION_DATA_DIR", str(runtime))
+    store = ActivityFitStore(tmp_path / "source" / "fits.sqlite")
+    identifier = store.submit("user:root", "job", {"citation": "Reviewed source"}, result)["id"]
+    store.review(identifier, "user:root", "approve", "Reviewed Psat", expected_version=1)
+    published = builder.publish_user_fit(identifier, user_fits_path=store.path, actor="user:root")
+    assert published["status"] == "published"
+    record = next(
+        item for item in json.loads((runtime / published["runtime_file"]).read_text())["interactions"]
+        if item.get("user_fit_id") == identifier
+    )
+    for field, value in result["parameters"].items():
+        assert record[field] == value
+    assert store.get(identifier)["result"]["request"]["psat"] == result["request"]["psat"]
+    assert result["request"]["psat"] == psat
+
+
+def test_publication_still_recomputes_hard_pins_on_original_basis(fitted):
+    edited = deepcopy(fitted)
+    row = next(row for row in edited["request"]["observations"] if row["kind"] == "GAMMA_INF")
+    row["gamma1_inf"] *= 2
+    row["pin"] = True
+    with pytest.raises(ValueError, match="hard-pin constraints"):
+        validate_runtime_inclusion(edited)
 
 
 @pytest.mark.parametrize("field,value", [

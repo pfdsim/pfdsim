@@ -2136,11 +2136,11 @@ def export_fit(result, *, pfd_text=None, scope="global", component_map=None):
 
 
 def validate_runtime_inclusion(result):
-    """Check that publishing liquid coefficients preserves the shared model basis.
+    """Check that publishing coefficients preserves the fitted liquid model.
 
-    Custom pure-fluid/structural/vapor definitions remain usable in PFD export.
-    The CAS interaction tables contain liquid coefficients, not global component
-    property replacements, so publication must not silently discard required data.
+    Psat and vapor definitions describe how measurements were reduced, not the
+    activity law being published. Audit measurements on their original basis and
+    verify activities and excess enthalpy independently of the shared vapor basis.
     """
     if result.get("success") is not True:
         raise ValueError("Only a converged fit passing phase checks can be published.")
@@ -2202,6 +2202,16 @@ def validate_runtime_inclusion(result):
         "import_options",
     ):
         canonical_request.pop(key, None)
+    temperatures = sorted({row["T_K"] for row in original.request["observations"]})
+    # Reuse the liquid-only initialization path. These rows configure temperature
+    # coverage only; no regression or measurement audit uses their placeholder
+    # gamma values. In particular, do not qualify shared Psat at these temperatures:
+    # a liquid mixture can exist below a pure component's freezing point.
+    canonical_request["vapor"] = "IDEAL"
+    canonical_request["observations"] = [
+        {"kind": "GAMMA_INF", "T_K": T, "gamma1_inf": 1.0}
+        for T in temperatures
+    ]
     standard = prepare_fit(canonical_request)
     if original.model == "UNIQUAC":
         for i in range(2):
@@ -2225,41 +2235,29 @@ def validate_runtime_inclusion(result):
     }
     runtime = create_thermodynamics(
         list(standard.components),
-        result["method"],
+        result["model"],
         db=standard.thermo.db,
         interaction_overrides=[params],
-        thermo_options=standard.definition.metadata.thermo_options,
     )
     runtime._resolver_known_props = deepcopy(standard.thermo._resolver_known_props)
     standard.thermo = runtime
-    # Verify observables, not just the spelling of optional definitions. Identical
-    # custom correlations are portable; materially different Psat/vapor bases are not.
-    for row in original.request["observations"]:
-        if row["kind"] not in VAPOR_OBJECTIVES:
-            continue
-        if row["kind"] == "VLLE":
-            a, b = original._vlle_endpoints(values, row)
-            explicit = {**row, "x1_alpha": float(a), "x1_beta": float(b)}
-            original_vle = original.row_errors(values, explicit)[1]
-            standard_values = np.array(
-                [values[original.names.index(name)] for name in standard.names]
-            )
-            standard_vle = standard.row_errors(standard_values, explicit)[1]
-        else:
-            original_vle = original._vle(row)[0]
-            standard_vle = standard._vle(row)[0]
-        if len(original_vle) != len(standard_vle) or not np.allclose(
-            original_vle, standard_vle, rtol=0, atol=1e-6
-        ):
-            raise ValueError(
-                "This fit requires a custom Psat, pure-fluid definition or vapor correction that differs from the shared runtime basis. Use its PFD export, or curate that property/vapor basis before publishing liquid coefficients."
-            )
-        for i in range(2):
-            first = original.thermo.Psat(original.components[i], row["T_K"])
-            second = standard.thermo.Psat(standard.components[i], row["T_K"])
-            if not math.isclose(first, second, rel_tol=1e-6):
+    for T in temperatures:
+        for x in (0.0, 0.05, 0.25, 0.5, 0.75, 0.95, 1.0):
+            fitted_gamma = original.checked_gamma(T, x)
+            runtime_gamma = standard.checked_gamma(T, x)
+            if not np.allclose(
+                [math.log(fitted_gamma[c]) for c in original.components],
+                [math.log(runtime_gamma[c]) for c in standard.components],
+                rtol=0,
+                atol=1e-6,
+            ) or not math.isclose(
+                original.thermo.excess_enthalpy(original.composition(x), T),
+                runtime.excess_enthalpy(standard.composition(x), T),
+                rel_tol=1e-9,
+                abs_tol=1e-6,
+            ):
                 raise ValueError(
-                    "Custom Psat differs from the shared runtime basis; curate that basis or use PFD export."
+                    "The published liquid activity model differs from the fitted activities or excess enthalpy. Use PFD export or reconcile the liquid model before publication."
                 )
     audit = original.report(values, original.request["observations"])
     if any(
@@ -2270,7 +2268,7 @@ def validate_runtime_inclusion(result):
         raise ValueError(
             "The submission fails recomputed physical checks or hard-pin constraints."
         )
-    return {"component_cas": cas, "property_basis": "shared_runtime_verified"}
+    return {"component_cas": cas, "property_basis": "shared_liquid_activity_verified"}
 
 
 def fitting_catalog():
