@@ -268,6 +268,36 @@ def test_leading_numeric_condition_header_is_reviewable_and_preserved():
     assert parsed["original_text"] == raw
 
 
+@pytest.mark.parametrize("row", [0, 1])
+def test_condition_heading_edits_and_exclusions_use_preview_data_rows(row):
+    raw = "HE / J/mol at temperatures in K\nx1\t298.15\t308.15\n.1\t100\t200\n.2\t300\t400"
+    options = {
+        "kind": "HE", "mapping": ["x1", "enthalpy", "enthalpy"],
+        "shared_columns": [0], "temperature_unit": "K",
+        "enthalpy_unit": "J/mol", "composition_basis": "mole_fraction",
+        "series": [{"columns": [1], "temperature": 298.15},
+                   {"columns": [2], "temperature": 308.15}],
+    }
+    preview = inspect_observations(raw, import_options=options)
+    edit = {"row": row, "column": 1, "value": "450"}
+    edited = inspect_observations(raw, import_options={**options, "cell_edits": [edit]})
+    assert edited["ready"], edited["issues"]
+    assert edited["raw_rows"][row][1] == "450"
+    assert edited["raw_rows"][1 - row] == preview["raw_rows"][1 - row]
+    assert edited["observations"][row]["HE_J_mol"] == 450
+    assert edited["cell_edits"] == [edit]
+    assert edited["original_text"] == raw
+    excluded = inspect_observations(raw, import_options={
+        **options, "cell_edits": [edit], "exclude_rows": [1 - row],
+    })
+    assert excluded["ready"], excluded["issues"]
+    assert len(excluded["observations"]) == 2
+    assert excluded["observations"][0]["HE_J_mol"] == 450
+    assert all(point["x1"] == (0.1 if row == 0 else 0.2) for point in excluded["observations"])
+    assert excluded["line_numbers"] == [3, 4]
+    assert {source["row"] for source in excluded["observation_sources"]} == {row}
+
+
 def test_optional_blank_vapor_columns_preserve_later_source_rows():
     raw = "T_K\tx1\ty1\n330\t.1\t\n340\t.3\t.75"
     points = parse_observations(raw, import_options={"pressure": 1})

@@ -289,6 +289,10 @@ def _is_data(cells, headers=()):
     return numbers >= min(2, len(cells)) and numbers > 0 or numeric_or_missing
 
 
+def _temperature_unit_label(unit):
+    return unit if unit == "K" else "°" + unit
+
+
 def _temperature_header_conditions(row):
     text = " ".join(row)
     matches = list(re.finditer(rf"{_NUM}\s*(?:K|°\s*[CF])\b", text, re.I))
@@ -299,7 +303,7 @@ def _temperature_header_conditions(row):
         values = re.findall(rf"(?<![A-Za-z0-9_]){_NUM}(?![A-Za-z0-9_])", text)
         if unit and 2 <= len(values) <= 29:
             return [
-                _series_header_hint(f"{cell} {unit if unit == 'K' else '°' + unit}")
+                _series_header_hint(f"{cell} {_temperature_unit_label(unit)}")
                 for cell in values
             ]
     return []
@@ -345,7 +349,7 @@ def _repeated_header_layout(headers):
         composition = next(cell for cell in heading if _field(cell)[0] == "x1")
         measurement = next(cell for cell in heading if _field(cell)[0] == "enthalpy")
         labels = [composition] + [
-            f"{measurement} at {item['temperature']:g} {item['temperature_unit']}"
+            f"{measurement} at {item['temperature']:g} {_temperature_unit_label(item['temperature_unit'])}"
             for item in conditions
         ]
         return labels
@@ -1226,6 +1230,18 @@ def interpret_paste(value, *, options=None, components=None):
     )
 
 
+def _leading_series_condition_row(rows):
+    return bool(
+        rows
+        and cell_number(rows[0][0]) is None
+        and (
+            _field(rows[0][0])[0] in ("x1", "temperature", "pressure")
+            or not str(rows[0][0]).strip()
+        )
+        and all(cell_number(cell) is not None for cell in rows[0][1:])
+    )
+
+
 def _interpret_table(block, *, options, components, value, table_index, blocks):
     flattened_issues = []
     header_width = _header_width(block["headers"])
@@ -1248,6 +1264,30 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
     ):
         block, flattened_issues = _flattened(block, options)
     rows = block["rows"]
+    # Preview row numbers always address data rows. Remove a condition heading
+    # before edits, exclusions and series projection use those same numbers.
+    condition_heading = _leading_series_condition_row(rows) and (
+        "series" in options or bool(str(rows[0][0]).strip())
+    )
+    if condition_heading:
+        if len(rows) == 1:
+            raise ValueError("No measurement rows remain after the condition heading.")
+        headers = _headers(block, len(rows[0]))
+        block = {
+            **block,
+            "column_headers": [
+                str(cell).strip() or headers[index]
+                for index, cell in enumerate(rows[0])
+            ],
+            "rows": rows[1:],
+            "line_numbers": block["line_numbers"][1:],
+            "ambiguous_rows": [
+                {**item, "row": item["row"] - 1}
+                for item in block.get("ambiguous_rows", [])
+                if item["row"] > 0
+            ],
+        }
+        rows = block["rows"]
     if len(rows) > 2000 or len(rows[0]) > 30:
         raise ValueError("Import at most 2000 rows and 30 columns at a time.")
     edits = options.get("cell_edits", [])
@@ -1296,7 +1336,11 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
             block.get("ambiguous_rows", []), options.get("exclude_rows", [])
         )
     )
-    if block.get("column_headers"):
+    if condition_heading:
+        notes.append(
+            "The leading axis/condition row was treated as a heading; it remains in the original paste."
+        )
+    elif block.get("column_headers"):
         notes.append(
             "Repeated HE columns and their temperatures were recognized from the shared heading and condition row. Short rows retain their unassigned measurements for alignment review."
         )
@@ -1939,15 +1983,7 @@ def _alignment_issues(ambiguous_rows, excluded):
 
 def _series_header_hints(headers, rows):
     labels = headers
-    if (
-        rows
-        and cell_number(rows[0][0]) is None
-        and (
-            _field(rows[0][0])[0] in ("x1", "temperature", "pressure")
-            or not str(rows[0][0]).strip()
-        )
-        and all(cell_number(cell) is not None for cell in rows[0][1:])
-    ):
+    if _leading_series_condition_row(rows):
         labels = [
             str(rows[0][index]).strip() or headers[index]
             for index in range(len(headers))
@@ -2014,29 +2050,6 @@ def _interpret_repeated(
     line_numbers = block["line_numbers"]
     ambiguous_rows = block.get("ambiguous_rows", [])
     notes = list(notes)
-    if (
-        source_rows
-        and cell_number(source_rows[0][0]) is None
-        and (
-            _field(source_rows[0][0])[0] in ("x1", "temperature", "pressure")
-            or not str(source_rows[0][0]).strip()
-        )
-        and all(cell_number(cell) is not None for cell in source_rows[0][1:])
-    ):
-        headings = source_rows[0]
-        headers = [
-            str(headings[index]).strip() or headers[index] for index in range(width)
-        ]
-        source_rows = source_rows[1:]
-        line_numbers = line_numbers[1:]
-        ambiguous_rows = [
-            {**item, "row": item["row"] - 1}
-            for item in ambiguous_rows
-            if item["row"] > 0
-        ]
-        notes.append(
-            "The leading axis/condition row was treated as a heading in repeated-series mode; it remains in the original paste."
-        )
     raw, issues, reports, lineage, excluded = [], [], [], [], []
     issues.extend(_alignment_issues(ambiguous_rows, options.get("exclude_rows", [])))
     used = set()

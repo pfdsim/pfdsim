@@ -351,27 +351,45 @@ def test_temperature_annotations_do_not_change_the_measured_quantity():
     assert [item["row"] for item in proposal["ambiguous_rows"]] == [1]
 
 
-def test_celsius_conditions_and_measurement_labels_are_preserved():
-    paste = "x l h E / J mol - 1\nT = 10 °C T = 25 °C\n0.1 -100 -80\n0.2 -150\n0.3 -200 -160"
+@pytest.mark.parametrize("heading,temperatures,unit", [
+    ("T = 10 °C T = 25 °C", [10, 25], "C"),
+    ("T = 50 °F T = 77 °F", [50, 77], "F"),
+    ("T = 283.15 K T = 298.15 K", [283.15, 298.15], "K"),
+    ("T / °C 10 25", [10, 25], "C"),
+    ("T / °F 50 77", [50, 77], "F"),
+    ("T / K 283.15 298.15", [283.15, 298.15], "K"),
+])
+def test_repeated_temperature_conditions_and_measurement_labels_are_preserved(
+    heading, temperatures, unit,
+):
+    paste = f"x l h E / J mol - 1\n{heading}\n0.1 -100 -80\n0.2 -150\n0.3 -200 -160"
     proposal = inspect_observations(paste)
     assert proposal["settings"]["kind"] == "HE"
+    assert [column["role"] for column in proposal["columns"]] == [
+        "x1", "enthalpy", "enthalpy",
+    ]
+    hints = proposal["series_header_hints"][1:]
     assert [
-        hint.get("temperature") for hint in proposal["series_header_hints"][1:]
-    ] == [10, 25]
+        hint.get("temperature") for hint in hints
+    ] == temperatures
     assert [
-        hint.get("temperature_unit") for hint in proposal["series_header_hints"][1:]
-    ] == ["C", "C"]
+        hint.get("temperature_unit") for hint in hints
+    ] == [unit, unit]
     options = {
         "shared_columns": [0],
         "exclude_rows": [1],
         "series": [
-            {"columns": [1], "temperature": 10, "temperature_unit": "C"},
-            {"columns": [2], "temperature": 25, "temperature_unit": "C"},
+            {"columns": [index], "temperature": hint["temperature"],
+             "temperature_unit": hint["temperature_unit"]}
+            for index, hint in enumerate(hints, start=1)
         ],
     }
     checked = inspect_observations(paste, import_options=options)
     assert checked["ready"], checked["issues"]
-    assert sorted({row["T_K"] for row in checked["observations"]}) == [283.15, 298.15]
+    assert sorted({row["T_K"] for row in checked["observations"]}) == pytest.approx([283.15, 298.15])
+    assert [(row["x1"], row["HE_J_mol"]) for row in checked["observations"]] == [
+        (0.1, -100), (0.3, -200), (0.1, -80), (0.3, -160),
+    ]
 
 
 def test_roman_liquid_phase_labels_remain_lle_endpoints():
