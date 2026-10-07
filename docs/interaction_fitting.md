@@ -198,7 +198,7 @@ to the mole fraction of **component 1**, including both LLE endpoints.
 | Kind | Required measurements in addition to temperature | Optional measurements |
 | --- | --- | --- |
 | `VLE` | `x1`, pressure | `y1` |
-| `LLE` | `x1_alpha`, `x1_beta` | pressure (not used by the activity-coefficient LLE model) |
+| `LLE` | `x1_alpha` and/or `x1_beta` | the other liquid endpoint; pressure (not used by the activity-coefficient LLE model) |
 | `HE` | `x1`, excess enthalpy | |
 | `GAMMA_INF` | `gamma1_inf` and/or `gamma2_inf` | |
 | `AZEOTROPE` | `x1`, pressure | `y1`, if equal to `x1` |
@@ -260,6 +260,13 @@ pure-liquid references and vapor fugacity coefficients:
   fraction of the dilute component.
 - **LLE:** both component log-activity differences at the observed endpoints,
   plus supporting-tangent penalties that discourage unstable stationary pairs.
+  One-sided observations fit a bounded latent missing endpoint on the opposite
+  side of the measured endpoint. Alpha is the lower component-1 mole fraction,
+  beta the higher; neither denotes a fixed chemical or vertical layer. For
+  one-sided rows the log-activity differences are divided by the endpoint
+  separation to prevent a collapsing latent pair from trivially reducing the
+  objective. Both endpoints cannot be missing. Validation-only rows infer the
+  missing endpoint from the fixed model without fitted nuisance coordinates.
   The final report independently runs the runtime equilibrium solver and reports
   its stable binodal predictions and phase fractions. Reports and sampled curves
   share the ordinary feed-based liquid flash for their final predictions. A

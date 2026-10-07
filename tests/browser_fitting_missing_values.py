@@ -166,6 +166,38 @@ def main():
         page.locator("#fit-import-add").click()
         expect(page.locator("#fit-table tbody tr")).to_have_count(8)
         assert [row["T_K"] for row in draft()["observations"][-2:]] == [320, 330]
+
+        # LLE manual entry accepts either measured branch, with no fabricated
+        # value for the missing branch, and still requires one endpoint.
+        page.locator("#fit-input-method").select_option("manual")
+        page.locator("#fit-data-kind").select_option("LLE")
+        page.locator("#fit-manual-temperature").fill("300")
+        page.locator("#fit-manual-temperature_unit").select_option("K")
+        page.locator("#fit-manual-x1_alpha").fill(".02")
+        page.locator("#fit-manual-x1_beta").fill("—")
+        page.locator("#fit-parse").click()
+        expect(page.locator("#fit-table tbody tr")).to_have_count(9)
+        assert draft()["observations"][-1]["x1_alpha"] == 0.02
+        assert "x1_beta" not in draft()["observations"][-1]
+        page.locator("#fit-manual-temperature").fill("300")
+        page.locator("#fit-manual-x1_alpha").fill("None")
+        page.locator("#fit-manual-x1_beta").fill(".8")
+        page.locator("#fit-parse").click()
+        expect(page.locator("#fit-table tbody tr")).to_have_count(10)
+        assert draft()["observations"][-1]["x1_beta"] == 0.8
+        assert "x1_alpha" not in draft()["observations"][-1]
+        page.locator("#fit-manual-temperature").fill("300")
+        page.locator("#fit-manual-x1_beta").fill("?")
+        page.locator("#fit-parse").click()
+        expect(page.locator(".toast")).to_contain_text("x1_alpha or x1_beta")
+        expect(page.locator("#fit-table tbody tr")).to_have_count(10)
+
+        page.locator("#fit-input-method").select_option("paste")
+        page.locator("#fit-data-kind").select_option("AUTO")
+        paste("kind,T_K,x1_alpha,x1_beta\nLLE,310,.03,None\nLLE,320,?,.75")
+        expect(page.locator("#fit-table tbody tr")).to_have_count(12)
+        assert "x1_beta" not in draft()["observations"][-2]
+        assert "x1_alpha" not in draft()["observations"][-1]
         assert not errors, errors
         page.screenshot(path=str(REPORT / "fitting-missing-values.png"), full_page=True)
         browser.close()

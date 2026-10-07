@@ -1699,7 +1699,7 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
         issues.append("Choose the column meanings.")
     required = {
         "VLE": {"temperature", "pressure", "x1"},
-        "LLE": {"temperature", "x1_alpha", "x1_beta"},
+        "LLE": {"temperature"},
         "VLLE": {"temperature", "pressure"},
         "HE": {"temperature", "x1", "enthalpy"},
         "GAMMA_INF": {"temperature"},
@@ -1729,6 +1729,8 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
             missing.remove(field)
     if missing:
         issues.append("Supply or map: " + ", ".join(sorted(missing)) + ".")
+    if "LLE" in row_kinds and not {"x1_alpha", "x1_beta"} & set(mapping):
+        issues.append("Map at least one LLE liquid endpoint: x1_alpha or x1_beta.")
     if settings["kind"] == "GAMMA_INF" and not {"gamma1_inf", "gamma2_inf"} & set(
         mapping
     ):
@@ -2056,7 +2058,7 @@ def _interpret_repeated(
     required = {
         "HE": {"x1", "enthalpy"},
         "VLE": {"x1"},
-        "LLE": {"x1_alpha", "x1_beta"},
+        "LLE": set(),
         "VLLE": set(),
         "AZEOTROPE": {"x1"},
         "GAMMA_INF": set(),
@@ -2123,6 +2125,8 @@ def _interpret_repeated(
                 absent & mandatory
                 or child_settings["kind"] == "GAMMA_INF"
                 and {role for role in roles if role.startswith("gamma")} <= absent
+                or child_settings["kind"] == "LLE"
+                and {role for role in roles if role in ("x1_alpha", "x1_beta")} <= absent
             ):
                 omitted.append(
                     {

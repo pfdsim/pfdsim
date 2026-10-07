@@ -62,6 +62,7 @@ function reconcileFitParameters() {
     if (row.kind === "VLLE" && missingValue(row.x1_alpha) && missingValue(row.x1_beta)) {
       latentNames.add(`vlle_xa.${row.id}`); latentNames.add(`vlle_gap.${row.id}`);
     }
+    if (row.kind === "LLE" && missingValue(row.x1_alpha) !== missingValue(row.x1_beta)) latentNames.add(`lle_gap.${row.id}`);
   }
   const removed = [];
   for (const field of ["initial", "bounds"]) {
@@ -75,7 +76,7 @@ function reconcileFitParameters() {
       if (parts.length === 2 && ["12", "21"].includes(parts[0]) && known.has(parts[1])) return !active.has(parts[1]);
       if (key === "alpha12") return $("fit-model").value !== "NRTL" || !$("fit-free-alpha").checked;
       if (knownVaporNames.has(key)) return !vaporNames.has(key);
-      if (parts.length >= 2 && ["critical_x1", "vlle_xa", "vlle_gap"].includes(parts[0])) return !latentNames.has(key);
+      if (parts.length >= 2 && ["critical_x1", "vlle_xa", "vlle_gap", "lle_gap"].includes(parts[0])) return !latentNames.has(key);
       return false; // Keep unknown keys for the backend to diagnose, and unfinished JSON editable.
     });
     if (!obsolete.length) continue;
@@ -362,7 +363,7 @@ function renderManual() {
   const kind = $("fit-data-kind").value === "AUTO" ? "VLE" : $("fit-data-kind").value;
   for (const role of manualRoles[kind]) {
     const input = measurementInput(manualValues[role], { id: `fit-manual-${role}` }, (value, text) => { manualValues[role] = text; saveDraft(); });
-    container.append(labeled(catalog.import_fields[role] + (["y1", "gamma1_inf", "gamma2_inf"].includes(role) || kind==="VLLE"&&role.startsWith("x1_") || ["UCST", "LCST"].includes(kind) && role === "x1" ? " (optional)" : ""), input));
+    container.append(labeled(catalog.import_fields[role] + (["y1", "gamma1_inf", "gamma2_inf"].includes(role) || ["LLE","VLLE"].includes(kind)&&role.startsWith("x1_") || ["UCST", "LCST"].includes(kind) && role === "x1" ? " (optional)" : ""), input));
   }
   for (const [key, label, items, fallback] of [
     ["temperature_unit", "Temperature unit", temperatureUnits, "C"],
@@ -709,9 +710,10 @@ async function parseInput() {
       const kind = $("fit-data-kind").value === "AUTO" ? "VLE" : $("fit-data-kind").value;
     const roles = manualRoles[kind].filter(role => !missingValue(manualValues[role]));
     if (!roles.length) throw new Error("Enter an observation in the textboxes first.");
-    const required = { VLE: ["temperature", "pressure", "x1"], LLE: ["temperature", "x1_alpha", "x1_beta"], HE: ["temperature", "x1", "enthalpy"], GAMMA_INF: ["temperature"], AZEOTROPE: ["temperature", "pressure", "x1"], VLLE:["temperature","pressure"], UCST: ["temperature"], LCST: ["temperature"] }[kind];
+    const required = { VLE: ["temperature", "pressure", "x1"], LLE: ["temperature"], HE: ["temperature", "x1", "enthalpy"], GAMMA_INF: ["temperature"], AZEOTROPE: ["temperature", "pressure", "x1"], VLLE:["temperature","pressure"], UCST: ["temperature"], LCST: ["temperature"] }[kind];
     const missing = required.filter(role => !roles.includes(role));
     if (kind === "GAMMA_INF" && !roles.some(role => role.startsWith("gamma"))) missing.push("gamma1_inf or gamma2_inf");
+    if (kind === "LLE" && !roles.some(role => ["x1_alpha", "x1_beta"].includes(role))) missing.push("x1_alpha or x1_beta");
     if (missing.length) throw new Error(`Fill the missing observation fields: ${missing.join(", ")}.`);
     text = roles.join("\t")+"\n"+roles.map(role => manualValues[role]).join("\t");
     options = { kind, mapping: roles, temperature_unit: manualValues.temperature_unit, pressure_unit: manualValues.pressure_unit || "bar", composition_basis: manualValues.composition_basis || "mole_fraction", composition_component: kind === "GAMMA_INF" ? 1 : Number(manualValues.composition_component), enthalpy_unit: manualValues.enthalpy_unit || "J/mol" };

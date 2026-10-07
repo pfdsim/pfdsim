@@ -250,7 +250,7 @@ def parse_observations(value, *, import_options=None, components=None):
             row["P_bar"] = _number(row["P_bar"], "P_bar", low=1e-9, high=10000)
         required = {
             "VLE": ("x1", "P_bar"),
-            "LLE": ("x1_alpha", "x1_beta"),
+            "LLE": (),
             "VLLE": ("P_bar",),
             "HE": ("x1", "HE_J_mol"),
             "GAMMA_INF": (),
@@ -296,7 +296,13 @@ def parse_observations(value, *, import_options=None, components=None):
             raise ValueError(
                 "VLLE vapor composition must be strictly between zero and one."
             )
-        if row["kind"] == "LLE" or row["kind"] == "VLLE" and "x1_alpha" in row:
+        if row["kind"] == "LLE":
+            endpoints = row.keys() & {"x1_alpha", "x1_beta"}
+            if not endpoints:
+                raise ValueError("LLE needs x1_alpha and/or x1_beta.")
+            if any(not 0 < row[key] < 1 for key in endpoints):
+                raise ValueError("LLE endpoints must be strictly between zero and one.")
+        if row["kind"] in ("LLE", "VLLE") and {"x1_alpha", "x1_beta"} <= row.keys():
             a, b = sorted((row["x1_alpha"], row["x1_beta"]))
             if not 0 < a < b < 1:
                 raise ValueError(
@@ -799,7 +805,16 @@ class FitProblem:
                 self.names.append(name)
                 self.scales.append(1.0)
         self.vlle_names = {}
+        self.lle_names = {}
         for row in request["observations"]:
+            if (
+                row["kind"] == "LLE"
+                and ("x1_alpha" in row) != ("x1_beta" in row)
+                and not row["validation_only"]
+            ):
+                self.lle_names[row["id"]] = len(self.names)
+                self.names.append(f"lle_gap.{row['id']}")
+                self.scales.append(1.0)
             if (
                 row["kind"] == "VLLE"
                 and "x1_alpha" not in row
@@ -902,6 +917,8 @@ class FitProblem:
                     if name.startswith("vlle_xa")
                     else (0.001, 0.999, 0.95)
                 )
+            elif name.startswith("lle_gap."):
+                self.lower[i], self.upper[i], self.initial[i] = 1e-6, 1 - 1e-6, 0.95
         for spec in self.vapor_specs:
             if spec["fit"]:
                 i = spec["index"]
@@ -954,6 +971,11 @@ class FitProblem:
             ):
                 raise ValueError(
                     "VLLE latent phase coordinates must be bounded strictly inside (0,1)."
+                )
+        for index in self.lle_names.values():
+            if self.lower[index] <= 0 or self.upper[index] >= 1:
+                raise ValueError(
+                    "LLE latent phase coordinates must be bounded strictly inside (0,1)."
                 )
         self.last = None
         self.last_vapor = None
@@ -1253,7 +1275,7 @@ class FitProblem:
         mua, mub = self.chemical_potentials(T, a), self.chemical_potentials(T, b)
         raw = (mua - mub).tolist()
         mu = (mua + mub) / 2
-        grid = np.unique(np.r_[np.linspace(0.00001, 0.99999, 41), a, b])
+        grid = np.r_[np.linspace(0.00001, 0.99999, 41), a, b]
         gaps = np.array(
             [self.gibbs(T, z) - (z * mu[0] + (1 - z) * mu[1]) for z in grid]
         )
@@ -1269,15 +1291,25 @@ class FitProblem:
             },
         )
 
-    def _vlle_endpoints(self, values, row):
-        if "x1_alpha" in row:
+    def _liquid_endpoints(self, values, row):
+        if {"x1_alpha", "x1_beta"} <= row.keys():
             return row["x1_alpha"], row["x1_beta"]
+        if row["id"] in self.lle_names:
+            gap = values[self.lle_names[row["id"]]]
+            if "x1_alpha" in row:
+                a = row["x1_alpha"]
+                return a, a + (1 - a) * gap
+            b = row["x1_beta"]
+            return b * (1 - gap), b
         if row["id"] in self.vlle_names:
             first, gap = self.vlle_names[row["id"]]
             a = values[first]
             return a, a + (1 - a) * values[gap]
         state = self.predict_lle(row["T_K"])
-        return state["x1_alpha"], state["x1_beta"]
+        return (
+            row.get("x1_alpha", state["x1_alpha"]),
+            row.get("x1_beta", state["x1_beta"]),
+        )
 
     def _vle(self, row):
         T, P, x = row["T_K"], row["P_bar"], row["x1"]
@@ -1343,11 +1375,24 @@ class FitProblem:
                     raw.append(math.log(gamma / row[key]))
             scaled = np.array(raw) / self._sigma(row, "log_gamma")
         elif kind == "LLE":
+            a, b = self._liquid_endpoints(values, row)
+            if not 0 < a < b < 1:
+                raise ValueError(
+                    "No distinct ordered LLE endpoints are available for this observation."
+                )
             scaled, raw, prediction = self._lle_errors(
-                T, row["x1_alpha"], row["x1_beta"], self._sigma(row, "log_fugacity")
+                T, a, b, self._sigma(row, "log_fugacity")
+            )
+            if ("x1_alpha" in row) != ("x1_beta" in row):
+                # Equal-state chemical potentials are a trivial solution. Do
+                # not let an unmeasured endpoint reduce the loss by collapsing
+                # onto the measured endpoint instead of finding coexistence.
+                scaled[:2] /= b - a
+            prediction.update(
+                evaluation_x1_alpha=float(a), evaluation_x1_beta=float(b)
             )
         elif kind == "VLLE":
-            a, b = self._vlle_endpoints(values, row)
+            a, b = self._liquid_endpoints(values, row)
             first = {**row, "kind": "VLE", "x1": a}
             _, vapor = self._vle(first)
             y = vapor["evaluation_y1"]
@@ -1446,6 +1491,37 @@ class FitProblem:
                     f"Fitting {len(rows)} observations · start {index + 1}/{len(starts)}"
                 )
             try:
+                if self.lle_names:
+                    # Seed unmeasured branches from this start's actual
+                    # coexistence. A fixed far-end guess can miss narrow or
+                    # strongly asymmetric gaps, especially for UNIQUAC.
+                    self.install(start)
+                    coexistence = {}
+                    for row in rows:
+                        coordinate = self.lle_names.get(row["id"])
+                        if coordinate is None or f"lle_gap.{row['id']}" in self.request.get(
+                            "initial", {}
+                        ):
+                            continue
+                        T = row["T_K"]
+                        if T not in coexistence:
+                            try:
+                                coexistence[T] = self.predict_lle(T)
+                            except (ValueError, OverflowError, *_MODEL_ERRORS):
+                                coexistence[T] = None
+                        phases = coexistence[T]
+                        if phases is None:
+                            continue
+                        if "x1_alpha" in row:
+                            a = row["x1_alpha"]
+                            gap = (phases["x1_beta"] - a) / (1 - a)
+                        else:
+                            b = row["x1_beta"]
+                            gap = (b - phases["x1_alpha"]) / b
+                        if 0 < gap < 1:
+                            start[coordinate] = np.clip(
+                                gap, self.lower[coordinate], self.upper[coordinate]
+                            )
                 soft = lambda values: self.residuals(values, rows)
                 # Use pins to find a feasible initial point, then enforce their
                 # declared tolerance as two-sided inequality constraints.
@@ -1636,7 +1712,7 @@ class FitProblem:
                     physical = False
             elif audit and row["kind"] == "LLE":
                 try:
-                    a, b = row["x1_alpha"], row["x1_beta"]
+                    a, b = self._liquid_endpoints(values, row)
                     prediction.update(self.predict_lle(row["T_K"], feed_x1=(a + b) / 2))
                 except (ValueError, RuntimeError, OverflowError, *_MODEL_ERRORS) as error:
                     prediction["equilibrium_error"] = str(error)
@@ -1844,13 +1920,13 @@ def fit_interactions(request, *, progress=None):
         local_request["initial"] = {
             k: v
             for k, v in request.get("initial", {}).items()
-            if not k.startswith(("critical_x1.", "vlle_"))
+            if not k.startswith(("critical_x1.", "vlle_", "lle_"))
             or k.partition(".")[2] in training_ids
         }
         local_request["bounds"] = {
             k: v
             for k, v in request.get("bounds", {}).items()
-            if not k.startswith(("critical_x1.", "vlle_"))
+            if not k.startswith(("critical_x1.", "vlle_", "lle_"))
             or k.partition(".")[2] in training_ids
         }
         try:

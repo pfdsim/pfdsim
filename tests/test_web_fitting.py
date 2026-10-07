@@ -86,6 +86,21 @@ def test_missing_values_corrections_and_flat_dimensions_http(client):
     assert len(response.get_json()["observations"]) == 2
 
 
+def test_one_sided_lle_import_and_job_admission(client):
+    response = client.post("/api/fitting/parse", json={
+        "observations": "kind,T_K,x1_alpha,x1_beta\nLLE,300,.1,—\nLLE,310,None,.8",
+    })
+    assert response.status_code == 200
+    proposal = response.get_json()
+    assert proposal["ready"], proposal["issues"]
+    rows = proposal["observations"]
+    assert rows[0]["x1_alpha"] == 0.1 and "x1_beta" not in rows[0]
+    assert rows[1]["x1_beta"] == 0.8 and "x1_alpha" not in rows[1]
+    assert client.post("/api/fitting", json=request(observations=rows)).status_code == 202
+    invalid = request(observations=[{"kind": "LLE", "T_K": 300}])
+    assert client.post("/api/fitting", json=invalid).status_code == 400
+
+
 @pytest.mark.parametrize("axis", ["T", "P"])
 def test_grouped_vle_table_http_preserves_conditions_and_ignores_fitted_values(client, axis):
     from .test_grouped_vle_import import grouped_table, assert_grouped_points

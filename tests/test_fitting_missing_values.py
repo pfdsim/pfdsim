@@ -7,6 +7,7 @@ import pytest
 
 from thermodynamics_models.interaction_fitting import (
     fitting_catalog,
+    fit_interactions,
     inspect_observations,
     parse_observations,
     prepare_fit,
@@ -145,6 +146,155 @@ def test_missing_vlle_endpoints_preserve_the_pair_requirement():
         parse_observations(
             [{"kind": "GAMMA_INF", "T_K": 300, "gamma1_inf": "?", "gamma2_inf": None}]
         )
+
+
+@pytest.mark.parametrize("marker", [None, *MARKERS])
+@pytest.mark.parametrize("known,unknown,value", [
+    ("x1_alpha", "x1_beta", 0.8),
+    ("x1_beta", "x1_alpha", 0.1),
+])
+def test_lle_accepts_either_endpoint_without_relabeling_it(marker, known, unknown, value):
+    original = {"kind": "LLE", "T_K": 300, known: value, unknown: marker}
+    row = parse_observations([original])[0]
+    assert row[known] == value
+    assert unknown not in row
+    assert unknown in original
+
+
+@pytest.mark.parametrize("endpoint", ["x1_alpha", "x1_beta"])
+@pytest.mark.parametrize("value", [0, 1, -0.1, 1.1, float("nan"), float("inf")])
+def test_one_sided_lle_rejects_invalid_endpoints(endpoint, value):
+    with pytest.raises(ValueError, match="finite|strictly between"):
+        parse_observations([{"kind": "LLE", "T_K": 300, endpoint: value}])
+
+
+def test_lle_still_needs_a_temperature_and_one_measured_endpoint():
+    with pytest.raises(ValueError, match="LLE needs"):
+        parse_observations([{"kind": "LLE", "T_K": 300, "x1_alpha": "—", "x1_beta": None}])
+    with pytest.raises(ValueError, match="required"):
+        parse_observations([{"kind": "LLE", "x1_beta": 0.9}])
+
+
+@pytest.mark.parametrize("endpoint", ["x1_alpha", "x1_beta"])
+def test_lle_import_accepts_one_endpoint_column(endpoint):
+    proposal = inspect_observations(f"kind,T_K,{endpoint}\nLLE,300,.2\nLLE,310,.3")
+    assert proposal["ready"], proposal["issues"]
+    assert len(proposal["observations"]) == 2
+    assert proposal["observations"][0][endpoint] == 0.2
+
+
+def test_sparse_lle_repeated_series_keep_one_sided_rows():
+    proposal = inspect_observations(
+        "T_K\tA\tB\n300\t.1\t—\n310\t?\t.8\n320\t—\t—",
+        import_options={
+            "kind": "LLE", "mapping": ["temperature", "x1_alpha", "x1_beta"],
+            "shared_columns": [0], "temperature_unit": "K",
+            "composition_basis": "mole_fraction", "composition_component": 1,
+            "series": [{"columns": [1, 2]}],
+        },
+    )
+    assert proposal["ready"], proposal["issues"]
+    assert len(proposal["observations"]) == 2
+    assert "x1_beta" not in proposal["observations"][0]
+    assert "x1_alpha" not in proposal["observations"][1]
+    assert len(proposal["series_reports"][0]["excluded"]) == 1
+
+
+def test_one_sided_lle_residuals_do_not_reward_collapsed_ideal_phases():
+    problem = prepare_fit({
+        "components": ["ethanol", "water"], "form": "constant",
+        "observations": [{"kind": "LLE", "T_K": 300, "x1_alpha": 0.2}],
+    })
+    values = problem.initial.copy()
+    index = problem.lle_names["1"]
+    values[index] = problem.lower[index]
+    scaled, _, prediction = problem.row_errors(values, problem.request["observations"][0])
+    assert prediction["evaluation_x1_beta"] > prediction["evaluation_x1_alpha"]
+    # An ideal liquid has no coexistence: even a tiny latent gap must retain
+    # the nonzero curvature limit of the log-activity residuals.
+    assert np.linalg.norm(scaled[:2]) > 100
+
+
+def test_fitted_lle_endpoint_crossing_a_tangent_grid_node_keeps_residual_size():
+    problem = prepare_fit({
+        "components": ["ethanol", "water"], "form": "constant",
+        "observations": [{"kind": "LLE", "T_K": 300, "x1_alpha": 0.2}],
+    })
+    lengths = []
+    for endpoint in (0.5, 0.50001):
+        values = problem.initial.copy()
+        values[problem.lle_names["1"]] = (endpoint - 0.2) / 0.8
+        errors, _, _ = problem.row_errors(values, problem.request["observations"][0])
+        lengths.append(len(errors))
+    assert lengths == [45, 45]
+
+
+@pytest.mark.parametrize("model,coefficients", [("NRTL", [2.5, 2.5]), ("UNIQUAC", [-2.5, -2.5])])
+def test_one_sided_lle_fit_and_validation_use_stable_runtime_endpoints(model, coefficients):
+    reference = prepare_fit({
+        "components": ["ethanol", "water"], "model": model, "form": "constant",
+        "observations": [{"kind": "GAMMA_INF", "T_K": 300, "gamma1_inf": 1}],
+    })
+    reference.install(np.array(coefficients))
+    truth = reference.predict_lle(300)
+    a, b = truth["x1_alpha"], truth["x1_beta"]
+    request = {
+        "components": ["ethanol", "water"], "model": model, "form": "constant", "starts": 1,
+        "initial": {"12.constant": coefficients[0] - 0.1, "21.constant": coefficients[1] + 0.1},
+        "observations": [
+            {"kind": "LLE", "T_K": 300, "x1_alpha": a, "x1_beta": None},
+            {"kind": "LLE", "T_K": 300, "x1_alpha": "—", "x1_beta": b},
+            {"kind": "LLE", "T_K": 300, "x1_alpha": a, "validation_only": True},
+            {"kind": "LLE", "T_K": 300, "x1_beta": b, "validation_only": True},
+        ],
+    }
+    problem = prepare_fit(request)
+    assert set(problem.lle_names) == {"1", "2"}
+    result = fit_interactions(request)
+    assert result["success"], result["warnings"]
+    assert result["optimizer"]["objective"] < 1e-7
+    for point in result["points"]:
+        assert point["physical"]
+        assert point["predicted"]["split"]
+        assert point["predicted"]["x1_alpha"] == pytest.approx(a, abs=1e-5)
+        assert point["predicted"]["x1_beta"] == pytest.approx(b, abs=1e-5)
+    for metrics in (result["physical_metrics"], result["validation_only"]["physical_metrics"]):
+        assert metrics["LLE"]["x1_alpha"]["n"] == 1
+        assert metrics["LLE"]["x1_beta"]["n"] == 1
+
+
+def test_one_sided_lle_cross_validation_keeps_latent_coordinates_in_training_only():
+    reference = prepare_fit({
+        "components": ["ethanol", "water"], "form": "constant",
+        "observations": [{"kind": "GAMMA_INF", "T_K": 300, "gamma1_inf": 1}],
+    })
+    reference.install(np.array([2.5, 2.5]))
+    state = reference.predict_lle(300)
+    a, b = state["x1_alpha"], state["x1_beta"]
+    result = fit_interactions({
+        "components": ["ethanol", "water"], "form": "constant", "starts": 1,
+        "cv": {"method": "kfold", "folds": 3},
+        "initial": {
+            "12.constant": 2.5, "21.constant": 2.5,
+            "lle_gap.lower": (b - a) / (1 - a), "lle_gap.upper": (b - a) / b,
+        },
+        "bounds": {"lle_gap.lower": [1e-6, .999999], "lle_gap.upper": [1e-6, .999999]},
+        "observations": [
+            {"id": "anchor", "kind": "LLE", "T_K": 300, "x1_alpha": a, "x1_beta": b},
+            {"id": "lower", "kind": "LLE", "T_K": 300, "x1_alpha": a},
+            {"id": "upper", "kind": "LLE", "T_K": 300, "x1_beta": b},
+        ],
+    })
+    assert result["success"], result["warnings"]
+    for fold in result["cross_validation"]["folds"]:
+        assert fold["success"], fold
+        expected_latent = len(set(fold["training_ids"]) & {"lower", "upper"})
+        assert fold["parameter_count"] == 2 + expected_latent
+        assert len(fold["held_out_ids"]) == 1
+        point = fold["points"][0]
+        assert point["physical"]
+        assert point["predicted"]["x1_alpha"] == pytest.approx(a, abs=1e-5)
+        assert point["predicted"]["x1_beta"] == pytest.approx(b, abs=1e-5)
 
 
 def test_an_entire_missing_data_row_is_retained_for_correction():
