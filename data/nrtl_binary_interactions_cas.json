@@ -6003,18 +6003,6 @@
       "source_id2": "1765"
     },
     {
-      "a12_cal_per_mol": 2633.6951,
-      "a21_cal_per_mol": 504.0381,
-      "alpha12": 0.4447,
-      "cas1": "7732-18-5",
-      "cas2": "71-36-3",
-      "comment": "Water/n-Butanol p336 1/1a",
-      "component1": "H2O",
-      "component2": "1-Butanol",
-      "source_id1": "1921",
-      "source_id2": "1105"
-    },
-    {
       "a12_cal_per_mol": 1310.8994,
       "a21_cal_per_mol": 1920.1402,
       "alpha12": 0.5778,
@@ -7102,25 +7090,6 @@
       "tau21_d": -0.5592664509486762
     },
     {
-      "Tmax_K": 397.75,
-      "Tmin_K": 298.15,
-      "alpha12": 0.45131325,
-      "cas1": "71-36-3",
-      "cas2": "7732-18-5",
-      "comment": "1-Butanol/Water temperature-dependent NRTL",
-      "component1": "1-Butanol",
-      "component2": "Water",
-      "source": "J. Chem. Thermodynamics 1978, 10, 1173-1179",
-      "source_file": "data/source/activity_fitting/1_butanol_water_interactions.json",
-      "tau12_c": 3.07626601,
-      "tau12_d": -489.80683594,
-      "tau12_e": -60.05225941,
-      "tau21_c": 4.3630256,
-      "tau21_d": -241.22842207,
-      "tau21_e": -8.71391481,
-      "tau_tref": 298.15
-    },
-    {
       "a12_cal_per_mol": 1353.0599,
       "a21_cal_per_mol": 610.8292,
       "alpha12": 0.467,
@@ -7512,6 +7481,47 @@
       "tau21_g": 0,
       "tau_tref": 298.15,
       "user_fit_id": "lTxbyvBQAejZdPiu6Dq3YIdxYSFyRbS0"
+    },
+    {
+      "Tmax_K": 397.85,
+      "Tmin_K": 273.0,
+      "alpha12": 0.4436303646143577,
+      "cas1": "71-36-3",
+      "cas2": "7732-18-5",
+      "comment": "Approved manual ABCD replacement after LLE, runtime, and 3-bar audit.",
+      "component1": "1-Butanol",
+      "component2": "Water",
+      "extrapolation": "constant_inverse",
+      "fit_provenance": {
+        "created": 1791401184.6357837,
+        "model": "NRTL",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "IUPAC Solubility Data Series 15 recommended 1-butanol/water LLE; Aoki and Moriyoshi, J. Chem. Thermodynamics 1978, 10, 1173-1179",
+          "doi": "10.1016/0021-9614(78)90034-4",
+          "notes": "Manual replacement with unbounded ABCD LLE/UCST fit. Interaction coefficients were probed without box constraints; runtime extrapolation uses constant_inverse continuation.",
+          "url": "https://iupac.github.io/SolubilityDataSeries/volumes/SDS-15.pdf"
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "IUPAC Solubility Data Series 15 recommended 1-butanol/water LLE; Aoki and Moriyoshi, J. Chem. Thermodynamics 1978, 10, 1173-1179",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": 422.2486217410446,
+      "tau12_d": -61823.39410446046,
+      "tau12_e": 466.8114846107641,
+      "tau12_f": -0.7161249624269147,
+      "tau12_g": 0.0,
+      "tau21_c": 75.40924585949703,
+      "tau21_d": -10992.238057643213,
+      "tau21_e": 59.97632097677231,
+      "tau21_f": -0.11744568332334826,
+      "tau21_g": 0.0,
+      "tau_tref": 298.15,
+      "user_fit_id": "UsgpcnY0SCKYrpnpkaXtrVPejn06UVKS"
     }
   ],
   "metadata": {
@@ -7525,7 +7535,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 340,
-    "converted_records": 492,
+    "converted_records": 491,
     "curated_water_nonwater_records": 29,
     "curated_water_nonwater_replaced_pairs": 3,
     "curated_water_nonwater_replaced_records": 5,
@@ -7569,8 +7579,8 @@
         "source_component_id": "51"
       }
     ],
-    "user_activity_fit_records": 8,
-    "user_activity_fit_replaced_records": 4,
+    "user_activity_fit_records": 9,
+    "user_activity_fit_replaced_records": 6,
     "water_organic_overlay_records": 7,
     "water_organic_overlay_replaced_pairs": 3,
     "water_organic_overlay_replaced_records": 4

@@ -4871,17 +4871,6 @@
       "source_id2": "1765"
     },
     {
-      "a12_cal_per_mol": 548.2453,
-      "a21_cal_per_mol": 89.0444,
-      "cas1": "7732-18-5",
-      "cas2": "71-36-3",
-      "comment": "Water/n-butanol p336 1/1a",
-      "component1": "H2O",
-      "component2": "1-Butanol",
-      "source_id1": "1921",
-      "source_id2": "1105"
-    },
-    {
       "a12_cal_per_mol": -370.3689,
       "a21_cal_per_mol": 1635.7568,
       "cas1": "7732-18-5",
@@ -7652,25 +7641,6 @@
       "use_q_prime": false
     },
     {
-      "Tmax_K": 397.75,
-      "Tmin_K": 298.15,
-      "cas1": "71-36-3",
-      "cas2": "7732-18-5",
-      "comment": "1-Butanol/Water temperature-dependent UNIQUAC",
-      "component1": "1-Butanol",
-      "component2": "Water",
-      "model_variant": "standard_uniquac",
-      "source": "J. Chem. Thermodynamics 1978, 10, 1173-1179",
-      "source_file": "data/source/activity_fitting/1_butanol_water_interactions.json",
-      "tau12_a": -12.81485434,
-      "tau12_b": 1905.74507135,
-      "tau12_d": 0.02169653866,
-      "tau21_a": 8.68179405,
-      "tau21_b": -1368.13065752,
-      "tau21_d": -0.0167836069,
-      "use_q_prime": false
-    },
-    {
       "a12_cal_per_mol": -801.2765,
       "a21_cal_per_mol": 1402.6755,
       "cas1": "7732-18-5",
@@ -8221,6 +8191,48 @@
       "tau_tref": 298.15,
       "use_q_prime": false,
       "user_fit_id": "aW0ZHPBokHE0MkUfHRaSVPt16l6S3ZSO"
+    },
+    {
+      "Tmax_K": 397.85,
+      "Tmin_K": 273.0,
+      "cas1": "71-36-3",
+      "cas2": "7732-18-5",
+      "comment": "Approved manual ABCD replacement after LLE, runtime, and 3-bar audit.",
+      "component1": "1-Butanol",
+      "component2": "Water",
+      "extrapolation": "constant_inverse",
+      "fit_provenance": {
+        "created": 1791401187.683549,
+        "model": "UNIQUAC",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "IUPAC Solubility Data Series 15 recommended 1-butanol/water LLE; Aoki and Moriyoshi, J. Chem. Thermodynamics 1978, 10, 1173-1179",
+          "doi": "10.1016/0021-9614(78)90034-4",
+          "notes": "Manual replacement with unbounded ABCD LLE/UCST fit. Interaction coefficients were probed without box constraints; runtime extrapolation uses constant_inverse continuation.",
+          "url": "https://iupac.github.io/SolubilityDataSeries/volumes/SDS-15.pdf"
+        }
+      },
+      "fit_status": "admin_published_user_fit",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "IUPAC Solubility Data Series 15 recommended 1-butanol/water LLE; Aoki and Moriyoshi, J. Chem. Thermodynamics 1978, 10, 1173-1179",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_a": -130.16715464918073,
+      "tau12_b": 19118.984282742884,
+      "tau12_c": -147.3272024640084,
+      "tau12_d": 0.22165828923887462,
+      "tau12_e": 0.0,
+      "tau21_a": 78.05625844806556,
+      "tau21_b": -11386.32528063243,
+      "tau21_c": 99.4141411967806,
+      "tau21_d": -0.136775263913861,
+      "tau21_e": 0.0,
+      "tau_tref": 298.15,
+      "use_q_prime": false,
+      "user_fit_id": "duIbOx0omTfOT8f0lFZnsTF0Pl4ywUak"
     }
   ],
   "metadata": {
@@ -8234,7 +8246,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 318,
-    "converted_records": 478,
+    "converted_records": 477,
     "curated_water_nonwater_records": 33,
     "curated_water_nonwater_replaced_pairs": 3,
     "curated_water_nonwater_replaced_records": 4,
@@ -8278,8 +8290,8 @@
         "source_component_id": "51"
       }
     ],
-    "user_activity_fit_records": 8,
-    "user_activity_fit_replaced_records": 3,
+    "user_activity_fit_records": 9,
+    "user_activity_fit_replaced_records": 5,
     "water_organic_overlay_records": 7,
     "water_organic_overlay_replaced_pairs": 2,
     "water_organic_overlay_replaced_records": 3
