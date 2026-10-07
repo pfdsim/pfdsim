@@ -261,7 +261,11 @@ pure-liquid references and vapor fugacity coefficients:
 - **LLE:** both component log-activity differences at the observed endpoints,
   plus supporting-tangent penalties that discourage unstable stationary pairs.
   The final report independently runs the runtime equilibrium solver and reports
-  its stable binodal predictions and phase fractions.
+  its stable binodal predictions and phase fractions. Reports and sampled curves
+  share the ordinary feed-based liquid flash for their final predictions. A
+  feed-independent stationary-pair search is used only to propose a feed when
+  observation endpoints are unavailable; every final split is checked for
+  chemical-potential equality and supporting-tangent stability.
 - **Azeotropes:** the VLE fugacity equalities with y=x, with their own objective
   weight and optional per-point weighting/pinning.
 - **VLLE/heteroazeotropes:** two liquid fugacity states are compared to one shared

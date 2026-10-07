@@ -105,6 +105,44 @@ def test_lle_and_vlle_predictions_find_asymmetric_miscibility_gaps():
     assert [vlle["x1_alpha"], vlle["x1_beta"]] == pytest.approx(endpoints, abs=1e-6)
 
 
+@pytest.mark.parametrize("compiled_flash", [True, False])
+def test_fitter_flashes_stationary_hints_into_stable_butanol_coexistence(compiled_flash, monkeypatch):
+    from thermodynamics_models.fitting_diagnostics import build_objective_plots
+
+    # Captured regression model: the feed-independent search returned nearly
+    # collapsed stationary pairs at these two curve sampling temperatures.
+    coefficients = np.array([
+        -17.738987178093353, 513.6959740292948, 30.0, .10062049304041591,
+        -.00016958498076724676, -22.902466499087573, 2150.628123486273,
+        -14.610389286060201, .10062049304041591, -.00010320165407430895,
+    ])
+    expected = [
+        (385.275, .03598380013755666, .2586304864303386),
+        (391.5125, .04794195630619725, .214131459245179),
+    ]
+    problem = prepare_fit(request(
+        components=["1-butanol", "water"], form="full", alpha=.2,
+        observations=[{"kind":"LLE", "T_K":T, "x1_alpha":a, "x1_beta":b} for T,a,b in expected],
+    ))
+    values = coefficients / problem.scales
+    problem.install(values)
+    if not compiled_flash:
+        monkeypatch.setattr(problem.thermo, "_compiled_lle_backend", lambda T=None: None)
+    for T,a,b in expected:
+        state = problem.predict_lle(T)
+        assert [state["x1_alpha"], state["x1_beta"]] == pytest.approx([a,b], abs=1e-6)
+        assert 0 < state["liquid_fraction"] < 1
+        _, raw, stability = problem._lle_errors(T,state["x1_alpha"],state["x1_beta"],1)
+        assert max(abs(value) for value in raw) < 1e-6
+        assert stability["minimum_tangent_gap"] >= -1e-6
+    report = problem.report(values, problem.request["observations"])
+    assert all(point["physical"] for point in report["points"])
+    if compiled_flash:
+        plots = build_objective_plots(problem,values,problem.request["observations"],report["points"])
+        assert not plots[0]["errors"]
+        assert all(value is not None for series in plots[0]["series"][:2] for value in series["x"])
+
+
 def test_calorimetry_plot_rejects_clipped_interior_states(monkeypatch):
     from thermodynamics_models.fitting_diagnostics import build_objective_plots
 

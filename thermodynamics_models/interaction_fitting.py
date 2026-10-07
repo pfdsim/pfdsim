@@ -1183,16 +1183,35 @@ class FitProblem:
         self.thermo._check_diagram_vle(composition, vapor, T, P)
         return {"T_K": float(T), "P_bar": float(P), "y1": vapor[self.components[0]]}
 
-    def predict_lle(self, T):
-        phases = self.thermo.binary_liquid_coexistence(T, tol=1e-8)
-        if phases is None:
-            raise ValueError("No stable two-liquid split is predicted.")
-        first, second = phases
-        a, b = sorted((first[self.components[0]], second[self.components[0]]))
-        _, raw, stability = self._lle_errors(T, a, b, 1)
-        if max(abs(value) for value in raw) > 1e-6 or stability["minimum_tangent_gap"] < -1e-6:
-            raise ValueError("The predicted liquid coexistence fails chemical-potential or tangent stability checks.")
-        return {"x1_alpha": a, "x1_beta": b, "split": True}
+    def predict_lle(self, T, *, feed_x1=None):
+        if feed_x1 is None:
+            # This feed-independent search supplies only a feed hint. Its
+            # stationary pair is not the final coexistence prediction.
+            phases = self.thermo.binary_liquid_coexistence(T, tol=1e-8)
+            if phases is None:
+                raise ValueError("No stable two-liquid split is predicted.")
+            feed_x1 = sum(phase[self.components[0]] for phase in phases) / 2
+        for attempt in range(2):
+            split, first, second, fraction = self.thermo.liquid_liquid_equilibrium(
+                self.composition(feed_x1), T, tol=1e-8
+            )
+            if not split:
+                raise ValueError("No stable two-liquid split is predicted.")
+            a, b = sorted((first[self.components[0]], second[self.components[0]]))
+            _, raw, stability = self._lle_errors(T, a, b, 1)
+            if max(abs(value) for value in raw) <= 1e-6 and stability["minimum_tangent_gap"] >= -1e-6:
+                return {
+                    "x1_alpha": a, "x1_beta": b, "split": True,
+                    "liquid_fraction": float(fraction),
+                }
+            if attempt == 0 and stability["minimum_tangent_gap"] < -1e-6:
+                # The ordinary interpreted flash can inherit a collapsed
+                # stationary hint. Move the feed toward the lower-Gibbs state
+                # identified by the existing tangent audit and flash again.
+                feed_x1 = ((a + b) / 2 + stability["minimum_tangent_gap_composition"]) / 2
+                continue
+            break
+        raise ValueError("The predicted liquid coexistence fails chemical-potential or tangent stability checks.")
 
     def predict_vlle(self, *, T=None, P=None, T_guess=350):
         try:
@@ -1244,7 +1263,10 @@ class FitProblem:
         return (
             scaled,
             raw,
-            {"log_activity_residuals": raw, "minimum_tangent_gap": float(min(gaps))},
+            {
+                "log_activity_residuals": raw, "minimum_tangent_gap": float(min(gaps)),
+                "minimum_tangent_gap_composition": float(grid[int(np.argmin(gaps))]),
+            },
         )
 
     def _vlle_endpoints(self, values, row):
@@ -1613,19 +1635,9 @@ class FitProblem:
                     prediction["equilibrium_error"] = str(error)
                     physical = False
             elif audit and row["kind"] == "LLE":
-                a, b = row["x1_alpha"], row["x1_beta"]
                 try:
-                    split, xa, xb, fraction = self.thermo.liquid_liquid_equilibrium(
-                        self.composition((a + b) / 2), row["T_K"], tol=1e-8
-                    )
-                    endpoints = sorted((xa[self.components[0]], xb[self.components[0]]))
-                    prediction.update(
-                        split=bool(split),
-                        x1_alpha=endpoints[0],
-                        x1_beta=endpoints[1],
-                        liquid_fraction=fraction,
-                    )
-                    physical = bool(split)
+                    a, b = row["x1_alpha"], row["x1_beta"]
+                    prediction.update(self.predict_lle(row["T_K"], feed_x1=(a + b) / 2))
                 except (ValueError, RuntimeError, OverflowError, *_MODEL_ERRORS) as error:
                     prediction["equilibrium_error"] = str(error)
                     physical = False
