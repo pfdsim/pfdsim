@@ -243,6 +243,7 @@ module.namespace.setLawCatalog({
   constant: ["constant"], inverse: ["inverse"], constant_inverse: ["constant", "inverse"],
   constant_inverse_anchored: ["constant", "inverse", "anchored"],
   constant_inverse_linear: ["constant", "inverse", "linear"],
+  constant_inverse_anchored_linear: ["constant", "inverse", "anchored", "linear"],
   full: ["constant", "inverse", "anchored", "linear", "quadratic"],
 });
 node("fit-law").value = "constant_inverse_linear";
@@ -270,6 +271,15 @@ assert.ok(!("12.linear" in JSON.parse(node("fit-initial").value))); // Backend s
 node("fit-law").value = "full";
 module.namespace.reconcileFitParameters();
 assert.deepEqual(JSON.parse(node("fit-initial").value), expected);
+const abcd = { ...expected, "12.anchored": -5, "12.linear": .002 };
+node("fit-initial").value = JSON.stringify({ ...abcd, "12.quadratic": .000001, "21.quadratic": -.000001 });
+node("fit-bounds").value = JSON.stringify({ "12.linear": [-.01,.01], "12.quadratic": [-.001,.001] });
+node("fit-law").value = "constant_inverse_anchored_linear";
+module.namespace.reconcileFitParameters();
+assert.deepEqual(JSON.parse(node("fit-initial").value), abcd);
+assert.deepEqual(JSON.parse(node("fit-bounds").value), { "12.linear": [-.01,.01] });
+node("fit-initial").value = JSON.stringify(expected);
+node("fit-bounds").value = JSON.stringify({ "21.inverse": [-30,30], "vlle_xa.paper": [.01,.8] });
 node("fit-law").value = "constant";
 module.namespace.reconcileFitParameters();
 delete expected["12.inverse"]; delete expected["21.inverse"];

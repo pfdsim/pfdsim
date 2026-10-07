@@ -441,6 +441,7 @@ NRTL **tau** or UNIQUAC **log(tau)**:
 | `constant_inverse` | A+B/T |
 | `constant_inverse_anchored` | A+B/T+C h(T) |
 | `constant_inverse_linear` | A+B/T+D T |
+| `constant_inverse_anchored_linear` | A+B/T+C h(T)+D T (ABCD) |
 | `full` | A+B/T+C h(T)+D T+E T² |
 
 Here `h(T)=(Tref-T)/T+ln(T/Tref)`, with `T_ref_K=298.15` by default. A constant

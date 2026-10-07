@@ -73,6 +73,7 @@ FORMS = {
     "constant_inverse": ("constant", "inverse"),
     "constant_inverse_anchored": ("constant", "inverse", "anchored"),
     "constant_inverse_linear": ("constant", "inverse", "linear"),
+    "constant_inverse_anchored_linear": ("constant", "inverse", "anchored", "linear"),
     "full": ("constant", "inverse", "anchored", "linear", "quadratic"),
 }
 VAPORS = ("IDEAL", "RK", "PR", "VDM", "TSONOPOULOS", "PITZER-CURL", "ABBOTT", "HOC")

@@ -72,7 +72,7 @@ def _parser():
     )
     parser.add_argument(
         "--form",
-        help="constant, inverse, constant_inverse, constant_inverse_anchored, constant_inverse_linear or full",
+        help="constant, inverse, constant_inverse, constant_inverse_anchored, constant_inverse_linear, constant_inverse_anchored_linear (ABCD) or full",
     )
     parser.add_argument("--alpha", type=float)
     parser.add_argument("--fit-alpha", action="store_true", default=None)

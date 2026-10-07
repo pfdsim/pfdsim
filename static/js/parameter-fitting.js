@@ -14,7 +14,7 @@ let pendingImport = null;
 let sessionLibrary;
 const fields = ["comp1", "comp2", "model", "vapor", "law", "alpha", "free-alpha", "r1", "q1", "r2", "q2", "cv", "folds", "tref", "starts", "evaluations", "seed", "extrapolation", "online", "scales", "initial", "bounds", "input", "source", "source-url", "source-doi", "source-notes", "input-method", "data-kind", "estimate-properties", "hoc-eta-default"];
 const labels = { VLE: "Vapor–liquid equilibrium", LLE: "Liquid–liquid equilibrium", HE: "Excess enthalpy", GAMMA_INF: "Infinite-dilution γ", AZEOTROPE: "Azeotrope", VLLE: "VLLE / heteroazeotrope", UCST: "Upper critical solution point", LCST: "Lower critical solution point" };
-const laws = { constant: "A", inverse: "B/T", constant_inverse: "A + B/T", constant_inverse_anchored: "A + B/T + C h(T)", constant_inverse_linear: "A + B/T + D T", full: "A + B/T + C h(T) + D T + E T²" };
+const laws = { constant: "A", inverse: "B/T", constant_inverse: "A + B/T", constant_inverse_anchored: "A + B/T + C h(T)", constant_inverse_linear: "A + B/T + D T", constant_inverse_anchored_linear: "A + B/T + C h(T) + D T", full: "A + B/T + C h(T) + D T + E T²" };
 const vaporParameterDefinitions = {
   VDM: [["VDM", "delta_H_residual_J_per_mol", "Cross-association ΔH / J mol⁻¹", 1000], ["VDM", "delta_S_residual_J_per_mol_K", "Cross-association ΔS / J mol⁻¹ K⁻¹", 10]],
   HOC: [["HOC", "eta", "HOC cross-association η", 1]],

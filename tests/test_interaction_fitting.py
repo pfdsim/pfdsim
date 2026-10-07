@@ -183,7 +183,7 @@ def test_single_temperature_fit_exports_a_usable_model(model, form):
         )
 
 
-@pytest.mark.parametrize("form", ["constant_inverse", "constant_inverse_anchored", "constant_inverse_linear", "full"])
+@pytest.mark.parametrize("form", ["constant_inverse", "constant_inverse_anchored", "constant_inverse_linear", "constant_inverse_anchored_linear", "full"])
 @pytest.mark.parametrize("kinds", [("GAMMA_INF",), ("HE",), ("GAMMA_INF", "HE")])
 def test_single_temperature_form_requires_independent_value_and_derivative(form, kinds):
     rows = {
