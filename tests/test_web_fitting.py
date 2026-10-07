@@ -253,8 +253,7 @@ def test_review_cli_reads_persisted_bundle(client, fitted, tmp_path):
                 "submissions",
                 "--directory",
                 str(tmp_path),
-                "--id",
-                submission,
+                f"--id={submission}",
                 "-o",
                 str(output),
             ]
