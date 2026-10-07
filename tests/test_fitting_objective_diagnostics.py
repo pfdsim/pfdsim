@@ -143,6 +143,87 @@ def test_fitter_flashes_stationary_hints_into_stable_butanol_coexistence(compile
         assert all(value is not None for series in plots[0]["series"][:2] for value in series["x"])
 
 
+def test_isobaric_vle_plot_uses_stable_vlle_plateau():
+    from thermodynamics_models.factory import create_thermodynamics
+    from thermodynamics_models.fitting_diagnostics import build_objective_plots
+
+    reference = create_thermodynamics(["butanol", "water"], "NRTL")
+    T = 350
+    tau, alpha, _ = reference._nrtl_cached_matrices(T)
+    problem = prepare_fit(request(
+        components=["butanol", "water"], form="constant", alpha=alpha[0][1],
+    ))
+    values = np.array([tau[0][1], tau[1][0]])
+    problem.install(values)
+    rows = parse_observations([
+        {"kind":"VLE", "T_K":365, "P_bar":1, "x1":.01},
+        {"kind":"VLE", "T_K":370, "P_bar":1, "x1":.4},
+    ])
+    plot = build_objective_plots(problem, values, rows, [])[0]
+    assert not plot["errors"], plot["errors"]
+    liquid, vapor = plot["series"][:2]
+    endpoints = next(
+        series for series in plot["series"]
+        if series["name"] == "Predicted VLLE liquid endpoints"
+    )
+    invariant_vapor = next(
+        series for series in plot["series"]
+        if series["name"] == "Predicted VLLE vapor"
+    )
+    lean, rich = endpoints["x"]
+    plateau = [
+        temperature for x, temperature in zip(liquid["x"], liquid["y"])
+        if lean <= x <= rich
+    ]
+    assert len(plateau) >= 2
+    assert max(plateau) - min(plateau) < 1e-8
+    assert invariant_vapor["y"] == pytest.approx([plateau[0]])
+    for liquid_x, temperature in zip(liquid["x"], vapor["y"]):
+        if lean <= liquid_x <= rich and temperature is not None:
+            assert temperature == pytest.approx(plateau[0], abs=1e-8)
+
+
+@pytest.mark.parametrize("interval", [(.411, .419), (.413, .413)])
+@pytest.mark.parametrize("available", [True, False])
+def test_isobaric_objective_samples_only_the_observation_interval(monkeypatch, interval, available):
+    from thermodynamics_models.fitting_diagnostics import build_objective_plots
+
+    problem = prepare_fit(request(form="constant"))
+    thermo = problem.thermo
+
+    def no_invariant(**kwargs):
+        raise ValueError("No VLLE invariant")
+
+    def bubble(composition, pressure):
+        assert interval[0] <= composition[problem.components[0]] <= interval[1]
+        if not available:
+            raise ValueError("Unavailable bubble state")
+        return 350
+
+    monkeypatch.setattr(problem, "predict_vlle", no_invariant)
+    monkeypatch.setattr(thermo, "bubble_point_T", bubble)
+    monkeypatch.setattr(thermo, "K_values", lambda *args: dict.fromkeys(problem.components, 1))
+    monkeypatch.setattr(thermo, "_check_diagram_vle", lambda *args: None)
+    monkeypatch.setattr(thermo, "dew_point_T", lambda *args: pytest.fail("Unused dew solve"))
+    rows = parse_observations([
+        {"kind": "VLE", "T_K": T, "P_bar": 1, "x1": x}
+        for T, x in zip((349, 351), interval)
+    ])
+    plot = build_objective_plots(problem, problem.initial, rows, [])[0]
+    liquid, vapor = plot["series"][:2]
+    assert liquid["x"][0] == interval[0]
+    assert liquid["x"][-1] == interval[1]
+    assert len(liquid["x"]) == (21 if interval[0] != interval[1] else 1)
+    if available:
+        assert not plot["errors"]
+        assert liquid["y"] == pytest.approx([76.85] * len(liquid["x"]))
+        assert vapor["x"] == pytest.approx(liquid["x"])
+    else:
+        assert len(plot["errors"]) == len(liquid["x"])
+        assert all(T is None for T in liquid["y"])
+        assert all("Unavailable bubble state" in error["error"] for error in plot["errors"])
+
+
 def test_calorimetry_plot_rejects_clipped_interior_states(monkeypatch):
     from thermodynamics_models.fitting_diagnostics import build_objective_plots
 

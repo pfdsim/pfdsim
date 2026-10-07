@@ -126,31 +126,54 @@ def build_objective_plots(problem, values, rows, points, progress=None):
                         groups.append((field, fixed, data))
             for field, fixed, data in groups:
                 isobaric = field == "P_bar"
-                x = np.linspace(
-                    min(row["x1"] for row in data),
-                    max(row["x1"] for row in data),
-                    count,
-                )
-                model_y, dependent, errors = [], [], []
                 guess = float(np.mean([row["T_K"] for row in data]))
-                for composition in x:
+                lower, upper = min(row["x1"] for row in data), max(
+                    row["x1"] for row in data
+                )
+                invariant = None
+                if isobaric:
                     try:
-                        state = (
-                            problem.predict_vle(
-                                float(composition), P=fixed, T_guess=guess
+                        state = problem.predict_vlle(P=fixed, T_guess=guess)
+                        invariant = {
+                            "T": state["T_K"],
+                            "x1": problem.composition(state["x1_alpha"]),
+                            "x2": problem.composition(state["x1_beta"]),
+                            "y": problem.composition(state["y1"]),
+                        }
+                    except Exception:
+                        # A homogeneous system has no three-phase invariant.
+                        invariant = None
+                    chart = problem.thermo._binary_diagram(
+                        problem.components[0],
+                        problem.components[1],
+                        P=fixed,
+                        n_points=count - 1,
+                        include_dew=False,
+                        lle_aware=invariant is not None,
+                        phase_boundary=invariant,
+                        compositions=np.linspace(lower, upper, count),
+                        allow_empty=True,
+                    )
+                    x = np.asarray(chart["x"])
+                    model_y = chart["y"]
+                    dependent = [
+                        T - 273.15 if T is not None else None for T in chart["bubble"]
+                    ]
+                    errors = list(chart["errors"])
+                else:
+                    x = np.linspace(lower, upper, count)
+                    model_y, dependent, errors = [], [], []
+                    for composition in x:
+                        try:
+                            state = problem.predict_vle(float(composition), T=fixed)
+                            model_y.append(state["y1"])
+                            dependent.append(state["P_bar"])
+                        except Exception as error:
+                            model_y.append(None)
+                            dependent.append(None)
+                            errors.append(
+                                {"x1": float(composition), "error": str(error)}
                             )
-                            if isobaric
-                            else problem.predict_vle(float(composition), T=fixed)
-                        )
-                        model_y.append(state["y1"])
-                        dependent.append(
-                            state["T_K"] - 273.15 if isobaric else state["P_bar"]
-                        )
-                        guess = state["T_K"]
-                    except Exception as error:
-                        model_y.append(None)
-                        dependent.append(None)
-                        errors.append({"x1": float(composition), "error": str(error)})
                 axis = "T / °C" if isobaric else "P / bar"
                 data_y = (
                     (lambda row: row["T_K"] - 273.15)
@@ -171,6 +194,29 @@ def build_objective_plots(problem, values, rows, points, progress=None):
                         "y": dependent,
                     },
                 ]
+                if invariant is not None:
+                    temperature_C = invariant["T"] - 273.15
+                    series.extend(
+                        [
+                            {
+                                "name": "Predicted VLLE liquid endpoints",
+                                "mode": "markers",
+                                "role": "model",
+                                "x": [
+                                    invariant["x1"][problem.components[0]],
+                                    invariant["x2"][problem.components[0]],
+                                ],
+                                "y": [temperature_C, temperature_C],
+                            },
+                            {
+                                "name": "Predicted VLLE vapor",
+                                "mode": "markers",
+                                "role": "model",
+                                "x": [invariant["y"][problem.components[0]]],
+                                "y": [temperature_C],
+                            },
+                        ]
+                    )
                 series += _observations(
                     data, lambda row: row["x1"], data_y, "Liquid data"
                 )

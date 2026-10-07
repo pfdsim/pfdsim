@@ -70,6 +70,8 @@ class PhaseDiagramMixin:
         lle_aware=False,
         phase_boundary=None,
         progress=None,
+        compositions=None,
+        allow_empty=False,
     ):
         self._diagram_controls(n_points, T, P)
         self._diagram_components([comp1, comp2])
@@ -84,7 +86,15 @@ class PhaseDiagramMixin:
             "components": [comp1, comp2],
         }
         grid = [i / n_points for i in range(n_points + 1)]
-        if phase_boundary:
+        if compositions is not None:
+            grid = list(compositions)
+            if not grid or any(not math.isfinite(x) or not 0 <= x <= 1 for x in grid):
+                raise ValueError("Supply composition samples between zero and one")
+            if phase_boundary:
+                lower, upper = min(grid), max(grid)
+                lean, rich = phase_boundary["x1"][comp1], phase_boundary["x2"][comp1]
+                grid += [x for x in (lean, rich, (lean + rich) / 2) if lower <= x <= upper]
+        elif phase_boundary:
             lean, rich = phase_boundary["x1"][comp1], phase_boundary["x2"][comp1]
             left_intervals = max(1, n_points // 2)
             right_intervals = max(1, n_points - left_intervals)
@@ -190,7 +200,7 @@ class PhaseDiagramMixin:
             result["dew"].append(dew)
             if progress and (i % 10 == 0 or i == len(grid) - 1):
                 progress(f"Equilibrium envelope: {i + 1}/{len(grid)} compositions")
-        if all(value is None for value in result["bubble"]):
+        if not allow_empty and all(value is None for value in result["bubble"]):
             raise ValueError(
                 "No bubble points converged: " + result["errors"][0]["error"]
             )

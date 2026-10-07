@@ -705,6 +705,11 @@ still agree with the shared structural parameters because they change the
 published activity law itself. General publication requires the repository's
 maintained builder and source collections.
 
+Isobaric VLE objective plots use the stable VLLE envelope when the fitted model
+has a three-phase invariant. The liquid and vapor curves therefore show the
+heteroazeotropic plateau instead of metastable homogeneous branches inside the
+two-liquid composition interval.
+
 ## Validation
 
 Numerical/HTTP/import/publication tests include `tests/test_interaction_fitting.py`,
