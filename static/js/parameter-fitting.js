@@ -764,14 +764,24 @@ function scopes(select, project) {
 }
 function libraryOptions() {
   const library = readLocal("pfdsim.laboratories.v1", {});
-  for (const [id, placeholder] of [["fit-project", "Independent mixture"], ["fit-export-project", "Choose a laboratory"]]) {
-    const current = $(id).value; $(id).replaceChildren(element("option", { value: "" }, placeholder));
+  for (const [id, placeholder, project] of [["fit-project", "Independent mixture", definitionProject], ["fit-export-project", "Choose a laboratory", exportProject]]) {
+    $(id).replaceChildren(element("option", { value: "" }, placeholder));
     for (const project of Object.values(library)) $(id).append(element("option", { value: project.id }, project.pfd?.metadata?.process_name || project.filename || project.id));
-    $(id).value = current;
+    const selected = projectChoice(project);
+    if (project && !Array.from($(id).options).some(option => option.value === selected)) {
+      $(id).append(element("option", { value: selected }, project.pfd?.metadata?.process_name || project.filename || "Imported PFD"));
+    }
+    $(id).value = selected;
   }
+}
+function projectChoice(project) { return project ? project.id || "@imported-pfd" : ""; }
+function selectedProject(select, current) {
+  if (current && select.value === projectChoice(current)) return current;
+  return readLocal("pfdsim.laboratories.v1", {})[select.value] || null;
 }
 async function selectDefinition(project) {
   definitionProject = project;
+  libraryOptions();
   scopes($("fit-scope"), project);
   if (project?.pfd?.components?.length >= 2) {
     [$("fit-comp1").value, $("fit-comp2").value] = project.pfd.components.slice(0, 2).map(c => c.symbol);
@@ -779,6 +789,7 @@ async function selectDefinition(project) {
   renderManual(); saveDraft();
 }
 function exportMapping() {
+  libraryOptions();
   scopes($("fit-export-scope"), exportProject);
   const container = $("fit-export-map"); container.replaceChildren();
   if (!exportProject || !result) return;
@@ -957,6 +968,7 @@ function repairFitObservationReferences(){
 }
 function restoreFitState(state){
   const saved=assignFitState(state);
+  libraryOptions();
   for(const key of Object.keys(catalog.scales))$(`fit-sigma-${key}`).value=saved.sigmaValues?.[key]??"";
   repairFitObservationReferences();
   renderManual();renderSetOptions();renderPsat();renderVaporParameters(saved.vaporParameters||[]);reconcileFitParameters();updateModel();renderObservations();
@@ -1044,8 +1056,8 @@ async function initialize() {
   });
   $("fit-prefill").onclick = guarded(async () => { const queued = await api("/api/fitting/prefill", controlsRequest({ includePsat: false })); await followJob(queued.job_id, "fit_prefill"); });
   $("fit-cancel").onclick = guarded(async () => { if (activeJob) await api(`/api/jobs/${encodeURIComponent(activeJob)}/cancel`, {}); });
-  $("fit-project").onchange = guarded(async () => { await selectDefinition(readLocal("pfdsim.laboratories.v1", {})[$("fit-project").value] || null); });
-  $("fit-export-project").onchange = () => { exportProject = readLocal("pfdsim.laboratories.v1", {})[$("fit-export-project").value] || null; exportMapping(); saveDraft(); };
+  $("fit-project").onchange = guarded(async () => { await selectDefinition(selectedProject($("fit-project"), definitionProject)); });
+  $("fit-export-project").onchange = () => { exportProject = selectedProject($("fit-export-project"), exportProject); exportMapping(); saveDraft(); };
   $("fit-import").onclick = () => $("fit-pfd-file").click(); $("fit-export-import").onclick = () => $("fit-export-file").click();
   $("fit-pfd-file").onchange = guarded(async () => { if ($("fit-pfd-file").files[0]) await importPfd($("fit-pfd-file").files[0], "definition"); });
   $("fit-export-file").onchange = guarded(async () => { if ($("fit-export-file").files[0]) await importPfd($("fit-export-file").files[0], "export"); });

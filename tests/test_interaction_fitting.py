@@ -543,6 +543,17 @@ INTERACTION_PARAMETERS:
     assert updated.interaction_parameters[-1].scope == "Child"
 
 
+def test_independent_butanol_water_fit_needs_no_process_component_definitions():
+    problem = prepare_fit(request(
+        components=["1-butanol", "water"], form="constant",
+        observations=[{"kind": "LLE", "T_K": 300, "x1_alpha": 0.02}],
+    ))
+    assert [problem.thermo.props[c].CAS for c in problem.components] == [
+        "71-36-3", "7732-18-5",
+    ]
+    assert [c.name for c in problem.definition.components] == ["1-butanol", "water"]
+
+
 @pytest.mark.parametrize("success", [True, False])
 def test_submit_saved_report_does_not_refit(tmp_path, monkeypatch, success):
     import fit_cli
