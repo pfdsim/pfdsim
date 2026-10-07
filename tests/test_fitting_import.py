@@ -67,6 +67,27 @@ def test_component_two_is_complemented_without_changing_temperature():
     assert any("component" in issue for issue in mismatched["issues"])
 
 
+@pytest.mark.parametrize(
+    "header,field",
+    [
+        (r"\(\gamma^\infty_{\mathrm{water\ in\ 1\text{-}butanol}}\)", "gamma2_inf"),
+        (r"\(\gamma^\infty_{\mathrm{1\text{-}butanol\ in\ water}}\)", "gamma1_inf"),
+    ],
+)
+def test_named_infinite_dilution_headers_follow_component_order(header, field):
+    proposal = inspect_observations(
+        f"T (K)\t{header}\n298.15\t5.06\n343.15\t3.27",
+        components=["1-butanol", "water"],
+    )
+    assert proposal["ready"], proposal["issues"]
+    assert [column["role"] for column in proposal["columns"]] == ["temperature", field]
+    assert all(field in row for row in proposal["observations"])
+    other = ({"gamma1_inf", "gamma2_inf"} - {field}).pop()
+    assert all(other not in row for row in proposal["observations"])
+    if field == "gamma2_inf":
+        assert any("named solute" in note for note in proposal["notes"])
+
+
 @pytest.mark.parametrize("layout", ["original", "reordered", "fractions", "reversed"])
 def test_unlabeled_numeric_txy_proposes_roles_and_units(layout):
     rows = [line.split() for line in UNLABELED_TXY.splitlines()]

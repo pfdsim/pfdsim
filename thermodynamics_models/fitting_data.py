@@ -642,6 +642,28 @@ def _field(label):
     )
 
 
+def _descriptive_gamma_role(label, components):
+    """Resolve named solute-in-solvent gamma-infinity headers to component order."""
+    if not components or len(components) != 2:
+        return None
+    cleaned = _clean_label(label)
+    if "gamma" not in cleaned or not ("inf" in cleaned or "infinite" in cleaned):
+        return None
+    compact = re.sub(
+        r"(?:mathrm|text|operatorname|gamma|infinite|inf|log|ln)", "", cleaned
+    )
+    compact = re.sub(r"[^a-z0-9]", "", compact)
+    names = [re.sub(r"[^a-z0-9]", "", _clean_label(name)) for name in components]
+    positions = [compact.find(name) if name else -1 for name in names]
+    if min(positions) < 0 or positions[0] == positions[1]:
+        return None
+    first = 0 if positions[0] < positions[1] else 1
+    start = positions[first] + len(names[first])
+    if "in" not in compact[start : positions[1 - first]]:
+        return None
+    return "gamma1_inf" if first == 0 else "gamma2_inf"
+
+
 def _units(text):
     lower = _clean_label(text)
     result = {}
@@ -1329,8 +1351,20 @@ def _interpret_table(block, *, options, components, value, table_index, blocks):
     context = "\n".join("\t".join(row) for row in block["headers"])
     field_info = _column_field_info(block, headers)
     mapping = [field[0] for field in field_info]
+    gamma_reassignments = []
+    for index, role in enumerate(mapping):
+        if role not in ("gamma1_inf", "gamma2_inf"):
+            continue
+        described = _descriptive_gamma_role(headers[index], components)
+        if described and described != role:
+            mapping[index] = described
+            gamma_reassignments.append((headers[index], described))
     header_series = _repeated_vle_series(mapping, headers)
     notes, issues = [], list(flattened_issues)
+    for header, role in gamma_reassignments:
+        notes.append(
+            f"{header} was assigned to {role} from the named solute and selected component order."
+        )
     issues.extend(
         _alignment_issues(
             block.get("ambiguous_rows", []), options.get("exclude_rows", [])

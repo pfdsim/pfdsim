@@ -501,6 +501,9 @@ compositions.
 Unspecified new terms use zero starting values and the model's default bounds. The same
 reconciliation applies when restoring a draft or session; unrelated parameter
 keys and unfinished JSON remain editable and subject to normal validation.
+Named infinite-dilution headers such as “water in 1-butanol” are assigned to
+`gamma1_inf` or `gamma2_inf` from the selected component order. This avoids
+silently interpreting every descriptive γ∞ column as component 1.
 
 Vapor treatments are `IDEAL`, `RK`, `PR`, `VDM`, `TSONOPOULOS`, `PITZER-CURL`,
 `ABBOTT` and `HOC`. They retain their runtime physical-property requirements.
