@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "description": "Recovered literature observations underlying the stated basis of 1_butanol_water_interactions.json, with a separately identified reconstruction candidate for its undocumented ambient tie line.",
+    "parameter_file": "data/source/activity_fitting/1_butanol_water_interactions.json",
+    "recovery_date": "2026-10-06",
+    "components": ["1-Butanol", "Water"],
+    "cas": ["71-36-3", "7732-18-5"],
+    "composition_basis": "Every composition is the 1-butanol fraction, including in the water-rich phase. Mole fractions are transcribed from the compilation's x1 (compiler) columns; mass percentages are grams of 1-butanol per 100 grams of solution.",
+    "recovery_status": "The 15 one-atmosphere rows and critical point match the parameter file's cited study and stated temperature limits. The exact historical fitting inputs, numerical precision, objective implementation, and supplied 298.15 K point are not preserved in the inspected Git history. The ambient point below is a documented literature reconstruction candidate, not a verified recovery of that supplied point.",
+    "source_excerpt": "data/reference/liquid-liquid-equilibria/1984-barton-butanol-water-solubility-source-excerpt.pdf",
+    "source_excerpt_sha256": "74c5132d1d7a0cd21dbc4e72196c22e296ac1f208ae9ba5a8d40dce57a62dba6",
+    "compilation": {
+      "citation": "Barton, A. F. M. (ed.). Alcohols with Water. IUPAC Solubility Data Series, Volume 15. Pergamon Press, 1984.",
+      "url": "https://iupac.github.io/SolubilityDataSeries/volumes/SDS-15.pdf",
+      "download_sha256": "89199ab8f9cf3b3fee50d88ed33cc420fe034c2525581a40f688c712627158c8",
+      "excerpt_printed_pages": [49, 82, 83, 84, 85],
+      "excerpt_original_pdf_pages_one_based": [68, 101, 102, 103, 104]
+    },
+    "sources": {
+      "aoki_moriyoshi_1978": {
+        "citation": "Aoki, Y.; Moriyoshi, T. Mutual solubility of n-butanol + water under high pressures. J. Chem. Thermodynamics 1978, 10(12), 1173-1179.",
+        "doi": "10.1016/0021-9614(78)90034-4",
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/0021961478900344",
+        "compilation_printed_pages": [82, 83, 84, 85],
+        "pressure_atm": 1.0,
+        "solubility_mean_error_mass_percent_as_compiled": 0.28,
+        "thermostat_control_K_as_compiled": 0.02,
+        "quality_note": "The compilation's critical evaluation on printed page 33 rejects the water-rich results around 323 K and 333 K from this study as inconsistent with other studies. Both source rows (322.75 K and 332.65 K) are retained for recovery; do not silently treat them as evaluator-recommended observations."
+      },
+      "butler_thomson_maclennan_1933": {
+        "citation": "Butler, J. A. V.; Thomson, D. W.; Maclennan, W. H. The free energy of the normal aliphatic alcohols in aqueous solution. J. Chem. Soc. 1933, 674-686.",
+        "doi": "10.1039/JR9330000674",
+        "url": "https://pubs.rsc.org/en/content/articlelanding/1933/jr/jr9330000674",
+        "compilation_printed_pages": [49],
+        "pressure_note": "Pressure is not specified on the compiled data sheet. Treating this ambient measurement as a 1-atm fitting observation is an assumption, consistent with the historical fit metadata but not explicitly documented by this sheet.",
+        "temperature_repeatability_C_as_compiled": 0.050
+      }
+    }
+  },
+  "aoki_moriyoshi_1978_tie_lines": [
+    {"temperature_K": 302.95, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0180, "x_butanol_butanol_rich": 0.482, "butanol_mass_percent_water_rich": 7.0, "butanol_mass_percent_butanol_rich": 79.3, "compilation_printed_page": 82},
+    {"temperature_K": 322.75, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0177, "x_butanol_butanol_rich": 0.459, "butanol_mass_percent_water_rich": 6.9, "butanol_mass_percent_butanol_rich": 77.7, "compilation_printed_page": 82},
+    {"temperature_K": 332.65, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0180, "x_butanol_butanol_rich": 0.436, "butanol_mass_percent_water_rich": 7.0, "butanol_mass_percent_butanol_rich": 76.1, "compilation_printed_page": 83},
+    {"temperature_K": 342.65, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0171, "x_butanol_butanol_rich": 0.422, "butanol_mass_percent_water_rich": 6.7, "butanol_mass_percent_butanol_rich": 75.0, "compilation_printed_page": 83},
+    {"temperature_K": 362.65, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0193, "x_butanol_butanol_rich": 0.359, "butanol_mass_percent_water_rich": 7.5, "butanol_mass_percent_butanol_rich": 69.7, "compilation_printed_page": 83},
+    {"temperature_K": 372.45, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0249, "x_butanol_butanol_rich": 0.328, "butanol_mass_percent_water_rich": 9.5, "butanol_mass_percent_butanol_rich": 66.8, "compilation_printed_page": 83},
+    {"temperature_K": 380.05, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0280, "x_butanol_butanol_rich": 0.290, "butanol_mass_percent_water_rich": 10.6, "butanol_mass_percent_butanol_rich": 62.7, "compilation_printed_page": 83},
+    {"temperature_K": 382.95, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0292, "x_butanol_butanol_rich": 0.281, "butanol_mass_percent_water_rich": 11.0, "butanol_mass_percent_butanol_rich": 61.7, "compilation_printed_page": 83},
+    {"temperature_K": 391.25, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0396, "x_butanol_butanol_rich": 0.233, "butanol_mass_percent_water_rich": 14.5, "butanol_mass_percent_butanol_rich": 55.6, "compilation_printed_page": 84},
+    {"temperature_K": 392.95, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0481, "x_butanol_butanol_rich": 0.220, "butanol_mass_percent_water_rich": 17.2, "butanol_mass_percent_butanol_rich": 53.7, "compilation_printed_page": 84},
+    {"temperature_K": 395.25, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0513, "x_butanol_butanol_rich": 0.182, "butanol_mass_percent_water_rich": 18.2, "butanol_mass_percent_butanol_rich": 47.7, "compilation_printed_page": 84},
+    {"temperature_K": 395.85, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0536, "x_butanol_butanol_rich": 0.183, "butanol_mass_percent_water_rich": 18.9, "butanol_mass_percent_butanol_rich": 48.0, "compilation_printed_page": 85},
+    {"temperature_K": 397.05, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0635, "x_butanol_butanol_rich": 0.165, "butanol_mass_percent_water_rich": 21.8, "butanol_mass_percent_butanol_rich": 44.9, "compilation_printed_page": 85},
+    {"temperature_K": 397.45, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0739, "x_butanol_butanol_rich": 0.148, "butanol_mass_percent_water_rich": 24.7, "butanol_mass_percent_butanol_rich": 41.8, "compilation_printed_page": 85},
+    {"temperature_K": 397.75, "pressure_atm": 1.0, "x_butanol_water_rich": 0.0859, "x_butanol_butanol_rich": 0.134, "butanol_mass_percent_water_rich": 27.9, "butanol_mass_percent_butanol_rich": 38.8, "compilation_printed_page": 85}
+  ],
+  "critical_point": {
+    "source_id": "aoki_moriyoshi_1978",
+    "temperature_K": 397.85,
+    "pressure_atm": 1.0,
+    "x_butanol": 0.110,
+    "compilation_printed_page": 85,
+    "role": "Separate critical constraint, not a finite-width tie line. The historical parameter file reports a 40 percent UCST objective weight for both models, but does not specify its normalization or residual definition."
+  },
+  "ambient_tie_line_reconstruction_candidate": {
+    "source_id": "butler_thomson_maclennan_1933",
+    "temperature_C_as_reported": 25.00,
+    "temperature_K": 298.15,
+    "pressure_atm": null,
+    "assumed_fit_pressure_atm": 1.0,
+    "x_butanol_water_rich": 0.0188,
+    "x_butanol_butanol_rich": 0.488,
+    "butanol_mass_percent_water_rich": 7.31,
+    "butanol_mass_percent_butanol_rich": 79.64,
+    "compilation_printed_page": 49,
+    "confirmed_as_historical_supplied_point": false
+  }
+}
