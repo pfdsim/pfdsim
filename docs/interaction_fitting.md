@@ -705,6 +705,12 @@ still agree with the shared structural parameters because they change the
 published activity law itself. General publication requires the repository's
 maintained builder and source collections.
 
+Fit warnings, non-convergence and equilibrium/phase-audit warnings do not block
+submission or publication. They remain visible in the assessment and provenance,
+including the publication-time recomputed audit. Coefficient consistency, finite
+values, verified component identities, shared structural-basis preservation and
+explicit hard-pin constraints remain required.
+
 Isobaric VLE objective plots use the stable VLLE envelope when the fitted model
 has a three-phase invariant. The liquid and vapor curves therefore show the
 heteroazeotropic plateau instead of metastable homogeneous branches inside the

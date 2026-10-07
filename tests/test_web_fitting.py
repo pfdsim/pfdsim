@@ -234,7 +234,7 @@ def test_cli_report_can_be_submitted_for_review(client, fitted):
                 "source": {"citation": "Source"},
             },
         ).status_code
-        == 400
+        == 201
     )
 
 

@@ -3374,7 +3374,7 @@ def publish_user_fit(identifier, *, user_fits_path, actor, action="publish", not
     if model not in ("NRTL","UNIQUAC") or action not in ("publish","withdraw"):
         raise ValueError("Choose NRTL/UNIQUAC publication or withdrawal.")
     if action == "publish":
-        validate_runtime_inclusion(record["result"])
+        validation = validate_runtime_inclusion(record["result"])
     elif record["status"] != "published":
         raise ValueError("Only published fits can be withdrawn.")
     target = interaction_output_directory()/f"{model.lower()}_binary_interactions_cas.json"
@@ -3385,7 +3385,7 @@ def publish_user_fit(identifier, *, user_fits_path, actor, action="publish", not
         if action == "withdraw" and record["status"] != "published":
             raise ValueError("Only published fits can be withdrawn.")
         if action == "publish":
-            store.publication_state(identifier,actor,"publishing",{"notes":notes})
+            store.publication_state(identifier,actor,"publishing",{"notes":notes,"validation":validation})
         try:
             if progress:
                 progress(f"Rebuilding the shared {model} interaction table")

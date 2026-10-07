@@ -217,10 +217,6 @@ def _submit_report(argv):
         payload = json.loads(args.file.expanduser().read_text(encoding="utf-8"))
         result = payload.get("result", payload)
         export_fit(result)  # Validate the reusable export contract, never refit.
-        if not result.get("success"):
-            raise ValueError(
-                "A fit needing review cannot be submitted for general inclusion."
-            )
         source = (
             dict(payload.get("source", {}))
             if "result" in payload

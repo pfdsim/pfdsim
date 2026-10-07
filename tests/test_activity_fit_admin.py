@@ -375,6 +375,44 @@ def test_publication_rechecks_coefficients_and_requires_portable_rq(fitted):
         validate_runtime_inclusion(custom)
 
 
+def test_publication_allows_warnings_and_failed_phase_assessment(tmp_path, fitted, monkeypatch):
+    edited = deepcopy(fitted)
+    edited["success"] = False
+    edited["optimizer"]["success"] = False
+    edited["warnings"] = [
+        "The optimizer stopped without convergence.",
+        "Parameters at bounds: 12.linear",
+        "One or more equilibrium observations failed the final equilibrium/phase-stability audit.",
+    ]
+    edited["request"]["observations"].append({
+        "id":"audit-lle", "kind":"LLE", "T_K":325, "x1_alpha":.1, "x1_beta":.9,
+    })
+    validation = validate_runtime_inclusion(edited)
+    assert any("audit-lle" in warning for warning in validation["warnings"])
+    assert edited["warnings"] == validation["warnings"][:3]
+    store = ActivityFitStore(tmp_path / "warning-fits.sqlite")
+    identifier = store.submit("user:root","warning-fit",{"citation":"Reviewed fit with warnings"},edited)["id"]
+    store.review(identifier,"user:root","approve","Warnings reviewed",expected_version=1)
+    runtime = tmp_path / "runtime"
+    monkeypatch.setattr(builder,"DATA",runtime)
+    monkeypatch.setattr(builder,"resolve_component_ids",lambda:([],[]))
+    monkeypatch.setattr(builder,"build_interaction_payload",lambda source,resolved,unresolved,**settings:
+        builder.apply_user_activity_overlay(
+            {"metadata":{},"interactions":[]},"NRTL",user_fits_path=settings["user_fits_path"],
+            candidate=settings["user_fit_candidate"],exclude=settings["exclude_user_fit"],
+        )
+    )
+    result = builder.publish_user_fit(identifier,user_fits_path=store.path,actor="user:root")
+    assert result["status"] == "published"
+    payload = json.loads((runtime / result["runtime_file"]).read_text())
+    assert any(record.get("user_fit_id") == identifier for record in payload["interactions"])
+    saved = store.get(identifier)
+    assert saved["result"]["success"] is False
+    assert saved["result"]["warnings"] == edited["warnings"]
+    event = next(event for event in saved["events"] if event["action"] == "publishing")
+    assert any("audit-lle" in warning for warning in event["details"]["validation"]["warnings"])
+
+
 @pytest.mark.parametrize("model", ["NRTL", "UNIQUAC"])
 @pytest.mark.parametrize("basis", ["pressure_correction", "subcooled_liquid"])
 def test_publication_accepts_reviewed_psat_basis_without_changing_it(
@@ -449,6 +487,29 @@ def test_publication_still_recomputes_hard_pins_on_original_basis(fitted):
     row["pin"] = True
     with pytest.raises(ValueError, match="hard-pin constraints"):
         validate_runtime_inclusion(edited)
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf")])
+def test_publication_warning_policy_still_rejects_nonfinite_coefficients(fitted, value):
+    edited = deepcopy(fitted)
+    edited["success"] = False
+    edited["warnings"] = ["Fit needs review"]
+    edited["coefficients"]["12.constant"] = value
+    with pytest.raises(ValueError, match="finite"):
+        validate_runtime_inclusion(edited)
+
+
+def test_unavailable_measurement_audit_is_a_publication_warning(fitted, monkeypatch):
+    from thermodynamics_models.interaction_fitting import FitProblem
+
+    def unavailable(*args, **kwargs):
+        raise ValueError("Measurement audit unavailable")
+
+    monkeypatch.setattr(FitProblem, "report", unavailable)
+    edited = deepcopy(fitted)
+    edited["success"] = False
+    verification = validate_runtime_inclusion(edited)
+    assert any("Measurement audit unavailable" in warning for warning in verification["warnings"])
 
 
 @pytest.mark.parametrize("field,value", [

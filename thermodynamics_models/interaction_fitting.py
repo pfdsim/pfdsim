@@ -2179,8 +2179,8 @@ def validate_runtime_inclusion(result):
     activity law being published. Audit measurements on their original basis and
     verify activities and excess enthalpy independently of the shared vapor basis.
     """
-    if result.get("success") is not True:
-        raise ValueError("Only a converged fit passing phase checks can be published.")
+    if not isinstance(result, dict) or not isinstance(result.get("success"), bool):
+        raise ValueError("Provide a completed fit report with a boolean success assessment.")
     original = prepare_fit(result["request"])
     if result.get("model") != original.request["model"] or result.get(
         "method"
@@ -2195,7 +2195,7 @@ def validate_runtime_inclusion(result):
         )
     values = np.array(
         [
-            result["coefficients"][name] / original.scales[i]
+            _number(result["coefficients"][name], f"coefficients.{name}") / original.scales[i]
             for i, name in enumerate(original.names)
         ]
     )
@@ -2286,8 +2286,13 @@ def validate_runtime_inclusion(result):
     standard.thermo = runtime
     for T in temperatures:
         for x in (0.0, 0.05, 0.25, 0.5, 0.75, 0.95, 1.0):
-            fitted_gamma = original.checked_gamma(T, x)
-            runtime_gamma = standard.checked_gamma(T, x)
+            fitted_gamma = original.thermo.activity_coefficients(T, original.composition(x))
+            runtime_gamma = standard.thermo.activity_coefficients(T, standard.composition(x))
+            if any(
+                not math.isfinite(value) or value <= 0
+                for gamma in (fitted_gamma, runtime_gamma) for value in gamma.values()
+            ):
+                raise ValueError("The published liquid model must have finite positive activities.")
             if not np.allclose(
                 [math.log(fitted_gamma[c]) for c in original.components],
                 [math.log(runtime_gamma[c]) for c in standard.components],
@@ -2302,16 +2307,26 @@ def validate_runtime_inclusion(result):
                 raise ValueError(
                     "The published liquid activity model differs from the fitted activities or excess enthalpy. Use PFD export or reconcile the liquid model before publication."
                 )
-    audit = original.report(values, original.request["observations"])
-    if any(
-        not point["physical"] or point["pin_satisfied"] is False
-        for point in audit["points"]
-        if point["role"] == "training"
-    ):
-        raise ValueError(
-            "The submission fails recomputed physical checks or hard-pin constraints."
-        )
-    return {"component_cas": cas, "property_basis": "shared_liquid_activity_verified"}
+    warnings = list(result.get("warnings", []))
+    failed = []
+    for row in original.request["observations"]:
+        try:
+            point = original.report(values, [row])["points"][0]
+        except (ValueError, RuntimeError, OverflowError, *_MODEL_ERRORS) as error:
+            if row["pin"] and not row["validation_only"]:
+                raise ValueError("The submission cannot verify its hard-pin constraints.") from error
+            warnings.append(f"Recomputed audit unavailable for observation {row['id']}: {error}")
+            continue
+        if point["role"] == "training" and point["pin_satisfied"] is False:
+            raise ValueError("The submission fails recomputed hard-pin constraints.")
+        if not point["physical"]:
+            failed.append(point["id"])
+    if failed:
+        warnings.append("Recomputed equilibrium/phase audit failed for observations: " + ", ".join(failed) + ".")
+    return {
+        "component_cas": cas, "property_basis": "shared_liquid_activity_verified",
+        "warnings": warnings,
+    }
 
 
 def fitting_catalog():

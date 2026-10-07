@@ -71,9 +71,9 @@ class ActivityFitStore:
             for value in source.values()
         ):
             raise ValueError("Source fields must be text of at most 10000 characters.")
-        if result.get("success") is not True:
+        if not isinstance(result, dict) or not isinstance(result.get("success"), bool):
             raise ValueError(
-                "Only a converged fit passing its phase checks can be submitted."
+                "Provide a completed fit report with a boolean success assessment."
             )
         source, result = deepcopy(source), deepcopy(result)
         encoded = json.dumps(result, allow_nan=False, sort_keys=True)

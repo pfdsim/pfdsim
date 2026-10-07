@@ -543,17 +543,22 @@ INTERACTION_PARAMETERS:
     assert updated.interaction_parameters[-1].scope == "Child"
 
 
-def test_submit_saved_report_does_not_refit(tmp_path, monkeypatch):
+@pytest.mark.parametrize("success", [True, False])
+def test_submit_saved_report_does_not_refit(tmp_path, monkeypatch, success):
     import fit_cli
 
     data, _, _ = synthetic(kinds=("GAMMA_INF",))
     result = fit_interactions(data)
+    result["success"] = success
+    if not success:
+        result["warnings"] = ["The optimizer stopped without convergence."]
     report = tmp_path / "report.json"
     report.write_text(json.dumps(result))
 
     def submit(server, uploaded, source):
         assert server == "http://localhost:5000"
         assert uploaded["parameters"] == result["parameters"]
+        assert uploaded["success"] is success
         assert source["citation"] == "Archived source"
         return {"submission": {"id": "review-id"}}
 

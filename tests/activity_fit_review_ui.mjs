@@ -72,7 +72,7 @@ const exports = {
 const source = await readFile(new URL("../static/js/parameter-fitting.js", import.meta.url), "utf8");
 const sessionSource = await readFile(new URL("../static/js/fitting-sessions.js", import.meta.url), "utf8");
 const sessionModule = new SourceTextModule(sessionSource, { context });
-const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileFitParameters, renderObservations, removeObservationIds }; export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
+const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileFitParameters, renderObservations, removeObservationIds, renderResult }; export function setDisplayedResult(value) { result = value; } export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
 const linked = new Map();
 async function link(path) {
   if (path === "./fitting-sessions.js") {
@@ -95,6 +95,7 @@ for (const psat of [null, { form: "antoine", Tmin_K: 273, Tmax_K: 400, coefficie
   await module.namespace.reviewFit("fit", {
     status: "approved", model: "NRTL", source: { citation: "Reviewed pressure correction" },
     result: {
+      success: false, warnings: ["Parameters at bounds: 12.linear"],
       components: ["Fit_1", "Fit_2"], component_names: ["Acetone", "Water"],
       request: { psat: [psat, null], weights: {} }, parameters: {}, objectives: {},
       property_provenance: [{
@@ -113,6 +114,7 @@ for (const psat of [null, { form: "antoine", Tmin_K: 273, Tmax_K: 400, coefficie
   assert.match(text, /validity 273–400 K/);
   const details = JSON.parse(descendants(dialog).find(item => item.tag === "pre").textContent);
   assert.deepEqual(details.fitting_psat_definitions, [psat, null]);
+  assert.deepEqual(details.warnings, ["Parameters at bounds: 12.linear"]);
   const publish = descendants(dialog).find(item => item.textContent === "Publish to runtime");
   assert.ok(publish && !publish.disabled);
   await publish.onclick();
@@ -141,6 +143,12 @@ const fitted = {
   points: [], parameters: {}, objectives: {}, optimizer: {}, warnings: [], cross_validation: { folds: [] },
 };
 const sourceCitation = { citation: "Original source", doi: "original-doi", notes: "Original notes" };
+module.namespace.setDisplayedResult({ ...fitted, success: false, warnings: ["Fit needs review"] });
+module.namespace.renderResult();
+assert.equal(node("fit-submit").disabled, false);
+assert.equal(node("fit-admin-direct").disabled, false);
+assert.match(content(node("fit-warnings")), /Fit needs review/);
+module.namespace.setDisplayedResult(null);
 const document = sessionModule.namespace.fittingSessionFromResult(fitted, sourceCitation);
 assert.equal(document.state.controls.comp1, "A");
 assert.equal(document.state.controls.model, "UNIQUAC");

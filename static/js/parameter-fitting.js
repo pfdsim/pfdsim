@@ -808,8 +808,8 @@ function renderResult() {
   $("fit-validation").replaceChildren(element("p", {}, result.cross_validation.pinned_points_policy), table(["Fold", "Fit converged", "Rank", "Held-out observations", "Held-out scores / errors"], result.cross_validation.folds.map(fold => [fold.fold, fold.success ? "Yes" : "No", fold.rank === undefined ? "—" : `${fold.rank}/${fold.parameter_count}`, fold.held_out_ids.join(", "), fold.error || JSON.stringify(fold.objectives)])));
   $("fit-coefficients").textContent = JSON.stringify({ coefficients: result.coefficients, parameters: result.parameters, vapor_parameters: result.vapor_parameters, rq: result.rq, optimizer: result.optimizer,property_provenance:result.property_provenance }, null, 2);
   $("fit-entry").value = result.entry;
-  $("fit-submit").disabled = !result.success;
-  $("fit-admin-direct").disabled = !result.success;
+  $("fit-submit").disabled = false;
+  $("fit-admin-direct").disabled = false;
   exportMapping();
 }
 async function followJob(identifier, kind = "fit") {
