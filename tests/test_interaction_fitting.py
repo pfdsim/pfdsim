@@ -323,7 +323,7 @@ def test_azeotrope_uses_equal_vapor_and_liquid_composition():
     )
     result = fit_interactions(data)
     assert result["optimizer"]["objective"] < 1e-8
-    assert result["points"][-1]["predicted"]["y1"] == x
+    assert result["points"][-1]["predicted"]["y1"] == pytest.approx(x, abs=1e-8)
 
 
 @pytest.mark.parametrize("kind", ["UCST", "LCST"])

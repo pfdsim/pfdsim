@@ -33,6 +33,7 @@ from .fitting_properties import (
     qualify_psat,
 )
 from .fitting_diagnostics import physical_metrics, build_objective_plots
+from .fitting_optimizer import solve_start
 
 if __package__.split(".", 1)[0] == "pfdsim":
     from ..pfd_parser import (
@@ -779,6 +780,8 @@ def prepare_fit(request):
 class FitProblem:
     """Mutable fitting context; never mutates a caller's thermodynamic package."""
 
+    numerical_errors = (ValueError, OverflowError, FloatingPointError, *_MODEL_ERRORS)
+
     def __init__(self, request, thermo, definition):
         self.request, self.thermo, self.definition = request, thermo, definition
         self.components = tuple(thermo.components)
@@ -979,6 +982,10 @@ class FitProblem:
                 )
         self.last = None
         self.last_vapor = None
+        self.model_indices = np.array([
+            i for i, name in enumerate(self.names)
+            if name.startswith(("12.", "21.", "vapor.")) or name == "alpha12"
+        ])
 
     def _coefficient_scale(self, term):
         tref = self.request["T_ref_K"]
@@ -1055,6 +1062,11 @@ class FitProblem:
     def install(self, values):
         if self.last is not None and np.array_equal(values, self.last):
             return
+        if self.last is not None and np.array_equal(
+            np.asarray(values)[self.model_indices], self.last[self.model_indices]
+        ):
+            self.last = np.array(values, copy=True)
+            return
         vapor = self.vapor_records(values)
         if vapor and vapor != self.last_vapor:
             # Reuse resolved properties; rebuild the authoritative vapor provider
@@ -1124,38 +1136,52 @@ class FitProblem:
         return {self.components[0]: x, self.components[1]: 1 - x}
 
     def checked_gamma(self, T, x):
-        """Reject runtime clipping, which destroys derivative consistency."""
         gamma = self.thermo.activity_coefficients(T, self.composition(x))
-        if any(
-            not math.isfinite(value)
-            or value <= 1e-12
-            or value >= math.exp(50) * (1 - 1e-14)
-            for value in gamma.values()
-        ):
+        self._check_gamma_limits(T, np.array([gamma[c] for c in self.components]))
+        return gamma
+
+    def checked_gamma_many(self, T, x):
+        """Reject runtime clipping, which destroys derivative consistency."""
+        x = np.asarray(x, dtype=float)
+        compositions = np.column_stack((x, 1 - x))
+        temperatures = np.broadcast_to(np.asarray(T, dtype=float), x.shape)
+        backend = self.thermo._compiled_activity_backend()
+        for temperature in np.unique(temperatures):
+            self.thermo._warn_activity_interaction_extrapolation(float(temperature))
+        if backend is None:
+            gamma = np.array([
+                [values[c] for c in self.components]
+                for temperature, composition in zip(temperatures, compositions)
+                for values in [self.thermo.activity_coefficients(float(temperature), dict(zip(self.components, composition))) ]
+            ], dtype=float).reshape(-1, len(self.components))
+        else:
+            gamma = backend.activity_coefficients_many(compositions, temperatures)
+        self._check_gamma_limits(temperatures, gamma)
+        return gamma
+
+    def _check_gamma_limits(self, temperatures, gamma):
+        if np.any(~np.isfinite(gamma) | (gamma <= 1e-12) | (gamma >= math.exp(50) * (1 - 1e-14))):
             raise ValueError(
                 "Runtime activity-coefficient limit reached; narrow the coefficient bounds or choose a less flexible temperature law."
             )
         if self.model == "UNIQUAC":
-            tau = self.thermo._uniquac_tau_matrix(T)
-            if any(
-                value <= math.exp(-50) * (1 + 1e-14)
-                or value >= math.exp(50) * (1 - 1e-14)
-                for line in tau
-                for value in line
-            ):
-                raise ValueError(
-                    "Runtime UNIQUAC interaction-exponent limit reached; narrow the coefficient bounds."
-                )
-        return gamma
+            for temperature in np.unique(temperatures):
+                tau = np.asarray(self.thermo._uniquac_tau_matrix(float(temperature)))
+                if np.any((tau <= math.exp(-50) * (1 + 1e-14)) | (tau >= math.exp(50) * (1 - 1e-14))):
+                    raise ValueError(
+                        "Runtime UNIQUAC interaction-exponent limit reached; narrow the coefficient bounds."
+                    )
 
     def chemical_potentials(self, T, x):
         gamma = self.checked_gamma(T, x)
-        return np.array(
-            [
-                math.log(max(x * gamma[self.components[0]], 1e-300)),
-                math.log(max((1 - x) * gamma[self.components[1]], 1e-300)),
-            ]
-        )
+        return np.log(np.maximum([
+            x * gamma[self.components[0]], (1 - x) * gamma[self.components[1]],
+        ], 1e-300))
+
+    def chemical_potentials_many(self, T, x):
+        x = np.asarray(x, dtype=float)
+        gamma = self.checked_gamma_many(T, x)
+        return np.log(np.maximum(np.column_stack((x, 1 - x)) * gamma, 1e-300))
 
     def gibbs(self, T, x):
         mu = self.chemical_potentials(T, x)
@@ -1163,14 +1189,12 @@ class FitProblem:
 
     def critical_derivatives(self, T, x):
         h = min(0.001, x / 4, (1 - x) / 4)
-        m = [
-            float(np.diff(self.chemical_potentials(T, x + i * h))[0]) * -1
-            for i in (-2, -1, 0, 1, 2)
-        ]
+        mu = self.chemical_potentials_many(T, x + h * np.arange(-2, 3))
+        m = mu[:, 0] - mu[:, 1]
         curvature = (m[0] - 8 * m[1] + 8 * m[3] - m[4]) / (12 * h)
         third = (-m[0] + 16 * m[1] - 30 * m[2] + 16 * m[3] - m[4]) / (12 * h * h)
         fourth = (-m[0] + 2 * m[1] - 2 * m[3] + m[4]) / (2 * h**3)
-        return curvature, third, fourth
+        return float(curvature), float(third), float(fourth)
 
     def _sigma(self, row, name):
         sigma = row["sigma"]
@@ -1272,13 +1296,14 @@ class FitProblem:
         }
 
     def _lle_errors(self, T, a, b, sigma):
-        mua, mub = self.chemical_potentials(T, a), self.chemical_potentials(T, b)
+        grid = np.r_[np.linspace(0.00001, 0.99999, 41), a, b]
+        potentials = self.chemical_potentials_many(T, grid)
+        mua, mub = potentials[-2:]
         raw = (mua - mub).tolist()
         mu = (mua + mub) / 2
-        grid = np.r_[np.linspace(0.00001, 0.99999, 41), a, b]
-        gaps = np.array(
-            [self.gibbs(T, z) - (z * mu[0] + (1 - z) * mu[1]) for z in grid]
-        )
+        # Keep the residual dimension fixed when a fitted endpoint crosses a
+        # grid node. Repeated evaluation coordinates are harmless here.
+        gaps = grid * (potentials[:, 0] - mu[0]) + (1 - grid) * (potentials[:, 1] - mu[1])
         scaled = np.r_[
             np.array(raw) / sigma, np.minimum(gaps, 0) / sigma / math.sqrt(len(grid))
         ]
@@ -1470,6 +1495,9 @@ class FitProblem:
         return np.asarray(output)
 
     def solve(self, rows, progress=None):
+        rows = [row for row in rows if not row["validation_only"]]
+        if not rows:
+            raise ValueError("At least one training observation is required.")
         rng = np.random.default_rng(self.request["seed"])
         starts = [self.initial.copy()]
         for index in range(1, self.request["starts"]):
@@ -1483,7 +1511,6 @@ class FitProblem:
             ):
                 start[0] = start[len(self.terms)] = 2.5
             starts.append(np.clip(start, self.lower + 1e-10, self.upper - 1e-10))
-        pins = [row for row in rows if row["pin"]]
         candidates, failures = [], []
         for index, start in enumerate(starts):
             if progress:
@@ -1522,87 +1549,8 @@ class FitProblem:
                             start[coordinate] = np.clip(
                                 gap, self.lower[coordinate], self.upper[coordinate]
                             )
-                soft = lambda values: self.residuals(values, rows)
-                # Use pins to find a feasible initial point, then enforce their
-                # declared tolerance as two-sided inequality constraints.
-                initialization = lambda values: np.r_[
-                    soft(values), self.residuals(values, rows, pins=True)
-                ]
-                initial = least_squares(
-                    initialization,
-                    start,
-                    bounds=(self.lower, self.upper),
-                    max_nfev=self.request["max_nfev"],
-                    diff_step=1e-4,
-                    ftol=1e-10,
-                    xtol=1e-10,
-                    gtol=1e-9,
-                )
-                values, success, message = (
-                    initial.x,
-                    bool(initial.success),
-                    initial.message,
-                )
-                if pins:
-                    tolerances = np.concatenate(
-                        [
-                            np.full(
-                                len(self.row_errors(values, row)[0]),
-                                row["pin_tolerance"],
-                            )
-                            for row in pins
-                        ]
-                    )
-
-                    def constraints(v):
-                        errors = self.residuals(v, rows, pins=True)
-                        return np.r_[tolerances - errors, tolerances + errors]
-
-                    optimum = minimize(
-                        lambda v: float(soft(v) @ soft(v)),
-                        values,
-                        method="SLSQP",
-                        bounds=list(zip(self.lower, self.upper)),
-                        constraints=[{"type": "ineq", "fun": constraints}],
-                        options={
-                            "maxiter": self.request["max_nfev"],
-                            "ftol": 1e-10,
-                            "eps": 1e-5,
-                        },
-                    )
-                    values, success, message = (
-                        optimum.x,
-                        bool(optimum.success),
-                        str(optimum.message),
-                    )
-                    if np.min(constraints(values)) < -1e-7:
-                        failures.append(
-                            f"Start {index + 1}: hard pins are infeasible ({message})."
-                        )
-                        continue
-                errors = soft(values)
-                jac = initial.jac
-                if pins:
-                    # SLSQP can move away from the least-squares initializer.
-                    # Compute the Jacobian at the reported coefficients without
-                    # taking an optimization step (only finite-difference probes).
-                    jac = least_squares(
-                        initialization,
-                        values,
-                        bounds=(self.lower, self.upper),
-                        max_nfev=1,
-                        diff_step=1e-4,
-                    ).jac
-                candidates.append(
-                    (
-                        float(errors @ errors),
-                        values,
-                        success,
-                        str(message),
-                        initial.nfev,
-                        jac,
-                    )
-                )
+                fitted = solve_start(self, rows, start)
+                candidates.append(fitted)
             except (
                 ValueError,
                 OverflowError,
@@ -1615,17 +1563,8 @@ class FitProblem:
                 "No feasible fit was found. Check the model, bounds and pins. "
                 + " ".join(failures)
             )
-        candidates.sort(key=lambda item: (not item[2], item[0]))
-        cost, values, success, message, nfev, jac = candidates[0]
-        return {
-            "values": values,
-            "objective": cost,
-            "success": success,
-            "message": message,
-            "nfev": nfev,
-            "rank": int(np.linalg.matrix_rank(jac)),
-            "failures": failures,
-        }
+        candidates.sort(key=lambda item: (not item["success"], item["objective"]))
+        return {**candidates[0], "failures": failures}
 
     def report(self, values, rows, *, audit=True):
         points, objectives = [], {}
@@ -1799,7 +1738,7 @@ class FitProblem:
                     "raw_residuals": raw,
                     "scaled_residuals": scaled.tolist(),
                     "weighted_sum_squares": weighted,
-                    "physical": physical,
+                    "physical": bool(physical),
                     "pin_satisfied": bool(
                         np.max(np.abs(scaled)) <= row["pin_tolerance"] + 1e-7
                     )

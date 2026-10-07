@@ -120,8 +120,15 @@ class CompiledNRTLBackend:
             )
         )
 
+    def activity_coefficients_many(self, compositions, temperatures):
+        """Evaluate a composition batch with the authoritative scalar kernel."""
+        x, T = _activity_batch_inputs(compositions, temperatures, len(self.components))
+        return _activity_coefficients_many_numba(
+            x, T, self.enthalpy_parameters(), _nrtl_activity_coefficients_numba
+        )
+
     def enthalpy_parameters(self):
-        """Shared numeric arguments for scalar and fused caloric kernels."""
+        """Shared numeric arguments for activity and caloric kernels."""
         return (
             self.tau_mode,
             self.tau_c,
@@ -260,7 +267,7 @@ class CompiledUNIQUACBackend:
         )
 
     def enthalpy_parameters(self):
-        """Shared numeric arguments for scalar and fused caloric kernels."""
+        """Shared numeric arguments for activity and caloric kernels."""
         return (
             self.r,
             self.q,
@@ -276,9 +283,31 @@ class CompiledUNIQUACBackend:
             self.interaction_tmax,
         )
 
+    def activity_coefficients_many(self, compositions, temperatures):
+        """Evaluate a composition batch with the authoritative scalar kernel."""
+        x, T = _activity_batch_inputs(compositions, temperatures, len(self.components))
+        return _activity_coefficients_many_numba(
+            x, T, self.enthalpy_parameters(), _uniquac_activity_coefficients_numba
+        )
+
+
+def _activity_batch_inputs(compositions, temperatures, components):
+    x = np.ascontiguousarray(compositions, dtype=np.float64)
+    if x.ndim != 2 or x.shape[1] != components:
+        raise ValueError("Activity composition batches must have one column per component.")
+    T = np.ascontiguousarray(np.broadcast_to(np.asarray(temperatures, dtype=np.float64), (len(x),)))
+    return x, T
+
 
 if njit is not None:
     _cached_kernel = numba_cached(njit)
+
+    @_cached_kernel
+    def _activity_coefficients_many_numba(compositions, temperatures, parameters, kernel):
+        result = np.empty_like(compositions)
+        for index in range(len(compositions)):
+            result[index] = kernel(compositions[index], temperatures[index], *parameters)
+        return result
 
     @_cached_kernel
     def _nrtl_activity_coefficients_numba(
@@ -723,6 +752,9 @@ if njit is not None:
         return -R_J_MOL_K * T * T * derivative_sum
 
 else:
+
+    def _activity_coefficients_many_numba(*_args, **_kwargs):  # pragma: no cover
+        raise RuntimeError("Compiled activity backend is unavailable")
 
     def _nrtl_activity_coefficients_numba(*_args, **_kwargs):  # pragma: no cover
         raise RuntimeError("Compiled NRTL backend is unavailable")

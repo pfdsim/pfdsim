@@ -476,9 +476,22 @@ internally scaled optimization coordinates. Fitted alpha uses `alpha12` and is
 bounded within `[0.01,1]`. Unknown critical compositions use
 `critical_x1.<observation-id>`. By default, coefficient bounds correspond to
 scaled coordinates `[-30,30]`; inverse, linear and quadratic coefficients are
-scaled with Tref to keep optimization well conditioned. Default starts are
+scaled with Tref. The optimizer orthogonalizes the temperature basis over the
+training interval, with a capped scaling ratio of 1000 to avoid magnifying
+roundoff in weakly identified directions. Original coefficient bounds remain
+exact linear constraints in the transformed coordinates; the exported law and
+physical coefficients are unchanged. Default starts are
 deterministically seeded (`seed=1729`, `starts=3`), with `max_nfev=500` per start
-and constrained refinement where pins are present.
+as the residual-evaluation limit and constrained refinement where pins are
+present. Finite-difference probes do not consume that limit. Hard-pin refinement
+has its own evaluation budget. Diagnostics distinguish residual-vector attempts
+(`nfev`) from observation evaluations (`row_evaluations`), which include numerical
+derivative probes. Final verification evaluations are reported separately.
+Local missing-phase coordinates only differentiate their own observation.
+Missing-phase and unknown critical composition fractions use logit coordinates with exactly
+transformed bounds, so phases near zero or one remain numerically scaled.
+Activity and critical derivative batches reuse the authoritative runtime kernels, retaining clipping
+rejection and every supporting-tangent check.
 
 Changing the temperature law, model, alpha/vapor fitting controls or observations
 keeps compatible initial values and bounds and removes parameters that are no
