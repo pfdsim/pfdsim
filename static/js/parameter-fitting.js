@@ -7,6 +7,7 @@ import { fittingSessionLibrary, fittingSessionFromResult } from "./fitting-sessi
 const draftKey = "pfdsim.fitting.v1";
 let catalog, observations = [], inputDirty = true, result = null, jobId = null, activeJob = null;
 let definitionProject = null, exportProject = null;
+let parameterModel = null;
 let storageWarningShown = false;
 let observationSets = [], importReports = [], manualValues = {};
 let psatValues = [{}, {}];
@@ -85,6 +86,29 @@ function reconcileFitParameters() {
     removed.push(`${field}: ${obsolete.join(", ")}`);
   }
   if (removed.length) toast(`Removed parameters no longer fitted by the current settings or observations (${removed.join("; ")}). Compatible values were kept; unspecified terms use default starting values and bounds.`);
+  return removed.length > 0;
+}
+function reconcileModelChange() {
+  const selected = $("fit-model").value;
+  if (parameterModel === null || parameterModel === selected) {
+    parameterModel = selected;
+    return false;
+  }
+  const removed = [];
+  for (const field of ["initial", "bounds"]) {
+    const control = $(`fit-${field}`);
+    let values;
+    try { values = JSON.parse(control.value); }
+    catch { continue; }
+    if (!values || Array.isArray(values) || typeof values !== "object") continue;
+    const incompatible = Object.keys(values).filter(key => /^(?:12|21)\./.test(key) || key === "alpha12");
+    if (!incompatible.length) continue;
+    for (const key of incompatible) delete values[key];
+    control.value = JSON.stringify(values, null, 2);
+    removed.push(`${field}: ${incompatible.join(", ")}`);
+  }
+  parameterModel = selected;
+  if (removed.length) toast(`Removed ${removed.join("; ")} because NRTL τ coefficients and UNIQUAC ln τ coefficients are not interchangeable.`);
   return removed.length > 0;
 }
 function updateModel() {
@@ -912,6 +936,7 @@ function assignFitState(saved){
   for(const [kind,value] of Object.entries(saved.weights||{}))if($(`fit-weight-${kind}`))$(`fit-weight-${kind}`).value=value;
   observations=saved.observations||[];inputDirty=saved.inputDirty;result=saved.result||null;jobId=saved.jobId||null;definitionProject=saved.definitionProject||null;exportProject=saved.exportProject||null;
   observationSets=saved.observationSets||[];importReports=saved.importReports||[];manualValues=saved.manualValues||{};psatValues=saved.psatValues||[{},{}];pendingImport=saved.pendingImport||null;
+  parameterModel=$("fit-model").value;
   return saved;
 }
 function repairFitObservationReferences(){
@@ -960,13 +985,13 @@ async function initialize() {
   }
   repairFitObservationReferences();
   renderSigma(saved?.sigmaValues); renderManual(); renderSetOptions(); renderPsat();
-  renderVaporParameters(saved?.vaporParameters); const reconciledParameters = reconcileFitParameters(); updateModel(); renderObservations(); renderResult(); scopes($("fit-scope"), definitionProject);
+  renderVaporParameters(saved?.vaporParameters); const reconciledParameters = reconcileFitParameters(); updateModel(); parameterModel=$("fit-model").value; renderObservations(); renderResult(); scopes($("fit-scope"), definitionProject);
   if(saved?.selectedScope)$("fit-scope").value=saved.selectedScope;
   if(saved?.exportScope)$("fit-export-scope").value=saved.exportScope;
   if(result)result.components.forEach((name,index)=>{if(saved?.exportMapping?.[name]&&$(`fit-map-${index}`))$(`fit-map-${index}`).value=saved.exportMapping[name];});
   if (reconciledParameters) saveDraft();
   fields.filter(name => name !== "law").forEach(name => $(`fit-${name}`).addEventListener("change", () => { reconcileFitParameters(); saveDraft(); }));
-  $("fit-model").addEventListener("change", updateModel);
+  $("fit-model").addEventListener("change", () => { reconcileModelChange(); reconcileFitParameters(); updateModel(); saveDraft(); });
   $("fit-law").addEventListener("change", () => { reconcileFitParameters(); updateModel(); saveDraft(); });
   $("fit-vapor").addEventListener("change", () => { renderVaporParameters(); renderPsat();saveDraft(); });
   $("fit-input").addEventListener("input", () => { pendingImport = null; inputDirty = true; saveDraft(); });

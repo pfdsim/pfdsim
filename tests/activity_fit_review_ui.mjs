@@ -72,7 +72,7 @@ const exports = {
 const source = await readFile(new URL("../static/js/parameter-fitting.js", import.meta.url), "utf8");
 const sessionSource = await readFile(new URL("../static/js/fitting-sessions.js", import.meta.url), "utf8");
 const sessionModule = new SourceTextModule(sessionSource, { context });
-const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileFitParameters, renderObservations, removeObservationIds, renderResult }; export function setDisplayedResult(value) { result = value; } export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
+const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileFitParameters, reconcileModelChange, renderObservations, removeObservationIds, renderResult }; export function setDisplayedResult(value) { result = value; } export function setParameterModel(value) { parameterModel = value; } export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
 const linked = new Map();
 async function link(path) {
   if (path === "./fitting-sessions.js") {
@@ -269,6 +269,15 @@ const vaporGroup = {
 };
 node("fit-vapor-parameters").children = [vaporGroup];
 const starts = { "12.constant": .4, "12.inverse": 450, "12.anchored": -5, "21.constant": .7, "21.inverse": -11, "21.anchored": .6, alpha12: .55, "vapor.PR.kij": .02, "critical_x1.paper": .3, "12.typo": 2, "12.anchored.": 3 };
+node("fit-initial").value = JSON.stringify(starts);
+node("fit-bounds").value = JSON.stringify({ "12.anchored": [-6, 6], "21.inverse": [-30, 30], "vlle_xa.paper": [.01, .8] });
+module.namespace.setParameterModel("NRTL");
+node("fit-model").value = "UNIQUAC";
+module.namespace.reconcileModelChange();
+assert.deepEqual(JSON.parse(node("fit-initial").value), { "vapor.PR.kij": .02, "critical_x1.paper": .3 });
+assert.deepEqual(JSON.parse(node("fit-bounds").value), { "vlle_xa.paper": [.01, .8] });
+node("fit-model").value = "NRTL";
+module.namespace.setParameterModel("NRTL");
 node("fit-initial").value = JSON.stringify(starts);
 node("fit-bounds").value = JSON.stringify({ "12.anchored": [-6, 6], "21.inverse": [-30, 30], "vlle_xa.paper": [.01, .8] });
 module.namespace.reconcileFitParameters();
