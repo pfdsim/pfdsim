@@ -456,7 +456,7 @@ function importPreview(text, initial, initialOptions) {
     const mappingContainer = element("div", { class: "fit-entry-grid" }), seriesContainer=element("div"), footer = element("div", { class: "form-actions" });
     const repeated=element("button",{type:"button",id:"fit-import-repeated"},"Repeated series / multicolumn");
     const add = element("button", { type: "button", class: "primary", id: "fit-import-add" }, "Review and add"), cancel = element("button", { type: "button" }, "Cancel");
-    let proposal = initial, finished = false, revision = 0;
+    let proposal = initial, finished = false, adding = false, revision = 0;
     function seriesAssignments(value) {
       return value.columns.map(column => {
         if (value.shared_columns?.includes(column.index)) return "shared";
@@ -502,7 +502,8 @@ function importPreview(text, initial, initialOptions) {
     }
     async function refresh() {
       const ticket = ++revision;
-      add.disabled = true;
+      // Blur may refresh during Add's mousedown. Keep the click deliverable;
+      // the Add handler validates the latest inputs before accepting anything.
       try {
         const updated = await api("/api/fitting/parse", { observations: text, components: componentNames(), import_options: capture() });
         if (ticket !== revision || finished) return;
@@ -625,7 +626,7 @@ function importPreview(text, initial, initialOptions) {
           node.disabled = !!proposal.dimensions_needed;
           node.value = cellEdits.get(`${index}:${column}`)?.value ?? (ambiguous && column > 0 ? "" : cell);
           node.oninput = () => {
-            ++revision; add.disabled = true;
+            ++revision;
             if (!ambiguous) { cellEdits.set(`${index}:${column}`, { row: index, column, value: node.value }); capture(); }
           };
           if (!ambiguous) node.onchange = guarded(refresh);
@@ -644,7 +645,7 @@ function importPreview(text, initial, initialOptions) {
         }
         checkbox.onchange = guarded(refresh); return [checkbox, ...shown,...(hasAmbiguousRows?[alignment]:[])];
       })));
-      add.disabled = !proposal.ready; add.textContent = proposal.ready ? `Add ${proposal.observations.length} observations` : "Resolve the missing choices";
+      add.disabled = adding || !proposal.ready; add.textContent = adding ? "Validating observations…" : proposal.ready ? `Add ${proposal.observations.length} observations` : "Resolve the missing choices";
       if(proposal.series_reports?.length)messages.append(element("p",{class:"field-help"},proposal.series_reports.map(series=>`${series.name}: ${series.ready?series.observations+" observations":"conditions needed"}`).join(" · ")));
     }
     function control(key, label, choices, value) {
@@ -707,10 +708,19 @@ function importPreview(text, initial, initialOptions) {
     cancel.onclick = () => { dismissPreview(); dialog.close(); };
     add.onclick = guarded(async () => {
       // Revalidate the current controls, including edits that have not blurred.
-      ++revision; add.disabled = true;
-      const updated = await api("/api/fitting/parse", { observations: text, components: componentNames(), import_options: capture() });
-      proposal = updated; display(); if (!proposal.ready) return;
-      finishPreview(proposal); dialog.close();
+      if (adding || finished) return;
+      const ticket = ++revision;
+      adding = true; add.disabled = true;
+      try {
+        const updated = await api("/api/fitting/parse", { observations: text, components: componentNames(), import_options: capture() });
+        if (ticket !== revision || finished) return;
+        proposal = updated;
+        if (!proposal.ready) return;
+        finishPreview(proposal); dialog.close();
+      } finally {
+        adding = false;
+        if (!finished) display();
+      }
     });
     dialog.addEventListener("close", dismissPreview);
     dialog.addEventListener("cancel", dismissPreview);
