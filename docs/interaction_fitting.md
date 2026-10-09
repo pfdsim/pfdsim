@@ -659,7 +659,8 @@ has no effect. Login/session permissions come from the server's account-role tab
 
 ### Administrator publication
 
-The root account sees an **Administrator fit review** panel. It can download the
+The root account opens **Publish and review parameters** from the fitting page
+to reach `/parameter-publishing`. Its **Parameter review** panel can download the
 full provenance bundle, record review notes, approve/reject using a versioned
 decision, and publish an approved fit. **Publish this fit to runtime** submits and
 approves root's own current fit, then runs the same publication path.
@@ -677,6 +678,34 @@ a named save, or cancel; the previous draft remains recoverable in Saved fitting
 sessions. You can then paste additional measurements and refit. Failed review requests are shown next
 to the dialog actions; shared notifications also appear above modal backdrops.
 Publication is a queued, cancellable job using existing compute accounting.
+
+The same root-only page supports direct entry without experimental observations
+or running a regression. Choose NRTL or standard UNIQUAC, identify the two
+components, and supply both directions as interaction energies (J/mol, kJ/mol,
+cal/mol or kcal/mol), constant τ values, or temperature-law coefficients.
+The form shows the exact equation and units. NRTL energy parameters use
+τᵢⱼ = aᵢⱼ/(RT); UNIQUAC uses τᵢⱼ = exp(−aᵢⱼ/(RT)). Constant UNIQUAC τ must be
+positive; its temperature-law coefficients describe ln(τ), rather than τ.
+Temperature laws use PFDSim's anchored logarithmic term and reference temperature.
+Optional validity limits and the existing extrapolation policies travel with
+the parameters. UNIQUAC uses the shared standard structural R/Q basis.
+
+The source citation is required to publish; URL, DOI, source notes, source-reported
+fitting method and source-reported statistics are optional. Method and statistics
+are retained as text exactly describing the source's assessment and appear in
+review, full provenance downloads and builder provenance. Manual entries are
+marked separately from computed fits and have no invented observations or
+computed objective statistics. Publishing uses the same builder, history,
+replacement, snapshot and withdrawal workflow as fitted submissions.
+
+Before publication, preview γ₁/γ₂, VLE P–x–y or LLE phase compositions at a selected
+temperature (K). VLE uses an ideal vapor and shared saturation pressures; γ shows
+the homogeneous activity law, including metastable compositions. The LLE graph
+shows the two equilibrium liquid compositions against overall composition:
+separate branches indicate a split and the coincident diagonal indicates one
+liquid. Preview jobs do not submit or publish parameters. Changing inputs marks
+the displayed curves as stale. The exact preview parameters and PFD are available
+for inspection and download; form drafts survive reloads in the same browser.
 
 `scripts/build_cas_interaction_parameters.py` owns both the normal SQLite overlay
 and publication. It rebuilds the affected activity table from source, keeps a
@@ -727,9 +756,13 @@ two-liquid composition interval.
 
 Numerical/HTTP/import/publication tests include `tests/test_interaction_fitting.py`,
 `tests/test_web_fitting.py`, `tests/test_fitting_import.py`, `tests/test_fitting_psat.py`
-and `tests/test_activity_fit_admin.py`. The opt-in real-browser workflow is
+and `tests/test_activity_fit_admin.py`; `tests/test_manual_parameters.py` covers
+energy/τ equivalence and direct previews. The opt-in real-browser workflow is
 `python tests/browser_interaction_fitting.py`; its screenshots and downloaded
 PFDs are written to a temporary report directory.
+`python tests/browser_parameter_publishing.py` checks root access, direct entry,
+all three preview modes, source-reported statistics, publication, export and
+withdrawal against isolated runtime tables.
 Wide-table projection and HOC/saved-state regressions are covered by
 `tests/test_repeated_series_import.py` and `tests/test_fit_sessions_and_hoc_overrides.py`.
 `python tests/browser_repeated_fit_sessions.py` checks explicit wide-table import,

@@ -358,6 +358,52 @@ def fitting_page():
     return render_template("parameter_fitting.html")
 
 
+@app.get("/parameter-publishing")
+def parameter_publishing_page():
+    require_fit_root()
+    return render_template("parameter_publishing.html")
+
+
+def manual_parameters_module():
+    if __package__ and __package__.split(".", 1)[0] == "pfdsim":
+        from .thermodynamics_models import manual_parameters
+    else:
+        from thermodynamics_models import manual_parameters
+    return manual_parameters
+
+
+def validate_fit_report(result):
+    if not isinstance(result, dict) or result.get("schema_version") != 1:
+        raise ValueError("Provide a PFDSim parameter report.")
+    if result.get("submission_origin") == "manual_parameters":
+        manual_parameters_module().validate_manual_inclusion(result)
+    else:
+        fitting_module().normalize_fit_request(result.get("request"))
+
+
+def require_fit_root():
+    user = require_fit_admin()
+    if user["username"].casefold() != "root":
+        from werkzeug.exceptions import Forbidden
+        raise Forbidden("The root account is required for direct parameter publishing.")
+    return user
+
+
+@app.post("/api/fitting/admin/preview")
+def api_manual_parameter_preview():
+    require_fit_root()
+    data = body()
+    kind = data.get("kind", "GAMMA")
+    if kind not in ("GAMMA", "VLE", "LLE"):
+        raise ValueError("Choose GAMMA, VLE or LLE preview.")
+    return submit("fit_parameter_preview", {
+        "parameters": manual_parameters_module().normalize_manual_parameters(data.get("parameters")),
+        "kind": kind,
+        "T_K": number(data, "T_K", 298.15, minimum=1, maximum=5273.15),
+        "n_points": number(data, "n_points", 30, minimum=10, maximum=100, integer=True),
+    })
+
+
 def fitting_module():
     if __package__ and __package__.split(".", 1)[0] == "pfdsim":
         from .thermodynamics_models import interaction_fitting
@@ -407,17 +453,28 @@ def api_fit_admin_publish():
     user = require_fit_admin()
     data = body()
     store = activity_fit_store()
-    if data.get("job_id") or data.get("result"):
-        result = completed_fit(data["job_id"]) if data.get("job_id") else data["result"]
-        fitting_module().normalize_fit_request(result.get("request"))
+    if "parameters" in data or data.get("job_id") or data.get("result"):
+        if "parameters" in data:
+            require_fit_root()
+            if data.keys() & {"id", "job_id", "result"}:
+                raise ValueError("Choose direct parameters or an existing fit/report, not both.")
+            result, _ = manual_parameters_module().prepare_manual_parameters(data["parameters"])
+        else:
+            result = completed_fit(data["job_id"]) if data.get("job_id") else data["result"]
+        if result.get("submission_origin") == "manual_parameters":
+            require_fit_root()
+        validate_fit_report(result)
         fitting_module().export_fit(result)
-        identifier = data.get("job_id") or "local:"+hashlib.sha256(json.dumps(result,sort_keys=True,allow_nan=False).encode()).hexdigest()
+        identity_content = {"result": result, "source": data.get("source")} if result.get("submission_origin") == "manual_parameters" else result
+        identifier = data.get("job_id") or "local:"+hashlib.sha256(json.dumps(identity_content,sort_keys=True,allow_nan=False).encode()).hexdigest()
         submitted = store.submit("user:"+user["id"],identifier,data.get("source"),result)
         record = store.get(submitted["id"])
         if record["status"] not in ("approved","published"):
             record = store.review(record["id"],"user:"+user["id"],"approve",data.get("notes") or "Direct administrator publication", expected_version=record["version"])
     else:
         record = store.get(data.get("id"))
+    if record["result"].get("submission_origin") == "manual_parameters":
+        require_fit_root()
     if record["status"] not in ("approved","published","publishing"):
         raise ValueError("Approve this fit before publication.")
     from_store = jobs()
@@ -498,9 +555,7 @@ def api_fitting_export():
     data = body()
     if data.get("result") is not None:
         result = data["result"]
-        if not isinstance(result, dict) or result.get("schema_version") != 1:
-            raise ValueError("Provide a PFDSim fit report.")
-        fitting_module().normalize_fit_request(result.get("request"))
+        validate_fit_report(result)
     else:
         result = completed_fit(data.get("job_id"))
     return respond({"success": True, **fitting_module().export_fit(result, pfd_text=data.get("pfd_text"),
@@ -517,9 +572,10 @@ def api_fitting_submit():
         result = data.get("result")
         if not isinstance(result, dict) or result.get("schema_version") != 1:
             raise ValueError("Provide a completed fitting job or a PFDSim CLI fit report.")
-        fitting_module().normalize_fit_request(result.get("request"))
+        validate_fit_report(result)
         fitting_module().export_fit(result)
-        result = {**result, "submission_origin": "external_report_pending_review"}
+        if result.get("submission_origin") != "manual_parameters":
+            result = {**result, "submission_origin": "external_report_pending_review"}
         identifier = "local:" + hashlib.sha256(json.dumps(result, sort_keys=True, allow_nan=False).encode()).hexdigest()
     submission = jobs().submit_fit(identity()[0], identifier, data.get("source"), result)
     return respond({"success": True, "submission": submission}, 201)

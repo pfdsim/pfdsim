@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Parameter publishing · PFDSIM{% endblock %}
+{% block content %}
+<main class="atlas-screen fitting-screen">
+  <div class="page-heading"><div><p class="eyebrow">ROOT PARAMETER MANAGEMENT</p>
+    <h1>Parameter publishing</h1><p>Enter sourced binary parameters directly, preview their behavior, or review submitted fits.</p>
+  </div><a href="/parameter-fitting">Return to parameter fitting ↗</a></div>
+  <div class="atlas-layout">
+    <section class="atlas-controls panel-card">
+      <h2>Direct entry</h2>
+      <form id="publish-form">
+        <label class="field"><span class="field-label">Component 1</span><input id="publish-comp1" value="ethanol" required placeholder="Name or CAS"></label>
+        <label class="field"><span class="field-label">Component 2</span><input id="publish-comp2" value="water" required placeholder="Name or CAS"></label>
+        <label class="field"><span class="field-label">Liquid model</span><select id="publish-model"><option>NRTL</option><option>UNIQUAC</option></select></label>
+        <label class="field"><span class="field-label">Parameter convention</span><select id="publish-basis"><option value="energy">Interaction energies</option><option value="tau">Constant τ values</option><option value="law">Temperature-law coefficients</option></select></label>
+        <label class="field" id="publish-unit-field"><span class="field-label">Energy unit</span><select id="publish-unit"><option>J/mol</option><option>kJ/mol</option><option>cal/mol</option><option>kcal/mol</option></select></label>
+        <p id="publish-equation" class="field-help"></p>
+        <p class="field-help">12 is the runtime matrix entry for component 1 / component 2; 21 is the reverse. Match the source’s sign and index definitions, then check the preview.</p>
+        <div id="publish-values" class="fit-rq-grid"></div>
+        <label class="field" id="publish-alpha-field"><span class="field-label">NRTL α₁₂ = α₂₁</span><input id="publish-alpha" type="number" min="0" step="any" value="0.3" required></label>
+        <label class="field" id="publish-tref-field" hidden><span class="field-label">Reference temperature Tref (K)</span><input id="publish-tref" type="number" min="1" step="any" value="298.15" required></label>
+        <div class="fit-rq-grid">
+          <label class="field"><span class="field-label">Validity Tmin (K, optional)</span><input id="publish-tmin" type="number" min="1" step="any"></label>
+          <label class="field"><span class="field-label">Validity Tmax (K, optional)</span><input id="publish-tmax" type="number" min="1" step="any"></label>
+        </div>
+        <label class="field"><span class="field-label">Outside the validity range</span><select id="publish-extrapolation"><option value="unrestricted">Evaluate the entered law</option><option value="clamp">Clamp to boundary parameters</option><option value="constant_inverse">Continue with A + B/T</option><option value="inverse_linear_quadratic">Continue with B/T + C/T²</option><option value="inverse_square_cubic">Continue with B/T² + C/T³</option></select></label>
+        <label class="field"><span class="field-label">Source citation (required to publish)</span><textarea id="publish-source" rows="3" maxlength="10000" placeholder="Paper, book, database, or your own study"></textarea></label>
+        <label class="field"><span class="field-label">Source URL (optional)</span><input id="publish-url" type="url" maxlength="10000"></label>
+        <label class="field"><span class="field-label">DOI (optional)</span><input id="publish-doi" maxlength="10000"></label>
+        <label class="field"><span class="field-label">Source notes (optional)</span><textarea id="publish-notes" rows="3" maxlength="10000"></textarea></label>
+        <label class="field"><span class="field-label">Source-reported fitting method (optional)</span><input id="publish-fit-method" maxlength="10000" placeholder="e.g. least squares of VLE and HE data"></label>
+        <label class="field"><span class="field-label">Source-reported statistics (optional)</span><textarea id="publish-statistics" rows="3" maxlength="10000" placeholder="e.g. RMS pressure error 1.2%; 42 points; temperature range"></textarea></label>
+        <p class="field-help">Method and statistics are preserved as reported by the source. Direct entry does not run a regression or recompute those statistics. UNIQUAC uses the shared standard R/Q basis.</p>
+        <button id="publish-run" type="submit" class="primary">Publish parameters to runtime</button>
+      </form>
+    </section>
+    <section class="panel-card fit-workbench">
+      <h2>Preview behavior</h2>
+      <p>Preview uses the exact entered parameters without publishing. VLE uses an ideal vapor and PFDSim’s saturation pressures; γ and LLE use the liquid activity model.</p>
+      <div class="fit-entry-grid">
+        <label class="field"><span class="field-label">Preview</span><select id="publish-preview-kind"><option value="GAMMA">Activity coefficients γ₁ / γ₂</option><option value="VLE">VLE · P–x–y</option><option value="LLE">LLE · liquid phase compositions</option></select></label>
+        <label class="field"><span class="field-label">Temperature (K)</span><input id="publish-preview-temperature" type="number" min="1" max="5273.15" step="any" value="298.15" required></label>
+        <label class="field"><span class="field-label">Composition intervals</span><input id="publish-preview-points" type="number" min="10" max="100" step="1" value="30" required></label>
+      </div>
+      <div class="form-actions"><button id="publish-preview" type="button">Preview parameters</button><button id="publish-preview-cancel" type="button" disabled>Cancel preview</button></div>
+      <p id="publish-preview-status" role="status" aria-live="polite"></p>
+      <p id="publish-preview-note" class="field-help"></p>
+      <pre id="publish-preview-warnings" class="field-help"></pre>
+      <div id="publish-preview-plots"></div>
+      <details><summary>Exact preview parameters and PFD</summary><pre id="publish-preview-parameters"></pre><button id="publish-preview-download" type="button" disabled>Download preview PFD</button></details>
+    </section>
+  </div>
+  <section id="fit-admin" class="panel-card fit-workbench">
+    <h2>Parameter review</h2><p>Review submitted fits and manual entries with their sources, results and exports. Publishing rebuilds the shared table and preserves a previous snapshot and review history. Approved submissions remain available here.</p>
+    <button id="fit-admin-refresh" type="button">Refresh review queue</button><div id="fit-admin-list" class="fit-table-scroll"></div>
+    <p id="fit-admin-status" role="status" aria-live="polite"></p>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<link rel="stylesheet" href="{{ url_for('static', filename='css/parameter-fitting.css') }}"><script type="module" src="{{ url_for('static', filename='js/parameter-publishing.js') }}"></script>{% endblock %}

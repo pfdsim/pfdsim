@@ -2181,6 +2181,9 @@ def validate_runtime_inclusion(result):
     """
     if not isinstance(result, dict) or not isinstance(result.get("success"), bool):
         raise ValueError("Provide a completed fit report with a boolean success assessment.")
+    if result.get("submission_origin") == "manual_parameters":
+        from .manual_parameters import validate_manual_inclusion
+        return validate_manual_inclusion(result)
     original = prepare_fit(result["request"])
     if result.get("model") != original.request["model"] or result.get(
         "method"

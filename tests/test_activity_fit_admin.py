@@ -89,6 +89,69 @@ def test_root_requires_one_time_token_and_role_is_authenticated(clients):
     assert guest.get("/api/session").get_json()["user"]["is_admin"] is False
 
 
+def test_manual_page_preview_and_publication_are_root_only(clients):
+    root, guest = clients
+    data = {"parameters": {"components": ["ethanol", "water"], "model": "NRTL", "basis": "energy", "values": {"12": 900, "21": -200}, "fit_method": "Source least squares", "statistics": "RMS 1.2%"}, "source": {"citation": "Raw parameter source"}}
+    assert guest.get("/parameter-publishing").status_code == 403
+    assert guest.post("/api/fitting/admin/preview", json=data).status_code == 403
+    assert guest.post("/api/fitting/admin/publish", json=data).status_code == 403
+    root_signup(root)
+    assert root.post("/api/fitting/admin/publish", json={**data, "id": "unrelated"}).status_code == 400
+    page = root.get("/parameter-publishing")
+    assert page.status_code == 200
+    assert b'id="fit-admin"' in page.data
+    assert b'id="publish-statistics"' in page.data
+    assert b'id="fit-admin"' not in root.get("/parameter-fitting").data
+    preview = root.post("/api/fitting/admin/preview", json={**data, "kind": "GAMMA"})
+    assert preview.status_code == 202
+    assert web.jobs().get(preview.get_json()["job_id"])["kind"] == "fit_parameter_preview"
+    assert web.activity_fit_store().list() == []
+    invalid = root.post("/api/fitting/admin/publish", json={**data, "source": {"citation": ""}})
+    assert invalid.status_code == 400
+    assert web.activity_fit_store().list() == []
+    published = root.post("/api/fitting/admin/publish", json=data)
+    assert published.status_code == 202, published.get_json()
+    job = web.jobs().get(published.get_json()["job_id"])
+    assert job["kind"] == "fit_publish"
+    stored = web.activity_fit_store().get(web.activity_fit_store().list()[0]["id"])
+    assert stored["status"] == "approved"
+    assert stored["result"]["reported_fit"] == {"method": "Source least squares", "statistics": "RMS 1.2%"}
+    assert stored["events"][0]["details"]["origin"] == "manual_parameters"
+    assert root.post("/api/fitting/export", json={"result": stored["result"]}).status_code == 200
+    assert root.post("/api/fitting/admin/publish", json=data).status_code == 400
+    ordinary = web.jobs().register("other-admin", "long administrator password", "guest:other")
+    with web.jobs().connect() as db:
+        db.execute("INSERT INTO account_roles VALUES (?, 'admin')", (ordinary["id"],))
+    with guest.session_transaction() as session:
+        session["user_id"] = ordinary["id"]
+    assert guest.get("/parameter-publishing").status_code == 403
+    assert guest.post("/api/fitting/admin/preview", json=data).status_code == 403
+    assert guest.post("/api/fitting/admin/publish", json=data).status_code == 403
+
+
+def test_manual_publication_uses_the_shared_builder(tmp_path, monkeypatch):
+    from thermodynamics_models.manual_parameters import prepare_manual_parameters
+
+    runtime = tmp_path / "runtime"
+    runtime.mkdir()
+    monkeypatch.setenv("PFDSIM_INTERACTION_DATA_DIR", str(runtime))
+    store = ActivityFitStore(tmp_path / "manual.sqlite")
+    result, _ = prepare_manual_parameters({"components": ["ethanol", "water"], "model": "UNIQUAC", "basis": "tau", "values": {"12": .6, "21": 1.2}, "fit_method": "Published regression", "statistics": "AAD 2%"})
+    identifier = store.submit("user:root", "manual", {"citation": "Manual source"}, result)["id"]
+    store.review(identifier, "user:root", "approve", None, expected_version=1)
+    first = builder.publish_user_fit(identifier, user_fits_path=store.path, actor="user:root")
+    payload = json.loads((runtime / first["runtime_file"]).read_text())
+    record = next(item for item in payload["interactions"] if item.get("user_fit_id") == identifier)
+    assert record["tau12_a"] == result["parameters"]["tau12_a"]
+    assert record["fit_status"] == "admin_published_manual_parameters"
+    assert record["fit_provenance"]["reported_fit"]["statistics"] == "AAD 2%"
+    second = builder.publish_user_fit(identifier, user_fits_path=store.path, actor="user:root")
+    assert (store.path.parent / second["backup"]).is_file()
+    withdrawn = builder.publish_user_fit(identifier, user_fits_path=store.path, actor="user:root", action="withdraw", notes="Wrong convention")
+    assert withdrawn["status"] == "revoked"
+    assert not any(item.get("user_fit_id") == identifier for item in json.loads((runtime / first["runtime_file"]).read_text())["interactions"])
+
+
 def test_review_permissions_history_versioning_and_direct_publish(clients, fitted):
     root, guest = clients
     submitted = guest.post(

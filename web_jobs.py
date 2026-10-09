@@ -461,6 +461,11 @@ def calculate_fit_publish(payload, progress, simulators=None):
     return result
 
 
+def calculate_fit_parameter_preview(payload, progress, simulators=None):
+    from thermodynamics_models.manual_parameters import preview_manual_parameters
+    return preview_manual_parameters(payload, progress)
+
+
 def calculate_groups(payload, progress, simulators=None):
     from chemical_properties import get_database
     from unifac import get_unifac_groups, parse_smiles_to_unifac, RDKIT_AVAILABLE
@@ -573,6 +578,7 @@ def run_calculation(store, identifier, simulators):
             "fit": calculate_fit,
             "fit_prefill": calculate_fit_prefill,
             "fit_publish": calculate_fit_publish,
+            "fit_parameter_preview": calculate_fit_parameter_preview,
         }[kind]
         output = calculate(json.loads(raw_payload), progress, simulators)
         if account():

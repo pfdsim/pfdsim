@@ -3,6 +3,8 @@ import { initializeLibrary, queueCloud } from "./persistence.js";
 import { appendObservations, repairObservationIds, mergeSigma } from "./fitting-observations.js";
 import { renderObjectivePlots } from "./fitting-plots.js";
 import { fittingSessionLibrary, fittingSessionFromResult } from "./fitting-sessions.js";
+import { table, labeled } from "./fitting-ui.js";
+import { adminPublication } from "./fitting-admin.js";
 
 const draftKey = "pfdsim.fitting.v1";
 let catalog, observations = [], inputDirty = true, result = null, jobId = null, activeJob = null;
@@ -175,13 +177,6 @@ function readVaporParameters() {
     fit: group.querySelector('[data-vapor="fit"]').checked,
     ...Object.fromEntries(["value", "lower", "upper"].map(key => [key, Number(group.querySelector(`[data-vapor="${key}"]`).value)])),
   }));
-}
-function table(headers, rows) {
-  const node = element("table"), head = element("thead"), tr = element("tr");
-  for (const header of headers) tr.append(element("th", { scope: "col" }, header));
-  head.append(tr); node.append(head); const body = element("tbody");
-  for (const cells of rows) { const row = element("tr"); for (const cell of cells) { const td = element("td"); td.append(cell instanceof Node ? cell : document.createTextNode(String(cell))); row.append(td); } body.append(row); }
-  node.append(body); return node;
 }
 function missingValue(value) {
   return catalog.missing_tokens.includes(String(value ?? "").trim().toLowerCase().replace(/\s+/g, " "));
@@ -365,9 +360,6 @@ function readPsat(includePsat = true) {
   });
   const component_properties = psatValues.map(state => Object.fromEntries(["MW", "Tc_K", "Pc_bar", "Tb_K", "omega", "Vc_cm3_mol","Zc","dipole_D","hoc_eta","Rprime_A","smiles"].filter(key => String(state[key] ?? "").trim()).map(key => [key, key==="smiles" ? state[key] : Number(state[key])])));
   return { ...(psat.some(Boolean) ? { psat } : {}), ...(component_properties.some(item => Object.keys(item).length) ? { component_properties } : {}) };
-}
-function labeled(label, control) {
-  const wrapper = element("label", { class: "field" }); wrapper.append(element("span", { class: "field-label" }, label), control); return wrapper;
 }
 function choose(items, value, id) {
   const select = element("select", id ? { id } : {});
@@ -876,71 +868,6 @@ async function importPfd(file, destination) {
 function currentSource() {
   return { citation: $("fit-source").value.trim(), url: $("fit-source-url").value.trim(), doi: $("fit-source-doi").value.trim(), notes: $("fit-source-notes").value.trim() };
 }
-async function adminPublication(data, path = "/api/fitting/admin/publish") {
-  const queued = await api(path, data);
-  const job = await pollJob(queued.job_id, updated => $("fit-admin-status").textContent = updated.progress.at(-1) || updated.status);
-  if (job.status !== "completed") throw new Error(job.error || `Publication ${job.status}`);
-  $("fit-admin-status").textContent = `${job.output.status}: ${job.output.id}. New simulation packages use the rebuilt table.`;
-  await refreshAdmin();
-}
-async function reviewFit(id,loadedSubmission=null) {
-  const submission=loadedSubmission||(await api(`/api/fitting/admin/submissions/${encodeURIComponent(id)}`)).submission;
-  const box = element("div");
-  box.append(element("h3", {}, `${submission.result.component_names.join(" / ")} · ${submission.model}`));
-  box.append(element("p", {}, `Status: ${submission.status}. Source: ${submission.source.citation}`));
-  const psatRecords = (submission.result.property_provenance || []).filter(record => record.property === "Psat");
-  if (psatRecords.length || submission.result.request.psat?.some(Boolean)) {
-    box.append(element("h4", {}, "Fitting saturation-pressure basis"));
-    box.append(element("p", {}, "Supplied Psat corrections and extended temperature ranges are retained for review and do not block publication. Publication activates liquid activity parameters; simulations use their own saturation-pressure and vapor definitions."));
-    if (psatRecords.length) box.append(table(["Component", "Temperature (K)", "Psat (bar)", "Source", "Validity and assessment"], psatRecords.map(record => {
-      const index = submission.result.components.indexOf(record.component);
-      return [submission.result.component_names[index] || record.component, formatNumber(record.T_K), formatNumber(record.value), record.source, record.notes];
-    })));
-  }
-  const status=element("p",{id:"fit-admin-review-status",role:"status","aria-live":"polite"},submission.status==="approved"?"Approved and saved. This fit remains in the review queue; Publish to runtime activates it in the shared tables.":`Current status: ${submission.status}.`);
-  const details = element("pre"); details.textContent = JSON.stringify({ source: submission.source, objective_scores: submission.result.objectives, weights: submission.result.request.weights, parameters: submission.result.parameters, fitting_psat_definitions: submission.result.request.psat, property_provenance: submission.result.property_provenance, warnings: submission.result.warnings, cross_validation: submission.result.cross_validation, review_history: submission.events }, null, 2); box.append(details);
-  const notes = element("textarea", { rows: 3, id: "fit-admin-review-notes", placeholder: "Optional review notes" }); notes.value=submission.review_notes||"";box.append(labeled("Review notes (optional)", notes),status);
-  const actions = element("div", { class: "form-actions" });
-  const artifact = element("button", { type: "button" }, "Download full provenance"); artifact.onclick = () => download(JSON.stringify(submission, null, 2), `activity-fit-${id}.json`, "application/json"); actions.append(artifact);
-  const report=element("button",{type:"button"},"Download fit result");report.onclick=()=>download(JSON.stringify(submission.result,null,2),`fit-result-${id}.json`,"application/json");actions.append(report);
-  const pfd=element("button",{type:"button"},"Download fitted PFD");pfd.onclick=guarded(async()=>{const exported=await api("/api/fitting/export",{result:submission.result});download(exported.pfd_text,`fitted-mixture-${id}.pfd`);});actions.append(pfd);
-  const view=element("button",{type:"button"},"View fit assessment");view.onclick=guarded(async()=>{
-    if(await sessionLibrary.openReviewedFit(fittingSessionFromResult(submission.result, submission.source)))$("fit-results").scrollIntoView({behavior:"smooth",block:"start"});
-  });actions.append(view);
-  if (!["published", "publishing"].includes(submission.status)) {
-    for (const [action, label] of [["approve", "Approve"], ["reject", "Reject"]]) {
-      if(action==="approve"&&submission.status==="approved")continue;
-      const button = element("button", { type: "button" }, label);
-      button.onclick = async()=>{
-        for(const control of actions.querySelectorAll("button"))control.disabled=true;
-        status.className="field-help";status.textContent=action==="approve"?"Approving and saving this fit…":"Saving the review decision…";
-        try{
-          const response=await api("/api/fitting/admin/review",{id,action,notes:notes.value,version:submission.version});
-          await reviewFit(id,response.submission);
-          $("fit-admin-review-status").scrollIntoView({block:"nearest"});
-          $("fit-admin-status").textContent=`${response.submission.result.component_names.join(" / ")} · ${response.submission.status}. Stored in the review queue${action==="approve"?"; publish separately to activate runtime parameters":""}.`;
-          try{await refreshAdmin();}catch(error){toast(`The decision was saved, but the queue could not refresh: ${error.message}`,true);}
-        }catch(error){status.className="fit-error";status.textContent=error.message;status.scrollIntoView({block:"nearest"});for(const control of actions.querySelectorAll("button"))control.disabled=false;}
-      };actions.append(button);
-    }
-  }
-  if (["approved", "published", "publishing"].includes(submission.status)) {
-    const publish = element("button", { type: "button", class: "primary" }, submission.status === "published" ? "Rebuild published fit" : submission.status === "publishing" ? "Recover interrupted publication" : "Publish to runtime");
-    publish.onclick = guarded(async () => { $("modal").close(); await adminPublication({ id, notes: notes.value }); }); actions.append(publish);
-  }
-  if (submission.status === "published") {
-    const withdraw = element("button", { type: "button" }, "Withdraw and rebuild"); withdraw.onclick = guarded(async () => { if (!notes.value.trim()) throw new Error("Explain the withdrawal in review notes."); $("modal").close(); await adminPublication({ id, notes: notes.value }, "/api/fitting/admin/withdraw"); }); actions.append(withdraw);
-  }
-  box.append(actions); modal("Review activity fit", box);
-}
-async function refreshAdmin() {
-  const { submissions } = await api("/api/fitting/admin/submissions");
-  $("fit-admin-list").replaceChildren(table(["Mixture", "Model", "Objectives", "Status", "Source", ""], submissions.map(item => {
-    const button = element("button", { type: "button" }, "Review"); button.onclick = guarded(() => reviewFit(item.id));
-    return [item.component_names?.length?item.component_names.join(" / "):`${item.cas1 || "unresolved"} / ${item.cas2 || "unresolved"}`,item.method||item.model,(item.objectives||[]).join(" + "),item.status,item.source.citation,button];
-  })));
-}
-
 function assignFitState(saved){
   saved=structuredClone(saved);
   for(const [name,value] of Object.entries(saved.controls||{})){const control=$(`fit-${name}`);if(control){if(control.type==="checkbox")control.checked=value;else control.value=value;}}
@@ -1083,16 +1010,22 @@ async function initialize() {
     const response = await api("/api/fitting/submit", { job_id: jobId, result, source });
     $("fit-submission-status").textContent = `Submitted for review · ${response.submission.id}`;
   });
-  $("fit-admin-refresh").onclick = guarded(refreshAdmin);
-  $("fit-admin-direct").onclick = guarded(async () => { await adminPublication({ result, source: currentSource(), notes: "Direct root administrator publication" }); });
+  $("fit-admin-direct").onclick = guarded(async () => { await adminPublication({ result, source: currentSource(), notes: "Direct root administrator publication" }, "/api/fitting/admin/publish", "fit-submission-status"); });
   const account = await getSession();
-  $("fit-admin").hidden = !account.user?.is_admin;
+  $("fit-publishing-link").hidden = !(account.user?.is_admin && account.user.username.toLowerCase() === "root");
   $("fit-admin-direct").hidden = !account.user?.is_admin;
-  if (account.user?.is_admin) await refreshAdmin();
   await initializeLibrary(); libraryOptions();
   if (saved?.activeJob) {
     const response = await api(`/api/jobs/${encodeURIComponent(saved.activeJob)}`);
     await followJob(saved.activeJob, response.job.kind);
+  }
+  const reviewId = new URLSearchParams(location.search).get("review");
+  if (reviewId && account.user?.is_admin) {
+    const { submission } = await api(`/api/fitting/admin/submissions/${encodeURIComponent(reviewId)}`);
+    if (await sessionLibrary.openReviewedFit(fittingSessionFromResult(submission.result, submission.source))) {
+      const url = new URL(location.href); url.searchParams.delete("review"); history.replaceState(null, "", url);
+      $("fit-results").scrollIntoView({block:"start"});
+    }
   }
 }
 guarded(initialize)();

@@ -386,7 +386,7 @@ class ActivityFitStore:
                     "user_fit_id": full["id"],
                     "comment": full["review_notes"]
                     or "Administrator-published experimental fit",
-                    "fit_status": "admin_published_user_fit",
+                    "fit_status": "admin_published_manual_parameters" if result.get("submission_origin") == "manual_parameters" else "admin_published_user_fit",
                     "fit_vapor_treatment": {"type": result["request"]["vapor"]},
                     "fit_provenance": {
                         "source": full["source"],
@@ -394,6 +394,7 @@ class ActivityFitStore:
                         "reviewed_by": full["reviewed_by"],
                         "created": full["created"],
                         "model": result["method"],
+                        **({"origin": "manual_parameters", "reported_fit": result["reported_fit"], "manual_input": result["manual_input"]} if result.get("submission_origin") == "manual_parameters" else {}),
                     },
                 }
             )

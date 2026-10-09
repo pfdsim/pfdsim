@@ -232,7 +232,9 @@ def main():
         setup_token = (REPORT / "jobs/root-setup-token").read_text().strip()
         page.locator('#modal input[name="setup_token"]').fill(setup_token)
         page.locator('#modal form button[type="submit"]').click()
-        expect(page.locator("#fit-admin")).to_be_visible(timeout=15000)
+        expect(page.locator("#fit-publishing-link")).to_be_visible(timeout=15000)
+        page.locator("#fit-publishing-link").click()
+        expect(page.locator("#fit-admin")).to_be_visible()
         expect(page.locator("#fit-admin-list tbody tr")).to_have_count(1)
         page.locator("#fit-admin-list").get_by_role(
             "button", name="Review", exact=True
@@ -247,7 +249,8 @@ def main():
         expect(page.locator("#modal").get_by_role("button",name="Download fit result",exact=True)).to_be_visible()
         expect(page.locator("#fit-admin-list")).to_contain_text("Ethanol")
         page.locator("#modal-close").click()
-        page.locator("#fit-admin-direct").click()
+        page.locator("#fit-admin-list").get_by_role("button", name="Review", exact=True).click()
+        page.locator("#modal").get_by_role("button", name="Publish to runtime", exact=True).click()
         expect(page.locator("#fit-admin-status")).to_contain_text(
             "published:", timeout=120000
         )
@@ -257,6 +260,7 @@ def main():
             ]["user_activity_fit_records"]
             == 1
         )
+        page.goto(address + "/parameter-fitting")
         page.screenshot(path=REPORT / "fitting-desktop.png", full_page=True)
         page.set_viewport_size({"width": 390, "height": 844})
         page.screenshot(path=REPORT / "fitting-mobile.png", full_page=True)
