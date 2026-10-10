@@ -2143,6 +2143,7 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
     """
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
+        self._newton_globalization()
         _condenser_thermal_specification(self)
         if not inlets:
             raise UnitOperationError(f"RigorousDistillation '{self.unit_id}' has no inlet stream")
@@ -2602,7 +2603,9 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
                 'bottoms_flow': B,
                 'mesh_residual': float(solution['residual_norm']),
                 'component_balance_error': float(component_balance_error),
-                'solver': 'sparse_damped_newton',
+                'solver': ('sparse_dogleg_newton' if self._newton_globalization() == 'dogleg'
+                           else 'sparse_damped_newton'),
+                'newton_globalization': self._newton_globalization(),
                 'initializer': str(initial.get('initializer', 'unknown')),
                 'jacobian_method': str(solution.get('jacobian_method', 'colored_finite_difference')),
                 'jacobian_fallback': bool(jacobian_fallback),
@@ -3380,7 +3383,9 @@ class RigorousDistillation(EquilibriumStageColumnMixin, UnitOperation):
             'bottoms_flow': float(B),
             'mesh_residual': float(solution['residual_norm']),
             'component_balance_error': float(component_balance_error),
-            'solver': 'sparse_damped_newton_vlle_active_set',
+            'solver': ('sparse_dogleg_newton_vlle_active_set' if self._newton_globalization() == 'dogleg'
+                       else 'sparse_damped_newton_vlle_active_set'),
+            'newton_globalization': self._newton_globalization(),
             'initializer': initializer_label,
             'vlle_seed_requested': requested_seed_mode,
             'vlle_homogeneous_initializer': homogeneous_initializer,
@@ -5563,6 +5568,7 @@ class CMODistillation(RigorousDistillation):
     """Multicomponent CMO MES column with fixed section traffic."""
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
+        self._newton_globalization()
         import numpy as np
         _condenser_thermal_specification(self, supports_subcooling=False)
         _liquid_routing_specification(self, supports_phase_routing=False)
@@ -6367,7 +6373,9 @@ class CMODistillation(RigorousDistillation):
                 ],
                 'mes_residual': residual_norm,
                 'component_balance_error': component_balance_error,
-                'solver': 'sparse_damped_newton_cmo_mes',
+                'solver': ('sparse_dogleg_newton_cmo_mes' if self._newton_globalization() == 'dogleg'
+                           else 'sparse_damped_newton_cmo_mes'),
+                'newton_globalization': self._newton_globalization(),
                 'jacobian_method': 'cmo_analytic_local_thermo',
                 'solver_iterations': int(solution['iterations']),
                 'function_evaluations': int(solution['function_evaluations']),

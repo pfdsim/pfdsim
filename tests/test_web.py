@@ -60,6 +60,15 @@ def test_templates_follow_current_registry(client):
         )
 
 
+def test_column_globalization_choices_reach_editor_templates(client):
+    templates = client.get('/api/unit-templates').get_json()
+    for name in ('RigorousDistillation', 'CMODistillation', 'RigorousExtractor',
+                 'RigorousAbsorber', 'RigorousStripper'):
+        setting = next(s for s in templates[name]['settings'] if s['name'] == 'newton_globalization')
+        assert setting['values'] == ['line_search', 'dogleg']
+        assert setting['section'] == 'solver'
+
+
 def test_metadata_json_preserves_all_fields():
     pfd = parse_pfd(
         "PROCESS: Round trip\nALLOW_COMPUTATION: false\nONLINE_LOOKUP: false\n"

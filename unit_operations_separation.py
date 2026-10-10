@@ -1167,6 +1167,7 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
     """
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
+        globalization = self._newton_globalization()
         if not inlets:
             raise UnitOperationError(
                 f"RigorousLiquidLiquidExtractor '{self.unit_id}' needs feed and solvent"
@@ -1206,6 +1207,34 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             raise UnitOperationError(
                 f"RigorousLiquidLiquidExtractor '{self.unit_id}' unknown mode '{mode}'. "
                 "Use isothermal or adiabatic."
+            )
+
+        solver_algorithm = str(
+            self.get_param('solver_algorithm', self.get_param('algorithm', 'equation_oriented'))
+        ).strip().lower()
+        solver_algorithm = {
+            'mesh': 'equation_oriented',
+            'eo': 'equation_oriented',
+            'equation-oriented': 'equation_oriented',
+            'equation_based': 'equation_oriented',
+            'equation-based': 'equation_oriented',
+            'sparse_newton': 'equation_oriented',
+            'direct': 'equation_oriented',
+            'broyden': 'split_sweep',
+            'inverse_broyden': 'split_sweep',
+            'split': 'split_sweep',
+            'nested_lle': 'split_sweep',
+            'stage_sweep': 'split_sweep',
+        }.get(solver_algorithm, solver_algorithm)
+        if solver_algorithm not in ('equation_oriented', 'split_sweep'):
+            raise UnitOperationError(
+                f"RigorousLiquidLiquidExtractor '{self.unit_id}' unknown solver_algorithm "
+                f"'{solver_algorithm}'. Use split_sweep or equation_oriented."
+            )
+        if globalization == 'dogleg' and solver_algorithm != 'equation_oriented':
+            raise UnitOperationError(
+                f"RigorousLiquidLiquidExtractor '{self.unit_id}' dogleg requires "
+                "solver_algorithm=equation_oriented"
             )
 
         comps = []
@@ -1253,23 +1282,6 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
         score_2 = sum(x2.get(c, 0.0) for c in solvent_keys)
         x_ext_eq, x_raf_eq = (dense(x1), dense(x2)) if score_1 >= score_2 else (dense(x2), dense(x1))
 
-        solver_algorithm = str(
-            self.get_param('solver_algorithm', self.get_param('algorithm', 'equation_oriented'))
-        ).strip().lower()
-        solver_algorithm = {
-            'mesh': 'equation_oriented',
-            'eo': 'equation_oriented',
-            'equation-oriented': 'equation_oriented',
-            'equation_based': 'equation_oriented',
-            'equation-based': 'equation_oriented',
-            'sparse_newton': 'equation_oriented',
-            'direct': 'equation_oriented',
-            'broyden': 'split_sweep',
-            'inverse_broyden': 'split_sweep',
-            'split': 'split_sweep',
-            'nested_lle': 'split_sweep',
-            'stage_sweep': 'split_sweep',
-        }.get(solver_algorithm, solver_algorithm)
         if solver_algorithm == 'equation_oriented':
             result = self._solve_equation_oriented(
                 feed, solvent, N, T, P, mode, comps, feed_z, solvent_z,
@@ -1277,12 +1289,6 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             )
             self._store_recycle_profile(result.performance)
             return result
-        if solver_algorithm != 'split_sweep':
-            raise UnitOperationError(
-                f"RigorousLiquidLiquidExtractor '{self.unit_id}' unknown solver_algorithm "
-                f"'{solver_algorithm}'. Use split_sweep or equation_oriented."
-            )
-
         flow_scale = max(total_F, 1.0)
         lle_tolerance = float(self.get_param('lle_tolerance', 1e-5))
         max_iterations = int(self.get_param('max_iterations', self.get_param('max_evaluations', 200)))
@@ -2694,7 +2700,9 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             performance={
                 'N_stages': N,
                 'mode': mode,
-                'solver': 'sparse_damped_newton',
+                'solver': ('sparse_dogleg_newton' if self._newton_globalization() == 'dogleg'
+                           else 'sparse_damped_newton'),
+                'newton_globalization': self._newton_globalization(),
                 'solver_algorithm': 'equation_oriented',
                 'initializer': initializer_used,
                 'requested_initializer': requested_initializer,
@@ -2811,187 +2819,19 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             residuals.append(H_out - H_raf_in - H_ext_in)
         return residuals
 
+    _newton_globalization = EquilibriumStageColumnMixin._newton_globalization
+    _color_jacobian_columns = EquilibriumStageColumnMixin._color_jacobian_columns
+    _finite_difference_jacobian = EquilibriumStageColumnMixin._finite_difference_jacobian
+
     def _sparse_newton_solve(self, residual, sparsity, x0, options: dict,
-                             jacobian=None) -> dict:
-        quality_context = getattr(getattr(self, 'thermo', None), 'quality_context', None)
-        if (
-            quality_context is not None
-            and not getattr(self, '_quality_solver_aux_context_active', False)
-        ):
-            self._quality_solver_aux_context_active = True
-            try:
-                with quality_context(phase='solver_iteration', affects_result=False):
-                    return self._sparse_newton_solve(
-                        residual, sparsity, x0, options, jacobian=jacobian
-                    )
-            finally:
-                self._quality_solver_aux_context_active = False
-
-        import numpy as np
-        from scipy.sparse import csc_matrix, eye
-        from scipy.sparse.linalg import MatrixRankWarning, spsolve
-        import warnings as py_warnings
-
-        x = np.array(x0, dtype=float)
-        f = residual(x)
-        if not np.all(np.isfinite(f)):
-            raise UnitOperationError(
-                f"RigorousLiquidLiquidExtractor '{self.unit_id}' generated non-finite initial residuals"
-            )
-
-        tolerance = options['mesh_tolerance']
-        acceptable_tolerance = max(options.get('acceptable_mesh_residual', tolerance), tolerance)
-        max_iterations = options['max_iterations']
-        max_jacobians = options['max_jacobian_evaluations']
-        line_search_steps = options['line_search_steps']
-        rel_step = options['finite_difference_rel_step']
-
-        groups = self._color_jacobian_columns(sparsity)
-        function_evaluations = 1
-        jacobian_evaluations = 0
-        used_model_jacobian = False
-        message = "maximum iterations reached"
-        last_iteration = 0
-
-        for iteration in range(1, max_iterations + 1):
-            last_iteration = iteration
-            residual_norm = float(np.linalg.norm(f, ord=np.inf))
-            if residual_norm < tolerance:
-                return {
-                    'success': True,
-                    'x': x,
-                    'residual_norm': residual_norm,
-                    'iterations': iteration - 1,
-                    'function_evaluations': function_evaluations,
-                    'jacobian_evaluations': jacobian_evaluations,
-                    'jacobian_method': (
-                        'semi_analytic_flow'
-                        if used_model_jacobian else 'colored_finite_difference'
-                    ),
-                    'message': 'converged',
-                }
-            if jacobian_evaluations >= max_jacobians:
-                message = "maximum Jacobian evaluations reached"
-                break
-
-            jacobian_result = jacobian(x, f, rel_step) if jacobian is not None else None
-            if jacobian_result is None:
-                J, evals = self._finite_difference_jacobian(
-                    residual, x, f, sparsity, groups, rel_step
-                )
-            else:
-                J, evals = jacobian_result
-                used_model_jacobian = True
-            function_evaluations += evals
-            jacobian_evaluations += 1
-
-            dx = None
-            for shift in (0.0, 1e-10, 1e-8, 1e-6, 1e-4, 1e-2):
-                try:
-                    with py_warnings.catch_warnings():
-                        py_warnings.simplefilter('error', MatrixRankWarning)
-                        matrix = csc_matrix(J)
-                        if shift:
-                            matrix = matrix + shift * eye(matrix.shape[0], matrix.shape[1], format='csc')
-                        trial_dx = spsolve(matrix, -f)
-                    if np.all(np.isfinite(trial_dx)):
-                        dx = np.array(trial_dx, dtype=float)
-                        break
-                except Exception:
-                    continue
-            if dx is None:
-                message = "linear Newton system could not be solved"
-                break
-
-            max_abs_step = float(np.max(np.abs(dx))) if dx.size else 0.0
-            step_limit = float(self.get_param('newton_step_limit', 8.0))
-            if max_abs_step > step_limit:
-                dx *= step_limit / max_abs_step
-
-            current_merit = 0.5 * float(np.dot(f, f))
-            accepted = False
-            best_x = x
-            best_f = f
-            best_merit = current_merit
-            for attempt in range(line_search_steps):
-                alpha = 0.5 ** attempt
-                x_trial = x + alpha * dx
-                f_trial = residual(x_trial)
-                function_evaluations += 1
-                if not np.all(np.isfinite(f_trial)):
-                    continue
-                trial_merit = 0.5 * float(np.dot(f_trial, f_trial))
-                if trial_merit < best_merit:
-                    best_merit = trial_merit
-                    best_x = x_trial
-                    best_f = f_trial
-                if trial_merit <= current_merit * (1.0 - 1e-4 * alpha):
-                    x = x_trial
-                    f = f_trial
-                    accepted = True
-                    break
-            if not accepted:
-                if best_merit < current_merit:
-                    x = best_x
-                    f = best_f
-                else:
-                    message = "line search could not reduce the MESH residual"
-                    break
-
-        residual_norm = float(np.linalg.norm(f, ord=np.inf))
-        return {
-            'success': residual_norm < acceptable_tolerance,
-            'x': x,
-            'residual_norm': residual_norm,
-            'iterations': last_iteration,
-            'function_evaluations': function_evaluations,
-            'jacobian_evaluations': jacobian_evaluations,
-            'jacobian_method': (
-                'semi_analytic_flow'
-                if used_model_jacobian else 'colored_finite_difference'
-            ),
-            'message': message,
-        }
-
-    def _color_jacobian_columns(self, sparsity):
-        column_rows = [
-            set(sparsity[:, col].nonzero()[0].tolist())
-            for col in range(sparsity.shape[1])
-        ]
-        groups: list[list[int]] = []
-        group_rows: list[set[int]] = []
-        for col, rows in enumerate(column_rows):
-            for index, used_rows in enumerate(group_rows):
-                if rows.isdisjoint(used_rows):
-                    groups[index].append(col)
-                    used_rows.update(rows)
-                    break
-            else:
-                groups.append([col])
-                group_rows.append(set(rows))
-        return groups
-
-    def _finite_difference_jacobian(self, residual, x, f0, sparsity, groups, rel_step: float):
-        import numpy as np
-
-        J = FixedPatternCSR(sparsity).empty()
-        evaluations = 0
-        column_rows = [
-            sparsity[:, col].nonzero()[0]
-            for col in range(sparsity.shape[1])
-        ]
-        for group in groups:
-            step = np.zeros_like(x)
-            for col in group:
-                step[col] = rel_step * max(abs(x[col]), 1.0)
-            f_step = residual(x + step)
-            evaluations += 1
-            diff = f_step - f0
-            for col in group:
-                rows = column_rows[col]
-                if rows.size:
-                    J.set_column(rows, col, diff[rows] / step[col])
-        return J.tocsr(), evaluations
+                             jacobian=None, step_event=None) -> dict:
+        # Keep the extractor's existing configurable line-search step limit;
+        # iteration, Jacobian and dogleg behavior share the column engine.
+        return EquilibriumStageColumnMixin._sparse_newton_solve(
+            self, residual, sparsity, x0,
+            dict(options, newton_step_limit=self.get_param('newton_step_limit', 8.0)),
+            jacobian=jacobian, step_event=step_event,
+        )
 
 
 class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
@@ -3003,6 +2843,7 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
     """
 
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
+        self._newton_globalization()
         column_name = type(self).__name__
 
         if not inlets:
@@ -3316,7 +3157,9 @@ class RigorousAbsorber(EquilibriumStageColumnMixin, UnitOperation):
                     float(-value) for value in stage_energy_residuals
                 ],
                 'duty_kW': float(heat_duty / 3600.0),
-                'solver': 'sparse_damped_newton',
+                'solver': ('sparse_dogleg_newton' if self._newton_globalization() == 'dogleg'
+                           else 'sparse_damped_newton'),
+                'newton_globalization': self._newton_globalization(),
                 'initializer': selected_initializer,
                 'initializer_order': tuple(initializer_order),
                 'initializer_attempts': attempts,

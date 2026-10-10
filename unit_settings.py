@@ -19,6 +19,7 @@ else:
     from dof_analyzer import get_unit_info
 
 LABELS = {
+    "newton_globalization": "Newton step strategy",
     "n_stages": "Number of stages",
     "feed_stage": "Feed stage",
     "feed_stages": "Feed stage assignments",
@@ -129,6 +130,23 @@ def unit_setting_schema(unit_type):
                     and node.func.value.id == "self"
                 ):
                     candidate = getattr(cls, node.func.attr, None)
+                elif (
+                    isinstance(node.func, ast.Attribute)
+                    and isinstance(node.func.value, ast.Call)
+                    and isinstance(node.func.value.func, ast.Name)
+                    and node.func.value.func.id == "super"
+                    and not node.func.value.args
+                ):
+                    # Overrides such as RigorousStripper.solve delegate their
+                    # numerical settings to a parent implementation.
+                    owner = next((base for base in cls.__mro__
+                                  if function.__name__ in base.__dict__
+                                  and inspect.unwrap(base.__dict__[function.__name__])
+                                  is inspect.unwrap(function)), None)
+                    if owner is not None:
+                        parents = cls.__mro__[cls.__mro__.index(owner) + 1:]
+                        candidate = next((getattr(base, node.func.attr) for base in parents
+                                          if inspect.isfunction(getattr(base, node.func.attr, None))), None)
                 elif isinstance(node.func, ast.Name):
                     candidate = getattr(function, "__globals__", {}).get(node.func.id)
                 if inspect.isfunction(candidate) and candidate not in seen:

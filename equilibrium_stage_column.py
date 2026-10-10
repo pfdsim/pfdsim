@@ -27,8 +27,51 @@ else:
     from stage_efficiency import VaporStageEfficiencies
 
 
+def _dogleg_step(newton, gradient, jacobian, radius):
+    """Minimize along the Cauchy/Newton dogleg inside an unscaled 2-norm ball.
+
+    A diagonally shifted Newton solve need not minimize the original quadratic.
+    Discard such an endpoint when it predicts no decrease; retain Cauchy descent.
+    """
+    import numpy as np
+
+    if newton is not None:
+        projected = jacobian @ newton
+        predicted = -float(gradient @ newton) - 0.5 * float(projected @ projected)
+        if not math.isfinite(predicted) or predicted <= 0.0:
+            newton = None
+    if newton is not None and np.linalg.norm(newton) <= radius:
+        if float(gradient @ newton) < 0.0:
+            return newton
+    squared_gradient = float(gradient @ gradient)
+    projected = jacobian @ gradient
+    curvature = float(projected @ projected)
+    if squared_gradient <= 0.0 or not math.isfinite(squared_gradient) or curvature <= 0.0:
+        return None
+    cauchy = -(squared_gradient / curvature) * gradient
+    if np.linalg.norm(cauchy) >= radius:
+        return -(radius / math.sqrt(squared_gradient)) * gradient
+    if newton is None or float(gradient @ newton) >= 0.0:
+        return cauchy
+    difference = newton - cauchy
+    a = float(difference @ difference)
+    b = float(cauchy @ difference)
+    c = float(cauchy @ cauchy) - radius**2
+    tau = (-b + math.sqrt(max(b*b - a*c, 0.0))) / a
+    return cauchy + tau * difference
+
+
 class EquilibriumStageColumnMixin:
     """Reusable equilibrium-stage column solver helpers."""
+
+    def _newton_globalization(self):
+        method = str(self.get_param('newton_globalization', 'line_search')).strip().lower()
+        if method not in ('line_search', 'dogleg'):
+            raise UnitOperationError(
+                f"{type(self).__name__} '{self.unit_id}' newton_globalization must be "
+                f"line_search or dogleg, got {method!r}"
+            )
+        return method
 
     def _component_order(self, inlet: StreamState) -> list[str]:
         threshold = float(self.get_param('component_solve_threshold', 1e-8))
@@ -1116,6 +1159,7 @@ class EquilibriumStageColumnMixin:
 
     def _sparse_newton_solve(self, residual, sparsity, x0, options: dict,
                              jacobian=None, step_event=None) -> dict:
+        globalization = self._newton_globalization()
         quality_context = getattr(getattr(self, 'thermo', None), 'quality_context', None)
         if (
             quality_context is not None
@@ -1144,7 +1188,7 @@ class EquilibriumStageColumnMixin:
         f = residual(x)
         if not np.all(np.isfinite(f)):
             raise UnitOperationError(
-                f"RigorousDistillation '{self.unit_id}' generated non-finite initial residuals"
+                f"{type(self).__name__} '{self.unit_id}' generated non-finite initial residuals"
             )
         tolerance = options['mesh_tolerance']
         acceptable_tolerance = max(options.get('acceptable_mesh_residual', tolerance), tolerance)
@@ -1166,6 +1210,9 @@ class EquilibriumStageColumnMixin:
         last_iteration = 0
         stall_best_residual = math.inf
         stall_count = 0
+        rejected_steps = 0
+        radius = math.sqrt(x.size)
+        maximum_radius = 8.0 * radius
 
         for iteration in range(1, max_iterations + 1):
             last_iteration = iteration
@@ -1183,6 +1230,8 @@ class EquilibriumStageColumnMixin:
                         if used_model_jacobian else 'colored_finite_difference'
                     ),
                     'message': 'converged',
+                    'newton_globalization': globalization,
+                    'rejected_steps': rejected_steps,
                 }
             if stall_iterations:
                 if not math.isfinite(stall_best_residual):
@@ -1252,11 +1301,11 @@ class EquilibriumStageColumnMixin:
                         break
                 except Exception:
                     continue
-            if dx is None:
+            if dx is None and globalization == 'line_search':
                 message = "linear Newton system could not be solved"
                 break
 
-            if step_event is not None:
+            if step_event is not None and dx is not None:
                 try:
                     step_event(x, f, dx)
                 except Exception as exc:
@@ -1269,9 +1318,60 @@ class EquilibriumStageColumnMixin:
                         )
                     raise
 
+            if globalization == 'dogleg':
+                if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+                    from .thermodynamics_models.common import ThermodynamicsError
+                else:
+                    from thermodynamics_models.common import ThermodynamicsError
+                gradient = np.asarray(J.T @ f).ravel()
+                merit = 0.5 * float(f @ f)
+                accepted = False
+                message = 'trust region could not reduce the MESH residual'
+                # Independent of line_search_steps: rejected trials reuse J.
+                for _ in range(16):
+                    step = _dogleg_step(dx, gradient, J, radius)
+                    if step is None:
+                        message = 'zero or invalid least-squares gradient'
+                        break
+                    projected = J @ step
+                    predicted = -float(gradient @ step) - 0.5 * float(projected @ projected)
+                    if predicted <= 0.0 or not math.isfinite(predicted):
+                        message = 'nonpositive trust-region model reduction'
+                        break
+                    trial_x = x + step
+                    function_evaluations += 1
+                    try:
+                        trial_f = residual(trial_x)
+                    except ThermodynamicsError:
+                        # Initial/Jacobian errors propagate; a trial can leave
+                        # the physical property domain and contract the radius.
+                        trial_f = np.full_like(f, np.nan)
+                    ratio = (
+                        (merit - 0.5 * float(trial_f @ trial_f)) / predicted
+                        if np.all(np.isfinite(trial_f)) else -math.inf
+                    )
+                    step_norm = float(np.linalg.norm(step))
+                    if ratio < 0.25:
+                        radius = 0.25 * step_norm
+                    elif ratio > 0.75 and step_norm > 0.95 * radius:
+                        radius = min(2.0 * radius, maximum_radius)
+                    if ratio > 0.1:
+                        x, f = trial_x, trial_f
+                        accepted = True
+                        break
+                    rejected_steps += 1
+                    if radius < 1e-12:
+                        message = 'trust-region radius underflow'
+                        break
+                if not accepted:
+                    break
+                message = 'maximum iterations reached'
+                continue
+
             max_abs_step = float(np.max(np.abs(dx))) if dx.size else 0.0
-            if max_abs_step > 8.0:
-                dx *= 8.0 / max_abs_step
+            step_limit = float(options.get('newton_step_limit', 8.0))
+            if max_abs_step > step_limit:
+                dx *= step_limit / max_abs_step
 
             current_merit = 0.5 * float(np.dot(f, f))
             accepted = False
@@ -1284,6 +1384,7 @@ class EquilibriumStageColumnMixin:
                 f_trial = residual(x_trial)
                 function_evaluations += 1
                 if not np.all(np.isfinite(f_trial)):
+                    rejected_steps += 1
                     continue
                 trial_merit = 0.5 * float(np.dot(f_trial, f_trial))
                 if trial_merit < best_merit:
@@ -1295,6 +1396,7 @@ class EquilibriumStageColumnMixin:
                     f = f_trial
                     accepted = True
                     break
+                rejected_steps += 1
             if not accepted:
                 if best_merit < current_merit:
                     x = best_x
@@ -1316,6 +1418,8 @@ class EquilibriumStageColumnMixin:
                 if used_model_jacobian else 'colored_finite_difference'
             ),
             'message': message,
+            'newton_globalization': globalization,
+            'rejected_steps': rejected_steps,
         }
 
     def _color_jacobian_columns(self, sparsity):

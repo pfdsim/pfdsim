@@ -2814,6 +2814,34 @@ not support side draws or phase-selective overhead withdrawal.
   local assembly, default `200` MB. Larger columns use the sparse global
   strategy.
 
+`RigorousDistillation`, `CMODistillation`, `RigorousExtractor`,
+`RigorousAbsorber`, and `RigorousStripper` support the numerical setting
+`newton_globalization = line_search | dogleg`, default `line_search`.
+`dogleg` selects an unscaled sparse Newton/Cauchy trust region from the first
+iteration. It may improve convergence from difficult initial guesses, but can
+take more solver work. It does not change the column equations, initialization
+selection, residual tolerances, or physical validation. For example:
+
+```pfd
+UNIT COL : RigorousDistillation
+    N_stages = 20
+    feed_stage = 10
+    reflux_ratio = 2
+    D_to_F = 0.4
+    initializer = azeotropic
+    newton_globalization = dogleg
+```
+
+The setting also applies to nested coarse-column and CMO initializer solves.
+It is independent of the extractor's `solver_algorithm`; dogleg applies to
+`solver_algorithm = equation_oriented`. Results report `newton_globalization`
+alongside the solver work counters. Rejected trust-region trials count as
+function evaluations and reuse their current Jacobian. `line_search_steps`
+remains specific to line search: dogleg uses an internal limit of 16 trials per
+Jacobian, an initial Euclidean radius of `sqrt(number_of_variables)`, and a
+maximum radius of eight times that value. Trust-region constants are not public
+tuning parameters. Invalid strategy names produce a descriptive error.
+
 For `RigorousDistillation`, the standard outlets are `distillate` and `bottoms`.
 Mixed condensers also expose `distillate_liquid` and `distillate_vapor`. These
 are views of the combined distillate and are not additional material products.

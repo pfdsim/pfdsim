@@ -961,6 +961,17 @@ for _name in ('RigorousDistillation', 'CMODistillation', 'McCabeThieleDistillati
         'feed_stage': {}, 'P_condenser': {'unit': 'bar'},
     })
 
+for _name in ('RigorousDistillation', 'CMODistillation', 'RigorousExtractor',
+              'RigorousAbsorber', 'RigorousStripper'):
+    UNIT_DOF_RULES[_name]['optional_specs']['newton_globalization'] = {
+        'values': ['line_search', 'dogleg'],
+        'default': 'line_search',
+        'description': (
+            'Newton step strategy: dogleg trust regions may improve difficult '
+            'initial guesses but can require more solver work'
+        ),
+    }
+
 # UI importance is independent of whether a runtime default closes a DOF.
 _PRIMARY_SPECS = {
     'distillation': ('N_stages', 'stages', 'feed_stage', 'feed_stages', 'reflux_ratio', 'RR',
