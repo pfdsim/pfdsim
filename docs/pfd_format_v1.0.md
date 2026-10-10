@@ -2598,6 +2598,12 @@ obtained for the actual solute, solvent, crystal form, and equipment.
 - Adiabatic bounds are `T_min`/`T_max` (aliases `adiabatic_T_min` and
   `adiabatic_T_max`). Initialization controls include `initializer`,
   `coarse_initial_stages`, and `mesh_initial_sweeps`.
+- If no liquid-liquid split exists, the combined liquid leaves through
+  `raffinate` and `extract` has zero flow. In adiabatic mode, the outlet
+  temperature conserves inlet enthalpy within the adiabatic temperature
+  bounds, and liquid stability is rechecked at that temperature. In isothermal
+  mode, the specified temperature is retained and the implied heat duty is
+  reported. Both modes report the overall energy-balance residual.
 
 **Absorber / Stripper:**
 - Shortcut Kremser-style gas absorption or stripping estimate.

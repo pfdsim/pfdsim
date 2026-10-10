@@ -1266,11 +1266,60 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
         }
         has_lle, x1, x2, _ = self.thermo.liquid_liquid_equilibrium(mixed_z, T)
         if not has_lle:
-            out = self.thermo.calculate_state(T, P, total_F, mixed_z, phase='liquid', flash=False)
+            energy_inlets = []
+            for stream in (feed, solvent):
+                if stream.H is None:
+                    stream = stream.copy()
+                    stream.H = self.thermo.mixture_enthalpy(
+                        stream.composition, stream.T, stream.vapor_fraction,
+                        stream.x, stream.y, stream.P,
+                    )
+                energy_inlets.append(stream)
+            feed, solvent = energy_inlets
+            inlet_enthalpy_flow = sum(stream.F * stream.H for stream in energy_inlets)
+            if mode == 'adiabatic':
+                target_enthalpy = inlet_enthalpy_flow / total_F
+                out, enthalpy_residual = _ThermoStateSolver(
+                    self.thermo, f"RigorousLiquidLiquidExtractor '{self.unit_id}'",
+                ).state_at_enthalpy(
+                    P, total_F, mixed_z, target_enthalpy, T,
+                    force_phase='liquid',
+                    T_bounds=self._adiabatic_temperature_bounds(feed, solvent, T),
+                )
+                if not math.isfinite(enthalpy_residual) or abs(enthalpy_residual) > max(
+                    1e-6, abs(target_enthalpy) * 1e-8
+                ):
+                    raise UnitOperationError(
+                        f"RigorousLiquidLiquidExtractor '{self.unit_id}' liquid enthalpy "
+                        f"solve residual is {enthalpy_residual:.4g} kJ/kmol"
+                    )
+                T = out.T
+                # Stability at the initial temperature does not determine the
+                # phase count at the energy-balanced adiabatic temperature.
+                has_lle, x1, x2, _ = self.thermo.liquid_liquid_equilibrium(mixed_z, T)
+            else:
+                out = self.thermo.calculate_state(T, P, total_F, mixed_z, phase='liquid', flash=False)
+        if not has_lle:
             empty = self.thermo.calculate_state(T, P, 0.0, mixed_z, phase='liquid', flash=False)
             empty.F = 0.0
+            enthalpy_change = out.F * out.H - inlet_enthalpy_flow
+            heat_duty = enthalpy_change if mode == 'isothermal' else 0.0
+            energy_residual = enthalpy_change - heat_duty
+            energy_scale = max(abs(out.F * out.H), abs(inlet_enthalpy_flow), 1.0)
             return UnitResult(
                 outlet_streams={'raffinate': out, 'extract': empty},
+                heat_duty=heat_duty,
+                performance={
+                    'N_stages': N,
+                    'mode': mode,
+                    'no_lle': True,
+                    'T_C': T - 273.15,
+                    'raffinate_T_C': T - 273.15,
+                    'extract_T_C': T - 273.15,
+                    'duty_kW': heat_duty / 3600.0,
+                    'overall_energy_residual_kJ_h': energy_residual,
+                    'overall_energy_relative_error': abs(energy_residual) / energy_scale,
+                },
                 warnings=["No LLE at operating conditions"],
             )
 
@@ -1299,18 +1348,7 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
             'broyden', 'broyden1', 'secant', 'newton_broyden'
         ) else acceleration
         temperature_scale = max(float(self.get_param('temperature_scale', 1000.0)), 1.0)
-        default_t_min = max(250.0, min(feed.T, solvent.T, T) - 100.0)
-        default_t_max = min(650.0, max(feed.T, solvent.T, T) + 100.0)
-        adiabatic_t_min = float(self.get_param('T_min', self.get_param('adiabatic_T_min', default_t_min)))
-        adiabatic_t_max = float(self.get_param('T_max', self.get_param('adiabatic_T_max', default_t_max)))
-        if adiabatic_t_min < 200:
-            adiabatic_t_min += 273.15
-        if adiabatic_t_max < 200:
-            adiabatic_t_max += 273.15
-        if adiabatic_t_min >= adiabatic_t_max:
-            raise UnitOperationError(
-                f"RigorousLiquidLiquidExtractor '{self.unit_id}' requires T_min < T_max"
-            )
+        adiabatic_t_min, adiabatic_t_max = self._adiabatic_temperature_bounds(feed, solvent, T)
 
         def normalize_positive(comp: dict[str, float]) -> dict[str, float]:
             values = {c: max(float(comp.get(c, 0.0)), 0.0) for c in comps}
@@ -1865,6 +1903,22 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
         self._store_recycle_profile(result.performance)
         return result
 
+    def _adiabatic_temperature_bounds(self, feed: StreamState, solvent: StreamState,
+                                      T: float) -> tuple[float, float]:
+        default_t_min = max(250.0, min(feed.T, solvent.T, T) - 100.0)
+        default_t_max = min(650.0, max(feed.T, solvent.T, T) + 100.0)
+        t_min = float(self.get_param('T_min', self.get_param('adiabatic_T_min', default_t_min)))
+        t_max = float(self.get_param('T_max', self.get_param('adiabatic_T_max', default_t_max)))
+        if t_min < 200:
+            t_min += 273.15
+        if t_max < 200:
+            t_max += 273.15
+        if t_min >= t_max:
+            raise UnitOperationError(
+                f"RigorousLiquidLiquidExtractor '{self.unit_id}' requires T_min < T_max"
+            )
+        return t_min, t_max
+
     def _solve_equation_oriented(
         self,
         feed: StreamState,
@@ -1900,18 +1954,7 @@ class RigorousLiquidLiquidExtractor(UnitOperation):
         }
         activity_scale = max(float(self.get_param('activity_scale', 1.0)), 1e-12)
 
-        default_t_min = max(250.0, min(feed.T, solvent.T, T) - 100.0)
-        default_t_max = min(650.0, max(feed.T, solvent.T, T) + 100.0)
-        adiabatic_t_min = float(self.get_param('T_min', self.get_param('adiabatic_T_min', default_t_min)))
-        adiabatic_t_max = float(self.get_param('T_max', self.get_param('adiabatic_T_max', default_t_max)))
-        if adiabatic_t_min < 200:
-            adiabatic_t_min += 273.15
-        if adiabatic_t_max < 200:
-            adiabatic_t_max += 273.15
-        if adiabatic_t_min >= adiabatic_t_max:
-            raise UnitOperationError(
-                f"RigorousLiquidLiquidExtractor '{self.unit_id}' requires T_min < T_max"
-            )
+        adiabatic_t_min, adiabatic_t_max = self._adiabatic_temperature_bounds(feed, solvent, T)
 
         def normalize(comp: dict[str, float]) -> dict[str, float]:
             values = {c: max(float(comp.get(c, 0.0)), 0.0) for c in comps}
