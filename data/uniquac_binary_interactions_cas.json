@@ -8233,6 +8233,64 @@
       "tau_tref": 298.15,
       "use_q_prime": false,
       "user_fit_id": "duIbOx0omTfOT8f0lFZnsTF0Pl4ywUak"
+    },
+    {
+      "Tmax_K": 400.0,
+      "Tmin_K": 350.0,
+      "a12_cal_per_mol": -120.52103250478011,
+      "a21_cal_per_mol": 461.84034416826,
+      "cas1": "75-05-8",
+      "cas2": "123-86-4",
+      "comment": "Direct root publication of sourced manual parameters",
+      "component1": "Acetonitrile",
+      "component2": "Butyl acetate",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791602258.3709908,
+        "manual_input": {
+          "T_ref_K": 298.15,
+          "Tmax_K": 400.0,
+          "Tmin_K": 350.0,
+          "alpha": 0.3,
+          "basis": "energy",
+          "components": [
+            "acetonitrile",
+            "butyl acetate"
+          ],
+          "extrapolation": "unrestricted",
+          "fit_method": "VLE least squares",
+          "model": "UNIQUAC",
+          "statistics": "RMS(T)=0.18K, RMS(y)=0.0040",
+          "unit": "J/mol",
+          "values": {
+            "12": -504.26,
+            "21": 1932.34
+          }
+        },
+        "model": "UNIQUAC",
+        "origin": "manual_parameters",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reported_fit": {
+          "method": "VLE least squares",
+          "statistics": "RMS(T)=0.18K, RMS(y)=0.0040"
+        },
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Acosta et al. / Fluid Phase Equilibria 203 (2002) 83\u201398",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_manual_parameters",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "model_variant": "standard_uniquac",
+      "source": "J. Acosta et al. / Fluid Phase Equilibria 203 (2002) 83\u201398",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "use_q_prime": false,
+      "user_fit_id": "O3ELp5vccp0uGXk0MAuVkE2PmLx4Hd4M"
     }
   ],
   "metadata": {
@@ -8246,7 +8304,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 318,
-    "converted_records": 477,
+    "converted_records": 478,
     "curated_water_nonwater_records": 33,
     "curated_water_nonwater_replaced_pairs": 3,
     "curated_water_nonwater_replaced_records": 4,
@@ -8290,7 +8348,7 @@
         "source_component_id": "51"
       }
     ],
-    "user_activity_fit_records": 9,
+    "user_activity_fit_records": 10,
     "user_activity_fit_replaced_records": 5,
     "water_organic_overlay_records": 7,
     "water_organic_overlay_replaced_pairs": 2,

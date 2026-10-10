@@ -7522,6 +7522,137 @@
       "tau21_g": 0.0,
       "tau_tref": 298.15,
       "user_fit_id": "UsgpcnY0SCKYrpnpkaXtrVPejn06UVKS"
+    },
+    {
+      "Tmax_K": 400.0,
+      "Tmin_K": 350.0,
+      "a12_cal_per_mol": 1652.7055449330783,
+      "a21_cal_per_mol": -1000.8580305927342,
+      "alpha12": 0.1,
+      "cas1": "75-05-8",
+      "cas2": "123-86-4",
+      "comment": "Direct root publication of sourced manual parameters",
+      "component1": "Acetonitrile",
+      "component2": "Butyl acetate",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791602190.9996846,
+        "manual_input": {
+          "T_ref_K": 298.15,
+          "Tmax_K": 400.0,
+          "Tmin_K": 350.0,
+          "alpha": 0.1,
+          "basis": "energy",
+          "components": [
+            "acetonitrile",
+            "butyl acetate"
+          ],
+          "extrapolation": "unrestricted",
+          "fit_method": "VLE least squares",
+          "model": "NRTL",
+          "statistics": "RMS(T)=0.17K, RMS(y)=0.0032",
+          "unit": "J/mol",
+          "values": {
+            "12": 6914.92,
+            "21": -4187.59
+          }
+        },
+        "model": "NRTL",
+        "origin": "manual_parameters",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reported_fit": {
+          "method": "VLE least squares",
+          "statistics": "RMS(T)=0.17K, RMS(y)=0.0032"
+        },
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "J. Acosta et al. / Fluid Phase Equilibria 203 (2002) 83\u201398",
+          "doi": "",
+          "notes": "",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_manual_parameters",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "J. Acosta et al. / Fluid Phase Equilibria 203 (2002) 83\u201398",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "user_fit_id": "EQzx4ef69y_qQ3v2d2oXU1a9aAEHZA_I"
+    },
+    {
+      "Tmax_K": 423.0,
+      "Tmin_K": 303.0,
+      "alpha12": 0.3,
+      "cas1": "75-05-8",
+      "cas2": "7732-18-5",
+      "comment": "Direct root publication of sourced manual parameters",
+      "component1": "Acetonitrile",
+      "component2": "Water",
+      "extrapolation": "unrestricted",
+      "fit_provenance": {
+        "created": 1791601891.0098083,
+        "manual_input": {
+          "T_ref_K": 298.15,
+          "Tmax_K": 423.0,
+          "Tmin_K": 303.0,
+          "alpha": 0.3,
+          "basis": "law",
+          "components": [
+            "acetonitrile",
+            "water"
+          ],
+          "extrapolation": "unrestricted",
+          "fit_method": "",
+          "model": "NRTL",
+          "statistics": "",
+          "unit": "J/mol",
+          "values": {
+            "12.c": -1.3354,
+            "12.d": 662.0521,
+            "12.e": 0.0,
+            "12.f": 0.0,
+            "12.g": 0.0,
+            "21.c": 2.0855,
+            "21.d": -58.2283,
+            "21.e": 0.0,
+            "21.f": 0.0,
+            "21.g": 0.0
+          }
+        },
+        "model": "NRTL",
+        "origin": "manual_parameters",
+        "owner": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "reported_fit": {
+          "method": "",
+          "statistics": ""
+        },
+        "reviewed_by": "user:OyzJBkoDw-v6Z2G3noruq9doOZav4djX",
+        "source": {
+          "citation": "Separation and Purification Technology 362 (2025) 131888",
+          "doi": "",
+          "notes": "Paper obtained parameters from Aspen Plus V14 database",
+          "url": ""
+        }
+      },
+      "fit_status": "admin_published_manual_parameters",
+      "fit_vapor_treatment": {
+        "type": "IDEAL"
+      },
+      "source": "Separation and Purification Technology 362 (2025) 131888",
+      "source_file": "data/source/activity_fitting/user_activity_fits.sqlite",
+      "tau12_c": -1.3354,
+      "tau12_d": 662.0521,
+      "tau12_e": 0.0,
+      "tau12_f": 0.0,
+      "tau12_g": 0.0,
+      "tau21_c": 2.0855,
+      "tau21_d": -58.2283,
+      "tau21_e": 0.0,
+      "tau21_f": 0.0,
+      "tau21_g": 0.0,
+      "tau_tref": 298.15,
+      "user_fit_id": "hT3CZ75gqT7kk_vaBAz3K2fbxBsVZl6w"
     }
   ],
   "metadata": {
@@ -7535,7 +7666,7 @@
     "assorted_overlay_replaced_records": 2,
     "assorted_overlay_zero_records": 3,
     "base_converted_records": 340,
-    "converted_records": 491,
+    "converted_records": 493,
     "curated_water_nonwater_records": 29,
     "curated_water_nonwater_replaced_pairs": 3,
     "curated_water_nonwater_replaced_records": 5,
@@ -7579,7 +7710,7 @@
         "source_component_id": "51"
       }
     ],
-    "user_activity_fit_records": 9,
+    "user_activity_fit_records": 11,
     "user_activity_fit_replaced_records": 6,
     "water_organic_overlay_records": 7,
     "water_organic_overlay_replaced_pairs": 3,
