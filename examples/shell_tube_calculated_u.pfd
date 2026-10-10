@@ -1,0 +1,50 @@
+# One-shell/two-tube-pass exchanger with segmental baffles.
+# Zukauskas ideal-bank films plus Bell shell-side corrections.
+PROCESS: Shell and Tube Calculated U
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: STEAM
+
+COMPONENTS:
+    water | Water | MW=18.015
+
+STREAM HotFeed : FEED -> HX-100.tube_in
+    T = 86.85 [C]
+    P = 3 [bar]
+    F = 400 [kmol/h]
+    x = water:1
+
+STREAM ColdFeed : FEED -> HX-100.shell_in
+    T = 26.85 [C]
+    P = 3 [bar]
+    F = 600 [kmol/h]
+    x = water:1
+
+STREAM CooledWater : HX-100.tube_out -> PRODUCT
+STREAM HeatedWater : HX-100.shell_out -> PRODUCT
+
+UNIT HX-100
+    TYPE: HeatExchanger
+    PORTS:
+        tube_in : inlet
+        shell_in : inlet
+        tube_out : outlet
+        shell_out : outlet
+    PARAMS:
+        U_model = shell_tube
+        wall_material = stainless_steel_304
+        tube_inner_diameter = 20 [mm]
+        tube_outer_diameter = 24 [mm]
+        shell_inner_diameter = 240 [mm]
+        bundle_diameter = 180 [mm]
+        tube_count = 12
+        tube_passes = 2
+        tube_pitch = 30 [mm]
+        tube_layout_angle = 30
+        baffle_spacing = 150 [mm]
+        baffle_cut = 0.25
+        baffle_count = 8
+        tube_baffle_clearance = 0.4 [mm]
+        shell_baffle_clearance = 1 [mm]
+        length = 2 [m]
+        curve_segments = 40

@@ -467,6 +467,20 @@ wheels = [
 ]
 
 [[package]]
+name = "ht"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fluids" },
+    { name = "numpy" },
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/86/52/ecd3cfb1d4fcca3563c34b9090a7e78b8b79d8c66f4d715f5f0cdadf5219/ht-1.2.0.tar.gz", hash = "sha256:ae117387c4e99a1860d78afd391d24b1a4217cb7495250cd480606e2b7fa2ff5", size = 886282, upload-time = "2025-10-26T16:48:28.367Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4f/b8/84e47b2d80bffa75ce1aa63a9b2ef8d05bc602b57d212fbb5802666f3027/ht-1.2.0-py3-none-any.whl", hash = "sha256:a4716bc3c8a9ef5e3dfff68d552232ba6f05c0edd3caa07fb72bee2306975ace", size = 805152, upload-time = "2025-10-26T16:48:26.509Z" },
+]
+
+[[package]]
 name = "iapws"
 version = "1.5.5"
 source = { registry = "https://pypi.org/simple" }
@@ -937,6 +951,7 @@ dependencies = [
     { name = "ase" },
     { name = "chemicals" },
     { name = "coolprop" },
+    { name = "ht" },
     { name = "numba" },
     { name = "numpy" },
     { name = "openpyxl" },
@@ -980,6 +995,7 @@ requires-dist = [
     { name = "coolprop", specifier = ">=7.2,<8.0" },
     { name = "flask", marker = "extra == 'web'", specifier = ">=3.1" },
     { name = "gunicorn", marker = "extra == 'web'", specifier = ">=26.2" },
+    { name = "ht", specifier = ">=1.2,<2.0" },
     { name = "numba", specifier = ">=0.67" },
     { name = "numpy", specifier = ">=2.5" },
     { name = "openpyxl", specifier = ">=3.1" },

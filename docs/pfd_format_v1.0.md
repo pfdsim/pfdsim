@@ -1472,6 +1472,48 @@ Common parameters by unit type:
   keeps a condensing Heater/Cooler and a downstream adiabatic separator on the
   same aqueous standard-state treatment.
 
+An optional `utility` adds consumption and surface sizing for the same process
+target. It does not add utility components to the process stream or create a
+second process outlet. Fluid utilities use the shared HeatExchanger curves with
+an independent utility property package.
+
+| Utility | Supply/return specification |
+|---|---|
+| `steam` | `utility_P` or saturated `utility_T`; saturated-vapor supply and saturated-liquid return by default. Optional `utility_T_in` for superheat, `utility_T_out` for return temperature, or `utility_outlet_vapor_fraction` for partial condensation. |
+| `cooling_water`, `chilled_water`, `hot_water` | Required `utility_T_in` and `utility_T_out`; liquid water at `utility_P` (default 1 bar). |
+| `hot_oil` | Required actual `utility_fluid`, or JSON `utility_composition` of mole fractions, plus `utility_T_in` and `utility_T_out`. No generic oil property is invented. |
+| `thermal_fluid` | Sensible liquid heating or cooling loop, including glycol/water mixtures. Required actual `utility_fluid` or JSON `utility_composition`, plus `utility_T_in` and `utility_T_out`. Supply and return must remain liquid. Composition uses mole fractions, not mass fractions. |
+| `air` | Required `utility_T_in` and `utility_T_out`; default dry composition 0.79 N2 / 0.21 O2. An explicit composition may replace it. |
+| `refrigerant` | Required pure `utility_fluid` and `utility_P` or saturated `utility_T`. Defaults to saturated liquid-to-vapor for cooling, vapor-to-liquid for heating. Optional inlet/outlet temperatures or `utility_inlet_vapor_fraction` / `utility_outlet_vapor_fraction`. |
+| `electric`, `fired` | Heater only. Required `utility_heat_flux` [W/m2 or kW/m2], the mean useful process surface loading. Area = process duty / specified loading. These do not calculate combustion radiation or electrical-element temperature. |
+
+`utility_P_drop` is an optional nonnegative utility pressure drop [bar]. Utility
+temperatures follow normal C/K/F syntax. Water/steam use IF97; sensible thermal fluids, oil and
+air default to IDEAL; refrigerants default to PR. `utility_thermo_method` selects
+another package; `process` reuses process component data and overrides.
+Phase-changing utility mixtures are rejected.
+
+Fluid sizing accepts numeric `U` or the geometry models below. `process_side`
+defaults to `tube` (`shell` also supported); the utility uses the other side.
+Supply/return enthalpies determine utility flow. If no U model/value is given,
+explicit selection of a fluid utility invokes preliminary service-class U;
+`utility_area_preliminary` and the normal auto-U warning identify this assumption.
+Impossible temperature approaches fail. Frozen-Henry process state construction
+is retained when applicable.
+
+`utility_efficiency` defaults to 1.0 electric and 0.85 fired. Electric power or
+fuel input = useful duty / efficiency. Fired heating accepts `utility_fuel`
+(default methane; alias `fuel`) with net heating value from the shared chemical
+database, or explicit `fuel_heating_value` [kJ/kg or MJ/kg]. Results report area,
+input power, losses, and fuel mass flow. Specified surface loading is an
+engineering input, not a predicted safe heater rating. Fluid-film U/UA models
+cannot be combined with electric/fired surface-loading sizing.
+
+Fluid results include `utility_flow_kmol_h`, `utility_mass_flow_kg_h`,
+supply/return T/P/quality, `area_required_m2`, `UA_required_W_per_K`, and nested
+`utility_sizing` with exchanger profiles and diagnostics.
+See [utility_surface_sizing.pfd](../examples/utility_surface_sizing.pfd).
+
 **HeatExchanger:**
 - Design mode: specify exactly one of `Q`/`duty`/`heat_duty`, one outlet
   temperature (`T_hot_out`, `T_cold_out`, `T_tube_out`, or `T_shell_out`), or
@@ -1491,6 +1533,182 @@ Common parameters by unit type:
 - `allow_temperature_cross` - Optional override for temperature-cross handling.
 - If `U` and `A` are omitted in design mode, the simulator reports only
   `UA_required`; it does not invent a U value.
+- Specified and preliminary-U calculations accept an explicit positive
+  `LMTD_correction <= 1`. Required conductance and area are divided by this
+  factor; rating uses the same correction. `U` supports W/m2-K, kW/m2-K and
+  the documented Btu/h-ft2-F forms; area supports m2 and ft2 (also m^2/ft^2);
+  `UA` supports W/K and kW/K. Unsupported units and non-finite sizing values
+  fail explicitly. Physical-side `P_drop_tube` and `P_drop_shell` follow the
+  same pressure-unit conversion as hot/cold pressure drops.
+
+Geometry-based coefficients are available with `U_model = double_pipe`
+(`double_pipe_gnielinski` is retained as an alias) or `U_model = shell_tube`.
+Both use one shared cylindrical wall/fouling network and local film solver.
+Double pipes have one pass per side and an insulated outer pipe. Shell-and-tube
+geometry includes a tube bundle and segmental baffles. Homogeneous Newtonian
+liquids, single-phase gases, and the pure-fluid phase-change regimes below are
+supported. Liquid-liquid splits, solids/slurries, enhanced or rough surfaces,
+and entrance-region enhancement are not modeled.
+
+Required geometry and material inputs:
+
+- `tube_inner_diameter`, `tube_outer_diameter`, `shell_inner_diameter` - Positive
+  diameters with `Di < Do < Ds`; default units m, also mm/cm/ft/in.
+- `wall_conductivity` - Positive constant [W/m/K], or choose `wall_material`
+  (alias `material`). Available: carbon_steel, copper, brass, aluminum, iron, nickel, titanium,
+  stainless_steel_304/316/430. `stainless_steel` means 304; `ss304`, `ss316`,
+  `304`, `316`, and `aluminium` aliases are accepted. Values are nominal
+  constants from Perry Tables 2-149/150 and the VDI building-material table
+  (nominal steel/brass), not temperature fits or guarantees for
+  commercial alloys. Source/reference temperature are reported. Explicit
+  conductivity overrides material data, and the override is recorded.
+- `tube_side = hot` or `cold` - Required for generic hot/cold inlet ports;
+  inferred when ports are explicitly `tube_in` and `shell_in`. `shell_in`
+  denotes the annulus for double pipes and baffled shell for shell-and-tube.
+  Conflicting assignments fail.
+- `fouling_tube`, `fouling_shell` - Nonnegative resistances [m2-K/W] on each
+  fluid's own surface-area basis. Both default to zero (clean surfaces).
+
+Design mode retains exactly one thermal target, such as `Q` or `T_hot_out`.
+It reports the required outer tube area and heat-transfer length. Rating mode
+requires `A`/`area` or `length`; `A = pi*Do*length*tube_count`, where tube_count
+is one for double pipes. If both are
+supplied they must agree. Area units m2 and ft2 are supported. Calculated U
+cannot be combined with numeric/auto `U`, `estimate_U = true`, or `UA`.
+Pressure drops retain the existing explicit hot/cold or tube/shell inputs;
+this model does not calculate exchanger pressure losses.
+
+Each integration point resolves density, heat capacity, viscosity and thermal
+conductivity using the authoritative property paths. IF97 supplies pressure-
+dependent water transport; dilute-gas mixtures use Lindsay-Bromley conductivity
+mixing and existing Wilke viscosity mixing. Gnielinski smooth-tube films apply
+for `4000 <= Re <= 1000000`, annular films for `10000 <= Re <= 1000000`,
+with `0.5 <= Pr, Pr_wall <= 1000`, and (annuli)
+`0.1 <= Do/Ds <= 0.9`. For `Re < 2300`, fully developed uniform-heat-flux
+laminar Nu is 48/11 in a round tube. Annular Nu comes from integrating the
+analytical Poiseuille velocity and transverse energy equation with outer wall
+insulated (Nu=6.1810147 at diameter ratio 0.5). Round-tube transition
+`2300 <= Re < 4000` interpolates Nu between the fully developed laminar and
+Re=4000 turbulent endpoints, following
+[Gnielinski (2013)](https://doi.org/10.1016/j.ijheatmasstransfer.2013.04.015).
+Nodes report `flow_regime = transition` and the turbulent interpolation
+fraction. Transition predictions depend strongly on inlet disturbances and
+are engineering estimates. Annular transition `2300 <= Re < 10000` remains
+unsupported; the tube interpolation is not extended to annuli. Liquid turbulent
+corrections use `(Pr/Pr_wall)^0.11`; gas corrections use `(T_bulk/T_wall)^0.45`
+with temperature ratio 0.5..1.5. Fully developed flow is an assumed boundary
+condition, not a checked entrance length; single-phase mixed/natural convection
+is not included.
+The simulator rejects out-of-domain states instead of extrapolating or falling
+back to service-class U estimates. Forced-phase specifications cannot hide a
+phase change: bulk inventories and fluid-facing wall phases are checked.
+Phase checks use the selected thermodynamic package and its configured VLE/LLE
+model; choosing a VLE-only package is not a global liquid-stability proof.
+
+The overall coefficient uses the **outer surface of the inner tube**:
+
+```text
+1/Uo = (Do/Di)*(1/hi + fouling_tube)
+       + Do*ln(Do/Di)/(2*wall_conductivity)
+       + fouling_shell + 1/ho
+```
+
+Three-point interior Gauss quadrature integrates local `dQ/(U*delta_T)` for area
+and `dQ/delta_T` for conductance. Intervals split at pure-fluid saturated-liquid/
+vapor enthalpy boundaries. This avoids endpoint quality clamps and permits
+sensible/latent zones to coexist. Rating solves duty at installed area. Increasing
+`curve_segments` checks spatial convergence. Performance reports include
+`U_model`, `U_area_basis`, `tube_side`, `U_W_m2_K` (the effective coefficient
+`UA_required/area_required`), `length_required_m`, and `calculated_U_nodes`.
+Each node includes film coefficients, Nu/Re/Pr, bulk transport properties,
+fluid-facing wall temperatures, individual resistances and wall-solve residual.
+Fluid-facing temperatures include deposit effects; separate metal-wall
+temperatures include fouling drops. Fouling is prescribed thermal resistance,
+not a deposit-growth, blockage or roughness model.
+With installed area, `area_margin_m2`, `area_utilization` and `length_m` are
+also reported. Calculated coefficients are required results and are not
+deferred during recycle iterations.
+
+This is a geometry-based engineering correlation model, not CFD or an
+experimental validation of a particular exchanger. Accuracy depends on
+property-source quality and on the stated flow/geometry assumptions. The
+existing service-class `U = auto` retains its preliminary-estimate behavior.
+See [double_pipe_calculated_u.pfd](../examples/double_pipe_calculated_u.pfd).
+Correlation references: [Gnielinski annular ducts, DOI 10.1080/01457630802528661](https://doi.org/10.1080/01457630802528661),
+[INL annular implementation](https://mooseframework.inl.gov/bison/source/materials/ADWallHTCGnielinskiAnnularMaterial.html),
+and [COMSOL internal forced convection](https://doc.comsol.com/6.3/doc/com.comsol.help.pipe/pipe_ug_heattransfer.06.17.html).
+
+Shell-and-tube geometry (`U_model = shell_tube`) additionally requires
+`bundle_diameter`, `tube_count`, `tube_pitch`, `baffle_spacing`, `baffle_count`,
+`tube_baffle_clearance`, and `shell_baffle_clearance`. Clearances are diametral,
+and actual values must be supplied (zero is allowed). `tube_layout_angle` is
+30, 45, or 90 degrees (default 30); `baffle_cut` is a shell-diameter fraction
+0.15..0.45 (default 0.25). `sealing_strip_pairs` defaults to zero. One shell
+pass and 1/2/4/6/8 tube passes are supported; tube counts must divide evenly
+among passes and fit the bundle. The shell crossflow area is obtained from
+bundle diameter, pitch, layout and baffle spacing. Zukauskas ideal-bank Nu,
+including row/property corrections, is multiplied by Bell window, leakage,
+bypass, low-Re and unequal-end-spacing factors. This is an explicitly reported
+engineering model (`zukauskas_bell_corrections`), not a full Bell-Delaware
+j-factor implementation. Shell crossflow supports Re=10..2e6 and Pr=0.7..500.
+
+For even tube passes, a standard one-shell mean-LMTD correction is calculated
+from the outlet temperatures. This is exact for constant capacity rates and
+approximate for temperature-dependent properties or mixed sensible/latent
+loads; the output profile is labelled an equivalent countercurrent profile.
+One-pass shell calculations likewise use an idealized countercurrent or
+cocurrent thermal arrangement. They do not resolve individual baffle
+compartments or tube passes. Explicit `LMTD_correction` is rejected for geometry
+models. Installed length determines equal inlet/outlet baffle spacings from
+the supplied count and central spacing; impossible baffle/length combinations
+fail. With no installed length/area, equal end and central spacing is assumed
+for thermal area sizing. `length_required_m` is the thermal-equivalent length,
+not a new mechanically validated bundle design.
+
+Pure-fluid two-phase heat transfer uses local saturation properties and quality:
+
+| Regime | Film model and limits |
+|---|---|
+| Tube/annulus saturated boiling | Shah (1982) CHART; hydraulic/equivalent diameter, local mass flux and heat flux. Inner-heated annuli use heated-perimeter diameter for radial gap <=4 mm, hydraulic diameter otherwise. Supported quality 0..0.7, reduced pressure 0.0053..0.78, diameter 1..28 mm, G=28..11071 kg/m2/s, boiling number 2.2e-6..0.00742. |
+| Tube/annulus subcooled boiling | Shah (1977), including high/low-subcooling selection; subcooling <=153 K, liquid Re=1400..360000, boiling number 1e-5..0.0054, reduced pressure 0.005..0.89 and G=200..87000 kg/m2/s. Round tubes 2.4..27.1 mm; radial annulus gaps 1..6.4 mm. |
+| Tube condensation | Perry's horizontal gravity-film correlation and, where valid, Shah (1979) high-shear film coefficient; larger contribution is selected. Superheated-vapor condensation uses Perry's conservative saturation driving-temperature treatment. |
+| Annulus condensation | Shah (1979), restricted to high-shear conditions: all-liquid Re>350, all-vapor Re>35000, vapor-only velocity 3..300 m/s, reduced pressure 0.0019..0.82; interior quality only. |
+| Shell condensation | Horizontal Nusselt film condensation with liquid properties at film temperature, latent heat correction and vertical-row inundation factor N^(-1/4). Vapor velocity <=3 m/s. |
+| Shell saturated pool boiling | Explicit `shell_pool_boiling = true` declares a submerged/wetted bundle. Required `boiling_Csf` specifies the actual fluid/surface Rohsenow coefficient; `boiling_n` defaults to 1.0 for water (commonly 1.7 for other fluids). This is a pool-boiling model, not a forced two-phase crossflow model. |
+
+Boiling and condensation are solved with the common wall/fouling network,
+including heat-flux-dependent boiling films. Saturated forced-flow boiling rejects
+quality above 0.7 instead of clamping it. This flow-correlation limit does not
+apply to explicitly wetted shell pool boiling; its surface coefficient and
+submerged-bundle declaration remain required. Condensation does not require
+surface-tension data; boiling requires it for Rohsenow and the critical-flux screen.
+A conservative screen at half the Zuber pool
+critical flux is applied; this screen does not constitute a geometry-specific
+CHF/dryout prediction. Subcooled shell boiling, shear-dominated shell
+condensation, and post-CHF/dryout heat transfer are unsupported. Vertical tube
+condensation requires the high-shear interior-quality model. Use `orientation`
+(`horizontal` default or `vertical`) explicitly for applicable phase-change
+geometry. Arbitrary two-component gas/liquid transport is not inferred from
+these phase-change correlations.
+
+CO2 forced-flow boiling requires a dedicated correlation and is rejected by this model.
+Two-phase mixtures, zeotropic refrigerant blends and noncondensables undergoing
+condensation/boiling fail explicitly; single-phase gas mixtures are supported.
+Properties and saturation use each side's actual property package. Pure-fluid
+PV states interpolate saturated phase enthalpies and inventories consistently;
+the model does not overwrite quality on a TP state's unrelated enthalpy.
+
+Examples: [shell_tube_calculated_u.pfd](../examples/shell_tube_calculated_u.pfd)
+and [utility_surface_sizing.pfd](../examples/utility_surface_sizing.pfd).
+Reproducible integrated/grid probes are maintained in
+[probe_heat_exchanger_transport.py](../scripts/performance/probe_heat_exchanger_transport.py).
+Textbook sources: Perry 9th edition Tables 2-149/150 and Secs.5/11; Seader et al.
+4th edition Ch.12. Additional references:
+[ASHRAE Fundamentals Ch.5](https://handbook.ashrae.org/Handbooks/F21/IP/F21_Ch05/F21_Ch05_ip.aspx),
+[Shah boiling assessment](https://mmshah.org/publications/oct._2006_HVACRJ.pdf),
+[Shah subcooled boiling](https://doi.org/10.3390/fluids8090245),
+[Shah condensation](https://doi.org/10.1016/0017-9310(79)90058-9), and
+[ht shell-side functions](https://ht.readthedocs.io/en/latest/ht.conv_tube_bank.html).
 
 **Flash:**
 - `T` - Temperature

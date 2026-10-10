@@ -1,0 +1,161 @@
+# Utilities are internal thermal services, not additional process components.
+# Fluid utility surfaces use supplied U here; geometric U models can also be used.
+# Electric/fired surfaces use specified mean design heat flux, not fluid U.
+PROCESS: Common Utility Surface Sizing
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: STEAM
+
+COMPONENTS:
+    water | Water | MW=18.015
+
+STREAM SteamFeed : FEED -> H-STEAM.in
+    T = 26.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM SteamProduct : H-STEAM.out -> PRODUCT
+
+UNIT H-STEAM : Heater
+    T_out = 56.85 [C]
+    utility = steam
+    utility_P = 500 [kPa]
+    U = 500 [W/m2-K]
+    curve_segments = 12
+
+STREAM OilFeed : FEED -> H-OIL.in
+    T = 26.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM OilProduct : H-OIL.out -> PRODUCT
+
+UNIT H-OIL : Heater
+    T_out = 56.85 [C]
+    utility = hot_oil
+    utility_fluid = decane
+    utility_T_in = 156.85 [C]
+    utility_T_out = 126.85 [C]
+    U = 350 [W/m2-K]
+    curve_segments = 12
+
+STREAM HotWaterFeed : FEED -> H-WATER.in
+    T = 26.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM HotWaterProduct : H-WATER.out -> PRODUCT
+
+UNIT H-WATER : Heater
+    T_out = 56.85 [C]
+    utility = hot_water
+    utility_P = 2 [bar]
+    utility_T_in = 96.85 [C]
+    utility_T_out = 76.85 [C]
+    U = 700 [W/m2-K]
+    curve_segments = 12
+
+STREAM ElectricFeed : FEED -> H-ELECTRIC.in
+    T = 26.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM ElectricProduct : H-ELECTRIC.out -> PRODUCT
+
+UNIT H-ELECTRIC : Heater
+    T_out = 56.85 [C]
+    utility = electric
+    utility_heat_flux = 10 [kW/m2]
+    utility_efficiency = 0.98
+
+STREAM FiredFeed : FEED -> H-FIRED.in
+    T = 26.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM FiredProduct : H-FIRED.out -> PRODUCT
+
+UNIT H-FIRED : Heater
+    T_out = 56.85 [C]
+    utility = fired
+    utility_fuel = methane
+    fuel_heating_value = 50 [MJ/kg]
+    utility_heat_flux = 25 [kW/m2]
+    utility_efficiency = 0.85
+
+STREAM CoolingWaterFeed : FEED -> C-WATER.in
+    T = 86.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM CoolingWaterProduct : C-WATER.out -> PRODUCT
+
+UNIT C-WATER : Cooler
+    T_out = 66.85 [C]
+    utility = cooling_water
+    utility_T_in = 26.85 [C]
+    utility_T_out = 41.85 [C]
+    U = 700 [W/m2-K]
+    curve_segments = 12
+
+STREAM ChilledFeed : FEED -> C-CHILLED.in
+    T = 56.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM ChilledProduct : C-CHILLED.out -> PRODUCT
+
+UNIT C-CHILLED : Cooler
+    T_out = 36.85 [C]
+    utility = chilled_water
+    utility_T_in = 6.85 [C]
+    utility_T_out = 16.85 [C]
+    U = 700 [W/m2-K]
+    curve_segments = 12
+
+STREAM AirFeed : FEED -> C-AIR.in
+    T = 86.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM AirProduct : C-AIR.out -> PRODUCT
+
+UNIT C-AIR : Cooler
+    T_out = 66.85 [C]
+    utility = air
+    utility_T_in = 26.85 [C]
+    utility_T_out = 46.85 [C]
+    U = 100 [W/m2-K]
+    curve_segments = 12
+
+STREAM RefrigerantFeed : FEED -> C-REFRIGERANT.in
+    T = 56.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM RefrigerantProduct : C-REFRIGERANT.out -> PRODUCT
+
+UNIT C-REFRIGERANT : Cooler
+    T_out = 36.85 [C]
+    utility = refrigerant
+    utility_fluid = ammonia
+    utility_P = 8 [bar]
+    U = 700 [W/m2-K]
+    curve_segments = 12
+
+# A sensible glycol/water loop. Utility composition is on a mole basis.
+STREAM GlycolFeed : FEED -> C-GLYCOL.in
+    T = 56.85 [C]
+    P = 3 [bar]
+    F = 100 [kmol/h]
+    x = water:1
+STREAM GlycolProduct : C-GLYCOL.out -> PRODUCT
+
+UNIT C-GLYCOL : Cooler
+    T_out = 36.85 [C]
+    utility = thermal_fluid
+    utility_composition = {"water": 0.7, "ethylene glycol": 0.3}
+    utility_T_in = 6.85 [C]
+    utility_T_out = 16.85 [C]
+    U = 500 [W/m2-K]
+    curve_segments = 12

@@ -1,6 +1,7 @@
-"""Reusable one-dimensional fluid-flow and pressure-drop correlations."""
+"""Reusable fluid-flow, pressure-drop and convective-transfer correlations."""
 
 from dataclasses import dataclass
+from functools import lru_cache
 import math
 from typing import Callable, Union
 
@@ -45,6 +46,165 @@ def laminar_flat_plate_transfer(reynolds: float, prandtl: float, schmidt: float)
     return {'reynolds': re, 'prandtl': pr, 'schmidt': sc,
             'nusselt': 0.664 * math.sqrt(re) * pr**(1/3),
             'sherwood': 0.664 * math.sqrt(re) * sc**(1/3)}
+
+
+def gnielinski_liquid_transfer(
+    reynolds: float,
+    prandtl: float,
+    wall_prandtl: float,
+    *,
+    annulus_diameter_ratio: float | None = None,
+) -> dict:
+    """Fully developed smooth-tube/inner-heated-annulus liquid convection.
+
+    Tube: Gnielinski (1976). Annulus: Gnielinski (2009), DOI
+    10.1080/01457630802528661, as documented by INL's
+    ADWallHTCGnielinskiAnnularMaterial. The outer annulus wall is insulated.
+    No length-average entrance enhancement is applied to local coefficients.
+    Tubes support Re=4000..1e6 (Gnielinski 2013, DOI
+    10.1016/j.ijheatmasstransfer.2013.04.015); annuli retain Re=1e4..1e6.
+    Pr/Pr_wall=0.5..1000, annulus diameter ratio=0.1..0.9.
+    """
+    re = _positive_float(reynolds, 'Reynolds number')
+    pr = _positive_float(prandtl, 'Prandtl number')
+    pr_wall = _positive_float(wall_prandtl, 'wall Prandtl number')
+    minimum_re = 4000 if annulus_diameter_ratio is None else 10000
+    if not minimum_re <= re <= 1e6 or not 0.5 <= pr <= 1000 or not 0.5 <= pr_wall <= 1000:
+        raise TransportCorrelationError(
+            f'Gnielinski liquid transfer requires {minimum_re}<=Re<=1000000 and '
+            f'0.5<=Pr,Pr_wall<=1000; got Re={re:g}, Pr={pr:g}, Pr_wall={pr_wall:g}'
+        )
+    if annulus_diameter_ratio is None:
+        friction = (0.79 * math.log(re) - 1.64) ** -2
+        numerator = (friction / 8) * (re - 1000) * pr
+        denominator = 1 + 12.7 * math.sqrt(friction / 8) * (pr**(2/3) - 1)
+        geometry_factor = 1.0
+    else:
+        ratio = _positive_float(annulus_diameter_ratio, 'annulus diameter ratio')
+        if not 0.1 <= ratio <= 0.9:
+            raise TransportCorrelationError('Annulus diameter ratio must be between 0.1 and 0.9')
+        log_ratio = math.log(ratio)
+        effective_re = re * (
+            (1 + ratio**2) * log_ratio + (1 - ratio**2)
+        ) / ((1 - ratio)**2 * log_ratio)
+        friction = (1.8 * math.log10(effective_re) - 1.5) ** -2
+        numerator = (friction / 8) * re * pr
+        denominator = (
+            1.07 + 900 / re - 0.63 / (1 + 10 * pr)
+            + 12.7 * math.sqrt(friction / 8) * (pr**(2/3) - 1)
+        )
+        geometry_factor = 0.75 * ratio**-0.17
+    correction = (pr / pr_wall)**0.11
+    return {
+        'reynolds': re, 'prandtl': pr, 'wall_prandtl': pr_wall,
+        'darcy_friction_factor': friction,
+        'wall_property_correction': correction,
+        'nusselt': numerator / denominator * geometry_factor * correction,
+    }
+
+
+@lru_cache(maxsize=128)
+def laminar_annulus_nusselt(diameter_ratio: float) -> float:
+    """Fully developed inner-wall uniform heat flux, outer wall insulated.
+
+    Integrate the analytical Poiseuille velocity and transverse energy
+    equation. This avoids applying the circular-tube Nu to an annulus.
+    Dh=Do-Di. See NASA TN D-1972 (1963), constant-wall-heat-flux annuli.
+    """
+    from scipy.integrate import quad
+    a = _positive_float(diameter_ratio, 'annulus diameter ratio')
+    if not 0.1 <= a <= 0.9:
+        raise TransportCorrelationError('Annulus diameter ratio must be between 0.1 and 0.9')
+    coefficient = (1 - a*a) / math.log(a)
+
+    def integrated_velocity(r):
+        return ((1-r*r)/2 - (1-r**4)/4
+                - coefficient*((r*r-1)/4 - r*r*math.log(r)/2))
+
+    normalization = integrated_velocity(a)
+    integral, _ = quad(lambda r: integrated_velocity(r)**2/r, a, 1,
+                       epsabs=1e-14, epsrel=1e-11)
+    return 2*(1-a)*normalization**2/(a*integral)
+
+
+def internal_flow_transfer(reynolds, prandtl, wall_prandtl, *, annulus_diameter_ratio=None,
+                           gas_temperature_ratio=None):
+    """Fully developed internal flow, with Gnielinski's tube transition blend.
+
+    Round tubes interpolate Nu between Re=2300 (uniform-flux laminar) and
+    Re=4000 (turbulent), following Gnielinski (2013). This interpolation is
+    not extended to annuli, for which the turbulent correlation starts at 1e4.
+    """
+    re = _positive_float(reynolds, 'Reynolds number')
+    pr = _positive_float(prandtl, 'Prandtl number')
+    wall_pr = _positive_float(wall_prandtl, 'wall Prandtl number')
+    if re < 2300:
+        nu = 48/11 if annulus_diameter_ratio is None else laminar_annulus_nusselt(annulus_diameter_ratio)
+        return {'reynolds': re, 'prandtl': pr, 'wall_prandtl': wall_pr,
+                'nusselt': nu, 'flow_regime': 'laminar',
+                'correlation': 'fully_developed_uniform_heat_flux', 'wall_property_correction': 1.0}
+    transition = annulus_diameter_ratio is None and re < 4000
+    result = gnielinski_liquid_transfer(4000 if transition else re, pr, wall_pr,
+                                      annulus_diameter_ratio=annulus_diameter_ratio)
+    if gas_temperature_ratio is not None:
+        ratio = _positive_float(gas_temperature_ratio, 'bulk/wall temperature ratio')
+        if not .5 <= ratio <= 1.5:
+            raise TransportCorrelationError('Gas bulk/wall temperature ratio must be between 0.5 and 1.5')
+        correction = ratio**.45
+        result['nusselt'] *= correction / result['wall_property_correction']
+        result['wall_property_correction'] = correction
+    if transition:
+        fraction = (re-2300)/1700
+        result['nusselt'] = (1-fraction)*48/11+fraction*result['nusselt']
+        result['reynolds'] = re
+        result['turbulent_fraction'] = fraction
+        # The endpoint friction/correction is not a transition-flow friction
+        # or a multiplicative correction to the blended Nusselt number.
+        result.pop('darcy_friction_factor')
+        result.pop('wall_property_correction')
+        return {**result, 'flow_regime': 'transition', 'correlation': 'gnielinski_transition'}
+    return {**result, 'flow_regime': 'turbulent', 'correlation': 'gnielinski'}
+
+
+def shah_boiling_coefficient(mass_flux, quality, diameter, liquid_density, vapor_density,
+                             liquid_viscosity, liquid_conductivity, liquid_cp, latent_heat,
+                             heat_flux, *, horizontal=True, check_limits=True):
+    """Shah (1982) CHART saturated boiling, ASHRAE Fundamentals Ch.5 Table 3.
+
+    Diameter is the specified channel equivalent diameter, not inferred here.
+    A wetted wall below dryout is required; no post-CHF branch is supplied.
+    """
+    g, x, d, rl, rv, mu, k, cp, hfg, q = map(float, (
+        mass_flux, quality, diameter, liquid_density, vapor_density,
+        liquid_viscosity, liquid_conductivity, liquid_cp, latent_heat, heat_flux))
+    if not all(math.isfinite(v) and v > 0 for v in (g, d, rl, rv, mu, k, cp, hfg, q)) or not 0 <= x <= .7:
+        raise TransportCorrelationError('Shah boiling requires positive properties/heat flux and quality between 0 and 0.7 (wetted wall)')
+    if rl <= rv:
+        raise TransportCorrelationError('Boiling requires liquid density above vapor density')
+    bo = q/(g*hfg)
+    re = g*d/mu
+    pr = cp*mu/k
+    if check_limits and (not 2.2e-6 <= bo <= .00742 or not .001 <= d <= .028 or not 28 <= g <= 11071):
+        raise TransportCorrelationError(f'Shah boiling outside supported domain: Bo={bo:g}, D={d:g} m, G={g:g} kg/m2/s')
+    h_all_liquid = .023*re**.8*pr**.4*k/d
+    if x == 0:
+        enhancement = 230*math.sqrt(bo) if bo > 3e-5 else 1+46*math.sqrt(bo)
+    else:
+        co = ((1-x)/x)**.8*math.sqrt(rv/rl)
+        fr = g*g/(rl*rl*9.80665*d)
+        n = co*(.38*fr**-.3 if horizontal and fr < .04 else 1)
+        convection = 1.8/n**.8
+        factor = 14.7 if bo > .0011 else 15.43
+        if n <= .1:
+            nucleation = factor*math.sqrt(bo)*math.exp(2.47*n**-.15)
+        elif n < 1:
+            nucleation = factor*math.sqrt(bo)*math.exp(2.74*n**-.1)
+        else:
+            nucleation = 230*math.sqrt(bo) if bo > 3e-5 else 1+46*math.sqrt(bo)
+        enhancement = max(convection, nucleation)*(1-x)**.8
+    return {'h_W_m2_K': h_all_liquid*enhancement, 'boiling_number': bo,
+            'flow_regime': 'saturated_boiling', 'correlation': 'shah_1982',
+            'all_liquid_reynolds': re, 'prandtl': pr}
 
 
 def _profile_value(profile: ScalarProfile, position_m: float, label: str) -> float:

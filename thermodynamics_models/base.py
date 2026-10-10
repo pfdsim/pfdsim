@@ -4019,6 +4019,40 @@ class IdealThermodynamics(PhaseDiagramMixin):
             for j in composition
         )
 
+    def transport_mixture_thermal_conductivity(
+        self, composition: dict[str, float], T: float, P: float,
+        vapor_fraction: float = 1.0, x: Optional[dict] = None,
+        y: Optional[dict] = None,
+    ) -> TransportPhaseValues:
+        """Active-phase conductivities [W/(m K)] for transport calculations.
+
+        Liquid mixtures use the shared Li rule. Dilute-gas mixtures use the
+        Lindsay-Bromley rule with the existing pure viscosity/conductivity paths.
+        """
+        vf = float(vapor_fraction)
+        if not math.isfinite(vf) or not 0 <= vf <= 1:
+            raise ThermodynamicsError('Conductivity requires vapor fraction between zero and one')
+        liquid = self.mixture_liquid_thermal_conductivity(x or composition, T) if vf < 1 else None
+        vapor = None
+        if vf > 0:
+            vapor_composition = self._normalized_positive_composition(y or composition)
+            active = [c for c, z in vapor_composition.items() if z > 1e-12]
+            if len(active) == 1:
+                vapor = self.pure_thermal_conductivity(active[0], T, 'vapor')
+            else:
+                from chemicals.thermal_conductivity import Lindsay_Bromley
+                boiling_points = [getattr(self.props[c], 'Tb', None) for c in active]
+                if not all(v is not None and math.isfinite(v) and v > 0 for v in boiling_points):
+                    raise ThermodynamicsError('Gas conductivity mixing requires positive pure-component boiling points')
+                total = sum(vapor_composition[c] for c in active)
+                vapor = Lindsay_Bromley(T, [vapor_composition[c]/total for c in active],
+                    [self.pure_thermal_conductivity(c, T, 'vapor') for c in active],
+                    [self._pure_viscosity(c, T, P, 'vapor') for c in active],
+                    boiling_points, [self.props[c].MW for c in active])
+                if not math.isfinite(vapor) or vapor <= 0:
+                    raise ThermodynamicsError('Gas conductivity mixing returned an invalid value')
+        return TransportPhaseValues(liquid=liquid, vapor=vapor)
+
     def _pure_viscosity(self, comp: str, T: float, P: float, phase: str) -> float:
         """Resolve and cache pure-component dynamic viscosity [Pa*s]."""
         phase_key = "vapor" if phase in {"gas", "vapor"} else "liquid"

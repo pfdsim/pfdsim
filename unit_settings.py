@@ -105,6 +105,11 @@ def unit_setting_schema(unit_type):
     info = get_unit_info(unit_type)
     schema, aliases = {}, {}
     pending = [cls.solve, cls.__init__]
+    if unit_type in ('Heater', 'Cooler'):
+        exchanger = UNIT_CLASSES['HeatExchanger']
+        pending.extend((exchanger._calculated_u_spec, exchanger._shell_transport_geometry,
+                        exchanger._curve_segments, exchanger._flow_pattern,
+                        exchanger._ua_spec))
     seen = set()
     while pending:
         function = pending.pop()
@@ -150,7 +155,20 @@ def unit_setting_schema(unit_type):
                 except (ValueError, TypeError):
                     pass
     declared_primary = {name.lower() for name in info.get("primary_specs", [])}
-    for name, metadata in info.get("optional_specs", {}).items():
+    metadata_specs = dict(info.get('optional_specs', {}))
+    if unit_type in ('Heater', 'Cooler'):
+        exchanger_specs = get_unit_info('HeatExchanger')['optional_specs']
+        for name in ('U_model', 'wall_material', 'tube_side', 'tube_inner_diameter',
+                     'tube_outer_diameter', 'shell_inner_diameter', 'wall_conductivity',
+                     'length', 'orientation', 'bundle_diameter', 'tube_pitch', 'tube_count',
+                     'tube_passes', 'shell_passes', 'tube_layout_angle', 'baffle_spacing',
+                     'baffle_cut', 'baffle_count', 'tube_baffle_clearance',
+                     'shell_baffle_clearance', 'sealing_strip_pairs', 'boiling_Csf',
+                     'boiling_n', 'shell_pool_boiling', 'fouling_tube', 'fouling_shell',
+                     'type', 'flow_pattern', 'curve_segments', 'A', 'UA', 'UA_available',
+                     'estimate_U'):
+            metadata_specs[name] = exchanger_specs[name]
+    for name, metadata in metadata_specs.items():
         if name.lower() not in schema and name.lower() not in declared_primary:
             continue
         item = schema.setdefault(name.lower(), {"name": name, "default": None})

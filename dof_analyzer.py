@@ -237,8 +237,22 @@ UNIT_DOF_RULES = {
         'required_specs': ['T_out|Q|vap_frac'],
         'optional_specs': {
             'P_drop': {'unit': 'bar', 'default': 0},
-            'utility': {'values': ['steam', 'hot_oil', 'electric', 'fired'], 'default': 'steam'},
+            'utility': {'values': ['steam', 'hot_oil', 'hot_water', 'thermal_fluid', 'air', 'refrigerant', 'electric', 'fired'], 'description': 'Optional utility consumption and surface sizing'},
             'utility_T': {'unit': 'C'},
+            'utility_P': {'unit': 'bar'},
+            'utility_P_drop': {'unit': 'bar', 'default': 0.0},
+            'utility_T_in': {'unit': 'C'},
+            'utility_T_out': {'unit': 'C'},
+            'utility_outlet_vapor_fraction': {'range': [0, 1]},
+            'utility_inlet_vapor_fraction': {'range': [0, 1]},
+            'utility_fluid': {'description': 'Actual thermal fluid, oil or pure refrigerant component identifier'},
+            'utility_composition': {'description': 'Utility mole-fraction mapping (JSON)', 'default': {}},
+            'utility_thermo_method': {'description': 'Utility property package; process preserves process-component overrides'},
+            'utility_heat_flux': {'unit': 'W/m2', 'description': 'Specified design surface loading for electric/fired heating'},
+            'utility_efficiency': {'description': 'Electric/fired thermal efficiency; defaults 1.0 electric, 0.85 fired'},
+            'utility_fuel': {'default': 'methane'},
+            'fuel_heating_value': {'unit': 'kJ/kg', 'description': 'Fuel net heating value; overrides chemical Hcomb'},
+            'process_side': {'values': ['tube', 'shell'], 'default': 'tube'},
             'U': {'unit': 'W/m2-K'},
         },
         'calculated': ['Q', 'T_out', 'utility_flow', 'area'],
@@ -251,9 +265,18 @@ UNIT_DOF_RULES = {
         'required_specs': ['T_out|Q|vap_frac'],
         'optional_specs': {
             'P_drop': {'unit': 'bar', 'default': 0},
-            'utility': {'values': ['cooling_water', 'chilled_water', 'refrigerant', 'air'], 'default': 'cooling_water'},
-            'utility_T_in': {'unit': 'C', 'default': 30},
-            'utility_T_out': {'unit': 'C', 'default': 45},
+            'utility': {'values': ['cooling_water', 'chilled_water', 'thermal_fluid', 'hot_oil', 'refrigerant', 'air'], 'description': 'Optional utility consumption and surface sizing'},
+            'utility_T_in': {'unit': 'C'},
+            'utility_T_out': {'unit': 'C'},
+            'utility_P': {'unit': 'bar'},
+            'utility_P_drop': {'unit': 'bar', 'default': 0.0},
+            'process_side': {'values': ['tube', 'shell'], 'default': 'tube'},
+            'utility_T': {'unit': 'C'},
+            'utility_outlet_vapor_fraction': {'range': [0, 1]},
+            'utility_inlet_vapor_fraction': {'range': [0, 1]},
+            'utility_fluid': {'description': 'Actual thermal fluid, oil or pure refrigerant component identifier'},
+            'utility_composition': {'description': 'Utility mole-fraction mapping (JSON)', 'default': {}},
+            'utility_thermo_method': {'description': 'Utility property package'},
             'U': {'unit': 'W/m2-K'},
         },
         'calculated': ['Q', 'T_out', 'utility_flow', 'area'],
@@ -268,7 +291,7 @@ UNIT_DOF_RULES = {
             'type': {'values': ['countercurrent', 'cocurrent', 'shell_tube', 'plate', 'double_pipe'], 'default': 'countercurrent'},
             'flow_pattern': {'values': ['countercurrent', 'cocurrent'], 'default': 'countercurrent'},
             'shell_passes': {'default': 1},
-            'tube_passes': {'default': 2},
+            'tube_passes': {'values': [1, 2, 4, 6, 8], 'description': 'Actual tube passes; double-pipe requires 1, shell-tube defaults to 2'},
             'P_drop_tube': {'unit': 'bar', 'default': 0},
             'P_drop_shell': {'unit': 'bar', 'default': 0},
             'P_drop_hot': {'unit': 'bar', 'default': 0},
@@ -278,11 +301,35 @@ UNIT_DOF_RULES = {
             'UA_available': {'unit': 'W/K'},
             'LMTD_correction': {'default': 1.0, 'range': [0.7, 1.0]},
             'min_approach': {'unit': 'C'},
-            'fouling_tube': {'unit': 'm2-K/W', 'default': 0.0001},
-            'fouling_shell': {'unit': 'm2-K/W', 'default': 0.0002},
+            'fouling_tube': {'unit': 'm2-K/W', 'default': 0.0, 'description': 'Tube-side fouling resistance for calculated U; clean by default'},
+            'fouling_shell': {'unit': 'm2-K/W', 'default': 0.0, 'description': 'Shell/annulus-side fouling resistance for calculated U; clean by default'},
             'Q': {'unit': 'kW'},
             'U': {'unit': 'W/m2-K'},
             'A': {'unit': 'm2'},
+            'U_model': {'values': ['specified', 'double_pipe', 'double_pipe_gnielinski', 'shell_tube'], 'default': 'specified',
+                        'description': 'Specified/preliminary U, or geometry-based tube and shell films'},
+            'tube_side': {'values': ['hot', 'cold'], 'description': 'Tube fluid for hot/cold ports; inferred from tube/shell ports'},
+            'tube_inner_diameter': {'unit': 'm'},
+            'tube_outer_diameter': {'unit': 'm'},
+            'shell_inner_diameter': {'unit': 'm'},
+            'wall_conductivity': {'unit': 'W/m/K'},
+            'wall_material': {'values': ['carbon_steel', 'copper', 'brass', 'aluminum', 'iron', 'nickel', 'titanium', 'stainless_steel_304', 'stainless_steel_316', 'stainless_steel_430'],
+                              'description': 'Nominal constant material conductivity; explicit wall_conductivity overrides'},
+            'orientation': {'values': ['horizontal', 'vertical'], 'default': 'horizontal'},
+            'bundle_diameter': {'unit': 'm'},
+            'tube_pitch': {'unit': 'm'},
+            'tube_count': {'description': 'Total tube count; must fit the bundle and divide evenly among passes'},
+            'tube_layout_angle': {'values': [30, 45, 90], 'default': 30},
+            'baffle_spacing': {'unit': 'm'},
+            'baffle_cut': {'default': .25, 'range': [.15, .45]},
+            'baffle_count': {'description': 'Number of internal segmental baffles for the specified hardware'},
+            'tube_baffle_clearance': {'unit': 'm', 'description': 'Tube-to-baffle diametral clearance; specify actual value, including zero'},
+            'shell_baffle_clearance': {'unit': 'm', 'description': 'Shell-to-baffle diametral clearance; specify actual value, including zero'},
+            'sealing_strip_pairs': {'default': 0},
+            'boiling_Csf': {'description': 'Rohsenow fluid/surface coefficient for saturated shell-side pool boiling'},
+            'boiling_n': {'default': 1.0, 'description': 'Rohsenow exponent; 1 for water, commonly 1.7 for other fluids'},
+            'shell_pool_boiling': {'default': False, 'description': 'Declare a fully submerged saturated pool-boiling bundle; requires boiling_Csf'},
+            'length': {'unit': 'm', 'description': 'Tube heat-transfer length; outer tube area is pi*Do*length*tube_count (one tube for double-pipe)'},
             'estimate_U': {'default': False},
             'allow_temperature_cross': {'default': False},
             'hot_vapor_fraction': {'range': [0, 1]},
@@ -291,7 +338,7 @@ UNIT_DOF_RULES = {
             'shell_vapor_fraction': {'range': [0, 1]},
         },
         'calculated': ['Q', 'UA_required', 'area', 'effectiveness', 'min_approach'],
-        'dof_notes': 'Design mode: exactly one outlet T, Q, or vapor_frac; optional U/A/UA report sizing. Rating mode: no thermal target, but requires UA, U+A, or A+auto-U.',
+        'dof_notes': 'Design mode: exactly one outlet T, Q, or vapor_frac; optional U/A/UA report sizing. Rating mode: no thermal target, but requires UA, U+A, A+auto-U, or calculated U with A/length.',
     },
     'FiredHeater': {
         'description': 'Process furnace with radiant and convective sections',
@@ -927,7 +974,7 @@ _PRIMARY_SPECS = {
     'expander': ('P_out', 'delta_P', 'pressure_ratio', 'eta_isen', 'eta_mech'),
     'valve': ('P_out',),
     'pipe': ('length', 'diameter', 'velocity', 'diameter_out', 'roughness', 'elevation_change'),
-    'heat_exchanger': ('T_hot_out', 'T_cold_out', 'T_tube_out', 'T_shell_out', 'Q', 'UA', 'U', 'A', 'area', 'estimate_U'),
+    'heat_exchanger': ('T_hot_out', 'T_cold_out', 'T_tube_out', 'T_shell_out', 'Q', 'UA', 'U', 'A', 'area', 'estimate_U', 'U_model'),
     'reactor': ('volume', 'V', 'length', 'diameter', 'phase', 'mode', 'T', 'P', 'catalyst_mass'),
     'batch_reactor': ('V_batch', 'N', 't_rxn', 'phase', 'mode', 'T', 'P'),
     'filter': ('cycle_time', 'P_drop', 'area', 'porosity', 'capture_cut_size', 'washing_model', 'deliquoring_time'),
@@ -1306,7 +1353,15 @@ class DOFAnalyzer:
                 has_tube_vf,
                 has_shell_vf,
             ])
-            has_rating_capacity = has_ua or (has_u and has_a) or (has_auto_u and has_a)
+            has_calculated_u = any(
+                parameter.name.lower() == 'u_model'
+                and str(parameter.value).strip().lower() in ('double_pipe_gnielinski', 'double_pipe', 'shell_tube')
+                for parameter in unit.params
+            )
+            has_rating_capacity = (
+                has_ua or (has_u and has_a) or (has_auto_u and has_a)
+                or (has_calculated_u and (has_a or 'length' in param_names))
+            )
             if n_thermal_specs == 1:
                 dof = 0
             elif n_thermal_specs > 1:
@@ -1319,7 +1374,7 @@ class DOFAnalyzer:
             else:
                 dof = 1
                 status = SpecificationStatus.UNDER_SPECIFIED
-                message = f"Unit '{unit.id}' needs an outlet target, Q, vapor_frac, UA, U+A, or A+auto-U"
+                message = f"Unit '{unit.id}' needs an outlet target, Q, vapor_frac, UA, U+A, A+auto-U, or calculated U with A/length"
                 
         elif unit_type in ['Flash', 'Flash3']:
             has_t = 't' in param_names or 'temperature' in param_names

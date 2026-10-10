@@ -8,6 +8,13 @@ import inspect
 from scipy.optimize import brentq
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+    from .heat_exchanger_transport import TubularHeatTransfer, ShellTubeGeometry, transport_parameter, heat_transfer_area, wall_material_record, solve_thermal_domain_root
+    from .utility_heat_transfer import HenryCurveThermodynamics, size_thermal_utility
+else:
+    from heat_exchanger_transport import TubularHeatTransfer, ShellTubeGeometry, transport_parameter, heat_transfer_area, wall_material_record, solve_thermal_domain_root
+    from utility_heat_transfer import HenryCurveThermodynamics, size_thermal_utility
+
+if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .physical_constants import R_J_MOL_K
 else:
     from physical_constants import R_J_MOL_K
@@ -343,11 +350,20 @@ class _ThermoStateSolver:
         if Pc is not None and P >= Pc:
             return None
 
-        candidates = self._temperature_grid(T_guess)
         try:
-            candidates.append(self.thermo.bubble_point_T(composition, P, T_guess))
+            temperature = self.thermo.bubble_point_T(composition, P, T_guess)
+            if math.isfinite(temperature) and temperature > 0:
+                try:
+                    saturation_residual = self.thermo.K_value(comp, temperature, P, composition)-1
+                except TypeError:
+                    saturation_residual = self.thermo.K_value(comp, temperature, P)-1
+                if abs(saturation_residual) < 1e-8:
+                    return temperature
         except Exception:
-            pass
+            temperature = None
+        candidates = self._temperature_grid(T_guess)
+        if temperature is not None:
+            candidates.append(temperature)
         grid = sorted(set(max(1.0, min(5000.0, float(T))) for T in candidates))
 
         def residual(T: float) -> float:
@@ -448,6 +464,34 @@ class _ThermoStateSolver:
             )
         except Exception:
             state.rho = None
+        return state
+
+    def state_at_vapor_fraction(self, P, F, composition, vapor_fraction, T_guess=300.0):
+        """Construct a consistent PV state, including pure-fluid saturation.
+
+        Temperature alone cannot determine a pure fluid's saturated quality;
+        interpolate its phase enthalpies and inventories instead of overwriting
+        the vapor_fraction field of an unrelated TP flash result.
+        """
+        vf = float(vapor_fraction)
+        if not math.isfinite(vf) or not 0 <= vf <= 1:
+            raise UnitOperationError(f'{self.unit_label} vapor fraction must be between zero and one')
+        direct = getattr(self.thermo, 'calculate_state_PQ', None)
+        if direct is not None:
+            try:
+                return direct(P, vf, F, composition)
+            except (NotImplementedError, AttributeError):
+                pass
+        active = [component for component, fraction in composition.items() if fraction > 1e-12]
+        if len(active) == 1:
+            phases = self._saturated_phase_states(P, F, composition, T_guess)
+            if phases is None:
+                raise UnitOperationError(f'{self.unit_label} cannot construct pure-fluid saturation at {P:g} bar')
+            return self._two_phase_state(*phases, vf)
+        temperature, _x, _y = self.thermo.flash_PV(composition, P, vf)
+        state = self.thermo.calculate_state(temperature, P, F, composition)
+        if abs(state.fluid_vapor_fraction-vf) > 1e-6:
+            raise UnitOperationError(f'{self.unit_label} PV flash did not reproduce the requested fluid vapor fraction')
         return state
 
     def _saturated_state_at_entropy(self, P: float, F: float, composition: dict,
@@ -2770,22 +2814,9 @@ class Heater(UnitOperation):
                     aqueous_context,
                 )
             else:
-                direct_pq = getattr(self.thermo, 'calculate_state_PQ', None)
-                if direct_pq is not None:
-                    try:
-                        outlet = direct_pq(P_out, vap_frac, inlet.F, inlet.composition)
-                    except (NotImplementedError, AttributeError):
-                        outlet = None
-                else:
-                    outlet = None
-                if outlet is None:
-                    T_out, x, y = self.thermo.flash_PV(inlet.composition, P_out, vap_frac)
-                    outlet = self.thermo.calculate_state(
-                        T_out, P_out, inlet.F, inlet.composition
-                    )
-                    outlet.vapor_fraction = vap_frac
-                    outlet.x = x
-                    outlet.y = y
+                outlet = _ThermoStateSolver(self.thermo, f"{self.__class__.__name__} '{self.unit_id}'").state_at_vapor_fraction(
+                    P_out, inlet.F, inlet.composition, vap_frac, inlet.T,
+                )
             Q = inlet.F * (outlet.H - inlet_H)
 
         self.thermo._record_estimated_interaction_extrapolation(
@@ -2812,10 +2843,12 @@ class Heater(UnitOperation):
             P_drop,
             henry_info=henry_info,
             warnings=henry_warnings,
+            curve_thermo=(HenryCurveThermodynamics(self.thermo, henry_helper, aqueous_context)
+                          if aqueous_context is not None else None),
         )
 
     def _result(self, outlet: StreamState, Q: float, inlet: StreamState,
-                P_drop: float, *, henry_info=None, warnings=None) -> UnitResult:
+                P_drop: float, *, henry_info=None, warnings=None, curve_thermo=None) -> UnitResult:
         performance = {
             'T_in_C': inlet.T - 273.15,
             'T_out_C': outlet.T - 273.15,
@@ -2826,11 +2859,22 @@ class Heater(UnitOperation):
         }
         if henry_info is not None:
             performance['henry'] = henry_info
+        result_warnings = list(warnings or ())
+        if self.get_param('utility') is not None:
+            curve_inlet = inlet
+            if curve_thermo is not None:
+                curve_inlet = inlet.copy()
+                curve_inlet.H = curve_thermo.helper._stream_enthalpy(inlet, curve_thermo.context)
+            utility_performance, utility_warnings = size_thermal_utility(
+                self, curve_inlet, outlet, Q, P_drop, process_thermo=curve_thermo,
+            )
+            performance.update(utility_performance)
+            result_warnings.extend(utility_warnings)
         return UnitResult(
             outlet_streams={'out': outlet},
             heat_duty=Q,
             performance=performance,
-            warnings=list(warnings or ()),
+            warnings=result_warnings,
         )
 
     def _vapor_fraction_spec(self):
@@ -2863,6 +2907,8 @@ class Heater(UnitOperation):
         return None
 
     def _enforce_direction(self, Q: float) -> None:
+        if not math.isfinite(Q):
+            raise UnitOperationError(f"{self.__class__.__name__} '{self.unit_id}' duty must be finite")
         tolerance = max(1e-9, abs(Q) * 1e-12)
         if self.heat_direction > 0 and Q <= tolerance:
             raise UnitOperationError(
@@ -2899,6 +2945,13 @@ class HeatExchanger(UnitOperation):
 
     supports_permanent_solids = True
     particle_size_behavior = 'nonselective'
+
+    def __init__(self, unit_id, thermo, params, *, side_thermodynamics=None):
+        super().__init__(unit_id, thermo, params)
+        self.side_thermodynamics = dict(side_thermodynamics or {})
+
+    def _thermo_for_stream(self, stream):
+        return self.side_thermodynamics.get(stream.thermo_scope, self.thermo)
 
     def particle_size_sources_for_outlet(self, outlet_name, inlets, result):
         performance = result.performance
@@ -3007,6 +3060,9 @@ class HeatExchanger(UnitOperation):
         )
         if self._truthy_param(self.get_param('estimate_U', False)):
             estimate_U = True
+        transport, A_value = self._calculated_u_spec(
+            hot_port, cold_port, U, estimate_U, UA_available, A_value
+        )
 
         T_hot_out = self._temperature_spec(
             'T_hot_out', 'hot_T_out', 'hot_out_T'
@@ -3056,12 +3112,14 @@ class HeatExchanger(UnitOperation):
             stream.solid_component_flows
             for stream in (hot, cold)
         )
-        if solid_bearing and (rating_mode or estimate_U):
+        if solid_bearing and (rating_mode or estimate_U or transport is not None):
             raise UnitOperationError(
                 f"HeatExchanger '{self.unit_id}' supports permanent solids only "
                 "with an explicit duty or outlet-state specification and without "
                 "auto-U estimation; slurry/powder film coefficients are not modeled"
             )
+        if transport is not None:
+            transport.validate_inlets(self._thermo_for_stream(hot), self._thermo_for_stream(cold), hot, cold)
         if thermal_spec_count > 1:
             raise UnitOperationError(
                 f"HeatExchanger '{self.unit_id}' requires exactly one of U+A, "
@@ -3134,8 +3192,10 @@ class HeatExchanger(UnitOperation):
 
         if design_mode and T_hot_out is not None:
             hot_out = self._state_at_temperature(
-                hot.composition, P_hot_out, hot.F, T_hot_out, hot_force_phase
+                hot.composition, P_hot_out, hot.F, T_hot_out, hot_force_phase,
+                thermo=self._thermo_for_stream(hot),
             )
+            hot_out.thermo_scope = hot.thermo_scope
             Q = hot.F * (self._stream_enthalpy(hot) - self._stream_enthalpy(hot_out))
             self._enforce_heat_transfer_direction(Q)
             cold_out = self._outlet_from_heat_added(
@@ -3146,7 +3206,9 @@ class HeatExchanger(UnitOperation):
             cold_out = self._state_at_temperature(
                 cold.composition, P_cold_out, cold.F, T_cold_out,
                 cold_force_phase,
+                thermo=self._thermo_for_stream(cold),
             )
+            cold_out.thermo_scope = cold.thermo_scope
             Q = cold.F * (self._stream_enthalpy(cold_out) - self._stream_enthalpy(cold))
             self._enforce_heat_transfer_direction(Q)
             hot_out = self._outlet_from_heat_removed(
@@ -3165,8 +3227,10 @@ class HeatExchanger(UnitOperation):
 
         elif design_mode and hot_vap_frac is not None:
             hot_out = self._state_for_vapor_fraction(
-                hot.composition, P_hot_out, hot.F, hot_vap_frac
+                hot.composition, P_hot_out, hot.F, hot_vap_frac,
+                thermo=self._thermo_for_stream(hot),
             )
+            hot_out.thermo_scope = hot.thermo_scope
             Q = hot.F * (self._stream_enthalpy(hot) - self._stream_enthalpy(hot_out))
             self._enforce_heat_transfer_direction(Q)
             cold_out = self._outlet_from_heat_added(
@@ -3175,8 +3239,10 @@ class HeatExchanger(UnitOperation):
 
         elif design_mode and cold_vap_frac is not None:
             cold_out = self._state_for_vapor_fraction(
-                cold.composition, P_cold_out, cold.F, cold_vap_frac
+                cold.composition, P_cold_out, cold.F, cold_vap_frac,
+                thermo=self._thermo_for_stream(cold),
             )
+            cold_out.thermo_scope = cold.thermo_scope
             Q = cold.F * (self._stream_enthalpy(cold_out) - self._stream_enthalpy(cold))
             self._enforce_heat_transfer_direction(Q)
             hot_out = self._outlet_from_heat_removed(
@@ -3197,6 +3263,7 @@ class HeatExchanger(UnitOperation):
                 flow_pattern,
                 hot_force_phase,
                 cold_force_phase,
+                transport,
             )
             hot_out = self._outlet_from_heat_removed(
                 hot, P_hot_out, Q, hot_force_phase
@@ -3205,7 +3272,7 @@ class HeatExchanger(UnitOperation):
                 cold, P_cold_out, Q, cold_force_phase
             )
 
-        compute_full_curve = self._compute_full_curve_metrics(rating_mode)
+        compute_full_curve = transport is not None or self._compute_full_curve_metrics(rating_mode)
         curve = None
         if compute_full_curve:
             try:
@@ -3220,9 +3287,10 @@ class HeatExchanger(UnitOperation):
                     include_u_estimates=estimate_U,
                     hot_force_phase=hot_force_phase,
                     cold_force_phase=cold_force_phase,
+                    transport=transport,
                 )
             except Exception as exc:
-                if self._curve_metrics_failure_is_deferrable(rating_mode):
+                if transport is None and self._curve_metrics_failure_is_deferrable(rating_mode):
                     warnings.append(
                         f"HeatExchanger '{self.unit_id}' deferred curve diagnostics "
                         f"during recycle iteration after: {exc}"
@@ -3236,7 +3304,7 @@ class HeatExchanger(UnitOperation):
                 f"Temperature cross detected in HeatExchanger '{self.unit_id}' "
                 f"(minimum approach {curve['min_approach_K']:.4g} K)"
             )
-            if rating_mode and not allow_temperature_cross:
+            if transport is not None or (rating_mode and not allow_temperature_cross):
                 raise UnitOperationError(message)
             if not allow_temperature_cross:
                 warnings.append(message)
@@ -3262,6 +3330,24 @@ class HeatExchanger(UnitOperation):
         sizing = self._sizing_performance(
             U_value, A_value, UA_available, estimate_U, curve
         )
+        if transport is not None:
+            required_area = curve['calculated_U_area_required_m2']
+            sizing.update({
+                'U_model': self.get_param('U_model'),
+                'U_area_basis': 'tube_outer_surface',
+                'tube_side': 'hot' if transport.tube_is_hot else 'cold',
+                'U_W_m2_K': curve['calculated_U_effective_W_m2_K'],
+                'area_required_m2': required_area,
+                'length_required_m': required_area / transport.perimeter_m,
+                'calculated_U_nodes': curve['calculated_U_nodes'],
+                'LMTD_correction': curve.get('LMTD_correction', 1.0),
+                'wall_conductivity_W_m_K': transport.wall_conductivity_W_m_K,
+                'wall_material': transport.wall_material,
+            })
+            if A_value is not None:
+                sizing['area_margin_m2'] = A_value - required_area
+                sizing['area_utilization'] = required_area / A_value
+                sizing['length_m'] = A_value / transport.perimeter_m
         profile = self._profile_performance(curve)
         
         return UnitResult(
@@ -3432,9 +3518,11 @@ class HeatExchanger(UnitOperation):
         F: float,
         T: float,
         force_phase: str | None,
+        *, thermo=None,
     ) -> StreamState:
+        thermo = thermo or self.thermo
         if force_phase is not None:
-            return self.thermo.calculate_state(
+            return thermo.calculate_state(
                 T,
                 P,
                 F,
@@ -3442,7 +3530,7 @@ class HeatExchanger(UnitOperation):
                 phase=force_phase,
                 flash=False,
             )
-        return self.thermo.calculate_state(T, P, F, composition)
+        return thermo.calculate_state(T, P, F, composition)
 
     def _has_physical_port(self, side: str, *ports: str) -> bool:
         return any(side in port.lower() for port in ports)
@@ -3460,36 +3548,126 @@ class HeatExchanger(UnitOperation):
             raise UnitOperationError(
                 f"HeatExchanger '{self.unit_id}' U must be numeric or auto"
             ) from exc
-        if U <= 0.0:
-            raise UnitOperationError(f"HeatExchanger '{self.unit_id}' U must be positive")
-        unit = (self.get_param_unit('U') or '').strip().lower()
-        if unit in ('btu/hr-ft2-f', 'btu/(hr-ft2-f)', 'btu/h-ft2-f',
-                    'btu/hr/ft2/f', 'btu/(h ft2 f)'):
-            U *= 5.6783
-        return U, False
+        factors = {'': 1, 'w/m2-k': 1, 'w/m2/k': 1, 'w/(m2*k)': 1,
+                   'w/m^2/k': 1, 'w/m^2-k': 1, 'kw/m2-k': 1000,
+                   'kw/m2/k': 1000, 'kw/m^2-k': 1000, 'kw/m^2/k': 1000}
+        factors.update(dict.fromkeys(('btu/hr-ft2-f', 'btu/(hr-ft2-f)',
+            'btu/h-ft2-f', 'btu/hr/ft2/f', 'btu/(hft2f)'), BTU_H_FT2_F_TO_W_M2_K))
+        return transport_parameter(U, 'U', self.get_param_unit('U'), factors), False
+
+    def _calculated_u_spec(self, hot_port, cold_port, U, estimate_U, UA, area):
+        model = str(self.get_param('U_model', 'specified')).strip().lower()
+        if model == 'specified':
+            return None, area
+        if model not in ('double_pipe_gnielinski', 'double_pipe', 'shell_tube'):
+            raise UnitOperationError(f"HeatExchanger '{self.unit_id}' has unknown U_model {model!r}")
+        if U is not None or estimate_U or UA is not None:
+            raise UnitOperationError('Calculated U cannot be combined with U, auto-U estimation or UA')
+        if self.get_param('LMTD_correction') is not None:
+            raise UnitOperationError('Geometry-based U computes its pass-arrangement correction; omit LMTD_correction')
+        for geometry in (self.get_param('type'), self.get_param('flow_pattern')):
+            normalized = str(geometry or '').strip().lower().replace('-', '_')
+            if normalized == 'plate' or (model != 'shell_tube' and normalized in ('shell_tube', 'shell_and_tube')):
+                raise UnitOperationError('double_pipe_gnielinski requires a concentric double-pipe exchanger')
+        if float(self.get_param('shell_passes', 1)) != 1 or (model != 'shell_tube' and float(self.get_param('tube_passes', 1)) != 1):
+            raise UnitOperationError('double_pipe_gnielinski supports one tube pass and one annulus pass')
+        side = self.get_param('tube_side')
+        physical = None
+        if 'tube' in hot_port.lower() and 'shell' in cold_port.lower():
+            physical = 'hot'
+        elif 'tube' in cold_port.lower() and 'shell' in hot_port.lower():
+            physical = 'cold'
+        if side is not None:
+            side = str(side).strip().lower()
+            if side not in ('hot', 'cold'):
+                raise UnitOperationError('tube_side must be hot or cold')
+            if physical is not None and side != physical:
+                raise UnitOperationError('tube_side conflicts with the tube/shell inlet ports')
+        side = physical if side is None else side
+        if side is None:
+            raise UnitOperationError('Calculated U requires tube_in/shell_in ports or an explicit tube_side')
+        length_units = {'': 1, 'm': 1, 'mm': 1e-3, 'cm': 1e-2, 'ft': 0.3048, 'in': 0.0254}
+        conductivity_units = {'': 1, 'w/m/k': 1, 'w/(m*k)': 1, 'w/m-k': 1}
+        resistance_units = {'': 1, 'm2-k/w': 1, 'm2*k/w': 1, 'm2*k/watt': 1, 'm2.k/w': 1}
+        material = self.get_param('wall_material', self.get_param('material'))
+        material_record = wall_material_record(material) if material is not None else None
+        conductivity = self.get_param('wall_conductivity')
+        if conductivity is None and material_record is not None:
+            conductivity = material_record['conductivity_W_m_K']
+            conductivity_unit = ''
+        else:
+            conductivity_unit = self.get_param_unit('wall_conductivity')
+            if material_record is not None:
+                material_record = {**material_record, 'overridden_by_wall_conductivity': True}
+        transport = TubularHeatTransfer(
+            transport_parameter(self.get_param('tube_inner_diameter'), 'tube_inner_diameter', self.get_param_unit('tube_inner_diameter'), length_units),
+            transport_parameter(self.get_param('tube_outer_diameter'), 'tube_outer_diameter', self.get_param_unit('tube_outer_diameter'), length_units),
+            transport_parameter(self.get_param('shell_inner_diameter'), 'shell_inner_diameter', self.get_param_unit('shell_inner_diameter'), length_units),
+            transport_parameter(conductivity, 'wall_conductivity', conductivity_unit, conductivity_units),
+            transport_parameter(self.get_param('fouling_tube', 0.0), 'fouling_tube', self.get_param_unit('fouling_tube'), resistance_units, nonnegative=True),
+            transport_parameter(self.get_param('fouling_shell', 0.0), 'fouling_shell', self.get_param_unit('fouling_shell'), resistance_units, nonnegative=True),
+            side == 'hot',
+            wall_material=material_record,
+            shell_geometry=self._shell_transport_geometry(length_units) if model == 'shell_tube' else None,
+            orientation=str(self.get_param('orientation', 'horizontal')).strip().lower(),
+        )
+        length = self.get_param('length')
+        if length is not None:
+            length = transport_parameter(length, 'length', self.get_param_unit('length'), length_units)
+            geometric_area = transport.perimeter_m * length
+            if area is not None and not math.isclose(area, geometric_area, rel_tol=1e-8):
+                raise UnitOperationError('Tubular A must equal pi*tube_outer_diameter*length*tube_count')
+            area = geometric_area
+        if area is not None:
+            transport = transport.with_available_area(area)
+        return transport, area
+
+    def _shell_transport_geometry(self, length_units):
+        def length(value, name):
+            return transport_parameter(value, name, self.get_param_unit(name), length_units)
+        def integer(value, name, *, zero=False):
+            number = transport_parameter(value, name, '', {'': 1}, nonnegative=zero)
+            if number != int(number):
+                raise UnitOperationError(f'{name} must be an integer')
+            return int(number)
+        geometry = ShellTubeGeometry(
+            length(self.get_param('shell_inner_diameter'), 'shell_inner_diameter'),
+            length(self.get_param('bundle_diameter'), 'bundle_diameter'),
+            length(self.get_param('tube_outer_diameter'), 'tube_outer_diameter'),
+            length(self.get_param('tube_pitch'), 'tube_pitch'),
+            integer(self.get_param('tube_count'), 'tube_count'),
+            integer(self.get_param('tube_passes', 2), 'tube_passes'),
+            length(self.get_param('baffle_spacing'), 'baffle_spacing'),
+            transport_parameter(self.get_param('baffle_cut', .25), 'baffle_cut', self.get_param_unit('baffle_cut'), {'': 1, '%': .01, 'percent': .01}),
+            integer(self.get_param('baffle_count'), 'baffle_count'),
+            transport_parameter(self.get_param('tube_baffle_clearance'), 'tube_baffle_clearance', self.get_param_unit('tube_baffle_clearance'), length_units, nonnegative=True),
+            transport_parameter(self.get_param('shell_baffle_clearance'), 'shell_baffle_clearance', self.get_param_unit('shell_baffle_clearance'), length_units, nonnegative=True),
+            integer(self.get_param('sealing_strip_pairs', 0), 'sealing_strip_pairs', zero=True),
+            integer(self.get_param('tube_layout_angle', 30), 'tube_layout_angle'),
+            (transport_parameter(self.get_param('boiling_Csf'), 'boiling_Csf', '', {'': 1})
+             if self.get_param('boiling_Csf') is not None else None),
+            transport_parameter(self.get_param('boiling_n', 1.0), 'boiling_n', '', {'': 1}),
+            self._truthy_param(self.get_param('shell_pool_boiling', False)),
+        )
+        if geometry.tube_passes > 1 and self._flow_pattern() != 'countercurrent':
+            raise UnitOperationError('Even-tube-pass shell exchangers require the equivalent countercurrent flow pattern')
+        return geometry
 
     def _area_spec(self, value) -> float | None:
         if value is None:
             return None
-        A = float(value)
-        if A <= 0.0:
-            raise UnitOperationError(f"HeatExchanger '{self.unit_id}' area must be positive")
-        return A
+        name = 'A' if self.get_param('A') is not None else 'area'
+        return heat_transfer_area(value, self.get_param_unit(name), name=name)
 
     def _ua_spec(self) -> float | None:
         for name in ('UA', 'UA_available'):
             value = self.get_param(name)
             if value is None:
                 continue
-            UA = float(value)
-            if UA <= 0.0:
-                raise UnitOperationError(f"HeatExchanger '{self.unit_id}' {name} must be positive")
-            unit = (self.get_param_unit(name) or '').strip().lower()
-            if unit in ('kw/k', 'kw per k', 'kw/kdeg', 'kw/degc', 'kw/c'):
-                return UA * 1000.0
-            if unit in ('w/k', 'w per k', 'w/degc', 'w/c', ''):
-                return UA
-            return UA * 1000.0 if abs(UA) < 1e4 else UA
+            return transport_parameter(value, name, self.get_param_unit(name),
+                {'': 1, 'w/k': 1, 'wperk': 1, 'w/degc': 1, 'w/c': 1,
+                 'kw/k': 1000, 'kwperk': 1000, 'kw/kdeg': 1000,
+                 'kw/degc': 1000, 'kw/c': 1000})
         return None
 
     def _flow_pattern(self) -> str:
@@ -3557,6 +3735,7 @@ class HeatExchanger(UnitOperation):
         flow_pattern: str,
         hot_force_phase: str | None = None,
         cold_force_phase: str | None = None,
+        transport: TubularHeatTransfer | None = None,
     ) -> float:
         if hot.T <= cold.T:
             raise UnitOperationError(
@@ -3570,53 +3749,47 @@ class HeatExchanger(UnitOperation):
         if constant_UA is not None:
             target = constant_UA
             mode = 'UA'
-        elif estimate_U and A_value is not None:
+        elif (estimate_U or transport is not None) and A_value is not None:
             target = A_value
             mode = 'area'
         else:
             raise UnitOperationError(
                 f"HeatExchanger '{self.unit_id}' rating mode requires UA, U and A, "
-                "or A with explicit auto-U estimation"
+                "A with explicit auto-U estimation, or calculated U with A/length"
             )
 
+        inlet_capacity = transport.inlet_capacity_W_K(self._thermo_for_stream(hot), self._thermo_for_stream(cold), hot, cold) if transport is not None else None
         def objective(Q: float) -> float:
             if Q <= 1e-9:
                 return -target
             curve = self._curve_metrics(
                 hot, cold, P_hot_out, P_cold_out, Q, segments, flow_pattern,
-                include_u_estimates=(mode == 'area'),
+                include_u_estimates=(mode == 'area' and transport is None),
                 hot_force_phase=hot_force_phase,
                 cold_force_phase=cold_force_phase,
+                transport=transport,
             )
             if curve['temperature_cross']:
-                return float('inf')
+                raise UnitOperationError('Trial duty creates a temperature cross')
             if mode == 'area':
-                return curve['auto_U_area_required_m2'] - target
+                key = 'calculated_U_area_required_m2' if transport is not None else 'auto_U_area_required_m2'
+                return curve[key] - target
             return curve['UA_required_W_per_K'] - target
 
         delta_t = max(1e-6, hot.T - cold.T)
-        capacity = constant_UA if constant_UA is not None else A_value * self.U_ESTIMATE_TABLE['liquid_liquid']['typical']
-        Q_high = max(1.0, capacity * delta_t * 3.6)
-        f_high = None
-        for _ in range(80):
-            try:
-                f_high = objective(Q_high)
-            except Exception:
-                f_high = float('inf')
-            if f_high > 0.0:
-                break
-            Q_high *= 2.0
+        if transport is not None:
+            capacity = inlet_capacity
         else:
+            capacity = constant_UA if constant_UA is not None else A_value * self.U_ESTIMATE_TABLE['liquid_liquid']['typical']
+        Q_high = max(1.0, capacity * delta_t * 3.6)
+        duty = solve_thermal_domain_root(objective, Q_high, xtol=1e-5,
+            label=f"HeatExchanger '{self.unit_id}' cannot rate capacity within the supported domain")
+        if transport is not None and abs(objective(duty)) > max(1e-7, target * 1e-6):
             raise UnitOperationError(
-                f"HeatExchanger '{self.unit_id}' could not bracket rating duty"
+                f"HeatExchanger '{self.unit_id}' cannot rate the supplied area within the "
+                "calculated-U domain: rating capacity residual exceeds tolerance"
             )
-
-        if math.isinf(f_high):
-            # Back off to the largest non-crossing interval, then use the cross
-            # point as the upper bracket.
-            pass
-
-        return brentq(objective, 0.0, Q_high, xtol=1e-5, rtol=1e-9, maxiter=100)
+        return duty
 
     def _compute_full_curve_metrics(self, rating_mode: bool) -> bool:
         if rating_mode:
@@ -3662,6 +3835,7 @@ class HeatExchanger(UnitOperation):
             'profile_hot_T_C',
             'profile_cold_T_C',
             'profile_delta_T_K',
+            'profile_basis',
         )
         return {
             key: curve[key]
@@ -3681,6 +3855,7 @@ class HeatExchanger(UnitOperation):
         include_u_estimates: bool = False,
         hot_force_phase: str | None = None,
         cold_force_phase: str | None = None,
+        transport: TubularHeatTransfer | None = None,
     ) -> dict:
         hot_states, cold_states = self._curve_states(
             hot, cold, P_hot_out, P_cold_out, Q, segments,
@@ -3702,6 +3877,15 @@ class HeatExchanger(UnitOperation):
         auto_segments = []
         service_counts = {}
         temperature_cross = any(delta <= 0.0 for delta in node_delta_t)
+        calculated_nodes = []
+        calculated_area = 0.0
+        sampled_approach = min(node_delta_t)
+        if transport is not None and not temperature_cross:
+            calculated_area, calculated_UA, calculated_nodes, sampled_approach = self._transport_curve_integrals(
+                transport, hot, cold, P_hot_out, P_cold_out, Q, segments,
+                flow_pattern, hot_states, cold_states, hot_force_phase, cold_force_phase,
+            )
+            temperature_cross = sampled_approach <= 0
 
         for i in range(segments):
             dT1 = node_delta_t[i]
@@ -3714,9 +3898,10 @@ class HeatExchanger(UnitOperation):
             UA_required += UA_segment
 
             if include_u_estimates:
+                cold_index = segments-i-1 if flow_pattern == 'countercurrent' else i
                 service_info = self._segment_service_info(
                     hot_states[i], hot_states[i + 1],
-                    cold_states[i], cold_states[i + 1],
+                    cold_states[cold_index], cold_states[cold_index + 1],
                 )
                 service = service_info['service']
                 U_record = self._u_record_for_service(service_info)
@@ -3740,8 +3925,20 @@ class HeatExchanger(UnitOperation):
                     'UA_required_W_per_K': UA_segment,
                 })
 
+        correction = 1.0
+        if transport is None:
+            correction = transport_parameter(self.get_param('LMTD_correction', 1.0),
+                'LMTD_correction', self.get_param_unit('LMTD_correction'), {'': 1})
+            if correction > 1:
+                raise UnitOperationError('LMTD_correction must be between zero and one')
+            UA_required /= correction
+            auto_area /= correction
+            for item in auto_segments:
+                item['area_m2'] /= correction
+                item['UA_required_W_per_K'] /= correction
         equivalent_delta_T = (Q / 3.6) / UA_required if UA_required > 0 and math.isfinite(UA_required) else 0.0
         result = {
+            'LMTD_correction': correction,
             'UA_required_W_per_K': UA_required,
             'equivalent_delta_T_K': equivalent_delta_T,
             'min_approach_K': min(node_delta_t),
@@ -3760,7 +3957,77 @@ class HeatExchanger(UnitOperation):
                 'auto_U_service_counts': service_counts,
                 'auto_U_segments': auto_segments,
             })
+        if transport is not None:
+            result['min_approach_K'] = min(result['min_approach_K'], sampled_approach)
+            if temperature_cross:
+                calculated_area = float('inf')
+            else:
+                factor = transport.arrangement_factor(hot, hot_states[-1], cold, cold_states[-1])
+                calculated_area /= factor
+                result['UA_required_W_per_K'] = calculated_UA/factor
+                result['equivalent_delta_T_K'] = (Q/3.6)/result['UA_required_W_per_K']
+                result['LMTD_correction'] = factor
+                if transport.shell_geometry and transport.shell_geometry.tube_passes > 1:
+                    result['profile_basis'] = 'equivalent_countercurrent_with_mean_LMTD_correction'
+            result.update({
+                'calculated_U_area_required_m2': calculated_area,
+                'calculated_U_effective_W_m2_K': (
+                    result['UA_required_W_per_K'] / calculated_area if calculated_area > 0 and math.isfinite(calculated_area) else None
+                ),
+                'calculated_U_nodes': calculated_nodes,
+            })
         return result
+
+    def _transport_curve_integrals(self, transport, hot, cold, P_hot_out, P_cold_out, Q,
+                                   segments, flow_pattern, hot_states, cold_states,
+                                   hot_force_phase, cold_force_phase):
+        """Interior quadrature split at phase boundaries, without quality clamps."""
+        cache = {i/segments: (hot_states[i], cold_states[i]) for i in range(segments+1)}
+        def sample(fraction):
+            if fraction not in cache:
+                hs, cs = self._curve_states(hot, cold, P_hot_out, P_cold_out, Q, segments,
+                    hot_force_phase=hot_force_phase, cold_force_phase=cold_force_phase,
+                    fractions=[fraction])
+                cache[fraction] = hs[0], cs[0]
+            return cache[fraction]
+        grid = {i/segments for i in range(segments+1)}
+        for side, inlet in enumerate((hot, cold)):
+            backend = self._thermo_for_stream(inlet)
+            for key in ('liquid_state', 'vapor_state'):
+                def phase_residual(fraction):
+                    state = sample(fraction)[side]
+                    sat = transport._saturation(backend, state)
+                    return None if sat is None else self._stream_enthalpy(state)-sat[key].H
+                for i in range(segments):
+                    left, right = i/segments, (i+1)/segments
+                    a, b = phase_residual(left), phase_residual(right)
+                    if a is not None and b is not None and a*b < 0:
+                        root = brentq(phase_residual, left, right, xtol=1e-12)
+                        grid.add(1-root if side == 1 and flow_pattern == 'countercurrent' else root)
+        ordered = sorted(grid)
+        points = []
+        for left, right in zip(ordered, ordered[1:]):
+            for abscissa, weight in ((-math.sqrt(3/5), 5/18), (0., 4/9), (math.sqrt(3/5), 5/18)):
+                points.append((.5*(left+right)+abscissa*(right-left)/2, weight*(right-left)))
+        area, UA, nodes = 0., 0., []
+        minimum = float('inf')
+        for fraction in ordered:
+            hs = sample(fraction)[0]
+            cs = sample(1-fraction if flow_pattern == 'countercurrent' else fraction)[1]
+            minimum = min(minimum, hs.T-cs.T)
+        for index, (fraction, weight) in enumerate(points):
+            hs = sample(fraction)[0]
+            cs = sample(1-fraction if flow_pattern == 'countercurrent' else fraction)[1]
+            difference = hs.T-cs.T
+            minimum = min(minimum, difference)
+            if difference <= 0:
+                return float('inf'), float('inf'), [], minimum
+            local = transport.segment(self._thermo_for_stream(hs), self._thermo_for_stream(cs), hs, cs)
+            conductance = Q/3.6*weight/difference
+            UA += conductance
+            area += conductance/local['U_W_m2_K']
+            nodes.append({'index': index, 'heat_fraction': fraction, **local})
+        return area, UA, nodes, minimum
 
     def _curve_states(
         self,
@@ -3772,6 +4039,7 @@ class HeatExchanger(UnitOperation):
         segments: int,
         hot_force_phase: str | None = None,
         cold_force_phase: str | None = None,
+        fractions: list[float] | None = None,
     ) -> tuple[list[StreamState], list[StreamState]]:
         H_hot_in = self._stream_enthalpy(hot)
         H_cold_in = self._stream_enthalpy(cold)
@@ -3779,24 +4047,27 @@ class HeatExchanger(UnitOperation):
         cold_states = []
         T_hot_guess = hot.T
         T_cold_guess = cold.T
-        for i in range(segments + 1):
-            fraction = i / segments
+        for fraction in (fractions if fractions is not None else [i/segments for i in range(segments+1)]):
             P_hot = hot.P + fraction * (P_hot_out - hot.P)
             P_cold = cold.P + fraction * (P_cold_out - cold.P)
             H_hot = H_hot_in - (Q * fraction) / hot.F
             H_cold = H_cold_in + (Q * fraction) / cold.F
-            if i == 0:
+            if fraction == 0:
                 hot_state = hot.copy()
                 cold_state = cold.copy()
             else:
                 hot_state = self._state_for_enthalpy(
                     hot.composition, P_hot, hot.F, H_hot, T_hot_guess,
                     include=('H',), force_phase=hot_force_phase,
+                    thermo=self._thermo_for_stream(hot),
                 )
                 cold_state = self._state_for_enthalpy(
                     cold.composition, P_cold, cold.F, H_cold, T_cold_guess,
                     include=('H',), force_phase=cold_force_phase,
+                    thermo=self._thermo_for_stream(cold),
                 )
+            hot_state.thermo_scope = hot.thermo_scope
+            cold_state.thermo_scope = cold.thermo_scope
             T_hot_guess = hot_state.T
             T_cold_guess = cold_state.T
             hot_states.append(hot_state)
@@ -3819,7 +4090,7 @@ class HeatExchanger(UnitOperation):
         curve: dict,
     ) -> dict:
         UA_required = curve['UA_required_W_per_K']
-        performance = {}
+        performance = {'LMTD_correction': curve.get('LMTD_correction', 1.0)}
         if UA_available is not None:
             performance['UA_available_W_per_K'] = UA_available
         if U_value is not None:
@@ -4102,7 +4373,7 @@ class HeatExchanger(UnitOperation):
         for comp, z in composition.items():
             if z <= 0.0:
                 continue
-            props = getattr(self.thermo, 'props', {}).get(comp)
+            props = getattr(self._thermo_for_stream(start), 'props', {}).get(comp)
             mw = float(getattr(props, 'MW', 0.0) or start.MW or 1.0)
             mass = z * max(mw, 1e-12)
             total_mass += mass
@@ -4563,9 +4834,9 @@ class HeatExchanger(UnitOperation):
             value = self.get_param(name)
             if value is not None:
                 P_drop = float(value)
-                if P_drop < 0.0:
+                if not math.isfinite(P_drop) or P_drop < 0.0:
                     raise UnitOperationError(
-                        f"HeatExchanger '{self.unit_id}' requires nonnegative {name}"
+                        f"HeatExchanger '{self.unit_id}' requires finite nonnegative {name}"
                     )
                 return P_drop
         return 0.0
@@ -4596,6 +4867,8 @@ class HeatExchanger(UnitOperation):
         return f'{fallback_side}_out'
 
     def _enforce_heat_transfer_direction(self, Q: float) -> None:
+        if not math.isfinite(Q):
+            raise UnitOperationError(f"HeatExchanger '{self.unit_id}' duty must be finite")
         tolerance = max(1e-9, abs(Q) * 1e-12)
         if Q <= tolerance:
             raise UnitOperationError(
@@ -4606,7 +4879,7 @@ class HeatExchanger(UnitOperation):
     def _stream_enthalpy(self, stream: StreamState) -> float:
         if stream.H is not None:
             return stream.H
-        return self.thermo.mixture_enthalpy(
+        return self._thermo_for_stream(stream).mixture_enthalpy(
             stream.composition,
             stream.T,
             stream.vapor_fraction,
@@ -4623,10 +4896,13 @@ class HeatExchanger(UnitOperation):
                 f"HeatExchanger '{self.unit_id}' cannot transfer heat to a zero-flow stream"
             )
         H_target = self._stream_enthalpy(stream) + Q / stream.F
-        return self._state_for_enthalpy(
+        state = self._state_for_enthalpy(
             stream.composition, P_out, stream.F, H_target, stream.T,
             force_phase=force_phase,
+            thermo=self._thermo_for_stream(stream),
         )
+        state.thermo_scope = stream.thermo_scope
+        return state
 
     def _outlet_from_heat_removed(self, stream: StreamState, P_out: float,
                                   Q: float,
@@ -4636,32 +4912,25 @@ class HeatExchanger(UnitOperation):
                 f"HeatExchanger '{self.unit_id}' cannot remove heat from a zero-flow stream"
             )
         H_target = self._stream_enthalpy(stream) - Q / stream.F
-        return self._state_for_enthalpy(
+        state = self._state_for_enthalpy(
             stream.composition, P_out, stream.F, H_target, stream.T,
             force_phase=force_phase,
+            thermo=self._thermo_for_stream(stream),
         )
+        state.thermo_scope = stream.thermo_scope
+        return state
 
     def _state_for_vapor_fraction(self, composition: dict, P: float, F: float,
-                                  vapor_fraction: float) -> StreamState:
-        direct_pq = getattr(self.thermo, 'calculate_state_PQ', None)
-        if direct_pq is not None:
-            try:
-                return direct_pq(P, vapor_fraction, F, composition)
-            except (NotImplementedError, AttributeError):
-                pass
-
-        T, x, y = self.thermo.flash_PV(composition, P, vapor_fraction)
-        state = self.thermo.calculate_state(T, P, F, composition)
-        state.vapor_fraction = vapor_fraction
-        state.x = x
-        state.y = y
-        return state
+                                  vapor_fraction: float, *, thermo=None) -> StreamState:
+        return _ThermoStateSolver(thermo or self.thermo, f"HeatExchanger '{self.unit_id}'").state_at_vapor_fraction(
+            P, F, composition, vapor_fraction,
+        )
 
     def _state_for_enthalpy(self, composition: dict, P: float, F: float,
                             H_target: float, T_guess: float, include=None,
-                            force_phase: str | None = None) -> StreamState:
+                            force_phase: str | None = None, *, thermo=None) -> StreamState:
         state, _error = _ThermoStateSolver(
-            self.thermo,
+            thermo or self.thermo,
             f"HeatExchanger '{self.unit_id}'",
         ).state_at_enthalpy(
             P, F, composition, H_target, T_guess, include=include,

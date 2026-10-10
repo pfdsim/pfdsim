@@ -13,7 +13,7 @@ from .common import (
     STEAM_WATER_S_OFFSET,
     ThermodynamicsError,
 )
-from .base import IdealThermodynamics, StreamState
+from .base import IdealThermodynamics, StreamState, TransportPhaseValues
 
 class SteamThermodynamics(IdealThermodynamics):
     """
@@ -126,6 +126,26 @@ class SteamThermodynamics(IdealThermodynamics):
                 f"T={T:.1f} K and P={P:.4g} bar"
             )
         return self._set_limited_cache(self._viscosity_cache, cache_key, value)
+
+    def transport_mixture_thermal_conductivity(
+        self, composition: dict[str, float], T: float, P: float,
+        vapor_fraction: float = 1.0, x: Optional[dict] = None,
+        y: Optional[dict] = None,
+    ) -> TransportPhaseValues:
+        """Pressure-dependent liquid/vapor water conductivity from IF97."""
+        self._normalize_water_composition(composition)
+        vf = float(vapor_fraction)
+        if not math.isfinite(vf) or not 0 <= vf <= 1:
+            raise ThermodynamicsError('Conductivity requires vapor fraction between zero and one')
+        saturated = P < self._pcrit_bar and abs(T-self._saturation_temperature(P)) <= max(1e-6, 1e-8*T)
+        def value(quality):
+            result = (self._props('L', 'P', self._pressure_to_pa(P), 'Q', quality) if saturated
+                      else self._props('L', 'T', T, 'P', self._pressure_to_pa(P)))
+            if not math.isfinite(result) or result <= 0:
+                raise ThermodynamicsError('IF97 returned invalid thermal conductivity')
+            return result
+        return TransportPhaseValues(liquid=value(0) if vf < 1 else None,
+                                    vapor=value(1) if vf > 0 else None)
 
     def _normalize_water_composition(self, composition: dict[str, float]) -> dict[str, float]:
         total = sum(max(float(value), 0.0) for value in composition.values())

@@ -313,6 +313,7 @@ class FlowsheetSolver:
                     or param_lower in {
                         't', 'temperature', 'vlle_azeotrope_temperature',
                         'vlle_azeotrope_temperature_k',
+                        'utility_t',
                     }
                 ):
                     unit_str = param.unit.upper() if param.unit else ''
@@ -718,6 +719,7 @@ class FlowsheetSolver:
         pressure_names = {
             'p', 'p_out', 'p_top', 'p_bottom', 'p_condenser', 'p_reboiler',
             'p_drop', 'p_drop_hot', 'p_drop_cold', 'p_drop_per_stage',
+            'p_drop_tube', 'p_drop_shell',
             'stage_pressures', 'pressure_profile',
         }
         return lower in pressure_names or 'pressure' in lower
