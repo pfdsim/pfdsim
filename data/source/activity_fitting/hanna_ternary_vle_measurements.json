@@ -1,0 +1,6142 @@
+{
+  "rows": [
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 0,
+      "P_Pa": 101300.0,
+      "T_K": 340.05,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.6840000000000002,
+        0.058999999999999816,
+        0.257
+      ],
+      "y": [
+        0.7500000000000001,
+        0.022999999999999885,
+        0.22699999999999998
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.684
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.257
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 1,
+      "P_Pa": 101300.0,
+      "T_K": 340.83,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.894,
+        0.048999999999999905,
+        0.05700000000000003
+      ],
+      "y": [
+        0.8930000000000007,
+        0.026999999999999677,
+        0.07999999999999963
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.894
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.057
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 2,
+      "P_Pa": 101300.0,
+      "T_K": 341.01,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.6050000000000002,
+        0.10799999999999972,
+        0.2870000000000001
+      ],
+      "y": [
+        0.7360000000000001,
+        0.0329999999999999,
+        0.2309999999999999
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.605
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.287
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 3,
+      "P_Pa": 101300.0,
+      "T_K": 341.07,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.4769999999999999,
+        0.055999999999999744,
+        0.46700000000000025
+      ],
+      "y": [
+        0.651,
+        0.01799999999999988,
+        0.33100000000000007
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.477
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.467
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 4,
+      "P_Pa": 101300.0,
+      "T_K": 341.25,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.7040000000000001,
+        0.11900000000000012,
+        0.17699999999999985
+      ],
+      "y": [
+        0.7950000000000003,
+        0.039999999999999876,
+        0.1649999999999999
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.704
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.177
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 5,
+      "P_Pa": 101300.0,
+      "T_K": 341.73,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.494,
+        0.11499999999999998,
+        0.391
+      ],
+      "y": [
+        0.6840000000000003,
+        0.029999999999999603,
+        0.28600000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.494
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.391
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 6,
+      "P_Pa": 101300.0,
+      "T_K": 341.88,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.7980000000000005,
+        0.12499999999999979,
+        0.07699999999999983
+      ],
+      "y": [
+        0.8620000000000002,
+        0.0499999999999999,
+        0.08799999999999984
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.798
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.077
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 7,
+      "P_Pa": 101300.0,
+      "T_K": 342.74,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.3889999999999999,
+        0.12500000000000003,
+        0.4860000000000001
+      ],
+      "y": [
+        0.6310000000000001,
+        0.026999999999999812,
+        0.3420000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.389
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.486
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 8,
+      "P_Pa": 101300.0,
+      "T_K": 343.35,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.5700000000000001,
+        0.236,
+        0.19399999999999992
+      ],
+      "y": [
+        0.7790000000000004,
+        0.0579999999999999,
+        0.16299999999999987
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.57
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.194
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 9,
+      "P_Pa": 101300.0,
+      "T_K": 343.48,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.6740000000000004,
+        0.23599999999999982,
+        0.0899999999999998
+      ],
+      "y": [
+        0.8430000000000004,
+        0.06799999999999982,
+        0.08899999999999977
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.674
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.09
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 10,
+      "P_Pa": 101300.0,
+      "T_K": 343.73,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.3179999999999999,
+        0.47000000000000014,
+        0.212
+      ],
+      "y": [
+        0.716,
+        0.05100000000000006,
+        0.23299999999999993
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.318
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.212
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 11,
+      "P_Pa": 101300.0,
+      "T_K": 343.76,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.27699999999999975,
+        0.052999999999999846,
+        0.6700000000000004
+      ],
+      "y": [
+        0.5299999999999999,
+        0.014999999999999958,
+        0.45500000000000007
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.277
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.67
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 12,
+      "P_Pa": 101300.0,
+      "T_K": 344.3,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.28699999999999987,
+        0.12099999999999994,
+        0.5920000000000002
+      ],
+      "y": [
+        0.5600000000000002,
+        0.02599999999999992,
+        0.4139999999999999
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.287
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.592
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 13,
+      "P_Pa": 101300.0,
+      "T_K": 344.56,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.366,
+        0.22099999999999997,
+        0.4130000000000001
+      ],
+      "y": [
+        0.6570000000000001,
+        0.04499999999999995,
+        0.298
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.366
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.413
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 14,
+      "P_Pa": 101300.0,
+      "T_K": 344.92,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.6550000000000004,
+        0.3039999999999999,
+        0.040999999999999745
+      ],
+      "y": [
+        0.8730000000000001,
+        0.08600000000000013,
+        0.04099999999999984
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.655
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.041
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 15,
+      "P_Pa": 101300.0,
+      "T_K": 345.22,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.4970000000000001,
+        0.33399999999999996,
+        0.16899999999999996
+      ],
+      "y": [
+        0.7830000000000004,
+        0.0769999999999999,
+        0.13999999999999976
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.497
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.169
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 16,
+      "P_Pa": 101300.0,
+      "T_K": 346.28,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.38799999999999996,
+        0.3529999999999999,
+        0.259
+      ],
+      "y": [
+        0.7240000000000002,
+        0.07199999999999988,
+        0.20399999999999993
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.388
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.259
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 17,
+      "P_Pa": 101300.0,
+      "T_K": 346.41,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.26499999999999974,
+        0.2220000000000001,
+        0.5130000000000002
+      ],
+      "y": [
+        0.575,
+        0.044999999999999894,
+        0.38000000000000006
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.265
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.513
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 18,
+      "P_Pa": 101300.0,
+      "T_K": 346.58,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.49400000000000005,
+        0.4140000000000002,
+        0.09199999999999982
+      ],
+      "y": [
+        0.8260000000000001,
+        0.094,
+        0.07999999999999993
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.494
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.092
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 19,
+      "P_Pa": 101300.0,
+      "T_K": 346.87,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.18399999999999975,
+        0.11800000000000004,
+        0.6980000000000002
+      ],
+      "y": [
+        0.45300000000000007,
+        0.023999999999999706,
+        0.5230000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.184
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.698
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 20,
+      "P_Pa": 101300.0,
+      "T_K": 346.98,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.39499999999999996,
+        0.406,
+        0.19899999999999998
+      ],
+      "y": [
+        0.7550000000000002,
+        0.08399999999999984,
+        0.16099999999999998
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.395
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.199
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 21,
+      "P_Pa": 101300.0,
+      "T_K": 347.69,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.29099999999999976,
+        0.3490000000000003,
+        0.3599999999999999
+      ],
+      "y": [
+        0.6490000000000002,
+        0.06899999999999988,
+        0.28199999999999986
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.291
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.36
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 22,
+      "P_Pa": 101300.0,
+      "T_K": 348.01,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.472,
+        0.4890000000000002,
+        0.038999999999999875
+      ],
+      "y": [
+        0.8540000000000002,
+        0.11100000000000002,
+        0.03499999999999974
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.472
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.039
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 23,
+      "P_Pa": 101300.0,
+      "T_K": 348.32,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.295,
+        0.4000000000000001,
+        0.305
+      ],
+      "y": [
+        0.6760000000000003,
+        0.07899999999999978,
+        0.24499999999999994
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.295
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.305
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 24,
+      "P_Pa": 101300.0,
+      "T_K": 349.89,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.2989999999999998,
+        0.5110000000000002,
+        0.18999999999999992
+      ],
+      "y": [
+        0.7340000000000001,
+        0.10100000000000002,
+        0.16499999999999992
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.299
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.19
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 25,
+      "P_Pa": 101300.0,
+      "T_K": 350.45,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.18999999999999984,
+        0.3530000000000001,
+        0.45700000000000013
+      ],
+      "y": [
+        0.5490000000000002,
+        0.06599999999999975,
+        0.38500000000000006
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.19
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.457
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 26,
+      "P_Pa": 101300.0,
+      "T_K": 350.52,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.09199999999999973,
+        0.10899999999999972,
+        0.7990000000000005
+      ],
+      "y": [
+        0.2950000000000001,
+        0.022999999999999635,
+        0.6820000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.092
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.799
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 27,
+      "P_Pa": 101300.0,
+      "T_K": 350.88,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.11999999999999979,
+        0.2089999999999999,
+        0.6710000000000003
+      ],
+      "y": [
+        0.39,
+        0.0409999999999999,
+        0.5690000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.12
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.671
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 28,
+      "P_Pa": 101300.0,
+      "T_K": 351.15,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.30399999999999977,
+        0.6030000000000004,
+        0.0929999999999998
+      ],
+      "y": [
+        0.7900000000000005,
+        0.12399999999999989,
+        0.08599999999999972
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.304
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.093
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 29,
+      "P_Pa": 101300.0,
+      "T_K": 351.18,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.1939999999999997,
+        0.40300000000000014,
+        0.4030000000000001
+      ],
+      "y": [
+        0.58,
+        0.07399999999999993,
+        0.34600000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.194
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.403
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 30,
+      "P_Pa": 101300.0,
+      "T_K": 352.34,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.046999999999999965,
+        0.05899999999999984,
+        0.8940000000000002
+      ],
+      "y": [
+        0.16399999999999987,
+        0.013999999999999908,
+        0.8220000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.047
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.894
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 31,
+      "P_Pa": 101300.0,
+      "T_K": 352.71,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.19499999999999998,
+        0.5060000000000001,
+        0.299
+      ],
+      "y": [
+        0.621,
+        0.10099999999999995,
+        0.278
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.195
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.299
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 32,
+      "P_Pa": 101300.0,
+      "T_K": 353.88,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.19999999999999984,
+        0.6030000000000002,
+        0.197
+      ],
+      "y": [
+        0.6770000000000003,
+        0.1279999999999998,
+        0.19499999999999998
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.2
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.197
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 33,
+      "P_Pa": 101300.0,
+      "T_K": 354,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.23899999999999977,
+        0.7070000000000004,
+        0.053999999999999895
+      ],
+      "y": [
+        0.7930000000000001,
+        0.15200000000000002,
+        0.054999999999999785
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.239
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.054
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 34,
+      "P_Pa": 101300.0,
+      "T_K": 356.3,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.08099999999999971,
+        0.35999999999999993,
+        0.5590000000000004
+      ],
+      "y": [
+        0.34299999999999997,
+        0.07599999999999973,
+        0.5810000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.081
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.559
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 35,
+      "P_Pa": 101300.0,
+      "T_K": 357.49,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.1009999999999998,
+        0.4820000000000002,
+        0.41700000000000004
+      ],
+      "y": [
+        0.44100000000000006,
+        0.10499999999999986,
+        0.4540000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.101
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.417
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 36,
+      "P_Pa": 101300.0,
+      "T_K": 358.8,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.029999999999999756,
+        0.28,
+        0.6900000000000003
+      ],
+      "y": [
+        0.14099999999999988,
+        0.06599999999999966,
+        0.7930000000000005
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.03
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.69
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 37,
+      "P_Pa": 101300.0,
+      "T_K": 360.08,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.04300000000000004,
+        0.3779999999999998,
+        0.5790000000000002
+      ],
+      "y": [
+        0.21399999999999975,
+        0.09599999999999989,
+        0.6900000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.043
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.579
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 38,
+      "P_Pa": 101300.0,
+      "T_K": 362.84,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.0939999999999997,
+        0.7090000000000004,
+        0.19699999999999998
+      ],
+      "y": [
+        0.5240000000000001,
+        0.20399999999999996,
+        0.272
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.094
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.197
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 39,
+      "P_Pa": 101300.0,
+      "T_K": 363.62,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.06000000000000002,
+        0.588,
+        0.352
+      ],
+      "y": [
+        0.3439999999999999,
+        0.1739999999999999,
+        0.48200000000000026
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.06
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.352
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 40,
+      "P_Pa": 101300.0,
+      "T_K": 364.02,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.1009999999999997,
+        0.7980000000000004,
+        0.10099999999999999
+      ],
+      "y": [
+        0.6100000000000001,
+        0.24,
+        0.1499999999999999
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.101
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.101
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "dataset": 18,
+      "row": 41,
+      "P_Pa": 101300.0,
+      "T_K": 373.8,
+      "components": [
+        "108-20-3",
+        "109-86-4",
+        "67-63-0"
+      ],
+      "names": [
+        "diisopropyl ether",
+        "2-methoxyethanol",
+        "isopropanol"
+      ],
+      "x": [
+        0.054999999999999806,
+        0.8950000000000002,
+        0.049999999999999954
+      ],
+      "y": [
+        0.52,
+        0.37100000000000005,
+        0.10899999999999993
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "Lladosa Table 11: x2/y2 are mole fractions, despite archive mass-fraction labels",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          0,
+          0.055
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.05
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 0,
+      "P_Pa": 101300.0,
+      "T_K": 351.47,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.011999999999999771,
+        0.562,
+        0.42600000000000016
+      ],
+      "y": [
+        0.058999999999999934,
+        0.607,
+        0.3340000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.426
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.562
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 1,
+      "P_Pa": 101300.0,
+      "T_K": 348.21,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.10000000000000017,
+        0.4829999999999999,
+        0.4169999999999999
+      ],
+      "y": [
+        0.24299999999999988,
+        0.4660000000000001,
+        0.2910000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.417
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.483
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 2,
+      "P_Pa": 101300.0,
+      "T_K": 348.39,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.19799999999999993,
+        0.6040000000000001,
+        0.19800000000000006
+      ],
+      "y": [
+        0.2259999999999998,
+        0.5520000000000002,
+        0.2220000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.198
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.604
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 3,
+      "P_Pa": 101300.0,
+      "T_K": 348.09,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.19899999999999993,
+        0.5330000000000001,
+        0.268
+      ],
+      "y": [
+        0.24799999999999991,
+        0.486,
+        0.26600000000000007
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.268
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.533
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 4,
+      "P_Pa": 101300.0,
+      "T_K": 348.29,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.3,
+        0.543,
+        0.15699999999999995
+      ],
+      "y": [
+        0.24599999999999986,
+        0.524,
+        0.23000000000000004
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.157
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.543
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 5,
+      "P_Pa": 101300.0,
+      "T_K": 348.25,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.34700000000000003,
+        0.501,
+        0.152
+      ],
+      "y": [
+        0.25499999999999995,
+        0.5080000000000001,
+        0.23700000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.152
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.501
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 6,
+      "P_Pa": 101300.0,
+      "T_K": 348.04,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.445,
+        0.402,
+        0.15300000000000002
+      ],
+      "y": [
+        0.2679999999999999,
+        0.45200000000000007,
+        0.2800000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.153
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.402
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 7,
+      "P_Pa": 101300.0,
+      "T_K": 348.1,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.18199999999999977,
+        0.5620000000000002,
+        0.25600000000000017
+      ],
+      "y": [
+        0.25000000000000006,
+        0.506,
+        0.24399999999999994
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.256
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.562
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 8,
+      "P_Pa": 101300.0,
+      "T_K": 348.54,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.22499999999999992,
+        0.6260000000000001,
+        0.14900000000000008
+      ],
+      "y": [
+        0.23600000000000004,
+        0.5720000000000001,
+        0.19199999999999998
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.149
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.626
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 9,
+      "P_Pa": 101300.0,
+      "T_K": 349.09,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.25699999999999995,
+        0.6630000000000001,
+        0.07999999999999999
+      ],
+      "y": [
+        0.22999999999999993,
+        0.6310000000000001,
+        0.13900000000000004
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.08
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.663
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 10,
+      "P_Pa": 101300.0,
+      "T_K": 349.02,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.33800000000000013,
+        0.585,
+        0.07699999999999996
+      ],
+      "y": [
+        0.2370000000000002,
+        0.6219999999999999,
+        0.14099999999999985
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.077
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.585
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 11,
+      "P_Pa": 101300.0,
+      "T_K": 350.78,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.021000000000000043,
+        0.8330000000000001,
+        0.146
+      ],
+      "y": [
+        0.04699999999999977,
+        0.8050000000000003,
+        0.14800000000000005
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.146
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.833
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 12,
+      "P_Pa": 101300.0,
+      "T_K": 348.96,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.38600000000000007,
+        0.533,
+        0.08099999999999997
+      ],
+      "y": [
+        0.25200000000000006,
+        0.589,
+        0.159
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.081
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.533
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 13,
+      "P_Pa": 101300.0,
+      "T_K": 348.72,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.489,
+        0.43,
+        0.08099999999999999
+      ],
+      "y": [
+        0.2640000000000001,
+        0.541,
+        0.195
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.081
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.43
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 14,
+      "P_Pa": 101300.0,
+      "T_K": 348.51,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08999999999999982,
+        0.45300000000000007,
+        0.4570000000000002
+      ],
+      "y": [
+        0.21000000000000005,
+        0.47,
+        0.32000000000000006
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.457
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.453
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 15,
+      "P_Pa": 101300.0,
+      "T_K": 348.56,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08099999999999978,
+        0.4710000000000001,
+        0.4480000000000002
+      ],
+      "y": [
+        0.20299999999999974,
+        0.4820000000000001,
+        0.31500000000000017
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.448
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.471
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 16,
+      "P_Pa": 101300.0,
+      "T_K": 348.61,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.0669999999999997,
+        0.44600000000000006,
+        0.4870000000000002
+      ],
+      "y": [
+        0.19799999999999987,
+        0.4820000000000001,
+        0.3200000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.487
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.446
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 17,
+      "P_Pa": 101300.0,
+      "T_K": 347.62,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.184,
+        0.43300000000000005,
+        0.38300000000000006
+      ],
+      "y": [
+        0.24800000000000005,
+        0.42499999999999993,
+        0.32699999999999996
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.383
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.433
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 18,
+      "P_Pa": 101300.0,
+      "T_K": 347.66,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.17099999999999987,
+        0.395,
+        0.43400000000000005
+      ],
+      "y": [
+        0.254,
+        0.41300000000000003,
+        0.333
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.434
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.395
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 19,
+      "P_Pa": 101300.0,
+      "T_K": 347.61,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.262,
+        0.391,
+        0.347
+      ],
+      "y": [
+        0.2560000000000001,
+        0.4119999999999999,
+        0.332
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.347
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.391
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 20,
+      "P_Pa": 101300.0,
+      "T_K": 350.24,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.0359999999999999,
+        0.736,
+        0.22800000000000004
+      ],
+      "y": [
+        0.08899999999999991,
+        0.7040000000000001,
+        0.20700000000000007
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.228
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.736
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 21,
+      "P_Pa": 101300.0,
+      "T_K": 350.2,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.029999999999999808,
+        0.5580000000000002,
+        0.41200000000000003
+      ],
+      "y": [
+        0.1279999999999999,
+        0.5860000000000001,
+        0.28600000000000014
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.412
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.558
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 22,
+      "P_Pa": 101300.0,
+      "T_K": 349.17,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.07999999999999989,
+        0.664,
+        0.2560000000000001
+      ],
+      "y": [
+        0.16399999999999976,
+        0.6090000000000001,
+        0.2270000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.256
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.664
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 23,
+      "P_Pa": 101300.0,
+      "T_K": 349.76,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.027999999999999817,
+        0.42200000000000004,
+        0.5500000000000002
+      ],
+      "y": [
+        0.19099999999999995,
+        0.509,
+        0.30000000000000004
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.55
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.422
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 24,
+      "P_Pa": 101300.0,
+      "T_K": 348.72,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.06599999999999988,
+        0.49,
+        0.4440000000000001
+      ],
+      "y": [
+        0.21000000000000005,
+        0.492,
+        0.298
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.444
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.49
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 25,
+      "P_Pa": 101300.0,
+      "T_K": 348.4,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.13600000000000004,
+        0.5940000000000001,
+        0.27
+      ],
+      "y": [
+        0.22099999999999978,
+        0.5350000000000001,
+        0.24400000000000016
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.27
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.594
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 1,
+      "row": 26,
+      "P_Pa": 101300.0,
+      "T_K": 351.07,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.010999999999999796,
+        0.3360000000000001,
+        0.6530000000000002
+      ],
+      "y": [
+        0.16099999999999978,
+        0.517,
+        0.3220000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          2,
+          0.653
+        ],
+        [
+          "Mole fraction",
+          1,
+          0.336
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 1,
+      "P_Pa": 101300.0,
+      "T_K": 350.04,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.9139999999999998,
+        0.06400000000000004,
+        0.02200000000000004
+      ],
+      "y": [
+        0.29500000000000004,
+        0.31599999999999995,
+        0.38900000000000007
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.064
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.022
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 1,
+      "P_Pa": 101300.0,
+      "T_K": 350.04,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.0009999999999999083,
+        0.08699999999999997,
+        0.9120000000000001
+      ],
+      "y": [
+        0.29500000000000004,
+        0.31599999999999995,
+        0.38900000000000007
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.087
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.912
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 2,
+      "P_Pa": 101300.0,
+      "T_K": 348.63,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.8350000000000001,
+        0.12299999999999998,
+        0.041999999999999996
+      ],
+      "y": [
+        0.26499999999999996,
+        0.36999999999999994,
+        0.36500000000000005
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.123
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.042
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 2,
+      "P_Pa": 101300.0,
+      "T_K": 348.63,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.0009999999999999083,
+        0.14400000000000002,
+        0.8550000000000001
+      ],
+      "y": [
+        0.26499999999999996,
+        0.36999999999999994,
+        0.36500000000000005
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.144
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.855
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 3,
+      "P_Pa": 101300.0,
+      "T_K": 347.91,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.682,
+        0.226,
+        0.09200000000000005
+      ],
+      "y": [
+        0.26099999999999995,
+        0.401,
+        0.3380000000000001
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.226
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.092
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 3,
+      "P_Pa": 101300.0,
+      "T_K": 347.91,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.011999999999999964,
+        0.263,
+        0.7250000000000001
+      ],
+      "y": [
+        0.26099999999999995,
+        0.401,
+        0.3380000000000001
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.263
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.725
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 4,
+      "P_Pa": 101300.0,
+      "T_K": 347.7,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.595,
+        0.28,
+        0.12500000000000006
+      ],
+      "y": [
+        0.2580000000000002,
+        0.4049999999999998,
+        0.33699999999999997
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.28
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.125
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 4,
+      "P_Pa": 101300.0,
+      "T_K": 347.7,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.0289999999999998,
+        0.315,
+        0.6560000000000002
+      ],
+      "y": [
+        0.2580000000000002,
+        0.4049999999999998,
+        0.33699999999999997
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.315
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.656
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 5,
+      "P_Pa": 101300.0,
+      "T_K": 347.67,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.463,
+        0.3379999999999999,
+        0.199
+      ],
+      "y": [
+        0.2570000000000001,
+        0.4079999999999999,
+        0.335
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.338
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.199
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 5,
+      "P_Pa": 101300.0,
+      "T_K": 347.67,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.06699999999999992,
+        0.373,
+        0.5600000000000002
+      ],
+      "y": [
+        0.2570000000000001,
+        0.4079999999999999,
+        0.335
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.373
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.56
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 6,
+      "P_Pa": 101300.0,
+      "T_K": 347.64,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.4010000000000002,
+        0.3599999999999999,
+        0.239
+      ],
+      "y": [
+        0.25700000000000006,
+        0.4089999999999999,
+        0.334
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.36
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.239
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 6,
+      "P_Pa": 101300.0,
+      "T_K": 347.64,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08399999999999988,
+        0.391,
+        0.5250000000000001
+      ],
+      "y": [
+        0.25700000000000006,
+        0.4089999999999999,
+        0.334
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.391
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.525
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 7,
+      "P_Pa": 101300.0,
+      "T_K": 347.64,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.33100000000000007,
+        0.38099999999999995,
+        0.28800000000000003
+      ],
+      "y": [
+        0.25599999999999973,
+        0.41000000000000003,
+        0.3340000000000002
+      ],
+      "liquid_phase": "Liquid mixture 1",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.381
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.288
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 7,
+      "P_Pa": 101300.0,
+      "T_K": 347.64,
+      "components": [
+        "108-88-3",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "toluene",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.1489999999999999,
+        0.402,
+        0.44900000000000007
+      ],
+      "y": [
+        0.25599999999999973,
+        0.41000000000000003,
+        0.3340000000000002
+      ],
+      "liquid_phase": "Liquid mixture 2",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.402
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.449
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 0,
+      "P_Pa": 101300.0,
+      "T_K": 365.94,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.1689999999999998,
+        0.07800000000000007,
+        0.7530000000000001
+      ],
+      "y": [
+        0.000999999999999591,
+        0.40100000000000013,
+        0.5980000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.078
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.753
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 1,
+      "P_Pa": 101300.0,
+      "T_K": 366.41,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2329999999999999,
+        0.10299999999999998,
+        0.6640000000000001
+      ],
+      "y": [
+        0.0009999999999996728,
+        0.4510000000000001,
+        0.5480000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.103
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.664
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 2,
+      "P_Pa": 101300.0,
+      "T_K": 362.64,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.20799999999999996,
+        0.15899999999999995,
+        0.6330000000000001
+      ],
+      "y": [
+        0.001000000000000065,
+        0.525,
+        0.47399999999999987
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.159
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.633
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 3,
+      "P_Pa": 101300.0,
+      "T_K": 368.94,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.402,
+        0.17199999999999993,
+        0.42600000000000005
+      ],
+      "y": [
+        0.005999999999999718,
+        0.5940000000000002,
+        0.4000000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.172
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.426
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 4,
+      "P_Pa": 101300.0,
+      "T_K": 371.77,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.486,
+        0.181,
+        0.3330000000000001
+      ],
+      "y": [
+        0.007999999999999816,
+        0.6480000000000001,
+        0.34400000000000014
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.181
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.333
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 5,
+      "P_Pa": 101300.0,
+      "T_K": 364.51,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2969999999999999,
+        0.187,
+        0.5160000000000002
+      ],
+      "y": [
+        0.002000000000000116,
+        0.576,
+        0.422
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.187
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.516
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 6,
+      "P_Pa": 101300.0,
+      "T_K": 367.63,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.387,
+        0.19199999999999992,
+        0.4210000000000001
+      ],
+      "y": [
+        0.004999999999999903,
+        0.618,
+        0.3770000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.192
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.421
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 7,
+      "P_Pa": 101300.0,
+      "T_K": 365.43,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.3239999999999999,
+        0.19300000000000012,
+        0.4830000000000001
+      ],
+      "y": [
+        0.0029999999999996132,
+        0.5910000000000002,
+        0.40600000000000025
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.193
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.483
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 8,
+      "P_Pa": 101300.0,
+      "T_K": 368.76,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.43499999999999994,
+        0.20999999999999996,
+        0.3550000000000001
+      ],
+      "y": [
+        0.005000000000000145,
+        0.657,
+        0.33799999999999986
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.21
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.355
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 9,
+      "P_Pa": 101300.0,
+      "T_K": 361.77,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.24199999999999988,
+        0.23000000000000004,
+        0.528
+      ],
+      "y": [
+        0.001000000000000065,
+        0.598,
+        0.4009999999999999
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.23
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.528
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 10,
+      "P_Pa": 101300.0,
+      "T_K": 366.5,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.395,
+        0.23099999999999993,
+        0.37400000000000005
+      ],
+      "y": [
+        0.004999999999999902,
+        0.661,
+        0.3340000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.231
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.374
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 11,
+      "P_Pa": 101300.0,
+      "T_K": 363.6,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.30700000000000005,
+        0.23499999999999988,
+        0.4580000000000001
+      ],
+      "y": [
+        0.0029999999999996132,
+        0.6270000000000002,
+        0.3700000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.235
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.458
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 12,
+      "P_Pa": 101300.0,
+      "T_K": 361.83,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.267,
+        0.25499999999999995,
+        0.4780000000000001
+      ],
+      "y": [
+        0.001999999999999759,
+        0.629,
+        0.3690000000000002
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.255
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.478
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 13,
+      "P_Pa": 101300.0,
+      "T_K": 364.4,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.3499999999999998,
+        0.2550000000000001,
+        0.3950000000000001
+      ],
+      "y": [
+        0.0029999999999998097,
+        0.6630000000000001,
+        0.3340000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.255
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.395
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 14,
+      "P_Pa": 101300.0,
+      "T_K": 367.79,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.454,
+        0.268,
+        0.2780000000000001
+      ],
+      "y": [
+        0.003999999999999853,
+        0.734,
+        0.26200000000000007
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.268
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.278
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 15,
+      "P_Pa": 101300.0,
+      "T_K": 362.54,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.305,
+        0.279,
+        0.4160000000000001
+      ],
+      "y": [
+        0.001999999999999759,
+        0.6620000000000001,
+        0.33600000000000013
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.279
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.416
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 16,
+      "P_Pa": 101300.0,
+      "T_K": 365.48,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.4080000000000001,
+        0.2959999999999999,
+        0.296
+      ],
+      "y": [
+        0.004999999999999901,
+        0.731,
+        0.2640000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.296
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.296
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 17,
+      "P_Pa": 101300.0,
+      "T_K": 368.45,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.516,
+        0.34,
+        0.14400000000000002
+      ],
+      "y": [
+        0.006000000000000033,
+        0.852,
+        0.14200000000000004
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.34
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.144
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 18,
+      "P_Pa": 101300.0,
+      "T_K": 362.39,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.36699999999999994,
+        0.393,
+        0.24000000000000005
+      ],
+      "y": [
+        0.0029999999999999255,
+        0.787,
+        0.20999999999999996
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.393
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.24
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 19,
+      "P_Pa": 101300.0,
+      "T_K": 368.91,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.5580000000000002,
+        0.40299999999999997,
+        0.03899999999999993
+      ],
+      "y": [
+        0.009000000000000142,
+        0.9500000000000001,
+        0.04099999999999982
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.403
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.039
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 20,
+      "P_Pa": 101300.0,
+      "T_K": 363.98,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.419,
+        0.416,
+        0.165
+      ],
+      "y": [
+        0.0039999999999999775,
+        0.8440000000000001,
+        0.152
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.416
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.165
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 21,
+      "P_Pa": 101300.0,
+      "T_K": 360.58,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.31599999999999995,
+        0.429,
+        0.2550000000000001
+      ],
+      "y": [
+        0.0019999999999997585,
+        0.784,
+        0.21400000000000013
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.429
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.255
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 22,
+      "P_Pa": 101300.0,
+      "T_K": 367.81,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.54,
+        0.441,
+        0.019000000000000017
+      ],
+      "y": [
+        0.006000000000000031,
+        0.9740000000000001,
+        0.019999999999999907
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.441
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.019
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 23,
+      "P_Pa": 101300.0,
+      "T_K": 358.86,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.263,
+        0.4670000000000001,
+        0.27
+      ],
+      "y": [
+        0.0009999999999999083,
+        0.7760000000000001,
+        0.22300000000000003
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.467
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.27
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 24,
+      "P_Pa": 101300.0,
+      "T_K": 360.55,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.319,
+        0.49100000000000005,
+        0.19000000000000003
+      ],
+      "y": [
+        0.0019999999999999185,
+        0.836,
+        0.16200000000000017
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.491
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.19
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 25,
+      "P_Pa": 101300.0,
+      "T_K": 362.39,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.39299999999999996,
+        0.508,
+        0.09900000000000009
+      ],
+      "y": [
+        0.003999999999999978,
+        0.9070000000000003,
+        0.08899999999999979
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.508
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.099
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 26,
+      "P_Pa": 101300.0,
+      "T_K": 359.93,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.31900000000000006,
+        0.571,
+        0.11000000000000001
+      ],
+      "y": [
+        0.0029999999999999268,
+        0.899,
+        0.0980000000000001
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.571
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.11
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 27,
+      "P_Pa": 101300.0,
+      "T_K": 357.14,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2040000000000001,
+        0.581,
+        0.215
+      ],
+      "y": [
+        0.0010000000000000653,
+        0.819,
+        0.17999999999999994
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.581
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.215
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 28,
+      "P_Pa": 101300.0,
+      "T_K": 359.74,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.31799999999999984,
+        0.6070000000000002,
+        0.07500000000000002
+      ],
+      "y": [
+        0.0019999999999997585,
+        0.927,
+        0.07100000000000016
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.607
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.075
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 29,
+      "P_Pa": 101300.0,
+      "T_K": 359.79,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.31800000000000017,
+        0.6129999999999998,
+        0.06899999999999996
+      ],
+      "y": [
+        0.002999999999999809,
+        0.9310000000000002,
+        0.06600000000000006
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.613
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.069
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 30,
+      "P_Pa": 101300.0,
+      "T_K": 358.43,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.283,
+        0.6640000000000001,
+        0.05300000000000005
+      ],
+      "y": [
+        0.0020000000000001154,
+        0.9480000000000001,
+        0.049999999999999836
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.664
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.053
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 31,
+      "P_Pa": 101300.0,
+      "T_K": 356.24,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.199,
+        0.6779999999999999,
+        0.12299999999999994
+      ],
+      "y": [
+        0.0010000000000000653,
+        0.889,
+        0.10999999999999988
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.678
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.123
+        ]
+      ]
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "dataset": 10,
+      "row": 32,
+      "P_Pa": 101300.0,
+      "T_K": 353.77,
+      "components": [
+        "107-21-1",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "ethylene glycol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08799999999999987,
+        0.9100000000000003,
+        0.0019999999999998916
+      ],
+      "y": [
+        0.0009999999999999085,
+        0.9960000000000001,
+        0.0030000000000000035
+      ],
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mole fraction",
+          1,
+          0.91
+        ],
+        [
+          "Mole fraction",
+          2,
+          0.002
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 0,
+      "P_Pa": 6700.0,
+      "T_K": 300.15,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.05205588583776625,
+        0.14961757464403727,
+        0.7983265395181964
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 1,
+      "P_Pa": 6700.0,
+      "T_K": 287.95,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.0678679284439108,
+        0.5851923189745916,
+        0.3469397525814976
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 2,
+      "P_Pa": 6700.0,
+      "T_K": 296.85,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.27307094677092125,
+        0.261617632051227,
+        0.4653114211778517
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 3,
+      "P_Pa": 13300.0,
+      "T_K": 312.85,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.05205588583776625,
+        0.14961757464403727,
+        0.7983265395181964
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 4,
+      "P_Pa": 13300.0,
+      "T_K": 300.85,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.0678679284439108,
+        0.5851923189745916,
+        0.3469397525814976
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 5,
+      "P_Pa": 13300.0,
+      "T_K": 309.55,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.27307094677092125,
+        0.261617632051227,
+        0.4653114211778517
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 6,
+      "P_Pa": 26700.0,
+      "T_K": 326.85,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.05205588583776625,
+        0.14961757464403727,
+        0.7983265395181964
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 7,
+      "P_Pa": 26700.0,
+      "T_K": 314.15,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.0678679284439108,
+        0.5851923189745916,
+        0.3469397525814976
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 8,
+      "P_Pa": 26700.0,
+      "T_K": 323.75,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.27307094677092125,
+        0.261617632051227,
+        0.4653114211778517
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 9,
+      "P_Pa": 40000,
+      "T_K": 335.95,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.05205588583776625,
+        0.14961757464403727,
+        0.7983265395181964
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 10,
+      "P_Pa": 40000,
+      "T_K": 322.95,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.0678679284439108,
+        0.5851923189745916,
+        0.3469397525814976
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 11,
+      "P_Pa": 40000,
+      "T_K": 333.15,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.27307094677092125,
+        0.261617632051227,
+        0.4653114211778517
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 12,
+      "P_Pa": 53300.0,
+      "T_K": 342.55,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.05205588583776625,
+        0.14961757464403727,
+        0.7983265395181964
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 13,
+      "P_Pa": 53300.0,
+      "T_K": 329.45,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.0678679284439108,
+        0.5851923189745916,
+        0.3469397525814976
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 14,
+      "P_Pa": 53300.0,
+      "T_K": 340.05,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.27307094677092125,
+        0.261617632051227,
+        0.4653114211778517
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 15,
+      "P_Pa": 66700.0,
+      "T_K": 348.15,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.05205588583776625,
+        0.14961757464403727,
+        0.7983265395181964
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 16,
+      "P_Pa": 66700.0,
+      "T_K": 334.75,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.0678679284439108,
+        0.5851923189745916,
+        0.3469397525814976
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 8,
+      "row": 17,
+      "P_Pa": 66700.0,
+      "T_K": 345.95,
+      "components": [
+        "56-81-5",
+        "67-56-1",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "methanol",
+        "water"
+      ],
+      "x": [
+        0.27307094677092125,
+        0.261617632051227,
+        0.4653114211778517
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 0,
+      "P_Pa": 6700.0,
+      "T_K": 303.25,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.054540446389106975,
+        0.10902991402526464,
+        0.8364296395856284
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 1,
+      "P_Pa": 6700.0,
+      "T_K": 298.35,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08258197678297287,
+        0.49526029349563033,
+        0.42215772972139676
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 2,
+      "P_Pa": 6700.0,
+      "T_K": 303.85,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2967051154830194,
+        0.19771096726502568,
+        0.505583917251955
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 3,
+      "P_Pa": 13300.0,
+      "T_K": 314.95,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.054540446389106975,
+        0.10902991402526464,
+        0.8364296395856284
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 4,
+      "P_Pa": 13300.0,
+      "T_K": 310.05,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08258197678297287,
+        0.49526029349563033,
+        0.42215772972139676
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 5,
+      "P_Pa": 13300.0,
+      "T_K": 316.65,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2967051154830194,
+        0.19771096726502568,
+        0.505583917251955
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 6,
+      "P_Pa": 26700.0,
+      "T_K": 329.55,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.054540446389106975,
+        0.10902991402526464,
+        0.8364296395856284
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 7,
+      "P_Pa": 26700.0,
+      "T_K": 323.45,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08258197678297287,
+        0.49526029349563033,
+        0.42215772972139676
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 8,
+      "P_Pa": 26700.0,
+      "T_K": 331.35,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2967051154830194,
+        0.19771096726502568,
+        0.505583917251955
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 9,
+      "P_Pa": 40000,
+      "T_K": 338.45,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.054540446389106975,
+        0.10902991402526464,
+        0.8364296395856284
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 10,
+      "P_Pa": 40000,
+      "T_K": 332.05,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08258197678297287,
+        0.49526029349563033,
+        0.42215772972139676
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 11,
+      "P_Pa": 40000,
+      "T_K": 340.95,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2967051154830194,
+        0.19771096726502568,
+        0.505583917251955
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 12,
+      "P_Pa": 53300.0,
+      "T_K": 344.95,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.054540446389106975,
+        0.10902991402526464,
+        0.8364296395856284
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 13,
+      "P_Pa": 53300.0,
+      "T_K": 338.65,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08258197678297287,
+        0.49526029349563033,
+        0.42215772972139676
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 14,
+      "P_Pa": 53300.0,
+      "T_K": 347.85,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2967051154830194,
+        0.19771096726502568,
+        0.505583917251955
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 15,
+      "P_Pa": 66700.0,
+      "T_K": 350.35,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.054540446389106975,
+        0.10902991402526464,
+        0.8364296395856284
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 16,
+      "P_Pa": 66700.0,
+      "T_K": 343.85,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.08258197678297287,
+        0.49526029349563033,
+        0.42215772972139676
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.6
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.2
+        ]
+      ]
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 9,
+      "row": 17,
+      "P_Pa": 66700.0,
+      "T_K": 353.45,
+      "components": [
+        "56-81-5",
+        "64-17-5",
+        "7732-18-5"
+      ],
+      "names": [
+        "glycerol",
+        "ethanol",
+        "water"
+      ],
+      "x": [
+        0.2967051154830194,
+        0.19771096726502568,
+        0.505583917251955
+      ],
+      "y": null,
+      "liquid_phase": "Liquid",
+      "composition_metadata_correction": "",
+      "source_composition_constraints": [
+        [
+          "Mass fraction",
+          1,
+          0.2
+        ],
+        [
+          "Mass fraction",
+          0,
+          0.6
+        ]
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 0,
+      "phase": "Liquid mixture 1",
+      "reason": "binary boundary of ternary system"
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "dataset": 2,
+      "row": 0,
+      "phase": "Liquid mixture 2",
+      "reason": "binary boundary of ternary system"
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "dataset": 10,
+      "scope": "dataset",
+      "reason": "electrolyte/solvent-basis dataset outside shared molecular vapor-pressure benchmark"
+    }
+  ],
+  "source_evidence": [
+    {
+      "doi": "10.1016/j.fluid.2007.09.014",
+      "filename": "10_1016_j_fluid_2007_09_014.json",
+      "sha256": "36582a2555763b6c03b324f3e45c9eb2fc48ddf7fe83dd2868abaebe00954af5"
+    },
+    {
+      "doi": "10.1016/j.fluid.2008.01.018",
+      "filename": "10_1016_j_fluid_2008_01_018.json",
+      "sha256": "1757a47337945d65ca7864c8513b35d936be7c9c1e4dc77ec9e0b3429cdada1e"
+    },
+    {
+      "doi": "10.1021/je2008704",
+      "filename": "2012-kamihama-ethanol-water-ethylene-glycol-thermoml.json",
+      "sha256": "1a8a7a9238b3d127fb19c39bfe6e9701822e37e5b78d36f44fc4b14a48382a91"
+    },
+    {
+      "doi": "10.1016/j.jct.2012.09.032",
+      "filename": "2013-veneral-methanol-ethanol-water-glycerol-thermoml.json",
+      "sha256": "a3f783f9fa602707fca013b09220779c566a4564bcfc3d25e63d76975f77ea3f"
+    },
+    {
+      "filename": "data/reference/vapor-liquid-equilibria/2007-lladosa-dipe-isopropanol-azeotrope-pressure-effect.pdf",
+      "sha256": "210b83272c65d3b81d30c097584cc32ee8a8975d505a394a8ed04a6917887eeb",
+      "note": "Table 11 and experimental-method mole-fraction statement verify correction of dataset 18 mass-fraction metadata"
+    }
+  ],
+  "collector_sha256": "a781bc8c43f63a25ac1d771bd524ea6af455b01a1fbdffb837f2f1e6c51174a9"
+}
