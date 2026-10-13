@@ -1,0 +1,1842 @@
+{
+  "metadata": {
+    "doi": "10.1016/j.fluid.2017.09.008",
+    "source": "Cesari et al., Fluid Phase Equilibria 453 (2017) 58-66, Tables 3 and 6; supporting information Table S2",
+    "thermoml_url": "https://trc.nist.gov/ThermoML/10.1016/j.fluid.2017.09.008.json",
+    "supplement_url": "https://ars.els-cdn.com/content/image/1-s2.0-S0378381217303394-mmc1.docx",
+    "thermoml_sha256": "2f2da992858320bee0de4380cffff37519048e698cc5d0fe8206eb624a670980",
+    "supplement_sha256": "fd9f5b2cc0e04194bb6db1ca726145029df9965061ac5bf3c98db331bebec621",
+    "note": "SI footnotes specify log10 for phenolics and ln for ethanol. The ethanol C-unit cell says degrees C, but the listed ln(kPa) coefficients require kelvin temperature (normal boiling point near 351.5 K); the Celsius interpretation is physically inconsistent. The benchmark records that interpretation explicitly.",
+    "experimental_vapor_compositions": "Not reported; Table 6 provides bubble temperatures, pressure and liquid composition only.",
+    "uncertainties_from_paper": {
+      "VLE_uT_K": 0.06,
+      "VLE_uP_Pa": 40,
+      "composition_u_upper_bound": 0.005,
+      "LLE_uT_K": 0.1
+    }
+  },
+  "vapor_pressure": {
+    "95-48-7": {
+      "name": "o-cresol",
+      "original_A": 6.9117,
+      "original_B": 1435.5,
+      "original_C": 165.16,
+      "original_pressure_units": "mmHg",
+      "temperature_basis": "degC",
+      "base": 10.0,
+      "A_Pa": 9.036603020132938,
+      "B": 1435.5,
+      "C_K": -107.98999999999998,
+      "normal_boiling_point_K": 464.11514340542954
+    },
+    "108-95-2": {
+      "name": "phenol",
+      "original_A": 7.1345,
+      "original_B": 1516.07,
+      "original_C": 174.57,
+      "original_pressure_units": "mmHg",
+      "temperature_basis": "degC",
+      "base": 10.0,
+      "A_Pa": 9.25940302013294,
+      "B": 1516.07,
+      "C_K": -98.57999999999998,
+      "normal_boiling_point_K": 454.99320367405824
+    },
+    "90-05-1": {
+      "name": "guaiacol",
+      "original_A": 4.36309,
+      "original_B": 1753.447,
+      "original_C": -74.81,
+      "original_pressure_units": "bar",
+      "temperature_basis": "K",
+      "base": 10.0,
+      "A_Pa": 9.36309,
+      "B": 1753.447,
+      "C_K": -74.81,
+      "normal_boiling_point_K": 477.21916810007576
+    },
+    "64-17-5": {
+      "name": "ethanol",
+      "original_A": 16.8969,
+      "original_B": 3803.98,
+      "original_C": -41.68,
+      "original_pressure_units": "kPa",
+      "temperature_basis": "K",
+      "base": 2.718281828459045,
+      "A_Pa": 23.804655278982136,
+      "B": 3803.98,
+      "C_K": -41.68,
+      "normal_boiling_point_K": 351.48651516142536
+    }
+  },
+  "vle": [
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 9000,
+      "T_K": 303.09,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.13
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 9000,
+      "T_K": 305.1,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.12
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 9000,
+      "T_K": 310.04,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.25
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 9000,
+      "T_K": 313.16,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.19
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 9000,
+      "T_K": 319.73,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.42
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 9000,
+      "T_K": 325.77,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.49
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.692,
+      "P_Pa": 9000,
+      "T_K": 333.65,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.53
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.794,
+      "P_Pa": 9000,
+      "T_K": 342.26,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.69
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.883,
+      "P_Pa": 9000,
+      "T_K": 353.85,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.98
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 15000,
+      "T_K": 312.58,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.28
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 15000,
+      "T_K": 315.16,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.22
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 15000,
+      "T_K": 319.57,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.26
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 15000,
+      "T_K": 323.66,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.3
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 15000,
+      "T_K": 330.26,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.46
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 15000,
+      "T_K": 337.31,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.54
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.692,
+      "P_Pa": 15000,
+      "T_K": 345.08,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.62
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.794,
+      "P_Pa": 15000,
+      "T_K": 355.05,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.87
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.883,
+      "P_Pa": 15000,
+      "T_K": 366.57,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.91
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 33000,
+      "T_K": 328.7,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.82
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 33000,
+      "T_K": 331.35,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.78
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 33000,
+      "T_K": 336.15,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.84
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 33000,
+      "T_K": 339.9,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.89
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 33000,
+      "T_K": 347.78,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.1
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 33000,
+      "T_K": 355.56,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.18
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.692,
+      "P_Pa": 33000,
+      "T_K": 364.32,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.33
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.794,
+      "P_Pa": 33000,
+      "T_K": 376.11,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.51
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.883,
+      "P_Pa": 33000,
+      "T_K": 388.5,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 3.41
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 55000,
+      "T_K": 340.09,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.96
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 55000,
+      "T_K": 342.95,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.01
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 55000,
+      "T_K": 348.05,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.05
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 55000,
+      "T_K": 352.38,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.18
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 55000,
+      "T_K": 360.94,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.37
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 55000,
+      "T_K": 369.17,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.46
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.692,
+      "P_Pa": 55000,
+      "T_K": 378.58,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.59
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.794,
+      "P_Pa": 55000,
+      "T_K": 389.9,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.89
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 75000,
+      "T_K": 347.53,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.07
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 75000,
+      "T_K": 350.61,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.2
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 75000,
+      "T_K": 355.78,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.19
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 75000,
+      "T_K": 360.18,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.41
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 75000,
+      "T_K": 369.28,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.54
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 75000,
+      "T_K": 378.05,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.64
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.692,
+      "P_Pa": 75000,
+      "T_K": 387.67,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.8
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 85100.0,
+      "T_K": 350.58,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.97
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 85100.0,
+      "T_K": 353.7,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 1.98
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 85100.0,
+      "T_K": 359.06,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.07
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 85100.0,
+      "T_K": 363.56,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.14
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 85100.0,
+      "T_K": 373.06,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.31
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 85100.0,
+      "T_K": 381.78,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.48
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.1,
+      "P_Pa": 98600.0,
+      "T_K": 354.51,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.25
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.198,
+      "P_Pa": 98600.0,
+      "T_K": 357.65,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.65
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.3,
+      "P_Pa": 98600.0,
+      "T_K": 362.97,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.19
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.4,
+      "P_Pa": 98600.0,
+      "T_K": 367.75,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 3.33
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.495,
+      "P_Pa": 98600.0,
+      "T_K": 376.85,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.45
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "x_pc": 0.588,
+      "P_Pa": 98600.0,
+      "T_K": 386.3,
+      "nist_dataset": 14,
+      "nist_expanded_uncertainty_T_K": 2.75
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 9000,
+      "T_K": 300.25,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.26
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 9000,
+      "T_K": 303.33,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.18
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 9000,
+      "T_K": 304.88,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.16
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 9000,
+      "T_K": 307.11,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.21
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 9000,
+      "T_K": 309.4,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.2
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 9000,
+      "T_K": 312.76,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.21
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 9000,
+      "T_K": 316.55,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.28
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 9000,
+      "T_K": 320.29,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.42
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 9000,
+      "T_K": 332.8,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.78
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 16400.0,
+      "T_K": 313.11,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.48
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 16400.0,
+      "T_K": 315.03,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.33
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 16400.0,
+      "T_K": 317.28,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.36
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 16400.0,
+      "T_K": 319.36,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.36
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 16400.0,
+      "T_K": 321.93,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.41
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 16400.0,
+      "T_K": 325.08,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.43
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 16400.0,
+      "T_K": 329.79,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.52
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 16400.0,
+      "T_K": 333.56,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.8
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 16400.0,
+      "T_K": 347.75,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.07
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 33300.0,
+      "T_K": 328.13,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.9
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 33300.0,
+      "T_K": 329.87,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.87
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 33300.0,
+      "T_K": 332.29,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.88
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 33300.0,
+      "T_K": 334.17,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.89
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 33300.0,
+      "T_K": 337.32,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.95
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 33300.0,
+      "T_K": 340.83,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 33300.0,
+      "T_K": 346.2,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.14
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 33300.0,
+      "T_K": 350.9,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.54
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 33300.0,
+      "T_K": 368.35,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.91
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 50000,
+      "T_K": 337.36,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.84
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 50000,
+      "T_K": 339.06,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.82
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 50000,
+      "T_K": 341.49,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.84
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 50000,
+      "T_K": 343.46,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.86
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 50000,
+      "T_K": 346.85,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.97
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 50000,
+      "T_K": 350.46,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.01
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 50000,
+      "T_K": 356.72,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.22
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 50000,
+      "T_K": 362.19,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.61
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 50000,
+      "T_K": 381.56,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 3.13
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 70000,
+      "T_K": 345.35,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.04
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 70000,
+      "T_K": 347.1,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.08
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 70000,
+      "T_K": 349.65,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.09
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 70000,
+      "T_K": 351.6,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.1
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 70000,
+      "T_K": 355.68,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.25
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 70000,
+      "T_K": 359.53,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.36
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 70000,
+      "T_K": 366.51,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.62
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 70000,
+      "T_K": 372.24,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 3.09
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 70000,
+      "T_K": 394.05,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 3.61
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 83200.0,
+      "T_K": 349.63,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.93
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 83200.0,
+      "T_K": 351.45,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.96
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 83200.0,
+      "T_K": 354,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.02
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 83200.0,
+      "T_K": 355.8,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 1.96
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 83200.0,
+      "T_K": 360.2,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.22
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 83200.0,
+      "T_K": 364.1,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.27
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 83200.0,
+      "T_K": 371.89,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.57
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 83200.0,
+      "T_K": 377.68,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.96
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 83200.0,
+      "T_K": 400.47,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 4.27
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.109,
+      "P_Pa": 99600.0,
+      "T_K": 354.12,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.13
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.219,
+      "P_Pa": 96100.0,
+      "T_K": 354.92,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.03
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.322,
+      "P_Pa": 99200.0,
+      "T_K": 358.7,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.28
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.4,
+      "P_Pa": 97700.0,
+      "T_K": 359.87,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.72
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.491,
+      "P_Pa": 99000,
+      "T_K": 365.43,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.36
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.592,
+      "P_Pa": 97100.0,
+      "T_K": 368.8,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 3.57
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.701,
+      "P_Pa": 99700.0,
+      "T_K": 377.89,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 2.94
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.773,
+      "P_Pa": 99000,
+      "T_K": 383.82,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 3.11
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "x_pc": 0.889,
+      "P_Pa": 96500.0,
+      "T_K": 409.48,
+      "nist_dataset": 15,
+      "nist_expanded_uncertainty_T_K": 5.59
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 9000,
+      "T_K": 302.23,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.17
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 9000,
+      "T_K": 305.46,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.19
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 9000,
+      "T_K": 308.67,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.27
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 9000,
+      "T_K": 312.21,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.22
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 9000,
+      "T_K": 319.01,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.35
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 9000,
+      "T_K": 326.79,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.43
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 9000,
+      "T_K": 333.07,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.4
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.791,
+      "P_Pa": 9000,
+      "T_K": 342.8,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.77
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.898,
+      "P_Pa": 9000,
+      "T_K": 359.99,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.22
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 15000,
+      "T_K": 311.87,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.27
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 15000,
+      "T_K": 315.32,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.21
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 15000,
+      "T_K": 319.29,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.24
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 15000,
+      "T_K": 322.19,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.27
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 15000,
+      "T_K": 329.86,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.4
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 15000,
+      "T_K": 336.5,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.44
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 15000,
+      "T_K": 344.12,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.54
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.791,
+      "P_Pa": 15000,
+      "T_K": 354.31,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.99
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.898,
+      "P_Pa": 15000,
+      "T_K": 373.1,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 3.09
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 35100.0,
+      "T_K": 329.36,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.98
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 35100.0,
+      "T_K": 333.25,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.96
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 35100.0,
+      "T_K": 337.22,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.98
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 35100.0,
+      "T_K": 340.16,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.02
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 35100.0,
+      "T_K": 348.9,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.2
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 35100.0,
+      "T_K": 356.03,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.27
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 35100.0,
+      "T_K": 363.84,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.41
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.791,
+      "P_Pa": 35100.0,
+      "T_K": 375.9,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.59
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 55100.0,
+      "T_K": 339.54,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.94
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 55100.0,
+      "T_K": 343.48,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.96
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 55100.0,
+      "T_K": 347.87,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 55100.0,
+      "T_K": 350.35,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.97
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 55100.0,
+      "T_K": 360.29,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.25
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 55100.0,
+      "T_K": 367.82,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.31
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 55100.0,
+      "T_K": 376.33,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.6
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.791,
+      "P_Pa": 55100.0,
+      "T_K": 389.39,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 3.21
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 75000,
+      "T_K": 346.85,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.09
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 75000,
+      "T_K": 351.09,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.18
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 75000,
+      "T_K": 355.53,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.14
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 75000,
+      "T_K": 357.5,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.3
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 75000,
+      "T_K": 368.4,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.44
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 75000,
+      "T_K": 376.1,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.5
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 75000,
+      "T_K": 385.84,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.76
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 85100.0,
+      "T_K": 349.95,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.94
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 85100.0,
+      "T_K": 354.17,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.04
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 85100.0,
+      "T_K": 358.8,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.08
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 85100.0,
+      "T_K": 360.75,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 1.85
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 85100.0,
+      "T_K": 371.88,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 85100.0,
+      "T_K": 379.52,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.54
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 85100.0,
+      "T_K": 389.62,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.43
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.097,
+      "P_Pa": 99100.0,
+      "T_K": 353.75,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.14
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.206,
+      "P_Pa": 97700.0,
+      "T_K": 357.95,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.4
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.304,
+      "P_Pa": 99700.0,
+      "T_K": 363.05,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.27
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.39,
+      "P_Pa": 99900.0,
+      "T_K": 364.6,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 3.31
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.507,
+      "P_Pa": 99100.0,
+      "T_K": 374.97,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.25
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.597,
+      "P_Pa": 98500.0,
+      "T_K": 384.56,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.71
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "x_pc": 0.699,
+      "P_Pa": 99400.0,
+      "T_K": 394.11,
+      "nist_dataset": 17,
+      "nist_expanded_uncertainty_T_K": 2.59
+    }
+  ],
+  "lle": [
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "T_K": 298.15,
+      "x_pc_aqueous": 0.0036,
+      "x_pc_organic": 0.7522
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "T_K": 303.15,
+      "x_pc_aqueous": 0.0037,
+      "x_pc_organic": 0.7346
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "T_K": 308.15,
+      "x_pc_aqueous": 0.0038,
+      "x_pc_organic": 0.7226
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "T_K": 313.15,
+      "x_pc_aqueous": 0.0039,
+      "x_pc_organic": 0.6952
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "T_K": 318.15,
+      "x_pc_aqueous": 0.0039,
+      "x_pc_organic": 0.6739
+    },
+    {
+      "cas_pc": "90-05-1",
+      "name_pc": "guaiacol",
+      "T_K": 323.15,
+      "x_pc_aqueous": 0.0041,
+      "x_pc_organic": 0.6443
+    },
+    {
+      "cas_pc": "91-10-1",
+      "name_pc": "syringol",
+      "T_K": 313.15,
+      "x_pc_aqueous": 0.0041,
+      "x_pc_organic": 0.3516
+    },
+    {
+      "cas_pc": "91-10-1",
+      "name_pc": "syringol",
+      "T_K": 318.15,
+      "x_pc_aqueous": 0.0044,
+      "x_pc_organic": 0.3278
+    },
+    {
+      "cas_pc": "91-10-1",
+      "name_pc": "syringol",
+      "T_K": 323.15,
+      "x_pc_aqueous": 0.0048,
+      "x_pc_organic": 0.3136
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "T_K": 298.15,
+      "x_pc_aqueous": 0.0042,
+      "x_pc_organic": 0.5152
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "T_K": 303.15,
+      "x_pc_aqueous": 0.0044,
+      "x_pc_organic": 0.5102
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "T_K": 308.15,
+      "x_pc_aqueous": 0.0046,
+      "x_pc_organic": 0.5046
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "T_K": 313.15,
+      "x_pc_aqueous": 0.0047,
+      "x_pc_organic": 0.499
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "T_K": 318.15,
+      "x_pc_aqueous": 0.0048,
+      "x_pc_organic": 0.4944
+    },
+    {
+      "cas_pc": "95-48-7",
+      "name_pc": "o-cresol",
+      "T_K": 323.15,
+      "x_pc_aqueous": 0.0051,
+      "x_pc_organic": 0.4846
+    },
+    {
+      "cas_pc": "108-39-4",
+      "name_pc": "m-cresol",
+      "T_K": 298.15,
+      "x_pc_aqueous": 0.0041,
+      "x_pc_organic": 0.5209
+    },
+    {
+      "cas_pc": "108-39-4",
+      "name_pc": "m-cresol",
+      "T_K": 303.15,
+      "x_pc_aqueous": 0.0042,
+      "x_pc_organic": 0.5087
+    },
+    {
+      "cas_pc": "108-39-4",
+      "name_pc": "m-cresol",
+      "T_K": 308.15,
+      "x_pc_aqueous": 0.0044,
+      "x_pc_organic": 0.4998
+    },
+    {
+      "cas_pc": "108-39-4",
+      "name_pc": "m-cresol",
+      "T_K": 313.15,
+      "x_pc_aqueous": 0.0044,
+      "x_pc_organic": 0.4859
+    },
+    {
+      "cas_pc": "108-39-4",
+      "name_pc": "m-cresol",
+      "T_K": 318.15,
+      "x_pc_aqueous": 0.0046,
+      "x_pc_organic": 0.4692
+    },
+    {
+      "cas_pc": "108-39-4",
+      "name_pc": "m-cresol",
+      "T_K": 323.15,
+      "x_pc_aqueous": 0.0049,
+      "x_pc_organic": 0.4573
+    },
+    {
+      "cas_pc": "106-44-5",
+      "name_pc": "p-cresol",
+      "T_K": 298.15,
+      "x_pc_aqueous": 0.0036,
+      "x_pc_organic": 0.4843
+    },
+    {
+      "cas_pc": "106-44-5",
+      "name_pc": "p-cresol",
+      "T_K": 303.15,
+      "x_pc_aqueous": 0.0037,
+      "x_pc_organic": 0.472
+    },
+    {
+      "cas_pc": "106-44-5",
+      "name_pc": "p-cresol",
+      "T_K": 308.15,
+      "x_pc_aqueous": 0.0038,
+      "x_pc_organic": 0.4617
+    },
+    {
+      "cas_pc": "106-44-5",
+      "name_pc": "p-cresol",
+      "T_K": 313.15,
+      "x_pc_aqueous": 0.0039,
+      "x_pc_organic": 0.4518
+    },
+    {
+      "cas_pc": "106-44-5",
+      "name_pc": "p-cresol",
+      "T_K": 318.15,
+      "x_pc_aqueous": 0.004,
+      "x_pc_organic": 0.4455
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "T_K": 298.15,
+      "x_pc_aqueous": 0.0172
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "T_K": 303.15,
+      "x_pc_aqueous": 0.0184
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "T_K": 308.15,
+      "x_pc_aqueous": 0.0195
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "T_K": 313.15,
+      "x_pc_aqueous": 0.0207
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "T_K": 318.15,
+      "x_pc_aqueous": 0.0217
+    },
+    {
+      "cas_pc": "108-95-2",
+      "name_pc": "phenol",
+      "T_K": 323.15,
+      "x_pc_aqueous": 0.0242
+    }
+  ]
+}
