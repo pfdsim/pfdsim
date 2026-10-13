@@ -130,7 +130,7 @@ Vapor pressure layer ([3]) judgment calls:
   alcohols) is hopelessly misprinted in the journal: +0.75407/
   (1+7 exp(201/T-91))-1 can neither vanish nor satisfy Ps(Tb) = 1 atm.  The
   correct form is Eq. (8-6) of Nannoolal's PhD thesis (Univ. KwaZulu-Natal,
-  2006, data/reference/thermodynamic-models/2006-nannoolal-group-contribution-property-estimation-thesis.pdf, p. 193):
+  2006, data/reference/property_estimation/2006-nannoolal-group-contribution-property-estimation-thesis.pdf, p. 193):
       f(T) = a [ 2 / (1 + exp((201/(T-91))^7)) - 1 ],   a = 0.37704
   added to log10(Ps/atm) for mono-functional alcohols only.  The journal's
   0.75407 is 2a, its "7 exp" is the 7th POWER on the argument, and

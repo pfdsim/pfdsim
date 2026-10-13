@@ -243,7 +243,7 @@ slightly.
   aminoalcohol observations used by the group-84 and amine/alcohol probe.
 
 The original Govender paper is stored at
-`../../../data/reference/thermodynamic-models/2020-govender-group-contribution-liquid-thermal-conductivity.pdf`.
+`../../../data/reference/property_estimation/2020-govender-group-contribution-liquid-thermal-conductivity.pdf`.
 
 ## Results directory
 
