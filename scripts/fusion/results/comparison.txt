@@ -1,0 +1,61 @@
+Directly comparable fusion-method rankings
+Every method in a panel uses identical observations, measured Tm, and target.
+MAPE and MAE are compound-equal; bootstrap differences are percentage points.
+Handbook/development data and bootstrap intervals do not establish external validation.
+
+crc_handbook: all general methods common: 140 compounds, 140 observations
+  Perry Chickos 1991        MAPE= 28.21% MAE= 1.509 kJ/mol median=  9.27% P90= 24.81%
+  Updated Chickos 1999      MAPE= 28.15% MAE= 1.547 kJ/mol median=  9.50% P90= 26.82%
+  Dannenfelser 1996         MAPE= 36.18% MAE= 2.013 kJ/mol median= 11.97% P90= 36.22%
+  Jain 2004                 MAPE= 38.25% MAE= 2.329 kJ/mol median= 16.52% P90= 41.83%
+  Walden baseline           MAPE= 48.33% MAE= 3.715 kJ/mol median= 21.83% P90= 65.12%
+  Updated minus Perry MAPE: -0.063 pp; paired bootstrap 95% [-1.861, +1.665] pp; Perry wins 70, updated wins 70, ties 0
+
+crc_handbook: confirmed single-transition common: 123 compounds, 123 observations
+  Perry Chickos 1991        MAPE= 10.71% MAE= 1.331 kJ/mol median=  9.07% P90= 21.54%
+  Updated Chickos 1999      MAPE= 11.36% MAE= 1.361 kJ/mol median=  9.11% P90= 25.03%
+  Dannenfelser 1996         MAPE= 15.35% MAE= 1.811 kJ/mol median= 11.24% P90= 33.41%
+  Jain 2004                 MAPE= 17.31% MAE= 2.099 kJ/mol median= 14.08% P90= 34.61%
+  Walden baseline           MAPE= 23.63% MAE= 3.200 kJ/mol median= 20.64% P90= 53.82%
+  Updated minus Perry MAPE: +0.648 pp; paired bootstrap 95% [-0.985, +2.265] pp; Perry wins 62, updated wins 61, ties 0
+
+perry_2_68: all general methods common: 77 compounds, 77 observations
+  Perry Chickos 1991        MAPE= 45.13% MAE= 2.062 kJ/mol median= 10.79% P90= 31.19%
+  Updated Chickos 1999      MAPE= 44.21% MAE= 2.079 kJ/mol median= 10.77% P90= 29.76%
+  Dannenfelser 1996         MAPE= 53.20% MAE= 2.495 kJ/mol median= 15.19% P90= 47.26%
+  Jain 2004                 MAPE= 55.35% MAE= 2.761 kJ/mol median= 16.88% P90= 39.87%
+  Walden baseline           MAPE= 60.64% MAE= 3.331 kJ/mol median= 15.15% P90= 60.74%
+  Updated minus Perry MAPE: -0.916 pp; paired bootstrap 95% [-3.874, +2.234] pp; Perry wins 37, updated wins 40, ties 0
+
+perry_2_68: confirmed single-transition common: 68 compounds, 68 observations
+  Perry Chickos 1991        MAPE= 13.13% MAE= 1.694 kJ/mol median= 10.59% P90= 24.02%
+  Updated Chickos 1999      MAPE= 12.56% MAE= 1.676 kJ/mol median= 10.70% P90= 25.48%
+  Dannenfelser 1996         MAPE= 16.98% MAE= 2.122 kJ/mol median= 14.77% P90= 35.13%
+  Jain 2004                 MAPE= 17.66% MAE= 2.330 kJ/mol median= 15.72% P90= 32.83%
+  Walden baseline           MAPE= 18.95% MAE= 2.733 kJ/mol median= 12.75% P90= 43.99%
+  Updated minus Perry MAPE: -0.568 pp; paired bootstrap 95% [-2.711, +1.531] pp; Perry wins 33, updated wins 35, ties 0
+
+disjoint resolved-CAS test: all general methods common: 1 compounds, 1 observations
+  Perry Chickos 1991        MAPE=  6.98% MAE= 0.774 kJ/mol median=  6.98% P90=  6.98%
+  Updated Chickos 1999      MAPE=  8.19% MAE= 0.909 kJ/mol median=  8.19% P90=  8.19%
+  Dannenfelser 1996         MAPE=  3.61% MAE= 0.401 kJ/mol median=  3.61% P90=  3.61%
+  Jain 2004                 MAPE= 26.80% MAE= 2.975 kJ/mol median= 26.80% P90= 26.80%
+  Walden baseline           MAPE= 37.96% MAE= 4.214 kJ/mol median= 37.96% P90= 37.96%
+  Updated minus Perry MAPE: +1.212 pp; paired bootstrap 95% [+1.212, +1.212] pp; Perry wins 1, updated wins 0, ties 0
+
+disjoint resolved-CAS test: Perry vs updated: 44 compounds, 46 observations
+  Perry Chickos 1991        MAPE= 27.75% MAE= 2.626 kJ/mol median=  9.17% P90= 41.04%
+  Updated Chickos 1999      MAPE= 24.00% MAE= 2.993 kJ/mol median= 10.73% P90= 41.87%
+  Updated minus Perry MAPE: -3.745 pp; paired bootstrap 95% [-16.837, +4.212] pp; Perry wins 27, updated wins 17, ties 0
+
+disjoint resolved-CAS test: updated vs Jain: 45 compounds, 46 observations
+  Updated Chickos 1999      MAPE= 23.63% MAE= 2.812 kJ/mol median= 11.44% P90= 37.99%
+  Jain 2004                 MAPE= 31.01% MAE= 3.386 kJ/mol median= 14.76% P90= 54.13%
+
+acid development: common total-enthalpy observations: 25 compounds, 48 observations
+  Perry Chickos 1991        MAPE= 33.63% MAE= 7.637 kJ/mol median= 19.79% P90= 75.95%
+  Updated Chickos 1999      MAPE= 26.04% MAE= 6.846 kJ/mol median= 22.32% P90= 45.85%
+  Acid entropy x Tm         MAPE= 22.75% MAE= 5.528 kJ/mol median= 15.93% P90= 38.19%
+  Acid direct enthalpy      MAPE= 22.73% MAE= 5.489 kJ/mol median= 16.85% P90= 36.41%
+  Walden baseline           MAPE= 36.28% MAE=10.896 kJ/mol median= 34.26% P90= 52.89%
+  Updated minus Perry MAPE: -7.591 pp; paired bootstrap 95% [-18.661, +2.594] pp; Perry wins 9, updated wins 16, ties 0

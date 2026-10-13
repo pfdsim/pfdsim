@@ -1,0 +1,70 @@
+{
+  "extraction_environment": {
+    "python": "3.14.4"
+  },
+  "formulas": {
+    "Chickos1999": "Eqs. 2-7, Tables 1/2; reference transitions Tables 5/7",
+    "Compernolle2011": "Eqs. 20/21, Table 1 and supplement Table S1",
+    "DY1996": "Eqs. 7/8/10 and original supplementary log descriptors",
+    "Jain2004": "Eqs. III/IV/VI, Table 1 and 1799-row supplement",
+    "Perry": "pp. 2-335/336, Eqs. 2-42/43/44, Tables 2-162/163; 1991 Chickos parameters"
+  },
+  "sources": [
+    {
+      "bytes": 1481947,
+      "doi": "10.1063/1.556045",
+      "path": "data/reference/property_estimation/1999-chickos-acree-liebman-solid-liquid-phase-change-enthalpies-entropies.pdf",
+      "sha256": "0c3243d224896f18d214ec5d3b7dd39f1f465a17d99a9f05c6d82f510eccf90b",
+      "url": "https://srd.nist.gov/jpcrdreprint/1.556045.pdf"
+    },
+    {
+      "bytes": 303616,
+      "doi": "10.1021/ie0497745",
+      "path": "data/reference/property_estimation/2004-jain-yang-yalkowsky-total-entropy-melting-supporting-information.xls",
+      "sha256": "af6e62aaa29eb225db6f092a1946045f13c8fe2c0b2a07d23c62300f56323a32",
+      "url": "https://ndownloader.figshare.com/files/5170753"
+    },
+    {
+      "bytes": 1734214,
+      "doi": "10.1021/ie940581z",
+      "path": "data/reference/property_estimation/1996-dannenfelser-yalkowsky-total-entropy-melting-supporting-information.pdf",
+      "sha256": "626d08b8662badb8274efb162b00008eb3f4c945ab51210c2730138720bbec7c",
+      "url": ""
+    },
+    {
+      "bytes": 593151,
+      "doi": "10.5194/acp-11-8385-2011",
+      "path": "data/reference/property_estimation/2011-compernolle-ceulemans-muller-fusion-properties-functionalised-acids.pdf",
+      "sha256": "cdc1ea577dd8b79d1a7f687c2d16926b7bbedf6eec111cd0791ae1a41da32f4d",
+      "url": "https://acp.copernicus.org/articles/11/8385/2011/acp-11-8385-2011.pdf"
+    },
+    {
+      "bytes": 143432,
+      "doi": "10.5194/acp-11-8385-2011",
+      "path": "data/reference/property_estimation/2011-compernolle-ceulemans-muller-fusion-properties-functionalised-acids-supporting-information.pdf",
+      "sha256": "8d6b06584b5735a5cdbb8f7b2600c9d557ceb389be96473c63f3227e338b0125",
+      "url": "https://acp.copernicus.org/articles/11/8385/2011/acp-11-8385-2011-supplement.pdf"
+    },
+    {
+      "bytes": 99304,
+      "doi": "10.1021/ie0497745",
+      "path": "data/reference/property_estimation/2004-jain-yang-yalkowsky-total-entropy-melting.pdf",
+      "sha256": "7e798f6378c1f22692f8d027efbcbcf200c45b3e1a8023d190a39cc1ccc98b9c",
+      "url": ""
+    },
+    {
+      "bytes": 191887,
+      "doi": "10.1021/ie940581z",
+      "path": "data/reference/property_estimation/1996-dannenfelser-yalkowsky-total-entropy-melting.pdf",
+      "sha256": "f1c1c36ee814edef23ddb6285a447318385eff7e36ae5e14decd9a49cb8e05f7",
+      "url": ""
+    },
+    {
+      "bytes": 52009066,
+      "doi": "",
+      "path": "data/source/perrys-chemical-engineers-handjob-9th-edition-2021-9nbsped-9780071834094-0071834095-9780071834087-0071834087_compress.pdf",
+      "sha256": "9db9a22e822dbd8ea434535d9a439f1f3772c86d7b199a00bde790294026c076",
+      "url": ""
+    }
+  ]
+}

@@ -1,0 +1,2712 @@
+{
+  "bootstrap_samples": 10000,
+  "input_sha256": "14d2acf3820d07bcad8dfca2b340cc2c51bf51076f899f1727800d7b336385aa",
+  "limitations": [
+    "Each panel is a separate population; scores across panels are not a method ranking.",
+    "Bootstrap intervals resample compounds, not underlying literature sources; shared lineage remains.",
+    "Class splits are exploratory, overlapping, and not validated switching rules.",
+    "Acid panel targets summed transition enthalpy and is development data."
+  ],
+  "panels": {
+    "acid development: common total-enthalpy observations": {
+      "chemical_classes_exploratory": {
+        "oxygen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 20.53173756418988,
+            "compound_equal_mae": 7.636705689266666,
+            "compound_equal_mape_percent": 33.630091376258434,
+            "median_compound_mape_percent": 19.787847850126834,
+            "n_compounds": 25,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 75.9469786513545
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -2.364116798106546,
+            "compound_equal_mae": 6.845643941666666,
+            "compound_equal_mape_percent": 26.039582340881847,
+            "median_compound_mape_percent": 22.317587884480112,
+            "n_compounds": 25,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 45.85148420368609
+          },
+          "compernolle_enthalpy_2011": {
+            "compound_equal_bias_percent": 5.581086116020865,
+            "compound_equal_mae": 5.48909,
+            "compound_equal_mape_percent": 22.72577781300962,
+            "median_compound_mape_percent": 16.8539291141729,
+            "n_compounds": 25,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 36.41052868024802
+          },
+          "compernolle_entropy_2011": {
+            "compound_equal_bias_percent": 5.2797679128620665,
+            "compound_equal_mae": 5.5281568209,
+            "compound_equal_mape_percent": 22.749829092283655,
+            "median_compound_mape_percent": 15.933495811972994,
+            "n_compounds": 25,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 38.188852999427446
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": -15.382883490961142,
+            "compound_equal_mae": 10.896342746666667,
+            "compound_equal_mape_percent": 36.28246551232794,
+            "median_compound_mape_percent": 34.25906336973593,
+            "n_compounds": 25,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 52.89177095271892
+          }
+        }
+      },
+      "compounds": 25,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": 20.53173756418988,
+          "compound_equal_mae": 7.636705689266666,
+          "compound_equal_mape_percent": 33.630091376258434,
+          "median_compound_mape_percent": 19.787847850126834,
+          "n_compounds": 25,
+          "n_observations": 48,
+          "p90_compound_mape_percent": 75.9469786513545
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": -2.364116798106546,
+          "compound_equal_mae": 6.845643941666666,
+          "compound_equal_mape_percent": 26.039582340881847,
+          "median_compound_mape_percent": 22.317587884480112,
+          "n_compounds": 25,
+          "n_observations": 48,
+          "p90_compound_mape_percent": 45.85148420368609
+        },
+        "compernolle_enthalpy_2011": {
+          "compound_equal_bias_percent": 5.581086116020865,
+          "compound_equal_mae": 5.48909,
+          "compound_equal_mape_percent": 22.72577781300962,
+          "median_compound_mape_percent": 16.8539291141729,
+          "n_compounds": 25,
+          "n_observations": 48,
+          "p90_compound_mape_percent": 36.41052868024802
+        },
+        "compernolle_entropy_2011": {
+          "compound_equal_bias_percent": 5.2797679128620665,
+          "compound_equal_mae": 5.5281568209,
+          "compound_equal_mape_percent": 22.749829092283655,
+          "median_compound_mape_percent": 15.933495811972994,
+          "n_compounds": 25,
+          "n_observations": 48,
+          "p90_compound_mape_percent": 38.188852999427446
+        },
+        "walden_54_4": {
+          "compound_equal_bias_percent": -15.382883490961142,
+          "compound_equal_mae": 10.896342746666667,
+          "compound_equal_mape_percent": 36.28246551232794,
+          "median_compound_mape_percent": 34.25906336973593,
+          "n_compounds": 25,
+          "n_observations": 48,
+          "p90_compound_mape_percent": 52.89177095271892
+        }
+      },
+      "observations": 48,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            -18.661295946576317,
+            2.594271359721343
+          ],
+          "left_lower_error_compounds": 9,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 16,
+          "right_minus_left_MAPE_percentage_points": -7.590509035376593,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs compernolle_enthalpy_2011": {
+          "bootstrap_95_percent_interval": [
+            -20.166083181631798,
+            -2.2500285480996363
+          ],
+          "left_lower_error_compounds": 10,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 15,
+          "right_minus_left_MAPE_percentage_points": -10.904313563248818,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs compernolle_entropy_2011": {
+          "bootstrap_95_percent_interval": [
+            -19.59799304487183,
+            -2.5149110347079295
+          ],
+          "left_lower_error_compounds": 10,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 15,
+          "right_minus_left_MAPE_percentage_points": -10.880262283974787,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            -8.682942670247062,
+            13.198891359981465
+          ],
+          "left_lower_error_compounds": 16,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 9,
+          "right_minus_left_MAPE_percentage_points": 2.6523741360694966,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs compernolle_enthalpy_2011": {
+          "bootstrap_95_percent_interval": [
+            -8.484372642401006,
+            2.1332950175587193
+          ],
+          "left_lower_error_compounds": 9,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 16,
+          "right_minus_left_MAPE_percentage_points": -3.3138045278722252,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs compernolle_entropy_2011": {
+          "bootstrap_95_percent_interval": [
+            -7.252153793482733,
+            1.0184121737493081
+          ],
+          "left_lower_error_compounds": 9,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 16,
+          "right_minus_left_MAPE_percentage_points": -3.289753248598192,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            3.1147623155623956,
+            17.065155800113033
+          ],
+          "left_lower_error_compounds": 17,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 8,
+          "right_minus_left_MAPE_percentage_points": 10.24288317144609,
+          "tied_compounds": 0
+        },
+        "compernolle_enthalpy_2011 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            7.650230788964731,
+            19.452053946163993
+          ],
+          "left_lower_error_compounds": 21,
+          "positive_difference_favors": "compernolle_enthalpy_2011",
+          "right_lower_error_compounds": 4,
+          "right_minus_left_MAPE_percentage_points": 13.556687699318315,
+          "tied_compounds": 0
+        },
+        "compernolle_entropy_2011 vs compernolle_enthalpy_2011": {
+          "bootstrap_95_percent_interval": [
+            -2.255594881971757,
+            2.0172242799459053
+          ],
+          "left_lower_error_compounds": 17,
+          "positive_difference_favors": "compernolle_entropy_2011",
+          "right_lower_error_compounds": 8,
+          "right_minus_left_MAPE_percentage_points": -0.024051279274032566,
+          "tied_compounds": 0
+        },
+        "compernolle_entropy_2011 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            7.805983287763017,
+            19.36000096379787
+          ],
+          "left_lower_error_compounds": 20,
+          "positive_difference_favors": "compernolle_entropy_2011",
+          "right_lower_error_compounds": 5,
+          "right_minus_left_MAPE_percentage_points": 13.532636420044282,
+          "tied_compounds": 0
+        }
+      },
+      "target": "total_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "source-defined": 48
+      }
+    },
+    "crc_handbook: all general methods common": {
+      "chemical_classes_exploratory": {
+        "aromatic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -4.886230817179715,
+            "compound_equal_mae": 1.774470126862745,
+            "compound_equal_mape_percent": 11.15641676600911,
+            "median_compound_mape_percent": 9.103387234042561,
+            "n_compounds": 51,
+            "n_observations": 51,
+            "p90_compound_mape_percent": 24.697771428571436
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 1.3592994579905853,
+            "compound_equal_mae": 1.788813405490196,
+            "compound_equal_mape_percent": 12.405399211133222,
+            "median_compound_mape_percent": 10.986876971608838,
+            "n_compounds": 51,
+            "n_observations": 51,
+            "p90_compound_mape_percent": 26.79387755102043
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -2.892007438814894,
+            "compound_equal_mae": 2.484358596901961,
+            "compound_equal_mape_percent": 16.85135681149762,
+            "median_compound_mape_percent": 14.191387413793088,
+            "n_compounds": 51,
+            "n_observations": 51,
+            "p90_compound_mape_percent": 33.96359354231975
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -3.4349210576102855,
+            "compound_equal_mae": 2.5867967474674813,
+            "compound_equal_mape_percent": 17.431006188188526,
+            "median_compound_mape_percent": 13.986379421850343,
+            "n_compounds": 51,
+            "n_observations": 51,
+            "p90_compound_mape_percent": 33.76743392311073
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 14.771565386201546,
+            "compound_equal_mae": 2.202033631372549,
+            "compound_equal_mape_percent": 18.93581161340382,
+            "median_compound_mape_percent": 12.37548387096772,
+            "n_compounds": 51,
+            "n_observations": 51,
+            "p90_compound_mape_percent": 45.9542168674699
+          }
+        },
+        "cyclic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 4.0117945092012945,
+            "compound_equal_mae": 1.7956761842985074,
+            "compound_equal_mape_percent": 18.44786574456512,
+            "median_compound_mape_percent": 9.463280785246877,
+            "n_compounds": 67,
+            "n_observations": 67,
+            "p90_compound_mape_percent": 25.820729903900524
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 7.039491823386588,
+            "compound_equal_mae": 1.7871254474626868,
+            "compound_equal_mape_percent": 18.92206506685506,
+            "median_compound_mape_percent": 10.636580882352948,
+            "n_compounds": 67,
+            "n_observations": 67,
+            "p90_compound_mape_percent": 27.269217109613216
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 3.09991890564972,
+            "compound_equal_mae": 2.2521763648059703,
+            "compound_equal_mape_percent": 20.527245637707516,
+            "median_compound_mape_percent": 11.980459487666026,
+            "n_compounds": 67,
+            "n_observations": 67,
+            "p90_compound_mape_percent": 34.632847668248985
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 1.7635134815751954,
+            "compound_equal_mae": 2.3202015185418436,
+            "compound_equal_mape_percent": 20.48203343381936,
+            "median_compound_mape_percent": 13.05913570887036,
+            "n_compounds": 67,
+            "n_observations": 67,
+            "p90_compound_mape_percent": 34.43867605295385
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 23.232955741286677,
+            "compound_equal_mae": 2.229185576119403,
+            "compound_equal_mape_percent": 27.435116493270204,
+            "median_compound_mape_percent": 12.37548387096772,
+            "n_compounds": 67,
+            "n_observations": 67,
+            "p90_compound_mape_percent": 48.41643350212445
+          }
+        },
+        "halogenated": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 3.081920364667106,
+            "compound_equal_mae": 1.2755833352692307,
+            "compound_equal_mape_percent": 16.34988159741982,
+            "median_compound_mape_percent": 10.830126854887398,
+            "n_compounds": 26,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 23.726830922009917
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 5.1746676357402865,
+            "compound_equal_mae": 1.1478938703846155,
+            "compound_equal_mape_percent": 14.81240399230766,
+            "median_compound_mape_percent": 9.14280090497736,
+            "n_compounds": 26,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 24.450196022727255
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 2.6237201742794403,
+            "compound_equal_mae": 1.5063769183846154,
+            "compound_equal_mape_percent": 17.566682810838323,
+            "median_compound_mape_percent": 10.773123178041665,
+            "n_compounds": 26,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 29.648529847308964
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 9.444014045670238,
+            "compound_equal_mae": 1.9271395624309824,
+            "compound_equal_mape_percent": 25.459885562426322,
+            "median_compound_mape_percent": 14.99898421314068,
+            "n_compounds": 26,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 37.05011224139458
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 23.189765257331207,
+            "compound_equal_mae": 2.2544110769230765,
+            "compound_equal_mape_percent": 30.454631311536097,
+            "median_compound_mape_percent": 22.526479402439172,
+            "n_compounds": 26,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 48.45781729882479
+          }
+        },
+        "hydrocarbon": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 26.17481005844031,
+            "compound_equal_mae": 1.6787038441707323,
+            "compound_equal_mape_percent": 38.81870304050594,
+            "median_compound_mape_percent": 8.84056589206453,
+            "n_compounds": 82,
+            "n_observations": 82,
+            "p90_compound_mape_percent": 24.695437803530822
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 23.988492222163416,
+            "compound_equal_mae": 1.7090461325000026,
+            "compound_equal_mape_percent": 37.802521615475314,
+            "median_compound_mape_percent": 9.448574990410426,
+            "n_compounds": 82,
+            "n_observations": 82,
+            "p90_compound_mape_percent": 26.40291327023114
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 34.791750152511675,
+            "compound_equal_mae": 2.2503371228146345,
+            "compound_equal_mape_percent": 48.78641529453562,
+            "median_compound_mape_percent": 13.625261561331723,
+            "n_compounds": 82,
+            "n_observations": 82,
+            "p90_compound_mape_percent": 36.59568438745719
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 33.03363995424763,
+            "compound_equal_mae": 2.58370773439211,
+            "compound_equal_mape_percent": 48.746534617614756,
+            "median_compound_mape_percent": 16.5952201113663,
+            "n_compounds": 82,
+            "n_observations": 82,
+            "p90_compound_mape_percent": 35.607173890469404
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 39.82837397174602,
+            "compound_equal_mae": 4.4899186536585365,
+            "compound_equal_mape_percent": 60.0644378194617,
+            "median_compound_mape_percent": 20.187215847798363,
+            "n_compounds": 82,
+            "n_observations": 82,
+            "p90_compound_mape_percent": 68.58357613132475
+          }
+        },
+        "nitrogen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -3.4068759707133855,
+            "compound_equal_mae": 1.3973980211518517,
+            "compound_equal_mape_percent": 11.116593960180841,
+            "median_compound_mape_percent": 10.028287476280845,
+            "n_compounds": 27,
+            "n_observations": 27,
+            "p90_compound_mape_percent": 25.267412727516955
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 2.8390283355259465,
+            "compound_equal_mae": 1.534479323703704,
+            "compound_equal_mape_percent": 14.464079909346601,
+            "median_compound_mape_percent": 11.040360824742262,
+            "n_compounds": 27,
+            "n_observations": 27,
+            "p90_compound_mape_percent": 32.64426597653555
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 11.630705150172972,
+            "compound_equal_mae": 2.03021233297037,
+            "compound_equal_mape_percent": 20.372667312921344,
+            "median_compound_mape_percent": 13.313021167415021,
+            "n_compounds": 27,
+            "n_observations": 27,
+            "p90_compound_mape_percent": 40.278758514157914
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 18.378190520106763,
+            "compound_equal_mae": 2.272521355844152,
+            "compound_equal_mape_percent": 24.047925034679608,
+            "median_compound_mape_percent": 20.19519770092663,
+            "n_compounds": 27,
+            "n_observations": 27,
+            "p90_compound_mape_percent": 54.135290962724596
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 31.65279588975699,
+            "compound_equal_mae": 3.0677975703703706,
+            "compound_equal_mape_percent": 33.380980790389486,
+            "median_compound_mape_percent": 25.13795379537954,
+            "n_compounds": 27,
+            "n_observations": 27,
+            "p90_compound_mape_percent": 67.69919656744436
+          }
+        },
+        "oxygen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -6.100152333870004,
+            "compound_equal_mae": 1.3412604250000002,
+            "compound_equal_mape_percent": 8.68892150079943,
+            "median_compound_mape_percent": 9.025639179031222,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 15.090993932314248
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -3.143804736114407,
+            "compound_equal_mae": 1.2352302500000008,
+            "compound_equal_mape_percent": 8.13232899433175,
+            "median_compound_mape_percent": 8.41962388526086,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 11.203604689995647
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 14.082081151642928,
+            "compound_equal_mae": 2.046021875,
+            "compound_equal_mape_percent": 17.586873794140743,
+            "median_compound_mape_percent": 11.978112525455089,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 37.20597791566914
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 13.87400850895423,
+            "compound_equal_mae": 2.0017024021073073,
+            "compound_equal_mape_percent": 17.378801151452045,
+            "median_compound_mape_percent": 11.978112525455089,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 37.20597791566914
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 22.06427236810487,
+            "compound_equal_mae": 2.5923240000000005,
+            "compound_equal_mape_percent": 23.01743978685687,
+            "median_compound_mape_percent": 17.626538834222686,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 49.28010397224802
+          }
+        },
+        "sulfur_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 2.7042694346726077,
+            "compound_equal_mae": 0.46482083000000074,
+            "compound_equal_mape_percent": 6.961622605870513,
+            "median_compound_mape_percent": 5.854669150736239,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 12.842838060814682
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 2.6192386623621995,
+            "compound_equal_mae": 1.0506356066666669,
+            "compound_equal_mape_percent": 12.882395239396637,
+            "median_compound_mape_percent": 15.274920768662238,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 19.166716829772163
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 5.313444542640544,
+            "compound_equal_mae": 0.961053757333334,
+            "compound_equal_mape_percent": 13.79313008314522,
+            "median_compound_mape_percent": 13.973143182361277,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 25.45728368017524
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 11.71077396643873,
+            "compound_equal_mae": 0.8677758452050058,
+            "compound_equal_mape_percent": 11.868795485752955,
+            "median_compound_mape_percent": 7.992714676069634,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 25.45728368017524
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 30.617674229063464,
+            "compound_equal_mae": 2.321450666666666,
+            "compound_equal_mape_percent": 30.617674229063464,
+            "median_compound_mape_percent": 33.591866419294995,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 37.52887366725784
+          }
+        }
+      },
+      "compounds": 140,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": 15.369764577745325,
+          "compound_equal_mae": 1.5088275076435718,
+          "compound_equal_mape_percent": 28.207754444302765,
+          "median_compound_mape_percent": 9.271292505910166,
+          "n_compounds": 140,
+          "n_observations": 140,
+          "p90_compound_mape_percent": 24.811499753694584
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": 15.760006468991495,
+          "compound_equal_mae": 1.5466560445357158,
+          "compound_equal_mape_percent": 28.145141552706608,
+          "median_compound_mape_percent": 9.498299300699276,
+          "n_compounds": 140,
+          "n_observations": 140,
+          "p90_compound_mape_percent": 26.815442773974816
+        },
+        "dy1996_author_descriptors": {
+          "compound_equal_bias_percent": 23.156417344258724,
+          "compound_equal_mae": 2.0133464248785717,
+          "compound_equal_mape_percent": 36.177779214499644,
+          "median_compound_mape_percent": 11.968628727314588,
+          "n_compounds": 140,
+          "n_observations": 140,
+          "p90_compound_mape_percent": 36.22343685937733
+        },
+        "jain_author_descriptors_2004": {
+          "compound_equal_bias_percent": 24.968765100898086,
+          "compound_equal_mae": 2.3294813894455766,
+          "compound_equal_mape_percent": 38.246629264048906,
+          "median_compound_mape_percent": 16.517010462772554,
+          "n_compounds": 140,
+          "n_observations": 140,
+          "p90_compound_mape_percent": 41.83058721363638
+        },
+        "walden_54_4": {
+          "compound_equal_bias_percent": 34.793051773476826,
+          "compound_equal_mae": 3.714902,
+          "compound_equal_mape_percent": 48.32808566804176,
+          "median_compound_mape_percent": 21.82585549474998,
+          "n_compounds": 140,
+          "n_observations": 140,
+          "p90_compound_mape_percent": 65.11946975411986
+        }
+      },
+      "observations": 140,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            -1.860667298756641,
+            1.6647045134100296
+          ],
+          "left_lower_error_compounds": 70,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 70,
+          "right_minus_left_MAPE_percentage_points": -0.06261289159615811,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            2.648507557290748,
+            14.84458544574101
+          ],
+          "left_lower_error_compounds": 87,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 53,
+          "right_minus_left_MAPE_percentage_points": 7.970024770196879,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            4.61822364421861,
+            16.721799364827238
+          ],
+          "left_lower_error_compounds": 95,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 45,
+          "right_minus_left_MAPE_percentage_points": 10.03887481974614,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            13.880523373439413,
+            27.485302598966733
+          ],
+          "left_lower_error_compounds": 96,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 44,
+          "right_minus_left_MAPE_percentage_points": 20.120331223738994,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            2.570964488006703,
+            15.574768853195847
+          ],
+          "left_lower_error_compounds": 85,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 55,
+          "right_minus_left_MAPE_percentage_points": 8.032637661793038,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            4.450829219719742,
+            17.467012361031284
+          ],
+          "left_lower_error_compounds": 98,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 42,
+          "right_minus_left_MAPE_percentage_points": 10.101487711342296,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            13.618848613683674,
+            28.293910117020463
+          ],
+          "left_lower_error_compounds": 102,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 38,
+          "right_minus_left_MAPE_percentage_points": 20.18294411533515,
+          "tied_compounds": 0
+        },
+        "dy1996_author_descriptors vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            0.22118335383575055,
+            4.1722759480085445
+          ],
+          "left_lower_error_compounds": 49,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 61,
+          "right_minus_left_MAPE_percentage_points": 2.068850049549262,
+          "tied_compounds": 30
+        },
+        "dy1996_author_descriptors vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            7.282132374644251,
+            17.606251003966793
+          ],
+          "left_lower_error_compounds": 97,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 43,
+          "right_minus_left_MAPE_percentage_points": 12.150306453542115,
+          "tied_compounds": 0
+        },
+        "jain_author_descriptors_2004 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            5.572636402738,
+            15.248669850111467
+          ],
+          "left_lower_error_compounds": 95,
+          "positive_difference_favors": "jain_author_descriptors_2004",
+          "right_lower_error_compounds": 45,
+          "right_minus_left_MAPE_percentage_points": 10.081456403992853,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "single_transition_in_chickos": 123,
+        "unknown": 17
+      }
+    },
+    "crc_handbook: confirmed single-transition common": {
+      "chemical_classes_exploratory": {
+        "aromatic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -4.807038790532375,
+            "compound_equal_mae": 1.8145081472916667,
+            "compound_equal_mape_percent": 11.469111361163607,
+            "median_compound_mape_percent": 9.565837355161703,
+            "n_compounds": 48,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 24.69993761904762
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 1.4473675231852943,
+            "compound_equal_mae": 1.8195329933333333,
+            "compound_equal_mape_percent": 12.616178734327379,
+            "median_compound_mape_percent": 11.210335037528553,
+            "n_compounds": 48,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 26.858573219883578
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -3.472072569153589,
+            "compound_equal_mae": 2.511610175875,
+            "compound_equal_mape_percent": 16.92111983972049,
+            "median_compound_mape_percent": 14.574435166523877,
+            "n_compounds": 48,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 34.465534136766685
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -4.048918289123693,
+            "compound_equal_mae": 2.6204507108508657,
+            "compound_equal_mape_percent": 17.536997302454576,
+            "median_compound_mape_percent": 14.033554456667467,
+            "n_compounds": 48,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 34.270865520493075
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 14.710333866870057,
+            "compound_equal_mae": 2.2143490666666668,
+            "compound_equal_mape_percent": 19.019020240554028,
+            "median_compound_mape_percent": 12.555139784946235,
+            "n_compounds": 48,
+            "n_observations": 48,
+            "p90_compound_mape_percent": 47.80087934346085
+          }
+        },
+        "cyclic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -4.099959687119521,
+            "compound_equal_mae": 1.6421755207999997,
+            "compound_equal_mape_percent": 11.19306559297589,
+            "median_compound_mape_percent": 9.733742627029308,
+            "n_compounds": 60,
+            "n_observations": 60,
+            "p90_compound_mape_percent": 24.6984934920635
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -0.3408238457315658,
+            "compound_equal_mae": 1.6348457496666666,
+            "compound_equal_mape_percent": 12.072377817826386,
+            "median_compound_mape_percent": 9.715686208915272,
+            "n_compounds": 60,
+            "n_observations": 60,
+            "p90_compound_mape_percent": 26.815442773974812
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -3.511456239435866,
+            "compound_equal_mae": 2.152144278866667,
+            "compound_equal_mape_percent": 14.956654614337776,
+            "median_compound_mape_percent": 10.938689984144837,
+            "n_compounds": 60,
+            "n_observations": 60,
+            "p90_compound_mape_percent": 31.47457568188454
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -4.235610958978523,
+            "compound_equal_mae": 2.253451051673548,
+            "compound_equal_mape_percent": 15.674332324003233,
+            "median_compound_mape_percent": 11.932170303513814,
+            "n_compounds": 60,
+            "n_observations": 60,
+            "p90_compound_mape_percent": 31.27102249264502
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 13.95228077481214,
+            "compound_equal_mae": 2.010339893333333,
+            "compound_equal_mape_percent": 18.27405979092831,
+            "median_compound_mape_percent": 12.171997254632789,
+            "n_compounds": 60,
+            "n_observations": 60,
+            "p90_compound_mape_percent": 45.59042168674699
+          }
+        },
+        "halogenated": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -2.197384932270374,
+            "compound_equal_mae": 1.1812772098800002,
+            "compound_equal_mape_percent": 11.601294749792451,
+            "median_compound_mape_percent": 10.116380406607371,
+            "n_compounds": 25,
+            "n_observations": 25,
+            "p90_compound_mape_percent": 21.400209801915583
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 0.6633738355936923,
+            "compound_equal_mae": 1.0668878796,
+            "compound_equal_mape_percent": 10.68661964642376,
+            "median_compound_mape_percent": 8.80809411764706,
+            "n_compounds": 25,
+            "n_observations": 25,
+            "p90_compound_mape_percent": 21.97007499999998
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -2.2910337667047718,
+            "compound_equal_mae": 1.4316019912,
+            "compound_equal_mape_percent": 13.249647375316467,
+            "median_compound_mape_percent": 10.037370616438356,
+            "n_compounds": 25,
+            "n_observations": 25,
+            "p90_compound_mape_percent": 29.416978236641253
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 0.9492839011773436,
+            "compound_equal_mae": 1.7655551449282214,
+            "compound_equal_mape_percent": 17.60579027860367,
+            "median_compound_mape_percent": 12.782278107898426,
+            "n_compounds": 25,
+            "n_observations": 25,
+            "p90_compound_mape_percent": 32.20981258827351
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 14.112085979148617,
+            "compound_equal_mae": 2.0754457599999996,
+            "compound_equal_mape_percent": 21.6675466755217,
+            "median_compound_mape_percent": 21.80899618805591,
+            "n_compounds": 25,
+            "n_observations": 25,
+            "p90_compound_mape_percent": 41.55339668508287
+          }
+        },
+        "hydrocarbon": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -2.913543299128976,
+            "compound_equal_mae": 1.3923953058611118,
+            "compound_equal_mape_percent": 10.631317988983444,
+            "median_compound_mape_percent": 8.650454483483028,
+            "n_compounds": 72,
+            "n_observations": 72,
+            "p90_compound_mape_percent": 21.43247980295567
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -4.175895714301897,
+            "compound_equal_mae": 1.403769062291669,
+            "compound_equal_mape_percent": 10.726263022012354,
+            "median_compound_mape_percent": 8.81821961906251,
+            "n_compounds": 72,
+            "n_observations": 72,
+            "p90_compound_mape_percent": 22.60366324098437
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 1.249210959634732,
+            "compound_equal_mae": 1.9459427821222226,
+            "compound_equal_mape_percent": 15.599908201791079,
+            "median_compound_mape_percent": 11.537224453749277,
+            "n_compounds": 72,
+            "n_observations": 72,
+            "p90_compound_mape_percent": 35.53164199526388
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -0.21489463401922052,
+            "compound_equal_mae": 2.2392547661467805,
+            "compound_equal_mape_percent": 16.224117449799348,
+            "median_compound_mape_percent": 14.781140246401508,
+            "n_compounds": 72,
+            "n_observations": 72,
+            "p90_compound_mape_percent": 33.515839888664395
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 2.4870524323547234,
+            "compound_equal_mae": 3.6472293555555555,
+            "compound_equal_mape_percent": 21.65391840431484,
+            "median_compound_mape_percent": 14.392598949944055,
+            "n_compounds": 72,
+            "n_observations": 72,
+            "p90_compound_mape_percent": 45.913795180722914
+          }
+        },
+        "nitrogen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -4.883110458785411,
+            "compound_equal_mae": 1.408602850917391,
+            "compound_equal_mape_percent": 10.596503950693688,
+            "median_compound_mape_percent": 10.057520618556705,
+            "n_compounds": 23,
+            "n_observations": 23,
+            "p90_compound_mape_percent": 23.468211850547043
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 2.0756613226987777,
+            "compound_equal_mae": 1.5544168147826087,
+            "compound_equal_mape_percent": 13.727460215343758,
+            "median_compound_mape_percent": 11.584507042253543,
+            "n_compounds": 23,
+            "n_observations": 23,
+            "p90_compound_mape_percent": 31.22961892111682
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 9.347030556694326,
+            "compound_equal_mae": 2.0025726069652174,
+            "compound_equal_mape_percent": 18.390275654704045,
+            "median_compound_mape_percent": 13.313021167415021,
+            "n_compounds": 23,
+            "n_observations": 23,
+            "p90_compound_mape_percent": 36.87783850428863
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 16.500580597903383,
+            "compound_equal_mae": 2.241438113382266,
+            "compound_equal_mape_percent": 21.937297587185306,
+            "median_compound_mape_percent": 20.19519770092663,
+            "n_compounds": 23,
+            "n_observations": 23,
+            "p90_compound_mape_percent": 45.56834752998603
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 30.10688231246595,
+            "compound_equal_mae": 3.1637275826086957,
+            "compound_equal_mape_percent": 31.893898863187335,
+            "median_compound_mape_percent": 25.13795379537954,
+            "n_compounds": 23,
+            "n_observations": 23,
+            "p90_compound_mape_percent": 63.5438513586634
+          }
+        },
+        "oxygen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -5.124990052149598,
+            "compound_equal_mae": 1.2283630666666658,
+            "compound_equal_mape_percent": 8.576682274722165,
+            "median_compound_mape_percent": 7.6683680220443025,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 15.52374818102929
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -1.9210605418646713,
+            "compound_equal_mae": 1.2273936666666667,
+            "compound_equal_mape_percent": 8.572426219487797,
+            "median_compound_mape_percent": 8.71558498740869,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 11.312433933497903
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 21.11263663052245,
+            "compound_equal_mae": 2.268029166666667,
+            "compound_equal_mape_percent": 21.11263663052245,
+            "median_compound_mape_percent": 14.16476140879002,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 44.67319343333172
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 20.83520644027085,
+            "compound_equal_mae": 2.2089365361430766,
+            "compound_equal_mape_percent": 20.83520644027085,
+            "median_compound_mape_percent": 14.16476140879002,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 44.67319343333172
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 29.02783942083158,
+            "compound_equal_mae": 3.217352,
+            "compound_equal_mape_percent": 29.372127370753336,
+            "median_compound_mape_percent": 24.21126041276353,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 57.404434455464916
+          }
+        },
+        "sulfur_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 2.2288785419544945,
+            "compound_equal_mae": 0.396239895000001,
+            "compound_equal_mape_percent": 4.758515743759798,
+            "median_compound_mape_percent": 3.654276595744685,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 8.662917957446822
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -1.8562475555566567,
+            "compound_equal_mae": 1.2805024100000002,
+            "compound_equal_mape_percent": 13.538487309995,
+            "median_compound_mape_percent": 15.274920768662238,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 18.283593394181747
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 6.914686223680919,
+            "compound_equal_mae": 0.802560442500001,
+            "compound_equal_mape_percent": 8.863649610580064,
+            "median_compound_mape_percent": 4.850418195925185,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 19.527607561162654
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 10.165719986427936,
+            "compound_equal_mae": 0.9241968032661485,
+            "compound_equal_mape_percent": 10.402752265399275,
+            "median_compound_mape_percent": 7.992714676069634,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 20.438976751242087
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 27.16207450996627,
+            "compound_equal_mae": 2.4588279999999996,
+            "compound_equal_mape_percent": 27.16207450996627,
+            "median_compound_mape_percent": 26.704703500912565,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 34.621059245516385
+          }
+        }
+      },
+      "compounds": 123,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": -2.984089805009519,
+          "compound_equal_mae": 1.3306139430902442,
+          "compound_equal_mape_percent": 10.708765825857657,
+          "median_compound_mape_percent": 9.066107751511847,
+          "n_compounds": 123,
+          "n_observations": 123,
+          "p90_compound_mape_percent": 21.535655874311345
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": -1.8807393289533425,
+          "compound_equal_mae": 1.3611970180081314,
+          "compound_equal_mape_percent": 11.356975406988473,
+          "median_compound_mape_percent": 9.111417262036897,
+          "n_compounds": 123,
+          "n_observations": 123,
+          "p90_compound_mape_percent": 25.034310979177917
+        },
+        "dy1996_author_descriptors": {
+          "compound_equal_bias_percent": 2.033790873766337,
+          "compound_equal_mae": 1.8110596896178865,
+          "compound_equal_mape_percent": 15.34726827854364,
+          "median_compound_mape_percent": 11.23853211009174,
+          "n_compounds": 123,
+          "n_observations": 123,
+          "p90_compound_mape_percent": 33.410478462223026
+        },
+        "jain_author_descriptors_2004": {
+          "compound_equal_bias_percent": 3.278734979073367,
+          "compound_equal_mae": 2.0992527285091906,
+          "compound_equal_mape_percent": 17.311370339560884,
+          "median_compound_mape_percent": 14.080729491484592,
+          "n_compounds": 123,
+          "n_observations": 123,
+          "p90_compound_mape_percent": 34.606163637209754
+        },
+        "walden_54_4": {
+          "compound_equal_bias_percent": 10.543184287398285,
+          "compound_equal_mae": 3.200217300813008,
+          "compound_equal_mape_percent": 23.63263345859379,
+          "median_compound_mape_percent": 20.64161616161615,
+          "n_compounds": 123,
+          "n_observations": 123,
+          "p90_compound_mape_percent": 53.816511071788405
+        }
+      },
+      "observations": 123,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            -0.9849550552276468,
+            2.2651443409398455
+          ],
+          "left_lower_error_compounds": 62,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 61,
+          "right_minus_left_MAPE_percentage_points": 0.6482095811308141,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            2.4406179599932205,
+            6.926212319267309
+          ],
+          "left_lower_error_compounds": 74,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 49,
+          "right_minus_left_MAPE_percentage_points": 4.638502452685979,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            4.169271593675508,
+            9.103171393903676
+          ],
+          "left_lower_error_compounds": 83,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 40,
+          "right_minus_left_MAPE_percentage_points": 6.602604513703226,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            8.87690671554276,
+            16.957328407447385
+          ],
+          "left_lower_error_compounds": 82,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 41,
+          "right_minus_left_MAPE_percentage_points": 12.923867632736133,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            1.6197211926264627,
+            6.477416403079298
+          ],
+          "left_lower_error_compounds": 71,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 52,
+          "right_minus_left_MAPE_percentage_points": 3.990292871555166,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            3.578173387710191,
+            8.515859817426213
+          ],
+          "left_lower_error_compounds": 85,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 38,
+          "right_minus_left_MAPE_percentage_points": 5.954394932572411,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            8.75460523863147,
+            15.856813591721835
+          ],
+          "left_lower_error_compounds": 88,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 35,
+          "right_minus_left_MAPE_percentage_points": 12.275658051605323,
+          "tied_compounds": 0
+        },
+        "dy1996_author_descriptors vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            0.6050058377311754,
+            3.4409451844203165
+          ],
+          "left_lower_error_compounds": 44,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 57,
+          "right_minus_left_MAPE_percentage_points": 1.9641020610172446,
+          "tied_compounds": 22
+        },
+        "dy1996_author_descriptors vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            4.529992733021793,
+            12.079091682383037
+          ],
+          "left_lower_error_compounds": 83,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 40,
+          "right_minus_left_MAPE_percentage_points": 8.285365180050153,
+          "tied_compounds": 0
+        },
+        "jain_author_descriptors_2004 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            3.014577889561986,
+            9.718569644645548
+          ],
+          "left_lower_error_compounds": 81,
+          "positive_difference_favors": "jain_author_descriptors_2004",
+          "right_lower_error_compounds": 42,
+          "right_minus_left_MAPE_percentage_points": 6.321263119032907,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "single_transition_in_chickos": 123
+      }
+    },
+    "disjoint resolved-CAS test: Perry vs updated": {
+      "chemical_classes_exploratory": {
+        "aromatic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 4.126390321183034,
+            "compound_equal_mae": 3.2610667714285713,
+            "compound_equal_mape_percent": 15.969848456814919,
+            "median_compound_mape_percent": 10.339526246147965,
+            "n_compounds": 14,
+            "n_observations": 14,
+            "p90_compound_mape_percent": 36.643877116577364
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -0.03834611043594667,
+            "compound_equal_mae": 3.5540466571428575,
+            "compound_equal_mape_percent": 17.036205138130843,
+            "median_compound_mape_percent": 14.191106014821223,
+            "n_compounds": 14,
+            "n_observations": 14,
+            "p90_compound_mape_percent": 39.40686113955284
+          }
+        },
+        "cyclic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 6.720636917652808,
+            "compound_equal_mae": 3.1044451838888887,
+            "compound_equal_mape_percent": 16.181461318008562,
+            "median_compound_mape_percent": 10.339526246147965,
+            "n_compounds": 18,
+            "n_observations": 19,
+            "p90_compound_mape_percent": 38.75005852322482
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 2.3300923693934283,
+            "compound_equal_mae": 3.2976187888888884,
+            "compound_equal_mape_percent": 16.76992852568612,
+            "median_compound_mape_percent": 14.191106014821223,
+            "n_compounds": 18,
+            "n_observations": 19,
+            "p90_compound_mape_percent": 34.916330141108936
+          }
+        },
+        "halogenated": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 24.446303979915577,
+            "compound_equal_mae": 1.6343946569230783,
+            "compound_equal_mape_percent": 31.35733992802708,
+            "median_compound_mape_percent": 9.72405832320781,
+            "n_compounds": 13,
+            "n_observations": 14,
+            "p90_compound_mape_percent": 108.69778270840163
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 27.95461099409395,
+            "compound_equal_mae": 1.9789206769230794,
+            "compound_equal_mape_percent": 37.34541927368822,
+            "median_compound_mape_percent": 11.579197875166063,
+            "n_compounds": 13,
+            "n_observations": 14,
+            "p90_compound_mape_percent": 116.71381343162483
+          }
+        },
+        "hydrocarbon": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 68.4478494111608,
+            "compound_equal_mae": 5.208640099999991,
+            "compound_equal_mape_percent": 84.49877100525318,
+            "median_compound_mape_percent": 12.13173062462102,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 238.66782633451956
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 28.7212291450228,
+            "compound_equal_mae": 4.313636099999984,
+            "compound_equal_mape_percent": 40.05120959630673,
+            "median_compound_mape_percent": 11.298482365069882,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 106.1162277580071
+          }
+        },
+        "nitrogen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 5.338149135835253,
+            "compound_equal_mae": 3.1626322333333334,
+            "compound_equal_mape_percent": 13.898812515174376,
+            "median_compound_mape_percent": 10.339526246147965,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 24.89371419784616
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -4.177695357038498,
+            "compound_equal_mae": 5.067533333333334,
+            "compound_equal_mape_percent": 21.131273018469557,
+            "median_compound_mape_percent": 17.217468977731823,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 37.663757675763385
+          }
+        },
+        "oxygen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 4.446955827065661,
+            "compound_equal_mae": 2.2808427532000013,
+            "compound_equal_mape_percent": 10.8047396751105,
+            "median_compound_mape_percent": 6.674039603960412,
+            "n_compounds": 25,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 21.22478505144916
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -2.7088414021939102,
+            "compound_equal_mae": 2.9011647000000083,
+            "compound_equal_mape_percent": 11.457284104187016,
+            "median_compound_mape_percent": 8.41717171717168,
+            "n_compounds": 25,
+            "n_observations": 26,
+            "p90_compound_mape_percent": 24.034481634891417
+          }
+        },
+        "sulfur_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 12.232452421207775,
+            "compound_equal_mae": 2.0255319999999983,
+            "compound_equal_mape_percent": 12.232452421207775,
+            "median_compound_mape_percent": 12.232452421207775,
+            "n_compounds": 2,
+            "n_observations": 2,
+            "p90_compound_mape_percent": 15.547949711709352
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 10.58841418476609,
+            "compound_equal_mae": 1.8085299999999949,
+            "compound_equal_mape_percent": 10.58841418476609,
+            "median_compound_mape_percent": 10.58841418476609,
+            "n_compounds": 2,
+            "n_observations": 2,
+            "p90_compound_mape_percent": 12.325408158841618
+          }
+        }
+      },
+      "compounds": 44,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": 20.210246435176455,
+          "compound_equal_mae": 2.626038181136363,
+          "compound_equal_mape_percent": 27.749917205249268,
+          "median_compound_mape_percent": 9.1739409263098,
+          "n_compounds": 44,
+          "n_observations": 46,
+          "p90_compound_mape_percent": 41.04102660654732
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": 12.528805280042526,
+          "compound_equal_mae": 2.993123247727276,
+          "compound_equal_mape_percent": 24.004987282509298,
+          "median_compound_mape_percent": 10.733359240069131,
+          "n_compounds": 44,
+          "n_observations": 46,
+          "p90_compound_mape_percent": 41.86757154357215
+        }
+      },
+      "observations": 46,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            -16.836690017242148,
+            4.211836405416221
+          ],
+          "left_lower_error_compounds": 27,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 17,
+          "right_minus_left_MAPE_percentage_points": -3.7449299227399675,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "source-defined": 46
+      }
+    },
+    "disjoint resolved-CAS test: all general methods common": {
+      "chemical_classes_exploratory": {
+        "halogenated": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 6.975325675675668,
+            "compound_equal_mae": 0.7742611499999992,
+            "compound_equal_mape_percent": 6.975325675675668,
+            "median_compound_mape_percent": 6.975325675675668,
+            "n_compounds": 1,
+            "n_observations": 1,
+            "p90_compound_mape_percent": 6.975325675675668
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 8.187297297297311,
+            "compound_equal_mae": 0.9087900000000015,
+            "compound_equal_mape_percent": 8.187297297297311,
+            "median_compound_mape_percent": 8.187297297297311,
+            "n_compounds": 1,
+            "n_observations": 1,
+            "p90_compound_mape_percent": 8.187297297297311
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 3.6087378378378285,
+            "compound_equal_mae": 0.4005698999999989,
+            "compound_equal_mape_percent": 3.6087378378378285,
+            "median_compound_mape_percent": 3.6087378378378285,
+            "n_compounds": 1,
+            "n_observations": 1,
+            "p90_compound_mape_percent": 3.6087378378378285
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 26.8018018018018,
+            "compound_equal_mae": 2.9749999999999996,
+            "compound_equal_mape_percent": 26.8018018018018,
+            "median_compound_mape_percent": 26.8018018018018,
+            "n_compounds": 1,
+            "n_observations": 1,
+            "p90_compound_mape_percent": 26.8018018018018
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 37.960360360360376,
+            "compound_equal_mae": 4.213600000000001,
+            "compound_equal_mape_percent": 37.960360360360376,
+            "median_compound_mape_percent": 37.960360360360376,
+            "n_compounds": 1,
+            "n_observations": 1,
+            "p90_compound_mape_percent": 37.960360360360376
+          }
+        }
+      },
+      "compounds": 1,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": 6.975325675675668,
+          "compound_equal_mae": 0.7742611499999992,
+          "compound_equal_mape_percent": 6.975325675675668,
+          "median_compound_mape_percent": 6.975325675675668,
+          "n_compounds": 1,
+          "n_observations": 1,
+          "p90_compound_mape_percent": 6.975325675675668
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": 8.187297297297311,
+          "compound_equal_mae": 0.9087900000000015,
+          "compound_equal_mape_percent": 8.187297297297311,
+          "median_compound_mape_percent": 8.187297297297311,
+          "n_compounds": 1,
+          "n_observations": 1,
+          "p90_compound_mape_percent": 8.187297297297311
+        },
+        "dy1996_author_descriptors": {
+          "compound_equal_bias_percent": 3.6087378378378285,
+          "compound_equal_mae": 0.4005698999999989,
+          "compound_equal_mape_percent": 3.6087378378378285,
+          "median_compound_mape_percent": 3.6087378378378285,
+          "n_compounds": 1,
+          "n_observations": 1,
+          "p90_compound_mape_percent": 3.6087378378378285
+        },
+        "jain_author_descriptors_2004": {
+          "compound_equal_bias_percent": 26.8018018018018,
+          "compound_equal_mae": 2.9749999999999996,
+          "compound_equal_mape_percent": 26.8018018018018,
+          "median_compound_mape_percent": 26.8018018018018,
+          "n_compounds": 1,
+          "n_observations": 1,
+          "p90_compound_mape_percent": 26.8018018018018
+        },
+        "walden_54_4": {
+          "compound_equal_bias_percent": 37.960360360360376,
+          "compound_equal_mae": 4.213600000000001,
+          "compound_equal_mape_percent": 37.960360360360376,
+          "median_compound_mape_percent": 37.960360360360376,
+          "n_compounds": 1,
+          "n_observations": 1,
+          "p90_compound_mape_percent": 37.960360360360376
+        }
+      },
+      "observations": 1,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            1.2119716216216423,
+            1.2119716216216423
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 1.2119716216216423,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            -3.366587837837841,
+            -3.366587837837841
+          ],
+          "left_lower_error_compounds": 0,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 1,
+          "right_minus_left_MAPE_percentage_points": -3.366587837837841,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            19.826476126126128,
+            19.826476126126128
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 19.826476126126128,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            30.985034684684706,
+            30.985034684684706
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 30.985034684684706,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            -4.578559459459483,
+            -4.578559459459483
+          ],
+          "left_lower_error_compounds": 0,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 1,
+          "right_minus_left_MAPE_percentage_points": -4.578559459459483,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            18.614504504504488,
+            18.614504504504488
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 18.614504504504488,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            29.773063063063063,
+            29.773063063063063
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 29.773063063063063,
+          "tied_compounds": 0
+        },
+        "dy1996_author_descriptors vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            23.19306396396397,
+            23.19306396396397
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 23.19306396396397,
+          "tied_compounds": 0
+        },
+        "dy1996_author_descriptors vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            34.35162252252255,
+            34.35162252252255
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 34.35162252252255,
+          "tied_compounds": 0
+        },
+        "jain_author_descriptors_2004 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            11.158558558558578,
+            11.158558558558578
+          ],
+          "left_lower_error_compounds": 1,
+          "positive_difference_favors": "jain_author_descriptors_2004",
+          "right_lower_error_compounds": 0,
+          "right_minus_left_MAPE_percentage_points": 11.158558558558578,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "source-defined": 1
+      }
+    },
+    "disjoint resolved-CAS test: updated vs Jain": {
+      "chemical_classes_exploratory": {
+        "aromatic": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -0.9365429352264459,
+            "compound_equal_mae": 3.5307688800000006,
+            "compound_equal_mape_percent": 16.801211361075012,
+            "median_compound_mape_percent": 13.575707964601788,
+            "n_compounds": 15,
+            "n_observations": 15,
+            "p90_compound_mape_percent": 37.993374621904444
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -4.80931853878009,
+            "compound_equal_mae": 3.572745619991788,
+            "compound_equal_mape_percent": 17.171381527581914,
+            "median_compound_mape_percent": 14.18315912311105,
+            "n_compounds": 15,
+            "n_observations": 15,
+            "p90_compound_mape_percent": 24.191995430928767
+          }
+        },
+        "cyclic": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -2.4475306919893858,
+            "compound_equal_mae": 3.136436104761905,
+            "compound_equal_mape_percent": 15.849979359423617,
+            "median_compound_mape_percent": 13.575707964601788,
+            "n_compounds": 21,
+            "n_observations": 21,
+            "p90_compound_mape_percent": 29.512455516014203
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -5.6065899474205825,
+            "compound_equal_mae": 2.9991040142798484,
+            "compound_equal_mape_percent": 15.125152770796857,
+            "median_compound_mape_percent": 13.306882674552122,
+            "n_compounds": 21,
+            "n_observations": 21,
+            "p90_compound_mape_percent": 24.043594306049826
+          }
+        },
+        "halogenated": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 27.141259949484123,
+            "compound_equal_mae": 1.9301134000000022,
+            "compound_equal_mape_percent": 37.314635585711244,
+            "median_compound_mape_percent": 11.510199585618704,
+            "n_compounds": 12,
+            "n_observations": 13,
+            "p90_compound_mape_percent": 125.1862048164602
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 39.35200729404059,
+            "compound_equal_mae": 3.162529446798047,
+            "compound_equal_mape_percent": 53.47177932249374,
+            "median_compound_mape_percent": 18.656713114209257,
+            "n_compounds": 12,
+            "n_observations": 13,
+            "p90_compound_mape_percent": 141.15039921743758
+          }
+        },
+        "hydrocarbon": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 42.79462105328219,
+            "compound_equal_mae": 2.3530224999999976,
+            "compound_equal_mape_percent": 57.55084881128929,
+            "median_compound_mape_percent": 23.241521875654175,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 136.7577366548043
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 51.60871479212678,
+            "compound_equal_mae": 2.778906726669512,
+            "compound_equal_mape_percent": 69.8695277623749,
+            "median_compound_mape_percent": 35.69943144803782,
+            "n_compounds": 4,
+            "n_observations": 4,
+            "p90_compound_mape_percent": 151.12743214029206
+          }
+        },
+        "nitrogen_containing": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -7.0631882043127305,
+            "compound_equal_mae": 4.87569642857143,
+            "compound_equal_mape_percent": 21.594826199825068,
+            "median_compound_mape_percent": 17.41207920792078,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 35.02436261405744
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -15.114291931538176,
+            "compound_equal_mae": 3.807428651530421,
+            "compound_equal_mape_percent": 15.114291931538176,
+            "median_compound_mape_percent": 17.391106417298353,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 21.41934210270226
+          }
+        },
+        "oxygen_containing": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -4.731962085797717,
+            "compound_equal_mae": 2.9793732931034556,
+            "compound_equal_mape_percent": 11.767479221992895,
+            "median_compound_mape_percent": 9.530041917259044,
+            "n_compounds": 29,
+            "n_observations": 29,
+            "p90_compound_mape_percent": 23.942382455649863
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -0.45224152116940036,
+            "compound_equal_mae": 3.572984047959408,
+            "compound_equal_mape_percent": 16.320254176296295,
+            "median_compound_mape_percent": 13.306882674552122,
+            "n_compounds": 29,
+            "n_observations": 29,
+            "p90_compound_mape_percent": 28.57758651692983
+          }
+        },
+        "sulfur_containing": {
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 2.555176629079581,
+            "compound_equal_mae": 2.2739799999999977,
+            "compound_equal_mape_percent": 11.562708950608538,
+            "median_compound_mape_percent": 12.7596566523605,
+            "n_compounds": 3,
+            "n_observations": 3,
+            "p90_compound_mape_percent": 13.360970116306849
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -6.163018743326147,
+            "compound_equal_mae": 2.083355506446864,
+            "compound_equal_mape_percent": 10.116030055332315,
+            "median_compound_mape_percent": 5.929516968009253,
+            "n_compounds": 3,
+            "n_observations": 3,
+            "p90_compound_mape_percent": 16.483450418335146
+          }
+        }
+      },
+      "compounds": 45,
+      "methods": {
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": 9.84217450449256,
+          "compound_equal_mae": 2.8119065844444497,
+          "compound_equal_mape_percent": 23.627234431142952,
+          "median_compound_mape_percent": 11.441201296071343,
+          "n_compounds": 45,
+          "n_observations": 46,
+          "p90_compound_mape_percent": 37.993374621904465
+        },
+        "jain_author_descriptors_2004": {
+          "compound_equal_bias_percent": 15.028662654577092,
+          "compound_equal_mae": 3.3863117730846475,
+          "compound_equal_mape_percent": 31.0119998021144,
+          "median_compound_mape_percent": 14.755371559340627,
+          "n_compounds": 45,
+          "n_observations": 46,
+          "p90_compound_mape_percent": 54.130221384581645
+        }
+      },
+      "observations": 46,
+      "paired_differences": {
+        "chickos_structure_1999 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            2.34470885981105,
+            12.91230283449075
+          ],
+          "left_lower_error_compounds": 32,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 13,
+          "right_minus_left_MAPE_percentage_points": 7.3847653709714525,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "source-defined": 46
+      }
+    },
+    "perry_2_68: all general methods common": {
+      "chemical_classes_exploratory": {
+        "aromatic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -3.544586435175431,
+            "compound_equal_mae": 2.290715532432957,
+            "compound_equal_mape_percent": 13.266548324566804,
+            "median_compound_mape_percent": 13.556732181303135,
+            "n_compounds": 38,
+            "n_observations": 38,
+            "p90_compound_mape_percent": 24.015636705735368
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -1.4510382093022385,
+            "compound_equal_mae": 2.29702754282664,
+            "compound_equal_mape_percent": 13.141903695674346,
+            "median_compound_mape_percent": 11.60805614054755,
+            "n_compounds": 38,
+            "n_observations": 38,
+            "p90_compound_mape_percent": 25.47632853328555
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -8.875044302385813,
+            "compound_equal_mae": 2.8808752299101354,
+            "compound_equal_mape_percent": 15.663559678457522,
+            "median_compound_mape_percent": 14.983779783002952,
+            "n_compounds": 38,
+            "n_observations": 38,
+            "p90_compound_mape_percent": 31.61210368224485
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -9.950698301642355,
+            "compound_equal_mae": 3.049922987520319,
+            "compound_equal_mape_percent": 16.185257373197995,
+            "median_compound_mape_percent": 14.430808265907661,
+            "n_compounds": 38,
+            "n_observations": 38,
+            "p90_compound_mape_percent": 31.91770335398027
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 7.203559642900248,
+            "compound_equal_mae": 2.19992812729123,
+            "compound_equal_mape_percent": 14.678681239133601,
+            "median_compound_mape_percent": 8.831744186112054,
+            "n_compounds": 38,
+            "n_observations": 38,
+            "p90_compound_mape_percent": 32.84888666918689
+          }
+        },
+        "cyclic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 7.865482573509651,
+            "compound_equal_mae": 2.4354909185537075,
+            "compound_equal_mape_percent": 23.695333232004383,
+            "median_compound_mape_percent": 13.556732181303135,
+            "n_compounds": 42,
+            "n_observations": 42,
+            "p90_compound_mape_percent": 24.656957721640666
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 8.273849371869884,
+            "compound_equal_mae": 2.399369795576564,
+            "compound_equal_mape_percent": 22.313938417761612,
+            "median_compound_mape_percent": 11.985305963171253,
+            "n_compounds": 42,
+            "n_observations": 42,
+            "p90_compound_mape_percent": 27.273623728450442
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -0.15568247775886998,
+            "compound_equal_mae": 2.8647873812949647,
+            "compound_equal_mape_percent": 22.317022735004322,
+            "median_compound_mape_percent": 14.983779783002952,
+            "n_compounds": 42,
+            "n_observations": 42,
+            "p90_compound_mape_percent": 34.63027298208044
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -1.4027435559527124,
+            "compound_equal_mae": 3.034658451207068,
+            "compound_equal_mape_percent": 23.03277783292608,
+            "median_compound_mape_percent": 15.072603824417175,
+            "n_compounds": 42,
+            "n_observations": 42,
+            "p90_compound_mape_percent": 34.45042745119158
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 19.674633030766135,
+            "compound_equal_mae": 2.3887505819103545,
+            "compound_equal_mape_percent": 26.437838284501076,
+            "median_compound_mape_percent": 9.313831008700896,
+            "n_compounds": 42,
+            "n_observations": 42,
+            "p90_compound_mape_percent": 39.5849891921526
+          }
+        },
+        "halogenated": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 5.177760782253879,
+            "compound_equal_mae": 1.3281191166085338,
+            "compound_equal_mape_percent": 8.879081653362025,
+            "median_compound_mape_percent": 8.203744279184882,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 16.10442144748035
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 1.6286556363533147,
+            "compound_equal_mae": 1.483535205806754,
+            "compound_equal_mape_percent": 9.38731209878451,
+            "median_compound_mape_percent": 8.112930535251465,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 16.548171561575018
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -12.74006900803303,
+            "compound_equal_mae": 2.1673907677036457,
+            "compound_equal_mape_percent": 12.791108350421094,
+            "median_compound_mape_percent": 10.92942140158797,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 31.54576600252187
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -12.615918996782899,
+            "compound_equal_mae": 2.1519712321028717,
+            "compound_equal_mape_percent": 12.695681712891725,
+            "median_compound_mape_percent": 10.814556880772953,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 31.34242428248452
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 8.736432216345678,
+            "compound_equal_mae": 1.4515165493943103,
+            "compound_equal_mape_percent": 10.161002923730027,
+            "median_compound_mape_percent": 7.9081110600778075,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 19.54335534275577
+          }
+        },
+        "hydrocarbon": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 35.066112406346015,
+            "compound_equal_mae": 1.8514915711156066,
+            "compound_equal_mape_percent": 50.654300406243706,
+            "median_compound_mape_percent": 11.779929291291264,
+            "n_compounds": 59,
+            "n_observations": 59,
+            "p90_compound_mape_percent": 31.319440714411716
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 33.15228287630575,
+            "compound_equal_mae": 1.7341796345670235,
+            "compound_equal_mape_percent": 48.10138399793542,
+            "median_compound_mape_percent": 10.772598505453324,
+            "n_compounds": 59,
+            "n_observations": 59,
+            "p90_compound_mape_percent": 27.785363471541686
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 46.12352412695401,
+            "compound_equal_mae": 2.2273733391792923,
+            "compound_equal_mape_percent": 61.372099164144664,
+            "median_compound_mape_percent": 15.190747626502807,
+            "n_compounds": 59,
+            "n_observations": 59,
+            "p90_compound_mape_percent": 49.88717799808393
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 45.245914611979344,
+            "compound_equal_mae": 2.4352913649739834,
+            "compound_equal_mape_percent": 61.44664239094475,
+            "median_compound_mape_percent": 18.004211324922476,
+            "n_compounds": 59,
+            "n_observations": 59,
+            "p90_compound_mape_percent": 46.27662489630218
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 52.677353745564446,
+            "compound_equal_mae": 3.383662603673611,
+            "compound_equal_mape_percent": 69.04589857230091,
+            "median_compound_mape_percent": 15.707603280864028,
+            "n_compounds": 59,
+            "n_observations": 59,
+            "p90_compound_mape_percent": 62.39798916502932
+          }
+        },
+        "nitrogen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 34.41678632552924,
+            "compound_equal_mae": 4.173624370315022,
+            "compound_equal_mape_percent": 45.12679566603148,
+            "median_compound_mape_percent": 14.170968490404432,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 82.65736699933049
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 36.62231018194305,
+            "compound_equal_mae": 4.9319316080928,
+            "compound_equal_mape_percent": 53.515022656023085,
+            "median_compound_mape_percent": 13.525892585351237,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 96.32419856807314
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 20.45659180432547,
+            "compound_equal_mae": 4.577693981426134,
+            "compound_equal_mape_percent": 40.04986803179492,
+            "median_compound_mape_percent": 20.26047943363479,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 63.937330564839634
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 35.83518980553379,
+            "compound_equal_mae": 5.5060436021047225,
+            "compound_equal_mape_percent": 58.047500584233454,
+            "median_compound_mape_percent": 21.742975842817106,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 100.34754696029007
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 44.53578741841877,
+            "compound_equal_mae": 4.862931752537246,
+            "compound_equal_mape_percent": 55.9710738885786,
+            "median_compound_mape_percent": 18.63588494806592,
+            "n_compounds": 9,
+            "n_observations": 9,
+            "p90_compound_mape_percent": 100.87233283116399
+          }
+        },
+        "oxygen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 10.866752735550353,
+            "compound_equal_mae": 3.527604847253943,
+            "compound_equal_mape_percent": 17.057794028938137,
+            "median_compound_mape_percent": 14.223667870230377,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 27.759159894580296
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -1.2438474985739352,
+            "compound_equal_mae": 3.9568354472539413,
+            "compound_equal_mape_percent": 15.9314058135209,
+            "median_compound_mape_percent": 13.525892585351237,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 29.533227145647736
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -0.9296866378655474,
+            "compound_equal_mae": 3.0427095460004594,
+            "compound_equal_mape_percent": 12.501644998454323,
+            "median_compound_mape_percent": 16.291553238352115,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 22.093436692695516
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -3.898757705109086,
+            "compound_equal_mae": 3.3525034405488308,
+            "compound_equal_mape_percent": 12.957262250551151,
+            "median_compound_mape_percent": 7.365209703595211,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 27.374806391606263
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 6.590204424826617,
+            "compound_equal_mae": 4.022142104396801,
+            "compound_equal_mape_percent": 18.916356113722646,
+            "median_compound_mape_percent": 18.63588494806592,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 27.04074822735997
+          }
+        }
+      },
+      "compounds": 77,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": 31.496773453824193,
+          "compound_equal_mae": 2.0617362867289972,
+          "compound_equal_mape_percent": 45.12541064731065,
+          "median_compound_mape_percent": 10.793881696029532,
+          "n_compounds": 77,
+          "n_observations": 77,
+          "p90_compound_mape_percent": 31.186646047051035
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": 29.873290676190994,
+          "compound_equal_mae": 2.078646750188966,
+          "compound_equal_mape_percent": 44.2091255671618,
+          "median_compound_mape_percent": 10.772598505453324,
+          "n_compounds": 77,
+          "n_observations": 77,
+          "p90_compound_mape_percent": 29.755138025456063
+        },
+        "dy1996_author_descriptors": {
+          "compound_equal_bias_percent": 36.243332839700244,
+          "compound_equal_mae": 2.4950751916070946,
+          "compound_equal_mape_percent": 53.20159270291531,
+          "median_compound_mape_percent": 15.190747626502807,
+          "n_compounds": 77,
+          "n_observations": 77,
+          "p90_compound_mape_percent": 47.25852468727464
+        },
+        "jain_author_descriptors_2004": {
+          "compound_equal_bias_percent": 37.382888303708306,
+          "compound_equal_mae": 2.761095117419914,
+          "compound_equal_mape_percent": 55.35117586675152,
+          "median_compound_mape_percent": 16.880534391728606,
+          "n_compounds": 77,
+          "n_observations": 77,
+          "p90_compound_mape_percent": 39.865122901322906
+        },
+        "walden_54_4": {
+          "compound_equal_bias_percent": 46.58979022988549,
+          "compound_equal_mae": 3.3307289394042474,
+          "compound_equal_mape_percent": 60.63502216982508,
+          "median_compound_mape_percent": 15.146394538099727,
+          "n_compounds": 77,
+          "n_observations": 77,
+          "p90_compound_mape_percent": 60.74175986658406
+        }
+      },
+      "observations": 77,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            -3.874353708390744,
+            2.2340089753828956
+          ],
+          "left_lower_error_compounds": 37,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 40,
+          "right_minus_left_MAPE_percentage_points": -0.9162850801488517,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            -1.3896473696035945,
+            20.01599401773614
+          ],
+          "left_lower_error_compounds": 48,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 29,
+          "right_minus_left_MAPE_percentage_points": 8.076182055604663,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            1.0676999618708012,
+            21.803393132543647
+          ],
+          "left_lower_error_compounds": 51,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 26,
+          "right_minus_left_MAPE_percentage_points": 10.22576521944087,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            5.605855387748683,
+            28.021074745530598
+          ],
+          "left_lower_error_compounds": 44,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 33,
+          "right_minus_left_MAPE_percentage_points": 15.509611522514433,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            -1.5241033624333276,
+            22.222599203474406
+          ],
+          "left_lower_error_compounds": 47,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 30,
+          "right_minus_left_MAPE_percentage_points": 8.992467135753515,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            1.8450888027263528,
+            23.544468932770677
+          ],
+          "left_lower_error_compounds": 50,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 27,
+          "right_minus_left_MAPE_percentage_points": 11.142050299589721,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            5.640739224012175,
+            30.40870166311196
+          ],
+          "left_lower_error_compounds": 45,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 32,
+          "right_minus_left_MAPE_percentage_points": 16.425896602663286,
+          "tied_compounds": 0
+        },
+        "dy1996_author_descriptors vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            -1.1277820409301424,
+            7.112004460125883
+          ],
+          "left_lower_error_compounds": 25,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 45,
+          "right_minus_left_MAPE_percentage_points": 2.1495831638362075,
+          "tied_compounds": 7
+        },
+        "dy1996_author_descriptors vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            -0.6690658650214579,
+            16.828183171537596
+          ],
+          "left_lower_error_compounds": 39,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 38,
+          "right_minus_left_MAPE_percentage_points": 7.433429466909772,
+          "tied_compounds": 0
+        },
+        "jain_author_descriptors_2004 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            -1.765405540436192,
+            13.676088992890685
+          ],
+          "left_lower_error_compounds": 38,
+          "positive_difference_favors": "jain_author_descriptors_2004",
+          "right_lower_error_compounds": 39,
+          "right_minus_left_MAPE_percentage_points": 5.283846303073563,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "single_transition_in_chickos": 68,
+        "unknown": 9
+      }
+    },
+    "perry_2_68: confirmed single-transition common": {
+      "chemical_classes_exploratory": {
+        "aromatic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -3.9677260533773815,
+            "compound_equal_mae": 2.310121238612032,
+            "compound_equal_mape_percent": 13.439593166055479,
+            "median_compound_mape_percent": 13.556732181303135,
+            "n_compounds": 36,
+            "n_observations": 36,
+            "p90_compound_mape_percent": 24.12423140803682
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -1.517950748577117,
+            "compound_equal_mae": 2.3407156929164756,
+            "compound_equal_mape_percent": 13.496320015443139,
+            "median_compound_mape_percent": 11.985305963171253,
+            "n_compounds": 36,
+            "n_observations": 36,
+            "p90_compound_mape_percent": 25.56365592158427
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -8.655568132771846,
+            "compound_equal_mae": 2.8442400742483427,
+            "compound_equal_mape_percent": 15.821223251958648,
+            "median_compound_mape_percent": 14.983779783002952,
+            "n_compounds": 36,
+            "n_observations": 36,
+            "p90_compound_mape_percent": 31.744779041690805
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -9.793757469329323,
+            "compound_equal_mae": 3.023496243559554,
+            "compound_equal_mape_percent": 16.374680933749165,
+            "median_compound_mape_percent": 14.430808265907661,
+            "n_compounds": 36,
+            "n_observations": 36,
+            "p90_compound_mape_percent": 31.94637081888432
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 7.581503236319301,
+            "compound_equal_mae": 2.263046865406876,
+            "compound_equal_mape_percent": 15.218983976939658,
+            "median_compound_mape_percent": 9.313831008700896,
+            "n_compounds": 36,
+            "n_observations": 36,
+            "p90_compound_mape_percent": 34.185876699448336
+          }
+        },
+        "cyclic": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -2.111313609711845,
+            "compound_equal_mae": 2.2468129278070412,
+            "compound_equal_mape_percent": 14.624432510446022,
+            "median_compound_mape_percent": 13.42690435636097,
+            "n_compounds": 39,
+            "n_observations": 39,
+            "p90_compound_mape_percent": 24.453771398868277
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -0.49251310051061226,
+            "compound_equal_mae": 2.255525146652168,
+            "compound_equal_mape_percent": 14.268145746747633,
+            "median_compound_mape_percent": 12.174867442444892,
+            "n_compounds": 39,
+            "n_observations": 39,
+            "p90_compound_mape_percent": 26.11345202257983
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -6.377327156185559,
+            "compound_equal_mae": 2.7205701846764563,
+            "compound_equal_mape_percent": 16.508599959565853,
+            "median_compound_mape_percent": 14.776811939503096,
+            "n_compounds": 39,
+            "n_observations": 39,
+            "p90_compound_mape_percent": 32.643979782922315
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -7.7413228111405665,
+            "compound_equal_mae": 2.9037707302674676,
+            "compound_equal_mape_percent": 17.263532706803066,
+            "median_compound_mape_percent": 14.643942906656859,
+            "n_compounds": 39,
+            "n_observations": 39,
+            "p90_compound_mape_percent": 32.55857014115493
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 9.086948823850944,
+            "compound_equal_mae": 2.1959732242424046,
+            "compound_equal_mape_percent": 16.136931045962044,
+            "median_compound_mape_percent": 9.674457692668085,
+            "n_compounds": 39,
+            "n_observations": 39,
+            "p90_compound_mape_percent": 37.985382312224374
+          }
+        },
+        "halogenated": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 4.047022396256816,
+            "compound_equal_mae": 1.2323496693862008,
+            "compound_equal_mape_percent": 8.21100837625348,
+            "median_compound_mape_percent": 7.64881324836567,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 16.26390162653749
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": 1.0177629112122695,
+            "compound_equal_mae": 1.549054894734199,
+            "compound_equal_mape_percent": 9.746251431447362,
+            "median_compound_mape_percent": 10.143898988848179,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 16.839347098666316
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -13.93664552466008,
+            "compound_equal_mae": 2.380018075465001,
+            "compound_equal_mape_percent": 13.994064784846652,
+            "median_compound_mape_percent": 11.646678271966326,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 31.612103682244847
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -13.79697676200368,
+            "compound_equal_mae": 2.36267109791413,
+            "compound_equal_mape_percent": 13.88670981762611,
+            "median_compound_mape_percent": 11.532738718385309,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 31.40895901675198
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 9.159260378391151,
+            "compound_equal_mae": 1.5344201562701998,
+            "compound_equal_mape_percent": 10.761902424198544,
+            "median_compound_mape_percent": 8.791284376372946,
+            "n_compounds": 8,
+            "n_observations": 8,
+            "p90_compound_mape_percent": 20.02729691415704
+          }
+        },
+        "hydrocarbon": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": -1.983597096319479,
+            "compound_equal_mae": 1.5210979226638004,
+            "compound_equal_mape_percent": 13.378130558267715,
+            "median_compound_mape_percent": 10.793881696029532,
+            "n_compounds": 53,
+            "n_observations": 53,
+            "p90_compound_mape_percent": 23.82813483661286
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -1.9765381082029887,
+            "compound_equal_mae": 1.3771867226888748,
+            "compound_equal_mape_percent": 12.309701646385248,
+            "median_compound_mape_percent": 10.627236636120157,
+            "n_compounds": 53,
+            "n_observations": 53,
+            "p90_compound_mape_percent": 23.237888831816086
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": 3.9361552410557317,
+            "compound_equal_mae": 1.8739881811497903,
+            "compound_equal_mape_percent": 17.454015941637497,
+            "median_compound_mape_percent": 14.776811939503096,
+            "n_compounds": 53,
+            "n_observations": 53,
+            "p90_compound_mape_percent": 35.76369109150518
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": 2.072865174575135,
+            "compound_equal_mae": 2.102863885613937,
+            "compound_equal_mape_percent": 18.279170463188855,
+            "median_compound_mape_percent": 16.56279134448798,
+            "n_compounds": 53,
+            "n_observations": 53,
+            "p90_compound_mape_percent": 35.29248616498097
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 4.668036215537592,
+            "compound_equal_mae": 2.7370286411282843,
+            "compound_equal_mape_percent": 19.954590415496696,
+            "median_compound_mape_percent": 11.084609161828933,
+            "n_compounds": 53,
+            "n_observations": 53,
+            "p90_compound_mape_percent": 52.480198108018286
+          }
+        },
+        "nitrogen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 4.823049483068877,
+            "compound_equal_mae": 3.529427964762515,
+            "compound_equal_mape_percent": 16.855971639340037,
+            "median_compound_mape_percent": 14.170968490404432,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 27.759159894580296
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -2.045011795094143,
+            "compound_equal_mae": 4.079372279048228,
+            "compound_equal_mape_percent": 17.6716121166686,
+            "median_compound_mape_percent": 13.525892585351237,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 30.277621810892825
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -1.9602946320377836,
+            "compound_equal_mae": 3.705728254762515,
+            "compound_equal_mape_percent": 16.80712513589213,
+            "median_compound_mape_percent": 18.999331270816292,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 23.04340823390572
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -4.912855579243384,
+            "compound_equal_mae": 4.0123783865761,
+            "compound_equal_mape_percent": 17.25045551007413,
+            "median_compound_mape_percent": 20.26047943363479,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 27.374806391606263
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 7.303783815374943,
+            "compound_equal_mae": 4.075258936191087,
+            "compound_equal_mape_percent": 20.70553584921837,
+            "median_compound_mape_percent": 18.63588494806592,
+            "n_compounds": 7,
+            "n_observations": 7,
+            "p90_compound_mape_percent": 33.5173816843176
+          }
+        },
+        "oxygen_containing": {
+          "chickos_perry_1991": {
+            "compound_equal_bias_percent": 10.307266879770348,
+            "compound_equal_mae": 3.7664932060650673,
+            "compound_equal_mape_percent": 17.53014838872276,
+            "median_compound_mape_percent": 15.775615685170944,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 28.600020327277754
+          },
+          "chickos_structure_1999": {
+            "compound_equal_bias_percent": -2.537121654583204,
+            "compound_equal_mae": 4.4564117393983995,
+            "compound_equal_mape_percent": 17.500673876194103,
+            "median_compound_mape_percent": 16.20173422182832,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 30.05669329616596
+          },
+          "dy1996_author_descriptors": {
+            "compound_equal_bias_percent": -0.5567249316736982,
+            "compound_equal_mae": 3.472099086065068,
+            "compound_equal_mape_percent": 14.057343019027266,
+            "median_compound_mape_percent": 17.645442254584204,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 22.5516760074607
+          },
+          "jain_author_descriptors_2004": {
+            "compound_equal_bias_percent": -4.02064117679116,
+            "compound_equal_mae": 3.8335252963715014,
+            "compound_equal_mape_percent": 14.588896479806904,
+            "median_compound_mape_percent": 13.812844568614999,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 27.914306484897097
+          },
+          "walden_54_4": {
+            "compound_equal_bias_percent": 6.796270675634073,
+            "compound_equal_mae": 4.561117839398402,
+            "compound_equal_mape_percent": 21.176780979346105,
+            "median_compound_mape_percent": 21.02538643101594,
+            "n_compounds": 6,
+            "n_observations": 6,
+            "p90_compound_mape_percent": 27.674523793432414
+          }
+        }
+      },
+      "compounds": 68,
+      "methods": {
+        "chickos_perry_1991": {
+          "compound_equal_bias_percent": -0.57342824343229,
+          "compound_equal_mae": 1.693867397200127,
+          "compound_equal_mape_percent": 13.128246883435251,
+          "median_compound_mape_percent": 10.591212997926865,
+          "n_compounds": 68,
+          "n_observations": 68,
+          "p90_compound_mape_percent": 24.015636705735368
+        },
+        "chickos_structure_1999": {
+          "compound_equal_bias_percent": -1.6313161619223417,
+          "compound_equal_mae": 1.6755726678488463,
+          "compound_equal_mape_percent": 12.560080640098194,
+          "median_compound_mape_percent": 10.699917570786742,
+          "n_compounds": 68,
+          "n_observations": 68,
+          "p90_compound_mape_percent": 25.47632853328555
+        },
+        "dy1996_author_descriptors": {
+          "compound_equal_bias_percent": 1.226485311094245,
+          "compound_equal_mae": 2.122082588058772,
+          "compound_equal_mape_percent": 16.98037116377655,
+          "median_compound_mape_percent": 14.765343694781848,
+          "n_compounds": 68,
+          "n_observations": 68,
+          "p90_compound_mape_percent": 35.12781662157443
+        },
+        "jain_author_descriptors_2004": {
+          "compound_equal_bias_percent": -0.5132933661507498,
+          "compound_equal_mae": 2.3299971092188883,
+          "compound_equal_mape_percent": 17.65651325971378,
+          "median_compound_mape_percent": 15.722684555014649,
+          "n_compounds": 68,
+          "n_observations": 68,
+          "p90_compound_mape_percent": 32.82883547116017
+        },
+        "walden_54_4": {
+          "compound_equal_bias_percent": 5.467742487621267,
+          "compound_equal_mae": 2.7333042909308567,
+          "compound_equal_mape_percent": 18.950400917050615,
+          "median_compound_mape_percent": 12.75361790063971,
+          "n_compounds": 68,
+          "n_observations": 68,
+          "p90_compound_mape_percent": 43.9919298650272
+        }
+      },
+      "observations": 68,
+      "paired_differences": {
+        "chickos_perry_1991 vs chickos_structure_1999": {
+          "bootstrap_95_percent_interval": [
+            -2.7109235402412057,
+            1.5305205813909255
+          ],
+          "left_lower_error_compounds": 33,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 35,
+          "right_minus_left_MAPE_percentage_points": -0.5681662433370569,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            0.9582357757480691,
+            6.870390955715294
+          ],
+          "left_lower_error_compounds": 42,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 26,
+          "right_minus_left_MAPE_percentage_points": 3.8521242803412994,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            1.4423755953633064,
+            7.6156305402412485
+          ],
+          "left_lower_error_compounds": 45,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 23,
+          "right_minus_left_MAPE_percentage_points": 4.5282663762785305,
+          "tied_compounds": 0
+        },
+        "chickos_perry_1991 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            0.9556448598762403,
+            10.754249948412735
+          ],
+          "left_lower_error_compounds": 38,
+          "positive_difference_favors": "chickos_perry_1991",
+          "right_lower_error_compounds": 30,
+          "right_minus_left_MAPE_percentage_points": 5.822154033615367,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs dy1996_author_descriptors": {
+          "bootstrap_95_percent_interval": [
+            1.3909855935600752,
+            7.608388650199432
+          ],
+          "left_lower_error_compounds": 41,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 27,
+          "right_minus_left_MAPE_percentage_points": 4.420290523678355,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            2.2587390208289344,
+            8.067427836293522
+          ],
+          "left_lower_error_compounds": 44,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 24,
+          "right_minus_left_MAPE_percentage_points": 5.0964326196155865,
+          "tied_compounds": 0
+        },
+        "chickos_structure_1999 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            1.9516098883327238,
+            10.894609439042114
+          ],
+          "left_lower_error_compounds": 39,
+          "positive_difference_favors": "chickos_structure_1999",
+          "right_lower_error_compounds": 29,
+          "right_minus_left_MAPE_percentage_points": 6.390320276952422,
+          "tied_compounds": 0
+        },
+        "dy1996_author_descriptors vs jain_author_descriptors_2004": {
+          "bootstrap_95_percent_interval": [
+            -0.7113485733593287,
+            2.1833950283695276
+          ],
+          "left_lower_error_compounds": 22,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 41,
+          "right_minus_left_MAPE_percentage_points": 0.6761420959372306,
+          "tied_compounds": 5
+        },
+        "dy1996_author_descriptors vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            -3.0995482669877066,
+            7.035672211993398
+          ],
+          "left_lower_error_compounds": 33,
+          "positive_difference_favors": "dy1996_author_descriptors",
+          "right_lower_error_compounds": 35,
+          "right_minus_left_MAPE_percentage_points": 1.9700297532740663,
+          "tied_compounds": 0
+        },
+        "jain_author_descriptors_2004 vs walden_54_4": {
+          "bootstrap_95_percent_interval": [
+            -3.4704795770733994,
+            6.017684150606174
+          ],
+          "left_lower_error_compounds": 33,
+          "positive_difference_favors": "jain_author_descriptors_2004",
+          "right_lower_error_compounds": 35,
+          "right_minus_left_MAPE_percentage_points": 1.293887657336836,
+          "tied_compounds": 0
+        }
+      },
+      "target": "fusion_enthalpy_kJ_mol",
+      "transition_status_counts": {
+        "single_transition_in_chickos": 68
+      }
+    }
+  },
+  "script_sha256": "b617bc145607096e8a5fc55c5a7bdb1d87ed84af6dd5ba8910f3db757b5880c6",
+  "seed": 1729
+}
