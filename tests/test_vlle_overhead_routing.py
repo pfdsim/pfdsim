@@ -10,10 +10,12 @@ from equilibrium_stage_vlle import EquationOrientedVLLEColumn, VLLEProfile, VLLE
 from pfd_parser import ParseError, parse_pfd
 from thermodynamics import create_thermodynamics
 from unit_operations_distillation import RigorousDistillation, CMODistillation, McCabeThieleDistillation, UnitOperationError
+from tests.butanol_fixtures import legacy_butanol_water_interaction
 
 
 def butanol_column(**overrides):
-    thermo = create_thermodynamics(['butanol', 'water'], 'NRTL')
+    thermo = create_thermodynamics(['butanol', 'water'], 'NRTL',
+                                  interaction_overrides=[legacy_butanol_water_interaction()])
     feed = thermo.calculate_state(298.15, 1., 100., {'butanol':.4,'water':.6},
                                   phase='liquid', flash=False)
     params = {'N_stages':20, 'feed_stage':10, 'D_to_F':.6118043106570895,

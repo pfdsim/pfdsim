@@ -34,6 +34,7 @@ from property_resolution.coolprop import (
     coolprop_reference_for,
     coolprop_saturation_pressure,
 )
+from tests.butanol_fixtures import legacy_butanol_water_interaction
 class ThermodynamicMethodTests(unittest.TestCase):
     def _coolprop_methanol_psat_at_80c(self):
         reference = coolprop_reference_for(
@@ -1971,7 +1972,8 @@ class ThermodynamicMethodTests(unittest.TestCase):
         for method, temperature, z_butanol in cases:
             with self.subTest(method=method):
                 thermo = create_thermodynamics(
-                    ['1-butanol', 'water'], method
+                    ['1-butanol', 'water'], method,
+                    interaction_overrides=[legacy_butanol_water_interaction(method, butanol='1-butanol')],
                 )
                 has_lle, phase1, phase2, beta = (
                     thermo.liquid_liquid_equilibrium(

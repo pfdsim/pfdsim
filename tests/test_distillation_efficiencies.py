@@ -16,6 +16,7 @@ from unit_operations_distillation import (
     RigorousDistillation, CMODistillation, McCabeThieleDistillation, ShortcutDistillation, UnitOperationError,
 )
 from tests.test_vlle_overhead_routing import butanol_column
+from tests.butanol_fixtures import legacy_butanol_water_interaction
 
 
 def binary_column(method='NRTL',vapor=False,**overrides):
@@ -178,7 +179,8 @@ class DistillationEfficiencyTests(unittest.TestCase):
             with self.subTest(method=method,condenser=condenser):
                 unit,feed = butanol_column(stage_efficiency=.7,acceptable_mesh_residual=1e-7)
                 if method != 'NRTL':
-                    unit.thermo = create_thermodynamics(['butanol','water'],method)
+                    unit.thermo = create_thermodynamics(['butanol','water'],method,
+                        interaction_overrides=[legacy_butanol_water_interaction()])
                     feed = unit.thermo.calculate_state(430.,1.,100.,{'butanol':.4,'water':.6},phase='vapor',flash=False)
                 if condenser == 'partial':
                     for name in ('distillate_liquid1_fraction','distillate_liquid2_fraction','distillate_liquid1_component'):
@@ -295,7 +297,8 @@ class DistillationEfficiencyTests(unittest.TestCase):
             with self.subTest(method=method):
                 unit,feed = butanol_column(N_stages=4,feed_stage=3,stage_efficiency=.7,
                                           stage_efficiencies={'3':1.})
-                unit.thermo = create_thermodynamics(['butanol','water'],method)
+                unit.thermo = create_thermodynamics(['butanol','water'],method,
+                    interaction_overrides=[legacy_butanol_water_interaction()])
                 inlet,feeds = unit._aggregate_feeds({'feed':feed},4,3)
                 comps = ['butanol','water']
                 candidate = unit._vlle_azeotrope_candidates(comps,1.)[0]

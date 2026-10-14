@@ -8,6 +8,7 @@ from simulator import Simulator
 from thermodynamics import create_thermodynamics
 from unit_operations_base import UnitOperationError
 from unit_operations_distillation import RigorousDistillation
+from tests.butanol_fixtures import legacy_butanol_water_interaction
 
 
 class VLLEInitializerEdgeCaseTests(unittest.TestCase):
@@ -824,7 +825,8 @@ class RigorousDistillationVLLETests(unittest.TestCase):
         )
 
     def test_butanol_water_projection_contracts_quickly_near_pure_bottoms(self):
-        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL')
+        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL',
+            interaction_overrides=[legacy_butanol_water_interaction()])
         feed = thermo.calculate_state(
             298.15,
             1.0,
@@ -882,7 +884,8 @@ class RigorousDistillationVLLETests(unittest.TestCase):
         )
 
     def test_butanol_water_auto_seed_falls_back_but_homogeneous_stays_strict(self):
-        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL')
+        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL',
+            interaction_overrides=[legacy_butanol_water_interaction()])
         feed = thermo.calculate_state(
             298.15,
             1.0,
@@ -955,7 +958,8 @@ class RigorousDistillationVLLETests(unittest.TestCase):
             ).solve({'feed': feed})
 
     def test_direct_azeotropic_seed_finds_post_azeotrope_branch_without_vle_solve(self):
-        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL')
+        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL',
+            interaction_overrides=[legacy_butanol_water_interaction()])
         feed = thermo.calculate_state(
             298.15,
             1.0,
@@ -1041,7 +1045,10 @@ class RigorousDistillationVLLETests(unittest.TestCase):
         )
         for components, method, pressure, pair, expected, temperature in cases:
             with self.subTest(components=components):
-                thermo = create_thermodynamics(components, method)
+                overrides = ([legacy_butanol_water_interaction()]
+                             if pair == ('butanol', 'water') else [])
+                thermo = create_thermodynamics(components, method,
+                    interaction_overrides=overrides)
                 unit = RigorousDistillation('VLLE-AZEOTROPE-PROBE', thermo, {})
                 candidates = unit._binary_vlle_azeotropes(
                     pair, components, pressure
@@ -1057,7 +1064,8 @@ class RigorousDistillationVLLETests(unittest.TestCase):
                 self.assertAlmostEqual(candidate['T'], temperature, places=3)
 
     def test_binary_vlle_candidate_cache_respects_search_controls(self):
-        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL')
+        thermo = create_thermodynamics(['butanol', 'water'], 'NRTL',
+            interaction_overrides=[legacy_butanol_water_interaction()])
         unit = RigorousDistillation(
             'VLLE-AZEOTROPE-CACHE',
             thermo,

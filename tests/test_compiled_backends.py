@@ -11,6 +11,7 @@ if ROOT not in sys.path:
 from thermodynamics import ActivityCoefficientThermodynamics, create_thermodynamics
 from simulator import Simulator
 import compiled_lle
+from tests.butanol_fixtures import legacy_butanol_water_interaction
 
 
 class CompiledBackendTests(unittest.TestCase):
@@ -812,7 +813,8 @@ class CompiledBackendTests(unittest.TestCase):
                 self.assertIsNone(result)
 
     def test_compiled_binary_lle_caches_successful_refinement(self):
-        thermo = create_thermodynamics(["1-butanol", "water"], "NRTL")
+        thermo = create_thermodynamics(["1-butanol", "water"], "NRTL",
+            interaction_overrides=[legacy_butanol_water_interaction(butanol="1-butanol")])
         backend = thermo._compiled_lle_backend(399.2)
         if backend is None:
             self.skipTest("Compiled NRTL LLE backend is unavailable")
