@@ -1,4 +1,4 @@
-// Exercise the actual review dialog without running the fitter's page startup.
+// Exercise real review/session modules; keep transport and DOM boundaries local.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { SourceTextModule, SyntheticModule, createContext } from "node:vm";
@@ -22,6 +22,10 @@ class Node {
   removeEventListener(type, fn) { this.listeners.get(type)?.delete(fn); }
   scrollIntoView() { this.scrolled = true; }
   setCustomValidity(message) { this.validityMessage = message; }
+  querySelectorAll(selector) {
+    assert.equal(selector, "button", `Unexpected test DOM selector ${selector}`);
+    return descendants(this).filter(item => item.tag === "button");
+  }
 }
 const nodes = new Map();
 const element = (tag, attributes, text) => {
@@ -37,6 +41,10 @@ const descendants = root => [root, ...root.children.flatMap(descendants)];
 const content = root => descendants(root).map(item => item.textContent).join("\n");
 let dialog;
 const calls = [];
+const downloads = [];
+const apiReplies = new Map();
+const apiErrors = new Map();
+let publicationJob = { status: "completed", output: { status: "published", id: "fit" } };
 const storage = new Map();
 let account = { user: null };
 let rejectSave = false;
@@ -49,19 +57,25 @@ const exports = {
   "./common.js": {
     $: node, element, svgElement: element,
     guarded: fn => fn.name === "initialize" ? () => {} : fn,
-    modal: (_title, body) => { dialog = body; },
+    modal: (_title, body) => { dialog = body; node("modal").closed = false; },
     api: async (path, data) => {
       calls.push({ path, data });
+      if (apiErrors.has(path)) throw apiErrors.get(path);
+      if (apiReplies.has(path)) return structuredClone(apiReplies.get(path));
       if (path.startsWith("/api/fitting/sessions/")) {
         if (rejectSave) throw Object.assign(new Error("This saved fit changed"), { status: 409 });
         return { version: 1, updated: 12345 };
       }
       if (path === "/api/fitting/sessions") return { sessions: [] };
-      return path.endsWith("/publish") ? { job_id: "publication" } : { submissions: [] };
+      return path.endsWith("/publish") || path.endsWith("/withdraw") ? { job_id: "publication" } : { submissions: [] };
     },
-    pollJob: async () => ({ status: "completed", output: { status: "published", id: "fit" } }),
+    pollJob: async (_id, progress) => {
+      if (progress) progress({ progress: ["Building reviewed parameters"], status: "running" });
+      return structuredClone(publicationJob);
+    },
     formatNumber: value => String(value),
-    toast() {}, getSession: async () => account, download() {},
+    toast() {}, getSession: async () => account,
+    download: (...args) => downloads.push(args),
     readLocal: (key, fallback) => storage.has(key) ? structuredClone(storage.get(key)) : fallback,
     writeLocal: (key, value) => { if (!writable) return false; storage.set(key, structuredClone(value)); return true; },
   },
@@ -72,14 +86,19 @@ const exports = {
 const source = await readFile(new URL("../static/js/parameter-fitting.js", import.meta.url), "utf8");
 const sessionSource = await readFile(new URL("../static/js/fitting-sessions.js", import.meta.url), "utf8");
 const sessionModule = new SourceTextModule(sessionSource, { context });
-const module = new SourceTextModule(source + "\nexport { reviewFit, reconcileFitParameters, reconcileModelChange, renderObservations, removeObservationIds, renderResult }; export function setDisplayedResult(value) { result = value; } export function setParameterModel(value) { parameterModel = value; } export function setReviewLibrary(library) { sessionLibrary = library; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
+const adminModule = new SourceTextModule(await readFile(new URL("../static/js/fitting-admin.js", import.meta.url), "utf8"), { context });
+const uiModule = new SourceTextModule(await readFile(new URL("../static/js/fitting-ui.js", import.meta.url), "utf8"), { context });
+const realModules = new Map([["./fitting-sessions.js", sessionModule], ["./fitting-admin.js", adminModule], ["./fitting-ui.js", uiModule]]);
+const module = new SourceTextModule(source + "\nexport { reconcileFitParameters, reconcileModelChange, renderObservations, removeObservationIds, renderResult }; export function setDisplayedResult(value) { result = value; } export function setParameterModel(value) { parameterModel = value; } export function setLawCatalog(forms) { catalog = { forms, missing_tokens: ['', '?', 'none'], kinds: ['UCST', 'LCST', 'VLLE', 'HE', 'GAMMA_INF'], scales: {}, vapor_requirements: {}, psat_forms: {} }; } export function setObservationRows(rows) { observations = rows; }", { context });
 const linked = new Map();
 async function link(path) {
-  if (path === "./fitting-sessions.js") {
-    if (!linked.has(path)) { linked.set(path, sessionModule); await sessionModule.link(link); }
-    return sessionModule;
-  }
   if (linked.has(path)) return linked.get(path);
+  if (realModules.has(path)) {
+    const dependency = realModules.get(path);
+    linked.set(path, dependency);
+    await dependency.link(link);
+    return dependency;
+  }
   const values = exports[path];
   assert.ok(values, `Unexpected import ${path}`);
   const dependency = new SyntheticModule(Object.keys(values), function () {
@@ -92,7 +111,7 @@ await module.link(link);
 await module.evaluate();
 
 for (const psat of [null, { form: "antoine", Tmin_K: 273, Tmax_K: 400, coefficients: { A: 4.296305 } }]) {
-  await module.namespace.reviewFit("fit", {
+  await adminModule.namespace.reviewFit("fit", {
     status: "approved", model: "NRTL", source: { citation: "Reviewed pressure correction" },
     result: {
       success: false, warnings: ["Parameters at bounds: 12.linear"],
@@ -122,6 +141,130 @@ for (const psat of [null, { form: "antoine", Tmin_K: 273, Tmax_K: 400, coefficie
   assert.deepEqual({ ...calls.at(-2).data }, { id: "fit", notes: "" });
 }
 console.log("Psat review information and publication action passed.");
+
+function reviewSubmission(status = "submitted") {
+  return {
+    status, version: 4, model: "NRTL", source: { citation: "Reviewed source", doi: "source-doi" },
+    review_notes: "Original review notes", events: [{ action: "submitted" }],
+    result: {
+      components: ["ethanol", "water"], component_names: ["Ethanol", "Water"], method: "NRTL",
+      success: false, warnings: ["Requires scientific review"],
+      request: { weights: { HE: 1 }, psat: [null, null] },
+      parameters: { alpha12: .3, tau12_d: 120 }, objectives: {},
+    },
+  };
+}
+const reviewAction = label => descendants(dialog).find(item => item.textContent === label);
+const publicationCalls = () => calls.filter(call => ["/api/fitting/admin/publish", "/api/fitting/admin/withdraw"].includes(call.path));
+calls.length = 0;
+const pending = reviewSubmission();
+await adminModule.namespace.reviewFit("pending", pending);
+assert.equal(reviewAction("Publish to runtime"), undefined);
+node("fit-admin-review-notes").value = "Checked the primary source";
+apiReplies.set("/api/fitting/admin/review", { submission: { ...pending, status: "approved", version: 5 } });
+await reviewAction("Approve").onclick();
+assert.deepEqual({ ...calls.find(call => call.path === "/api/fitting/admin/review").data }, {
+  id: "pending", action: "approve", notes: "Checked the primary source", version: 4,
+});
+assert.equal(publicationCalls().length, 0); // Approval never activates runtime parameters.
+assert.match(node("fit-admin-review-status").textContent, /Approved and saved/);
+assert.equal(reviewAction("Approve"), undefined);
+assert.ok(reviewAction("Publish to runtime"));
+
+calls.length = 0;
+await adminModule.namespace.reviewFit("pending", pending);
+node("fit-admin-review-notes").value = "Insufficient source evidence";
+apiReplies.set("/api/fitting/admin/review", { submission: { ...pending, status: "rejected", version: 5 } });
+await reviewAction("Reject").onclick();
+assert.deepEqual({ ...calls.find(call => call.path === "/api/fitting/admin/review").data }, {
+  id: "pending", action: "reject", notes: "Insufficient source evidence", version: 4,
+});
+assert.equal(publicationCalls().length, 0);
+assert.equal(reviewAction("Publish to runtime"), undefined);
+
+calls.length = 0;
+apiReplies.delete("/api/fitting/admin/review");
+apiErrors.set("/api/fitting/admin/review", Object.assign(new Error("Review version is stale"), { status: 409 }));
+await adminModule.namespace.reviewFit("pending", pending);
+node("fit-admin-review-notes").value = "Keep my attempted review";
+await reviewAction("Approve").onclick();
+assert.match(node("fit-admin-review-status").textContent, /Review version is stale/);
+assert.equal(node("fit-admin-review-notes").value, "Keep my attempted review");
+assert.ok(descendants(dialog).filter(item => item.tag === "button").every(item => !item.disabled));
+assert.equal(publicationCalls().length, 0);
+assert.equal(node("modal").closed, false);
+apiErrors.clear();
+
+for (const [status, label] of [["approved", "Publish to runtime"], ["publishing", "Recover interrupted publication"], ["published", "Rebuild published fit"]]) {
+  calls.length = 0;
+  await adminModule.namespace.reviewFit("fit", reviewSubmission(status));
+  node("fit-admin-review-notes").value = "Publication audit note";
+  if (status !== "approved") {
+    assert.equal(reviewAction("Approve"), undefined);
+    assert.equal(reviewAction("Reject"), undefined);
+  }
+  await reviewAction(label).onclick();
+  assert.deepEqual({ ...publicationCalls()[0].data }, { id: "fit", notes: "Publication audit note" });
+  assert.equal(publicationCalls()[0].path, "/api/fitting/admin/publish");
+  assert.match(node("fit-admin-status").textContent, /^published: fit\./);
+}
+calls.length = 0;
+await adminModule.namespace.reviewFit("fit", reviewSubmission("published"));
+node("fit-admin-review-notes").value = "";
+await assert.rejects(reviewAction("Withdraw and rebuild").onclick(), /Explain the withdrawal/);
+assert.equal(publicationCalls().length, 0);
+node("fit-admin-review-notes").value = "Wrong source convention";
+publicationJob = { status: "completed", output: { status: "revoked", id: "fit" } };
+await reviewAction("Withdraw and rebuild").onclick();
+assert.deepEqual({ ...publicationCalls()[0].data }, { id: "fit", notes: "Wrong source convention" });
+assert.equal(publicationCalls()[0].path, "/api/fitting/admin/withdraw");
+assert.match(node("fit-admin-status").textContent, /^revoked: fit\./);
+publicationJob = { status: "failed", error: "Publication validation rejected the coefficients" };
+await assert.rejects(adminModule.namespace.adminPublication({ id: "fit" }), /Publication validation rejected/);
+assert.doesNotMatch(node("fit-admin-status").textContent, /^published:/);
+publicationJob = { status: "completed", output: { status: "published", id: "fit" } };
+apiErrors.set("/api/fitting/admin/publish", new Error("Could not queue publication"));
+node("fit-admin-status").textContent = "Not published";
+await assert.rejects(adminModule.namespace.adminPublication({ id: "fit" }), /Could not queue publication/);
+assert.equal(node("fit-admin-status").textContent, "Not published");
+apiErrors.clear();
+
+const specialId = "review /?&id";
+const detailPath = `/api/fitting/admin/submissions/${encodeURIComponent(specialId)}`;
+apiReplies.set(detailPath, { submission: reviewSubmission("approved") });
+await adminModule.namespace.reviewFit(specialId);
+assert.equal(calls.at(-1).path, detailPath);
+assert.equal(reviewAction("View fit assessment").href, `/parameter-fitting?review=${encodeURIComponent(specialId)}`);
+apiReplies.clear();
+console.log("Review/approval/rejection, optimistic versions, publication/recovery/withdrawal and failure propagation passed.");
+
+for (const model of ["NRTL", "UNIQUAC"]) {
+  const manual = reviewSubmission("approved");
+  manual.model = manual.result.method = model;
+  Object.assign(manual.result, {
+    submission_origin: "manual_parameters",
+    reported_fit: { method: "Source weighted least squares", statistics: "AAD 0.5%\n42 source observations" },
+    manual_input: { model, basis: "tau", values: { "12": .6, "21": 1.2 } },
+  });
+  await adminModule.namespace.reviewFit("manual", manual);
+  assert.match(content(dialog), /PFDSim did not run a regression/);
+  assert.match(content(dialog), /Source-reported fitting method: Source weighted least squares/);
+  assert.match(content(dialog), /AAD 0.5%\n42 source observations/);
+  assert.ok(descendants(dialog).some(item => item.tag === "pre" && item.textContent === JSON.stringify(manual.result.manual_input, null, 2)));
+  assert.equal(reviewAction("View fit assessment"), undefined);
+  downloads.length = 0;
+  reviewAction("Download full provenance").onclick();
+  assert.deepEqual(JSON.parse(downloads[0][0]), manual);
+  reviewAction("Download fit result").onclick();
+  assert.deepEqual(JSON.parse(downloads[1][0]), manual.result);
+  apiReplies.set("/api/fitting/export", { pfd_text: "Sourced manual parameters PFD" });
+  await reviewAction("Download fitted PFD").onclick();
+  assert.equal(downloads[2][0], "Sourced manual parameters PFD");
+  assert.deepEqual(calls.at(-1).data.result, manual.result);
+  assert.ok(reviewAction("Publish to runtime"));
+}
+apiReplies.clear();
+console.log("Manual NRTL/UNIQUAC entries preserve source-reported method/statistics, raw input and provenance exports.");
 
 const fitted = {
   components: ["A", "B"], component_names: ["Acetone", "Water"], method: "UNIQUAC-PR", model: "UNIQUAC",
@@ -172,13 +315,18 @@ function setup(dirty = true) {
   const library = sessionModule.namespace.fittingSessionLibrary({
     capture: () => structuredClone(state), restore: saved => { state = structuredClone(saved); }, canOpen: () => !active,
   });
-  module.namespace.setReviewLibrary(library);
   return { library, state: () => state, active: value => { active = value; } };
 }
 const reviewed = { status: "published", model: "UNIQUAC", source: sourceCitation, result: fitted, events: [] };
 async function view() {
-  await module.namespace.reviewFit("fit", reviewed);
-  return descendants(dialog).find(item => item.textContent === "View fit assessment").onclick();
+  await adminModule.namespace.reviewFit("fit", reviewed);
+  const assessment = descendants(dialog).find(item => item.textContent === "View fit assessment");
+  assert.equal(assessment.tag, "a");
+  assert.equal(assessment.href, "/parameter-fitting?review=fit");
+  assert.equal(assessment.onclick, undefined); // Navigation is handled by the fitter's startup.
+  // The real browser check covers that startup wiring. Exercise the same public
+  // session operation here for all unsaved-work and account/storage failures.
+  return page.library.openReviewedFit(sessionModule.namespace.fittingSessionFromResult(fitted, sourceCitation));
 }
 const button = label => descendants(dialog).find(item => item.textContent === label);
 let page = setup();

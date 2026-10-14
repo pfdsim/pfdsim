@@ -669,51 +669,40 @@ class InteractionParameterTests(unittest.TestCase):
         self.assertAlmostEqual(uniquac["tau21_a"], -12.439879602, places=8)
         self.assertAlmostEqual(uniquac["tau21_b"], 2315.818669335, places=8)
 
-    def test_1_butanol_water_temperature_interactions_override_legacy_records(self):
-        for filename in (
-            "nrtl_binary_interactions_cas.json",
-            "uniquac_binary_interactions_cas.json",
+    def test_published_butanol_water_interactions_override_legacy_records(self):
+        pair = ("71-36-3", "7732-18-5")
+        for model, lookup, orient in (
+            ("NRTL", nrtl_binary_interaction, orient_nrtl_interaction),
+            ("UNIQUAC", uniquac_binary_interaction, orient_uniquac_interaction),
         ):
+            filename = f"{model.lower()}_binary_interactions_cas.json"
             with open(
                 os.path.join(ROOT, "data", filename),
                 encoding="utf-8",
             ) as handle:
                 records = json.load(handle)["interactions"]
-            record = next(
-                item
-                for item in records
-                if item["cas1"] == "71-36-3" and item["cas2"] == "7732-18-5"
-            )
+            active = [item for item in records
+                      if {item["cas1"], item["cas2"]} == set(pair)
+                      and not item.get("disabled")]
+            self.assertEqual(len(active), 1, f"{model}: old or reversed duplicate still active")
+            record = active[0]
+            published = published_user_fits(model)
+            self.assertIn(record.get("user_fit_id"), published)
+            approved = published[record["user_fit_id"]]
+            parameters = json.loads(approved["result"])["parameters"]
             self.assertEqual(
                 record["source_file"],
-                "data/source/activity_fitting/1_butanol_water_interactions.json",
+                "data/source/activity_fitting/user_activity_fits.sqlite",
             )
-            self.assertEqual(
-                record["source"],
-                "J. Chem. Thermodynamics 1978, 10, 1173-1179",
-            )
-            self.assertAlmostEqual(record["Tmin_K"], 298.15)
-            self.assertAlmostEqual(record["Tmax_K"], 397.75)
-
-        nrtl = nrtl_binary_interaction("71-36-3", "7732-18-5")
-        self.assertIn("temperature-dependent NRTL", nrtl["comment"])
-        self.assertAlmostEqual(nrtl["tau12_c"], 3.07626601, places=8)
-        self.assertAlmostEqual(nrtl["tau12_d"], -489.80683594, places=8)
-        self.assertAlmostEqual(nrtl["tau12_e"], -60.05225941, places=8)
-        self.assertAlmostEqual(nrtl["tau21_c"], 4.36302560, places=8)
-        self.assertAlmostEqual(nrtl["tau21_d"], -241.22842207, places=8)
-        self.assertAlmostEqual(nrtl["tau21_e"], -8.71391481, places=8)
-        self.assertAlmostEqual(nrtl["tau_tref"], 298.15, places=8)
-        self.assertAlmostEqual(nrtl["alpha12"], 0.45131325, places=8)
-
-        uniquac = uniquac_binary_interaction("71-36-3", "7732-18-5")
-        self.assertIn("temperature-dependent UNIQUAC", uniquac["comment"])
-        self.assertAlmostEqual(uniquac["tau12_a"], -12.81485434, places=8)
-        self.assertAlmostEqual(uniquac["tau12_b"], 1905.74507135, places=8)
-        self.assertAlmostEqual(uniquac["tau12_d"], 0.02169653866, places=10)
-        self.assertAlmostEqual(uniquac["tau21_a"], 8.68179405, places=8)
-        self.assertAlmostEqual(uniquac["tau21_b"], -1368.13065752, places=8)
-        self.assertAlmostEqual(uniquac["tau21_d"], -0.01678360690, places=10)
+            self.assertEqual(record["source"], json.loads(approved["source"])["citation"])
+            for field, value in parameters.items():
+                if field != "comment":
+                    self.assertEqual(record[field], value, f"{model}: {field}")
+            # Both lookup directions must use this same authoritative record.
+            for first, second in (pair, tuple(reversed(pair))):
+                expected = orient(record, reverse=record["cas1"] != first)
+                actual = lookup(first, second)
+                self.assertEqual(actual, expected, f"{model}: lookup {first}/{second}")
 
     def test_extended_uniquac_interactions_are_retained_but_disabled(self):
         with open(
@@ -2340,16 +2329,26 @@ class InteractionParameterTests(unittest.TestCase):
                     allowed = set()
                     if record.get('user_fit_id') in published:
                         fit = published[record['user_fit_id']]
-                        self.assertEqual(record['fit_status'], 'admin_published_user_fit')
+                        result = json.loads(fit['result'])
+                        manual = result.get('submission_origin') == 'manual_parameters'
+                        self.assertEqual(record['fit_status'],
+                                         'admin_published_manual_parameters' if manual
+                                         else 'admin_published_user_fit')
                         self.assertEqual((record['cas1'], record['cas2']),
                                          (fit['cas1'], fit['cas2']))
-                        self.assertEqual(record['fit_provenance'], {
+                        expected_provenance = {
                             'source': json.loads(fit['source']),
                             'owner': fit['owner'],
                             'reviewed_by': fit['reviewed_by'],
                             'created': fit['created'],
-                            'model': json.loads(fit['result'])['method'],
-                        })
+                            'model': result['method'],
+                        }
+                        if manual:
+                            expected_provenance.update(
+                                origin='manual_parameters', reported_fit=result['reported_fit'],
+                                manual_input=result['manual_input'],
+                            )
+                        self.assertEqual(record['fit_provenance'], expected_provenance)
                         allowed.add('fit_provenance')
                     self.assertFalse(
                         (forbidden - allowed) & set(record),

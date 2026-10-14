@@ -38,11 +38,44 @@ def check_fitted_review(page, address):
     page.locator("#modal").get_by_role("button", name="Approve", exact=True).click()
     expect(page.locator("#fit-admin-review-status")).to_contain_text("Approved and saved")
     expect(page.locator("#modal").get_by_role("button", name="Publish to runtime", exact=True)).to_be_visible()
+    reviewed = page.request.get(address + f"/api/fitting/admin/submissions/{fit_id}").json()["submission"]
+    assert reviewed["status"] == "approved"
+    rerun_requests = []
+    page.on("request", lambda request: rerun_requests.append(request.url)
+            if request.method == "POST" and request.url.split("?")[0] in
+            {address + "/api/fitting", address + "/api/fitting/prefill"} else None)
+    # The review link now crosses pages. Seed actual unsaved work through the
+    # fitter's controls, then verify navigation cannot silently discard it.
+    draft = page.context.new_page()
+    draft.goto(address + "/parameter-fitting")
+    draft.wait_for_function("document.getElementById('fit-saved-sessions').onclick !== null")
+    draft.locator("#fit-input-method").select_option("paste")
+    original_input = '[{"kind":"HE","T_K":300,"x1":0.5,"HE_J_mol":123}]'
+    draft.locator("#fit-input").fill(original_input)
+    expect(draft.locator("#fit-input")).to_have_value(original_input)
+    assert draft.evaluate("JSON.parse(localStorage.getItem('pfdsim.fitting.v1')).controls.input") == original_input
+    draft.close()
     page.locator("#modal").get_by_role("link", name="View fit assessment", exact=True).click()
+    expect(page.locator("#modal")).to_contain_text("unsaved fitting work")
+    expect(page.locator("#fit-input")).to_have_value(original_input)
+    page.locator("#modal").get_by_role("button", name="Cancel", exact=True).click()
+    expect(page.locator("#fit-input")).to_have_value(original_input)
+    assert "review=" in page.url
+    page.reload()
+    expect(page.locator("#modal")).to_contain_text("unsaved fitting work")
+    page.locator("#modal").get_by_role("button", name="Open without saving", exact=True).click()
     expect(page.locator("#fit-result-status")).to_contain_text("Converged", timeout=15000)
     expect(page.locator("#fit-table tbody tr")).to_have_count(1)
     expect(page.locator("#fit-source")).to_have_value("Synthetic computed-fit review check")
+    restored = page.evaluate("JSON.parse(localStorage.getItem('pfdsim.fitting.v1'))")
+    assert restored["result"] == reviewed["result"]
+    assert restored["observations"] == reviewed["result"]["request"]["observations"]
+    assert {kind: float(value) for kind, value in restored["weights"].items()} == reviewed["result"]["request"]["weights"]
+    assert restored["controls"]["model"] == "NRTL"
+    assert restored["controls"]["law"] == "constant"
+    assert not rerun_requests, rerun_requests
     assert "review=" not in page.url
+    assert page.evaluate("JSON.parse(localStorage.getItem('pfdsim.fit-session-previous.v1')).state.controls.input") == original_input
     assert page.locator("#fit-admin").count() == 0
     page.locator("#fit-admin-direct").click()
     expect(page.locator("#fit-submission-status")).to_contain_text("published:", timeout=120000)
@@ -59,7 +92,8 @@ def main():
     shutil.copyfile(ROOT / "data/uniquac_rq_cas.json", runtime / "uniquac_rq_cas.json")
     with patch.dict(os.environ, {"PFDSIM_INTERACTION_DATA_DIR": str(runtime)}), preview() as address, sync_playwright() as playwright:
         browser = playwright.chromium.launch(executable_path=shutil.which("google-chrome"), args=["--no-sandbox"])
-        page = browser.new_page(viewport={"width": 1440, "height": 1000})
+        context = browser.new_context(viewport={"width": 1440, "height": 1000}, accept_downloads=True)
+        page = context.new_page()
         errors = []
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.goto(address + "/parameter-fitting")

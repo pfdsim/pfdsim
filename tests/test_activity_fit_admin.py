@@ -25,6 +25,12 @@ def fitted():
     return fit_interactions(data)
 
 
+@pytest.fixture(scope="module")
+def uniquac_fitted():
+    data, _, _ = synthetic(settings={"model": "UNIQUAC"}, kinds=("GAMMA_INF", "HE"))
+    return fit_interactions(data)
+
+
 @pytest.fixture
 def clients(tmp_path, monkeypatch):
     monkeypatch.setitem(web.app.config, "TESTING", True)
@@ -255,6 +261,63 @@ def test_builder_consumes_published_fits_with_full_provenance(tmp_path, fitted):
     assert record["fit_provenance"]["source"]["citation"] == "Primary paper"
     assert record["fit_provenance"]["reviewed_by"] == "user:root"
     assert store.get(identifier)["result"]["points"] == fitted["points"]
+
+
+@pytest.mark.parametrize("model", ["NRTL", "UNIQUAC"])
+@pytest.mark.parametrize("origin", ["computed", "manual"])
+def test_publication_origin_keeps_exact_nested_provenance(tmp_path, request, model, origin):
+    """Every publication kind is covered independently of the live source DB."""
+    if origin == "manual":
+        from thermodynamics_models.manual_parameters import prepare_manual_parameters
+        result, _ = prepare_manual_parameters({
+            "components": ["ethanol", "water"], "model": model,
+            "basis": "energy", "values": {"12": 900, "21": -200},
+            "fit_method": "Source weighted least squares",
+            "statistics": "AAD 0.5%\n42 source observations",
+        })
+        assert result["submission_origin"] == "manual_parameters"
+    else:
+        result = request.getfixturevalue("fitted" if model == "NRTL" else "uniquac_fitted")
+        assert result.get("submission_origin") != "manual_parameters"
+    original = deepcopy(result)
+    source = {"citation": "Primary publication", "url": "https://example.test/paper",
+              "doi": "test-doi", "notes": "Complete original source notes"}
+    store = ActivityFitStore(tmp_path / "fits.sqlite")
+    identifier = store.submit("user:author", "publication", source, result)["id"]
+    assert store.runtime_records(model) == []
+    store.review(identifier, "user:root", "approve", "Reviewed measurements", expected_version=1)
+    assert store.runtime_records(model) == []  # Approval alone does not activate it.
+    base = {"metadata": {}, "interactions": []}
+    candidate = builder.apply_user_activity_overlay(
+        deepcopy(base), model, user_fits_path=store.path, candidate=identifier,
+    )
+    assert store.get(identifier)["status"] == "approved"
+    store.publication_state(identifier, "user:root", "publishing", {})
+    assert store.runtime_records(model) == []
+    store.publication_state(identifier, "user:root", "published", {})
+    rebuilt = builder.apply_user_activity_overlay(deepcopy(base), model, user_fits_path=store.path)
+    assert candidate["interactions"] == rebuilt["interactions"]
+    assert len(rebuilt["interactions"]) == 1
+    record = rebuilt["interactions"][0]
+    stored = store.get(identifier)
+    expected = {"source": source, "owner": "user:author", "reviewed_by": "user:root",
+                "created": stored["created"], "model": result["method"]}
+    if origin == "manual":
+        expected.update(origin="manual_parameters", reported_fit=result["reported_fit"],
+                        manual_input=result["manual_input"])
+        assert record["fit_status"] == "admin_published_manual_parameters"
+    else:
+        assert record["fit_status"] == "admin_published_user_fit"
+    assert record["fit_provenance"] == expected
+    assert (record["cas1"], record["cas2"]) == tuple(result["component_cas"])
+    assert record["user_fit_id"] == identifier
+    for field, value in result["parameters"].items():
+        if field != "comment":
+            assert record[field] == value
+    assert not {"reported_fit", "manual_input", "points", "request", "optimizer",
+                "fit_evidence", "cross_validation"} & record.keys()
+    assert result == original
+    assert stored["result"] == original
 
 
 def test_candidate_publication_and_full_rebuild_export_identical_order(tmp_path, fitted):
