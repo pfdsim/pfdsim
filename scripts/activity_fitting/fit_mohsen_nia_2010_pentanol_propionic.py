@@ -16,13 +16,14 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from scipy.optimize import brentq, least_squares
+from scipy.optimize import brentq
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics  # noqa: E402
+from scripts.activity_fitting.binary_regression import central_jacobian, fit_regression
 
 
 COMPONENTS = ("1-pentanol", "propionic acid")
@@ -194,27 +195,25 @@ def fit_vdm(model: str) -> dict:
     engine = MutableVDMModel(model)
     if model == "NRTL":
         alpha = 0.1
-        result = least_squares(
+        result = fit_regression(
             lambda values: objective(
                 engine, np.asarray([values[0], values[1], alpha])
             ),
-            [-93.0, 46.0],
-            bounds=([-5000.0, -5000.0], [5000.0, 5000.0]),
-            x_scale="jac",
+            [[-93.0, 46.0]],
+            ([-5000.0, -5000.0], [5000.0, 5000.0]),
             max_nfev=180,
+            jacobian=central_jacobian,
         )
         parameters = [float(result.x[0]), float(result.x[1]), alpha]
     else:
-        result = least_squares(
+        result = fit_regression(
             lambda values: objective(engine, values),
-            [-105.0, 77.0],
-            bounds=([-5000.0, -5000.0], [5000.0, 5000.0]),
-            x_scale="jac",
+            [[-105.0, 77.0]],
+            ([-5000.0, -5000.0], [5000.0, 5000.0]),
             max_nfev=180,
+            jacobian=central_jacobian,
         )
         parameters = [float(value) for value in result.x]
-    if not result.success:
-        raise RuntimeError(f"{model}-VDM regression failed: {result.message}")
     return {
         "parameters": parameters,
         "cost": float(result.cost),

@@ -7,16 +7,16 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from scipy.optimize import least_squares
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from thermodynamics import create_thermodynamics
-from thermodynamics_models.interaction_estimation import (
-    _nrtl_ln_gamma,
-    _uniquac_ln_gamma,
+from scripts.activity_fitting.binary_regression import (
+    fit_regression,
+    gibbs_temperature_derivative,
+    log_activity,
 )
 
 R = 8.31446261815324
@@ -126,23 +126,30 @@ def unpack(parameters, with_heat_capacity):
     return a12, b12, e12, a21, b21, e21
 
 
-def interaction_values(model, temperature, parameters, with_heat_capacity):
+def _interaction_state(model, temperature, parameters, with_heat_capacity):
+    temperature = np.asarray(temperature)
     a12, b12, e12, a21, b21, e21 = unpack(parameters, with_heat_capacity)
-    anchored = (TREF - temperature) / temperature + math.log(temperature / TREF)
+    anchored = (TREF - temperature) / temperature + np.log(temperature / TREF)
     first = a12 + b12 / temperature + e12 * anchored
     second = a21 + b21 / temperature + e21 * anchored
+    dfirst = (-b12 + e12 * (temperature - TREF)) / temperature**2
+    dsecond = (-b21 + e21 * (temperature - TREF)) / temperature**2
     if model == "UNIQUAC":
-        return math.exp(first), math.exp(second)
-    return first, second
+        first, second = np.exp(first), np.exp(second)
+        dfirst, dsecond = first * dfirst, second * dsecond
+    return first, second, dfirst, dsecond
+
+
+def interaction_values(model, temperature, parameters, with_heat_capacity):
+    return _interaction_state(model, temperature, parameters, with_heat_capacity)[:2]
 
 
 def ln_gamma(model, x1, temperature, parameters, alpha, with_heat_capacity):
     first, second = interaction_values(
         model, temperature, parameters, with_heat_capacity
     )
-    if model == "NRTL":
-        return _nrtl_ln_gamma(x1, first, second, alpha)
-    return _uniquac_ln_gamma(x1, R_VALUES, Q_VALUES, first, second)
+    values = log_activity(model, x1, first, second, alpha=alpha, r=R_VALUES, q=Q_VALUES)
+    return values[..., 0], values[..., 1]
 
 
 def reduced_ge(model, x1, temperature, parameters, alpha, with_heat_capacity):
@@ -151,57 +158,49 @@ def reduced_ge(model, x1, temperature, parameters, alpha, with_heat_capacity):
 
 
 def excess_enthalpy(model, x1, temperature, parameters, alpha, with_heat_capacity):
-    step = 0.01
-    derivative = (
-        reduced_ge(model, x1, temperature + step, parameters, alpha, with_heat_capacity)
-        - reduced_ge(
-            model, x1, temperature - step, parameters, alpha, with_heat_capacity
-        )
-    ) / (2.0 * step)
+    first, second, dfirst, dsecond = _interaction_state(
+        model, temperature, parameters, with_heat_capacity
+    )
+    derivative = gibbs_temperature_derivative(
+        model, x1, first, second, dfirst, dsecond, alpha=alpha, q=Q_VALUES
+    )
     return -R * temperature * temperature * derivative
 
 
 def source_bubble(model, x1, parameters, alpha, with_heat_capacity):
+    scalar = np.ndim(x1) == 0
+    x1 = np.atleast_1d(x1)
     ln1, ln2 = ln_gamma(model, x1, TREF, parameters, alpha, with_heat_capacity)
-    gamma = (math.exp(ln1), math.exp(ln2))
-    x = (x1, 1.0 - x1)
-    pressure = sum(x[i] * gamma[i] * PSAT_KPA[i] for i in range(2))
-    y = [x[i] * gamma[i] * PSAT_KPA[i] / pressure for i in range(2)]
+    gamma = np.stack((np.exp(ln1), np.exp(ln2)), axis=-1)
+    x = np.column_stack((x1, 1.0 - x1))
+    pure, b, volumes = np.asarray(PSAT_KPA), np.asarray(B_L_MOL), np.asarray(VL_L_MOL)
+    rt = R * TREF
+    pressure = np.sum(x * gamma * pure, axis=1)
+    y = x * gamma * pure / pressure[:, None]
+    reference = x * gamma * pure * np.exp(np.diag(b) * pure / rt)
     for _ in range(100):
-        bmix = sum(y[i] * y[j] * B_L_MOL[i][j] for i in range(2) for j in range(2))
-        phi = []
-        for i in range(2):
-            partial = 2.0 * sum(y[j] * B_L_MOL[i][j] for j in range(2)) - bmix
-            phi.append(math.exp(partial * pressure / (R * TREF)))
-        rhs = []
-        for i in range(2):
-            phi_sat = math.exp(B_L_MOL[i][i] * PSAT_KPA[i] / (R * TREF))
-            poynting = math.exp(VL_L_MOL[i] * (pressure - PSAT_KPA[i]) / (R * TREF))
-            rhs.append(x[i] * gamma[i] * PSAT_KPA[i] * phi_sat * poynting / phi[i])
-        new_pressure = sum(rhs)
-        new_y = [value / new_pressure for value in rhs]
-        if (
-            abs(new_pressure - pressure) < 1e-12
-            and max(abs(new_y[i] - y[i]) for i in range(2)) < 1e-12
-        ):
-            pressure, y = new_pressure, new_y
-            break
+        bmix = np.einsum("ni,ij,nj->n", y, b, y)
+        partial = 2 * y @ b.T - bmix[:, None]
+        phi = np.exp(partial * pressure[:, None] / rt)
+        rhs = reference * np.exp(volumes * (pressure[:, None] - pure) / rt) / phi
+        new_pressure = np.sum(rhs, axis=1)
+        new_y = rhs / new_pressure[:, None]
+        residual = max(np.max(np.abs(new_pressure - pressure)), np.max(np.abs(new_y - y)))
         pressure, y = new_pressure, new_y
-    return pressure, y[0]
+        if residual < 1e-13:
+            return (pressure[0].item(), y[0, 0].item()) if scalar else (pressure, y[:, 0])
+    raise RuntimeError("Source bubble-pressure equation did not converge")
 
 
 def objective(model, alpha, with_heat_capacity, parameters):
-    residuals = []
-    for x1, observed in MOREAU_PX[1:-1]:
-        calculated, _ = source_bubble(model, x1, parameters, alpha, with_heat_capacity)
-        residuals.append((calculated - observed) / 0.005)
-    for temperature, rows in HE.items():
-        for x1, observed in rows:
-            calculated = excess_enthalpy(
-                model, x1, temperature, parameters, alpha, with_heat_capacity
-            )
-            residuals.append((calculated - observed) / (0.005 * observed))
-    return np.asarray(residuals)
+    pressure_rows = np.asarray(MOREAU_PX[1:-1])
+    enthalpy_rows = np.asarray([(x, T, h) for T, rows in HE.items() for x, h in rows])
+    pressure, _ = source_bubble(model, pressure_rows[:, 0], parameters, alpha, with_heat_capacity)
+    enthalpy = excess_enthalpy(
+        model, enthalpy_rows[:, 0], enthalpy_rows[:, 1], parameters, alpha, with_heat_capacity
+    )
+    return np.r_[(pressure - pressure_rows[:, 1]) / 0.005,
+                 (enthalpy - enthalpy_rows[:, 2]) / (0.005 * enthalpy_rows[:, 2])]
 
 
 def initial_guesses(model, with_heat_capacity):
@@ -229,21 +228,10 @@ def fit(model, alpha, with_heat_capacity):
         if size == 6
         else np.array([-10.0, -10000.0, -10.0, -10000.0])
     )
-    upper = -lower
-    results = []
-    for initial in initial_guesses(model, with_heat_capacity):
-        results.append(
-            least_squares(
-                lambda p: objective(model, alpha, with_heat_capacity, p),
-                initial,
-                bounds=(lower, upper),
-                max_nfev=5000,
-                xtol=1e-11,
-                ftol=1e-11,
-                gtol=1e-11,
-            )
-        )
-    return min(results, key=lambda result: 2.0 * result.cost)
+    return fit_regression(
+        lambda p: objective(model, alpha, with_heat_capacity, p),
+        initial_guesses(model, with_heat_capacity), (lower, -lower), max_nfev=5000,
+    )
 
 
 def metrics(values):

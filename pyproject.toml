@@ -55,6 +55,9 @@ dev = [
 [tool.uv]
 package = true
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [tool.ruff]
 extend-exclude = ["data/archived"]
 

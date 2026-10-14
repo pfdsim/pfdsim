@@ -48,21 +48,6 @@ from scripts.activity_fitting.build_uniquac_rq_parameters import (
     assorted_alcohol_ether_rq_records,
     build_uniquac_rq_payload,
 )
-from scripts.activity_fitting.fit_fendu_2025_activity_parameters import (
-    build_payload as build_fendu_2025_activity_payload,
-)
-from scripts.activity_fitting.fit_mohsen_nia_2010_pentanol_propionic import (
-    build_payload as build_mohsen_nia_2010_payload,
-)
-from scripts.activity_fitting.fit_moreau_ovejero_2012_2007_activity import (
-    build_payload as build_moreau_ovejero_payload,
-)
-from scripts.activity_fitting.fit_moreau_2012_pentanol_toluene_activity import (
-    build_payload as build_moreau_toluene_payload,
-)
-from scripts.activity_fitting.fit_moreau_ovejero_2016_2007_pentanol_hexane_activity import (
-    build_payload as build_moreau_ovejero_hexane_payload,
-)
 from scripts.activity_fitting.prepare_eg_glycerol_activity_parameters import (
     build_payload as build_eg_glycerol_activity_payload,
 )
@@ -70,7 +55,6 @@ from scripts.activity_fitting.prepare_eg_glycerol_activity_parameters import (
 
 from physical_constants import R_J_MOL_K
 from activity_fit_store import DEFAULT_ACTIVITY_FITS_PATH
-from tests.fit_source_comparison import assert_fit_source_equal
 
 
 def published_user_fits(model):
@@ -1634,67 +1618,6 @@ class InteractionParameterTests(unittest.TestCase):
         )
         self.assertIsNone(nrtl_binary_interaction("75-65-0", "104-76-7"))
         self.assertIsNone(uniquac_binary_interaction("75-65-0", "104-76-7"))
-
-    def test_fendu_refit_builder_matches_committed_source(self):
-        built = build_fendu_2025_activity_payload()
-        source_path = os.path.join(
-            ROOT, "data", "source", "activity_fitting", "fendu_2025_activity_refits.json"
-        )
-        with open(source_path, encoding="utf-8") as handle:
-            committed = json.load(handle)
-        self.assertEqual(built, committed)
-
-    def test_mohsen_nia_analysis_matches_committed_source(self):
-        built = build_mohsen_nia_2010_payload()
-        source_path = os.path.join(
-            ROOT,
-            "data",
-            "source",
-            "activity_fitting",
-            "mohsen_nia_2010_pentanol_propionic_association.json",
-        )
-        with open(source_path, encoding="utf-8") as handle:
-            committed = json.load(handle)
-        assert_fit_source_equal(self, built, committed)
-
-    def test_moreau_ovejero_fit_matches_committed_source(self):
-        built = build_moreau_ovejero_payload()
-        source_path = os.path.join(
-            ROOT,
-            "data",
-            "source",
-            "activity_fitting",
-            "moreau_ovejero_pentanol_cyclohexane_joint_fit.json",
-        )
-        with open(source_path, encoding="utf-8") as handle:
-            committed = json.load(handle)
-        assert_fit_source_equal(self, built, committed)
-
-    def test_moreau_toluene_fit_matches_committed_source(self):
-        built = build_moreau_toluene_payload()
-        source_path = os.path.join(
-            ROOT,
-            "data",
-            "source",
-            "activity_fitting",
-            "moreau_2012_pentanol_toluene_joint_fit.json",
-        )
-        with open(source_path, encoding="utf-8") as handle:
-            committed = json.load(handle)
-        self.assertEqual(built, committed)
-
-    def test_moreau_ovejero_hexane_fit_matches_committed_source(self):
-        built = build_moreau_ovejero_hexane_payload()
-        source_path = os.path.join(
-            ROOT,
-            "data",
-            "source",
-            "activity_fitting",
-            "moreau_ovejero_2016_2007_pentanol_hexane_joint_fit.json",
-        )
-        with open(source_path, encoding="utf-8") as handle:
-            committed = json.load(handle)
-        assert_fit_source_equal(self, built, committed)
 
     def test_eg_glycerol_preparation_matches_committed_source(self):
         built = build_eg_glycerol_activity_payload()

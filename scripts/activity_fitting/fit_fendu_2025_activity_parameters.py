@@ -24,8 +24,8 @@ if str(ROOT) not in sys.path:
 
 from thermodynamics_models.interaction_estimation import (  # noqa: E402
     _nrtl_ln_gamma,
-    _uniquac_ln_gamma,
 )
+from scripts.activity_fitting.binary_regression import fit_regression, log_activity
 
 
 SOURCE = {
@@ -355,6 +355,11 @@ def _pure_antoine(component: str) -> tuple[float, float, float]:
             values[0] - values[1] / (temperatures + values[2]) - log_pressures
         ),
         np.asarray([7.0, 1500.0, -50.0]),
+        jac=lambda values: np.column_stack((
+            np.ones(len(temperatures)), -1 / (temperatures + values[2]),
+            values[1] / (temperatures + values[2])**2,
+        )),
+        x_scale="jac",
         max_nfev=500,
         xtol=1.0e-13,
         ftol=1.0e-13,
@@ -367,10 +372,9 @@ def _pure_antoine(component: str) -> tuple[float, float, float]:
     return tuple(float(value) for value in result.x)
 
 
-@lru_cache(maxsize=None)
 def psat_kpa(component: str, temperature: float) -> float:
     a, b, c = _pure_antoine(component)
-    return 10.0 ** (a - b / (float(temperature) + c))
+    return 10.0 ** (a - b / (np.asarray(temperature) + c))
 
 
 def _rows(system: dict, omitted_composition: float | None = None) -> list[tuple]:
@@ -402,10 +406,10 @@ def _uniquac_parameters(form: str, values: np.ndarray, temperature: float) -> tu
     if form == "zero":
         return 1.0, 1.0
     if form == "B_over_T":
-        return math.exp(values[0] / temperature), math.exp(values[1] / temperature)
+        return np.exp(values[0] / temperature), np.exp(values[1] / temperature)
     return (
-        math.exp(values[0] + values[1] / temperature),
-        math.exp(values[2] + values[3] / temperature),
+        np.exp(values[0] + values[1] / temperature),
+        np.exp(values[2] + values[3] / temperature),
     )
 
 
@@ -417,21 +421,17 @@ def _pressure_residuals(
     system: dict,
 ) -> np.ndarray:
     comp1, comp2 = system["components"]
-    residuals = []
-    for x1, temperature, pressure in rows:
-        if model == "NRTL":
-            tau12, tau21, alpha = _nrtl_parameters(form, values, temperature)
-            ln_gamma1, ln_gamma2 = _nrtl_ln_gamma(x1, tau12, tau21, alpha)
-        else:
-            tau12, tau21 = _uniquac_parameters(form, values, temperature)
-            ln_gamma1, ln_gamma2 = _uniquac_ln_gamma(
-                x1, system["rq"][0], system["rq"][1], tau12, tau21
-            )
-        calculated = x1 * math.exp(ln_gamma1) * psat_kpa(comp1, temperature) + (
-            1.0 - x1
-        ) * math.exp(ln_gamma2) * psat_kpa(comp2, temperature)
-        residuals.append(calculated / pressure - 1.0)
-    return np.asarray(residuals)
+    x1, temperature, pressure = np.asarray(rows).T
+    if model == "NRTL":
+        tau12, tau21, alpha = _nrtl_parameters(form, values, temperature)
+    else:
+        tau12, tau21 = _uniquac_parameters(form, values, temperature)
+        alpha = None
+    gamma = np.exp(log_activity(model, x1, tau12, tau21, alpha=alpha,
+                               r=system["rq"][0], q=system["rq"][1]))
+    calculated = (x1 * gamma[:, 0] * psat_kpa(comp1, temperature)
+                  + (1 - x1) * gamma[:, 1] * psat_kpa(comp2, temperature))
+    return calculated / pressure - 1
 
 
 def _fit(
@@ -445,15 +445,11 @@ def _fit(
     x0, lower, upper = specs[form]
     if not len(x0):
         return x0
-    result = least_squares(
+    result = fit_regression(
         lambda values: _pressure_residuals(model, form, values, rows, system),
-        x0 if initial is None else initial,
-        bounds=(lower, upper),
-        x_scale="jac",
+        [x0 if initial is None else initial], (lower, upper),
         max_nfev=750,
     )
-    if not result.success:
-        raise RuntimeError(f"{model} {form} regression failed: {result.message}")
     return result.x
 
 

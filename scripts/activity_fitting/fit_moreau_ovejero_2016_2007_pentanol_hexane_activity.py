@@ -10,7 +10,6 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
-from scipy.optimize import least_squares
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -179,21 +178,10 @@ def _fit(model: str, alpha, heat_capacity: bool, starts) -> object:
         if size == 6
         else [-10.0, -10000.0, -10.0, -10000.0]
     )
-    results = [
-        least_squares(
-            lambda parameters: common.objective(
-                model, alpha, heat_capacity, parameters
-            ),
-            start,
-            bounds=(lower, -lower),
-            max_nfev=1500,
-            xtol=1.0e-10,
-            ftol=1.0e-10,
-            gtol=1.0e-10,
-        )
-        for start in starts
-    ]
-    return min(results, key=lambda result: 2.0 * result.cost)
+    return common.fit_regression(
+        lambda parameters: common.objective(model, alpha, heat_capacity, parameters),
+        starts, (lower, -lower), max_nfev=1500,
+    )
 
 
 def _candidate(model: str, alpha, form: str, result) -> dict:
