@@ -1,0 +1,8 @@
+Preliminary restricted subset, not the final assessment.
+
+This run excluded molecules with any atomic formal charges. That unnecessarily
+omits neutral nitro compounds and other charge-separated resonance structures.
+The retained comparisons are valid, but coverage is incomplete.
+The maintained script now filters on total molecular charge and single-component
+identity, with explicit numerical checks for nitromethane, ions, and salts.
+Use ../unifac-transfer-results/ for the final complete neutral-molecule assessment.

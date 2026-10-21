@@ -1,0 +1,56 @@
+{
+  "common5_UNIFAC2_minus_UNIFAC": {
+    "predictions": 17713,
+    "solutes": 145,
+    "MAE_difference_log10": -0.000345383695493272,
+    "95pct_paired_solute_bootstrap_CI": [
+      -0.029711952994985573,
+      0.02830421687625688
+    ]
+  },
+  "common5_UNIFAC2_minus_Dortmund": {
+    "predictions": 17713,
+    "solutes": 145,
+    "MAE_difference_log10": -0.06596618285929372,
+    "95pct_paired_solute_bootstrap_CI": [
+      -0.12671080135242865,
+      -0.009798558757744847
+    ]
+  },
+  "common5_UNIFAC2_minus_modified2": {
+    "predictions": 17713,
+    "solutes": 145,
+    "MAE_difference_log10": -0.014314291373210173,
+    "95pct_paired_solute_bootstrap_CI": [
+      -0.05291592761051846,
+      0.025167389264991673
+    ]
+  },
+  "common5_UNIFAC2_minus_NIST": {
+    "predictions": 17713,
+    "solutes": 145,
+    "MAE_difference_log10": -0.14087598297773804,
+    "95pct_paired_solute_bootstrap_CI": [
+      -0.21097604303555917,
+      -0.07910608690068445
+    ]
+  },
+  "common5_UNIFAC2_minus_ideal": {
+    "predictions": 17713,
+    "solutes": 145,
+    "MAE_difference_log10": -0.16951242493439286,
+    "95pct_paired_solute_bootstrap_CI": [
+      -0.25849604837138224,
+      -0.09936559929849338
+    ]
+  },
+  "common6_Lyngby_minus_UNIFAC2": {
+    "predictions": 7647,
+    "solutes": 86,
+    "MAE_difference_log10": -0.005367551534053578,
+    "95pct_paired_solute_bootstrap_CI": [
+      -0.05744357371915681,
+      0.04999670934826665
+    ]
+  }
+}

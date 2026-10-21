@@ -1,0 +1,7 @@
+Pilot run only; not the final assessment.
+
+The 12-solute pilot validated the main BigSolDB computation and execution time.
+Its exploratory AqSolDB results are invalid: a case-sensitive water-density
+lookup missed the density table's "Water" label and produced NaN anchors.
+The maintained benchmark now normalizes that label and explicitly rejects
+missing/nonfinite density values. Use the separate full assessment outputs.

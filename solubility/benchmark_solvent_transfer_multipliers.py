@@ -1,0 +1,392 @@
+"""Compare held-out solvent mean multipliers with saved UNIFAC predictions.
+
+One log multiplier per solvent; no solute descriptors, fitted fusion effects,
+or solvent-pair-specific parameters. Cross-validation keeps every observation
+of a chemical identity together. This script never reruns UNIFAC calculations.
+"""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+import json
+from pathlib import Path
+import time
+
+import numpy as np
+from rdkit import rdBase
+from scipy.sparse.csgraph import connected_components
+
+from benchmark_solubility_transfer import METHODS, SCOPES, prepare, write_csv
+from solubility_paths import DATA_DIR, RESULTS_DIR, verify_manifest, write_manifest
+
+
+CASE_DTYPE = np.dtype([
+    ('case', 'u8'), ('solute', 'u4'), ('scope', 'u1'), ('category', 'u1'),
+    ('reference', 'u2'), ('target', 'u2'), ('log_reference_x', 'f8'),
+    ('log_target_x', 'f8')])
+
+
+def reconstruct(data_dir, results_dir):
+    """Rebuild exact saved case IDs through the authoritative data preparation."""
+    verify_manifest(results_dir/'manifest.json')
+    jobs, solutes, solvents, audit, _ = prepare(data_dir)
+    ordered = sorted(jobs, key=lambda k: (-max(len(b['observations']) for b in jobs[k]), k))
+    solvent_order = sorted(solvents)
+    solvent_indices = {key:i for i,key in enumerate(solvent_order)}
+    cases, training = [], []
+    for solute_index, key in enumerate(ordered):
+        case_index = 0
+        for bundle in jobs[key]:
+            observations = bundle['observations']
+            indices = np.array([solvent_indices[o['solvent']] for o in observations])
+            values = np.log10([o['x'] for o in observations])
+            if bundle['scope'] == 'same_publication':
+                training.append((solute_index, indices, values))
+            references = [0] if bundle.get('anchor_only') else range(len(observations))
+            for reference in references:
+                for target in range(len(observations)):
+                    if reference == target:
+                        continue
+                    ref_water = solvents[observations[reference]['solvent']]['name'] == 'water'
+                    target_water = solvents[observations[target]['solvent']]['name'] == 'water'
+                    category = 0 if ref_water else 1 if target_water else 2
+                    cases.append((solute_index*1000000+case_index, solute_index,
+                                  SCOPES.index(bundle['scope']), category,
+                                  indices[reference], indices[target], values[reference], values[target]))
+                    case_index += 1
+    cases = np.array(cases, dtype=CASE_DTYPE)
+    records = np.load(results_dir/'metric_records.npy')
+    # Validate IDs, identity, scope and values for EVERY saved case, not samples.
+    for method in range(len(METHODS)):
+        rows = np.sort(records[records['method']==method], order='case')
+        assert np.array_equal(rows['case'], cases['case'])
+        assert np.array_equal(rows['solute'], cases['solute'])
+        assert np.array_equal(rows['scope'], cases['scope'])
+        assert np.array_equal(rows['category'], cases['category'])
+        assert np.allclose(rows['ideal_error_log10'], cases['log_reference_x']-cases['log_target_x'], atol=1e-12, rtol=0)
+    metadata = [dict(index=i, inchi=key, name=solutes[key]['name']) for i,key in enumerate(ordered)]
+    solvent_metadata = [dict(index=i, inchi=key, name=solvents[key]['name']) for i,key in enumerate(solvent_order)]
+    return cases, training, records, metadata, solvent_metadata, audit
+
+
+def contributions(training):
+    """Normal equations for equal-solute, equal-group mean pairwise log errors."""
+    count = Counter(solute for solute, _, _ in training)
+    blocks = []
+    for solute, indices, values in training:
+        k = len(indices)
+        centered = np.eye(k)-np.ones((k,k))/k
+        normal = centered*(2/((k-1)*count[solute]))
+        blocks.append((solute, indices, normal, normal@values))
+    return blocks
+
+
+def accumulate(blocks, n_solvents, folds=None, n_folds=1):
+    matrices = np.zeros((n_folds,n_solvents,n_solvents))
+    vectors = np.zeros((n_folds,n_solvents))
+    for solute, indices, matrix, vector in blocks:
+        fold = int(folds[solute]) if folds is not None else 0
+        matrices[fold][np.ix_(indices,indices)] += matrix
+        vectors[fold,indices] += vector
+    return matrices, vectors
+
+
+def fit(normal, rhs, water_index):
+    """Fit connected solvent components without arbitrary unseen-solvent guesses."""
+    normal = (normal+normal.T)/2
+    normal[np.abs(normal)<1e-12] = 0
+    adjacency = normal.copy()
+    np.fill_diagonal(adjacency,0)
+    _, components = connected_components(np.abs(adjacency)>1e-12, directed=False)
+    active = np.diag(normal)>1e-12
+    components[~active] = -1
+    beta = np.full(len(rhs),np.nan)
+    maximum_residual = 0.0
+    for component in np.unique(components[active]):
+        indices = np.flatnonzero(components==component)
+        anchor = water_index if water_index in indices else indices[0]
+        free = indices[indices!=anchor]
+        beta[anchor] = 0
+        beta[free] = np.linalg.solve(normal[np.ix_(free,free)],rhs[free])
+        residual = normal[np.ix_(indices,indices)]@beta[indices]-rhs[indices]
+        maximum_residual = max(maximum_residual,float(np.max(np.abs(residual))))
+    if maximum_residual>1e-8:
+        raise ArithmeticError(f'Normal-equation residual {maximum_residual:g}')
+    return beta, components, maximum_residual
+
+
+def self_check():
+    # Different solids, sources and temperatures can shift intercepts freely.
+    truth = np.array([0.0,0.7,-1.2])
+    training = [(0,np.array([0,1,2]),truth+3),
+                (1,np.array([0,1]),truth[:2]-8),
+                (1,np.array([1,2]),truth[1:]+7)]
+    blocks = contributions(training)
+    a,b = accumulate(blocks,4)
+    beta, components, residual = fit(a[0],b[0],0)
+    assert np.allclose(beta[:3],truth,atol=1e-12)
+    assert np.isnan(beta[3]) and components[3]==-1
+    # Training on the second molecule alone still recovers the same effects.
+    a,b = accumulate([block for block in blocks if block[0]!=0],4)
+    beta,_,_ = fit(a[0],b[0],0)
+    assert np.allclose(beta[:3],truth,atol=1e-12)
+    return {'known_multiplier_recovery':True,'nuisance_intercept_cancellation':True,
+            'held_out_molecule_exclusion':True,'unseen_solvent_rejected':True,
+            'normal_equation_residual':residual}
+
+
+def averages(errors, solutes):
+    """Per-solute moments for every independent split repetition."""
+    if errors.ndim==1:
+        errors = errors[:,None]
+    identities, inverse = np.unique(solutes,return_inverse=True)
+    counts = np.bincount(inverse)
+    moments = []
+    for transform in (np.abs(errors), errors**2, errors,
+                      np.abs(errors)<=np.log10(2), np.abs(errors)<=1):
+        moments.append(np.column_stack([np.bincount(inverse,weights=transform[:,r])/counts
+                                       for r in range(errors.shape[1])]))
+    score = dict(predictions=len(errors),solutes=len(identities),
+                 MAE_log10=float(np.mean(moments[0])),
+                 RMSE_log10=float(np.sqrt(np.mean(moments[1]))),
+                 bias_log10=float(np.mean(moments[2])),
+                 geometric_mean_fold_error=10**float(np.mean(moments[0])),
+                 within_factor_2=float(np.mean(moments[3])),
+                 within_factor_10=float(np.mean(moments[4])))
+    return score, moments[0]
+
+
+def difference_bootstrap(delta, seed, draws):
+    """Resample whole molecules and whole split repetitions, never pair rows."""
+    rng = np.random.default_rng(seed)
+    boot = np.empty(draws)
+    n_solutes, n_repeats = delta.shape
+    for start in range(0,draws,100):
+        stop = min(start+100,draws)
+        compounds = rng.integers(0,n_solutes,(stop-start,n_solutes))
+        repetitions = rng.integers(0,n_repeats,(stop-start,n_repeats))
+        boot[start:stop] = delta[compounds[:,:,None],repetitions[:,None,:]].mean(axis=(1,2))
+    point = float(np.mean(delta))
+    ci = np.quantile(boot,[.025,.975]).tolist()
+    # Two-sided familywise 95% intervals for searching six UNIFAC variants.
+    simultaneous = np.quantile(boot,[.05/(2*len(METHODS)),1-.05/(2*len(METHODS))]).tolist()
+    return dict(UNIFAC_minus_baseline_MAE_log10=point,
+                paired_95pct_CI=ci,
+                paired_familywise_95pct_CI_six_variants=simultaneous,
+                convincingly_beats_baseline=simultaneous[1]<0,
+                baseline_convincingly_better=simultaneous[0]>0,
+                split_MAE_difference_min=float(delta.mean(axis=0).min()),
+                split_MAE_difference_max=float(delta.mean(axis=0).max()))
+
+
+def compare(rows, case_positions, baseline_errors, raw_errors, seed, draws):
+    positions = case_positions[np.searchsorted(case_positions['case'],rows['case'])]['position']
+    supported = np.isfinite(baseline_errors[positions]).all(axis=1)
+    rows, positions = rows[supported], positions[supported]
+    if not len(rows):
+        return {'predictions':0}
+    unifac, u = averages(rows['error_log10'],rows['solute'])
+    baseline, b = averages(baseline_errors[positions],rows['solute'])
+    raw, raw_b = averages(raw_errors[positions],rows['solute'])
+    return dict(UNIFAC=unifac,baseline=baseline,uncapped_baseline=raw,
+                paired=difference_bootstrap(u-b,seed,draws),
+                paired_uncapped=difference_bootstrap(u-raw_b,seed,draws),
+                baseline_unsupported_cases_removed=int(np.sum(~supported)))
+
+
+def comparisons(records, cases, errors, raw_errors, seed, draws):
+    positions = np.empty(len(cases),dtype=[('case','u8'),('position','u4')])
+    positions['case'],positions['position'] = cases['case'],np.arange(len(cases))
+    output = {}
+    for scope_index,scope in enumerate(SCOPES):
+        selected = records[(records['scope']==scope_index)&(records['status']==0)]
+        common_six = selected['case'][selected['method']==0]
+        common_five = common_six
+        for method in range(1,len(METHODS)):
+            ids = selected['case'][selected['method']==method]
+            common_six = np.intersect1d(common_six,ids)
+            if method<5:
+                common_five = np.intersect1d(common_five,ids)
+        scope_result = {}
+        for method,name in enumerate(METHODS):
+            rows = selected[selected['method']==method]
+            six = rows[np.isin(rows['case'],common_six)]
+            five = rows[np.isin(rows['case'],common_five)]
+            result = {'own_coverage':compare(rows,positions,errors,raw_errors,seed,draws),
+                      'common_all_six':compare(six,positions,errors,raw_errors,seed,draws)}
+            if method<5:
+                result['common_five'] = compare(five,positions,errors,raw_errors,seed,draws)
+                result['categories_common_five'] = {
+                    category:compare(five[five['category']==i],positions,errors,raw_errors,seed,draws)
+                    for i,category in enumerate(('water_to_nonwater','nonwater_to_water','nonwater_to_nonwater'))}
+            scope_result[name] = result
+        output[scope] = scope_result
+    return output
+
+
+def markdown_table(rows, cohort):
+    lines = ['| Variant | Transfers | Molecules | UNIFAC MAE | Multiplier MAE | Difference | Simultaneous 95% CI |',
+             '|---|---:|---:|---:|---:|---:|---|']
+    for name,values in rows.items():
+        if cohort not in values or 'paired' not in values[cohort]:
+            continue
+        row = values[cohort]
+        lo,hi = row['paired']['paired_familywise_95pct_CI_six_variants']
+        lines.append(f'| {name} | {row["UNIFAC"]["predictions"]:,} | {row["UNIFAC"]["solutes"]} | '
+                     f'{row["UNIFAC"]["MAE_log10"]:.4f} | {row["baseline"]["MAE_log10"]:.4f} | '
+                     f'{row["paired"]["UNIFAC_minus_baseline_MAE_log10"]:+.4f} | {lo:+.4f} to {hi:+.4f} |')
+    return lines
+
+
+def report(output, summary):
+    lines = ['# Solvent mean transfer multipliers versus UNIFAC','',
+             'One positive factor M_s per solvent: x_pred = x_reference M_target/M_reference. '
+             'The physical main baseline caps x_pred at 1. The literal uncapped multiplier is also scored as a sensitivity check.','',
+             '## Fitting and held-out evaluation','',
+             '- Fit solvent effects beta_s = log10(M_s) by least squares to training log-solubility differences. '
+             'This estimates geometric mean multiplicative effects, rather than allowing a few enormous raw ratios to dominate.',
+             '- Training observations use the prior benchmark’s same-publication, exact-temperature room-temperature groups and deduplication. '
+             'Each molecule has equal total weight; each group within a molecule has equal weight; each distinct solvent pair within a group has equal weight.',
+             '- The objective is the mean squared error of observed pairwise log ratios minus beta_target-beta_reference. '
+             'This cancels group-specific solid/temperature/source intercepts without fitting or using a target molecule’s solid effect.',
+             f'- {summary["folds"]}-fold cross-validation, repeated {summary["repeats"]} times; seed {summary["seed"]}. '
+             'All temperatures, sources and solvents of a chemical identity remain in the same fold. '
+             'Training includes eligible molecules that UNIFAC cannot represent; it is not selected using UNIFAC success.',
+             '- Fit one shared set of solvent factors per training fold for all variants. No solute features, solvent-pair-specific factors, regularization or tuned hyperparameters.',
+             '- Unseen solvents and disconnected solvent components are unavailable, rather than guessed. '
+             'Main comparisons require baseline availability in every repeat and use identical UNIFAC/baseline cases.',
+             '- Score the mean held-out loss across repeats, not the loss of an ensemble-averaged prediction. '
+             'Every molecule receives equal evaluation weight, matching the previous benchmark.',
+             f'- Bootstrap {summary["bootstrap_draws"]:,} times, resampling whole molecules and whole split repetitions. '
+             'Differences are UNIFAC MAE minus baseline MAE; negative favors UNIFAC. '
+             '“Convincingly” requires the upper endpoint of the simultaneous familywise 95% interval for six variants to be below zero.',
+             '- Statistical intervals condition on these fitted cross-validation predictions; they do not establish performance outside this dataset or remove the previous solid-form/pH and model-training-overlap limitations.','',
+             '## Main: each variant on its available compounds','',
+             'Each row compares exactly the same cases for UNIFAC and the multiplier. Across rows, compound coverage differs.','',
+             *markdown_table(summary['comparisons']['same_publication'],'own_coverage'),'','## Same cases for all six variants','',
+             *markdown_table(summary['comparisons']['same_publication'],'common_all_six'),'','## Larger common five-variant cohort','',
+             *markdown_table(summary['comparisons']['same_publication'],'common_five'),'','## Directional results on the common five-variant cohort','',
+             '| Variant | Direction | Transfers | Molecules | UNIFAC MAE | Multiplier MAE | Difference | Simultaneous 95% CI |',
+             '|---|---|---:|---:|---:|---:|---:|---|']
+    for name,values in summary['comparisons']['same_publication'].items():
+        for category,row in values.get('categories_common_five',{}).items():
+            if 'paired' not in row:
+                continue
+            lo,hi=row['paired']['paired_familywise_95pct_CI_six_variants']
+            lines.append(f'| {name} | {category} | {row["UNIFAC"]["predictions"]:,} | {row["UNIFAC"]["solutes"]} | '
+                         f'{row["UNIFAC"]["MAE_log10"]:.4f} | {row["baseline"]["MAE_log10"]:.4f} | '
+                         f'{row["paired"]["UNIFAC_minus_baseline_MAE_log10"]:+.4f} | {lo:+.4f} to {hi:+.4f} |')
+    for scope in SCOPES[1:]:
+        lines += ['',f'## Sensitivity: {scope}','',
+                  'The same molecule-held-out factors trained on the main same-publication data are used here. '
+                  'AqSolDB remains approximate because temperature, pH and solid form are unverified.','',
+                  *markdown_table(summary['comparisons'][scope],'common_all_six')]
+    lines += ['','## Audit','', '```json',json.dumps(summary['audit'],indent=2),'```','',
+              '## Reproducibility','',
+              '- folds.csv contains each molecule’s held-out fold for every repeat.',
+              '- fold_multipliers.csv contains every fitted fold’s solvent factors and connected component.',
+              '- full_data_multipliers.csv is a descriptive fit on all molecules, relative to water where connected; it was not used to score held-out predictions.',
+              '- cases.csv and baseline_errors.npz preserve case identities and every held-out prediction error.',
+              '- summary.json contains capped/uncapped errors, paired ordinary and simultaneous confidence intervals, and split-to-split ranges.',
+              '- manifest.json contains input/code hashes and the exact command arguments.',
+              '- Existing UNIFAC predictions were reused. No UNIFAC model was rerun and no production code or source data was modified.','']
+    (output/'REPORT.md').write_text('\n'.join(lines))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--data-dir',type=Path,default=DATA_DIR)
+    parser.add_argument('--results-dir',type=Path,default=RESULTS_DIR/'unifac-transfer-results')
+    parser.add_argument('--output-dir',type=Path,default=RESULTS_DIR/'solvent-multiplier-results')
+    parser.add_argument('--folds',type=int,default=5)
+    parser.add_argument('--repeats',type=int,default=10)
+    parser.add_argument('--bootstrap-draws',type=int,default=10000)
+    parser.add_argument('--seed',type=int,default=20261014)
+    args = parser.parse_args()
+    if args.folds<2 or args.repeats<2 or args.bootstrap_draws<1000:
+        parser.error('Use at least two folds/repeats and 1,000 bootstrap draws')
+    started = time.monotonic()
+    rdBase.DisableLog('rdApp.*')
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True,exist_ok=False)
+    checks = self_check()
+    print('Synthetic factor recovery and held-out exclusion checks passed',flush=True)
+    data_dir = args.data_dir
+    cases,training,records,molecules,solvents,data_audit = reconstruct(data_dir,args.results_dir)
+    n_solutes,n_solvents = len(molecules),len(solvents)
+    if args.folds>n_solutes:
+        parser.error('More folds than molecules')
+    blocks = contributions(training)
+    water = next(row['index'] for row in solvents if row['name']=='water')
+    error = np.full((len(cases),args.repeats),np.nan)
+    raw_error = error.copy()
+    fold_rows,multiplier_rows,fold_audit = [],[],[]
+    max_residual = 0.0
+    rng = np.random.default_rng(args.seed)
+    for repeat in range(args.repeats):
+        order = rng.permutation(n_solutes)
+        folds = np.empty(n_solutes,dtype=int)
+        folds[order] = np.arange(n_solutes)%args.folds
+        matrices,vectors = accumulate(blocks,n_solvents,folds,args.folds)
+        total_matrix,total_vector = matrices.sum(axis=0),vectors.sum(axis=0)
+        for fold in range(args.folds):
+            beta,components,residual = fit(total_matrix-matrices[fold],total_vector-vectors[fold],water)
+            max_residual = max(max_residual,residual)
+            indices = np.flatnonzero(folds[cases['solute']]==fold)
+            reference,target = cases['reference'][indices],cases['target'][indices]
+            supported = (components[reference]>=0)&(components[reference]==components[target])
+            indices,reference,target = indices[supported],reference[supported],target[supported]
+            prediction = cases['log_reference_x'][indices]+beta[target]-beta[reference]
+            raw_error[indices,repeat] = prediction-cases['log_target_x'][indices]
+            error[indices,repeat] = np.minimum(prediction,0)-cases['log_target_x'][indices]
+            fold_audit.append(dict(repeat=repeat,fold=fold,held_out_molecules=int(np.sum(folds==fold)),
+                                   supported_cases=len(indices),unsupported_cases=int(np.sum(~supported)),
+                                   predictions_above_one_before_capping=int(np.sum(prediction>0))))
+            for row in solvents:
+                index = row['index']
+                multiplier_rows.append(dict(repeat=repeat,fold=fold,**row,
+                                            log10_multiplier=float(beta[index]) if np.isfinite(beta[index]) else '',
+                                            multiplier=10**float(beta[index]) if np.isfinite(beta[index]) else '',
+                                            connected_component=int(components[index]),
+                                            water_connected=bool(components[index]>=0 and components[index]==components[water])))
+        fold_rows.extend(dict(repeat=repeat,fold=int(folds[row['index']]),**row) for row in molecules)
+        print(f'Completed repeat {repeat+1}/{args.repeats} in {time.monotonic()-started:.1f}s',flush=True)
+    finite = np.isfinite(error)
+    assert np.all(np.abs(error[finite])<=np.abs(raw_error[finite])+1e-12)
+    np.savez_compressed(output/'baseline_errors.npz',capped=error,uncapped=raw_error,case=cases['case'])
+    write_csv(output/'cases.csv',({name:row[name].item() for name in cases.dtype.names} for row in cases))
+    write_csv(output/'folds.csv',fold_rows)
+    write_csv(output/'fold_multipliers.csv',multiplier_rows)
+    a,b = accumulate(blocks,n_solvents)
+    beta,components,residual = fit(a[0],b[0],water)
+    write_csv(output/'full_data_multipliers.csv',[
+        dict(**row,log10_multiplier=float(beta[row['index']]) if np.isfinite(beta[row['index']]) else '',
+             multiplier=10**float(beta[row['index']]) if np.isfinite(beta[row['index']]) else '',
+             connected_component=int(components[row['index']]),
+             water_connected=bool(components[row['index']]>=0 and components[row['index']]==components[water]))
+        for row in solvents])
+    print('Held-out predictions saved; calculating paired confidence intervals',flush=True)
+    summary = dict(folds=args.folds,repeats=args.repeats,seed=args.seed,bootstrap_draws=args.bootstrap_draws,
+                   checks=checks,audit=dict(data_audit=data_audit,solvents=n_solvents,
+                                           molecules=n_solutes,training_groups=len(training),
+                                           training_molecules=len({t[0] for t in training}),
+                                           cases=len(cases),baseline_cases_supported_all_repeats=int(np.isfinite(error).all(axis=1).sum()),
+                                           maximum_normal_equation_residual=max(max_residual,residual),
+                                           fold_details=fold_audit),
+                   comparisons=comparisons(records,cases,error,raw_error,args.seed,args.bootstrap_draws))
+    summary['elapsed_seconds'] = time.monotonic()-started
+    (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    fingerprints = [Path(__file__),Path(__file__).with_name('benchmark_solubility_transfer.py'),
+                    args.results_dir/'metric_records.npy',args.results_dir/'manifest.json',
+                    data_dir/'BigSolDBv2.0.csv',data_dir/'curated-solubility-dataset.csv',data_dir/'BigSolDBv2.0_densities.csv']
+    write_manifest(output/'manifest.json', vars(args), fingerprints)
+    report(output,summary)
+    for name,values in summary['comparisons']['same_publication'].items():
+        row = values['own_coverage']
+        print(name,json.dumps(row),flush=True)
+    print(f'Complete: {output}; elapsed {summary["elapsed_seconds"]:.1f}s',flush=True)
+
+
+if __name__=='__main__':
+    main()

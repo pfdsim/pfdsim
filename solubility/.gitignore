@@ -1,0 +1,6 @@
+# Existing generated files larger than 50 MB (50,000,000 bytes) stay local.
+/results/unifac-transfer-20261014/metric_records.npy
+/results/unifac-transfer-20261014/predictions.csv
+/results/unifac-transfer-pilot/predictions.csv
+/results/unifac-transfer-results/metric_records.npy
+/results/unifac-transfer-results/predictions.csv

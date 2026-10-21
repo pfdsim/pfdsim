@@ -1,0 +1,19 @@
+{
+  "compiled_readable_agreement": [
+    "UNIFAC",
+    "UNIFAC2",
+    "UNIFDMD",
+    "UNIFM2",
+    "UNIFNIST",
+    "UNIFLBY"
+  ],
+  "identical_component_ideal_transfer": [
+    "UNIFAC",
+    "UNIFAC2",
+    "UNIFDMD",
+    "UNIFM2",
+    "UNIFNIST",
+    "UNIFLBY"
+  ],
+  "root_log_residual_tolerance": 1e-08
+}

@@ -1,0 +1,1231 @@
+{
+  "minimum_molecules": 20,
+  "seed": 20261014,
+  "bootstrap_draws": 10000,
+  "checks": {
+    "holm_known_result": true,
+    "relative_network_recovers_known_bias": true
+  },
+  "relative_numerical_audit": [
+    {
+      "method": "UNIFNIST",
+      "status": "ok",
+      "anchor": "ethanol",
+      "core_solvents": 15,
+      "connected_solvents": 15,
+      "fit_molecules": 164,
+      "unordered_pairs": 7145,
+      "bootstrap_draws": 2000,
+      "disconnected_bootstrap_draws": 0,
+      "maximum_normal_equation_residual": 7.105427357601002e-15
+    },
+    {
+      "method": "UNIFDMD",
+      "status": "ok",
+      "anchor": "ethanol",
+      "core_solvents": 20,
+      "connected_solvents": 20,
+      "fit_molecules": 227,
+      "unordered_pairs": 12009,
+      "bootstrap_draws": 2000,
+      "disconnected_bootstrap_draws": 0,
+      "maximum_normal_equation_residual": 3.1086244689504383e-15
+    },
+    {
+      "method": "UNIFAC",
+      "status": "ok",
+      "anchor": "ethanol",
+      "core_solvents": 22,
+      "connected_solvents": 22,
+      "fit_molecules": 246,
+      "unordered_pairs": 15682,
+      "bootstrap_draws": 2000,
+      "disconnected_bootstrap_draws": 0,
+      "maximum_normal_equation_residual": 1.2434497875801753e-14
+    },
+    {
+      "method": "UNIFLBY",
+      "status": "ok",
+      "anchor": "ethanol",
+      "core_solvents": 11,
+      "connected_solvents": 11,
+      "fit_molecules": 105,
+      "unordered_pairs": 3305,
+      "bootstrap_draws": 2000,
+      "disconnected_bootstrap_draws": 0,
+      "maximum_normal_equation_residual": 1.3322676295501878e-15
+    },
+    {
+      "method": "UNIFAC2",
+      "status": "ok",
+      "anchor": "ethanol",
+      "core_solvents": 30,
+      "connected_solvents": 30,
+      "fit_molecules": 339,
+      "unordered_pairs": 32289,
+      "bootstrap_draws": 2000,
+      "disconnected_bootstrap_draws": 0,
+      "maximum_normal_equation_residual": 1.4210854715202004e-14
+    },
+    {
+      "method": "UNIFM2",
+      "status": "ok",
+      "anchor": "ethanol",
+      "core_solvents": 30,
+      "connected_solvents": 30,
+      "fit_molecules": 342,
+      "unordered_pairs": 31767,
+      "bootstrap_draws": 2000,
+      "disconnected_bootstrap_draws": 0,
+      "maximum_normal_equation_residual": 7.549516567451064e-15
+    }
+  ],
+  "significance_counts": {
+    "finite_0.01": {
+      "UNIFAC": {
+        "target": {
+          "tested": 12,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 12,
+          "significant": 2
+        }
+      },
+      "UNIFAC2": {
+        "target": {
+          "tested": 17,
+          "significant": 3
+        },
+        "reference": {
+          "tested": 17,
+          "significant": 2
+        }
+      },
+      "UNIFDMD": {
+        "target": {
+          "tested": 9,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 8,
+          "significant": 1
+        }
+      },
+      "UNIFM2": {
+        "target": {
+          "tested": 18,
+          "significant": 4
+        },
+        "reference": {
+          "tested": 17,
+          "significant": 8
+        }
+      },
+      "UNIFNIST": {
+        "target": {
+          "tested": 8,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 7,
+          "significant": 0
+        }
+      },
+      "UNIFLBY": {
+        "target": {
+          "tested": 6,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 6,
+          "significant": 0
+        }
+      }
+    },
+    "finite_0.05": {
+      "UNIFAC": {
+        "target": {
+          "tested": 16,
+          "significant": 4
+        },
+        "reference": {
+          "tested": 15,
+          "significant": 2
+        }
+      },
+      "UNIFAC2": {
+        "target": {
+          "tested": 23,
+          "significant": 5
+        },
+        "reference": {
+          "tested": 22,
+          "significant": 2
+        }
+      },
+      "UNIFDMD": {
+        "target": {
+          "tested": 16,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 16,
+          "significant": 2
+        }
+      },
+      "UNIFM2": {
+        "target": {
+          "tested": 23,
+          "significant": 6
+        },
+        "reference": {
+          "tested": 23,
+          "significant": 5
+        }
+      },
+      "UNIFNIST": {
+        "target": {
+          "tested": 13,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 12,
+          "significant": 0
+        }
+      },
+      "UNIFLBY": {
+        "target": {
+          "tested": 8,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 7,
+          "significant": 0
+        }
+      }
+    },
+    "finite_all": {
+      "UNIFAC": {
+        "target": {
+          "tested": 23,
+          "significant": 5
+        },
+        "reference": {
+          "tested": 22,
+          "significant": 4
+        }
+      },
+      "UNIFAC2": {
+        "target": {
+          "tested": 31,
+          "significant": 7
+        },
+        "reference": {
+          "tested": 30,
+          "significant": 4
+        }
+      },
+      "UNIFDMD": {
+        "target": {
+          "tested": 21,
+          "significant": 2
+        },
+        "reference": {
+          "tested": 20,
+          "significant": 2
+        }
+      },
+      "UNIFM2": {
+        "target": {
+          "tested": 31,
+          "significant": 6
+        },
+        "reference": {
+          "tested": 30,
+          "significant": 9
+        }
+      },
+      "UNIFNIST": {
+        "target": {
+          "tested": 16,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 15,
+          "significant": 2
+        }
+      },
+      "UNIFLBY": {
+        "target": {
+          "tested": 12,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 11,
+          "significant": 0
+        }
+      }
+    },
+    "infinite_0.01": {
+      "UNIFAC": {
+        "target": {
+          "tested": 12,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 12,
+          "significant": 2
+        }
+      },
+      "UNIFAC2": {
+        "target": {
+          "tested": 17,
+          "significant": 4
+        },
+        "reference": {
+          "tested": 17,
+          "significant": 2
+        }
+      },
+      "UNIFDMD": {
+        "target": {
+          "tested": 9,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 8,
+          "significant": 1
+        }
+      },
+      "UNIFM2": {
+        "target": {
+          "tested": 18,
+          "significant": 4
+        },
+        "reference": {
+          "tested": 17,
+          "significant": 8
+        }
+      },
+      "UNIFNIST": {
+        "target": {
+          "tested": 8,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 7,
+          "significant": 0
+        }
+      },
+      "UNIFLBY": {
+        "target": {
+          "tested": 6,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 6,
+          "significant": 0
+        }
+      }
+    },
+    "infinite_0.05": {
+      "UNIFAC": {
+        "target": {
+          "tested": 16,
+          "significant": 2
+        },
+        "reference": {
+          "tested": 15,
+          "significant": 2
+        }
+      },
+      "UNIFAC2": {
+        "target": {
+          "tested": 23,
+          "significant": 5
+        },
+        "reference": {
+          "tested": 22,
+          "significant": 2
+        }
+      },
+      "UNIFDMD": {
+        "target": {
+          "tested": 16,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 16,
+          "significant": 2
+        }
+      },
+      "UNIFM2": {
+        "target": {
+          "tested": 23,
+          "significant": 6
+        },
+        "reference": {
+          "tested": 23,
+          "significant": 5
+        }
+      },
+      "UNIFNIST": {
+        "target": {
+          "tested": 13,
+          "significant": 1
+        },
+        "reference": {
+          "tested": 12,
+          "significant": 0
+        }
+      },
+      "UNIFLBY": {
+        "target": {
+          "tested": 8,
+          "significant": 0
+        },
+        "reference": {
+          "tested": 7,
+          "significant": 0
+        }
+      }
+    }
+  },
+  "primary_significant_target_biases": [
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC",
+      "role": "target",
+      "solvent_index": 73,
+      "transfers": 1002,
+      "molecules": 42,
+      "bias_log10": -0.8977020855282092,
+      "geometric_prediction_ratio": 0.12656042206259424,
+      "median_molecule_bias_log10": -0.7025576433922363,
+      "fraction_molecules_overpredicted": 0.047619047619047616,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.15147834252326836,
+      "p_mean": 5.508306602746131e-07,
+      "p_sign": 4.1109160520136356e-10,
+      "t_CI95_low": -1.2036188043885017,
+      "t_CI95_high": -0.5917853666679167,
+      "bootstrap_CI95_low": -1.217751677517556,
+      "bootstrap_CI95_high": -0.6370113483231384,
+      "p_mean_Holm": 0.00013164852780563253,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.0359508451074362e-07,
+      "solvent": "1,4-dioxane"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC",
+      "role": "target",
+      "solvent_index": 70,
+      "transfers": 651,
+      "molecules": 35,
+      "bias_log10": -0.9069330690507268,
+      "geometric_prediction_ratio": 0.12389875173949691,
+      "median_molecule_bias_log10": -0.727913497248497,
+      "fraction_molecules_overpredicted": 0.0,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.13816718350230822,
+      "p_mean": 1.6097896123569734e-07,
+      "p_sign": 5.820766091346741e-11,
+      "t_CI95_low": -1.1877225690911863,
+      "t_CI95_high": -0.6261435690102672,
+      "bootstrap_CI95_low": -1.1962681760978893,
+      "bootstrap_CI95_high": -0.6633300348484091,
+      "p_mean_Holm": 3.9439845502745846e-05,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.4842953532934189e-08,
+      "solvent": "THF"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC",
+      "role": "target",
+      "solvent_index": 24,
+      "transfers": 1756,
+      "molecules": 76,
+      "bias_log10": 0.3939939968025904,
+      "geometric_prediction_ratio": 2.47738781277983,
+      "median_molecule_bias_log10": 0.3885389111963742,
+      "fraction_molecules_overpredicted": 0.8026315789473685,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.05254960667560717,
+      "p_mean": 1.0725250101561979e-10,
+      "p_sign": 9.842847414734726e-08,
+      "t_CI95_low": 0.2893098121521428,
+      "t_CI95_high": 0.498678181453038,
+      "bootstrap_CI95_low": 0.2893912203307172,
+      "bootstrap_CI95_high": 0.49761101964489635,
+      "p_mean_Holm": 2.681312525390495e-08,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 2.372126226951069e-05,
+      "solvent": "acetonitrile"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC",
+      "role": "target",
+      "solvent_index": 191,
+      "transfers": 3137,
+      "molecules": 161,
+      "bias_log10": 0.18295776188890533,
+      "geometric_prediction_ratio": 1.523904536442593,
+      "median_molecule_bias_log10": 0.15789876959065827,
+      "fraction_molecules_overpredicted": 0.6770186335403726,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.04799224675928425,
+      "p_mean": 0.00019616711474517958,
+      "p_sign": 8.2883652550846e-06,
+      "t_CI95_low": 0.0881777988960516,
+      "t_CI95_high": 0.2777377248817591,
+      "bootstrap_CI95_low": 0.0892476460028002,
+      "bootstrap_CI95_high": 0.27317546955555516,
+      "p_mean_Holm": 0.043549099473429866,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.0019229007391796272,
+      "solvent": "methanol"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC",
+      "role": "target",
+      "solvent_index": 47,
+      "transfers": 3243,
+      "molecules": 142,
+      "bias_log10": -0.10310989854657311,
+      "geometric_prediction_ratio": 0.7886605212252119,
+      "median_molecule_bias_log10": -0.07948966273067165,
+      "fraction_molecules_overpredicted": 0.31690140845070425,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.020816105191730303,
+      "p_mean": 2.0566678402860705e-06,
+      "p_sign": 1.5219409544281678e-05,
+      "t_CI95_low": -0.1442619123708277,
+      "t_CI95_high": -0.06195788472231852,
+      "bootstrap_CI95_low": -0.14421686022986666,
+      "bootstrap_CI95_high": -0.06253389827462741,
+      "p_mean_Holm": 0.00047920360678665444,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.003500464195184786,
+      "solvent": "n-propanol"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 73,
+      "transfers": 2272,
+      "molecules": 77,
+      "bias_log10": -0.2863352110663806,
+      "geometric_prediction_ratio": 0.5172074702237087,
+      "median_molecule_bias_log10": -0.26978319447791227,
+      "fraction_molecules_overpredicted": 0.2077922077922078,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.049636929806544994,
+      "p_mean": 1.6340160090672524e-07,
+      "p_sign": 2.4176312825015983e-07,
+      "t_CI95_low": -0.3851957245889311,
+      "t_CI95_high": -0.18747469754383012,
+      "bootstrap_CI95_low": -0.3840221620947269,
+      "bootstrap_CI95_high": -0.18987129221128288,
+      "p_mean_Holm": 3.9869990621240955e-05,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 5.729786139528788e-05,
+      "solvent": "1,4-dioxane"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 70,
+      "transfers": 952,
+      "molecules": 46,
+      "bias_log10": -0.7046490992645518,
+      "geometric_prediction_ratio": 0.19740170558768805,
+      "median_molecule_bias_log10": -0.5703861408119626,
+      "fraction_molecules_overpredicted": 0.06521739130434782,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.11400596231589068,
+      "p_mean": 1.6821664940147909e-07,
+      "p_sign": 4.6219383875722997e-10,
+      "t_CI95_low": -0.9342688943176092,
+      "t_CI95_high": -0.4750293042114943,
+      "bootstrap_CI95_low": -0.9360187943625052,
+      "bootstrap_CI95_high": -0.4966933933579701,
+      "p_mean_Holm": 4.087664580455942e-05,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.1554845968930749e-07,
+      "solvent": "THF"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 24,
+      "transfers": 4726,
+      "molecules": 168,
+      "bias_log10": 0.2864726807442713,
+      "geometric_prediction_ratio": 1.9340721921535087,
+      "median_molecule_bias_log10": 0.2550328312482161,
+      "fraction_molecules_overpredicted": 0.75,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.037996354642196285,
+      "p_mean": 2.862437199939427e-12,
+      "p_sign": 6.009507673225859e-11,
+      "t_CI95_low": 0.21145758130124503,
+      "t_CI95_high": 0.36148778018729755,
+      "bootstrap_CI95_low": 0.21145665681370074,
+      "bootstrap_CI95_high": 0.35959414451091115,
+      "p_mean_Holm": 7.270590487846144e-10,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.5264149489993682e-08,
+      "solvent": "acetonitrile"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 30,
+      "transfers": 6386,
+      "molecules": 285,
+      "bias_log10": -0.12998658688773285,
+      "geometric_prediction_ratio": 0.7413331368970061,
+      "median_molecule_bias_log10": -0.1314591762064843,
+      "fraction_molecules_overpredicted": 0.3333333333333333,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.026092641237834262,
+      "p_mean": 1.0963545877144925e-06,
+      "p_sign": 1.9210936205420857e-08,
+      "t_CI95_low": -0.18134609358541068,
+      "t_CI95_high": -0.07862708019005502,
+      "bootstrap_CI95_low": -0.18174419664488836,
+      "bootstrap_CI95_high": -0.07918572821150083,
+      "p_mean_Holm": 0.00025983603728833474,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 4.687468434122689e-06,
+      "solvent": "ethanol"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 191,
+      "transfers": 5546,
+      "molecules": 236,
+      "bias_log10": 0.3043192643332431,
+      "geometric_prediction_ratio": 2.015205149867061,
+      "median_molecule_bias_log10": 0.17742554651116688,
+      "fraction_molecules_overpredicted": 0.6991525423728814,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.036845799138508564,
+      "p_mean": 1.0677418005954793e-14,
+      "p_sign": 8.535603336132589e-10,
+      "t_CI95_low": 0.23172898469815795,
+      "t_CI95_high": 0.3769095439683282,
+      "bootstrap_CI95_low": 0.232911620992267,
+      "bootstrap_CI95_high": 0.37741172759982755,
+      "p_mean_Holm": 2.7440964275303818e-12,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 2.1253652306970148e-07,
+      "solvent": "methanol"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 93,
+      "transfers": 1126,
+      "molecules": 47,
+      "bias_log10": -0.1354893777708474,
+      "geometric_prediction_ratio": 0.7319992266472642,
+      "median_molecule_bias_log10": -0.1388063225813263,
+      "fraction_molecules_overpredicted": 0.2127659574468085,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.03347898031662095,
+      "p_mean": 0.00019664942965625257,
+      "p_sign": 9.848878492846323e-05,
+      "t_CI95_low": -0.2028790699064839,
+      "t_CI95_high": -0.0680996856352109,
+      "bootstrap_CI95_low": -0.20051951015185907,
+      "bootstrap_CI95_high": -0.07001250467855301,
+      "p_mean_Holm": 0.043549099473429866,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.021864510254118837,
+      "solvent": "n-pentanol"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFAC2",
+      "role": "target",
+      "solvent_index": 194,
+      "transfers": 2664,
+      "molecules": 136,
+      "bias_log10": -1.0686363392945284,
+      "geometric_prediction_ratio": 0.08538147648577764,
+      "median_molecule_bias_log10": -0.64719922304821,
+      "fraction_molecules_overpredicted": 0.3235294117647059,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.1871726243249055,
+      "p_mean": 6.89974093302887e-08,
+      "p_sign": 4.7096705279504535e-05,
+      "t_CI95_low": -1.438806192932498,
+      "t_CI95_high": -0.6984664856565589,
+      "bootstrap_CI95_low": -1.451708374016328,
+      "bootstrap_CI95_high": -0.7116727567548292,
+      "p_mean_Holm": 1.704236010458131e-05,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.010643855393168025,
+      "solvent": "water"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFDMD",
+      "role": "target",
+      "solvent_index": 75,
+      "transfers": 2503,
+      "molecules": 130,
+      "bias_log10": -0.21886210250604668,
+      "geometric_prediction_ratio": 0.6041404260244543,
+      "median_molecule_bias_log10": -0.05881905665609605,
+      "fraction_molecules_overpredicted": 0.4,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.0566839325103062,
+      "p_mean": 0.00017766852574567176,
+      "p_sign": 0.027944840955287726,
+      "t_CI95_low": -0.33101265125104484,
+      "t_CI95_high": -0.10671155376104854,
+      "bootstrap_CI95_low": -0.336292316458042,
+      "bootstrap_CI95_high": -0.11374577405527872,
+      "p_mean_Holm": 0.039797749767030474,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.0,
+      "solvent": "ethyl acetate"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFDMD",
+      "role": "target",
+      "solvent_index": 194,
+      "transfers": 1017,
+      "molecules": 67,
+      "bias_log10": -1.0767120569296285,
+      "geometric_prediction_ratio": 0.08380847594059028,
+      "median_molecule_bias_log10": -0.787174402384938,
+      "fraction_molecules_overpredicted": 0.29850746268656714,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.2064739411313488,
+      "p_mean": 1.9898791561478293e-06,
+      "p_sign": 0.0013071686857635996,
+      "t_CI95_low": -1.4889505812333337,
+      "t_CI95_high": -0.6644735326259232,
+      "bootstrap_CI95_low": -1.483826295439496,
+      "bootstrap_CI95_high": -0.6831760337460393,
+      "p_mean_Holm": 0.00046563172253859204,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.2679695805815379,
+      "solvent": "water"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFM2",
+      "role": "target",
+      "solvent_index": 70,
+      "transfers": 941,
+      "molecules": 46,
+      "bias_log10": -0.7483478568072792,
+      "geometric_prediction_ratio": 0.17850572249898308,
+      "median_molecule_bias_log10": -0.5441823297815225,
+      "fraction_molecules_overpredicted": 0.043478260869565216,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.13282152019983373,
+      "p_mean": 1.086539680239362e-06,
+      "p_sign": 3.0752289603697136e-11,
+      "t_CI95_low": -1.01586413075807,
+      "t_CI95_high": -0.48083158285648836,
+      "bootstrap_CI95_low": -1.0195101272604092,
+      "bootstrap_CI95_high": -0.5110616437251104,
+      "p_mean_Holm": 0.00025859644389696816,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 7.872586138546467e-09,
+      "solvent": "THF"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFM2",
+      "role": "target",
+      "solvent_index": 24,
+      "transfers": 4694,
+      "molecules": 171,
+      "bias_log10": 0.20382567417564518,
+      "geometric_prediction_ratio": 1.5989160947955803,
+      "median_molecule_bias_log10": 0.19064873252599024,
+      "fraction_molecules_overpredicted": 0.6432748538011696,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.036969802799429706,
+      "p_mean": 1.2881693944746606e-07,
+      "p_sign": 0.0002210806917028136,
+      "t_CI95_low": 0.13084666577174872,
+      "t_CI95_high": 0.2768046825795416,
+      "bootstrap_CI95_low": 0.13261605199224824,
+      "bootstrap_CI95_high": 0.2751170229636147,
+      "p_mean_Holm": 3.168896710407665e-05,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.04731126802440211,
+      "solvent": "acetonitrile"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFM2",
+      "role": "target",
+      "solvent_index": 75,
+      "transfers": 5758,
+      "molecules": 231,
+      "bias_log10": -0.44777734895221044,
+      "geometric_prediction_ratio": 0.3566339231439896,
+      "median_molecule_bias_log10": -0.2686004597464728,
+      "fraction_molecules_overpredicted": 0.19913419913419914,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.043418353189177396,
+      "p_mean": 9.613659175497141e-21,
+      "p_sign": 6.066225081292373e-21,
+      "t_CI95_low": -0.5333259097841259,
+      "t_CI95_high": -0.36222878812029496,
+      "bootstrap_CI95_low": -0.534279823413762,
+      "bootstrap_CI95_high": -0.36476692092429325,
+      "p_mean_Holm": 2.509165044804754e-18,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.5832847462173093e-18,
+      "solvent": "ethyl acetate"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFM2",
+      "role": "target",
+      "solvent_index": 191,
+      "transfers": 5551,
+      "molecules": 239,
+      "bias_log10": 0.36318127649350207,
+      "geometric_prediction_ratio": 2.307710236472418,
+      "median_molecule_bias_log10": 0.25678679377932984,
+      "fraction_molecules_overpredicted": 0.7782426778242678,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.039390865731787544,
+      "p_mean": 1.6388804376654537e-17,
+      "p_sign": 1.6276838450094043e-18,
+      "t_CI95_low": 0.2855819985696866,
+      "t_CI95_high": 0.44078055441731756,
+      "bootstrap_CI95_low": 0.28553033485635987,
+      "bootstrap_CI95_high": 0.44183295359462765,
+      "p_mean_Holm": 4.26108913793018e-15,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 4.231977997024451e-16,
+      "solvent": "methanol"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFM2",
+      "role": "target",
+      "solvent_index": 43,
+      "transfers": 2245,
+      "molecules": 81,
+      "bias_log10": -0.4210507405664823,
+      "geometric_prediction_ratio": 0.3792706704964735,
+      "median_molecule_bias_log10": -0.24465218897711594,
+      "fraction_molecules_overpredicted": 0.1728395061728395,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.06136809317655529,
+      "p_mean": 1.3103362121901357e-09,
+      "p_sign": 1.8890284038209304e-09,
+      "t_CI95_low": -0.5431771380292796,
+      "t_CI95_high": -0.29892434310368504,
+      "bootstrap_CI95_low": -0.5445510860679155,
+      "bootstrap_CI95_high": -0.30556634781140984,
+      "p_mean_Holm": 3.262737168353438e-07,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 4.6659001574376984e-07,
+      "solvent": "methyl acetate"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFM2",
+      "role": "target",
+      "solvent_index": 194,
+      "transfers": 2659,
+      "molecules": 134,
+      "bias_log10": -1.3397700049537373,
+      "geometric_prediction_ratio": 0.04573303199334207,
+      "median_molecule_bias_log10": -0.7770059749947583,
+      "fraction_molecules_overpredicted": 0.26865671641791045,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.18208353055083662,
+      "p_mean": 1.7297392561900244e-11,
+      "p_sign": 8.109066404609521e-08,
+      "t_CI95_low": -1.6999241752261929,
+      "t_CI95_high": -0.9796158346812818,
+      "bootstrap_CI95_low": -1.69891492722519,
+      "bootstrap_CI95_high": -0.9849979157818559,
+      "p_mean_Holm": 4.341645533036961e-09,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 1.962394069915504e-05,
+      "solvent": "water"
+    },
+    {
+      "scenario": "finite_all",
+      "method": "UNIFNIST",
+      "role": "target",
+      "solvent_index": 194,
+      "transfers": 695,
+      "molecules": 45,
+      "bias_log10": -1.1183738791340785,
+      "geometric_prediction_ratio": 0.07614232272722304,
+      "median_molecule_bias_log10": -1.0177559048412848,
+      "fraction_molecules_overpredicted": 0.2,
+      "eligible_for_inference": true,
+      "standard_error_log10": 0.2130515541080375,
+      "p_mean": 4.2151709999050185e-06,
+      "p_sign": 6.57466324582856e-05,
+      "t_CI95_low": -1.5477510729682682,
+      "t_CI95_high": -0.6889966852998888,
+      "bootstrap_CI95_low": -1.5416904632654118,
+      "bootstrap_CI95_high": -0.725600976629592,
+      "p_mean_Holm": 0.0009779196719779642,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 262,
+      "p_sign_Holm": 0.014727245670655975,
+      "solvent": "water"
+    }
+  ],
+  "significant_reference_adjusted_biases": [
+    {
+      "method": "UNIFAC",
+      "solvent_index": 24,
+      "bias_relative_to_ethanol_log10": 0.4731866336960632,
+      "relative_prediction_ratio": 2.9729433498363345,
+      "standard_error_cluster_robust": 0.06683675027108396,
+      "bootstrap_CI95_low": 0.3448126717761546,
+      "bootstrap_CI95_high": 0.6019546869915758,
+      "molecules": 75,
+      "fit_molecules": 246,
+      "available_molecules_before_core_pair_filter": 76,
+      "eligible_for_inference": true,
+      "p_mean": 1.5178103951649365e-11,
+      "p_mean_Holm": 1.8061943702462744e-09,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "acetonitrile"
+    },
+    {
+      "method": "UNIFAC",
+      "solvent_index": 191,
+      "bias_relative_to_ethanol_log10": 0.2800042689073866,
+      "relative_prediction_ratio": 1.9054794478243224,
+      "standard_error_cluster_robust": 0.05249966508765258,
+      "bootstrap_CI95_low": 0.17824602576633738,
+      "bootstrap_CI95_high": 0.38444972110056586,
+      "molecules": 157,
+      "fit_molecules": 246,
+      "available_molecules_before_core_pair_filter": 158,
+      "eligible_for_inference": true,
+      "p_mean": 2.1901104069381772e-07,
+      "p_mean_Holm": 2.496725863909522e-05,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methanol"
+    },
+    {
+      "method": "UNIFAC",
+      "solvent_index": 43,
+      "bias_relative_to_ethanol_log10": 0.18112639067515224,
+      "relative_prediction_ratio": 1.5174919317241922,
+      "standard_error_cluster_robust": 0.049728832222938585,
+      "bootstrap_CI95_low": 0.08264461029054372,
+      "bootstrap_CI95_high": 0.2824584219498874,
+      "molecules": 50,
+      "fit_molecules": 246,
+      "available_molecules_before_core_pair_filter": 51,
+      "eligible_for_inference": true,
+      "p_mean": 0.0003297637600429376,
+      "p_mean_Holm": 0.03462519480450845,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methyl acetate"
+    },
+    {
+      "method": "UNIFAC2",
+      "solvent_index": 24,
+      "bias_relative_to_ethanol_log10": 0.3220361798598732,
+      "relative_prediction_ratio": 2.099114747724432,
+      "standard_error_cluster_robust": 0.05583059856759296,
+      "bootstrap_CI95_low": 0.21413183212254916,
+      "bootstrap_CI95_high": 0.43614158270928477,
+      "molecules": 168,
+      "fit_molecules": 339,
+      "available_molecules_before_core_pair_filter": 168,
+      "eligible_for_inference": true,
+      "p_mean": 1.811332006514259e-08,
+      "p_mean_Holm": 2.1011451275565405e-06,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "acetonitrile"
+    },
+    {
+      "method": "UNIFAC2",
+      "solvent_index": 192,
+      "bias_relative_to_ethanol_log10": 0.4073778536435595,
+      "relative_prediction_ratio": 2.554923221768174,
+      "standard_error_cluster_robust": 0.11312855378968238,
+      "bootstrap_CI95_low": 0.18194150571196346,
+      "bootstrap_CI95_high": 0.6504577025834165,
+      "molecules": 26,
+      "fit_molecules": 339,
+      "available_molecules_before_core_pair_filter": 26,
+      "eligible_for_inference": true,
+      "p_mean": 0.0003644816990912629,
+      "p_mean_Holm": 0.03790609670549134,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "chloroform"
+    },
+    {
+      "method": "UNIFAC2",
+      "solvent_index": 111,
+      "bias_relative_to_ethanol_log10": 0.4265362157612475,
+      "relative_prediction_ratio": 2.67015342159789,
+      "standard_error_cluster_robust": 0.10522007560967121,
+      "bootstrap_CI95_low": 0.20825375010489006,
+      "bootstrap_CI95_high": 0.6296034696224901,
+      "molecules": 39,
+      "fit_molecules": 339,
+      "available_molecules_before_core_pair_filter": 39,
+      "eligible_for_inference": true,
+      "p_mean": 6.260030737176982e-05,
+      "p_mean_Holm": 0.00694863411826645,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "cyclohexane"
+    },
+    {
+      "method": "UNIFAC2",
+      "solvent_index": 191,
+      "bias_relative_to_ethanol_log10": 0.4453317519808626,
+      "relative_prediction_ratio": 2.78825026392334,
+      "standard_error_cluster_robust": 0.05732986613343762,
+      "bootstrap_CI95_low": 0.3361354214325232,
+      "bootstrap_CI95_high": 0.5604606668506311,
+      "molecules": 235,
+      "fit_molecules": 339,
+      "available_molecules_before_core_pair_filter": 236,
+      "eligible_for_inference": true,
+      "p_mean": 9.640666150148633e-14,
+      "p_mean_Holm": 1.156879938017836e-11,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methanol"
+    },
+    {
+      "method": "UNIFAC2",
+      "solvent_index": 43,
+      "bias_relative_to_ethanol_log10": 0.2123174695026956,
+      "relative_prediction_ratio": 1.6304874843494184,
+      "standard_error_cluster_robust": 0.04791486615196719,
+      "bootstrap_CI95_low": 0.12130643676557434,
+      "bootstrap_CI95_high": 0.30131925581786584,
+      "molecules": 79,
+      "fit_molecules": 339,
+      "available_molecules_before_core_pair_filter": 80,
+      "eligible_for_inference": true,
+      "p_mean": 1.268202216278257e-05,
+      "p_mean_Holm": 0.0014203864822316479,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methyl acetate"
+    },
+    {
+      "method": "UNIFDMD",
+      "solvent_index": 191,
+      "bias_relative_to_ethanol_log10": 0.2730370988007893,
+      "relative_prediction_ratio": 1.875154682837622,
+      "standard_error_cluster_robust": 0.06794708400467785,
+      "bootstrap_CI95_low": 0.13508663476108718,
+      "bootstrap_CI95_high": 0.40431128915810516,
+      "molecules": 128,
+      "fit_molecules": 227,
+      "available_molecules_before_core_pair_filter": 129,
+      "eligible_for_inference": true,
+      "p_mean": 7.982941964353091e-05,
+      "p_mean_Holm": 0.00870140674114487,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methanol"
+    },
+    {
+      "method": "UNIFDMD",
+      "solvent_index": 155,
+      "bias_relative_to_ethanol_log10": 0.4003366541461145,
+      "relative_prediction_ratio": 2.513834337504108,
+      "standard_error_cluster_robust": 0.08717935384303045,
+      "bootstrap_CI95_low": 0.22221853167271183,
+      "bootstrap_CI95_high": 0.5805766049632554,
+      "molecules": 51,
+      "fit_molecules": 227,
+      "available_molecules_before_core_pair_filter": 52,
+      "eligible_for_inference": true,
+      "p_mean": 7.286139316505122e-06,
+      "p_mean_Holm": 0.0008233337427650787,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "toluene"
+    },
+    {
+      "method": "UNIFM2",
+      "solvent_index": 46,
+      "bias_relative_to_ethanol_log10": 0.7886517399397157,
+      "relative_prediction_ratio": 6.146837610847356,
+      "standard_error_cluster_robust": 0.21195246685033745,
+      "bootstrap_CI95_low": 0.3408156675903554,
+      "bootstrap_CI95_high": 1.1732554892764535,
+      "molecules": 63,
+      "fit_molecules": 342,
+      "available_molecules_before_core_pair_filter": 64,
+      "eligible_for_inference": true,
+      "p_mean": 0.00023210314269758622,
+      "p_mean_Holm": 0.024835036268641725,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "DMF"
+    },
+    {
+      "method": "UNIFM2",
+      "solvent_index": 105,
+      "bias_relative_to_ethanol_log10": 0.626148584821845,
+      "relative_prediction_ratio": 4.228132462787086,
+      "standard_error_cluster_robust": 0.16514573745166472,
+      "bootstrap_CI95_low": 0.3216046653147411,
+      "bootstrap_CI95_high": 0.985150034864152,
+      "molecules": 27,
+      "fit_molecules": 342,
+      "available_molecules_before_core_pair_filter": 29,
+      "eligible_for_inference": true,
+      "p_mean": 0.00017706125353347566,
+      "p_mean_Holm": 0.01912261538161537,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "NMP"
+    },
+    {
+      "method": "UNIFM2",
+      "solvent_index": 24,
+      "bias_relative_to_ethanol_log10": 0.20341346183945785,
+      "relative_prediction_ratio": 1.5973991972183612,
+      "standard_error_cluster_robust": 0.05048379327349112,
+      "bootstrap_CI95_low": 0.1058788201005659,
+      "bootstrap_CI95_high": 0.2967535392189814,
+      "molecules": 170,
+      "fit_molecules": 342,
+      "available_molecules_before_core_pair_filter": 170,
+      "eligible_for_inference": true,
+      "p_mean": 6.902702627264847e-05,
+      "p_mean_Holm": 0.007592972889991332,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "acetonitrile"
+    },
+    {
+      "method": "UNIFM2",
+      "solvent_index": 75,
+      "bias_relative_to_ethanol_log10": -0.3579834510320078,
+      "relative_prediction_ratio": 0.43854740848409,
+      "standard_error_cluster_robust": 0.06075940625580508,
+      "bootstrap_CI95_low": -0.4713230345401825,
+      "bootstrap_CI95_high": -0.24634153988383875,
+      "molecules": 214,
+      "fit_molecules": 342,
+      "available_molecules_before_core_pair_filter": 215,
+      "eligible_for_inference": true,
+      "p_mean": 9.168461884157648e-09,
+      "p_mean_Holm": 1.072710040446445e-06,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "ethyl acetate"
+    },
+    {
+      "method": "UNIFM2",
+      "solvent_index": 191,
+      "bias_relative_to_ethanol_log10": 0.3629815996581035,
+      "relative_prediction_ratio": 2.3066494577113605,
+      "standard_error_cluster_robust": 0.0591752550275366,
+      "bootstrap_CI95_low": 0.24515112952006368,
+      "bootstrap_CI95_high": 0.4830447325300752,
+      "molecules": 238,
+      "fit_molecules": 342,
+      "available_molecules_before_core_pair_filter": 239,
+      "eligible_for_inference": true,
+      "p_mean": 2.374259958572191e-09,
+      "p_mean_Holm": 2.8016267511151856e-07,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methanol"
+    },
+    {
+      "method": "UNIFM2",
+      "solvent_index": 43,
+      "bias_relative_to_ethanol_log10": -0.3350944336233488,
+      "relative_prediction_ratio": 0.46228049152801926,
+      "standard_error_cluster_robust": 0.05887060839126818,
+      "bootstrap_CI95_low": -0.45134828690122636,
+      "bootstrap_CI95_high": -0.22314834422410693,
+      "molecules": 73,
+      "fit_molecules": 342,
+      "available_molecules_before_core_pair_filter": 74,
+      "eligible_for_inference": true,
+      "p_mean": 2.707944293512446e-08,
+      "p_mean_Holm": 3.114135937539313e-06,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methyl acetate"
+    },
+    {
+      "method": "UNIFNIST",
+      "solvent_index": 43,
+      "bias_relative_to_ethanol_log10": -0.3342344747186474,
+      "relative_prediction_ratio": 0.4631967732078777,
+      "standard_error_cluster_robust": 0.09088995354002255,
+      "bootstrap_CI95_low": -0.5123284820710955,
+      "bootstrap_CI95_high": -0.1555424694762274,
+      "molecules": 21,
+      "fit_molecules": 164,
+      "available_molecules_before_core_pair_filter": 21,
+      "eligible_for_inference": true,
+      "p_mean": 0.0003196365127312373,
+      "p_mean_Holm": 0.03388147034951115,
+      "significant_mean_bias_Holm_0_05": true,
+      "multiplicity_family_tests": 120,
+      "solvent": "methyl acetate"
+    }
+  ],
+  "elapsed_seconds": 41.34357520099729
+}

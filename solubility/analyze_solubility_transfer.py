@@ -1,0 +1,205 @@
+"""Render a completed solubility-transfer benchmark and paired uncertainty.
+
+Uses the benchmark's persisted compact numerical records; never reruns models.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import numpy as np
+
+from benchmark_solubility_transfer import METHODS, SCOPES, CATEGORIES
+from solubility_paths import RESULTS_DIR
+
+
+def common_rows(records, methods):
+    common = records['case'][records['method']==methods[0]]
+    for method in methods[1:]:
+        common = np.intersect1d(common, records['case'][records['method']==method])
+    return {method:np.sort(records[(records['method']==method) & np.isin(records['case'],common)],order='case')
+            for method in methods}
+
+
+def paired_difference(first, second, second_field='error_log10'):
+    assert np.array_equal(first['case'],second['case'])
+    _, inverse = np.unique(first['solute'],return_inverse=True)
+    values = np.bincount(inverse,weights=np.abs(first['error_log10'])-np.abs(second[second_field]))/np.bincount(inverse)
+    rng = np.random.default_rng(20261014)
+    draws = np.mean(values[rng.integers(0,len(values),(5000,len(values)))],axis=1)
+    return {'predictions':len(first),'solutes':len(values),'MAE_difference_log10':float(np.mean(values)),
+            '95pct_paired_solute_bootstrap_CI':np.quantile(draws,[.025,.975]).tolist()}
+
+
+def table(methods, field, ideal=False):
+    lines=['| Variant | MAE log10 | 95% CI | RMSE log10 | Geometric mean fold error | Within 2x | Within 10x |',
+           '|---|---:|---|---:|---:|---:|---:|']
+    for name,row in methods.items():
+        score=row[field]
+        if not score['predictions']:
+            continue
+        lo,hi=score['MAE_95pct_solute_bootstrap_CI']
+        lines.append(f'| {name} | {score["solute_balanced_MAE_log10"]:.4f} | {lo:.4f}–{hi:.4f} | '
+                     f'{score["solute_balanced_RMSE_log10"]:.4f} | {score["geometric_mean_fold_error"]:.3f} | '
+                     f'{100*score["within_factor_2"]:.1f}% | {100*score["within_factor_10"]:.1f}% |')
+    if ideal:
+        baseline=next(iter(methods.values()))['ideal_on_common_all_six' if field=='common_all_six' else 'ideal_on_common_five']
+        lo,hi=baseline['MAE_95pct_solute_bootstrap_CI']
+        lines.append(f'| Ideal solution | {baseline["solute_balanced_MAE_log10"]:.4f} | {lo:.4f}–{hi:.4f} | '
+                     f'{baseline["solute_balanced_RMSE_log10"]:.4f} | {baseline["geometric_mean_fold_error"]:.3f} | '
+                     f'{100*baseline["within_factor_2"]:.1f}% | {100*baseline["within_factor_10"]:.1f}% |')
+    return lines
+
+
+def render(output, summary, paired):
+    main=summary['scopes']['same_publication']
+    methods=main['methods']
+    lines=[
+        '# UNIFAC solubility transfer at room temperature', '',
+        'Completed evaluation of the six pfdsim liquid-activity variants using BigSolDB 2.0 and AqSolDB.', '',
+        '## Main protocol', '',
+        '- Include BigSolDB measurements at 293.15–303.15 K inclusive. Match exact numeric temperature and source DOI.',
+        '- Group solutes and solvents by full standard InChI. Keep stereochemistry, salts and protonation distinctions; normalize standard-InChI tautomers.',
+        '- Within each solute/solvent/temperature/DOI group, use the median log10 mole fraction. Count each directed solvent transfer once.',
+        '- Keep single-component molecules with zero total formal charge. Neutral nitro resonance structures remain eligible. Unsupported structures are rejected by pfdsim, not approximated with different groups.',
+        '- Use the first canonical dataset SMILES for each chemical identity. Dataset graphs are the supplied identities; this is not a comprehensive structure-curation study.',
+        '- Use pfdsim get_unifac_groups, the shipped variant-specific parameter files, and CompiledUNIFACBackend. No parameters are fitted.',
+        '- Require every ordered main-group interaction used by a binary model. Do not silently accept the runtime zero-interaction fallback.',
+        '- Infer a_ref = x_ref gamma_ref(T,x_ref), then solve x_pred gamma_target(T,x_pred) = a_ref. Target measurements are used only to score the prediction.',
+        '- Search the full binary composition interval (mole-fraction floor 1e-30). Use the first stable solvent-rich root. Check binary tangent-plane distances on a grid and refine detected minima; tolerance -1e-7 RT. This is a numerical stability screen, not an analytic proof.',
+        '- Reject unstable reference liquids. Preserve failure counts; successful predictions do not replace unavailable or invalid cases.',
+        '- Score e = log10(x_pred/x_measured). Average |e| and e² within each solute first, then across solutes. RMSE is the square root of mean solute mean-square error. Within-factor fractions are also solute-balanced.',
+        '- Confidence intervals resample whole solutes (1,000 draws for scores; 5,000 paired draws for differences; seed 20261014). Correlated temperatures, directions and publications are not treated as independent samples.', '',
+        'The same solid form, pressure and chemical species must apply in both solvents for the solid contribution to cancel. Matching a publication and temperature improves comparability but does not verify polymorph/solvate identity or solution pH.', '',
+        '## Input audit', '', '```json',json.dumps(summary['data_audit'],indent=2),'```','',
+        '## Same cases, all six variants', '',
+        f'{main["common_all_six_predictions"]:,} successful directed predictions common to all six; '
+        f'{methods["UNIFAC"]["common_all_six"]["solutes"]} distinct solutes. These are the same cases for every row.', '',
+        *table(methods,'common_all_six',ideal=True),'',
+        '## Larger common set excluding Lyngby', '',
+        f'{main["common_five_excluding_Lyngby_predictions"]:,} directed predictions across '
+        f'{methods["UNIFAC"]["common_five_excluding_Lyngby"]["solutes"]} solutes. Lyngby is not compared on this cohort because its coverage differs.', '',
+        *table({m:r for m,r in methods.items() if m!='UNIFLBY'},'common_five_excluding_Lyngby',ideal=True),'',
+        '## Full eligible-data coverage', '',
+        'Own-coverage MAEs below use different compounds and must not be used as an unbiased accuracy ranking.', '',
+        '| Variant | Successful directed predictions | Solutes | Own-coverage MAE | Unavailable model | Unstable reference |',
+        '|---|---:|---:|---:|---:|---:|']
+    for name,row in methods.items():
+        own,status=row['own_coverage'],row['status_counts']
+        lines.append(f'| {name} | {own["predictions"]:,} | {own["solutes"]} | {own["solute_balanced_MAE_log10"]:.4f} | '
+                     f'{status.get("model_unavailable",0):,} | {status.get("reference_liquid_unstable",0):,} |')
+    lines += ['', '## Water versus other solvents', '',
+              'Same five-variant common cohort. The successful reference-stability screen can make the two water directions have different cohorts.', '',
+              '| Variant | Non-water → non-water MAE | Water → non-water MAE | Non-water → water MAE |',
+              '|---|---:|---:|---:|']
+    for name,row in methods.items():
+        if name=='UNIFLBY':
+            continue
+        c=row['categories_common_five']
+        lines.append(f'| {name} | {c["nonwater_to_nonwater"]["solute_balanced_MAE_log10"]:.4f} | '
+                     f'{c["water_to_nonwater"]["solute_balanced_MAE_log10"]:.4f} | '
+                     f'{c["nonwater_to_water"]["solute_balanced_MAE_log10"]:.4f} |')
+    for category in CATEGORIES:
+        row=methods['UNIFAC']['categories_common_five'][category]
+        lines.append(f'- {category}: {row["predictions"]:,} directed predictions, {row["solutes"]} solutes.')
+    lines += ['', '## Pooled-publication sensitivity', '',
+              'Match solute and exact temperature, but pool publications before taking the median log(x). Solid-form mismatches are more plausible here.', '',
+              *table(summary['scopes']['pooled_publications']['methods'],'common_all_six',ideal=True),'',
+              '## AqSolDB water anchors: exploratory only', '',
+              'AqSolDB has no per-compound temperature. Use nominal 298.15 K, BigSolDB targets measured exactly at 298.15 K, and aqueous concentration <=0.1 mol/L. '
+              'Convert C_water to approximate x_water = C/(55.3446851784+C), using the supplied Water density at 298.15 K. '
+              'This assumes pure-solvent water inventory per solution volume and neglects solute partial volume; it is deliberately restricted to dilute water anchors. '
+              'Unknown temperature, pH/speciation and solid form prevent interpreting this subset as an isolated test of liquid nonideality.', '',
+              *table(summary['scopes']['AqSolDB_approximate_water_anchor']['methods'],'common_all_six',ideal=True),'',
+              '## Paired uncertainty', '', 'Differences are first model MAE minus second model MAE; negative favors the first model.', '',
+              '```json',json.dumps(paired,indent=2),'```','',
+              '## Numerical and reproducibility checks', '',
+              '- Compiled and readable pfdsim activity coefficients agree within rtol=atol=1e-10 for six variants at four nontrivial compositions.',
+              '- Identical-component binaries reproduce ideal transfer at x=1e-12, 1e-4, 0.1 and 0.9 for every variant.',
+              f'- Largest successful prediction equation residual: {max(v["maximum_equation_ln_residual"] for v in methods.values()):.3g} in ln activity.',
+              '- Model/root search never uses the measured target to initialize, select or calibrate predictions.',
+              '- Original input CSVs and pfdsim production code are unchanged. Input, code and parameter SHA256 fingerprints are in manifest.json.',
+              '- Main model evaluation used five workers; total runtime was '+f'{summary["elapsed_seconds"]:.1f} seconds.', '',
+              '## Interpretation limits', '',
+              'Coverage is a major limit: most drug-like structures are outside the strict fragmenters or lack required interactions. '
+              'A low error on the common small-molecule cohort does not establish performance on unsupported structures. '
+              'Model-dependent stability rejection additionally selects the successful comparison set; status counts are therefore part of the assessment. '
+              'Acids and bases can be neutral in the SMILES but ionize in water; pH and apparent-versus-intrinsic solubility are not recorded here. '
+              'Original and modified UNIFAC parameter collections may have used some of the underlying literature; this is an external-dataset assessment, not a proven training-disjoint test. '
+              'A small local melting-point audit found no known liquid solutes in the retained multi-solvent groups, but verified solid identities and forms are not available for all compounds.', '',
+              '## Files', '',
+              '- predictions.csv: every method/case, including failures, predictions, errors and reference stability.',
+              '- deduplicated_observations.csv: source-keyed and pooled median observations, duplicate counts and observed spread.',
+              '- model_coverage.csv: binary fragmentation and missing-interaction audit.',
+              '- metric_records.npy: compact numerical records used by this renderer; no model rerun is needed.',
+              '- summary.json, paired_comparisons.json: full numerical results and uncertainty.',
+              '- comparison.png and comparison.svg: shareable accuracy/coverage figure.', '']
+    (output/'REPORT.md').write_text('\n'.join(lines))
+
+
+def plot(output, summary):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    methods=summary['scopes']['same_publication']['methods']
+    labels=['Original','UNIFAC 2.0','Dortmund','Modified 2.0','NIST','Lyngby']
+    fig,axes=plt.subplots(1,2,figsize=(12,4.8),layout='constrained')
+    positions=np.arange(len(METHODS))
+    values=np.array([methods[m]['common_all_six']['solute_balanced_MAE_log10'] for m in METHODS])
+    intervals=np.array([methods[m]['common_all_six']['MAE_95pct_solute_bootstrap_CI'] for m in METHODS])
+    axes[0].errorbar(values,positions,xerr=np.array([values-intervals[:,0],intervals[:,1]-values]),fmt='o',color='#2957a4',capsize=4)
+    ideal=methods['UNIFAC']['ideal_on_common_all_six']['solute_balanced_MAE_log10']
+    axes[0].axvline(ideal,color='#a65032',linestyle='--',label=f'Ideal solution: {ideal:.3f}')
+    axes[0].set_yticks(positions,labels);axes[0].invert_yaxis()
+    axes[0].set_xlabel('Solute-balanced mean absolute log10 error')
+    axes[0].set_title('Accuracy on identical cases\n7,647 transfers · 86 solutes · 95% bootstrap CI')
+    axes[0].legend(loc='lower right',fontsize=9)
+    coverage=[methods[m]['own_coverage']['solutes'] for m in METHODS]
+    axes[1].barh(positions,coverage,color='#428d83')
+    axes[1].set_yticks(positions,labels);axes[1].invert_yaxis()
+    for y,value in zip(positions,coverage):
+        axes[1].text(value+4,y,str(value),va='center')
+    axes[1].set_xlim(0,max(coverage)*1.18)
+    axes[1].set_xlabel('Distinct solutes with at least one valid transfer')
+    axes[1].set_title('Coverage on the full eligible dataset\n1,088 candidate solutes')
+    for ax in axes:
+        ax.spines[['top','right']].set_visible(False)
+        ax.grid(axis='x',alpha=.2)
+    fig.suptitle('UNIFAC solubility transfer: same temperature and publication',fontsize=13)
+    fig.savefig(output/'comparison.png',dpi=180)
+    fig.savefig(output/'comparison.svg')
+    plt.close(fig)
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('results_dir',type=Path,nargs='?',default=RESULTS_DIR/'unifac-transfer-results')
+    args=parser.parse_args()
+    output=args.results_dir.resolve()
+    for name in ('REPORT.md','paired_comparisons.json','comparison.png','comparison.svg'):
+        if (output/name).exists():
+            raise FileExistsError(f'Refusing to overwrite {output/name}')
+    summary=json.loads((output/'summary.json').read_text())
+    records=np.load(output/'metric_records.npy')
+    main_records=records[(records['scope']==SCOPES.index('same_publication')) & (records['status']==0)]
+    all_six=common_rows(main_records,list(range(6)))
+    five=common_rows(main_records,list(range(5)))
+    paired={
+        'common5_UNIFAC2_minus_UNIFAC':paired_difference(five[1],five[0]),
+        'common5_UNIFAC2_minus_Dortmund':paired_difference(five[1],five[2]),
+        'common5_UNIFAC2_minus_modified2':paired_difference(five[1],five[3]),
+        'common5_UNIFAC2_minus_NIST':paired_difference(five[1],five[4]),
+        'common5_UNIFAC2_minus_ideal':paired_difference(five[1],five[1],'ideal_error_log10'),
+        'common6_Lyngby_minus_UNIFAC2':paired_difference(all_six[5],all_six[1]),
+    }
+    (output/'paired_comparisons.json').write_text(json.dumps(paired,indent=2)+'\n')
+    render(output,summary,paired)
+    plot(output,summary)
+    print(json.dumps(paired,indent=2))
+    print(f'Report and figures saved in {output}')
+
+
+if __name__=='__main__':
+    main()

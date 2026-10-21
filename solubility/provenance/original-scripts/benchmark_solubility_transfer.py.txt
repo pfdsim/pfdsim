@@ -1,0 +1,569 @@
+"""Assess parameter-free, finite-concentration UNIFAC solubility transfer.
+
+Main data: BigSolDB 2.0 at 293.15--303.15 K, matching temperature and DOI.
+The solid reference activity is inferred ONLY from the reference measurement.
+All distinct solvent directions are evaluated, with solute-balanced metrics.
+No pfdsim model/parameter/resolution code or source dataset is modified.
+"""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter, defaultdict
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import csv
+from dataclasses import dataclass
+from decimal import Decimal
+from functools import lru_cache
+import hashlib
+import json
+import math
+from pathlib import Path
+import sys
+import time
+
+import numpy as np
+from numba import njit
+from rdkit import Chem, rdBase
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from compiled_unifac import CompiledUNIFACBackend, _activity_coefficients_numba
+from unifac import UNIFACModel, get_unifac_groups
+
+PARAMETERS = {
+    'UNIFAC': 'unifac_params.json',
+    'UNIFAC2': 'unifac2/UNIFAC2rq.csv',
+    'UNIFDMD': 'unifac_dmd.txt',
+    'UNIFM2': 'unifac2/UNIFM2rq.xlsx',
+    'UNIFNIST': 'nist_modified_unifac_params.json',
+    'UNIFLBY': 'lyngby_unifac.json',
+}
+METHODS = tuple(PARAMETERS)
+LN10 = math.log(10)
+XGRID = np.unique(np.concatenate((
+    [0.0], np.geomspace(1e-30, 0.12, 144),
+    np.linspace(0.12, 0.88, 97), 1-np.geomspace(1e-12, 0.12, 64), [1.0])))
+
+
+@njit(cache=True)
+def log_activities(args, temperature, x):
+    gamma = _activity_coefficients_numba(*args, np.array([x, 1-x]), temperature)
+    return (math.log(max(x, 1e-300)) + math.log(gamma[0]),
+            math.log(max(1-x, 1e-300)) + math.log(gamma[1]))
+
+
+@njit(cache=True)
+def curve(args, temperature, grid):
+    activities = np.empty(len(grid))
+    gibbs = np.empty(len(grid))
+    for i, x in enumerate(grid):
+        a, b = log_activities(args, temperature, x)
+        activities[i] = a
+        gibbs[i] = x*a+(1-x)*b
+    return activities, gibbs
+
+
+@njit(cache=True)
+def stability_minimum(args, temperature, grid, gibbs, x, a, b):
+    """Global binary tangent-plane scan, refining every detected minimum."""
+    tpd = gibbs-grid*a-(1-grid)*b
+    minimum = min(0.0, np.min(tpd))
+    for i in range(1, len(grid)-1):
+        if tpd[i] <= tpd[i-1] and tpd[i] <= tpd[i+1]:
+            lo, hi = grid[i-1], grid[i+1]
+            # Golden-section refinement; all endpoints are retained in the scan.
+            ratio = 0.6180339887498949
+            c, d = hi-ratio*(hi-lo), lo+ratio*(hi-lo)
+            ac, bc = log_activities(args, temperature, c)
+            ad, bd = log_activities(args, temperature, d)
+            fc = c*(ac-a)+(1-c)*(bc-b)
+            fd = d*(ad-a)+(1-d)*(bd-b)
+            for _ in range(45):
+                if hi-lo < 1e-12:
+                    break
+                if fc < fd:
+                    hi, d, fd = d, c, fc
+                    c = hi-ratio*(hi-lo)
+                    ac, bc = log_activities(args, temperature, c)
+                    fc = c*(ac-a)+(1-c)*(bc-b)
+                else:
+                    lo, c, fc = c, d, fd
+                    d = lo+ratio*(hi-lo)
+                    ad, bd = log_activities(args, temperature, d)
+                    fd = d*(ad-a)+(1-d)*(bd-b)
+            minimum = min(minimum, fc, fd)
+    # A grid search is a numerical screen, not an analytic stability proof.
+    return minimum
+
+
+@njit(cache=True)
+def invert_activity(args, temperature, grid, activities, gibbs, desired):
+    """Find the first stable root without using the target measurement."""
+    if not math.isfinite(desired):
+        return math.nan, math.nan, 1
+    if desired > 1e-9:
+        return math.nan, math.nan, 2
+    found = False
+    for i in range(1, len(grid)-1):
+        if activities[i] <= desired <= activities[i+1]:
+            found = True
+            lo, hi = math.log(grid[i]), math.log(grid[i+1])
+            residual = math.inf
+            for _ in range(65):
+                middle = (lo+hi)/2
+                a, b = log_activities(args, temperature, math.exp(middle))
+                residual = a-desired
+                if abs(residual) < 1e-10:
+                    break
+                if residual > 0:
+                    hi = middle
+                else:
+                    lo = middle
+            x = math.exp(middle)
+            if stability_minimum(args, temperature, grid, gibbs, x, a, b) >= -1e-7:
+                return x, residual, 0
+    return math.nan, math.nan, 3 if found else 4
+
+
+STATUS = {0: 'ok', 1: 'nonfinite_reference_activity',
+          2: 'reference_activity_above_pure_liquid',
+          3: 'no_stable_target_root', 4: 'no_target_root_in_search_range'}
+STATUSES = tuple(STATUS.values()) + ('model_unavailable', 'reference_liquid_unstable')
+SCOPES = ('same_publication', 'pooled_publications', 'AqSolDB_approximate_water_anchor')
+CATEGORIES = ('water_to_nonwater', 'nonwater_to_water', 'nonwater_to_nonwater')
+COMPACT_DTYPE = np.dtype([
+    ('method', 'u1'), ('scope', 'u1'), ('category', 'u1'), ('status', 'u1'),
+    ('solute', 'u4'), ('case', 'u8'), ('error_log10', 'f8'),
+    ('ideal_error_log10', 'f8'), ('activity_closure_error_log10', 'f8'),
+    ('equation_ln_residual', 'f8')])
+PREDICTION_FIELDS = (
+    'method', 'scope', 'pair_id', 'solute', 'solute_name', 'temperature_K', 'source',
+    'reference_solvent', 'target_solvent', 'category', 'reference_x', 'target_x',
+    'ideal_error_log10', 'status', 'activity_closure_error_log10', 'reference_activity',
+    'reference_minimum_TPD', 'predicted_x', 'error_log10', 'equation_ln_residual')
+
+
+@lru_cache(None)
+def model(method):
+    result = UNIFACModel(str(ROOT/'data'/PARAMETERS[method]))
+    assert result.variant == method
+    return result
+
+
+@lru_cache(None)
+def groups(method, smiles):
+    # Structure is the identity: dataset names can be ambiguous or erroneous.
+    # This still uses the authoritative shared path and its Lyngby translation.
+    result = get_unifac_groups('structure:'+smiles, smiles=smiles, variant=method)
+    return model(method)._resolve_groups(result)
+
+
+def backend_for(method, solute, solvent):
+    definitions = {'solute': groups(method, solute), 'solvent': groups(method, solvent)}
+    m = model(method)
+    mains = {m.subgroups[g].main_group for gs in definitions.values() for g in gs}
+    missing = [(i, j) for i in mains for j in mains if i != j
+               and (i, j) not in m.interactions and (i, j) not in m.interaction_coefficients]
+    if missing:
+        raise ValueError(f'missing_interactions:{len(missing)}:{sorted(missing)[:6]}')
+    backend = CompiledUNIFACBackend.from_model(m, ['solute', 'solvent'], definitions)
+    if backend is None:
+        raise RuntimeError('Compiled pfdsim UNIFAC backend is required')
+    return backend
+
+
+def numerical_args(backend):
+    return backend.enthalpy_parameters()
+
+
+@lru_cache(None)
+def chemical(smiles, inchi=''):
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None and inchi:
+        mol = Chem.MolFromInchi(inchi)
+    if mol is None:
+        return None
+    key = Chem.MolToInchi(mol)
+    if not key:
+        return None
+    # Nitro and other charge-separated resonance forms are neutral molecules.
+    # Atomic formal charges alone must not classify them as electrolytes.
+    neutral = Chem.GetFormalCharge(mol) == 0
+    single = len(Chem.GetMolFrags(mol)) == 1
+    return key, Chem.MolToSmiles(mol, isomericSmiles=True), neutral and single
+
+
+def read_csv(path):
+    with path.open(newline='') as stream:
+        return list(csv.DictReader(stream))
+
+
+def write_csv(path, rows):
+    rows = list(rows)
+    with path.open('x', newline='') as stream:
+        if rows:
+            keys = list(dict.fromkeys(k for row in rows for k in row))
+            writer = csv.DictWriter(stream, fieldnames=keys)
+            writer.writeheader()
+            writer.writerows(rows)
+
+
+def prepare(data_dir):
+    audit = Counter()
+    solutes, solvents, source_groups, pooled_groups = {}, {}, defaultdict(lambda: defaultdict(list)), defaultdict(lambda: defaultdict(list))
+    originals = read_csv(data_dir/'BigSolDBv2.0.csv')
+    for index, row in enumerate(originals, 2):
+        temperature = Decimal(row['Temperature_K'])
+        if not Decimal('293.15') <= temperature <= Decimal('303.15'):
+            continue
+        audit['BigSolDB_room_temperature_rows'] += 1
+        solute = chemical(row['SMILES_Solute'])
+        solvent = chemical(row['SMILES_Solvent']) if row['SMILES_Solvent'] != '-' else None
+        if solute is None or not solute[2]:
+            audit['charged_or_multicomponent_solute_rows_excluded'] += 1
+            continue
+        if solvent is None or not solvent[2]:
+            audit['unresolved_or_charged_solvent_rows_excluded'] += 1
+            continue
+        x = float(row['Solubility(mole_fraction)'])
+        if not math.isfinite(x) or not 0 < x < 1:
+            audit['invalid_mole_fraction_rows_excluded'] += 1
+            continue
+        skey, vkey = solute[0], solvent[0]
+        solutes.setdefault(skey, dict(smiles=solute[1], name=row['Compound_Name']))
+        solvents.setdefault(vkey, dict(smiles=solvent[1], name=row['Solvent']))
+        measurement = (math.log10(x), index)
+        source_groups[(skey, str(temperature.normalize()), row['Source'])][vkey].append(measurement)
+        pooled_groups[(skey, str(temperature.normalize()), '')][vkey].append(measurement)
+    jobs = defaultdict(list)
+    group_rows = []
+    for scope, grouped in [('same_publication', source_groups), ('pooled_publications', pooled_groups)]:
+        for (solute, temperature, source), measurements in sorted(grouped.items()):
+            if len(measurements) < 2:
+                continue
+            observations = []
+            for solvent, repeats in sorted(measurements.items()):
+                # Median log(x) gives equal weight to a deduplicated observation.
+                logs = [r[0] for r in repeats]
+                observation = dict(solvent=solvent, x=10**float(np.median(logs)),
+                                   repeat_count=len(repeats), source_rows=[r[1] for r in repeats])
+                observations.append(observation)
+                group_rows.append(dict(scope=scope, solute=solute, temperature_K=float(temperature),
+                                       source=source, solvent=solvent, log10_x=float(np.median(logs)),
+                                       repeat_count=len(repeats), spread_log10_x=max(logs)-min(logs)))
+            jobs[solute].append(dict(scope=scope, T=float(temperature), source=source, observations=observations))
+    water = chemical('O')[0]
+    aq_values = defaultdict(list)
+    for row in read_csv(data_dir/'curated-solubility-dataset.csv'):
+        molecule = chemical(row['SMILES'], row['InChI'])
+        if molecule and molecule[2]:
+            aq_values[molecule[0]].append(float(row['Solubility']))
+    # Deliberately keep this approximate-temperature/density extension separate.
+    # Restrict water anchors to <=0.1 mol/L to limit dilute conversion error.
+    water_densities = [float(r['Density_g/cm^3']) for r in read_csv(data_dir/'BigSolDBv2.0_densities.csv')
+                       if r['Solvent'].strip().casefold() == 'water'
+                       and Decimal(r['Temperature_K']) == Decimal('298.15')]
+    if not water_densities:
+        raise ValueError('No water density at 298.15 K in the supplied density table')
+    water_molarity = float(np.median(water_densities))*1000/18.01528
+    assert math.isfinite(water_molarity) and water_molarity > 0
+    audit['water_pure_solvent_molarity_at_298_15_K'] = water_molarity
+    for solute, bundles in list(jobs.items()):
+        if solute not in aq_values:
+            continue
+        logc = float(np.median(aq_values[solute]))
+        if logc > -1:
+            audit['AqSolDB_overlap_nondilute_water_anchor_solutes_excluded'] += 1
+            continue
+        target_bundle = next((b for b in bundles if b['scope'] == 'pooled_publications' and b['T'] == 298.15), None)
+        if target_bundle is None:
+            continue
+        targets = [o for o in target_bundle['observations'] if o['solvent'] != water]
+        if not targets:
+            continue
+        c = 10**logc
+        anchor = dict(solvent=water, x=c/(water_molarity+c), repeat_count=len(aq_values[solute]), source_rows=[])
+        jobs[solute].append(dict(scope='AqSolDB_approximate_water_anchor', T=298.15,
+                                 source='AqSolDB', observations=[anchor]+targets, anchor_only=True))
+    solvents.setdefault(water, dict(smiles='O', name='water'))
+    audit['eligible_multisolvent_solutes'] = len(jobs)
+    for scope in ('same_publication', 'pooled_publications', 'AqSolDB_approximate_water_anchor'):
+        selected = [b for bundles in jobs.values() for b in bundles if b['scope'] == scope]
+        audit[scope+'_groups'] = len(selected)
+        audit[scope+'_directed_predictions'] = sum(
+            len(b['observations'])-1 if b.get('anchor_only') else len(b['observations'])*(len(b['observations'])-1)
+            for b in selected)
+    return jobs, solutes, solvents, dict(audit), group_rows
+
+
+@dataclass
+class BinaryState:
+    backend: object
+    activities: np.ndarray
+    gibbs: np.ndarray
+    args: tuple
+
+
+def evaluate_solute(job):
+    solute_key, solute_info, bundles, solvents = job
+    rdBase.DisableLog('rdApp.*')
+    rows, coverage, details = [], [], []
+    binary_models, states, observed, inversions = {}, {}, {}, {}
+    for method in METHODS:
+        for solvent_key in sorted({o['solvent'] for b in bundles for o in b['observations']}):
+            try:
+                backend = backend_for(method, solute_info['smiles'], solvents[solvent_key]['smiles'])
+                binary_models[method, solvent_key] = backend
+                coverage.append(dict(method=method, solute=solute_key, solvent=solvent_key, status='ok'))
+            except (ValueError, KeyError, OverflowError) as error:
+                reason = str(error)
+                status = 'missing_interactions' if reason.startswith('missing_interactions:') else 'fragmentation_unavailable'
+                coverage.append(dict(method=method, solute=solute_key, solvent=solvent_key, status=status, reason=reason))
+    for bundle in bundles:
+        temperature = bundle['T']
+        observations = bundle['observations']
+        reference_indices = [0] if bundle.get('anchor_only') else range(len(observations))
+        for method in METHODS:
+            for o in observations:
+                key = method, o['solvent'], temperature
+                if (method, o['solvent']) not in binary_models or key in states:
+                    continue
+                backend = binary_models[method, o['solvent']]
+                args = numerical_args(backend)
+                activities, gibbs = curve(args, temperature, XGRID)
+                if not np.all(np.isfinite(activities)) or not np.all(np.isfinite(gibbs)):
+                    continue
+                states[key] = BinaryState(backend, activities, gibbs, args)
+            for reference_index in reference_indices:
+                reference = observations[reference_index]
+                for target_index, target in enumerate(observations):
+                    if target_index == reference_index:
+                        continue
+                    category = ('water_to_nonwater' if solvents[reference['solvent']]['name'] == 'water'
+                                else 'nonwater_to_water' if solvents[target['solvent']]['name'] == 'water'
+                                else 'nonwater_to_nonwater')
+                    pair_id = json.dumps([bundle['scope'], solute_key, temperature, bundle['source'],
+                                          reference['solvent'], target['solvent']], separators=(',', ':'))
+                    entry = dict(method=method, scope=bundle['scope'], pair_id=pair_id, solute=solute_key,
+                                 solute_name=solute_info['name'], temperature_K=temperature, source=bundle['source'],
+                                 reference_solvent=solvents[reference['solvent']]['name'],
+                                 target_solvent=solvents[target['solvent']]['name'], category=category,
+                                 reference_x=reference['x'], target_x=target['x'],
+                                 ideal_error_log10=math.log10(reference['x']/target['x']))
+                    refkey, targetkey = (method, reference['solvent'], temperature), (method, target['solvent'], temperature)
+                    if refkey not in states or targetkey not in states:
+                        entry['status'] = 'model_unavailable'
+                        rows.append(entry)
+                        continue
+                    refstate, targetstate = states[refkey], states[targetkey]
+                    obskey = refkey, reference['x']
+                    if obskey not in observed:
+                        a, b = log_activities(refstate.args, temperature, reference['x'])
+                        tpd = stability_minimum(refstate.args, temperature, XGRID, refstate.gibbs, reference['x'], a, b)
+                        observed[obskey] = a, tpd
+                    refactivity, ref_tpd = observed[obskey]
+                    targetactivity, _ = log_activities(targetstate.args, temperature, target['x'])
+                    entry.update(activity_closure_error_log10=(refactivity-targetactivity)/LN10,
+                                 reference_activity=math.exp(refactivity), reference_minimum_TPD=ref_tpd)
+                    if ref_tpd < -1e-7:
+                        entry['status'] = 'reference_liquid_unstable'
+                    else:
+                        invkey = targetkey, refactivity
+                        if invkey not in inversions:
+                            inversions[invkey] = invert_activity(targetstate.args, temperature, XGRID,
+                                                                targetstate.activities, targetstate.gibbs, refactivity)
+                        predicted, residual, code = inversions[invkey]
+                        entry['status'] = STATUS[code]
+                        if code == 0:
+                            entry.update(predicted_x=predicted, error_log10=math.log10(predicted/target['x']),
+                                         equation_ln_residual=residual)
+                    rows.append(entry)
+        details.append(dict(scope=bundle['scope'], solute=solute_key, T=temperature,
+                            source=bundle['source'], solvents=len(observations)))
+    return rows, coverage, details
+
+
+def compact_rows(rows, solute_index):
+    result = np.empty(len(rows), dtype=COMPACT_DTYPE)
+    case_ids = {}
+    for i, row in enumerate(rows):
+        case_id = case_ids.setdefault(row['pair_id'], len(case_ids))
+        assert case_id < 1000000
+        result[i] = (METHODS.index(row['method']), SCOPES.index(row['scope']),
+                     CATEGORIES.index(row['category']), STATUSES.index(row['status']),
+                     solute_index, solute_index*1000000+case_id,
+                     *(row.get(field, math.nan) for field in
+                       ('error_log10', 'ideal_error_log10', 'activity_closure_error_log10',
+                        'equation_ln_residual')))
+    return result
+
+
+def metrics(rows, error_field='error_log10'):
+    rows = rows[np.isfinite(rows[error_field])]
+    if not len(rows):
+        return {'predictions': 0, 'solutes': 0}
+    solutes, inverse = np.unique(rows['solute'], return_inverse=True)
+    errors = rows[error_field]
+    counts = np.bincount(inverse)
+    per_solute = np.column_stack([
+        np.bincount(inverse, weights=v)/counts for v in
+        (np.abs(errors), errors**2, errors,
+         np.abs(errors)<=math.log10(2), np.abs(errors)<=1)])
+    rng = np.random.default_rng(20261014)
+    bootstrap = np.array([np.mean(per_solute[rng.integers(0,len(per_solute),len(per_solute)),0]) for _ in range(1000)])
+    mae = float(np.mean(per_solute[:,0]))
+    return dict(predictions=len(rows), solutes=len(solutes),
+                solute_balanced_MAE_log10=mae,
+                solute_balanced_RMSE_log10=float(np.sqrt(np.mean(per_solute[:,1]))),
+                solute_balanced_bias_log10=float(np.mean(per_solute[:,2])),
+                geometric_mean_fold_error=10**mae,
+                within_factor_2=float(np.mean(per_solute[:,3])),
+                within_factor_10=float(np.mean(per_solute[:,4])),
+                MAE_95pct_solute_bootstrap_CI=np.quantile(bootstrap,[.025,.975]).tolist(),
+                micro_MAE_log10=float(np.mean(np.abs(errors))),
+                micro_RMSE_log10=float(np.sqrt(np.mean(errors**2))))
+
+
+def summarize(rows, coverage, audit):
+    summary = dict(data_audit=audit, scopes={}, coverage={})
+    for method in METHODS:
+        subset = [r for r in coverage if r['method']==method]
+        summary['coverage'][method] = dict(Counter(r['status'] for r in subset))
+    for scope_index, scope in enumerate(SCOPES):
+        selected = rows[rows['scope']==scope_index]
+        if not len(selected):
+            continue
+        successes = {m:selected['case'][(selected['method']==i) & (selected['status']==0)]
+                     for i,m in enumerate(METHODS)}
+        all_common = successes[METHODS[0]]
+        five_common = successes[METHODS[0]]
+        for method in METHODS[1:]:
+            all_common = np.intersect1d(all_common, successes[method])
+            if method!='UNIFLBY':
+                five_common = np.intersect1d(five_common, successes[method])
+        output = {'methods':{}, 'common_all_six_predictions':len(all_common),
+                  'common_five_excluding_Lyngby_predictions':len(five_common)}
+        for method_index, method in enumerate(METHODS):
+            subset = selected[selected['method']==method_index]
+            valid = subset[subset['status']==0]
+            common_six = valid[np.isin(valid['case'], all_common)]
+            common_five = valid[np.isin(valid['case'], five_common)]
+            output['methods'][method] = dict(
+                status_counts={STATUSES[int(k)]:int(v) for k,v in
+                               zip(*np.unique(subset['status'],return_counts=True))},
+                own_coverage=metrics(valid),
+                ideal_on_same_coverage=metrics(valid,'ideal_error_log10'),
+                common_all_six=metrics(common_six),
+                common_five_excluding_Lyngby=metrics(common_five),
+                ideal_on_common_all_six=metrics(common_six, 'ideal_error_log10'),
+                ideal_on_common_five=metrics(common_five, 'ideal_error_log10'),
+                activity_closure_all_available=metrics(subset,'activity_closure_error_log10'),
+                categories={c:metrics(valid[valid['category']==i]) for i,c in enumerate(CATEGORIES)},
+                categories_common_five={c:metrics(common_five[common_five['category']==i])
+                                        for i,c in enumerate(CATEGORIES)},
+                maximum_equation_ln_residual=float(np.max(np.abs(valid['equation_ln_residual']))) if len(valid) else None)
+        summary['scopes'][scope] = output
+    return summary
+
+
+def self_check():
+    assert chemical('C[N+](=O)[O-]')[2]
+    assert not chemical('[Na+].[Cl-]')[2]
+    assert not chemical('C[NH3+]')[2]
+    checked = []
+    for method in METHODS:
+        backend = backend_for(method, 'CCO', 'O')
+        m, definitions = model(method), [groups(method,'CCO'),groups(method,'O')]
+        for x in (1e-6,.05,.4,.95):
+            actual = backend.activity_coefficients([x,1-x],298.15)
+            readable = m.activity_coefficients(definitions,[x,1-x],298.15)
+            assert np.allclose(actual, readable, rtol=1e-10, atol=1e-10), (method,x,actual,readable)
+        same = CompiledUNIFACBackend.from_model(m,['solute','solvent'],
+                                               {'solute':definitions[0], 'solvent':definitions[0]})
+        args = numerical_args(same)
+        activities, gibbs = curve(args,298.15,XGRID)
+        for x in (1e-12,1e-4,.1,.9):
+            prediction,residual,code=invert_activity(args,298.15,XGRID,activities,gibbs,math.log(x))
+            assert code==0 and abs(math.log(prediction/x))<1e-8 and abs(residual)<1e-8, (method,x,code)
+        checked.append(method)
+    return {'compiled_readable_agreement':checked, 'identical_component_ideal_transfer':checked,
+            'root_log_residual_tolerance':1e-8}
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--data-dir',type=Path,default=ROOT.parent/'TESTS'/'solubility')
+    parser.add_argument('--output-dir',type=Path,required=True)
+    parser.add_argument('--workers',type=int,default=5)
+    parser.add_argument('--limit-solutes',type=int,default=None,help='Pilot only: largest solvent bundles first')
+    parser.add_argument('--self-check-only',action='store_true')
+    args=parser.parse_args()
+    if not 1 <= args.workers <= 5:
+        parser.error('--workers must be 1--5')
+    rdBase.DisableLog('rdApp.*')
+    output=args.output_dir.resolve()
+    output.mkdir(parents=True,exist_ok=False)
+    start=time.monotonic()
+    checks=self_check()
+    (output/'numerical_checks.json').write_text(json.dumps(checks,indent=2)+'\n')
+    print('Numerical self-checks passed for all six variants',flush=True)
+    if args.self_check_only:
+        return
+    jobs,solutes,solvents,audit,group_rows=prepare(args.data_dir)
+    ordered=sorted(jobs,key=lambda k:(-max(len(b['observations']) for b in jobs[k]),k))
+    if args.limit_solutes is not None:
+        ordered=ordered[:args.limit_solutes]
+    task_arguments=[(key,solutes[key],jobs[key],solvents) for key in ordered]
+    audit['evaluated_solutes']=len(ordered)
+    write_csv(output/'deduplicated_observations.csv',group_rows)
+    input_paths=[args.data_dir/name for name in ('BigSolDBv2.0.csv','BigSolDBv2.0_densities.csv','curated-solubility-dataset.csv')]
+    parameter_paths=[ROOT/'data'/name for name in PARAMETERS.values()]
+    parameter_paths += [ROOT/'data'/'unifac2'/name for name in ('UNIFAC2int.csv','UNIFM2intA.xlsx','UNIFM2intB.xlsx')]
+    code_paths=[Path(__file__),ROOT/'unifac.py',ROOT/'unifac_fragmenter.py',ROOT/'compiled_unifac.py',ROOT/'lyngby_parameters.py']
+    manifest={'arguments':{k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},
+              'sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in input_paths+parameter_paths+code_paths},
+              'temperature_matching':'exact numeric temperature; main scope also exact source DOI',
+              'duplicates':'median log10 mole fraction per solute/solvent/temperature/source',
+              'stability':'binary TPD scan with refined minima; tolerance -1e-7 RT; numerical screen',
+              'roots':'first stable solvent-rich root, ln residual <=1e-10; no target-data initialization',
+              'bootstrap_seed':20261014,'workers':args.workers}
+    (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+    print(json.dumps(audit,indent=2),flush=True)
+    compact_results,coverage,details=[],[],[]
+    solute_indices={key:i for i,key in enumerate(ordered)}
+    with (output/'predictions.csv').open('x',newline='') as predictions_stream, ProcessPoolExecutor(max_workers=args.workers) as pool:
+        predictions_writer=csv.DictWriter(predictions_stream,fieldnames=PREDICTION_FIELDS)
+        predictions_writer.writeheader()
+        futures={pool.submit(evaluate_solute,job):job[0] for job in task_arguments}
+        task_count=len(futures)
+        for count,future in enumerate(as_completed(futures),1):
+            completed_solute=futures.pop(future)
+            rows,cov,detail=future.result()
+            predictions_writer.writerows(rows)
+            predictions_stream.flush()
+            compact_results.append(compact_rows(rows,solute_indices[completed_solute]))
+            coverage.extend(cov);details.extend(detail)
+            # Persist completed compounds incrementally; no lost expensive work.
+            with (output/'completed_solutes.jsonl').open('a') as stream:
+                stream.write(json.dumps({'solute':completed_solute,'prediction_rows':len(rows)})+'\n')
+            if count%25==0 or count==task_count:
+                print(f'Completed {count}/{task_count} solutes in {time.monotonic()-start:.1f}s',flush=True)
+    write_csv(output/'model_coverage.csv',coverage)
+    write_csv(output/'groups.csv',details)
+    compact=np.concatenate(compact_results)
+    np.save(output/'metric_records.npy',compact)
+    summary=summarize(compact,coverage,audit)
+    summary['elapsed_seconds']=time.monotonic()-start
+    summary['numerical_checks']=checks
+    (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    for scope,report in summary['scopes'].items():
+        print('\n'+scope,flush=True)
+        for method,score in report['methods'].items():
+            own=score['own_coverage']
+            print(method, own, flush=True)
+    print(f'Complete: {output}; elapsed {summary["elapsed_seconds"]:.1f}s',flush=True)
+
+
+if __name__=='__main__':
+    main()

@@ -1,0 +1,7 @@
+Preliminary analysis. The marginal target/reference results are valid.
+
+The relative-network diagnostic initially reported molecule counts before
+restricting comparisons to the core solvent network. The maintained script
+now reports actual counts after that restriction and formally tests only
+coefficients retaining the required molecule support.
+Final complete results are in ../solvent-bias-assessment/.

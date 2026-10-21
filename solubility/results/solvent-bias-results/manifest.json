@@ -1,0 +1,27 @@
+{
+  "arguments": {
+    "results_dir": "../../data/unifac-transfer-results",
+    "infinite_dir": "../../data/infinite-dilution-assessment",
+    "output_dir": "../../data/solvent-bias-results",
+    "minimum_molecules": 20,
+    "bootstrap_draws": 10000,
+    "relative_bootstrap_draws": 2000,
+    "workers": 5,
+    "seed": 20261014
+  },
+  "sha256": {
+    "../../provenance/original-scripts/benchmark_solvent_transfer_multipliers.py.txt": "a4af05bd93a8f3f76a203ec9eda35253d9ac42e1a4dc9a02dc26b24649327414",
+    "../unifac-transfer-results/metric_records.npy": "c6cff17b19a32ff152d0f032d2b517a644e41dc8b596f200ba6071068638b642",
+    "../unifac-transfer-results/manifest.json": "84344379353d4b798a94c1871e5e949bb9815d393b115a866c0ee9a8cc4e6429",
+    "../infinite-dilution-assessment/infinite_errors.npz": "b96a1ffbb80f744be9b0d052e2bc37a795a59cbf412ee074ce4f4fc3a6f2d70d",
+    "../infinite-dilution-assessment/manifest.json": "b39d0894268fc6622cc3c5b7ca835d28834cf88d89d891b1c01bde156d023c5a"
+  },
+  "path_base": "manifest",
+  "relocation": {
+    "original_manifest_sha256": "607d21d5ad180ca478568ecb1c59e5109ef1e6961c1807d45af574e06d1e15f3",
+    "note": "Paths made relative to this manifest. Numerical results and source/parameter hashes are unchanged. Original scripts are immutable snapshots in provenance/; upstream manifest hashes were updated only for this relocation."
+  },
+  "unavailable_historical_code_sha256": {
+    "../../analyze_solvent_bias.py": "da7eaacf09e1f9c343a8004dc38f171453509212fd7960ede123f403ff50dbe9"
+  }
+}

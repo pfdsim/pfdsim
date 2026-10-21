@@ -1,0 +1,5 @@
+No assessment was run in this folder. The initial numerical check used a
+benzoic-acid/ethanol fixture that lacks required interactions in one variant.
+The check now uses ethanol/water, which has complete parameters in all six
+variants. Actual assessment cases still require complete interactions.
+Final results are in ../infinite-dilution-assessment/.
