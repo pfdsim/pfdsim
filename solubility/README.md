@@ -15,6 +15,8 @@ solubility/
   benchmark_infinite_dilution_solubility.py
   analyze_solvent_bias.py
   solubility_paths.py
+  solubility_dependencies.py
+  pull_pfdsim_dependencies.py
   data/
     BigSolDBv2.0.csv
     BigSolDBv2.0_densities.csv
@@ -44,9 +46,20 @@ Use the pfdsim Python environment. The study needs NumPy, Numba, RDKit, SciPy,
 pandas, openpyxl, and Matplotlib. The first six are pfdsim dependencies;
 Matplotlib is additionally needed by `analyze_solubility_transfer.py`.
 
-Shared numerical code comes from `../unifac.py`, `../compiled_unifac.py`,
-`../unifac_fragmenter.py`, and `../lyngby_parameters.py`, with their supporting
-modules. The parameter tables are:
+The complete shared dependency set is **six Python files and nine parameter
+files** outside this directory. `solubility_dependencies.py` owns the file list
+used both by the benchmark fingerprints and the dependency downloader.
+
+| Python file, relative to this directory | Reached through | Purpose |
+| --- | --- | --- |
+| `../unifac.py` | Direct benchmark import | Parameter loading, group resolution, and reference activity coefficients. |
+| `../compiled_unifac.py` | Direct benchmark import | Numeric model arrays and compiled activity-coefficient kernels. |
+| `../unifac_fragmenter.py` | `unifac.py` | Variant-specific fragmentation of molecular SMILES. |
+| `../lyngby_parameters.py` | `unifac.py` | Translation of classic groups into Lyngby groups. |
+| `../compiled_cache.py` | `compiled_unifac.py` | Numba cache identities and decorator. |
+| `../physical_constants.py` | `compiled_unifac.py` | Shared physical constants imported by that backend. |
+
+The nine parameter files are:
 
 ```text
 ../data/unifac_params.json
@@ -59,6 +72,45 @@ modules. The parameter tables are:
 ../data/unifac2/UNIFM2intA.xlsx
 ../data/unifac2/UNIFM2intB.xlsx
 ```
+
+Lyngby's group translation also reads `unifac_params.json`, already included
+above. All six variants are exercised by the finite-concentration and
+infinite-dilution numerical checks. The multiplier and bias analyses reuse
+saved predictions and validate their upstream source fingerprints. The report
+renderer imports the benchmark module but does not load the parameter tables
+when rendering existing numerical results.
+
+These workflows supply SMILES directly, so the conditional identifier resolver
+in `unifac.py` does not import `chemical_properties.py` or its dependencies.
+They do not use the Lyngby gas extension (`mhv2_unifac.json`), the EOS models,
+or the process simulator.
+
+## Fetching only the shared pfdsim files
+
+`pull_pfdsim_dependencies.py` downloads exactly the 15 files above through
+`https://raw.githubusercontent.com/`, without cloning a repository or using the
+GitHub API. The downloader itself needs only the Python standard library and
+the two local study helpers; it does not install Python packages.
+
+```sh
+python solubility/pull_pfdsim_dependencies.py --list
+python solubility/pull_pfdsim_dependencies.py --ref main
+```
+
+The default repository is `pfdsim/pfdsim`, and the default destination is the
+parent of `solubility/`. For a reproducible snapshot, pass a full GitHub commit
+SHA to `--ref` instead of a moving branch. `--repository OWNER/REPOSITORY` and
+`--destination DIRECTORY` select another source or destination. An alternate
+destination becomes the shared-code root only when the study's `solubility/`
+directory is also placed inside it; existing scripts retain their location-based
+root. This allows the study to run without the rest of a full pfdsim checkout.
+
+Downloads are staged before installation. Identical existing files are left
+untouched, and differing existing files cause an error without overwriting them.
+Choose a fresh destination when fetching a different revision. Files are
+installed atomically, and failed downloads do not install a partial file set.
+Existing result manifests still require their recorded source and parameter
+hashes to match; downloading a newer revision does not bypass that validation.
 
 ## Running the study
 
@@ -126,8 +178,16 @@ Existing manifests were relocated without changing numerical outputs. They
 reference immutable original source snapshots under `provenance/`; new runs
 fingerprint the maintained scripts. See `provenance/README.md` for details.
 
+The shared fingerprints also cover `compiled_cache.py` and
+`physical_constants.py`. Their previously omitted hashes were added to the
+saved base manifests after the original assessments, with a
+`fingerprint_extension` provenance record. Downstream manifest references were
+updated to those augmented manifests. Numerical outputs, original script
+snapshots, and all pre-existing source/parameter fingerprints were preserved.
+Previously incomplete historical source records remain marked incomplete.
+
 Run the focused path/provenance tests with:
 
 ```sh
-python -m pytest solubility/tests/test_solubility_paths.py
+python -m pytest solubility/tests/
 ```

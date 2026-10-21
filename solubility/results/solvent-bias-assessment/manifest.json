@@ -13,13 +13,18 @@
     "../../provenance/original-scripts/analyze_solvent_bias.py.txt": "ef77fb36043c66071b450d710475d91105bc7c3378797b266bca2c8356c70a68",
     "../../provenance/original-scripts/benchmark_solvent_transfer_multipliers.py.txt": "a4af05bd93a8f3f76a203ec9eda35253d9ac42e1a4dc9a02dc26b24649327414",
     "../unifac-transfer-results/metric_records.npy": "c6cff17b19a32ff152d0f032d2b517a644e41dc8b596f200ba6071068638b642",
-    "../unifac-transfer-results/manifest.json": "84344379353d4b798a94c1871e5e949bb9815d393b115a866c0ee9a8cc4e6429",
+    "../unifac-transfer-results/manifest.json": "3a43a5a82df9430a061ded7726940ddb3ba510c316bd624fa11ca7309738527a",
     "../infinite-dilution-assessment/infinite_errors.npz": "b96a1ffbb80f744be9b0d052e2bc37a795a59cbf412ee074ce4f4fc3a6f2d70d",
-    "../infinite-dilution-assessment/manifest.json": "b39d0894268fc6622cc3c5b7ca835d28834cf88d89d891b1c01bde156d023c5a"
+    "../infinite-dilution-assessment/manifest.json": "4730afe69437e635fb86828316153eb4dcc9b8259f613ff713d90029030f3fa1"
   },
   "path_base": "manifest",
   "relocation": {
     "original_manifest_sha256": "a89c9539581739da07c529bdb4aff55fe8f6363f8f2e67ee42314773d0cabf2c",
     "note": "Paths made relative to this manifest. Numerical results and source/parameter hashes are unchanged. Original scripts are immutable snapshots in provenance/; upstream manifest hashes were updated only for this relocation."
+  },
+  "fingerprint_extension": {
+    "previous_manifest_sha256": "700aa6ea1584f76e739332beca812e85b398d6425c65e9a6dcc358ade9face1b",
+    "added_shared_files": [],
+    "note": "Missing imported support-file fingerprints were recorded after the original assessments. Upstream manifest hashes were refreshed for this extension only; numerical outputs and all other existing source/parameter hashes are unchanged."
   }
 }

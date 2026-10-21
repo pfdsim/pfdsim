@@ -26,19 +26,12 @@ from numba import njit
 from rdkit import Chem, rdBase
 
 from solubility_paths import DATA_DIR, RESULTS_DIR, ROOT, write_manifest
+from solubility_dependencies import PARAMETERS, SHARED_FILES
 
 sys.path.insert(0, str(ROOT))
 from compiled_unifac import CompiledUNIFACBackend, _activity_coefficients_numba
 from unifac import UNIFACModel, get_unifac_groups
 
-PARAMETERS = {
-    'UNIFAC': 'unifac_params.json',
-    'UNIFAC2': 'unifac2/UNIFAC2rq.csv',
-    'UNIFDMD': 'unifac_dmd.txt',
-    'UNIFM2': 'unifac2/UNIFM2rq.xlsx',
-    'UNIFNIST': 'nist_modified_unifac_params.json',
-    'UNIFLBY': 'lyngby_unifac.json',
-}
 METHODS = tuple(PARAMETERS)
 LN10 = math.log(10)
 XGRID = np.unique(np.concatenate((
@@ -518,15 +511,14 @@ def main():
     audit['evaluated_solutes']=len(ordered)
     write_csv(output/'deduplicated_observations.csv',group_rows)
     input_paths=[args.data_dir/name for name in ('BigSolDBv2.0.csv','BigSolDBv2.0_densities.csv','curated-solubility-dataset.csv')]
-    parameter_paths=[ROOT/'data'/name for name in PARAMETERS.values()]
-    parameter_paths += [ROOT/'data'/'unifac2'/name for name in ('UNIFAC2int.csv','UNIFM2intA.xlsx','UNIFM2intB.xlsx')]
-    code_paths=[Path(__file__),ROOT/'unifac.py',ROOT/'unifac_fragmenter.py',ROOT/'compiled_unifac.py',ROOT/'lyngby_parameters.py']
+    shared_paths=[ROOT/name for name in SHARED_FILES]
+    code_paths=[Path(__file__),Path(__file__).with_name('solubility_dependencies.py')]
     manifest={'temperature_matching':'exact numeric temperature; main scope also exact source DOI',
               'duplicates':'median log10 mole fraction per solute/solvent/temperature/source',
               'stability':'binary TPD scan with refined minima; tolerance -1e-7 RT; numerical screen',
               'roots':'first stable solvent-rich root, ln residual <=1e-10; no target-data initialization',
               'bootstrap_seed':20261014,'workers':args.workers}
-    write_manifest(output/'manifest.json', vars(args), input_paths+parameter_paths+code_paths, **manifest)
+    write_manifest(output/'manifest.json', vars(args), input_paths+shared_paths+code_paths, **manifest)
     print(json.dumps(audit,indent=2),flush=True)
     compact_results,coverage,details=[],[],[]
     solute_indices={key:i for i,key in enumerate(ordered)}

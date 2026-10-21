@@ -29,11 +29,21 @@
     "../../../unifac.py": "703304eecdc71fa8d2b2005b6a00fead822f8643856b9b236d6115f4b6c2534d",
     "../../../unifac_fragmenter.py": "1a6dcff1738d6d263f55644fde114210adee5a2e7b3efcf4c49dde4a36818fd7",
     "../../../compiled_unifac.py": "25d6921d3960ac79d739a4e164606663babfab3f24fcee39f70418352f99cea1",
-    "../../../lyngby_parameters.py": "2d05d2959eaedfb90555a597b7f716636ac4ce1ae22aa6d2afcb1d3a75c98d2d"
+    "../../../lyngby_parameters.py": "2d05d2959eaedfb90555a597b7f716636ac4ce1ae22aa6d2afcb1d3a75c98d2d",
+    "../../../compiled_cache.py": "a91136f2ca12978c577b2b5b37f60d27fc574e8a93db1a60838b29bf9ce3a08a",
+    "../../../physical_constants.py": "daa1064575105bd5bcca9fe1d2d08c4c570d434638ef6850ae6317120f3280c5"
   },
   "path_base": "manifest",
   "relocation": {
     "original_manifest_sha256": "d4e1d62d8be95068c71ffd7dae33f2dd17dbb353bf6da5b15fa751ac27cd67a6",
     "note": "Paths made relative to this manifest. Numerical results and source/parameter hashes are unchanged. Original scripts are immutable snapshots in provenance/; upstream manifest hashes were updated only for this relocation."
+  },
+  "fingerprint_extension": {
+    "previous_manifest_sha256": "84344379353d4b798a94c1871e5e949bb9815d393b115a866c0ee9a8cc4e6429",
+    "added_shared_files": [
+      "../../../compiled_cache.py",
+      "../../../physical_constants.py"
+    ],
+    "note": "Missing imported support-file fingerprints were recorded after the original assessments. Upstream manifest hashes were refreshed for this extension only; numerical outputs and all other existing source/parameter hashes are unchanged."
   }
 }

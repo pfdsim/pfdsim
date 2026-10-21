@@ -17,3 +17,11 @@ and `solvent-bias-results`. Their original missing-source hashes are retained
 under `unavailable_historical_code_sha256`; validation rejects those runs as
 upstream inputs. Their results and explanatory notes remain available.
 All four final assessment manifests validate against the preserved originals.
+
+The saved base manifests were subsequently extended to fingerprint the imported
+`compiled_cache.py` and `physical_constants.py` files. These hashes were recorded
+after the original runs, not measured retroactively at execution time.
+`fingerprint_extension` records the preceding manifest hash and added paths;
+dependent manifest hashes were updated to preserve the existing result chains.
+No numerical outputs, original source snapshots, or existing source/parameter
+hashes were replaced by this extension.
