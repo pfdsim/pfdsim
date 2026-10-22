@@ -157,7 +157,7 @@ def averages(errors, solutes):
     return score, moments[0]
 
 
-def difference_bootstrap(delta, seed, draws):
+def difference_bootstrap(delta, seed, draws, *, requested_family_size=None):
     """Resample whole molecules and whole split repetitions, never pair rows."""
     rng = np.random.default_rng(seed)
     boot = np.empty(draws)
@@ -171,13 +171,20 @@ def difference_bootstrap(delta, seed, draws):
     ci = np.quantile(boot,[.025,.975]).tolist()
     # Two-sided familywise 95% intervals for searching six UNIFAC variants.
     simultaneous = np.quantile(boot,[.05/(2*len(METHODS)),1-.05/(2*len(METHODS))]).tolist()
-    return dict(UNIFAC_minus_baseline_MAE_log10=point,
+    result = dict(UNIFAC_minus_baseline_MAE_log10=point,
                 paired_95pct_CI=ci,
                 paired_familywise_95pct_CI_six_variants=simultaneous,
                 convincingly_beats_baseline=simultaneous[1]<0,
                 baseline_convincingly_better=simultaneous[0]>0,
                 split_MAE_difference_min=float(delta.mean(axis=0).min()),
                 split_MAE_difference_max=float(delta.mean(axis=0).max()))
+    if requested_family_size is not None:
+        if requested_family_size < 1:
+            raise ValueError('The requested comparison family must be positive')
+        result['requested_family_size'] = requested_family_size
+        result['paired_requested_family_95pct_CI'] = np.quantile(
+            boot,[.05/(2*requested_family_size),1-.05/(2*requested_family_size)]).tolist()
+    return result
 
 
 def compare(rows, case_positions, baseline_errors, raw_errors, seed, draws):

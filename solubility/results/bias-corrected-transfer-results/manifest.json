@@ -1,0 +1,29 @@
+{
+  "path_base": "manifest",
+  "arguments": {
+    "data_dir": "../../data",
+    "results_dir": "../unifac-transfer-results",
+    "baseline_dir": "../solvent-multiplier-results",
+    "infinite_dir": "../infinite-dilution-assessment",
+    "output_dir": ".",
+    "bootstrap_draws": 20000,
+    "workers": 5,
+    "seed": 20261014
+  },
+  "sha256": {
+    "../../benchmark_bias_corrected_transfer.py": "eba9f38fa00d7b8bfd02f18cd443d2a28bc603f0c1b1a473b5d70bce62b34a05",
+    "../../benchmark_solvent_transfer_multipliers.py": "ca11a7af6c5c1d5b153b66048d4ac9b4a00ebad758a025d471972e166d3f171f",
+    "../../benchmark_solubility_transfer.py": "8e5b03f4fde4675e3b4a8c7a81ea8f27a82e0e603b57ccb74f8cbb78a503874e",
+    "../unifac-transfer-results/manifest.json": "3a43a5a82df9430a061ded7726940ddb3ba510c316bd624fa11ca7309738527a",
+    "../unifac-transfer-results/metric_records.npy": "c6cff17b19a32ff152d0f032d2b517a644e41dc8b596f200ba6071068638b642",
+    "../solvent-multiplier-results/manifest.json": "49f455b7f7c4e7e1edf3415a04c39f2487f0dd9f63dba31c75652c9f793454b1",
+    "../solvent-multiplier-results/folds.csv": "fddbdf295fe52c2bc5a8ffda675c28ca2ba257da336dd81b125c597d733e41ca",
+    "../solvent-multiplier-results/baseline_errors.npz": "983c650c1e0ee4fd8d0c9e80119ca320676ebb546a1501495c8cab85491aa5c0",
+    "../infinite-dilution-assessment/manifest.json": "4730afe69437e635fb86828316153eb4dcc9b8259f613ff713d90029030f3fa1",
+    "../infinite-dilution-assessment/infinite_errors.npz": "b96a1ffbb80f744be9b0d052e2bc37a795a59cbf412ee074ce4f4fc3a6f2d70d",
+    "../../data/BigSolDBv2.0.csv": "879f55f39db977e295c705e304d011d89d6e10da1daaa3f069181108c1de38b0",
+    "../../data/curated-solubility-dataset.csv": "7c47e021d03a5720f53cfddb7aef90c8911ea276a36306c839798733d8630332",
+    "../../data/BigSolDBv2.0_densities.csv": "02226420d9fb3294cb32211dac7f6ff7fa067511924afdb9f1893af1e334aac6",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

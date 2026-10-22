@@ -14,6 +14,7 @@ solubility/
   benchmark_solvent_transfer_multipliers.py
   benchmark_infinite_dilution_solubility.py
   analyze_solvent_bias.py
+  benchmark_bias_corrected_transfer.py
   solubility_paths.py
   solubility_dependencies.py
   pull_pfdsim_dependencies.py
@@ -26,6 +27,7 @@ solubility/
     solvent-multiplier-results/
     infinite-dilution-assessment/
     solvent-bias-assessment/
+    bias-corrected-transfer-results/
     ... historical and diagnostic runs ...
   provenance/original-scripts/
   tests/
@@ -124,6 +126,7 @@ python solubility/analyze_solubility_transfer.py
 python solubility/benchmark_solvent_transfer_multipliers.py
 python solubility/benchmark_infinite_dilution_solubility.py
 python solubility/analyze_solvent_bias.py
+python solubility/benchmark_bias_corrected_transfer.py
 ```
 
 These commands describe the dependency order. The completed results already
@@ -185,6 +188,33 @@ saved base manifests after the original assessments, with a
 updated to those augmented manifests. Numerical outputs, original script
 snapshots, and all pre-existing source/parameter fingerprints were preserved.
 Previously incomplete historical source records remain marked incomplete.
+
+## Held-out solvent-bias correction
+
+`benchmark_bias_corrected_transfer.py` reuses the saved finite and infinite-
+dilution predictions and the multiplier benchmark's molecule-level folds.
+It estimates solvent corrections using training molecules only. Its main
+correction subtracts a target-minus-reference log bias; a target-only mean
+correction is also reported as a sensitivity check.
+
+For a controlled comparison, the script fits a solvent-only transfer baseline
+on exactly the same training cases, chemical coverage, and equal-molecule
+weights as the relative correction. The original broad-population baseline
+is retained separately. It does not select offsets using the earlier
+full-dataset significance analysis or refit any UNIFAC parameters.
+
+The default evaluates five scenarios (finite concentration without a dilute
+cutoff, and finite/infinite dilution with both observed mole fractions below
+0.05 or 0.01), using the existing five-fold splits repeated ten times.
+The principal uncertainty intervals account for 60 corrected-versus-matched-
+baseline comparisons: six variants, five scenarios, and two correction forms.
+Outputs include every held-out error, fitted fold coefficients, and a report.
+The script refuses to overwrite an existing results directory.
+
+```sh
+set -o pipefail
+python solubility/benchmark_bias_corrected_transfer.py --output-dir solubility/results/new-bias-correction 2>&1 | tee /tmp/solubility-bias-correction.log
+```
 
 Run the focused path/provenance tests with:
 
