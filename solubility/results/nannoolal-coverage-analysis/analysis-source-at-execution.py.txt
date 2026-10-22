@@ -1,0 +1,309 @@
+"""Audit uncovered structures using native Nannoolal failure frames.
+
+Read the native exception's unassigned atoms and prior assignments directly.
+Never replace the fragmenter, relax its rules, or change regression results.
+"""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter, defaultdict
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import json
+from pathlib import Path
+import time
+
+import numpy as np
+import pandas as pd
+from rdkit import Chem, rdBase
+
+from benchmark_nannoolal_solubility import nm
+from benchmark_solubility_transfer import write_csv
+from solubility_paths import RESULTS_DIR, ROOT, verify_manifest, write_manifest
+
+
+PATTERNS = {
+    'amide_or_urea_carbonyl':'[CX3](=[OX1])[#7]',
+    'sulfonamide':'[SX4](=[OX1])(=[OX1])[#7]',
+    'phosphorus_environment':'[#15]',
+    'nitrogen_nitrogen_bond':'[#7]~[#7]',
+    'thiocarbonyl':'[#6]=[#16]',
+    'sulfonic_acid_or_sulfonate_ester':'[SX4](=[OX1])(=[OX1])[#8]',
+    'nitrogen_oxygen_bond':'[#7]~[#8]',
+    'aromatic_nitrogen':'[n]',
+    'nitrile':'[#6]#[#7]',
+    'carbonyl_other':'[#6]=[#8]',
+    'imine':'[#6]=[#7]',
+}
+COMPILED = {name:Chem.MolFromSmarts(pattern) for name,pattern in PATTERNS.items()}
+ORDINARY_ELEMENTS = {1,6,7,8,9,14,15,16,17,35,53}
+
+
+def motif_atoms(mol):
+    output = {}
+    for name,pattern in COMPILED.items():
+        atoms = set(a for match in mol.GetSubstructMatches(pattern) for a in match)
+        if name=='phosphorus_environment':
+            atoms |= {neighbor.GetIdx() for i in list(atoms) for neighbor in mol.GetAtomWithIdx(i).GetNeighbors()}
+        output[name] = atoms
+    unusual = {atom.GetIdx() for atom in mol.GetAtoms() if atom.GetAtomicNum() not in ORDINARY_ELEMENTS}
+    output['unusual_element_environment'] = unusual|{
+        neighbor.GetIdx() for i in unusual for neighbor in mol.GetAtomWithIdx(i).GetNeighbors()}
+    output['formal_charge_environment'] = {a.GetIdx() for a in mol.GetAtoms() if a.GetFormalCharge()!=0}
+    output['radical_environment'] = {a.GetIdx() for a in mol.GetAtoms() if a.GetNumRadicalElectrons()!=0}
+    return output
+
+
+def failure_state(mol):
+    """Inspect only the native Python exception frame, preserving all rules."""
+    try:
+        nm.fragment(mol)
+    except nm.FragmentationError as error:
+        traceback = error.__traceback__
+        while traceback is not None:
+            frame = traceback.tb_frame
+            if frame.f_code is nm.fragment.__code__:
+                values = frame.f_locals
+                return (values['mol'],{a.GetIdx() for a in values.get('unclaimed',[])},
+                        set(values.get('claimed',set())),values.get('frag'),str(error))
+            traceback = traceback.tb_next
+        raise RuntimeError('Native fragmentation failure frame unavailable') from error
+    raise AssertionError('Saved unavailable structure now fragments successfully')
+
+
+def structural_candidates(mol,missing,claimed):
+    """Identify native rule candidates blocked by atoms assigned earlier."""
+    candidates = defaultdict(list)
+    for priority,gid,pattern,claim_indices,predicate in nm._ASSIGNERS:
+        for match in mol.GetSubstructMatches(pattern):
+            if claim_indices is None:
+                atoms = match
+            elif callable(claim_indices):
+                atoms = claim_indices(mol,match)
+            else:
+                atoms = tuple(match[i] for i in claim_indices)
+            atoms = set(atoms)
+            relevant = atoms&missing
+            if not relevant or (predicate is not None and not predicate(mol,match)):
+                continue
+            for atom in relevant:
+                candidates[atom].append(dict(group=str(gid),priority=priority,
+                                            blocked_by=sorted(atoms&claimed),claimed_atoms=sorted(atoms)))
+    assert all(all(candidate['blocked_by'] for candidate in values) for values in candidates.values()), (
+        'A matching, non-overlapping native rule unexpectedly remained unapplied')
+    return candidates
+
+
+def environment(atom):
+    return dict(element=atom.GetSymbol(),aromatic=atom.GetIsAromatic(),
+                charge=atom.GetFormalCharge(),hydrogens=atom.GetTotalNumHs(),
+                hybridization=str(atom.GetHybridization()),
+                neighbors=sorted((bond.GetOtherAtom(atom).GetSymbol(),
+                                  bond.GetOtherAtom(atom).GetIsAromatic(),str(bond.GetBondType()))
+                                 for bond in atom.GetBonds()))
+
+
+def diagnose_batch(batch):
+    rdBase.DisableLog('rdApp.*')
+    rows,atoms,blocked = [],[],[]
+    for original in batch:
+        mol = Chem.MolFromSmiles(original['smiles'])
+        assert mol is not None
+        row = dict(original)
+        row['heavy_atoms'] = mol.GetNumHeavyAtoms()
+        row['ring_count'] = mol.GetRingInfo().NumRings()
+        motifs = motif_atoms(mol)
+        row.update({'contains_'+name:bool(indices) for name,indices in motifs.items()})
+        if original['status']=='ok':
+            rows.append(row)
+            continue
+        active,missing,claimed,fragmentation,message = failure_state(mol)
+        assert message==original['reason']
+        missing_motifs = motif_atoms(active)
+        row.update({'unassigned_'+name:bool(indices&missing) for name,indices in missing_motifs.items()})
+        candidates = structural_candidates(active,missing,claimed) if missing else {}
+        row['unassigned_atoms'] = len(missing)
+        row['blocked_rule_atoms'] = len(candidates)
+        row['no_native_rule_atoms'] = len(missing-set(candidates))
+        row['failure_kind'] = ('single_heavy_atom' if not missing else 'blocked_rules_only' if len(candidates)==len(missing)
+                               else 'no_matching_rules_only' if not candidates else 'mixed')
+        row['missing_elements'] = ','.join(sorted({active.GetAtomWithIdx(i).GetSymbol() for i in missing}))
+        instances = fragmentation.instances if fragmentation else []
+        for i in sorted(missing):
+            atom = active.GetAtomWithIdx(i)
+            env = environment(atom)
+            descriptor = json.dumps(env,sort_keys=True,separators=(',',':'))
+            relevant_motifs = [name for name,indices in missing_motifs.items() if i in indices]
+            atoms.append(dict(index=original['index'],atom_index=i,environment=descriptor,
+                              motifs=';'.join(relevant_motifs),has_blocked_rule=bool(candidates.get(i))))
+            for candidate in candidates.get(i,[]):
+                existing = sorted({str(gid) for gid,indices in instances if set(indices)&set(candidate['blocked_by'])})
+                blocked.append(dict(index=original['index'],atom_index=i,candidate_group=candidate['group'],
+                                    earlier_groups=','.join(existing),blocked_atoms=','.join(map(str,candidate['blocked_by']))))
+        rows.append(row)
+    return rows,atoms,blocked
+
+
+def aggregate(rows,atoms,blocked):
+    covered = [row for row in rows if row['status']=='ok']
+    uncovered = [row for row in rows if row['status']!='ok']
+    motifs = []
+    keys = [key.removeprefix('contains_') for key in rows[0] if key.startswith('contains_')]
+    for key in keys:
+        c = sum(row['contains_'+key] for row in covered)
+        u = sum(row['contains_'+key] for row in uncovered)
+        touching = [row for row in uncovered if row.get('unassigned_'+key)]
+        examples = sorted(touching,key=lambda row:(row['heavy_atoms'],row['index']))[:5]
+        motifs.append(dict(motif=key,covered_containing=c,uncovered_containing=u,
+                           fraction_covered_containing=c/len(covered),fraction_uncovered_containing=u/len(uncovered),
+                           uncovered_with_unassigned_atom_in_motif=len(touching),
+                           example_indices=[row['index'] for row in examples],
+                           example_names=[row['name'] for row in examples]))
+    per_environment = defaultdict(list)
+    for atom in atoms:
+        per_environment[atom['environment']].append(atom)
+    environments = []
+    for descriptor,items in per_environment.items():
+        environments.append(dict(environment=descriptor,unassigned_atoms=len(items),
+                                 molecules=len({item['index'] for item in items}),
+                                 blocked_rule_atoms=sum(item['has_blocked_rule'] for item in items)))
+    environments.sort(key=lambda row:row['molecules'],reverse=True)
+    block_groups = Counter((row['candidate_group'],row['earlier_groups']) for row in blocked)
+    blocks = [dict(candidate_group=pair[0],earlier_groups=pair[1],atom_rule_candidates=n,
+                   molecules=len({row['index'] for row in blocked if (row['candidate_group'],row['earlier_groups'])==pair}))
+              for pair,n in block_groups.most_common()]
+    remaining = {row['index'] for row in uncovered}
+    top_patterns = [row['motif'] for row in sorted(motifs,key=lambda row:row['uncovered_with_unassigned_atom_in_motif'],reverse=True)]
+    cumulative = []
+    explained = set()
+    for motif in top_patterns:
+        matched = {row['index'] for row in uncovered if row.get('unassigned_'+motif)}
+        new = matched-explained
+        if not new:
+            continue
+        explained |= matched
+        cumulative.append(dict(motif=motif,new_molecules=len(new),cumulative_molecules=len(explained),
+                               cumulative_fraction=len(explained)/len(uncovered)))
+    remaining -= explained
+    kinds = dict(Counter(row['failure_kind'] for row in uncovered))
+    return dict(covered=len(covered),uncovered=len(uncovered),failure_kinds=kinds,
+                motif_summary=sorted(motifs,key=lambda row:row['uncovered_with_unassigned_atom_in_motif'],reverse=True),
+                top_unassigned_environments=environments,blocked_rule_summary=blocks,
+                cumulative_motif_coverage=cumulative,unclassified_indices=sorted(remaining))
+
+
+def self_check():
+    mol = Chem.MolFromSmiles('CS(=O)(=O)N')
+    active,missing,claimed,_,_ = failure_state(mol)
+    assert missing
+    motifs = motif_atoms(active)
+    assert missing&motifs['sulfonamide']
+    candidates = structural_candidates(active,missing,claimed)
+    assert any(c['group']=='105' for values in candidates.values() for c in values)
+    mol = Chem.MolFromSmiles('O=P(O)(O)O')
+    assert motif_atoms(mol)['phosphorus_environment']==set(range(mol.GetNumAtoms()))
+    return dict(native_failure_frame=True,sulfonamide_existing_rule_blocked=True,phosphorus_environment=True)
+
+
+def render(output,summary):
+    lines = ['# Uncovered Nannoolal aqueous-solubility molecules','',
+             f'The original experiment tested {summary["covered"]+summary["uncovered"]:,} neutral, connected, carbon-containing structures. '
+             f'{summary["covered"]:,} were representable and {summary["uncovered"]:,} were uncovered. '
+             'This report concerns structural coverage, not invalid regression predictions.','',
+             '## Native failure mechanism','',
+             'Run the original native fragmenter on saved uncovered structures, and inspect its Python exception frame to recover ALL unassigned atoms and prior assignments. '
+             'No matching priorities, patterns, parameters, or production implementation are changed. '
+             'The native message lists at most eight atoms, so reading only its printed examples would miss some environments.','',
+             'A second read-only pass checks existing native group patterns at those unassigned atoms, including their original predicates. '
+             'It distinguishes atoms with no matching native rule from atoms whose matching group overlaps atoms claimed earlier. '
+             'A blocked pattern is evidence of an assignment conflict, not proof that changing priority alone gives a valid complete fragmentation or that the published method supports every compound.','',
+             '```json',json.dumps(summary['failure_kinds'],indent=2),'```','',
+             '## Structural motifs at actual unassigned atoms','',
+             'These categories overlap. A motif elsewhere in the molecule is not counted as the cause: '
+             'the motif atom set must intersect the native unassigned atom set. '
+             'Phosphorus and unusual-element environments additionally include directly bonded neighbors.','',
+             '| Motif | Uncovered molecules with unassigned atoms in motif | % of uncovered | Covered molecules containing motif | Uncovered molecules containing motif |',
+             '|---|---:|---:|---:|---:|']
+    for row in summary['motif_summary']:
+        lines.append(f'| {row["motif"]} | {row["uncovered_with_unassigned_atom_in_motif"]} | '
+                     f'{100*row["uncovered_with_unassigned_atom_in_motif"]/summary["uncovered"]:.1f}% | '
+                     f'{row["covered_containing"]} | {row["uncovered_containing"]} |')
+    lines += ['','## Examples','']
+    for row in summary['motif_summary']:
+        if row['example_names']:
+            lines.append('- '+row['motif']+': '+'; '.join(row['example_names']))
+    lines += ['','## Overlap-aware cumulative coverage','',
+              'Categories are added in descending individual count, counting each molecule once. '
+              'Broad motifs such as carbonyls are descriptive; they are not new proposed group definitions.','',
+              '```json',json.dumps(summary['cumulative_motif_coverage'],indent=2),'```','',
+              '## Existing-rule blocking','',
+              '| Candidate native group | Earlier assigned groups | Molecules | Atom/rule candidates |',
+              '|---|---|---:|---:|']
+    for row in summary['blocked_rule_summary'][:25]:
+        lines.append(f'| {row["candidate_group"]} | {row["earlier_groups"]} | {row["molecules"]} | {row["atom_rule_candidates"]} |')
+    lines += ['','## Scope and files','',
+              'No fragmenter repair or extension was performed. Missing features, structural assignment conflicts and broad chemistry-domain limitations '
+              'must be distinguished before proposing new group definitions. '
+              'The prior neutral-organic filter permits organometallic structures and internally charge-separated molecules if their total charge is zero; '
+              'those are included in the audit.','',
+              '- molecules.csv: all covered/uncovered structures, motif flags and native failure classes.',
+              '- unassigned_atoms.csv: exact native atom indices and environments.',
+              '- blocked_rules.csv: matching native patterns blocked by prior assignments.',
+              '- motif_summary.csv, environments.csv, summary.json: counts, examples and overlap-aware summaries.',
+              '- manifest.json: reproducible source/results fingerprints. Prior predictions, source data and production code are unchanged.','']
+    (output/'REPORT.md').write_text('\n'.join(lines))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--results-dir',type=Path,default=RESULTS_DIR/'nannoolal-aqueous-regression')
+    parser.add_argument('--prepared-dir',type=Path,default=RESULTS_DIR/'aqueous-count-regression')
+    parser.add_argument('--output-dir',type=Path,default=RESULTS_DIR/'nannoolal-coverage-analysis')
+    parser.add_argument('--workers',type=int,default=5)
+    args = parser.parse_args()
+    if not 1<=args.workers<=5:
+        parser.error('Use one to five workers')
+    started = time.monotonic()
+    rdBase.DisableLog('rdApp.*')
+    checks = self_check()
+    verify_manifest(args.results_dir/'manifest.json')
+    verify_manifest(args.prepared_dir/'manifest.json')
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True,exist_ok=False)
+    molecules = pd.read_csv(args.prepared_dir/'molecules.csv')
+    fragmentation = pd.read_csv(args.results_dir/'fragmentation.csv').fillna('')
+    inputs = fragmentation[['index','status','reason']].merge(molecules[['index','inchi','name','smiles','logS_mol_L']],on='index')
+    items = inputs.to_dict('records')
+    batches = [items[i:i+64] for i in range(0,len(items),64)]
+    rows,atoms,blocked = [],[],[]
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        futures = {pool.submit(diagnose_batch,b):i for i,b in enumerate(batches)}
+        for count,future in enumerate(as_completed(futures),1):
+            futures.pop(future)
+            r,a,b = future.result()
+            rows.extend(r)
+            atoms.extend(a)
+            blocked.extend(b)
+            if count%25==0 or count==len(batches):
+                print(f'Audited {len(rows)}/{len(items)} molecules in {time.monotonic()-started:.1f}s',flush=True)
+    rows.sort(key=lambda row:row['index'])
+    summary = aggregate(rows,atoms,blocked)
+    summary['checks'] = checks
+    summary['elapsed_seconds'] = time.monotonic()-started
+    write_csv(output/'molecules.csv',rows)
+    write_csv(output/'unassigned_atoms.csv',atoms)
+    write_csv(output/'blocked_rules.csv',blocked)
+    write_csv(output/'motif_summary.csv',summary['motif_summary'])
+    write_csv(output/'environments.csv',summary['top_unassigned_environments'])
+    (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    write_manifest(output/'manifest.json',vars(args),[
+        Path(__file__),ROOT/'nannoolal_method.py',
+        args.results_dir/'manifest.json',args.results_dir/'fragmentation.csv',
+        args.prepared_dir/'manifest.json',args.prepared_dir/'molecules.csv'])
+    render(output,summary)
+    print(json.dumps({key:summary[key] for key in ('covered','uncovered','failure_kinds','cumulative_motif_coverage')},indent=2),flush=True)
+    print(f'Complete: {output}; elapsed {summary["elapsed_seconds"]:.1f}s',flush=True)
+
+
+if __name__=='__main__':
+    main()

@@ -15,6 +15,15 @@ solubility/
   benchmark_infinite_dilution_solubility.py
   analyze_solvent_bias.py
   benchmark_bias_corrected_transfer.py
+  benchmark_aqueous_count_regression.py
+  analyze_aqueous_count_domains.py
+  analyze_aqueous_count_comparisons.py
+  plot_aqueous_count_regression.py
+  benchmark_nannoolal_solubility.py
+  plot_nannoolal_solubility.py
+  analyze_nannoolal_coverage.py
+  expanded_nannoolal_features.py
+  benchmark_expanded_nannoolal.py
   solubility_paths.py
   solubility_dependencies.py
   pull_pfdsim_dependencies.py
@@ -28,6 +37,12 @@ solubility/
     infinite-dilution-assessment/
     solvent-bias-assessment/
     bias-corrected-transfer-results/
+    aqueous-count-regression/
+    aqueous-count-domain-check/
+    aqueous-count-comparisons/
+    nannoolal-aqueous-regression/
+    nannoolal-coverage-analysis/
+    expanded-nannoolal-regression/
     ... historical and diagnostic runs ...
   provenance/original-scripts/
   tests/
@@ -48,7 +63,7 @@ Use the pfdsim Python environment. The study needs NumPy, Numba, RDKit, SciPy,
 pandas, openpyxl, and Matplotlib. The first six are pfdsim dependencies;
 Matplotlib is additionally needed by `analyze_solubility_transfer.py`.
 
-The complete shared dependency set is **six Python files and nine parameter
+The UNIFAC workflows' shared dependency set is **six Python files and nine parameter
 files** outside this directory. `solubility_dependencies.py` owns the file list
 used both by the benchmark fingerprints and the dependency downloader.
 
@@ -127,6 +142,8 @@ python solubility/benchmark_solvent_transfer_multipliers.py
 python solubility/benchmark_infinite_dilution_solubility.py
 python solubility/analyze_solvent_bias.py
 python solubility/benchmark_bias_corrected_transfer.py
+python solubility/benchmark_aqueous_count_regression.py
+python solubility/analyze_aqueous_count_domains.py
 ```
 
 These commands describe the dependency order. The completed results already
@@ -216,7 +233,127 @@ set -o pipefail
 python solubility/benchmark_bias_corrected_transfer.py --output-dir solubility/results/new-bias-correction 2>&1 | tee /tmp/solubility-bias-correction.log
 ```
 
-Run the focused path/provenance tests with:
+## Absolute aqueous-solubility count regressions
+
+`benchmark_aqueous_count_regression.py` predicts room-temperature aqueous
+`log10(S / (mol/L))` directly from atom or UNIFAC group counts. AqSolDB's
+curated values take priority on overlapping molecules; BigSolDB-only water
+measurements at 20–30 °C add further chemical identities. Each molecule has
+one target, and source agreement is reported separately.
+
+The study compares total/heavy atom counts, counts by element including H,
+UNIFAC main-group counts, and UNIFAC subgroup counts. It uses the shared
+fragmenter and group tables, without requiring group interaction parameters.
+Equivalent variant encodings are evaluated once when their matrices match.
+
+Plain OLS is reported alongside nested-validation alternatives. Candidate
+size relationships include linear, logarithmic, surface-like, and curved
+bases. Ridge strength and optional nonlinear size terms are chosen within
+training data only. The default uses five molecule folds repeated five times
+and three-fold inner validation. Atom-count baselines are also refitted on
+each group's representable population and on the common population.
+
+```sh
+set -o pipefail
+python solubility/benchmark_aqueous_count_regression.py --output-dir solubility/results/new-aqueous-counts 2>&1 | tee /tmp/aqueous-count-regression.log
+```
+
+These are absolute-solubility regressions: their labels include solid-state
+and ionization effects. Their errors are not directly comparable to the
+earlier solvent-transfer assessments.
+
+`analyze_aqueous_count_domains.py` reuses the prepared count matrices and
+folds for a chemical-domain sensitivity check. It refits the same models on
+neutral, single-component organic identities, without filtering by target
+or prediction error, and retains the full-population assessment unchanged.
+This distinguishes ordinary molecular prediction from disconnected mixtures,
+salts, and inorganic records in the released datasets. Its default output is
+`results/aqueous-count-domain-check`.
+
+`plot_aqueous_count_regression.py` renders that completed domain check without
+refitting: a size/solubility relationship plot and held-out prediction plots
+on identical molecule populations. It additionally requires Matplotlib.
+
+`analyze_aqueous_count_comparisons.py` compares the saved held-out losses of
+the neutral-domain size, element, and group models on identical molecules.
+Its bootstrap resamples molecules and CV repetitions and reports both ordinary
+and familywise intervals covering the full displayed comparison family.
+It never refits or selects a regression model using test errors. Its default
+output directory is `results/aqueous-count-comparisons`.
+
+## Nannoolal count comparison
+
+`benchmark_nannoolal_solubility.py` uses the additional shared implementation
+`../nannoolal_method.py` to extract first-order structural groups and native
+second-order correction counts. This dependency is separate from the UNIFAC
+file set downloaded by `pull_pfdsim_dependencies.py`. No Nannoolal property
+contribution values, boiling-point predictions, or interaction-pair features
+are used in the aqueous regression.
+
+It reuses the prepared aqueous labels, atom/UNIFAC matrices, molecular folds,
+and nested regression implementation. Each pairwise coverage intersection
+and the all-encoding common intersection refit the compared models on
+identical molecules. Both OLS and training-selected nonlinear-size/ridge
+regressions are evaluated, with paired molecule/repetition uncertainty.
+
+Nonfinite predictions and predictions outside the declared range
+`-30 <= log10(S / (mol/L)) <= 3` are invalid rather than clipped. This is a
+generous numerical plausibility screen, not a universal physical bound.
+Invalid counts remain visible; conditional metrics and paired comparisons
+use matched molecules with valid predictions in every repeat. The original
+raw predictions are retained, including failures.
+
+```sh
+set -o pipefail
+python solubility/benchmark_nannoolal_solubility.py --output-dir solubility/results/new-nannoolal-aqueous 2>&1 | tee /tmp/nannoolal-aqueous.log
+```
+
+`plot_nannoolal_solubility.py` renders a completed result directory's matched
+accuracy and structural coverage without refitting. It requires Matplotlib
+and accepts `--results-dir` for alternate completed assessments.
+
+`analyze_nannoolal_coverage.py` audits the uncovered molecules using the native
+fragmenter's exception frame. It records every unassigned atom, compares
+structural motif frequencies with covered molecules, and checks whether
+existing native group matches are blocked by earlier assignments. This is
+read-only diagnosis: matching rules, priorities and regression results are
+unchanged. Counts of overlapping motifs are reported alongside cumulative
+unique-molecule counts. The output is `results/nannoolal-coverage-analysis`.
+
+## Study-only expanded Nannoolal groups
+
+`expanded_nannoolal_features.py` preserves complete native assignments and
+repairs failed assignments for this solubility study only. It reuses the
+native fragmenter code in an isolated namespace with specific sulfonamide
+matching ahead of the broad sulfone match. Overlapping amide/urea systems
+become disjoint composite units; every remaining unassigned atom supplies
+detailed and core local-environment group candidates. Production fragmenter
+code and parameter tables remain unchanged.
+
+`benchmark_expanded_nannoolal.py` admits a new descriptor only with at least
+20 distinct fully represented training molecules. It checks actual selected
+group support, backs rare detailed groups off to core environments, and
+iterates support after excluding structures requiring another unsupported
+unit. Vocabulary discovery and backoff are fitted separately inside every
+outer and inner training fold. Test molecules do not contribute support.
+Existing native groups are retained; a native group absent from training is
+unavailable at test time.
+
+The benchmark compares repaired-only and fully expanded representations,
+using OLS and nested size/ridge selection. Its default output directory is
+`results/expanded-nannoolal-regression`; a preserved preliminary diagnostic
+run has a separate note and exact source snapshots. Counts distinguish
+structural unavailability from invalid numerical predictions. Every fold's
+new groups and supporting molecule counts are saved, along with a full-data
+descriptive catalogue, remaining coverage gaps, and held-out predictions.
+Study groups are not valid inputs to published Nannoolal property equations.
+
+```sh
+set -o pipefail
+python solubility/benchmark_expanded_nannoolal.py --output-dir solubility/results/new-expanded-nannoolal 2>&1 | tee /tmp/expanded-nannoolal.log
+```
+
+Run the focused study tests with:
 
 ```sh
 python -m pytest solubility/tests/

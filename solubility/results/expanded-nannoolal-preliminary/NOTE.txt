@@ -1,0 +1,8 @@
+Preliminary diagnostic run, preserved with exact source snapshots.
+
+The first extractor applied composite amide representations even when a
+complete native assignment already existed. This unnecessarily made 28
+previously covered molecules unavailable due to rare composite groups.
+The maintained extractor now preserves all complete native assignments and
+repairs failed native structures only. Final results are in the sibling
+expanded-nannoolal-regression directory. Previous results were not overwritten.

@@ -1,0 +1,24 @@
+{
+  "path_base": "manifest",
+  "arguments": {
+    "results_dir": "../nannoolal-aqueous-regression",
+    "prepared_dir": "../aqueous-count-regression",
+    "output_dir": ".",
+    "workers": 5
+  },
+  "sha256": {
+    "../../analyze_nannoolal_coverage.py": "7585081b3e93816c931d91171fff42ee1db86672dc767f2b266fafe777ac2d08",
+    "../../../nannoolal_method.py": "7dd14bfbc48b8561ff27574fc5665be95c3554403d040ca293e4946717b0a510",
+    "../nannoolal-aqueous-regression/manifest.json": "c6f548ae5b575e60ae846a39c9bf2c4f2bcf97bbafedba49940f9080c0b3ebb3",
+    "../nannoolal-aqueous-regression/fragmentation.csv": "cac895c83cfb72cdd1fdbaf73ecb516843cd5e4d2d7089691c1ffa5ebf1ab2b7",
+    "../aqueous-count-regression/manifest.json": "baa885c250c95a37d4ec9e912eb3f8fedc76c12384f84ab297b47198ad853faf",
+    "../aqueous-count-regression/molecules.csv": "af1ab81a70dcbe4f78b8d48bd0071f6d433ea17562cfa9adf5b26bb4bd60fa2d",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451",
+    "analysis-source-at-execution.py.txt": "cfa970cbb0f6675a727fabdb14e078de8352c7e522b562bdf20a41edb84a2018"
+  },
+  "source_maintenance": {
+    "change": "Removed an unused numpy import after execution; analysis logic and outputs are unchanged.",
+    "executed_source_snapshot": "analysis-source-at-execution.py.txt",
+    "previous_manifest_sha256": "a1d0a6dab38184e0140a4cf65779d8bc8f45d572f6b769f4a13c4a0ca76a67dc"
+  }
+}

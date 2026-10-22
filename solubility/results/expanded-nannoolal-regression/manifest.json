@@ -1,0 +1,30 @@
+{
+  "path_base": "manifest",
+  "arguments": {
+    "prepared_dir": "../aqueous-count-regression",
+    "native_dir": "../nannoolal-aqueous-regression",
+    "domain_dir": "../aqueous-count-domain-check",
+    "output_dir": ".",
+    "minimum_molecules": 20,
+    "bootstrap_draws": 20000,
+    "workers": 5
+  },
+  "sha256": {
+    "../../benchmark_expanded_nannoolal.py": "90b288ca37cb427843582ec474459dc3a3282b440b1e3abd21914c34073603ff",
+    "../../expanded_nannoolal_features.py": "a657d6cc7a88452bce7cf9fdd0d33a49523f0549d5c53783164c96419aa009d5",
+    "../../../nannoolal_method.py": "7dd14bfbc48b8561ff27574fc5665be95c3554403d040ca293e4946717b0a510",
+    "../../benchmark_aqueous_count_regression.py": "2aac4b7086ff7115b4b34532411bff40e85a3d3e49481359a0ff93d70dddcf6a",
+    "../../benchmark_solvent_transfer_multipliers.py": "ca11a7af6c5c1d5b153b66048d4ac9b4a00ebad758a025d471972e166d3f171f",
+    "../aqueous-count-regression/manifest.json": "baa885c250c95a37d4ec9e912eb3f8fedc76c12384f84ab297b47198ad853faf",
+    "../nannoolal-aqueous-regression/manifest.json": "c6f548ae5b575e60ae846a39c9bf2c4f2bcf97bbafedba49940f9080c0b3ebb3",
+    "../aqueous-count-domain-check/manifest.json": "fec8c4b86487e815073648f115cbea8e53a8ec1ede172378223a339f2d7622f0",
+    "../aqueous-count-regression/molecules.csv": "af1ab81a70dcbe4f78b8d48bd0071f6d433ea17562cfa9adf5b26bb4bd60fa2d",
+    "../aqueous-count-regression/features.npz": "df45d41d79b984371e10cc45aeeda78af7bc2123091ac26eb776b8750d318eeb",
+    "../aqueous-count-regression/folds.csv": "b826aacc7aaa0a0d4c7ed8e0d2ea0ebab1894ce719abd26338028e9ea0845e34",
+    "../nannoolal-aqueous-regression/features.npz": "c125760e79fcadf2abe7ecc703a57b3cc7d995666274b25c28356afa23474668",
+    "../nannoolal-aqueous-regression/Nannoolal_own__Nannoolal_first_adaptive.npz": "8a1509281961b874a2cdfb0d52e41aa4cf1a7f95252d40b71afc6bdd78af5eb9",
+    "../aqueous-count-domain-check/neutral_single_organic__element_counts_adaptive.npz": "ff476254c21196bfc65df686493f687ea91d66035906819f73cf03b51bba9a4d",
+    "../aqueous-count-domain-check/neutral_single_organic__element_counts_OLS.npz": "8e2b8480a3dc397a80f7191357394056c212a94d05f0071acc66afc3b6863638",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

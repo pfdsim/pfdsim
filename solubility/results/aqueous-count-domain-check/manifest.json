@@ -1,0 +1,18 @@
+{
+  "path_base": "manifest",
+  "arguments": {
+    "prepared_dir": "../aqueous-count-regression",
+    "output_dir": ".",
+    "workers": 5
+  },
+  "sha256": {
+    "../../analyze_aqueous_count_domains.py": "b2df46d06ee37d3971434c9da9a5bf494ac2eb11419001ffdbd71d5e1f1466e2",
+    "../../benchmark_aqueous_count_regression.py": "2aac4b7086ff7115b4b34532411bff40e85a3d3e49481359a0ff93d70dddcf6a",
+    "../aqueous-count-regression/manifest.json": "baa885c250c95a37d4ec9e912eb3f8fedc76c12384f84ab297b47198ad853faf",
+    "../aqueous-count-regression/features.npz": "df45d41d79b984371e10cc45aeeda78af7bc2123091ac26eb776b8750d318eeb",
+    "../aqueous-count-regression/feature_metadata.json": "acf07cf3489999e5c165360a590c80704848d8ae962769673663e7068991140b",
+    "../aqueous-count-regression/molecules.csv": "af1ab81a70dcbe4f78b8d48bd0071f6d433ea17562cfa9adf5b26bb4bd60fa2d",
+    "../aqueous-count-regression/folds.csv": "b826aacc7aaa0a0d4c7ed8e0d2ea0ebab1894ce719abd26338028e9ea0845e34",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

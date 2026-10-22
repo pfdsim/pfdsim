@@ -1,0 +1,303 @@
+{
+  "minimum_training_molecules": 20,
+  "bootstrap_draws": 20000,
+  "seed": 20261022,
+  "vocabulary_audit": {
+    "total_molecules": 9044,
+    "native_available": 7278,
+    "full_data_expanded_coverage": 8228,
+    "recovered_native_failures": 950,
+    "lost_native_coverage": 0,
+    "candidate_groups": 775,
+    "supported_new_groups": 23,
+    "supported_group_types": {
+      "residual_detail": 16,
+      "amide_system_detail": 4,
+      "amide_system_core": 1,
+      "residual_core": 2
+    },
+    "minimum_selected_group_support": 20
+  },
+  "scores": {
+    "repaired_OLS": {
+      "total_molecules": 9044,
+      "supported_predictions": 38826,
+      "supported_all_repeats": 7749,
+      "unavailable_predictions": 6394,
+      "invalid_supported_predictions": 12,
+      "valid_all_repeats": 7746,
+      "metrics": {
+        "predictions": 7746,
+        "solutes": 7746,
+        "MAE_log10": 0.884482082303195,
+        "RMSE_log10": 1.2077254666666182,
+        "bias_log10": -0.0018855569495758685,
+        "geometric_mean_fold_error": 7.664469181932499,
+        "within_factor_2": 0.24221533694810224,
+        "within_factor_10": 0.6669248644461657,
+        "R2": 0.7216773785525419
+      }
+    },
+    "repaired_adaptive": {
+      "total_molecules": 9044,
+      "supported_predictions": 38826,
+      "supported_all_repeats": 7749,
+      "unavailable_predictions": 6394,
+      "invalid_supported_predictions": 16,
+      "valid_all_repeats": 7745,
+      "metrics": {
+        "predictions": 7745,
+        "solutes": 7745,
+        "MAE_log10": 0.8264133639710409,
+        "RMSE_log10": 1.1172059516210158,
+        "bias_log10": -0.0007798714964551075,
+        "geometric_mean_fold_error": 6.705225129499251,
+        "within_factor_2": 0.26378308586184634,
+        "within_factor_10": 0.697249838605552,
+        "R2": 0.7618389642854034
+      }
+    },
+    "expanded_OLS": {
+      "total_molecules": 9044,
+      "supported_predictions": 40894,
+      "supported_all_repeats": 8133,
+      "unavailable_predictions": 4326,
+      "invalid_supported_predictions": 13,
+      "valid_all_repeats": 8130,
+      "metrics": {
+        "predictions": 8130,
+        "solutes": 8130,
+        "MAE_log10": 0.9033920953854087,
+        "RMSE_log10": 1.2333160834421193,
+        "bias_log10": -0.002607318077803885,
+        "geometric_mean_fold_error": 8.005566978320953,
+        "within_factor_2": 0.23793357933579337,
+        "within_factor_10": 0.6584747847478475,
+        "R2": 0.716586143700541
+      }
+    },
+    "expanded_adaptive": {
+      "total_molecules": 9044,
+      "supported_predictions": 40894,
+      "supported_all_repeats": 8133,
+      "unavailable_predictions": 4326,
+      "invalid_supported_predictions": 21,
+      "valid_all_repeats": 8128,
+      "metrics": {
+        "predictions": 8128,
+        "solutes": 8128,
+        "MAE_log10": 0.8352408930928664,
+        "RMSE_log10": 1.123497307002532,
+        "bias_log10": -0.0029259780644167845,
+        "geometric_mean_fold_error": 6.842911024637283,
+        "within_factor_2": 0.26016240157480314,
+        "within_factor_10": 0.6916830708661418,
+        "R2": 0.7648145531016435
+      }
+    },
+    "element_adaptive": {
+      "total_molecules": 9044,
+      "supported_predictions": 45220,
+      "supported_all_repeats": 9044,
+      "unavailable_predictions": 0,
+      "invalid_supported_predictions": 14,
+      "valid_all_repeats": 9041,
+      "metrics": {
+        "predictions": 9041,
+        "solutes": 9041,
+        "MAE_log10": 1.023002495149809,
+        "RMSE_log10": 1.340715306335766,
+        "bias_log10": 0.00021368701198471596,
+        "geometric_mean_fold_error": 10.54392954172166,
+        "within_factor_2": 0.2012830439110718,
+        "within_factor_10": 0.5913505143236367,
+        "R2": 0.6597723098674275
+      }
+    },
+    "element_OLS": {
+      "total_molecules": 9044,
+      "supported_predictions": 45220,
+      "supported_all_repeats": 9044,
+      "unavailable_predictions": 0,
+      "invalid_supported_predictions": 0,
+      "valid_all_repeats": 9044,
+      "metrics": {
+        "predictions": 9044,
+        "solutes": 9044,
+        "MAE_log10": 1.0932565785515582,
+        "RMSE_log10": 1.4387035976946247,
+        "bias_log10": 0.002081580526911842,
+        "geometric_mean_fold_error": 12.395286762923007,
+        "within_factor_2": 0.18182220256523662,
+        "within_factor_10": 0.5630252100840336,
+        "R2": 0.6082282250063896
+      }
+    },
+    "native_adaptive": {
+      "total_molecules": 9044,
+      "supported_predictions": 36390,
+      "supported_all_repeats": 7278,
+      "unavailable_predictions": 8830,
+      "invalid_supported_predictions": 17,
+      "valid_all_repeats": 7274,
+      "metrics": {
+        "predictions": 7274,
+        "solutes": 7274,
+        "MAE_log10": 0.8317272421853351,
+        "RMSE_log10": 1.1235306132649405,
+        "bias_log10": -0.0013025896592104588,
+        "geometric_mean_fold_error": 6.7877719400711,
+        "within_factor_2": 0.2600769865273577,
+        "within_factor_10": 0.6956007698652735,
+        "R2": 0.7676593176180051
+      }
+    }
+  },
+  "paired": [
+    {
+      "first": "expanded_OLS",
+      "second": "native_adaptive",
+      "molecules": 7266,
+      "MAE_first": 0.8994579418927386,
+      "MAE_second": 0.8317935203969615,
+      "difference": 0.06766442149577703,
+      "CI95": [
+        0.0591572005918984,
+        0.07642896439576224
+      ],
+      "familywise_CI95": [
+        0.055503404821876615,
+        0.07996944513162949
+      ]
+    },
+    {
+      "first": "expanded_adaptive",
+      "second": "element_adaptive",
+      "molecules": 8127,
+      "MAE_first": 0.8350404086338832,
+      "MAE_second": 1.020335527306499,
+      "difference": -0.18529511867261558,
+      "CI95": [
+        -0.19881663626402385,
+        -0.17176089879073
+      ],
+      "familywise_CI95": [
+        -0.20417816830668686,
+        -0.16679464390603016
+      ]
+    },
+    {
+      "first": "expanded_OLS",
+      "second": "element_OLS",
+      "molecules": 8130,
+      "MAE_first": 0.9033920953854087,
+      "MAE_second": 1.0909497049630887,
+      "difference": -0.1875576095776801,
+      "CI95": [
+        -0.20135263772731113,
+        -0.17384490961682192
+      ],
+      "familywise_CI95": [
+        -0.20692137415790524,
+        -0.16806073097027976
+      ]
+    },
+    {
+      "first": "expanded_adaptive",
+      "second": "element_OLS",
+      "molecules": 8128,
+      "MAE_first": 0.8352408930928664,
+      "MAE_second": 1.088893154270069,
+      "difference": -0.25365226117720263,
+      "CI95": [
+        -0.2685458771613777,
+        -0.23904874316611258
+      ],
+      "familywise_CI95": [
+        -0.27456733941489936,
+        -0.23323351473583093
+      ]
+    },
+    {
+      "first": "expanded_OLS",
+      "second": "element_adaptive",
+      "molecules": 8129,
+      "MAE_first": 0.9033313270939705,
+      "MAE_second": 1.0204445909219386,
+      "difference": -0.11711326382796829,
+      "CI95": [
+        -0.13348701568938404,
+        -0.10100566693601273
+      ],
+      "familywise_CI95": [
+        -0.13983583494178803,
+        -0.09424452655938935
+      ]
+    },
+    {
+      "first": "expanded_adaptive",
+      "second": "native_adaptive",
+      "molecules": 7265,
+      "MAE_first": 0.831350270854114,
+      "MAE_second": 0.8310824220633201,
+      "difference": 0.0002678487907937942,
+      "CI95": [
+        -0.002274553221237675,
+        0.00276930484520817
+      ],
+      "familywise_CI95": [
+        -0.0033078868548650437,
+        0.0038832639835853053
+      ]
+    },
+    {
+      "first": "repaired_adaptive",
+      "second": "native_adaptive",
+      "molecules": 7266,
+      "MAE_first": 0.8317158923782183,
+      "MAE_second": 0.8317935203969615,
+      "difference": -7.76280187432789e-05,
+      "CI95": [
+        -0.0021757713973833627,
+        0.002214478912271298
+      ],
+      "familywise_CI95": [
+        -0.0030172110706350205,
+        0.0033308333447326726
+      ]
+    },
+    {
+      "first": "expanded_adaptive",
+      "second": "repaired_adaptive",
+      "molecules": 7743,
+      "MAE_first": 0.8253834162040958,
+      "MAE_second": 0.8254538661106904,
+      "difference": -7.044990659455101e-05,
+      "CI95": [
+        -0.0018982263523637517,
+        0.0016500905424987901
+      ],
+      "familywise_CI95": [
+        -0.0025971223925395654,
+        0.002347310435168265
+      ]
+    },
+    {
+      "first": "expanded_adaptive",
+      "second": "expanded_OLS",
+      "molecules": 8128,
+      "MAE_first": 0.8352408930928664,
+      "MAE_second": 0.9019167335172731,
+      "difference": -0.06667584042440668,
+      "CI95": [
+        -0.07523575913628172,
+        -0.05836266739929239
+      ],
+      "familywise_CI95": [
+        -0.0787047761855042,
+        -0.055094390304391755
+      ]
+    }
+  ],
+  "elapsed_seconds": 65.66223267803434
+}

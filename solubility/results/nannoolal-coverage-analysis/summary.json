@@ -1,0 +1,1990 @@
+{
+  "covered": 7278,
+  "uncovered": 1766,
+  "failure_kinds": {
+    "no_matching_rules_only": 1012,
+    "blocked_rules_only": 628,
+    "mixed": 125,
+    "single_heavy_atom": 1
+  },
+  "motif_summary": [
+    {
+      "motif": "carbonyl_other",
+      "covered_containing": 4044,
+      "uncovered_containing": 1031,
+      "fraction_covered_containing": 0.5556471558120363,
+      "fraction_uncovered_containing": 0.5838052095130238,
+      "uncovered_with_unassigned_atom_in_motif": 494,
+      "example_indices": [
+        10158,
+        10162,
+        10246,
+        5920,
+        6255
+      ],
+      "example_names": [
+        "formaldehyde",
+        "(1-hydroxy-1-phosphonoethyl)phosphonic acid",
+        "carbon dioxide",
+        "peroxyacetic acid",
+        "hydantoin"
+      ]
+    },
+    {
+      "motif": "amide_or_urea_carbonyl",
+      "covered_containing": 1211,
+      "uncovered_containing": 583,
+      "fraction_covered_containing": 0.16639186589722452,
+      "fraction_uncovered_containing": 0.3301245753114383,
+      "uncovered_with_unassigned_atom_in_motif": 460,
+      "example_indices": [
+        6255,
+        6313,
+        6663,
+        6707,
+        5905
+      ],
+      "example_names": [
+        "hydantoin",
+        "1-Acetylurea",
+        "4(3h)-pyrimidone",
+        "succinimide",
+        "(E)-(carbamoylimino)urea; (Z)-(carbamoylimino)urea"
+      ]
+    },
+    {
+      "motif": "nitrogen_nitrogen_bond",
+      "covered_containing": 221,
+      "uncovered_containing": 429,
+      "fraction_covered_containing": 0.030365485023358067,
+      "fraction_uncovered_containing": 0.24292185730464327,
+      "uncovered_with_unassigned_atom_in_motif": 350,
+      "example_indices": [
+        10220,
+        5979,
+        5980,
+        5949,
+        5982
+      ],
+      "example_names": [
+        "methylhydrazine",
+        "1,2-dimethylhydrazine",
+        "1,1-dimethylhydrazine",
+        "n-nitrosodimethylamine",
+        "ethanol, 2-hydrazino-"
+      ]
+    },
+    {
+      "motif": "sulfonamide",
+      "covered_containing": 54,
+      "uncovered_containing": 340,
+      "fraction_covered_containing": 0.00741962077493817,
+      "fraction_uncovered_containing": 0.19252548131370328,
+      "uncovered_with_unassigned_atom_in_motif": 336,
+      "example_indices": [
+        5978,
+        6656,
+        7971,
+        6608,
+        7998
+      ],
+      "example_names": [
+        "methanesulfonamide, n-(methylsulfonyl)-",
+        "5-Chlorothiophene-2-sulfonamide",
+        "benzenesulfonamide",
+        "ethanesulfonamide, n-(ethylsulfonyl)-",
+        "Sulfanilamide"
+      ]
+    },
+    {
+      "motif": "phosphorus_environment",
+      "covered_containing": 90,
+      "uncovered_containing": 216,
+      "fraction_covered_containing": 0.01236603462489695,
+      "fraction_uncovered_containing": 0.12231030577576443,
+      "uncovered_with_unassigned_atom_in_motif": 215,
+      "example_indices": [
+        10218,
+        5948,
+        5983,
+        6431,
+        6549
+      ],
+      "example_names": [
+        "methylphosphonic acid",
+        "ethephon",
+        "methamidophos",
+        "dimethyl methylphosphonate",
+        "sarin"
+      ]
+    },
+    {
+      "motif": "nitrogen_oxygen_bond",
+      "covered_containing": 469,
+      "uncovered_containing": 289,
+      "fraction_covered_containing": 0.06444078043418522,
+      "fraction_uncovered_containing": 0.1636466591166478,
+      "uncovered_with_unassigned_atom_in_motif": 163,
+      "example_indices": [
+        5949,
+        10196,
+        6311,
+        6396,
+        6600
+      ],
+      "example_names": [
+        "n-nitrosodimethylamine",
+        "hydroxyurea",
+        "n-nitrosomethylvinylamine",
+        "n-methyl-n-nitrosoethamine",
+        "N,N-diethylhydroxylamine"
+      ]
+    },
+    {
+      "motif": "thiocarbonyl",
+      "covered_containing": 32,
+      "uncovered_containing": 121,
+      "fraction_covered_containing": 0.004396812311074471,
+      "fraction_uncovered_containing": 0.06851642129105323,
+      "uncovered_with_unassigned_atom_in_motif": 121,
+      "example_indices": [
+        10247,
+        5943,
+        10198,
+        10216,
+        5887
+      ],
+      "example_names": [
+        "dithioxomethane",
+        "ethanethioamide",
+        "thiourea",
+        "aminothiourea",
+        "thiourea, cyano-"
+      ]
+    },
+    {
+      "motif": "sulfonic_acid_or_sulfonate_ester",
+      "covered_containing": 10,
+      "uncovered_containing": 115,
+      "fraction_covered_containing": 0.0013740038472107722,
+      "fraction_uncovered_containing": 0.06511891279728199,
+      "uncovered_with_unassigned_atom_in_motif": 115,
+      "example_indices": [
+        10203,
+        5959,
+        5962,
+        5977,
+        6355
+      ],
+      "example_names": [
+        "methanesulfonic acid",
+        "methyl methanesulfonate",
+        "isethionic acid",
+        "taurine",
+        "1,2-oxathiolane 2,2-dioxide"
+      ]
+    },
+    {
+      "motif": "aromatic_nitrogen",
+      "covered_containing": 1010,
+      "uncovered_containing": 587,
+      "fraction_covered_containing": 0.138774388568288,
+      "fraction_uncovered_containing": 0.33238958097395244,
+      "uncovered_with_unassigned_atom_in_motif": 105,
+      "example_indices": [
+        7182,
+        6234,
+        7958,
+        7959,
+        8756
+      ],
+      "example_names": [
+        "pyridine oxide",
+        "N-nitropyrazole",
+        "4-methyl-n-oxidepyridine",
+        "3-methyl-n-oxidepyridine",
+        "3,5-dimethylpyridine-n-oxide"
+      ]
+    },
+    {
+      "motif": "formal_charge_environment",
+      "covered_containing": 408,
+      "uncovered_containing": 178,
+      "fraction_covered_containing": 0.05605935696619951,
+      "fraction_uncovered_containing": 0.10079275198187995,
+      "uncovered_with_unassigned_atom_in_motif": 56,
+      "example_indices": [
+        10245,
+        7182,
+        10199,
+        6234,
+        7044
+      ],
+      "example_names": [
+        "methanidylidyneoxidanium",
+        "pyridine oxide",
+        "1-nitroguanidine",
+        "N-nitropyrazole",
+        "Betaine"
+      ]
+    },
+    {
+      "motif": "imine",
+      "covered_containing": 227,
+      "uncovered_containing": 180,
+      "fraction_covered_containing": 0.03118988733168453,
+      "fraction_uncovered_containing": 0.10192525481313704,
+      "uncovered_with_unassigned_atom_in_motif": 39,
+      "example_indices": [
+        7147,
+        7907,
+        7916,
+        8550,
+        7250
+      ],
+      "example_names": [
+        "allopurinol",
+        "5-methyl-[1,2,4]triazolo[1,5-a]pyrimidin-7-ol",
+        "4(1h)-pteridinone, hydrazone",
+        "2(3h)-pteridinone, 3-methyl-",
+        "methazolamide"
+      ]
+    },
+    {
+      "motif": "unusual_element_environment",
+      "covered_containing": 8,
+      "uncovered_containing": 30,
+      "fraction_covered_containing": 0.0010992030777686177,
+      "fraction_uncovered_containing": 0.01698754246885617,
+      "uncovered_with_unassigned_atom_in_motif": 29,
+      "example_indices": [
+        10242,
+        143,
+        5969,
+        10137,
+        10210
+      ],
+      "example_names": [
+        "chipcote",
+        "dimethyltin dichloride",
+        "cacodylic acid",
+        "Tetra(10B)boron carbide",
+        "methane arsonate"
+      ]
+    },
+    {
+      "motif": "nitrile",
+      "covered_containing": 167,
+      "uncovered_containing": 64,
+      "fraction_covered_containing": 0.022945864248419896,
+      "fraction_uncovered_containing": 0.0362400906002265,
+      "uncovered_with_unassigned_atom_in_motif": 10,
+      "example_indices": [
+        10233,
+        10240,
+        10242,
+        5903,
+        7026
+      ],
+      "example_names": [
+        "hydrocyanic acid",
+        "iodine cyanide",
+        "chipcote",
+        "2-cyanoguanidine",
+        "tabun"
+      ]
+    },
+    {
+      "motif": "radical_environment",
+      "covered_containing": 3,
+      "uncovered_containing": 4,
+      "fraction_covered_containing": 0.00041220115416323167,
+      "fraction_uncovered_containing": 0.0022650056625141564,
+      "uncovered_with_unassigned_atom_in_motif": 4,
+      "example_indices": [
+        6877,
+        9822,
+        9868,
+        5027
+      ],
+      "example_names": [
+        "2-methylpropane",
+        "tempone",
+        "4-hydroxy-2,2,6,6-tetramethylpiperidinoxyl",
+        "Octadecan-1-ol, ethoxylated"
+      ]
+    }
+  ],
+  "top_unassigned_environments": [
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 633,
+      "molecules": 494,
+      "blocked_rule_atoms": 514
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 385,
+      "molecules": 290,
+      "blocked_rule_atoms": 371
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 303,
+      "molecules": 160,
+      "blocked_rule_atoms": 7
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":2,\"neighbors\":[[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 158,
+      "molecules": 154,
+      "blocked_rule_atoms": 158
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 130,
+      "molecules": 130,
+      "blocked_rule_atoms": 130
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 139,
+      "molecules": 121,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 215,
+      "molecules": 121,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 127,
+      "molecules": 119,
+      "blocked_rule_atoms": 112
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"P\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 122,
+      "molecules": 109,
+      "blocked_rule_atoms": 5
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"P\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 112,
+      "molecules": 106,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 108,
+      "molecules": 91,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 88,
+      "molecules": 79,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 70,
+      "molecules": 65,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 67,
+      "molecules": 64,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 77,
+      "molecules": 63,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 60,
+      "molecules": 58,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 61,
+      "molecules": 55,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 54,
+      "molecules": 52,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 52,
+      "molecules": 48,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 67,
+      "molecules": 45,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 46,
+      "molecules": 44,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 50,
+      "molecules": 43,
+      "blocked_rule_atoms": 2
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 36,
+      "molecules": 34,
+      "blocked_rule_atoms": 26
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 33,
+      "molecules": 33,
+      "blocked_rule_atoms": 29
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":2,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 39,
+      "molecules": 32,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 38,
+      "molecules": 30,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 28,
+      "molecules": 28,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 36,
+      "molecules": 27,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 37,
+      "molecules": 26,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 26,
+      "molecules": 25,
+      "blocked_rule_atoms": 23
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 29,
+      "molecules": 24,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 56,
+      "molecules": 24,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 24,
+      "molecules": 23,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 21,
+      "molecules": 21,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"DOUBLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 20,
+      "molecules": 20,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"DOUBLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 21,
+      "molecules": 18,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 16,
+      "molecules": 16,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 22,
+      "molecules": 16,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 15,
+      "molecules": 15,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 15,
+      "molecules": 15,
+      "blocked_rule_atoms": 14
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 16,
+      "molecules": 15,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 20,
+      "molecules": 14,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 14,
+      "molecules": 13,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"DOUBLE\"]]}",
+      "unassigned_atoms": 17,
+      "molecules": 13,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 12,
+      "molecules": 12,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 12,
+      "molecules": 12,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 15,
+      "molecules": 11,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 23,
+      "molecules": 11,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 11,
+      "molecules": 11,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 13,
+      "molecules": 11,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 17,
+      "molecules": 11,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 12,
+      "molecules": 10,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 10,
+      "molecules": 10,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 10,
+      "molecules": 10,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Cl\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 13,
+      "molecules": 9,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"C\",true,\"AROMATIC\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 9,
+      "molecules": 9,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 8,
+      "molecules": 8,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 10,
+      "molecules": 8,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 11,
+      "molecules": 8,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 8,
+      "molecules": 8,
+      "blocked_rule_atoms": 8
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 8,
+      "molecules": 8,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 8,
+      "molecules": 8,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 8,
+      "molecules": 8,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"DOUBLE\"],[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":2,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 7,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 9,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 10,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 8,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 7,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"F\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 6,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Sn\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 10,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Cl\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"Sn\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 11,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 5,
+      "blocked_rule_atoms": 5
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 5,
+      "blocked_rule_atoms": 5
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 5,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 4,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"O\",false,\"SINGLE\"],[\"O\",true,\"AROMATIC\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 4,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 4,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"P\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 4,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":2,\"neighbors\":[[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 7,
+      "molecules": 4,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 4,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 3,
+      "blocked_rule_atoms": 4
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 7,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"DOUBLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"C\",true,\"DOUBLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"F\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"C\",true,\"AROMATIC\"],[\"Cu\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 5,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Cl\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 3,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"Sn\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"DOUBLE\"],[\"C\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 2
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"DOUBLE\"],[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"TRIPLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"C\",true,\"AROMATIC\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Cl\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 2,
+      "blocked_rule_atoms": 3
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"As\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"As\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"N\",false,\"SINGLE\"],[\"N\",true,\"AROMATIC\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"F\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Br\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"F\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Cu\",\"hybridization\":\"SP3D2\",\"hydrogens\":0,\"neighbors\":[[\"N\",true,\"SINGLE\"],[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 2
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 2,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Zn\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Zn\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Sb\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 6,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Sb\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Co\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Co\",\"hybridization\":\"SP3D\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Co\",\"hybridization\":\"SP3D\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Co\",\"hybridization\":\"SP3D2\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Pb\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"Sn\",false,\"SINGLE\"],[\"Sn\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"N\",true,\"AROMATIC\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"N\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"N\",true,\"AROMATIC\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"Si\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 3,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 2
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"P\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"DOUBLE\"],[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"Al\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"Al\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":1,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"AROMATIC\"],[\"C\",true,\"AROMATIC\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"N\",true,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":true,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"DOUBLE\"],[\"C\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"As\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"C\",true,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"TRIPLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"S\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"P\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Cu\",\"hybridization\":\"SP3D2\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"Cu\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Zn\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Zn\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"Zn\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"Cl\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"TRIPLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"Ge\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"Ge\",false,\"SINGLE\"],[\"Ge\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"F\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Hg\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Hg\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"Br\",false,\"SINGLE\"],[\"Br\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"I\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"DOUBLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"N\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"P\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"S\",false,\"DOUBLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"B\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"B\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"Cl\",false,\"SINGLE\"],[\"Cl\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",true,\"SINGLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",true,\"DOUBLE\"],[\"N\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"Cl\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"S\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"N\",false,\"SINGLE\"],[\"S\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 2,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"C\",true,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"O\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"N\",true,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"],[\"P\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 1
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"B\",\"hybridization\":\"SP2\",\"hydrogens\":0,\"neighbors\":[[\"B\",false,\"SINGLE\"],[\"B\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 4,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":2,\"neighbors\":[[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP2\",\"hydrogens\":1,\"neighbors\":[[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"N\",\"hybridization\":\"SP3\",\"hydrogens\":1,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"Cl\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"As\",\"hybridization\":\"SP3\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"O\",false,\"DOUBLE\"],[\"O\",false,\"SINGLE\"],[\"O\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"H\",\"hybridization\":\"S\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":1,\"neighbors\":[[\"N\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"I\",false,\"SINGLE\"],[\"N\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"Hg\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"SINGLE\"],[\"C\",false,\"SINGLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"Hg\",false,\"SINGLE\"],[\"N\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":-1,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":1,\"element\":\"O\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"C\",false,\"TRIPLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"O\",false,\"DOUBLE\"],[\"O\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    },
+    {
+      "environment": "{\"aromatic\":false,\"charge\":0,\"element\":\"C\",\"hybridization\":\"SP\",\"hydrogens\":0,\"neighbors\":[[\"S\",false,\"DOUBLE\"],[\"S\",false,\"DOUBLE\"]]}",
+      "unassigned_atoms": 1,
+      "molecules": 1,
+      "blocked_rule_atoms": 0
+    }
+  ],
+  "blocked_rule_summary": [
+    {
+      "candidate_group": "49",
+      "earlier_groups": "100",
+      "atom_rule_candidates": 516,
+      "molecules": 182
+    },
+    {
+      "candidate_group": "105",
+      "earlier_groups": "82",
+      "atom_rule_candidates": 378,
+      "molecules": 330
+    },
+    {
+      "candidate_group": "48",
+      "earlier_groups": "100",
+      "atom_rule_candidates": 286,
+      "molecules": 132
+    },
+    {
+      "candidate_group": "48",
+      "earlier_groups": "48",
+      "atom_rule_candidates": 150,
+      "molecules": 63
+    },
+    {
+      "candidate_group": "49",
+      "earlier_groups": "49",
+      "atom_rule_candidates": 82,
+      "molecules": 39
+    },
+    {
+      "candidate_group": "48",
+      "earlier_groups": "99",
+      "atom_rule_candidates": 40,
+      "molecules": 19
+    },
+    {
+      "candidate_group": "73",
+      "earlier_groups": "73",
+      "atom_rule_candidates": 18,
+      "molecules": 4
+    },
+    {
+      "candidate_group": "100",
+      "earlier_groups": "100,48",
+      "atom_rule_candidates": 18,
+      "molecules": 9
+    },
+    {
+      "candidate_group": "100",
+      "earlier_groups": "49,99",
+      "atom_rule_candidates": 16,
+      "molecules": 8
+    },
+    {
+      "candidate_group": "100",
+      "earlier_groups": "100,49",
+      "atom_rule_candidates": 16,
+      "molecules": 8
+    },
+    {
+      "candidate_group": "105",
+      "earlier_groups": "105",
+      "atom_rule_candidates": 5,
+      "molecules": 5
+    },
+    {
+      "candidate_group": "48",
+      "earlier_groups": "109",
+      "atom_rule_candidates": 3,
+      "molecules": 3
+    },
+    {
+      "candidate_group": "105",
+      "earlier_groups": "100",
+      "atom_rule_candidates": 3,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "48",
+      "earlier_groups": "105",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "94",
+      "earlier_groups": "79",
+      "atom_rule_candidates": 2,
+      "molecules": 2
+    },
+    {
+      "candidate_group": "100",
+      "earlier_groups": "100",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "77",
+      "earlier_groups": "118",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "118",
+      "earlier_groups": "118",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "49",
+      "earlier_groups": "99",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "96",
+      "earlier_groups": "16,17,99",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "76",
+      "earlier_groups": "99",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "47",
+      "earlier_groups": "99",
+      "atom_rule_candidates": 2,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "48",
+      "earlier_groups": "118",
+      "atom_rule_candidates": 1,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "91",
+      "earlier_groups": "91",
+      "atom_rule_candidates": 1,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "49",
+      "earlier_groups": "118",
+      "atom_rule_candidates": 1,
+      "molecules": 1
+    },
+    {
+      "candidate_group": "77",
+      "earlier_groups": "77",
+      "atom_rule_candidates": 1,
+      "molecules": 1
+    }
+  ],
+  "cumulative_motif_coverage": [
+    {
+      "motif": "carbonyl_other",
+      "new_molecules": 494,
+      "cumulative_molecules": 494,
+      "cumulative_fraction": 0.2797281993204983
+    },
+    {
+      "motif": "amide_or_urea_carbonyl",
+      "new_molecules": 8,
+      "cumulative_molecules": 502,
+      "cumulative_fraction": 0.2842582106455266
+    },
+    {
+      "motif": "nitrogen_nitrogen_bond",
+      "new_molecules": 323,
+      "cumulative_molecules": 825,
+      "cumulative_fraction": 0.46715741789354476
+    },
+    {
+      "motif": "sulfonamide",
+      "new_molecules": 322,
+      "cumulative_molecules": 1147,
+      "cumulative_fraction": 0.6494903737259343
+    },
+    {
+      "motif": "phosphorus_environment",
+      "new_molecules": 195,
+      "cumulative_molecules": 1342,
+      "cumulative_fraction": 0.7599093997734995
+    },
+    {
+      "motif": "nitrogen_oxygen_bond",
+      "new_molecules": 112,
+      "cumulative_molecules": 1454,
+      "cumulative_fraction": 0.8233295583238958
+    },
+    {
+      "motif": "thiocarbonyl",
+      "new_molecules": 103,
+      "cumulative_molecules": 1557,
+      "cumulative_fraction": 0.8816534541336354
+    },
+    {
+      "motif": "sulfonic_acid_or_sulfonate_ester",
+      "new_molecules": 106,
+      "cumulative_molecules": 1663,
+      "cumulative_fraction": 0.9416761041902605
+    },
+    {
+      "motif": "aromatic_nitrogen",
+      "new_molecules": 15,
+      "cumulative_molecules": 1678,
+      "cumulative_fraction": 0.9501698754246886
+    },
+    {
+      "motif": "formal_charge_environment",
+      "new_molecules": 3,
+      "cumulative_molecules": 1681,
+      "cumulative_fraction": 0.9518686296715742
+    },
+    {
+      "motif": "imine",
+      "new_molecules": 4,
+      "cumulative_molecules": 1685,
+      "cumulative_fraction": 0.9541336353340883
+    },
+    {
+      "motif": "unusual_element_environment",
+      "new_molecules": 21,
+      "cumulative_molecules": 1706,
+      "cumulative_fraction": 0.9660249150622876
+    },
+    {
+      "motif": "nitrile",
+      "new_molecules": 8,
+      "cumulative_molecules": 1714,
+      "cumulative_fraction": 0.970554926387316
+    },
+    {
+      "motif": "radical_environment",
+      "new_molecules": 2,
+      "cumulative_molecules": 1716,
+      "cumulative_fraction": 0.9716874292185731
+    }
+  ],
+  "unclassified_indices": [
+    781,
+    944,
+    1192,
+    1293,
+    1443,
+    2393,
+    2394,
+    2664,
+    2844,
+    3296,
+    4209,
+    4239,
+    4389,
+    4506,
+    4582,
+    4753,
+    4763,
+    4823,
+    4979,
+    4992,
+    5808,
+    5922,
+    6399,
+    6543,
+    6579,
+    6585,
+    6763,
+    6821,
+    7393,
+    7639,
+    7640,
+    7682,
+    7764,
+    7834,
+    7844,
+    8493,
+    9042,
+    9162,
+    9191,
+    9376,
+    9972,
+    9973,
+    9974,
+    10142,
+    10178,
+    10182,
+    10192,
+    10193,
+    10197,
+    10228
+  ],
+  "checks": {
+    "native_failure_frame": true,
+    "sulfonamide_existing_rule_blocked": true,
+    "phosphorus_environment": true
+  },
+  "elapsed_seconds": 3.468951709975954
+}

@@ -1,0 +1,23 @@
+group,training_molecules
+"amide_system_core:C2,N1,O2|CO=2|NH=[0]|aromatic=0|ring=1",26
+"amide_system_detail:C2,N2,O2|CO=2|NH=[0, 0]|aromatic=0|ring=1|boundary=C-C:a1:SINGLE;N-C:a0:SINGLE;N-C:a0:SINGLE;N-C:a1:SINGLE",30
+"amide_system_detail:C2,N2,O2|CO=2|NH=[0, 1]|aromatic=0|ring=1|boundary=C-C:a0:SINGLE;N-C:a0:SINGLE;N-C:a0:SINGLE",42
+"amide_system_detail:C2,N2,O2|CO=2|NH=[1, 1]|aromatic=0|ring=1|boundary=C-C:a0:SINGLE;N-C:a0:SINGLE",25
+"amide_system_detail:C3,N2,O3|CO=3|NH=[1, 1]|aromatic=0|ring=1|boundary=C-C:a0:SINGLE;C-C:a0:SINGLE",57
+residual_core:N:a1:q0:H0:r1:rad0|C:a0:q0:SINGLE;C:a1:q0:SINGLE;C:a1:q0:SINGLE,27
+residual_core:O:a0:q0:H0:r0:rad0|C:a0:q0:SINGLE;N:a0:q0:SINGLE,22
+residual_detail:C:a0:q0:H0:r1:rad0|N:a0:q0:SINGLE:H1:d2;N:a0:q0:SINGLE:H1:d2;S:a0:q0:DOUBLE:H0:d1,22
+residual_detail:N:a0:q0:H0:r0:rad0|C:a0:q0:SINGLE:H1:d3;N:a0:q0:DOUBLE:H0:d2,23
+residual_detail:N:a0:q0:H0:r0:rad0|C:a1:q0:DOUBLE:H0:d3;S:a0:q0:SINGLE:H0:d4,20
+residual_detail:N:a0:q0:H0:r0:rad0|C:a1:q0:SINGLE:H0:d3;N:a0:q0:DOUBLE:H0:d2,79
+residual_detail:N:a0:q0:H1:r0:rad0|C:a1:q0:SINGLE:H0:d3;N:a0:q0:SINGLE:H0:d2,48
+residual_detail:O:a0:q0:H0:r0:rad0|C:a0:q0:SINGLE:H2:d2;P:a0:q0:SINGLE:H0:d4,31
+residual_detail:O:a0:q0:H0:r0:rad0|C:a0:q0:SINGLE:H3:d1;P:a0:q0:SINGLE:H0:d4,24
+residual_detail:O:a0:q0:H0:r0:rad0|C:a1:q0:SINGLE:H0:d3;P:a0:q0:SINGLE:H0:d4,36
+residual_detail:O:a0:q0:H1:r0:rad0|N:a0:q0:SINGLE:H0:d3,20
+residual_detail:O:a0:q0:H1:r0:rad0|S:a0:q0:SINGLE:H0:d4,68
+residual_detail:P:a0:q0:H0:r0:rad0|O:a0:q0:SINGLE:H0:d2;O:a0:q0:SINGLE:H0:d2;O:a0:q0:SINGLE:H0:d2;S:a0:q0:DOUBLE:H0:d1,34
+residual_detail:P:a0:q0:H0:r0:rad0|O:a0:q0:SINGLE:H0:d2;O:a0:q0:SINGLE:H0:d2;S:a0:q0:DOUBLE:H0:d1;S:a0:q0:SINGLE:H0:d2,24
+residual_detail:S:a0:q0:H0:r0:rad0|C:a0:q0:DOUBLE:H0:d3,22
+residual_detail:S:a0:q0:H0:r0:rad0|C:a0:q0:SINGLE:H2:d2;P:a0:q0:SINGLE:H0:d4,24
+residual_detail:S:a0:q0:H0:r0:rad0|P:a0:q0:DOUBLE:H0:d4,58

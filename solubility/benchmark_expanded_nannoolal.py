@@ -1,0 +1,322 @@
+"""Evaluate study-only Nannoolal repairs and supported new groups.
+
+Vocabulary eligibility, backoff, scaling and model selection are all fitted
+within training folds. Production Nannoolal and earlier results are untouched.
+"""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import json
+from pathlib import Path
+import time
+
+import numpy as np
+import pandas as pd
+from rdkit import rdBase
+
+from benchmark_aqueous_count_regression import ALPHAS,AUGMENTATIONS,augmented,ridge_grid
+from benchmark_nannoolal_solubility import valid_predictions
+from benchmark_solubility_transfer import write_csv
+from benchmark_solvent_transfer_multipliers import averages,difference_bootstrap
+from expanded_nannoolal_features import extract_study,fit_vocabulary,encode
+from solubility_paths import RESULTS_DIR,ROOT,verify_manifest,write_manifest
+
+MODELS = ('repaired_OLS','repaired_adaptive','expanded_OLS','expanded_adaptive')
+
+
+def extract_batch(batch):
+    rdBase.DisableLog('rdApp.*')
+    return [(i,extract_study(smiles)) for i,smiles in batch]
+
+
+def view(rows,mode):
+    if mode=='expanded':
+        return rows
+    return [dict(row,status='unresolved_residual' if row.get('residual_atoms',0) else row['status']) for row in rows]
+
+
+def fit_predict(train,y,heavy_train,test,heavy_test,minimum,form,alpha):
+    vocabulary,x,train_ok,_ = fit_vocabulary(train,minimum)
+    xt,test_ok,_ = encode(test,vocabulary)
+    predictions = np.full(len(test),np.nan)
+    if np.any(train_ok) and np.any(test_ok):
+        design = augmented(x[train_ok],heavy_train[train_ok],form)
+        target = augmented(xt[test_ok],heavy_test[test_ok],form)
+        p,_,_,_ = ridge_grid(design,y[train_ok],target,np.array([alpha]))
+        predictions[test_ok] = p[:,0]
+    return predictions,train_ok,test_ok,vocabulary
+
+
+def choose(train,y,heavy,minimum,seed):
+    rng = np.random.default_rng(seed)
+    inner = np.empty(len(train),dtype=int)
+    inner[rng.permutation(len(train))] = np.arange(len(train))%3
+    loss = np.zeros((len(AUGMENTATIONS),len(ALPHAS)))
+    validation_count = 0
+    inner_audit = []
+    for fold in range(3):
+        fitting = np.flatnonzero(inner!=fold)
+        validation = np.flatnonzero(inner==fold)
+        vocabulary,x,ok,_ = fit_vocabulary([train[i] for i in fitting],minimum)
+        xt,eligible,_ = encode([train[i] for i in validation],vocabulary)
+        inner_audit.append(dict(fold=fold,training_molecules=int(ok.sum()),validation_molecules=int(eligible.sum()),
+                                extension_groups=len(vocabulary.accepted),
+                                minimum_group_support=min(vocabulary.support.values(),default=0)))
+        if not np.any(eligible):
+            continue
+        validation_count += int(eligible.sum())
+        for j,form in enumerate(AUGMENTATIONS):
+            design = augmented(x[ok],heavy[fitting[ok]],form)
+            target = augmented(xt[eligible],heavy[validation[eligible]],form)
+            prediction,_,_,_ = ridge_grid(design,y[fitting[ok]],target,ALPHAS)
+            loss[j] += np.sum((prediction-y[validation[eligible],None])**2,axis=0)
+    if not validation_count:
+        raise ValueError('No represented inner-validation molecules')
+    selected = np.unravel_index(np.argmin(loss),loss.shape)
+    return AUGMENTATIONS[selected[0]],float(ALPHAS[selected[1]]),inner_audit
+
+
+def outer_job(task):
+    name,repeat,fold,folds,rows,y,heavy,minimum,seed,output = task
+    mode = name.split('_')[0]
+    selected_rows = view(rows,mode)
+    training = np.flatnonzero(folds!=fold)
+    test = np.flatnonzero(folds==fold)
+    train_rows = [selected_rows[i] for i in training]
+    form,alpha,inner_audit = 'none',0.,[]
+    if name.endswith('adaptive'):
+        form,alpha,inner_audit = choose(train_rows,y[training],heavy[training],minimum,seed+repeat*5+fold)
+    prediction,ok,eligible,vocabulary = fit_predict(train_rows,y[training],heavy[training],
+                                                   [selected_rows[i] for i in test],heavy[test],minimum,form,alpha)
+    for label,n in vocabulary.support.items():
+        assert n>=minimum,(label,n)
+    destination = Path(output)
+    stem = f'{name}_repeat{repeat}_fold{fold}'
+    write_csv(destination/(stem+'_groups.csv'),[
+        dict(group=label,training_molecules=n) for label,n in sorted(vocabulary.support.items())])
+    np.savez_compressed(destination/(stem+'.npz'),index=test,prediction=prediction,supported=eligible)
+    return dict(model=name,repeat=repeat,fold=fold,size_basis=form,ridge_alpha=alpha,
+                train_total=len(training),train_supported=int(ok.sum()),test_total=len(test),
+                test_supported=int(eligible.sum()),invalid_supported_predictions=int(np.sum(eligible&~valid_predictions(prediction))),
+                native_groups=sum(label.startswith('native_') for label in vocabulary.labels),
+                extension_groups=len(vocabulary.accepted),
+                minimum_group_support=min(vocabulary.support.values(),default=0),inner=inner_audit,
+                training_indices=training.tolist(),test_indices=test.tolist())
+
+
+def score(prediction,target,ids):
+    supported = np.isfinite(prediction)
+    valid = valid_predictions(prediction)
+    keep = np.all(valid,axis=1)
+    result = dict(total_molecules=len(ids),supported_predictions=int(supported.sum()),
+                  supported_all_repeats=int(np.all(supported,axis=1).sum()),
+                  unavailable_predictions=int((~supported).sum()),
+                  invalid_supported_predictions=int(np.sum(supported&~valid)),
+                  valid_all_repeats=int(keep.sum()))
+    if np.any(keep):
+        e = prediction[keep]-target[keep,None]
+        metrics,_ = averages(e,ids[keep])
+        metrics['R2'] = 1-float(np.mean(e*e))/float(np.var(target[keep]))
+        result['metrics'] = metrics
+    return result
+
+
+def compare_job(task):
+    first,second,p1,p2,y,ids,seed,draws,family = task
+    keep = np.all(valid_predictions(p1)&valid_predictions(p2),axis=1)
+    if not np.any(keep):
+        return dict(first=first,second=second,molecules=0)
+    e1,e2 = p1[keep]-y[keep,None],p2[keep]-y[keep,None]
+    delta = np.abs(e1)-np.abs(e2)
+    boot = difference_bootstrap(delta,seed,draws,requested_family_size=family)
+    a,_ = averages(e1,ids[keep])
+    b,_ = averages(e2,ids[keep])
+    return dict(first=first,second=second,molecules=int(keep.sum()),
+                MAE_first=a['MAE_log10'],MAE_second=b['MAE_log10'],
+                difference=boot['UNIFAC_minus_baseline_MAE_log10'],CI95=boot['paired_95pct_CI'],
+                familywise_CI95=boot['paired_requested_family_95pct_CI'])
+
+
+def render(output,summary):
+    lines = ['# Study-only expanded Nannoolal features','',
+             'The production nannoolal_method.py, group tables, and previous studies are unchanged. '
+             'These are new aqueous-solubility descriptors and regressions, not extensions to the published pure-property equations.','',
+             '## Structural conflict resolution','',
+             '- Preserve every complete native assignment. Apply experimental repairs only when native fragmentation fails, so a supported native molecule cannot lose descriptive coverage merely by acquiring a rare composite.',
+             '- Reuse the native fragmenter function code in a separate globals dictionary; prioritize specific sulfonamide group 105 ahead of the broad sulfone group 82. The original module registry is never modified.',
+             '- Find connected overlapping native amide/urea/carbamate assignments involving at least two carbonyl centers. '
+             'Replace the entire overlap component and any intersecting assigned units by one disjoint amide-system descriptor. '
+             'Its detailed descriptor includes composition, carbonyl count, N hydrogens, aromaticity, ring membership and boundary substituents; the backoff drops boundary detail.',
+             '- Preserve all remaining native assigned units, including silicon environments. Every atom is assigned exactly once; no partial amide group is double-counted.',
+             '- Enumerate every remaining unassigned atom environment, including central element/charge/H/aromatic/ring/radical state and bonded neighbor elements/aromaticity/charge/bond order. '
+             'Detailed environments add neighbor hydrogen counts/degrees; the chemically consistent core environment omits that detail.',
+             '- Native one-heavy-atom refusal remains unavailable. Structural groups too rare to regress remain unavailable and are explicitly audited.','',
+             '## Support and validation','',
+             f'- New groups require at least {summary["minimum_training_molecules"]} distinct fully representable TRAINING molecules. Counts of atoms, occurrences, temperatures or CV repeats cannot inflate this support.',
+             '- Determine feature eligibility and detailed-to-core backoff inside every outer AND inner training split. '
+             'Iteratively remove rare selected detail groups before testing backoff, recompute actual selected-group support, and remove molecules with another unsupported unit until the vocabulary stabilizes.',
+             '- Existing native descriptors are retained; the new-group support threshold does not retroactively delete published native groups. Native groups absent from training are unavailable at test time.',
+             '- Reuse the previous 9,044 neutral connected organic identities, labels, five molecular folds and five repeats. '
+             'Choose ridge strength and optional nonlinear size terms on three-fold inner validation only. Reuse the shared SVD/scaling implementation.',
+             '- Compare repaired-only assignments (no residual atom additions) and fully expanded assignments, each with OLS and nested size/ridge selection.',
+             '- Predictions outside the declared [-30,3] log10 mol/L interval or nonfinite predictions are invalid, never clipped. '
+             'Unavailable structures and invalid numerical predictions are reported separately. Metrics require validity in every repeat; paired tests use identical molecules.',
+             '- Element baselines and the original Nannoolal predictor reuse their previous held-out predictions. '
+             'Expanded models train on all represented training molecules in the larger domain; the native model had a smaller training domain. This measures the combined practical effect of the representation and expanded training data.',
+             f'- Bootstrap molecules and split repetitions {summary["bootstrap_draws"]:,} times; familywise intervals cover the {len(summary["paired"])} reported comparisons. '
+             'These tests condition on the fitted CV predictions and do not establish independently collected external or unseen-scaffold accuracy.','',
+             '## Full-data vocabulary audit (descriptive, not CV eligibility)','',
+             '```json',json.dumps(summary['vocabulary_audit'],indent=2),'```','',
+             '## Held-out results','',
+             '| Model | Supported in every repeat | Valid in every repeat | Invalid supported predictions | MAE log10 | RMSE log10 | R² |',
+             '|---|---:|---:|---:|---:|---:|---:|']
+    for name,row in summary['scores'].items():
+        m = row.get('metrics',{})
+        lines.append(f'| {name} | {row["supported_all_repeats"]} | {row["valid_all_repeats"]} | {row["invalid_supported_predictions"]} | '
+                     f'{m.get("MAE_log10",float("nan")):.4f} | {m.get("RMSE_log10",float("nan")):.4f} | {m.get("R2",float("nan")):.4f} |')
+    lines += ['','Own-coverage rows have different populations. Use the paired comparisons below for accuracy conclusions.','',
+              '## Paired comparisons','',
+              '| First | Second | Molecules | First MAE | Second MAE | Difference | Familywise 95% CI |',
+              '|---|---|---:|---:|---:|---:|---|']
+    for row in summary['paired']:
+        lo,hi = row['familywise_CI95']
+        lines.append(f'| {row["first"]} | {row["second"]} | {row["molecules"]} | {row["MAE_first"]:.4f} | '
+                     f'{row["MAE_second"]:.4f} | {row["difference"]:+.4f} | {lo:+.4f} to {hi:+.4f} |')
+    lines += ['','## Remaining limitations','',
+              'Twenty molecules is a declared minimum support criterion, not a guarantee of independently identifiable coefficients or broad chemical diversity. '
+              'Overlapping feature counts can remain correlated; ridge/validation controls prediction stability. '
+              'Unknown pH, solution species and solid forms remain part of the target uncertainty. '
+              'Descriptor units are experimental study features and must not be passed to the production Nannoolal property tables.','',
+              '## Artifacts','',
+              '- candidate_features.json: disjoint native units and every candidate detailed/core extension per molecule.',
+              '- group_catalogue.csv: every candidate, total and selected-molecule support and acceptance status.',
+              '- coverage.csv: full-data descriptive coverage and unsatisfied candidate groups.',
+              '- *_groups.csv: every inner-independent outer-training vocabulary and its selected molecule support.',
+              '- folds.json: model selections, inner support audits and train/test identity indices.',
+              '- predictions.npz: all held-out predictions, including unavailable and invalid cases.',
+              '- summary.json, REPORT.md, manifest.json: results and provenance.','']
+    (output/'REPORT.md').write_text('\n'.join(lines))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--prepared-dir',type=Path,default=RESULTS_DIR/'aqueous-count-regression')
+    parser.add_argument('--native-dir',type=Path,default=RESULTS_DIR/'nannoolal-aqueous-regression')
+    parser.add_argument('--domain-dir',type=Path,default=RESULTS_DIR/'aqueous-count-domain-check')
+    parser.add_argument('--output-dir',type=Path,default=RESULTS_DIR/'expanded-nannoolal-regression')
+    parser.add_argument('--minimum-molecules',type=int,default=20)
+    parser.add_argument('--bootstrap-draws',type=int,default=20000)
+    parser.add_argument('--workers',type=int,default=5)
+    args = parser.parse_args()
+    if args.minimum_molecules<3 or not 1<=args.workers<=5:
+        parser.error('Use at least three supporting molecules and one to five workers')
+    started = time.monotonic()
+    rdBase.DisableLog('rdApp.*')
+    for directory in (args.prepared_dir,args.native_dir,args.domain_dir):
+        verify_manifest(directory/'manifest.json')
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True,exist_ok=False)
+    data = pd.read_csv(args.prepared_dir/'molecules.csv')
+    previous = json.loads((args.prepared_dir/'summary.json').read_text())
+    with np.load(args.prepared_dir/'features.npz') as f:
+        clean = data.neutral_single.to_numpy(dtype=bool)&(f['elements'][:,5]>0)
+        heavy = f['heavy_atoms'][clean]
+    global_ids = np.flatnonzero(clean)
+    y = data.logS_mol_L.to_numpy()[clean]
+    split = pd.read_csv(args.prepared_dir/'folds.csv')
+    outer = np.full((previous['repeats'],len(data)),-1,dtype=int)
+    outer[split.repeat,split['index']] = split.fold
+    outer = outer[:,clean]
+    batches = [[(int(i),data.smiles[i]) for i in global_ids[start:start+64]] for start in range(0,len(global_ids),64)]
+    extracted = {}
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        futures = {pool.submit(extract_batch,b):i for i,b in enumerate(batches)}
+        for count,future in enumerate(as_completed(futures),1):
+            futures.pop(future)
+            extracted.update(future.result())
+            if count%25==0 or count==len(batches):
+                print(f'Partitioned {len(extracted)}/{len(global_ids)} molecules in {time.monotonic()-started:.1f}s',flush=True)
+    rows = [extracted[int(i)] for i in global_ids]
+    (output/'candidate_features.json').write_text(json.dumps(dict(index=global_ids.tolist(),rows=rows),indent=2)+'\n')
+    vocabulary,matrix,supported,chosen = fit_vocabulary(rows,args.minimum_molecules)
+    possible = Counter(label for row in rows for label in {label for unit in row['units'] for label in unit['options']})
+    catalogue = [dict(group=label,candidate_molecules=possible[label],
+                      selected_regression_molecules=vocabulary.support.get(label,0),
+                      accepted=label in vocabulary.accepted) for label in sorted(possible)]
+    write_csv(output/'group_catalogue.csv',catalogue)
+    coverage = []
+    with np.load(args.native_dir/'features.npz') as native:
+        original_available = native['available'][global_ids]
+    for i,row in enumerate(rows):
+        unknown = [unit['options'] for unit in row['units'] if not any(option in vocabulary.accepted for option in unit['options'])]
+        coverage.append(dict(index=int(global_ids[i]),name=data.name[global_ids[i]],native_available=bool(original_available[i]),
+                             study_supported=bool(supported[i]),amide_systems=row.get('amide_systems',0),
+                             residual_atoms=row.get('residual_atoms',0),missing_groups=json.dumps(unknown),
+                             boundary_status=row['status']))
+    write_csv(output/'coverage.csv',coverage)
+    audit = dict(total_molecules=len(rows),native_available=int(original_available.sum()),
+                 full_data_expanded_coverage=int(supported.sum()),recovered_native_failures=int(np.sum(supported&~original_available)),
+                 lost_native_coverage=int(np.sum(~supported&original_available)),candidate_groups=len(possible),
+                 supported_new_groups=len(vocabulary.accepted),
+                 supported_group_types=dict(Counter(label.split(':')[0] for label in vocabulary.accepted)),
+                 minimum_selected_group_support=min(vocabulary.support.values(),default=0))
+    print(json.dumps(audit,indent=2),flush=True)
+    tasks = [(name,r,f,outer[r],rows,y,heavy,args.minimum_molecules,previous['seed'],str(output))
+             for name in MODELS for r in range(len(outer)) for f in range(previous['folds'])]
+    predictions = {name:np.full((len(y),len(outer)),np.nan) for name in MODELS}
+    fold_rows = []
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        futures = {pool.submit(outer_job,t):t[:3] for t in tasks}
+        for count,future in enumerate(as_completed(futures),1):
+            futures.pop(future)
+            result = future.result()
+            fold_rows.append(result)
+            stem = f'{result["model"]}_repeat{result["repeat"]}_fold{result["fold"]}'
+            with np.load(output/(stem+'.npz')) as saved:
+                predictions[result['model']][saved['index'],result['repeat']] = saved['prediction']
+            if count%10==0 or count==len(tasks):
+                print(f'Fitted {count}/{len(tasks)} support-aware outer folds in {time.monotonic()-started:.1f}s',flush=True)
+    (output/'folds.json').write_text(json.dumps(fold_rows,indent=2)+'\n')
+    for model_name,path in (
+        ('element_adaptive',args.domain_dir/'neutral_single_organic__element_counts_adaptive.npz'),
+        ('element_OLS',args.domain_dir/'neutral_single_organic__element_counts_OLS.npz'),
+        ('native_adaptive',args.native_dir/'Nannoolal_own__Nannoolal_first_adaptive.npz')):
+        with np.load(path) as archive:
+            p = np.full((len(y),len(outer)),np.nan)
+            indices = np.searchsorted(global_ids,archive['index'])
+            assert np.array_equal(global_ids[indices],archive['index'])
+            p[indices] = archive['predictions']
+            predictions[model_name] = p
+    np.savez_compressed(output/'predictions.npz',index=global_ids,target=y,**predictions)
+    scores = {name:score(p,y,global_ids) for name,p in predictions.items()}
+    pairs = [(a,b) for a in ('expanded_OLS','expanded_adaptive') for b in ('element_OLS','element_adaptive','native_adaptive')]
+    pairs += [('expanded_adaptive','repaired_adaptive'),('repaired_adaptive','native_adaptive'),('expanded_adaptive','expanded_OLS')]
+    paired = []
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        futures = {pool.submit(compare_job,(a,b,predictions[a],predictions[b],y,global_ids,previous['seed'],args.bootstrap_draws,len(pairs))):(a,b)
+                   for a,b in pairs}
+        for count,future in enumerate(as_completed(futures),1):
+            futures.pop(future)
+            paired.append(future.result())
+            print(f'Compared {count}/{len(pairs)} held-out pairs in {time.monotonic()-started:.1f}s',flush=True)
+    summary = dict(minimum_training_molecules=args.minimum_molecules,bootstrap_draws=args.bootstrap_draws,
+                   seed=previous['seed'],vocabulary_audit=audit,scores=scores,paired=paired,
+                   elapsed_seconds=time.monotonic()-started)
+    (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    files = [Path(__file__),Path(__file__).with_name('expanded_nannoolal_features.py'),ROOT/'nannoolal_method.py',
+             Path(__file__).with_name('benchmark_aqueous_count_regression.py'),Path(__file__).with_name('benchmark_solvent_transfer_multipliers.py'),
+             *[directory/'manifest.json' for directory in (args.prepared_dir,args.native_dir,args.domain_dir)],
+             args.prepared_dir/'molecules.csv',args.prepared_dir/'features.npz',args.prepared_dir/'folds.csv',
+             args.native_dir/'features.npz',args.native_dir/'Nannoolal_own__Nannoolal_first_adaptive.npz',
+             args.domain_dir/'neutral_single_organic__element_counts_adaptive.npz',args.domain_dir/'neutral_single_organic__element_counts_OLS.npz']
+    write_manifest(output/'manifest.json',vars(args),files)
+    render(output,summary)
+    print(json.dumps(scores,indent=2),flush=True)
+    print(f'Complete: {output}; elapsed {summary["elapsed_seconds"]:.1f}s',flush=True)
+
+
+if __name__=='__main__':
+    main()

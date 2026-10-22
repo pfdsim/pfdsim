@@ -1,0 +1,6 @@
+group,training_molecules
+"amide_system_core:C2,N1,O2|CO=2|NH=[0]|aromatic=0|ring=1",26
+"amide_system_core:C2,N2,O2|CO=2|NH=[0, 0]|aromatic=0|ring=1",21
+"amide_system_detail:C2,N2,O2|CO=2|NH=[0, 1]|aromatic=0|ring=1|boundary=C-C:a0:SINGLE;N-C:a0:SINGLE;N-C:a0:SINGLE",43
+"amide_system_detail:C2,N2,O2|CO=2|NH=[1, 1]|aromatic=0|ring=1|boundary=C-C:a0:SINGLE;N-C:a0:SINGLE",28
+"amide_system_detail:C3,N2,O3|CO=3|NH=[1, 1]|aromatic=0|ring=1|boundary=C-C:a0:SINGLE;C-C:a0:SINGLE",51

@@ -1,0 +1,34 @@
+{
+  "path_base": "manifest",
+  "arguments": {
+    "data_dir": "../../data",
+    "output_dir": ".",
+    "folds": 5,
+    "repeats": 5,
+    "workers": 5,
+    "seed": 20261022
+  },
+  "sha256": {
+    "../../benchmark_aqueous_count_regression.py": "2aac4b7086ff7115b4b34532411bff40e85a3d3e49481359a0ff93d70dddcf6a",
+    "../../benchmark_solubility_transfer.py": "8e5b03f4fde4675e3b4a8c7a81ea8f27a82e0e603b57ccb74f8cbb78a503874e",
+    "../../benchmark_solvent_transfer_multipliers.py": "ca11a7af6c5c1d5b153b66048d4ac9b4a00ebad758a025d471972e166d3f171f",
+    "../../../unifac.py": "703304eecdc71fa8d2b2005b6a00fead822f8643856b9b236d6115f4b6c2534d",
+    "../../../compiled_unifac.py": "25d6921d3960ac79d739a4e164606663babfab3f24fcee39f70418352f99cea1",
+    "../../../unifac_fragmenter.py": "1a6dcff1738d6d263f55644fde114210adee5a2e7b3efcf4c49dde4a36818fd7",
+    "../../../lyngby_parameters.py": "2d05d2959eaedfb90555a597b7f716636ac4ce1ae22aa6d2afcb1d3a75c98d2d",
+    "../../../compiled_cache.py": "a91136f2ca12978c577b2b5b37f60d27fc574e8a93db1a60838b29bf9ce3a08a",
+    "../../../physical_constants.py": "daa1064575105bd5bcca9fe1d2d08c4c570d434638ef6850ae6317120f3280c5",
+    "../../../data/unifac_params.json": "ab285071bcc12c9e8b5ee41e71bf8aa60fec4076fab8d647deff5f8771d75a40",
+    "../../../data/unifac2/UNIFAC2rq.csv": "5cdd67ab29a7e1716426bbf4ed0c5c51870fb9d87f392281ed70fc24cb31806d",
+    "../../../data/unifac_dmd.txt": "2d904fa7b27cc27c345f8c475f27e8ac51714dbdc0b8254d29ebc6200993e826",
+    "../../../data/unifac2/UNIFM2rq.xlsx": "3d8b5d34aefb4dc1a5c11c2725efdc00cb73d5434c46c00f68dea61559b4004e",
+    "../../../data/nist_modified_unifac_params.json": "074ccecf653ab4a5a52728604c8de5af2646eb61bb0e5c7a144d001fb4ae5dfc",
+    "../../../data/lyngby_unifac.json": "a53219e1100f6301159e8806c17273ebdf963c9495e496afc465e0ae1151add7",
+    "../../../data/unifac2/UNIFAC2int.csv": "eddf3077c1733bc4e4186e6ed9d4d35e7e1b99c21925755e318c3ccbcdcd5161",
+    "../../../data/unifac2/UNIFM2intA.xlsx": "4cfa4fec0bb9915b5225eaac76f737a8b4944d45f3dd8c9bbf833620183de7b1",
+    "../../../data/unifac2/UNIFM2intB.xlsx": "39881d3003c1f970b1393b69d43f9896dcbc28624aa7a6dec8d3582ce83a8e1e",
+    "../../data/BigSolDBv2.0.csv": "879f55f39db977e295c705e304d011d89d6e10da1daaa3f069181108c1de38b0",
+    "../../data/curated-solubility-dataset.csv": "7c47e021d03a5720f53cfddb7aef90c8911ea276a36306c839798733d8630332",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

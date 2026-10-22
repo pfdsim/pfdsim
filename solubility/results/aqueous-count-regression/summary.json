@@ -1,0 +1,1645 @@
+{
+  "folds": 5,
+  "repeats": 5,
+  "seed": 20261022,
+  "checks": {
+    "rank_deficient_OLS_prediction": true,
+    "nonlinear_size_recovery": true,
+    "nested_training_only_size_selection": true
+  },
+  "data_audit": {
+    "AqSolDB_input_rows": 9982,
+    "AqSolDB_InChI_recoveries": 2,
+    "BigSolDB_room_temperature_water_rows": 2045,
+    "compounds": 10421,
+    "AqSolDB_unique": 9982,
+    "BigSolDB_unique": 694,
+    "overlapping_compounds": 255,
+    "BigSolDB_only": 439,
+    "overlap_median_absolute_logS_difference": 0.1307895316864654,
+    "overlap_absolute_logS_difference_95pct": 2.7408019566673953
+  },
+  "coverage": {
+    "UNIFAC": {
+      "aliases": [
+        "UNIFAC",
+        "UNIFAC2"
+      ],
+      "molecules": 4190,
+      "subgroups": 104,
+      "main_groups": 51
+    },
+    "UNIFDMD": {
+      "aliases": [
+        "UNIFDMD",
+        "UNIFM2"
+      ],
+      "molecules": 4281,
+      "subgroups": 111,
+      "main_groups": 55
+    },
+    "UNIFNIST": {
+      "aliases": [
+        "UNIFNIST"
+      ],
+      "molecules": 4690,
+      "subgroups": 186,
+      "main_groups": 87
+    },
+    "UNIFLBY": {
+      "aliases": [
+        "UNIFLBY"
+      ],
+      "molecules": 2067,
+      "subgroups": 45,
+      "main_groups": 21
+    }
+  },
+  "common_molecules": 1945,
+  "scores": {
+    "all_water": {
+      "training_mean": {
+        "predictions": 10421,
+        "solutes": 10421,
+        "MAE_log10": 1.8752449036952241,
+        "RMSE_log10": 2.3524056959952886,
+        "bias_log10": 4.239425612182126e-07,
+        "geometric_mean_fold_error": 75.03172026284567,
+        "within_factor_2": 0.10663084156990692,
+        "within_factor_10": 0.33098551002782844,
+        "R2": -9.712174847109623e-05,
+        "unseen_feature_molecules": 0,
+        "choices": {},
+        "ridge_choices": {}
+      },
+      "heavy_atoms_OLS": {
+        "predictions": 10421,
+        "solutes": 10421,
+        "MAE_log10": 1.7214537944876998,
+        "RMSE_log10": 2.208954961252696,
+        "bias_log10": -0.0003175370068598425,
+        "geometric_mean_fold_error": 52.656718931199634,
+        "within_factor_2": 0.12048747720948086,
+        "within_factor_10": 0.37495441896171194,
+        "R2": 0.11815662835784235,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "total_atoms_OLS": {
+        "predictions": 10421,
+        "solutes": 10421,
+        "MAE_log10": 1.7319539650065106,
+        "RMSE_log10": 2.2225712909001,
+        "bias_log10": -0.0003430157057840246,
+        "geometric_mean_fold_error": 53.94534376952527,
+        "within_factor_2": 0.12019959696766146,
+        "within_factor_10": 0.3743402744458305,
+        "R2": 0.10725149160316716,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "size_selected": {
+        "predictions": 10421,
+        "solutes": 10421,
+        "MAE_log10": 1.6346867317012879,
+        "RMSE_log10": 2.171708557559088,
+        "bias_log10": 0.005828196176992045,
+        "geometric_mean_fold_error": 43.120792273883424,
+        "within_factor_2": 0.12849054793206027,
+        "within_factor_10": 0.40163132137030993,
+        "R2": 0.14764440137332646,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "heavy_log": 20,
+          "heavy_flexible": 5
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "heavy_log",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_OLS": {
+        "predictions": 10421,
+        "solutes": 10421,
+        "MAE_log10": 1.302511369173392,
+        "RMSE_log10": 1.7844063037231719,
+        "bias_log10": -0.001490759282019736,
+        "geometric_mean_fold_error": 20.06833625202868,
+        "within_factor_2": 0.1527492563093753,
+        "within_factor_10": 0.48515497553017944,
+        "R2": 0.42455313240156134,
+        "unseen_feature_molecules": 18,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_adaptive": {
+        "predictions": 10421,
+        "solutes": 10421,
+        "MAE_log10": 1.233557927808026,
+        "RMSE_log10": 1.8790489887173984,
+        "bias_log10": 0.0032182172431733424,
+        "geometric_mean_fold_error": 17.122135428622755,
+        "within_factor_2": 0.1678533729968333,
+        "within_factor_10": 0.5164763458401305,
+        "R2": 0.3618923690411556,
+        "unseen_feature_molecules": 18,
+        "choices": {
+          "surface": 21,
+          "quadratic": 4
+        },
+        "ridge_choices": {
+          "100.0": 20,
+          "10.0": 5
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 10.0
+        }
+      }
+    },
+    "UNIFAC": {
+      "training_mean": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.9604565170107005,
+        "RMSE_log10": 2.4558212582278998,
+        "bias_log10": -3.181061010143296e-05,
+        "geometric_mean_fold_error": 91.2970021161148,
+        "within_factor_2": 0.10243436754176612,
+        "within_factor_10": 0.324200477326969,
+        "R2": -0.00026992673173409365,
+        "unseen_feature_molecules": 0,
+        "choices": {},
+        "ridge_choices": {}
+      },
+      "heavy_atoms_OLS": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.601370711544423,
+        "RMSE_log10": 2.119415519001307,
+        "bias_log10": -0.0019023093481157834,
+        "geometric_mean_fold_error": 39.93656533851641,
+        "within_factor_2": 0.13880668257756562,
+        "within_factor_10": 0.41255369928400953,
+        "R2": 0.25500059972306255,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "total_atoms_OLS": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.6890057899456772,
+        "RMSE_log10": 2.2303053157464467,
+        "bias_log10": -0.0018887516773001042,
+        "geometric_mean_fold_error": 48.86588740226034,
+        "within_factor_2": 0.12587112171837708,
+        "within_factor_10": 0.4028162291169451,
+        "R2": 0.17500305178999787,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "size_selected": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.488588969908161,
+        "RMSE_log10": 1.9372686313041108,
+        "bias_log10": 0.0040200199200094424,
+        "geometric_mean_fold_error": 30.80271303665475,
+        "within_factor_2": 0.1462529832935561,
+        "within_factor_10": 0.4388066825775656,
+        "R2": 0.3775515415542495,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "heavy_log": 8,
+          "heavy_flexible": 17
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "heavy_log",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_OLS": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.1514750690830202,
+        "RMSE_log10": 1.6485360465250325,
+        "bias_log10": -0.006978365470241575,
+        "geometric_mean_fold_error": 14.17343345722064,
+        "within_factor_2": 0.16763723150357995,
+        "within_factor_10": 0.5397136038186158,
+        "R2": 0.5492657100682561,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_adaptive": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 0.9907857245197369,
+        "RMSE_log10": 1.3514638052178745,
+        "bias_log10": 0.0012852467364372136,
+        "geometric_mean_fold_error": 9.790068364670534,
+        "within_factor_2": 0.21121718377088305,
+        "within_factor_10": 0.6043914081145585,
+        "R2": 0.6970767965051772,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "surface": 24,
+          "quadratic": 1
+        },
+        "ridge_choices": {
+          "0.0": 19,
+          "0.01": 1,
+          "1.0": 2,
+          "0.1": 3
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 1.0
+        }
+      },
+      "UNIFAC_main_OLS": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.0705536029087752,
+        "RMSE_log10": 1.5828202366652846,
+        "bias_log10": -0.008549237487616736,
+        "geometric_mean_fold_error": 11.763961727265402,
+        "within_factor_2": 0.19632458233890215,
+        "within_factor_10": 0.5763245823389022,
+        "R2": 0.584484822952777,
+        "unseen_feature_molecules": 12,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFAC_subgroup_OLS": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 1.0014165327829525,
+        "RMSE_log10": 1.4789609994142017,
+        "bias_log10": -0.013348314023563757,
+        "geometric_mean_fold_error": 10.032670123597054,
+        "within_factor_2": 0.21818615751789977,
+        "within_factor_10": 0.6156085918854415,
+        "R2": 0.6372251706993142,
+        "unseen_feature_molecules": 27,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFAC_subgroup_adaptive": {
+        "predictions": 4190,
+        "solutes": 4190,
+        "MAE_log10": 0.8438658849126753,
+        "RMSE_log10": 1.2440997926048882,
+        "bias_log10": 0.002306555109554864,
+        "geometric_mean_fold_error": 6.980168152402295,
+        "within_factor_2": 0.26692124105011933,
+        "within_factor_10": 0.6917422434367542,
+        "R2": 0.7432951119234283,
+        "unseen_feature_molecules": 27,
+        "choices": {
+          "surface": 20,
+          "quadratic": 5
+        },
+        "ridge_choices": {
+          "1.0": 8,
+          "0.1": 3,
+          "0.0": 8,
+          "10.0": 4,
+          "0.01": 1,
+          "100.0": 1
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 1.0
+        }
+      }
+    },
+    "UNIFDMD": {
+      "training_mean": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.9531152299496268,
+        "RMSE_log10": 2.448847351334488,
+        "bias_log10": -7.278806556024528e-05,
+        "geometric_mean_fold_error": 89.76669379704836,
+        "within_factor_2": 0.10165849100677411,
+        "within_factor_10": 0.3272132679280542,
+        "R2": -0.0002864845256282944,
+        "unseen_feature_molecules": 0,
+        "choices": {},
+        "ridge_choices": {}
+      },
+      "heavy_atoms_OLS": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.5712217437194869,
+        "RMSE_log10": 2.0820678599870566,
+        "bias_log10": -0.0024004355764853124,
+        "geometric_mean_fold_error": 37.25818919694284,
+        "within_factor_2": 0.14029432375613174,
+        "within_factor_10": 0.4163046017285681,
+        "R2": 0.27691270192672424,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "total_atoms_OLS": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.6696631124995318,
+        "RMSE_log10": 2.2093034098723385,
+        "bias_log10": -0.0020787209826376328,
+        "geometric_mean_fold_error": 46.737245414998384,
+        "within_factor_2": 0.12651249708012147,
+        "within_factor_10": 0.40817565989254845,
+        "R2": 0.18583636968435413,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "size_selected": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.4545636395156931,
+        "RMSE_log10": 1.893406444012679,
+        "bias_log10": 0.004223411420441723,
+        "geometric_mean_fold_error": 28.481551251475405,
+        "within_factor_2": 0.15225414622751693,
+        "within_factor_10": 0.4476991357159542,
+        "R2": 0.4020172252966637,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "heavy_log": 6,
+          "heavy_flexible": 19
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "heavy_log",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_OLS": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.1584232033472615,
+        "RMSE_log10": 1.6479141902222343,
+        "bias_log10": -0.0068455358423668775,
+        "geometric_mean_fold_error": 14.402013157372773,
+        "within_factor_2": 0.16720392431674844,
+        "within_factor_10": 0.5361831347815931,
+        "R2": 0.547029249645002,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_adaptive": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 0.9732440269441764,
+        "RMSE_log10": 1.2900904928837937,
+        "bias_log10": -0.0007364139039793389,
+        "geometric_mean_fold_error": 9.402514827047138,
+        "within_factor_2": 0.21289418360196216,
+        "within_factor_10": 0.6126138752627891,
+        "R2": 0.7223860267354524,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "surface": 25
+        },
+        "ridge_choices": {
+          "0.0": 9,
+          "1.0": 15,
+          "0.1": 1
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 1.0
+        }
+      },
+      "UNIFDMD_main_OLS": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.052424129115095,
+        "RMSE_log10": 1.5591331882893167,
+        "bias_log10": -0.009549078826655668,
+        "geometric_mean_fold_error": 11.282988074454682,
+        "within_factor_2": 0.20205559448726934,
+        "within_factor_10": 0.5886942303200187,
+        "R2": 0.5945218982314616,
+        "unseen_feature_molecules": 14,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFDMD_subgroup_OLS": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 1.0071278520998588,
+        "RMSE_log10": 1.479574533573998,
+        "bias_log10": -0.017045309622465244,
+        "geometric_mean_fold_error": 10.165479107094043,
+        "within_factor_2": 0.21593085727633732,
+        "within_factor_10": 0.6145293155804719,
+        "R2": 0.6348471727570122,
+        "unseen_feature_molecules": 29,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFDMD_subgroup_adaptive": {
+        "predictions": 4281,
+        "solutes": 4281,
+        "MAE_log10": 0.8162175081374372,
+        "RMSE_log10": 1.1544108755125804,
+        "bias_log10": -0.006553461466737695,
+        "geometric_mean_fold_error": 6.54964118269065,
+        "within_factor_2": 0.2742349918243401,
+        "within_factor_10": 0.7013314646110722,
+        "R2": 0.7777090451579198,
+        "unseen_feature_molecules": 29,
+        "choices": {
+          "surface": 24,
+          "quadratic": 1
+        },
+        "ridge_choices": {
+          "0.1": 1,
+          "1.0": 19,
+          "0.0": 3,
+          "10.0": 2
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 1.0
+        }
+      }
+    },
+    "UNIFNIST": {
+      "training_mean": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.9647412113760543,
+        "RMSE_log10": 2.463307489786358,
+        "bias_log10": -4.333264584165823e-05,
+        "geometric_mean_fold_error": 92.20218464430799,
+        "within_factor_2": 0.10780383795309169,
+        "within_factor_10": 0.32285714285714284,
+        "R2": -0.0003130370655188841,
+        "unseen_feature_molecules": 0,
+        "choices": {},
+        "ridge_choices": {}
+      },
+      "heavy_atoms_OLS": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.6396173266061993,
+        "RMSE_log10": 2.145280690811432,
+        "bias_log10": -0.0017013431980814745,
+        "geometric_mean_fold_error": 43.613137093667326,
+        "within_factor_2": 0.1384221748400853,
+        "within_factor_10": 0.3997867803837953,
+        "R2": 0.2413055241976373,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "total_atoms_OLS": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.7293525117535407,
+        "RMSE_log10": 2.2568476985469164,
+        "bias_log10": -0.0015828735699352095,
+        "geometric_mean_fold_error": 53.62317339454832,
+        "within_factor_2": 0.12221748400852879,
+        "within_factor_10": 0.38699360341151384,
+        "R2": 0.16034055325488317,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "size_selected": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.5190222343456299,
+        "RMSE_log10": 1.9662464335821463,
+        "bias_log10": 0.002738461453584628,
+        "geometric_mean_fold_error": 33.03864552250061,
+        "within_factor_2": 0.14349680170575693,
+        "within_factor_10": 0.4346695095948827,
+        "R2": 0.36265501905778363,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "heavy_log": 6,
+          "heavy_flexible": 19
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "heavy_flexible",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_OLS": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.183615561945279,
+        "RMSE_log10": 1.6521904711309614,
+        "bias_log10": -0.005872000516954509,
+        "geometric_mean_fold_error": 15.262144530351996,
+        "within_factor_2": 0.1637953091684435,
+        "within_factor_10": 0.5229850746268657,
+        "R2": 0.5499933822962211,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_adaptive": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.0271554548857815,
+        "RMSE_log10": 1.3668474120105911,
+        "bias_log10": -0.001051324083867171,
+        "geometric_mean_fold_error": 10.645239943793984,
+        "within_factor_2": 0.20277185501066097,
+        "within_factor_10": 0.5893816631130064,
+        "R2": 0.6920084907737373,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "surface": 25
+        },
+        "ridge_choices": {
+          "0.0": 10,
+          "1.0": 11,
+          "0.1": 4
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFNIST_main_OLS": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.0546699990003212,
+        "RMSE_log10": 1.5601453177984796,
+        "bias_log10": -0.007951214405391758,
+        "geometric_mean_fold_error": 11.341486991782027,
+        "within_factor_2": 0.20507462686567166,
+        "within_factor_10": 0.5826012793176972,
+        "R2": 0.5987373116959336,
+        "unseen_feature_molecules": 19,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFNIST_subgroup_OLS": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 1.0139095750245137,
+        "RMSE_log10": 1.5018741107069031,
+        "bias_log10": -0.013933911654534592,
+        "geometric_mean_fold_error": 10.325463956537149,
+        "within_factor_2": 0.2126226012793177,
+        "within_factor_10": 0.6122388059701492,
+        "R2": 0.6281517548327333,
+        "unseen_feature_molecules": 48,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFNIST_subgroup_adaptive": {
+        "predictions": 4690,
+        "solutes": 4690,
+        "MAE_log10": 0.8427138569444573,
+        "RMSE_log10": 1.224619246963825,
+        "bias_log10": -0.006798906443232081,
+        "geometric_mean_fold_error": 6.961676798536086,
+        "within_factor_2": 0.27113006396588485,
+        "within_factor_10": 0.6928358208955224,
+        "R2": 0.7527701895062947,
+        "unseen_feature_molecules": 48,
+        "choices": {
+          "surface": 22,
+          "quadratic": 3
+        },
+        "ridge_choices": {
+          "1.0": 20,
+          "10.0": 4,
+          "0.0": 1
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 10.0
+        }
+      }
+    },
+    "UNIFLBY": {
+      "training_mean": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.9064443789704064,
+        "RMSE_log10": 2.3512192344879974,
+        "bias_log10": -0.00025980201037628095,
+        "geometric_mean_fold_error": 80.62029425954869,
+        "within_factor_2": 0.10043541364296081,
+        "within_factor_10": 0.31233671988388967,
+        "R2": -0.0007017517530392148,
+        "unseen_feature_molecules": 0,
+        "choices": {},
+        "ridge_choices": {}
+      },
+      "heavy_atoms_OLS": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.5246432132150753,
+        "RMSE_log10": 1.9751909898104536,
+        "bias_log10": -0.0036679476260136424,
+        "geometric_mean_fold_error": 33.46903673589317,
+        "within_factor_2": 0.12839864537977747,
+        "within_factor_10": 0.4022254475084664,
+        "R2": 0.29378554938581436,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "total_atoms_OLS": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.529554421023175,
+        "RMSE_log10": 2.000036973419405,
+        "bias_log10": -0.003992526833528587,
+        "geometric_mean_fold_error": 33.84966859024622,
+        "within_factor_2": 0.13091436865021772,
+        "within_factor_10": 0.399225931301403,
+        "R2": 0.2759068203926074,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "size_selected": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.3408891537072865,
+        "RMSE_log10": 1.7493687838925018,
+        "bias_log10": 0.011052228116947695,
+        "geometric_mean_fold_error": 21.922453305397134,
+        "within_factor_2": 0.15316884373488146,
+        "within_factor_10": 0.4818577648766328,
+        "R2": 0.4460364962200878,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "total_flexible": 5,
+          "total_log": 19,
+          "heavy_flexible": 1
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "total_log",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_OLS": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.2271185223925787,
+        "RMSE_log10": 1.7608561806112812,
+        "bias_log10": -0.004543119496871106,
+        "geometric_mean_fold_error": 16.87013361835457,
+        "within_factor_2": 0.15529753265602322,
+        "within_factor_10": 0.5057571359458152,
+        "R2": 0.43873730101054886,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_adaptive": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 0.9558686275249519,
+        "RMSE_log10": 1.2733118530670002,
+        "bias_log10": -0.00014118571151896953,
+        "geometric_mean_fold_error": 9.03376164437194,
+        "within_factor_2": 0.22002902757619738,
+        "within_factor_10": 0.6220609579100145,
+        "R2": 0.7065136061298054,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "surface": 25
+        },
+        "ridge_choices": {
+          "0.0": 6,
+          "0.1": 7,
+          "1.0": 12
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.1
+        }
+      },
+      "UNIFLBY_main_OLS": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.2285031323697024,
+        "RMSE_log10": 1.7640202932526723,
+        "bias_log10": -0.005523392764685403,
+        "geometric_mean_fold_error": 16.924004509115175,
+        "within_factor_2": 0.15278180938558297,
+        "within_factor_10": 0.5089501693275278,
+        "R2": 0.43671840362220093,
+        "unseen_feature_molecules": 2,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFLBY_subgroup_OLS": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 1.1455888492921429,
+        "RMSE_log10": 1.6522149348553072,
+        "bias_log10": -0.0091733708777588,
+        "geometric_mean_fold_error": 13.982629469694071,
+        "within_factor_2": 0.18364779874213835,
+        "within_factor_10": 0.5475568456700532,
+        "R2": 0.5058583109595834,
+        "unseen_feature_molecules": 5,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFLBY_subgroup_adaptive": {
+        "predictions": 2067,
+        "solutes": 2067,
+        "MAE_log10": 0.8854347795367246,
+        "RMSE_log10": 1.2614838238892316,
+        "bias_log10": -0.0018423752345512975,
+        "geometric_mean_fold_error": 7.681300925685103,
+        "within_factor_2": 0.25660377358490566,
+        "within_factor_10": 0.6737300435413643,
+        "R2": 0.7119407802240993,
+        "unseen_feature_molecules": 5,
+        "choices": {
+          "surface": 23,
+          "quadratic": 1,
+          "log": 1
+        },
+        "ridge_choices": {
+          "0.0": 4,
+          "1.0": 19,
+          "0.1": 2
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 1.0
+        }
+      }
+    },
+    "common_UNIFAC": {
+      "training_mean": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.924799813377451,
+        "RMSE_log10": 2.3804799329637696,
+        "bias_log10": -0.0003480707978606637,
+        "geometric_mean_fold_error": 84.10073926762533,
+        "within_factor_2": 0.10437017994858612,
+        "within_factor_10": 0.31125964010282775,
+        "R2": -0.0006667622000915419,
+        "unseen_feature_molecules": 0,
+        "choices": {},
+        "ridge_choices": {}
+      },
+      "heavy_atoms_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.5651704464232796,
+        "RMSE_log10": 2.0169907048668936,
+        "bias_log10": -0.004390921890172488,
+        "geometric_mean_fold_error": 36.74264751152698,
+        "within_factor_2": 0.12226221079691517,
+        "within_factor_10": 0.3892030848329049,
+        "R2": 0.281596865312567,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "total_atoms_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.5687667696737895,
+        "RMSE_log10": 2.04006290431687,
+        "bias_log10": -0.004379294495565562,
+        "geometric_mean_fold_error": 37.04817075673134,
+        "within_factor_2": 0.12627249357326478,
+        "within_factor_10": 0.385706940874036,
+        "R2": 0.2650673481082171,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "size_selected": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.3758561051166862,
+        "RMSE_log10": 1.7902324799130376,
+        "bias_log10": 0.011950915740120608,
+        "geometric_mean_fold_error": 23.760528980757964,
+        "within_factor_2": 0.15002570694087403,
+        "within_factor_10": 0.46796915167095116,
+        "R2": 0.43404840338030437,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "total_log": 17,
+          "heavy_flexible": 3,
+          "total_flexible": 5
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "total_log",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.251660027253967,
+        "RMSE_log10": 1.7965638696819086,
+        "bias_log10": -0.004803155861687362,
+        "geometric_mean_fold_error": 17.850896307164067,
+        "within_factor_2": 0.15239074550128534,
+        "within_factor_10": 0.49696658097686375,
+        "R2": 0.4300382018882263,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "element_counts_adaptive": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 0.9610188737106536,
+        "RMSE_log10": 1.39723197351337,
+        "bias_log10": 0.005997307593074263,
+        "geometric_mean_fold_error": 9.141529681636241,
+        "within_factor_2": 0.21933161953727506,
+        "within_factor_10": 0.6296143958868895,
+        "R2": 0.6552554132348807,
+        "unseen_feature_molecules": 0,
+        "choices": {
+          "surface": 23,
+          "quadratic": 2
+        },
+        "ridge_choices": {
+          "1.0": 11,
+          "10.0": 1,
+          "0.0": 9,
+          "0.1": 3,
+          "0.01": 1
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.1
+        }
+      },
+      "UNIFAC_main_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.2516839724161555,
+        "RMSE_log10": 1.7856240999644857,
+        "bias_log10": -0.005805236456157672,
+        "geometric_mean_fold_error": 17.851880557273155,
+        "within_factor_2": 0.147146529562982,
+        "within_factor_10": 0.4930591259640103,
+        "R2": 0.4369583752798083,
+        "unseen_feature_molecules": 3,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFAC_subgroup_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.1526272398165425,
+        "RMSE_log10": 1.656403764724112,
+        "bias_log10": -0.012269599583260318,
+        "geometric_mean_fold_error": 14.21108508962223,
+        "within_factor_2": 0.17552699228791774,
+        "within_factor_10": 0.5496143958868894,
+        "R2": 0.5155010470092661,
+        "unseen_feature_molecules": 7,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFAC_subgroup_adaptive": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 0.8774127902419079,
+        "RMSE_log10": 1.202385339904397,
+        "bias_log10": -0.0064196737976883,
+        "geometric_mean_fold_error": 7.540719570452185,
+        "within_factor_2": 0.2526478149100257,
+        "within_factor_10": 0.6808226221079692,
+        "R2": 0.7447017898844257,
+        "unseen_feature_molecules": 7,
+        "choices": {
+          "surface": 21,
+          "log": 4
+        },
+        "ridge_choices": {
+          "1.0": 13,
+          "0.0": 6,
+          "0.1": 2,
+          "10.0": 2,
+          "0.01": 2
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFDMD_main_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.2381192567536627,
+        "RMSE_log10": 1.7809888549161872,
+        "bias_log10": -0.006410127817741498,
+        "geometric_mean_fold_error": 17.30291429975684,
+        "within_factor_2": 0.15187660668380462,
+        "within_factor_10": 0.50426735218509,
+        "R2": 0.4398777450484399,
+        "unseen_feature_molecules": 4,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFDMD_subgroup_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.1506679053740396,
+        "RMSE_log10": 1.657105136344659,
+        "bias_log10": -0.014289944025114522,
+        "geometric_mean_fold_error": 14.147115700639567,
+        "within_factor_2": 0.1730591259640103,
+        "within_factor_10": 0.5482776349614396,
+        "R2": 0.5150906570224867,
+        "unseen_feature_molecules": 10,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFDMD_subgroup_adaptive": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 0.8501455086856716,
+        "RMSE_log10": 1.1602651579458325,
+        "bias_log10": -0.005700823840800468,
+        "geometric_mean_fold_error": 7.0818301861980695,
+        "within_factor_2": 0.2641645244215938,
+        "within_factor_10": 0.6863753213367609,
+        "R2": 0.7622749613185067,
+        "unseen_feature_molecules": 10,
+        "choices": {
+          "surface": 25
+        },
+        "ridge_choices": {
+          "1.0": 18,
+          "0.0": 4,
+          "0.1": 3
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFNIST_main_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.2329204219267884,
+        "RMSE_log10": 1.7843151394008179,
+        "bias_log10": -0.0038590714619996997,
+        "geometric_mean_fold_error": 17.09702008651765,
+        "within_factor_2": 0.15938303341902313,
+        "within_factor_10": 0.5038560411311054,
+        "R2": 0.4377835536048491,
+        "unseen_feature_molecules": 4,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFNIST_subgroup_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.1511177198329374,
+        "RMSE_log10": 1.6694121685590697,
+        "bias_log10": -0.012855188972043834,
+        "geometric_mean_fold_error": 14.16177596939823,
+        "within_factor_2": 0.1808740359897172,
+        "within_factor_10": 0.5517737789203084,
+        "R2": 0.5078612354702079,
+        "unseen_feature_molecules": 18,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFNIST_subgroup_adaptive": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 0.8435127445111225,
+        "RMSE_log10": 1.1788006945533036,
+        "bias_log10": -0.012806080735908602,
+        "geometric_mean_fold_error": 6.974494634600486,
+        "within_factor_2": 0.2758868894601542,
+        "within_factor_10": 0.6944987146529563,
+        "R2": 0.7546188535618918,
+        "unseen_feature_molecules": 18,
+        "choices": {
+          "surface": 21,
+          "log": 4
+        },
+        "ridge_choices": {
+          "1.0": 17,
+          "0.1": 2,
+          "0.0": 3,
+          "10.0": 3
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFLBY_main_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.249331747835976,
+        "RMSE_log10": 1.7938840307931971,
+        "bias_log10": -0.005833279744430565,
+        "geometric_mean_fold_error": 17.755452622909747,
+        "within_factor_2": 0.1524935732647815,
+        "within_factor_10": 0.49953727506426737,
+        "R2": 0.4317372971916281,
+        "unseen_feature_molecules": 2,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFLBY_subgroup_OLS": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 1.1650974973469,
+        "RMSE_log10": 1.681756378348709,
+        "bias_log10": -0.009143383809368737,
+        "geometric_mean_fold_error": 14.625054641408749,
+        "within_factor_2": 0.18179948586118252,
+        "within_factor_10": 0.5384061696658098,
+        "R2": 0.5005562393399234,
+        "unseen_feature_molecules": 5,
+        "choices": {
+          "none": 25
+        },
+        "ridge_choices": {
+          "0.0": 25
+        },
+        "descriptive_refit": {
+          "size_basis": "none",
+          "ridge_alpha": 0.0
+        }
+      },
+      "UNIFLBY_subgroup_adaptive": {
+        "predictions": 1945,
+        "solutes": 1945,
+        "MAE_log10": 0.8899657793334851,
+        "RMSE_log10": 1.2709183889449205,
+        "bias_log10": -0.001496120861723525,
+        "geometric_mean_fold_error": 7.7618595387325895,
+        "within_factor_2": 0.2572750642673522,
+        "within_factor_10": 0.6720822622107969,
+        "R2": 0.7147696386164175,
+        "unseen_feature_molecules": 5,
+        "choices": {
+          "surface": 23,
+          "quadratic": 1,
+          "log": 1
+        },
+        "ridge_choices": {
+          "1.0": 14,
+          "0.0": 3,
+          "0.1": 8
+        },
+        "descriptive_refit": {
+          "size_basis": "surface",
+          "ridge_alpha": 0.0
+        }
+      }
+    }
+  },
+  "paired_comparisons": [
+    {
+      "pool": "UNIFAC",
+      "group_model": "UNIFAC_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 4190,
+      "group_minus_atomic_MAE": -0.15005853630006785,
+      "CI95": [
+        -0.1710671571345985,
+        -0.12875298505025523
+      ],
+      "familywise_CI95": [
+        -0.18232733423942216,
+        -0.11768736496328545
+      ]
+    },
+    {
+      "pool": "UNIFAC",
+      "group_model": "UNIFAC_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 4190,
+      "group_minus_atomic_MAE": -0.14691983960706162,
+      "CI95": [
+        -0.16733588651488135,
+        -0.1256335524161482
+      ],
+      "familywise_CI95": [
+        -0.17799006240883497,
+        -0.11407008548999341
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFAC_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.09903278743742461,
+      "CI95": [
+        -0.1296162001254543,
+        -0.06906971503945378
+      ],
+      "familywise_CI95": [
+        -0.14701887109292044,
+        -0.05673217936028129
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFAC_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.0836060834687458,
+      "CI95": [
+        -0.11605964656429463,
+        -0.05659444685417289
+      ],
+      "familywise_CI95": [
+        -0.1372448437853809,
+        -0.04258783525715473
+      ]
+    },
+    {
+      "pool": "UNIFDMD",
+      "group_model": "UNIFDMD_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 4281,
+      "group_minus_atomic_MAE": -0.15129535124740245,
+      "CI95": [
+        -0.17269783162077593,
+        -0.12999327496125712
+      ],
+      "familywise_CI95": [
+        -0.18243241998927442,
+        -0.12139275094039212
+      ]
+    },
+    {
+      "pool": "UNIFDMD",
+      "group_model": "UNIFDMD_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 4281,
+      "group_minus_atomic_MAE": -0.15702651880673923,
+      "CI95": [
+        -0.17697125935061395,
+        -0.13619282542040473
+      ],
+      "familywise_CI95": [
+        -0.18583921973619846,
+        -0.12428332710503047
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFDMD_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.10099212187992748,
+      "CI95": [
+        -0.1331085473665247,
+        -0.07005818575989493
+      ],
+      "familywise_CI95": [
+        -0.14980497732163536,
+        -0.05475637701936344
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFDMD_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.110873365024982,
+      "CI95": [
+        -0.14259439074580874,
+        -0.08289336496592777
+      ],
+      "familywise_CI95": [
+        -0.16252341956273098,
+        -0.06913226625039687
+      ]
+    },
+    {
+      "pool": "UNIFNIST",
+      "group_model": "UNIFNIST_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 4690,
+      "group_minus_atomic_MAE": -0.16970598692076513,
+      "CI95": [
+        -0.19131322359511987,
+        -0.1474251744012248
+      ],
+      "familywise_CI95": [
+        -0.2013862596475548,
+        -0.13587205955997234
+      ]
+    },
+    {
+      "pool": "UNIFNIST",
+      "group_model": "UNIFNIST_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 4690,
+      "group_minus_atomic_MAE": -0.1844415979413244,
+      "CI95": [
+        -0.20630896285070927,
+        -0.16152412414000852
+      ],
+      "familywise_CI95": [
+        -0.21779812191366757,
+        -0.1478597786336045
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFNIST_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.10054230742102979,
+      "CI95": [
+        -0.13503877611899184,
+        -0.06692109526971017
+      ],
+      "familywise_CI95": [
+        -0.1525712029498175,
+        -0.05091934078551507
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFNIST_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.11750612919953107,
+      "CI95": [
+        -0.15364693967861254,
+        -0.0861788285904792
+      ],
+      "familywise_CI95": [
+        -0.1749721075623686,
+        -0.06816919753376388
+      ]
+    },
+    {
+      "pool": "UNIFLBY",
+      "group_model": "UNIFLBY_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 2067,
+      "group_minus_atomic_MAE": -0.08152967310043603,
+      "CI95": [
+        -0.10815921662827595,
+        -0.055756914553624325
+      ],
+      "familywise_CI95": [
+        -0.12163798709832119,
+        -0.043038677002406045
+      ]
+    },
+    {
+      "pool": "UNIFLBY",
+      "group_model": "UNIFLBY_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 2067,
+      "group_minus_atomic_MAE": -0.07043384798822731,
+      "CI95": [
+        -0.09411870231925183,
+        -0.04457758179400328
+      ],
+      "familywise_CI95": [
+        -0.10632011630523981,
+        -0.027264489545947592
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFLBY_subgroup_OLS",
+      "atomic_model": "element_counts_OLS",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.08656252990706732,
+      "CI95": [
+        -0.11476725125569233,
+        -0.05890781913144565
+      ],
+      "familywise_CI95": [
+        -0.12927437988389037,
+        -0.046461688109718575
+      ]
+    },
+    {
+      "pool": "common_UNIFAC",
+      "group_model": "UNIFLBY_subgroup_adaptive",
+      "atomic_model": "element_counts_adaptive",
+      "molecules": 1945,
+      "group_minus_atomic_MAE": -0.07105309437716843,
+      "CI95": [
+        -0.09748344633911647,
+        -0.046977855795370366
+      ],
+      "familywise_CI95": [
+        -0.11688002407196103,
+        -0.035592931842543564
+      ]
+    }
+  ],
+  "elapsed_seconds": 94.6861812180141
+}
