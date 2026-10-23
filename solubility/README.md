@@ -5,6 +5,11 @@ There is no dependency on a separate `TESTS/solubility` directory. The scripts
 use pfdsim's shared UNIFAC implementation and parameter tables in the parent
 repository; those are not copied into this study.
 
+See [MAE_SUMMARY.md](MAE_SUMMARY.md) for the main accuracy and coverage findings,
+matched-population comparisons, limitations, and links to the full reports.
+The [complete MAE inventory](results/mae-inventory-20261023/all_saved_MAEs.csv)
+lists saved MAEs by assessment and JSON path.
+
 ## Layout
 
 ```text
