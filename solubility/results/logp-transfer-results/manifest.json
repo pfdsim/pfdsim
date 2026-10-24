@@ -1,0 +1,35 @@
+{
+  "rdkit_version": "2026.03.5",
+  "path_base": "manifest",
+  "source_snapshot": "The exact unrestricted benchmark source was preserved before adding PFDSim's requested minimum-support zero-slope rule. Only this source pointer changed; the original source hash and every numerical output are unchanged.",
+  "arguments": {
+    "data_dir": "../../data",
+    "results_dir": "../unifac-transfer-results",
+    "baseline_dir": "../solvent-multiplier-results",
+    "output_dir": ".",
+    "draws": 20000
+  },
+  "sha256": {
+    "../../provenance/original-scripts/benchmark_logp_transfer_unrestricted_20261023.py.txt": "ce146b9441a1499bae06d4fe425e6e624896de5f7839e71b3efbde35153e0d79",
+    "../../benchmark_solvent_transfer_multipliers.py": "ca11a7af6c5c1d5b153b66048d4ac9b4a00ebad758a025d471972e166d3f171f",
+    "../../benchmark_solubility_transfer.py": "8e5b03f4fde4675e3b4a8c7a81ea8f27a82e0e603b57ccb74f8cbb78a503874e",
+    "../unifac-transfer-results/manifest.json": "3a43a5a82df9430a061ded7726940ddb3ba510c316bd624fa11ca7309738527a",
+    "../unifac-transfer-results/metric_records.npy": "c6cff17b19a32ff152d0f032d2b517a644e41dc8b596f200ba6071068638b642",
+    "../solvent-multiplier-results/manifest.json": "49f455b7f7c4e7e1edf3415a04c39f2487f0dd9f63dba31c75652c9f793454b1",
+    "../solvent-multiplier-results/summary.json": "13b2e0320772cb0a6a4d34cc12eabd0f194341cdcf0e658aef27cce8a388e628",
+    "../solvent-multiplier-results/folds.csv": "fddbdf295fe52c2bc5a8ffda675c28ca2ba257da336dd81b125c597d733e41ca",
+    "../solvent-multiplier-results/baseline_errors.npz": "983c650c1e0ee4fd8d0c9e80119ca320676ebb546a1501495c8cab85491aa5c0",
+    "../../data/BigSolDBv2.0.csv": "879f55f39db977e295c705e304d011d89d6e10da1daaa3f069181108c1de38b0",
+    "../../data/BigSolDBv2.0_densities.csv": "02226420d9fb3294cb32211dac7f6ff7fa067511924afdb9f1893af1e334aac6",
+    "../../data/curated-solubility-dataset.csv": "7c47e021d03a5720f53cfddb7aef90c8911ea276a36306c839798733d8630332",
+    "REPORT.md": "c5dba9abd3ff247a950757d3df33d7b69111cecb65dd9dc642eb22d29aed3767",
+    "baseline_errors.npz": "001210a172c3c0f85764250ec46368b49b46184e61d4e939346fea99b39a7b7e",
+    "errors_capped.npz": "75bb57f1783cda4e873de38c07e487465bbc834fa2877be72fdf9c5e7f54bf2b",
+    "errors_uncapped.npz": "0b738cfdc7a5c49bf521a4b5d85122abdd216d9053b583dce144f4b82accec56",
+    "fold_audit.csv": "d2c0ee1c514ed19b79486654d152b80a8dff3ab26e779d3e6c4c72f1a1090a10",
+    "fold_parameters.csv": "ba0862525e8367c62643a66b6595f971d1d32d2eb28be7cee9e64f98ead9ad01",
+    "molecules.csv": "79d267e42dace7a177d851336bb453918c27cab1caa6d915bd6f395d2248357a",
+    "summary.json": "b646e76e8a9d271f4f067aef5c907c089e09892bdc97316193d6cb013e99584b",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

@@ -1,5 +1,10 @@
 # Important solubility MAE results
 
+For the current **Nannoolal-focused headline report**, including R², RMSE,
+correlation plots, coverage and invalid predictions, see
+[METRICS_SUMMARY.md](METRICS_SUMMARY.md). This document retains the broader
+MAE detail and the solvent-transfer findings.
+
 Summary of the completed investigations, 2026-10-23. Values below are held-out
 mean absolute errors in base-10 logarithms. An MAE of 1 means a geometric mean
 absolute error factor of 10; 0.835 means about 6.84. Sample sizes and matched
@@ -154,6 +159,73 @@ training cases. For finite UNIFAC 2.0, uncorrected/relative-corrected/target-onl
 corrected MAEs are **0.600 / 0.606 / 0.596**, versus **0.630** for that baseline;
 both corrected-versus-baseline intervals include zero. See the
 [calibration report](results/bias-corrected-transfer-results/REPORT.md).
+
+## Solvent multipliers plus computed logP
+
+The additional transfer model fits an offset and logP slope per solvent:
+`log10(x_target/x_reference) = a_target − a_reference + (b_target − b_reference) cLogP`.
+A shared global logP term would cancel. RDKit Wildman–Crippen logP is computed
+from the standard InChI identity; no measured partition coefficient is used.
+
+Following PFDSim's requested sparse-data fallback, each solvent slope is
+**exactly zero below 20 distinct training molecules**, while its multiplier is
+still fitted. Eligibility is recomputed within each of the original five
+folds and ten repeats. Repeated measurements cannot inflate support. The
+threshold was declared, not optimized on held-out errors. There are 41–44
+freely fitted solvent slopes per fold; the water/connected-component reference
+slope is fixed to zero.
+
+On **213,610 identical transfers across 1,074 molecules**, matching exact
+temperature and publication:
+
+| Model | MAE | RMSE | Predictive R² | Pearson r | Within ×10 |
+|---|---:|---:|---:|---:|---:|
+| Solvent multiplier only | 0.658 | 0.971 | 0.515 | 0.758 | 79.1% |
+| **Multiplier + supported logP slope** | **0.600** | **0.874** | **0.607** | **0.805** | **81.1%** |
+
+The MAE reduction is **8.7%**; new minus old MAE is **−0.0575**, simultaneous
+95% interval **[−0.0794, −0.0375]**. RMSE is descriptively 10.0% lower. All
+headline metrics weight molecules equally. The intervals cover seven primary
+comparisons and condition on the saved fitted CV predictions.
+
+The larger improvements are water-related: water → non-water MAE falls from
+**1.295 to 1.020**, and non-water → water from **1.335 to 1.041** (7,697
+transfers / 467 molecules in each direction). Non-water → non-water changes
+only from **0.531 to 0.519** (198,216 transfers / 1,024 molecules). These are
+different directional populations; their scores are descriptive.
+
+| Variant | UNIFAC MAE | Multiplier-only MAE | Multiplier + logP MAE |
+|---|---:|---:|---:|
+| Original UNIFAC | 0.544 | 0.533 | 0.490 |
+| UNIFAC 2.0 | 0.598 | 0.627 | 0.564 |
+| Dortmund | 0.532 | 0.525 | 0.479 |
+| Modified UNIFAC 2.0 | 0.625 | 0.625 | 0.567 |
+| NIST | 0.576 | 0.553 | 0.506 |
+| Lyngby | 0.431 | 0.507 | 0.451 |
+
+Each row compares identical cases, but different rows cover different molecules.
+Despite these point differences, **none of the UNIFAC-versus-supported-logP
+MAE intervals excludes zero after the seven-comparison correction**. In
+particular, the better UNIFAC point estimates on narrower shared populations
+do not establish superiority across its broader usable coverage.
+
+The multiplier baseline was refitted on the identical training groups and
+verified against the saved original predictions. Both models retain the
+original physical `x ≤ 1` cap. The new model's uncapped main MAE is **0.608**;
+no arbitrary lower-solubility invalid screen is applied. There are no supported
+predictions below log10(x) = −30, and no descriptor failures.
+
+The unrestricted diagnostic fit initially gave MAE 0.578 but RMSE 2.536 on
+its narrower 212,156-case population. One solvent had only two training
+molecules separated by 0.0042 logP units, allowing a huge extrapolation slope.
+Those numerical results are preserved separately; they motivated the
+requested zero-slope fallback. The support rule removes that exploding tail,
+rather than excluding its predictions from the final score.
+
+See the [supported-logP report](results/logp-transfer-supported-results/REPORT.md)
+and [full metrics/uncertainty](results/logp-transfer-supported-results/summary.json).
+The [unrestricted diagnostic report](results/logp-transfer-results/REPORT.md)
+retains its exact source snapshot and original numerical outputs.
 
 ## Interpretation and complete inventory
 

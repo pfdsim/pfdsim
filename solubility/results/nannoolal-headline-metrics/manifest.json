@@ -1,0 +1,24 @@
+{
+  "path_base": "manifest",
+  "arguments": {
+    "results_dir": "../expanded-nannoolal-regression",
+    "output_dir": "."
+  },
+  "sha256": {
+    "../../summarize_nannoolal_metrics.py": "a941f700db55c823aa40e1654a019f764b7a5ce72ef3493bfdbc6d5480d952d4",
+    "../../benchmark_expanded_nannoolal.py": "90b288ca37cb427843582ec474459dc3a3282b440b1e3abd21914c34073603ff",
+    "../../benchmark_nannoolal_solubility.py": "d59961a67b37ff275dd3e92e9ae9cee2152dc4577c2808d02412fc56fa63b2ce",
+    "../expanded-nannoolal-regression/manifest.json": "3a469c4ec3941007ea1046f490840e0df18a371e9f6b15459f0ec33b8547b70f",
+    "../expanded-nannoolal-regression/summary.json": "ca2873dbf3c60b1e7d8e68a0bf95dcdc210838820aae984edf09cb9d8ec38004",
+    "../expanded-nannoolal-regression/predictions.npz": "13b89c55dbec15631b4bf6d5d4b9ac05bda88150eb165fef7d97fbc29aa210e5",
+    "headline_metrics.csv": "e457e96d481557f1b363fb2da27399459a69658b9fca6734667d174f67f58d5c",
+    "matched_element_adaptive.png": "33996f418233298be0b4101f2c59a5c8768d6919aae0eabb93729e7cf00f7099",
+    "matched_element_adaptive.svg": "9ee557ce1345f6f095a00a494c874518d5a92d83f6a0e0cdf8021351a2704bb5",
+    "matched_native_adaptive.png": "0889fad1da3a964499a9197d95a90d302fd901415c01d09927ea784d707c6b03",
+    "matched_native_adaptive.svg": "f0f0a656b98c0b16ff7e473b92be9ceec9cd3c18dac1193467b9f66f5d351c47",
+    "nannoolal_predictions.png": "9bcbf2c49932204ac0f2a04f537ea016af2dcc5f576e77b3edc6c22421af1e83",
+    "nannoolal_predictions.svg": "311b4e9494a6d09d3aec6a0b7917746b5d777ace7c9d4d09eb063a078c1647a8",
+    "summary.json": "1bf130c05376c808905da119d3c5c8d08afecb168d15f4309bab059818094369",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

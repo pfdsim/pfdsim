@@ -5,8 +5,12 @@ There is no dependency on a separate `TESTS/solubility` directory. The scripts
 use pfdsim's shared UNIFAC implementation and parameter tables in the parent
 repository; those are not copied into this study.
 
-See [MAE_SUMMARY.md](MAE_SUMMARY.md) for the main accuracy and coverage findings,
-matched-population comparisons, limitations, and links to the full reports.
+See [METRICS_SUMMARY.md](METRICS_SUMMARY.md) for the Nannoolal headline results:
+MAE, RMSE, predictive R², Pearson correlation, factor-of-ten accuracy, coverage,
+invalid predictions, and held-out correlation plots. It includes matched
+comparisons, a fixed ESOL benchmark on identical molecules, and the validation
+limits. The earlier [MAE detail](MAE_SUMMARY.md)
+also covers atom/UNIFAC models and the distinct solvent-transfer investigation.
 The [complete MAE inventory](results/mae-inventory-20261023/all_saved_MAEs.csv)
 lists saved MAEs by assessment and JSON path.
 
@@ -29,6 +33,9 @@ solubility/
   analyze_nannoolal_coverage.py
   expanded_nannoolal_features.py
   benchmark_expanded_nannoolal.py
+  summarize_nannoolal_metrics.py
+  scripts/benchmark_esol.py
+  scripts/benchmark_logp_transfer.py
   solubility_paths.py
   solubility_dependencies.py
   pull_pfdsim_dependencies.py
@@ -48,6 +55,10 @@ solubility/
     nannoolal-aqueous-regression/
     nannoolal-coverage-analysis/
     expanded-nannoolal-regression/
+    nannoolal-headline-metrics/
+    esol-comparison/
+    logp-transfer-results/
+    logp-transfer-supported-results/
     ... historical and diagnostic runs ...
   provenance/original-scripts/
   tests/
@@ -353,6 +364,15 @@ new groups and supporting molecule counts are saved, along with a full-data
 descriptive catalogue, remaining coverage gaps, and held-out predictions.
 Study groups are not valid inputs to published Nannoolal property equations.
 
+`summarize_nannoolal_metrics.py` renders the saved expanded-study predictions
+without refitting. It checks saved own-coverage and paired scores and adds
+Pearson correlation alongside predictive R², RMSE, MAE, bias, accuracy fractions,
+and support/failure counts. It writes native/repaired/expanded correlation
+plots and matched comparisons against native Nannoolal and element counts.
+The default output is `results/nannoolal-headline-metrics`; use a fresh
+`--output-dir` for another rendering. Plots and scores use all individual
+held-out repeats, without averaging predictions into an ensemble.
+
 ```sh
 set -o pipefail
 python solubility/benchmark_expanded_nannoolal.py --output-dir solubility/results/new-expanded-nannoolal 2>&1 | tee /tmp/expanded-nannoolal.log
@@ -362,4 +382,66 @@ Run the focused study tests with:
 
 ```sh
 python -m pytest solubility/tests/
+```
+
+## Fixed ESOL comparison
+
+`scripts/benchmark_esol.py` evaluates the exact 8,128-molecule expanded
+Nannoolal valid population using two frozen ESOL equations. The main reference
+uses Patrick Walters's RDKit-refitted coefficients; the original Delaney
+coefficients applied to RDKit descriptors are a labeled sensitivity check,
+not an exact recreation of the original Daylight-based method.
+
+The unchanged upstream calculator, public calibration table, revision metadata,
+and MIT notice are preserved in `provenance/esol-reference/`. Only its calculator
+class is loaded; training routines and demos are never executed. The benchmark
+performs no regression or calibration. It scores saved Nannoolal held-out
+predictions and both deterministic ESOL predictions on identical molecules,
+audits overlap with the public calibration structures, and repeats comparisons
+after conservative stereochemistry-agnostic overlap exclusion. Predictions
+outside the existing validity screen are reported, never clipped.
+
+Outputs include descriptor values, per-molecule predictions and overlap flags,
+headline metrics, paired uncertainty, a correlation plot, and portable
+fingerprints. All dependencies are local after the reference files are present.
+The completed assessment is `results/esol-comparison`; use a fresh output
+directory for a new calculation:
+
+```sh
+set -o pipefail
+python solubility/scripts/benchmark_esol.py --output-dir solubility/results/new-esol-comparison > /tmp/solubility-esol-comparison.log 2>&1
+```
+
+## Solvent multipliers with computed logP
+
+`scripts/benchmark_logp_transfer.py` extends the solvent-only transfer baseline
+with one computed-logP slope per solvent. It fits
+`log10(x_target/x_reference) = a_target - a_reference + (b_target - b_reference) cLogP`
+using RDKit MolLogP for the solute. A single global logP coefficient would
+cancel between solvents and add no information to a transfer.
+
+The benchmark reuses the original temperature/publication matching, molecule
+folds and equal-molecule/group/pair weighting. It refits the multiplier-only
+baseline on identical training groups, checks agreement with the original
+baseline, and compares saved UNIFAC predictions on identical held-out cases.
+By default a solvent's logP slope is exactly zero unless it has at least
+20 distinct training molecules; its offset remains fitted. Eligibility is
+recomputed in each fold, and repeated measurements cannot inflate support.
+The threshold was declared rather than tuned against held-out performance.
+Training-only centering/scaling and a rank-revealing solver handle sparse
+solvent coverage; unseen, disconnected and unidentifiable transfer contrasts
+are unavailable rather than assigned arbitrary slopes. Main predictions use
+the existing x ≤ 1 cap; uncapped predictions and cap counts are retained.
+
+The output `results/logp-transfer-supported-results` includes fold coefficients,
+identifiability audits, capped and uncapped errors, headline metrics, and paired
+molecule/repetition uncertainty. No UNIFAC model is rerun and no production
+code is changed. The unrestricted first pass remains in
+`results/logp-transfer-results`, with an exact source snapshot in `provenance/`;
+its large errors on sparsely supported solvents motivated the zero-slope rule.
+`--minimum-molecules 0` reproduces unrestricted fitting. To run into a fresh directory:
+
+```sh
+set -o pipefail
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python solubility/scripts/benchmark_logp_transfer.py --output-dir solubility/results/new-logp-transfer > /tmp/solubility-logp-transfer.log 2>&1
 ```

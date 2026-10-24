@@ -1,0 +1,35 @@
+{
+  "rdkit_version": "2026.03.5",
+  "path_base": "manifest",
+  "arguments": {
+    "data_dir": "../../data",
+    "results_dir": "../unifac-transfer-results",
+    "baseline_dir": "../solvent-multiplier-results",
+    "output_dir": ".",
+    "minimum_molecules": 20,
+    "draws": 20000
+  },
+  "sha256": {
+    "../../scripts/benchmark_logp_transfer.py": "4e32234b874a7b89da62715587e7e10b766797952c7f7983ff17095aaf86c182",
+    "../../benchmark_solvent_transfer_multipliers.py": "ca11a7af6c5c1d5b153b66048d4ac9b4a00ebad758a025d471972e166d3f171f",
+    "../../benchmark_solubility_transfer.py": "8e5b03f4fde4675e3b4a8c7a81ea8f27a82e0e603b57ccb74f8cbb78a503874e",
+    "../unifac-transfer-results/manifest.json": "3a43a5a82df9430a061ded7726940ddb3ba510c316bd624fa11ca7309738527a",
+    "../unifac-transfer-results/metric_records.npy": "c6cff17b19a32ff152d0f032d2b517a644e41dc8b596f200ba6071068638b642",
+    "../solvent-multiplier-results/manifest.json": "49f455b7f7c4e7e1edf3415a04c39f2487f0dd9f63dba31c75652c9f793454b1",
+    "../solvent-multiplier-results/summary.json": "13b2e0320772cb0a6a4d34cc12eabd0f194341cdcf0e658aef27cce8a388e628",
+    "../solvent-multiplier-results/folds.csv": "fddbdf295fe52c2bc5a8ffda675c28ca2ba257da336dd81b125c597d733e41ca",
+    "../solvent-multiplier-results/baseline_errors.npz": "983c650c1e0ee4fd8d0c9e80119ca320676ebb546a1501495c8cab85491aa5c0",
+    "../../data/BigSolDBv2.0.csv": "879f55f39db977e295c705e304d011d89d6e10da1daaa3f069181108c1de38b0",
+    "../../data/BigSolDBv2.0_densities.csv": "02226420d9fb3294cb32211dac7f6ff7fa067511924afdb9f1893af1e334aac6",
+    "../../data/curated-solubility-dataset.csv": "7c47e021d03a5720f53cfddb7aef90c8911ea276a36306c839798733d8630332",
+    "REPORT.md": "0e7eac45754e36ebc8030a4613c01966f9897570d5f635b3e6162e60c9a403dd",
+    "baseline_errors.npz": "001210a172c3c0f85764250ec46368b49b46184e61d4e939346fea99b39a7b7e",
+    "errors_capped.npz": "5fa1e59d2fbfe7d562018dbd4af39f55d4a1a0dfa54c88dce59c61fd5a9508d0",
+    "errors_uncapped.npz": "b6e3b4281899920e0c7602de69f9237372080c1a12c7d55b33156b0776d9ed11",
+    "fold_audit.csv": "a7c5fb181dda78793aaab70f502961beaecdbdb014520743eb00ec0f2284771b",
+    "fold_parameters.csv": "c009a1e42d43c88d5871bbdbe70ac4bacf220fe8d19f56f9bcbefcdccbd14ae3",
+    "molecules.csv": "79d267e42dace7a177d851336bb453918c27cab1caa6d915bd6f395d2248357a",
+    "summary.json": "294afd0f042528a89bd6fb71d463b0fd1dc241a7e94df0c5499e89b0bd8c5232",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

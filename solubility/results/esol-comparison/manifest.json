@@ -1,0 +1,36 @@
+{
+  "rdkit_version": "2026.03.5",
+  "path_base": "manifest",
+  "arguments": {
+    "results_dir": "../expanded-nannoolal-regression",
+    "prepared_dir": "../aqueous-count-regression",
+    "reference_dir": "../../provenance/esol-reference",
+    "output_dir": ".",
+    "draws": 20000,
+    "seed": 20261023
+  },
+  "sha256": {
+    "../../scripts/benchmark_esol.py": "e0b04602254ec71af6a036a9eb7ee67cc32b348a3b3e2ae47c0894e42558c629",
+    "../expanded-nannoolal-regression/manifest.json": "3a469c4ec3941007ea1046f490840e0df18a371e9f6b15459f0ec33b8547b70f",
+    "../expanded-nannoolal-regression/summary.json": "ca2873dbf3c60b1e7d8e68a0bf95dcdc210838820aae984edf09cb9d8ec38004",
+    "../expanded-nannoolal-regression/predictions.npz": "13b89c55dbec15631b4bf6d5d4b9ac05bda88150eb165fef7d97fbc29aa210e5",
+    "../aqueous-count-regression/manifest.json": "baa885c250c95a37d4ec9e912eb3f8fedc76c12384f84ab297b47198ad853faf",
+    "../aqueous-count-regression/molecules.csv": "af1ab81a70dcbe4f78b8d48bd0071f6d433ea17562cfa9adf5b26bb4bd60fa2d",
+    "../../provenance/esol-reference/LICENSE": "2007d43a9ee2091bbf79ac4f356cea359bfca19aaa2e2ef400b17ecc7198674b",
+    "../../provenance/esol-reference/README.md": "5d4f3534c64c69f8f767a51c0ea8bdb0502a436b2902d2fb992e252fe9d23311",
+    "../../provenance/esol-reference/delaney.csv": "c12da8daa5b6867794c925b7df64d4c883f3f9bc1799a5ae9113bc3f586b3899",
+    "../../provenance/esol-reference/esol.py": "35b01d553a07001c15e51bd3275616dfaed54d603b15fe610d536b1b2de9df64",
+    "../../provenance/esol-reference/source.json": "285208d25739b73e561e78c4167af12e89e778b7296a04dd68e84e022967712e",
+    "../../summarize_nannoolal_metrics.py": "a941f700db55c823aa40e1654a019f764b7a5ce72ef3493bfdbc6d5480d952d4",
+    "../../benchmark_solvent_transfer_multipliers.py": "ca11a7af6c5c1d5b153b66048d4ac9b4a00ebad758a025d471972e166d3f171f",
+    "../../benchmark_nannoolal_solubility.py": "d59961a67b37ff275dd3e92e9ae9cee2152dc4577c2808d02412fc56fa63b2ce",
+    "../../benchmark_expanded_nannoolal.py": "90b288ca37cb427843582ec474459dc3a3282b440b1e3abd21914c34073603ff",
+    "REPORT.md": "13440a135bbca145ff10500628cbd3459df358960acfc87e43706c5253881446",
+    "correlation.png": "597cba30e3a55d0d2251d5b50ed586136d2da72604fe0db93cc5dd72b0f4ac61",
+    "correlation.svg": "7f0a8b8156cd396937e502c7bd9d596433e81321fe5bda995d4865f21e23506d",
+    "headline_metrics.csv": "650379e09a7cf4acad996aa3865c7609f08cfe9abfd53f1d38b4ffdd2d3f2fbf",
+    "predictions.csv": "2c73e59316918f95c4d80cbb27a8fae57a20baaa8420b3332055c5b81b52ff4f",
+    "summary.json": "888ac8a2a04c348f66c1b362737d3d9834aa910cbd0b0900a64bfbd7cc810d67",
+    "../../solubility_paths.py": "a8aee2db0494a10da386d9d75c4637a060af8ec911ec2292ed9d325c717ed451"
+  }
+}

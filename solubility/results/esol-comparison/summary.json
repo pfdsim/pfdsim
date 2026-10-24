@@ -1,0 +1,212 @@
+{
+  "reference": {
+    "repository": "https://github.com/PatWalters/solubility",
+    "commit": "9e0e55fd7040575e8427079c44759d51dc7c2216",
+    "paper": "https://doi.org/10.1021/ci034243x"
+  },
+  "rdkit_version": "2026.03.5",
+  "bootstrap_draws": 20000,
+  "seed": 20261023,
+  "audit": {
+    "requested_molecules": 8128,
+    "descriptor_failures": 0,
+    "invalid_ESOL_predictions": {
+      "ESOL_RDKit": 0,
+      "ESOL_original_RDKit": 0
+    },
+    "matched_valid_molecules": 8128,
+    "public_calibration_table": {
+      "rows": 1144,
+      "invalid_identities": 0,
+      "unique_exact": 1117,
+      "unique_without_stereo": 1115
+    },
+    "exact_public_training_overlap": 1038,
+    "public_training_overlap_without_stereo": 1136,
+    "remaining_after_overlap_exclusion": 6992
+  },
+  "scores": {
+    "same_expanded_cohort": {
+      "ESOL_RDKit": {
+        "total_molecules": 8128,
+        "supported_predictions": 40640,
+        "supported_all_repeats": 8128,
+        "unavailable_predictions": 0,
+        "invalid_supported_predictions": 0,
+        "valid_all_repeats": 8128,
+        "metrics": {
+          "predictions": 8128,
+          "solutes": 8128,
+          "MAE_log10": 1.0037579415432836,
+          "RMSE_log10": 1.4849371969411365,
+          "bias_log10": -0.31783352050191016,
+          "geometric_mean_fold_error": 10.086905254255155,
+          "within_factor_2": 0.22440944881889763,
+          "within_factor_10": 0.6385334645669292,
+          "R2": 0.5891507056591594,
+          "Pearson_r": 0.8092264969114422
+        }
+      },
+      "ESOL_original_RDKit": {
+        "total_molecules": 8128,
+        "supported_predictions": 40640,
+        "supported_all_repeats": 8128,
+        "unavailable_predictions": 0,
+        "invalid_supported_predictions": 0,
+        "valid_all_repeats": 8128,
+        "metrics": {
+          "predictions": 8128,
+          "solutes": 8128,
+          "MAE_log10": 0.9723626395380817,
+          "RMSE_log10": 1.3094091944950992,
+          "bias_log10": 0.08985568440331096,
+          "geometric_mean_fold_error": 9.383452060154443,
+          "within_factor_2": 0.20878444881889763,
+          "within_factor_10": 0.625861220472441,
+          "R2": 0.6805395160790196,
+          "Pearson_r": 0.8263177822328234
+        }
+      },
+      "Nannoolal": {
+        "total_molecules": 8128,
+        "supported_predictions": 40640,
+        "supported_all_repeats": 8128,
+        "unavailable_predictions": 0,
+        "invalid_supported_predictions": 0,
+        "valid_all_repeats": 8128,
+        "metrics": {
+          "predictions": 8128,
+          "solutes": 8128,
+          "MAE_log10": 0.8352408930928664,
+          "RMSE_log10": 1.123497307002532,
+          "bias_log10": -0.0029259780644167845,
+          "geometric_mean_fold_error": 6.842911024637283,
+          "within_factor_2": 0.26016240157480314,
+          "within_factor_10": 0.6916830708661418,
+          "R2": 0.7648145531016435,
+          "Pearson_r": 0.874542238912398
+        }
+      }
+    },
+    "excluding_public_training_structures": {
+      "ESOL_RDKit": {
+        "total_molecules": 6992,
+        "supported_predictions": 34960,
+        "supported_all_repeats": 6992,
+        "unavailable_predictions": 0,
+        "invalid_supported_predictions": 0,
+        "valid_all_repeats": 6992,
+        "metrics": {
+          "predictions": 6992,
+          "solutes": 6992,
+          "MAE_log10": 1.0463593506927487,
+          "RMSE_log10": 1.5525882145465506,
+          "bias_log10": -0.3695536419837785,
+          "geometric_mean_fold_error": 11.12651994311217,
+          "within_factor_2": 0.2155320366132723,
+          "within_factor_10": 0.6231407322654462,
+          "R2": 0.5640012889150421,
+          "Pearson_r": 0.8032733879971335
+        }
+      },
+      "ESOL_original_RDKit": {
+        "total_molecules": 6992,
+        "supported_predictions": 34960,
+        "supported_all_repeats": 6992,
+        "unavailable_predictions": 0,
+        "invalid_supported_predictions": 0,
+        "valid_all_repeats": 6992,
+        "metrics": {
+          "predictions": 6992,
+          "solutes": 6992,
+          "MAE_log10": 0.9975416545843802,
+          "RMSE_log10": 1.3452177738710724,
+          "bias_log10": 0.05807257190954302,
+          "geometric_mean_fold_error": 9.943554412166044,
+          "within_factor_2": 0.2035183066361556,
+          "within_factor_10": 0.6157036613272311,
+          "R2": 0.6726910893090425,
+          "Pearson_r": 0.8215600532321238
+        }
+      },
+      "Nannoolal": {
+        "total_molecules": 6992,
+        "supported_predictions": 34960,
+        "supported_all_repeats": 6992,
+        "unavailable_predictions": 0,
+        "invalid_supported_predictions": 0,
+        "valid_all_repeats": 6992,
+        "metrics": {
+          "predictions": 6992,
+          "solutes": 6992,
+          "MAE_log10": 0.8527061753729422,
+          "RMSE_log10": 1.147509799647065,
+          "bias_log10": -0.044320889631839964,
+          "geometric_mean_fold_error": 7.123709080945828,
+          "within_factor_2": 0.25532036613272313,
+          "within_factor_10": 0.6836098398169337,
+          "R2": 0.7618308859457299,
+          "Pearson_r": 0.8730436912339061
+        }
+      }
+    }
+  },
+  "paired": [
+    {
+      "population": "same_expanded_cohort",
+      "model": "ESOL_RDKit",
+      "molecules": 8128,
+      "difference": -0.16851704845041712,
+      "CI95": [
+        -0.1869444477517673,
+        -0.15078116990876186
+      ],
+      "familywise_CI95": [
+        -0.19247369255850597,
+        -0.14542346425658884
+      ]
+    },
+    {
+      "population": "same_expanded_cohort",
+      "model": "ESOL_original_RDKit",
+      "molecules": 8128,
+      "difference": -0.13712174644521527,
+      "CI95": [
+        -0.14963617364251017,
+        -0.12478409076047385
+      ],
+      "familywise_CI95": [
+        -0.1532453855562229,
+        -0.12156669641567207
+      ]
+    },
+    {
+      "population": "excluding_public_training_structures",
+      "model": "ESOL_RDKit",
+      "molecules": 6992,
+      "difference": -0.19365317531980636,
+      "CI95": [
+        -0.2145839088455193,
+        -0.17330277835756452
+      ],
+      "familywise_CI95": [
+        -0.22049812910339434,
+        -0.16748592930004078
+      ]
+    },
+    {
+      "population": "excluding_public_training_structures",
+      "model": "ESOL_original_RDKit",
+      "molecules": 6992,
+      "difference": -0.14483547921143775,
+      "CI95": [
+        -0.15890418111622043,
+        -0.13111251507026953
+      ],
+      "familywise_CI95": [
+        -0.1627257858321778,
+        -0.12769460859663279
+      ]
+    }
+  ]
+}

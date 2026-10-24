@@ -1,0 +1,16 @@
+Preserved unrestricted diagnostic fit, 2026-10-23.
+
+The unrestricted per-solvent logP slopes reduced main MAE but produced severe
+extrapolation errors and increased RMSE. In repeat 9/fold 0, 4-methyl-2-pentanol
+had only two training molecules, with computed logP 2.7480 and 2.7522. The fitted
+slope extrapolated to predictions near log10 mole fraction -1098 for CL-20.
+
+PFDSim then requested setting insufficiently supported slope terms to zero.
+The supported fit, using at least 20 distinct training molecules per solvent
+and fold, is saved separately in ../logp-transfer-supported-results/.
+No invalid-prediction screen was used to hide the unrestricted fit's failures.
+
+All original numerical outputs remain unchanged. The exact unrestricted source
+was copied to ../../provenance/original-scripts/benchmark_logp_transfer_unrestricted_20261023.py.txt
+before the maintained script was extended. This manifest's source pointer was
+redirected to that snapshot while retaining its original SHA-256.
