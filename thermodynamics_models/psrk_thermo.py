@@ -13,19 +13,16 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from interaction_parameters import cas_for_component
 
-from .base import IdealThermodynamics, StreamState
+from .base import StreamState
 from .common import (
-    P_REF,
     ThermodynamicsError,
-    _solve_bubble_point_temperature,
-    _solve_dew_point_temperature,
 )
-from .eos import _EOSCpDepartureMixin, _phi_henry_aqueous_K_values
+from .eos import PhiPhiThermodynamics, _phi_henry_aqueous_K_values
 from .henry import AqueousEquilibriumContext
-from .psrk import PSRK, PSRKError
+from .psrk import PSRK, PSRKError, R_BAR_CM3_PER_MOL_K
 
 
-class PSRKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
+class PSRKThermodynamics(PhiPhiThermodynamics):
     """First-class phi-phi thermodynamics wrapper around :class:`PSRK`."""
 
     model = "PSRK"
@@ -129,6 +126,12 @@ class PSRKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
             T, P, self._cas_composition(composition), phase
         )
 
+    def _eos_reduced_parameters(self, T, composition):
+        temperature, _ = self.psrk._validate_temperature_pressure(T, 1.)
+        x = self.psrk._normalize_composition(self._cas_composition(composition))
+        mixture = self.psrk._mixture_parameters(temperature, x)
+        return mixture.D, R_BAR_CM3_PER_MOL_K * temperature / mixture.b, 1., 0.
+
     def fugacity_coefficients(
         self,
         T: float,
@@ -222,84 +225,6 @@ class PSRKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
             T, P, self._cas_composition(composition), phase
         )
 
-    def residual_enthalpy(
-        self,
-        T: float,
-        P: float,
-        composition: dict[str, float],
-        phase: str = "vapor",
-    ) -> float:
-        return self.departure_enthalpy(T, P, composition, phase)
-
-    def mixture_enthalpy(
-        self,
-        composition: dict[str, float],
-        T: float,
-        vapor_fraction: float = 1.0,
-        x: Optional[dict] = None,
-        y: Optional[dict] = None,
-        P: float = P_REF,
-    ) -> float:
-        def ideal_gas_mixture(values: dict[str, float]) -> float:
-            return 1000.0 * sum(
-                fraction * self.enthalpy_ideal_gas(component, T)
-                for component, fraction in values.items()
-            )
-
-        if vapor_fraction > 0.999:
-            return ideal_gas_mixture(composition) + self.departure_enthalpy(
-                T, P, composition, "vapor"
-            )
-        if vapor_fraction < 0.001:
-            return ideal_gas_mixture(composition) + self.departure_enthalpy(
-                T, P, composition, "liquid"
-            )
-        liquid = x or composition
-        vapor = y or composition
-        liquid_enthalpy = ideal_gas_mixture(liquid) + self.departure_enthalpy(
-            T, P, liquid, "liquid"
-        )
-        vapor_enthalpy = ideal_gas_mixture(vapor) + self.departure_enthalpy(
-            T, P, vapor, "vapor"
-        )
-        return (
-            vapor_fraction * vapor_enthalpy
-            + (1.0 - vapor_fraction) * liquid_enthalpy
-        )
-
-    def mixture_entropy(
-        self,
-        composition: dict[str, float],
-        T: float,
-        vapor_fraction: float = 1.0,
-        x: Optional[dict] = None,
-        y: Optional[dict] = None,
-        P: float = P_REF,
-    ) -> float:
-        def ideal_gas_mixture(values: dict[str, float]) -> float:
-            return self._ideal_gas_mixture_entropy(values, T, P)
-
-        if vapor_fraction > 0.999:
-            return ideal_gas_mixture(composition) + self.departure_entropy(
-                T, P, composition, "vapor"
-            )
-        if vapor_fraction < 0.001:
-            return ideal_gas_mixture(composition) + self.departure_entropy(
-                T, P, composition, "liquid"
-            )
-        liquid = x or composition
-        vapor = y or composition
-        liquid_entropy = ideal_gas_mixture(liquid) + self.departure_entropy(
-            T, P, liquid, "liquid"
-        )
-        vapor_entropy = ideal_gas_mixture(vapor) + self.departure_entropy(
-            T, P, vapor, "vapor"
-        )
-        return (
-            vapor_fraction * vapor_entropy
-            + (1.0 - vapor_fraction) * liquid_entropy
-        )
-
     def K_values(
         self,
         T: float,
@@ -321,40 +246,6 @@ class PSRKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
         return _phi_henry_aqueous_K_values(
             self, T, P, composition, context, "aqueous_psrk_phi_henry"
         )
-
-    def K_value(
-        self,
-        comp: str,
-        T: float,
-        P: float,
-        x: Optional[dict[str, float]] = None,
-    ) -> float:
-        composition = x if x is not None else {comp: 1.0}
-        return self.K_values(T, P, composition).get(comp, 1.0)
-
-    def flash_TP(
-        self,
-        composition: dict[str, float],
-        T: float,
-        P: float,
-    ) -> tuple[float, dict, dict]:
-        return self._iterative_K_flash_TP(composition, T, P)
-
-    def bubble_point_T(
-        self,
-        composition: dict[str, float],
-        P: float,
-        T_guess: float = 350.0,
-    ) -> float:
-        return _solve_bubble_point_temperature(self, composition, P, T_guess)
-
-    def dew_point_T(
-        self,
-        composition: dict[str, float],
-        P: float,
-        T_guess: float = 350.0,
-    ) -> float:
-        return _solve_dew_point_temperature(self, composition, P, T_guess)
 
     def calculate_state(
         self,

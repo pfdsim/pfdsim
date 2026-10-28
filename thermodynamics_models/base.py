@@ -1,4 +1,6 @@
 import math
+import numpy as np
+from scipy.optimize import brentq
 from copy import deepcopy
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -33,6 +35,7 @@ from .common import (
     STEAM_WATER_MW,
     T_REF,
     ThermodynamicsError,
+    ThermodynamicsValidityError,
     _property_lookup_identifier,
     _solve_bubble_point_temperature,
     _solve_dew_point_temperature,
@@ -574,6 +577,12 @@ class IdealThermodynamics(PhaseDiagramMixin):
                 self._resolver_known_props.get(comp, {}),
             )
 
+        if callable(getattr(self, '_eos_root_kind', None)):
+            if __package__.split('.', 1)[0] == 'pfdsim':
+                from ..phi_phi import initialize_phi_phi
+            else:
+                from phi_phi import initialize_phi_phi
+            initialize_phi_phi(self)
         self._runtime_initialized = True
         return self
 
@@ -3268,122 +3277,47 @@ class IdealThermodynamics(PhaseDiagramMixin):
         composition: dict[str, float],
         T: float,
         P: float,
-        max_iter: int = 50,
-        tol: float = 1e-8,
+        max_iter: int = 100,
+        tol: float = 1e-9,
     ) -> tuple[float, dict, dict]:
         """
-        TP flash with outer direct substitution on composition-dependent K-values.
+        EOS TP flash using fugacities of both candidate phase compositions.
 
-        This is used by EOS phi-phi models, where K-values depend on the
-        equilibrium liquid composition. Ideal Raoult-law K-values do not need
-        this outer loop.
+        Wilson estimates initialize the shared VLE solver. Root identity and
+        actual phase fugacities determine the result; EOS liquid-liquid
+        instability is never interpreted as a vapor-liquid split.
         """
-        z = {
-            comp: max(float(composition.get(comp, 0.0)), 0.0)
-            for comp in self.components
-        }
-        z_total = sum(z.values())
-        if z_total <= 0.0:
-            z = {comp: 1.0 / len(self.components) for comp in self.components}
+        if __package__.split('.', 1)[0] == 'pfdsim':
+            from ..phi_phi import PhiPhiFlashError, solve_phi_phi_flash
         else:
-            z = {comp: value / z_total for comp, value in z.items()}
-
-        K = self.K_values(T, P, z)
-        sum_zK = sum(z[comp] * K.get(comp, 1.0) for comp in self.components)
-        if sum_zK <= 1.0:
-            return 0.0, dict(z), dict(z)
-
-        V = 0.5
-        for _ in range(max_iter):
-            V = self._rachford_rice_bounded(z, K, V)
-            x, y = self._flash_phase_compositions(z, K, V)
-            K_new = self.K_values(T, P, x)
-            max_change = 0.0
-            for comp in self.components:
-                K_old = max(K.get(comp, 1.0), 1e-300)
-                max_change = max(max_change, abs(K_new.get(comp, 1.0) - K_old) / K_old)
-            K = K_new
-            if max_change < tol:
-                break
-
-        V = self._rachford_rice_bounded(z, K, V)
-        return (V, *self._flash_phase_compositions(z, K, V))
+            from phi_phi import PhiPhiFlashError, solve_phi_phi_flash
+        try:
+            return solve_phi_phi_flash(self, composition, T, P, max_iter, tol)
+        except PhiPhiFlashError as exc:
+            raise ThermodynamicsValidityError(str(exc)) from exc
 
     def _rachford_rice_bounded(
         self, z: dict[str, float], K: dict[str, float], V_guess: float = 0.5
     ) -> float:
-        def residual(V_value: float) -> float:
-            total = 0.0
-            for comp in self.components:
-                K_i = K.get(comp, 1.0)
-                term = K_i - 1.0
-                denom = 1.0 + V_value * term
-                if abs(denom) < 1e-14:
-                    denom = 1e-14 if denom >= 0.0 else -1e-14
-                total += z.get(comp, 0.0) * term / denom
-            return total
-
-        f_low = residual(0.0)
-        f_high = residual(1.0)
-        if f_low <= 0.0:
-            return 0.0
-        if f_high >= 0.0:
-            return 1.0
-
-        V = max(0.0, min(1.0, float(V_guess)))
-        for _ in range(20):
-            f = residual(V)
-            if abs(f) < 1e-12:
-                return V
-            derivative = 0.0
-            for comp in self.components:
-                K_i = K.get(comp, 1.0)
-                term = K_i - 1.0
-                denom = 1.0 + V * term
-                if abs(denom) < 1e-14:
-                    denom = 1e-14 if denom >= 0.0 else -1e-14
-                derivative -= z.get(comp, 0.0) * term * term / (denom * denom)
-            if abs(derivative) < 1e-14:
-                break
-            V_new = V - f / derivative
-            if not 0.0 < V_new < 1.0:
-                break
-            if abs(V_new - V) < 1e-12:
-                return V_new
-            V = V_new
-
-        low = 0.0
-        high = 1.0
-        for _ in range(100):
-            mid = 0.5 * (low + high)
-            f_mid = residual(mid)
-            if abs(f_mid) < 1e-13 or high - low < 1e-13:
-                return mid
-            if f_mid > 0.0:
-                low = mid
-            else:
-                high = mid
-        return 0.5 * (low + high)
+        if __package__.split('.', 1)[0] == 'pfdsim':
+            from ..phi_phi_numerics import rachford_rice
+        else:
+            from phi_phi_numerics import rachford_rice
+        return float(rachford_rice(
+            np.array([z.get(c, 0.) for c in self.components], dtype=float),
+            np.array([K.get(c, 1.) for c in self.components], dtype=float), float(V_guess)))
 
     def _flash_phase_compositions(
         self, z: dict[str, float], K: dict[str, float], V: float
     ) -> tuple[dict[str, float], dict[str, float]]:
-        x = {}
-        y = {}
-        for comp in self.components:
-            denom = 1.0 + V * (K.get(comp, 1.0) - 1.0)
-            if abs(denom) < 1e-14:
-                denom = 1e-14 if denom >= 0.0 else -1e-14
-            x[comp] = z.get(comp, 0.0) / denom
-            y[comp] = K.get(comp, 1.0) * x[comp]
-
-        x_sum = sum(x.values())
-        y_sum = sum(y.values())
-        if x_sum > 0.0:
-            x = {comp: value / x_sum for comp, value in x.items()}
-        if y_sum > 0.0:
-            y = {comp: value / y_sum for comp, value in y.items()}
-        return x, y
+        if __package__.split('.', 1)[0] == 'pfdsim':
+            from ..phi_phi_numerics import phase_compositions
+        else:
+            from phi_phi_numerics import phase_compositions
+        x, y = phase_compositions(
+            np.array([z.get(c, 0.) for c in self.components], dtype=float),
+            np.array([K.get(c, 1.) for c in self.components], dtype=float), float(V))
+        return dict(zip(self.components, x.tolist())), dict(zip(self.components, y.tolist()))
 
     def flash_PV(
         self, composition: dict[str, float], P: float, vapor_frac: float
@@ -3403,28 +3337,55 @@ class IdealThermodynamics(PhaseDiagramMixin):
         T_low = self.bubble_point_T(composition, P)
         T_high = self.dew_point_T(composition, P)
 
-        if vapor_frac <= 0.001:
-            V, x, y = self.flash_TP(composition, T_low, P)
-            return T_low, x, y
+        if vapor_frac <= 0.0:
+            _, _, y = self.flash_TP(composition, T_low, P)
+            return T_low, dict(composition), y
 
-        if vapor_frac >= 0.999:
-            V, x, y = self.flash_TP(composition, T_high, P)
-            return T_high, x, y
+        if vapor_frac >= 1.0:
+            _, x, _ = self.flash_TP(composition, T_high, P)
+            return T_high, x, dict(composition)
 
-        # Bisection to find T
-        for _ in range(50):
-            T_mid = (T_low + T_high) / 2
-            V, x, y = self.flash_TP(composition, T_mid, P)
+        if sum(value > 0. for value in composition.values()) == 1:
+            # Pure-fluid quality changes at one coexistence temperature;
+            # an unforced TP flash selects an endpoint rather than this Q.
+            return T_low, dict(composition), dict(composition)
 
-            if abs(V - vapor_frac) < 1e-6:
-                return T_mid, x, y
+        if abs(T_high-T_low) < 1e-6:
+            # At an azeotrope the phase compositions also coincide. Require
+            # actual coexistence before interpreting a collapsed T bracket.
+            T = .5*(T_low+T_high)
+            self._check_diagram_vle(composition, composition, T, P, fugacity_tolerance=1e-8)
+            return T, dict(composition), dict(composition)
 
-            if V < vapor_frac:
-                T_low = T_mid
-            else:
-                T_high = T_mid
+        trials = {}
+        def residual(T):
+            if T not in trials:
+                # Resolve trace phases below the ordinary TP stability
+                # tolerance before attaching an independently specified Q.
+                options = {'tol': 1e-11} if callable(getattr(self, '_eos_root_kind', None)) else {}
+                trials[T] = self.flash_TP(composition, T, P, **options)
+            return trials[T][0]-vapor_frac
 
-        return T_mid, x, y
+        try:
+            brentq(residual, min(T_low, T_high), max(T_low, T_high),
+                   xtol=1e-10, rtol=1e-14, maxiter=100)
+        except (ValueError, RuntimeError) as error:
+            raise ThermodynamicsError('PV flash could not converge to the requested vapor quality') from error
+        # At solver precision, the final bracket endpoint need not have the
+        # smallest physical residual of the evaluated states.
+        T, (V, x, y) = min(trials.items(), key=lambda item: abs(item[1][0]-vapor_frac))
+        material_residual = max(
+            abs((1.-vapor_frac)*x[c]+vapor_frac*y[c]-value)
+            for c, value in composition.items()
+        )
+        # The caller attaches the requested quality to these compositions.
+        # Check that exact inventory, rather than a nearby TP vapor fraction.
+        if (not math.isfinite(V) or not 0. < V < 1. or abs(V-vapor_frac) > 1e-8
+                or not math.isfinite(material_residual) or material_residual > 1e-9):
+            raise ThermodynamicsError(
+                'PV flash did not converge to the requested vapor quality; '
+                f'quality residual={V-vapor_frac:g}, material residual={material_residual:g}')
+        return T, x, y
 
     def enthalpy_ideal_gas(self, comp: str, T: float) -> float:
         """
@@ -5326,9 +5287,20 @@ class IdealThermodynamics(PhaseDiagramMixin):
         include_set = self._normalize_state_include(include)
 
         # Normalize composition
-        total = sum(composition.values())
-        if total > 0:
-            composition = {k: v / total for k, v in composition.items()}
+        if callable(getattr(self, '_eos_root_kind', None)):
+            if __package__.split('.', 1)[0] == 'pfdsim':
+                from ..phi_phi import PhiPhiFlashError, normalized_eos_composition
+            else:
+                from phi_phi import PhiPhiFlashError, normalized_eos_composition
+            try:
+                normalized = normalized_eos_composition(self.process_components, composition)
+                composition = {c: normalized[c] for c in self.components}
+            except PhiPhiFlashError as exc:
+                raise ThermodynamicsValidityError(str(exc)) from exc
+        else:
+            total = sum(composition.values())
+            if total > 0:
+                composition = {k: v / total for k, v in composition.items()}
 
         state = StreamState(
             T=T,
@@ -5366,6 +5338,8 @@ class IdealThermodynamics(PhaseDiagramMixin):
                     P,
                 )
             except Exception as exc:
+                if isinstance(exc, ThermodynamicsValidityError):
+                    raise
                 if self.fluid_phase_model != "VLE":
                     raise ThermodynamicsError(
                         f"{self.fluid_phase_model} fluid phase calculation failed"

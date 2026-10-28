@@ -2302,50 +2302,37 @@ class ThermodynamicMethodTests(unittest.TestCase):
             'H2O': 0.8829968756861305,
         }
         pressure = 2.24
-        thermo = create_thermodynamics(
-            components,
-            'PR',
-            interaction_overrides=[{
-                'model': 'PR',
-                'component1': 'C2H4O',
-                'component2': 'H2O',
-                'kij': 0.0,
-            }],
-        )
+        for kij in (0.0, -0.1):
+            with self.subTest(kij=kij):
+                thermo = create_thermodynamics(
+                    components, 'PR', interaction_overrides=[{
+                        'model': 'PR', 'component1': 'C2H4O',
+                        'component2': 'H2O', 'kij': kij,
+                    }],
+                )
+                temperature = thermo.bubble_point_T(composition, pressure, 350.0)
+                K_values = thermo.K_values(temperature, pressure, composition)
+                vapor = {c: fraction*K_values[c] for c, fraction in composition.items()}
+                total = sum(vapor.values())
+                self.assertLess(abs(total-1.0), 1e-8)
+                vapor = {c: fraction/total for c, fraction in vapor.items()}
+                self.assertLess(
+                    thermo._check_diagram_vle(composition, vapor, temperature, pressure), 1e-8)
 
-        with self.assertRaisesRegex(
-            ThermodynamicsError,
-            r'best residual 0\.210707 at T=245\.545 K',
-        ):
-            thermo.bubble_point_T(composition, pressure, 350.0)
-
-        fitted = create_thermodynamics(
-            components,
-            'PR',
-            interaction_overrides=[{
-                'model': 'PR',
-                'component1': 'C2H4O',
-                'component2': 'H2O',
-                'kij': -0.1,
-            }],
-        )
-        temperature = fitted.bubble_point_T(
-            composition,
-            pressure,
-            350.0,
-        )
-        K_values = fitted.K_values(
-            temperature,
-            pressure,
-            composition,
-        )
-        residual = sum(
-            composition[component] * K_values[component]
-            for component in composition
-        ) - 1.0
-
-        self.assertAlmostEqual(temperature, 316.2191566, places=6)
-        self.assertLess(abs(residual), 1.0e-8)
+                if kij == -0.1:
+                    self.assertAlmostEqual(temperature, 316.2191566, places=6)
+                else:
+                    # The old grid search returned this nonroot sample. It
+                    # must remain invalid even when another root is found.
+                    bad_temperature = 245.545
+                    bad_K = thermo.K_values(bad_temperature, pressure, composition)
+                    bad_vapor = {c: fraction*bad_K[c] for c, fraction in composition.items()}
+                    bad_total = sum(bad_vapor.values())
+                    self.assertGreater(abs(bad_total-1.0), 1e-4)
+                    bad_vapor = {c: fraction/bad_total for c, fraction in bad_vapor.items()}
+                    with self.assertRaises(ValueError):
+                        thermo._check_diagram_vle(
+                            composition, bad_vapor, bad_temperature, pressure)
 
     def test_vlle_bubble_dew_and_spec_flashes_recover_ternary_reference_state(self):
         thermo = create_thermodynamics(['water', 'ethanol', 'cyclohexane'], 'UNIFNIST')

@@ -1739,6 +1739,11 @@ omit `P` to use the inlet pressure as the second variable. Supported pairs are:
 - `T` and `Q`/`duty`/`heat_duty` - Find pressure from heat duty
 - `VF`/`vapor_fraction` and `Q`/`duty`/`heat_duty` - Find pressure and temperature from vapor fraction and heat duty
 
+Pressure/quality VLE states solve for the requested interior vapor fraction,
+including values close to zero or one, and check the final component balances.
+They do not substitute saturated endpoint compositions for a nonzero phase.
+Pure fluids and azeotropes can vary quality at a single coexistence temperature.
+
 **Decanter / FlashLLE:**
 - Separates a liquid feed into `light` and `heavy` liquid outlet phases using
   an LLE-capable activity-coefficient model (`NRTL`, `UNIQUAC`, `UNIFAC`, etc.).

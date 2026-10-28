@@ -24,7 +24,7 @@ class PhaseDiagramMixin:
         ):
             raise ValueError("Choose distinct components from this thermodynamic model")
 
-    def _check_diagram_vle(self, x, y, T, P):
+    def _check_diagram_vle(self, x, y, T, P, *, fugacity_tolerance=1e-4):
         # K-values can contain single-phase extrapolations used to initialize
         # flashes. Audit the phases using the shared physical activity path.
         phase_log_fugacities = getattr(self, "_phase_log_fugacities", None)
@@ -43,7 +43,7 @@ class PhaseDiagramMixin:
         residual = max(
             abs(liquid[c] - vapor[c]) for c in x if x[c] > 1e-12 or y.get(c, 0) > 1e-12
         )
-        if not math.isfinite(residual) or residual > 1e-4:
+        if not math.isfinite(residual) or residual > fugacity_tolerance:
             raise ValueError(
                 f"VLE failed fugacity equality (log residual {residual:g})"
             )
@@ -631,6 +631,9 @@ class PhaseDiagramMixin:
 
     def bubble_point_P(self, composition: dict[str, float], T: float) -> float:
         self._diagram_controls(2, T)
+        if callable(getattr(self, '_eos_root_kind', None)):
+            from .common import _solve_eos_phase_boundary
+            return _solve_eos_phase_boundary(self, composition, T, None, kind='bubble', variable='P')
         activity = getattr(self, "activity_coefficients", None)
         gamma = (
             activity(T, composition)
@@ -698,6 +701,9 @@ class PhaseDiagramMixin:
         raise ValueError("Could not bracket a converged bubble pressure")
 
     def dew_point_P(self, composition: dict[str, float], T: float) -> float:
+        if callable(getattr(self, '_eos_root_kind', None)):
+            from .common import _solve_eos_phase_boundary
+            return _solve_eos_phase_boundary(self, composition, T, None, kind='dew', variable='P')
         y = composition
         x = dict(y)
         self._diagram_controls(2, T)

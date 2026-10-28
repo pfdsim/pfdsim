@@ -1333,29 +1333,13 @@ class CubicEOS:
             }
             return self._set_cached_phi_phi_K(cache_key, result)
 
-        single_root = len(self.compressibility_roots(T, P, x)) < 2
-        phi_l = self.fugacity_coefficients(T, P, x, "liquid")
-        K = self._wilson_K(T, P)
-        initial_K = dict(K)
-        y = self._normalized_composition({comp: x[comp] * K[comp] for comp in self.components})
-
-        for _ in range(max_iter):
-            phi_v = self.fugacity_coefficients(T, P, y, "vapor")
-            K_new = {
-                comp: max(1e-8, min(1e8, phi_l.get(comp, 1.0) / max(phi_v.get(comp, 1.0), 1e-12)))
-                for comp in self.components
-            }
-            y_new = self._normalized_composition({comp: x[comp] * K_new[comp] for comp in self.components})
-            if max(abs(y_new[comp] - y[comp]) for comp in self.components) < 1e-9:
-                # A single root is valid for either phase. Only reject the
-                # homogeneous K=1 fixed point, which cannot locate a phase
-                # boundary; retain Wilson's single-phase extrapolation there.
-                if single_root and all(abs(K_new[c] - 1.0) < 1e-6 for c in self.components if x[c] > 0.0):
-                    return self._set_cached_phi_phi_K(cache_key, initial_K)
-                return self._set_cached_phi_phi_K(cache_key, K_new)
-            K = {comp: 0.5 * K[comp] + 0.5 * K_new[comp] for comp in self.components}
-            y = y_new
-        return self._set_cached_phi_phi_K(cache_key, K)
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .phi_phi import iterate_phi_phi_K
+        else:
+            from phi_phi import iterate_phi_phi_K
+        return self._set_cached_phi_phi_K(
+            cache_key, iterate_phi_phi_K(self, T, P, x, max_iter)
+        )
 
     def _set_cached_phi_phi_K(self, key: tuple, values: dict[str, float]) -> dict[str, float]:
         if len(self._phi_phi_k_cache) > 20000:
@@ -1364,9 +1348,8 @@ class CubicEOS:
         return values
 
     def _wilson_K(self, T: float, P: float) -> dict[str, float]:
-        values = {}
-        for comp in self.components:
-            props = self.props[comp]
-            exponent = 5.373 * (1.0 + props.omega) * (1.0 - props.Tc / T)
-            values[comp] = max(1e-8, min(1e8, props.Pc / max(P, 1e-12) * math.exp(exponent)))
-        return values
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from .phi_phi import wilson_K
+        else:
+            from phi_phi import wilson_K
+        return wilson_K(self.props, T, P, self.components)

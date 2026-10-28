@@ -85,9 +85,27 @@ class ThermodynamicsError(Exception):
     pass
 
 
+class ThermodynamicsValidityError(ThermodynamicsError):
+    """An invalid physical result that must not be replaced by a guessed state."""
+
+
+def _solve_eos_phase_boundary(thermo, composition, fixed, guess, *, kind, variable):
+    if __package__.split('.', 1)[0] == 'pfdsim':
+        from ..phi_phi import PhiPhiFlashError, solve_phi_phi_boundary
+    else:
+        from phi_phi import PhiPhiFlashError, solve_phi_phi_boundary
+    try:
+        return solve_phi_phi_boundary(thermo, composition, fixed, guess,
+                                      kind=kind, variable=variable)
+    except PhiPhiFlashError as error:
+        raise ThermodynamicsValidityError(str(error)) from error
+
+
 def _solve_bubble_point_temperature(thermo, composition: dict[str, float],
                                     P: float, T_guess: float = 350.0) -> float:
     """Solve sum(x_i K_i) = 1 with bracketing around available pure data."""
+    if callable(getattr(thermo, '_eos_root_kind', None)):
+        return _solve_eos_phase_boundary(thermo, composition, P, T_guess, kind='bubble', variable='T')
     x_total = sum(max(float(value), 0.0) for value in composition.values())
     if x_total <= 0.0:
         raise ThermodynamicsError("Cannot calculate bubble point for zero composition")
@@ -308,6 +326,8 @@ def _solve_bubble_point_temperature(thermo, composition: dict[str, float],
 def _solve_dew_point_temperature(thermo, composition: dict[str, float],
                                  P: float, T_guess: float = 350.0) -> float:
     """Solve sum(y_i / K_i) = 1 while iterating incipient liquid composition."""
+    if callable(getattr(thermo, '_eos_root_kind', None)):
+        return _solve_eos_phase_boundary(thermo, composition, P, T_guess, kind='dew', variable='T')
     components = list(getattr(thermo, "components", composition.keys()))
     y_raw = {
         comp: max(float(composition.get(comp, 0.0)), 0.0)

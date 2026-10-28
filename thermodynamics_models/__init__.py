@@ -1,7 +1,7 @@
 from .common import (
     R, R_BAR, T_REF, P_REF, LIQUID_VOLUME_EXTRAPOLATION_LIMIT_K,
     DEFAULT_STATE_INCLUDE, STEAM_WATER_MW, STEAM_WATER_H_OFFSET,
-    STEAM_WATER_S_OFFSET, ThermodynamicsError,
+    STEAM_WATER_S_OFFSET, ThermodynamicsError, ThermodynamicsValidityError,
 )
 from .base import (
     FluidPhaseEquilibrium,
@@ -74,7 +74,7 @@ from .sle import (
 __all__ = [
     'R', 'R_BAR', 'T_REF', 'P_REF', 'LIQUID_VOLUME_EXTRAPOLATION_LIMIT_K',
     'DEFAULT_STATE_INCLUDE', 'STEAM_WATER_MW', 'STEAM_WATER_H_OFFSET',
-    'STEAM_WATER_S_OFFSET', 'ThermodynamicsError', 'StreamState',
+    'STEAM_WATER_S_OFFSET', 'ThermodynamicsError', 'ThermodynamicsValidityError', 'StreamState',
     'FluidPhaseEquilibrium', 'TransportPhaseValues', 'ParticleSizeDistribution',
     'IdealThermodynamics',
     'AqueousEquilibriumContext', 'HenryComponentData', 'HenryConstantDatabase',

@@ -199,6 +199,51 @@ def test_integrated_flash_material_and_fugacity_closure():
         assert math.log(x[c]*pl[c]/(y[c]*pv[c])) == pytest.approx(0., abs=1e-7)
 
 
+@pytest.mark.parametrize('compiled', [True, False], ids=['compiled', 'reference'])
+def test_solvent_liquid_instability_is_not_reported_as_vapor(compiled):
+    components = ['ethylene', 'ethane', 'hexane', '2-methylpentane', '3-methylpentane', 'ethanol']
+    thermo = create_thermodynamics(components, 'RKSMHV2', ChemicalDatabase(enable_online=False))
+    if not compiled:
+        thermo.cubic._compiled_backend = None
+    amounts = {'hexane': .56, '2-methylpentane': .16, '3-methylpentane': .08, 'ethanol': .2}
+    z = {c: amounts.get(c, 0.0) for c in components}
+    T, P = 298.15, 10.0
+    # Both phase selectors return the same dense volume root at this feed.
+    roots = thermo.cubic.compressibility_roots(T, P, z)
+    assert len(roots) == 1
+    assert thermo._eos_root_kind(T, P, z, 'vapor') == 'liquid'
+
+    # Independently establish negative liquid Gibbs curvature in the
+    # ethanol-exchange direction: rejecting the false vapor split must not
+    # conceal the EOS's predicted liquid instability.
+    def gibbs(composition):
+        phi = thermo.fugacity_coefficients(T, P, composition, 'liquid')
+        return sum(composition[c] * math.log(composition[c] * phi[c])
+                   for c in amounts)
+    step = 1e-3
+    direction = {c: (1.0 if c == 'ethanol' else 0.0) - z[c] for c in components}
+    plus = {c: z[c] + step * direction[c] for c in components}
+    minus = {c: z[c] - step * direction[c] for c in components}
+    assert gibbs(plus) + gibbs(minus) - 2*gibbs(z) < -1e-9
+
+    beta, x, y = thermo.flash_TP({c: 100 * amount for c, amount in z.items()}, T, P)
+    assert beta == 0.0
+    assert x == pytest.approx(z, abs=1e-12)
+    assert y == pytest.approx(z, abs=1e-12)
+    state = thermo.calculate_state(T, P, 300., z, include=())
+    assert state.vapor_fraction == 0.0
+    assert state.phase_status == 'single_liquid'
+    assert state.phase_stability == 'vle_constrained'
+    assert any('locally unstable liquid' in warning and 'LLE/VLLE is not implemented' in warning
+               for warning in thermo.warnings)
+    # Reusing a flash after reporting context is reset must retain the physical
+    # instability diagnostic, including when it was already known on a miss.
+    thermo.warnings.clear()
+    thermo._warning_keys.clear()
+    thermo.flash_TP({c: 100 * amount for c, amount in z.items()}, T, P)
+    assert any('locally unstable liquid' in warning for warning in thermo.warnings)
+
+
 def test_co2_ethanol_bubble_pressure_matches_mhv2_paper_figure_2():
     model = create_thermodynamics(
         ['CO2', 'ethanol'],

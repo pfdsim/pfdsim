@@ -3,13 +3,18 @@ from typing import Iterable, Optional, Union
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from ..chemical_properties import ChemicalDatabase
+    from ..physical_constants import R_BAR_CM3_MOL_K
+    from ..phi_phi import cubic_root_kind, cubic_pressure_extrema
 else:
     from chemical_properties import ChemicalDatabase
+    from physical_constants import R_BAR_CM3_MOL_K
+    from phi_phi import cubic_root_kind, cubic_pressure_extrema
 
 from .common import (
     P_REF,
     T_REF,
     ThermodynamicsError,
+    ThermodynamicsValidityError,
     _solve_bubble_point_temperature,
     _solve_dew_point_temperature,
 )
@@ -84,6 +89,8 @@ class _EOSCpDepartureMixin:
             h_low = self.departure_enthalpy(T_low, P, composition, phase)
             h_high = self.departure_enthalpy(T_high, P, composition, phase)
             value = (h_high - h_low) / (T_high - T_low)
+        except ThermodynamicsValidityError:
+            raise
         except Exception:
             value = 0.0
         if not math.isfinite(value):
@@ -108,6 +115,88 @@ class _EOSCpDepartureMixin:
         cp_vapor = cp_ideal + self._cp_departure(composition, T, float(P), 'vapor')
         cp_liquid = cp_ideal + self._cp_departure(composition, T, float(P), 'liquid')
         return V * cp_vapor + (1.0 - V) * cp_liquid
+
+
+class PhiPhiThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
+    """Shared caloric and equilibrium integration for phi-phi property models."""
+
+    def _eos_reduced_parameters(self, T, composition):
+        x = self.cubic._normalized_composition(composition)
+        attraction, covolume, _, _ = self.cubic.mixture_params(T, x)
+        return (attraction / (covolume * R_BAR_CM3_MOL_K * T),
+                R_BAR_CM3_MOL_K * T / covolume, *self.cubic._delta_roots())
+
+    def _eos_root_kind(self, T, P, composition, phase):
+        attraction, pressure_scale, delta1, delta2 = self._eos_reduced_parameters(T, composition)
+        volume_over_b = self.compressibility_factor(T, P, composition, phase) * pressure_scale / P
+        return cubic_root_kind(attraction, volume_over_b, delta1, delta2)
+
+    def _eos_pressure_extrema(self, T, composition):
+        return cubic_pressure_extrema(*self._eos_reduced_parameters(T, composition))
+
+    def residual_enthalpy(self, T: float, P: float,
+                          composition: dict[str, float],
+                          phase: str = 'vapor') -> float:
+        """Alias for EOS departure enthalpy [kJ/kmol]."""
+        return self.departure_enthalpy(T, P, composition, phase)
+
+    def mixture_enthalpy(self, composition: dict[str, float], T: float,
+                        vapor_fraction: float = 1.0,
+                        x: Optional[dict] = None,
+                        y: Optional[dict] = None,
+                        P: float = P_REF) -> float:
+        """Mixture molar enthalpy with EOS departure correction [kJ/kmol]."""
+        def ideal_gas_mixture(comp: dict[str, float]) -> float:
+            return 1000.0 * sum(
+                zi * self.enthalpy_ideal_gas(component, T)
+                for component, zi in comp.items()
+            )
+
+        if vapor_fraction > 0.999:
+            return ideal_gas_mixture(composition) + self.departure_enthalpy(T, P, composition, 'vapor')
+        if vapor_fraction < 0.001:
+            return ideal_gas_mixture(composition) + self.departure_enthalpy(T, P, composition, 'liquid')
+        x = x or composition
+        y = y or composition
+        H_l = ideal_gas_mixture(x) + self.departure_enthalpy(T, P, x, 'liquid')
+        H_v = ideal_gas_mixture(y) + self.departure_enthalpy(T, P, y, 'vapor')
+        return vapor_fraction * H_v + (1.0 - vapor_fraction) * H_l
+
+    def mixture_entropy(self, composition: dict[str, float], T: float,
+                        vapor_fraction: float = 1.0,
+                        x: Optional[dict] = None,
+                        y: Optional[dict] = None,
+                        P: float = P_REF) -> float:
+        """Mixture molar entropy with EOS departure correction [kJ/kmol-K]."""
+        def ideal_gas_mixture(comp: dict[str, float]) -> float:
+            return self._ideal_gas_mixture_entropy(comp, T, P)
+
+        if vapor_fraction > 0.999:
+            return ideal_gas_mixture(composition) + self.departure_entropy(T, P, composition, 'vapor')
+        if vapor_fraction < 0.001:
+            return ideal_gas_mixture(composition) + self.departure_entropy(T, P, composition, 'liquid')
+        x = x or composition
+        y = y or composition
+        S_l = ideal_gas_mixture(x) + self.departure_entropy(T, P, x, 'liquid')
+        S_v = ideal_gas_mixture(y) + self.departure_entropy(T, P, y, 'vapor')
+        return vapor_fraction * S_v + (1.0 - vapor_fraction) * S_l
+
+    def K_value(self, comp: str, T: float, P: float,
+                x: Optional[dict[str, float]] = None) -> float:
+        composition = x if x is not None else {comp: 1.0}
+        return self.K_values(T, P, composition).get(comp, 1.0)
+
+    def flash_TP(self, composition: dict[str, float], T: float, P: float,
+                 *, tol: float = 1e-9) -> tuple[float, dict, dict]:
+        return self._iterative_K_flash_TP(composition, T, P, tol=tol)
+
+    def bubble_point_T(self, composition: dict[str, float], P: float,
+                       T_guess: float = 350.0) -> float:
+        return _solve_bubble_point_temperature(self, composition, P, T_guess)
+
+    def dew_point_T(self, composition: dict[str, float], P: float,
+                    T_guess: float = 350.0) -> float:
+        return _solve_dew_point_temperature(self, composition, P, T_guess)
 
 
 class RKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
@@ -171,6 +260,16 @@ class RKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
             )
         self.extend_warnings(getattr(self.rk, 'warnings', []))
     
+    def _eos_reduced_parameters(self, T, composition):
+        x = self.rk._normalized_composition(composition)
+        attraction, covolume = self.rk.mixture_params(x)
+        return (attraction / (covolume * R_BAR_CM3_MOL_K * T**1.5),
+                R_BAR_CM3_MOL_K * T / covolume, 1., 0.)
+
+    # RK has its own caloric adapter but shares the cubic root geometry.
+    _eos_root_kind = PhiPhiThermodynamics._eos_root_kind
+    _eos_pressure_extrema = PhiPhiThermodynamics._eos_pressure_extrema
+
     def compressibility_factor(self, T: float, P: float, 
                                 composition: dict[str, float],
                                 phase: str = 'vapor') -> float:
@@ -227,8 +326,7 @@ class RKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
         composition = x if x is not None else {comp: 1.0}
         return self.K_values(T, P, composition).get(comp, 1.0)
 
-    def flash_TP(self, composition: dict[str, float], T: float, P: float) -> tuple[float, dict, dict]:
-        return self._iterative_K_flash_TP(composition, T, P)
+    flash_TP = PhiPhiThermodynamics.flash_TP
 
     def bubble_point_T(self, composition: dict[str, float], P: float,
                        T_guess: float = 350.0) -> float:
@@ -346,7 +444,7 @@ class RKThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
         return state
 
 
-class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
+class CubicEOSThermodynamics(PhiPhiThermodynamics):
     """Phi-phi VLE using a cubic EOS for both liquid and vapor fugacity."""
 
     def __init__(
@@ -528,53 +626,6 @@ class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
         self.extend_warnings(self.cubic.warnings)
         return value
 
-    def residual_enthalpy(self, T: float, P: float,
-                          composition: dict[str, float],
-                          phase: str = 'vapor') -> float:
-        """Alias for EOS departure enthalpy [kJ/kmol]."""
-        return self.departure_enthalpy(T, P, composition, phase)
-
-    def mixture_enthalpy(self, composition: dict[str, float], T: float,
-                        vapor_fraction: float = 1.0,
-                        x: Optional[dict] = None,
-                        y: Optional[dict] = None,
-                        P: float = P_REF) -> float:
-        """Mixture molar enthalpy with cubic EOS departure correction [kJ/kmol]."""
-        def ideal_gas_mixture(comp: dict[str, float]) -> float:
-            return 1000.0 * sum(
-                zi * self.enthalpy_ideal_gas(component, T)
-                for component, zi in comp.items()
-            )
-
-        if vapor_fraction > 0.999:
-            return ideal_gas_mixture(composition) + self.departure_enthalpy(T, P, composition, 'vapor')
-        if vapor_fraction < 0.001:
-            return ideal_gas_mixture(composition) + self.departure_enthalpy(T, P, composition, 'liquid')
-        x = x or composition
-        y = y or composition
-        H_l = ideal_gas_mixture(x) + self.departure_enthalpy(T, P, x, 'liquid')
-        H_v = ideal_gas_mixture(y) + self.departure_enthalpy(T, P, y, 'vapor')
-        return vapor_fraction * H_v + (1.0 - vapor_fraction) * H_l
-
-    def mixture_entropy(self, composition: dict[str, float], T: float,
-                        vapor_fraction: float = 1.0,
-                        x: Optional[dict] = None,
-                        y: Optional[dict] = None,
-                        P: float = P_REF) -> float:
-        """Mixture molar entropy with cubic EOS departure correction [kJ/kmol-K]."""
-        def ideal_gas_mixture(comp: dict[str, float]) -> float:
-            return self._ideal_gas_mixture_entropy(comp, T, P)
-
-        if vapor_fraction > 0.999:
-            return ideal_gas_mixture(composition) + self.departure_entropy(T, P, composition, 'vapor')
-        if vapor_fraction < 0.001:
-            return ideal_gas_mixture(composition) + self.departure_entropy(T, P, composition, 'liquid')
-        x = x or composition
-        y = y or composition
-        S_l = ideal_gas_mixture(x) + self.departure_entropy(T, P, x, 'liquid')
-        S_v = ideal_gas_mixture(y) + self.departure_entropy(T, P, y, 'vapor')
-        return vapor_fraction * S_v + (1.0 - vapor_fraction) * S_l
-
     def K_values(self, T: float, P: float,
                  composition: dict[str, float]) -> dict[str, float]:
         values = self.cubic.phi_phi_K_values(T, P, composition)
@@ -587,22 +638,6 @@ class CubicEOSThermodynamics(_EOSCpDepartureMixin, IdealThermodynamics):
         return _phi_henry_aqueous_K_values(
             self, T, P, composition, context, f'aqueous_{self.model}_phi_henry'
         )
-
-    def K_value(self, comp: str, T: float, P: float,
-                x: Optional[dict[str, float]] = None) -> float:
-        composition = x if x is not None else {comp: 1.0}
-        return self.K_values(T, P, composition).get(comp, 1.0)
-
-    def flash_TP(self, composition: dict[str, float], T: float, P: float) -> tuple[float, dict, dict]:
-        return self._iterative_K_flash_TP(composition, T, P)
-
-    def bubble_point_T(self, composition: dict[str, float], P: float,
-                       T_guess: float = 350.0) -> float:
-        return _solve_bubble_point_temperature(self, composition, P, T_guess)
-
-    def dew_point_T(self, composition: dict[str, float], P: float,
-                    T_guess: float = 350.0) -> float:
-        return _solve_dew_point_temperature(self, composition, P, T_guess)
 
     def calculate_state(self, T: float, P: float, F: float,
                        composition: dict[str, float],
