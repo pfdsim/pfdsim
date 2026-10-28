@@ -181,6 +181,16 @@ substitutions.
   models with vapor-dimerization fugacity corrections
 - `STEAM` - CoolProp IF97 steam properties for water-only flowsheets
 
+`STEAM` pressure/enthalpy and pressure/entropy states are refined against the
+forward IF97 model, rather than reporting an unchecked backward temperature.
+Wet states use the saturation/quality representation. A homogeneous inverse
+state that cannot be verified in IF97's forward domain now fails explicitly;
+at saturation, specify pressure and vapor quality instead of relying on an
+approximate homogeneous backward state.
+Inverse targets must be finite and pressure must be positive and finite.
+The inverse solver includes IF97's high-temperature region up to 2273.15 K
+at pressures up to 500 bar; above 500 bar the temperature limit is 1073.15 K.
+
 The `-BV` variants use a pressure-truncated second-virial vapor EOS while
 retaining the selected activity model for the liquid. The default coefficient
 provider is Tsonopoulos, including its supported polar-fluid corrections and

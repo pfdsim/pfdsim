@@ -188,14 +188,20 @@ class SteamThermodynamics(IdealThermodynamics):
         return evaluate
 
     def _normalize_water_composition(self, composition: dict[str, float]) -> dict[str, float]:
-        total = sum(max(float(value), 0.0) for value in composition.values())
+        try:
+            values = {comp: float(value) for comp, value in composition.items()}
+        except (TypeError, ValueError, OverflowError) as error:
+            raise ThermodynamicsError('STEAM composition must be finite') from error
+        if any(not math.isfinite(value) for value in values.values()):
+            raise ThermodynamicsError('STEAM composition must be finite')
+        total = sum(max(value, 0.0) for value in values.values())
         if total <= 0.0:
             raise ThermodynamicsError("STEAM thermodynamics requires a positive H2O composition")
 
         water_total = 0.0
         nonwater = []
-        for comp, value in composition.items():
-            fraction = max(float(value), 0.0) / total
+        for comp, value in values.items():
+            fraction = max(value, 0.0) / total
             props = self.props.get(comp)
             identifiers = {
                 str(comp).strip().lower(),
@@ -228,6 +234,72 @@ class SteamThermodynamics(IdealThermodynamics):
             self._set_limited_cache(cache, key, value, limit=2048)
         return cache[key]
 
+    def _inverse_saturation(self, output, P):
+        if P >= self._pcrit_bar:
+            return None
+        try:
+            return (self._saturation_temperature(P), self._saturation_property(output, P, 0.),
+                    self._saturation_property(output, P, 1.))
+        except ThermodynamicsError:
+            # A homogeneous vapor can exist below the saturation backend's
+            # minimum pressure. Its PT/PH/PS domain checks remain authoritative.
+            return None
+
+    @staticmethod
+    def _validate_inverse_inputs(P, target):
+        if not math.isfinite(P) or P <= 0. or not math.isfinite(target):
+            raise ThermodynamicsError('STEAM inverse states require finite inputs and positive pressure')
+
+    def _refine_inverse_temperature(self, output, P, target, seed):
+        """Refine an IF97 backward estimate against the forward H or S model."""
+        bounds = self._inverse_saturation(output, P)
+        # IAPWS R7-97(2012): regions 1--3 end at 1073.15 K; region 5
+        # extends to 2273.15 K for P <= 50 MPa. CoolProp's trivial Tmax
+        # output can report only the former, despite supporting region 5.
+        high = 2273.15 if P <= 500. else 1073.15
+        low, boundary_quality = self._tmin, None
+        if bounds is not None:
+            sat_T, liquid, vapor = bounds
+            if target < liquid:
+                high, boundary_quality = sat_T, 0.
+            elif target > vapor:
+                low, boundary_quality = sat_T, 1.
+            else:
+                return sat_T, 0.
+        pressure = self._pressure_to_pa(P)
+        def evaluate(T):
+            temperature = max(low, min(high, T))
+            if bounds is not None and temperature == bounds[0]:
+                pair = ('P', pressure, 'Q', boundary_quality)
+            else:
+                pair = ('T', temperature, 'P', pressure)
+            value, cp = self._props_values([output, 'Cpmass'], *pair)
+            return value, cp if output == 'H' else cp/temperature
+        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+            from ..ph_solver import solve_caloric_temperature
+        else:
+            from ph_solver import solve_caloric_temperature
+        try:
+            temperature, residual, _, converged = solve_caloric_temperature(
+                evaluate, (), target, max(low, min(high, seed)))
+        except ThermodynamicsError as error:
+            raise ThermodynamicsError(
+                f'STEAM P{output} inversion requires a forward-consistent state; '
+                'an approximate backward temperature alone is not accepted. '
+                'For saturation states specify pressure and vapor quality; '
+                'homogeneous IF97 states must be outside its T/P saturation ambiguity band. '
+                f'Forward evaluation failed: {error}') from error
+        if not converged:
+            raise ThermodynamicsError(f'STEAM {output} inverse refinement failed; residual={residual:g}')
+        return max(low, min(high, temperature)), residual
+
+    def _inverse_temperature_estimate(self, output, P, target):
+        try:
+            return self._props('T', 'P', self._pressure_to_pa(P), output, target)
+        except ThermodynamicsError:
+            # The installed IF97 backend can reject a backward lookup for a
+            # supported PT state. A seed never becomes a state without refinement.
+            return self._tcrit
 
     def _saturation_pressure(self, T: float) -> float:
         if T >= self._tcrit:
@@ -317,9 +389,31 @@ class SteamThermodynamics(IdealThermodynamics):
         include_set = self._normalize_state_include(include)
         composition = self._normalize_water_composition(composition)
 
-        T = self._props('T', input1, value1, input2, value2)
-        P = self._props('P', input1, value1, input2, value2) / 1e5
-        quality = self._quality_from_pair(input1, value1, input2, value2)
+        inputs = {input1: value1, input2: value2}
+        inverse_output = 'H' if 'H' in inputs else ('S' if 'S' in inputs else None)
+        if 'P' in inputs and inverse_output is not None:
+            P = inputs['P']/1e5
+            target = inputs[inverse_output]
+            self._validate_inverse_inputs(P, target)
+            saturation = self._inverse_saturation(inverse_output, P)
+            tolerance = max(1e-8, abs(target)*1e-12)
+            if (saturation is not None and saturation[2] > saturation[1]
+                    and saturation[1]-tolerance <= target <= saturation[2]+tolerance):
+                quality = max(0., min(1., (target-saturation[1])/(saturation[2]-saturation[1])))
+                input1, value1, input2, value2 = 'P', inputs['P'], 'Q', quality
+                T = saturation[0]
+            else:
+                T = self._inverse_temperature_estimate(inverse_output, P, target)
+                T, _ = self._refine_inverse_temperature(inverse_output, P, target, T)
+                quality = None
+                input1, value1, input2, value2 = 'T', T, 'P', inputs['P']
+                if saturation is not None and T == saturation[0]:
+                    quality = 0. if target < saturation[1] else 1.
+                    input1, value1, input2, value2 = 'P', inputs['P'], 'Q', quality
+        else:
+            T = self._props('T', input1, value1, input2, value2)
+            P = self._props('P', input1, value1, input2, value2) / 1e5
+            quality = self._quality_from_pair(input1, value1, input2, value2)
         if vapor_fraction is None:
             vapor_fraction = quality if quality is not None else self._vapor_fraction_from_TP(T, P)[0]
         vapor_fraction = max(0.0, min(1.0, float(vapor_fraction)))
@@ -436,41 +530,24 @@ class SteamThermodynamics(IdealThermodynamics):
             phase = 'vapor'
         if phase not in {'liquid', 'vapor'}:
             raise NotImplementedError('temperature-only steam PH requires a homogeneous phase')
-        pressure = self._pressure_to_pa(P)
         target = self._molar_enthalpy_to_mass(float(H) - self._reference_H_offset)
-        if not math.isfinite(target) or not math.isfinite(pressure) or pressure <= 0.0:
-            raise ThermodynamicsError('steam PH requires finite inputs and positive pressure')
+        self._validate_inverse_inputs(P, target)
         # A PH temperature alone cannot describe a wet state. Check enthalpy
         # endpoints before using the inverse, including the forced phase.
         quality = 1.0 if phase == 'vapor' else 0.0
         saturated = False
         if P < self._pcrit_bar:
-            boundary = self._props('H', 'P', pressure, 'Q', quality)
+            boundary = self._saturation_property('H', P, quality)
             saturated = abs(target - boundary) <= 1.0e-5
             if not saturated and ((phase == 'vapor' and target < boundary)
                                   or (phase == 'liquid' and target > boundary)):
                 raise NotImplementedError('steam PH target is outside the requested homogeneous phase')
-        temperature = self._props('T', 'P', pressure, 'H', target)
         if saturated:
-            return temperature, self._mass_enthalpy_to_molar(boundary - target)
+            return self._saturation_temperature(P), self._mass_enthalpy_to_molar(boundary - target)
 
-        def evaluate(T):
-            return (
-                self._mass_enthalpy_to_molar(self._props('H', 'T', T, 'P', pressure))
-                + self._reference_H_offset,
-                self._mass_entropy_to_molar(self._props('Cpmass', 'T', T, 'P', pressure)),
-            )
-
-        if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-            from ..ph_solver import solve_caloric_temperature
-        else:
-            from ph_solver import solve_caloric_temperature
-        temperature, residual, _evaluations, converged = solve_caloric_temperature(
-            evaluate, (), float(H), temperature,
-        )
-        if not converged:
-            raise ThermodynamicsError(f'steam PH residual {residual:.6g} kJ/kmol')
-        return float(temperature), float(residual)
+        temperature = self._inverse_temperature_estimate('H', P, target)
+        temperature, residual = self._refine_inverse_temperature('H', P, target, temperature)
+        return float(temperature), self._mass_enthalpy_to_molar(residual)
 
     def calculate_state_PH(self, P: float, H: float, F: float,
                            composition: dict[str, float],
