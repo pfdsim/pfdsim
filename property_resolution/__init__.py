@@ -63,6 +63,7 @@ from .solid_cp import (
 )
 from .solid_volume import SolidVolumeRecord, load_bundled_solid_volume
 from .viscosity_kernel import ViscosityKernel
+from .conductivity_kernel import ThermalConductivityKernel
 from .organic_classification import (
     HydrogenBondDonorProfile, StrictOrganicClassification,
     classify_strict_molecular_organic, hydrogen_bond_donor_profile,
@@ -129,7 +130,7 @@ __all__ = [
     'SolidCpCollectionKernel', 'SolidCpTransitionError',
     'load_bundled_solid_kernel', 'SolidVolumeRecord',
     'load_bundled_solid_volume',
-    'ViscosityKernel',
+    'ViscosityKernel', 'ThermalConductivityKernel',
     'HydrogenBondDonorProfile', 'StrictOrganicClassification',
     'classify_strict_molecular_organic', 'hydrogen_bond_donor_profile',
     'is_strict_organic_formula_counts',

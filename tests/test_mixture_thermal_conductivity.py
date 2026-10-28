@@ -30,11 +30,13 @@ def test_li_mixing_has_pure_limits_symmetry_and_bounds(thermo, monkeypatch):
 def test_pure_conductivity_preserves_phase_and_caches(thermo, monkeypatch):
     import property_resolver
     calls = []
-    def resolve(identifier, T, *, phase, props):
-        calls.append(phase)
-        return SimpleNamespace(value=2.2 if phase == 'solid' else 0.6)
+    def resolve(identifier, phase, props, **options):
+        def evaluate(T):
+            calls.append(phase)
+            return SimpleNamespace(value=2.2 if phase == 'solid' else 0.6)
+        return SimpleNamespace(evaluate=evaluate)
     monkeypatch.setattr(property_resolver, 'get_property_resolver',
-                        lambda: SimpleNamespace(resolve_thermal_conductivity=resolve))
+                        lambda: SimpleNamespace(resolve_thermal_conductivity_kernel=resolve))
     monkeypatch.setattr(thermo, '_record_lazy_property_source', lambda *args: None)
     assert thermo.pure_thermal_conductivity('water', 250, 'solid') == 2.2
     assert thermo.pure_thermal_conductivity('water', 250, 'solid') == 2.2
@@ -45,7 +47,8 @@ def test_pure_conductivity_preserves_phase_and_caches(thermo, monkeypatch):
 def test_invalid_resolver_conductivity_fails(thermo, monkeypatch):
     import property_resolver
     monkeypatch.setattr(property_resolver, 'get_property_resolver', lambda: SimpleNamespace(
-        resolve_thermal_conductivity=lambda *args, **kwargs: SimpleNamespace(value=float('nan')),
+        resolve_thermal_conductivity_kernel=lambda *args, **kwargs: SimpleNamespace(
+            evaluate=lambda T: SimpleNamespace(value=float('nan'))),
     ))
     with pytest.raises(ThermodynamicsError, match='positive and finite'):
         thermo.pure_thermal_conductivity('water', 250, 'solid')

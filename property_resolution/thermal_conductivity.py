@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import math
+from copy import deepcopy
 from typing import Any, Mapping, Optional
 
 from .common import PropertyResolutionError, PropertyResolutionResult
+from .conductivity_kernel import ThermalConductivityKernel
 
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from ..physical_constants import R_J_MOL_K
@@ -80,9 +82,30 @@ class ThermalConductivityMixin:
     ) -> PropertyResolutionResult:
         """Resolve liquid or dilute-vapor conductivity, preferring in-range data."""
         T = self._normalize_thermal_conductivity_temperature(T)
+        return self.resolve_thermal_conductivity_kernel(
+            identifier, phase, props, allow_online=allow_online).evaluate(T)
+
+    def resolve_thermal_conductivity_kernel(self, identifier, phase, props=None, *, allow_online=True):
+        """Prepare immutable inputs without choosing a row at an arbitrary T."""
         phase = self._normalize_thermal_conductivity_phase(phase)
         props = self._coerce_props(identifier, props, allow_online=allow_online)
         allow_online = self._props_allow_online(props, allow_online)
+        props = deepcopy(props)
+        prepared = []
+        def perry_inputs():
+            if not prepared:
+                library = self._get_perry_library()
+                candidates = (() if library is None else tuple(self._identifier_candidates(identifier, props)))
+                selectors = tuple(library.prepare_thermal_conductivity_correlation(candidate, phase)
+                                  for candidate in candidates)
+                prepared.append((library, candidates, selectors))
+            return prepared[0]
+        def evaluate(T):
+            return self._resolve_prepared_thermal_conductivity(
+                identifier, T, phase, props, allow_online, perry_inputs)
+        return ThermalConductivityKernel(phase, evaluate)
+
+    def _resolve_prepared_thermal_conductivity(self, identifier, T, phase, props, allow_online, perry_inputs):
         correlation_key = "kg" if phase == "vapor" else "kl"
 
         provided = self._evaluate_provided_correlation(
@@ -102,11 +125,10 @@ class ThermalConductivityMixin:
                     default_quality=0.97,
                 )
 
-        library = self._get_perry_library()
+        library, candidates, selectors = perry_inputs()
         if library is not None:
-            candidates = self._identifier_candidates(identifier, props)
-            for candidate in candidates:
-                row = library.thermal_conductivity_correlation(candidate, T, phase)
+            for select in selectors:
+                row = select(T)
                 if row is None:
                     continue
                 correlation = self._normalized_perry_conductivity_correlation(row)
@@ -861,12 +883,7 @@ class ThermalConductivityMixin:
         )
 
     def _normalize_thermal_conductivity_temperature(self, T: float) -> float:
-        value = self._positive_number(T)
-        if value is None:
-            raise PropertyResolutionError(
-                "Thermal-conductivity temperature must be a positive finite value in K."
-            )
-        return value
+        return ThermalConductivityKernel.temperature(T)
 
     @staticmethod
     def _normalize_thermal_conductivity_phase(phase: str) -> str:

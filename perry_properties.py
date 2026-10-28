@@ -934,20 +934,25 @@ class PerryPropertyLibrary:
         phase: str,
     ) -> Optional[dict[str, Any]]:
         """Return an in-range Perry conductivity row without evaluating it."""
+        select = self.prepare_thermal_conductivity_correlation(identifier, phase)
+        return select(T)
+
+    def prepare_thermal_conductivity_correlation(self, identifier, phase):
+        """Resolve identity once while retaining temperature-dependent row selection."""
         self._load_thermal_conductivity()
         entry = self.get(identifier, expand_identity=False)
         if not entry:
-            return None
+            return lambda T: None
         thermal_entry = self.thermal_conductivity_chemicals.get(entry.get("cas"))
         if not thermal_entry:
-            return None
+            return lambda T: None
         if phase == "vapor":
             key = "vapor_thermal_conductivity"
         elif phase == "liquid":
             key = "liquid_thermal_conductivity"
         else:
-            return None
-        return self._select_in_range(thermal_entry, key, T, supported={100, 102})
+            return lambda T: None
+        return lambda T: self._select_in_range(thermal_entry, key, T, supported={100, 102})
 
     def saturated_liquid_thermal_conductivity_W_per_m_K(
         self,

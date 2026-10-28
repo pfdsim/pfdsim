@@ -26,7 +26,7 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
         ShomateSolidCpKernel, Perry151SolidCpKernel, TabularSolidCpKernel,
         PiecewiseSolidCpKernel, LastovkaSolidCpKernel,
         ModifiedKoppSolidCpKernel, SolidCpCollectionKernel,
-        ViscosityKernel,
+        ViscosityKernel, ThermalConductivityKernel,
         PropertyResolver,
     )
 else:
@@ -50,7 +50,7 @@ else:
         ShomateSolidCpKernel, Perry151SolidCpKernel, TabularSolidCpKernel,
         PiecewiseSolidCpKernel, LastovkaSolidCpKernel,
         ModifiedKoppSolidCpKernel, SolidCpCollectionKernel,
-        ViscosityKernel,
+        ViscosityKernel, ThermalConductivityKernel,
         PropertyResolver,
     )
 
@@ -100,6 +100,7 @@ __all__ = (
     'ModifiedKoppSolidCpKernel',
     'SolidCpCollectionKernel',
     'ViscosityKernel',
+    'ThermalConductivityKernel',
     'PropertyResolver',
     'get_property_resolver',
     'resolve_vapor_pressure',
@@ -126,6 +127,7 @@ __all__ = (
     'resolve_viscosity',
     'resolve_viscosity_kernel',
     'resolve_thermal_conductivity',
+    'resolve_thermal_conductivity_kernel',
     'resolve_surface_tension',
     'resolve_dipole_moment',
     'resolve_radius_of_gyration',
@@ -445,6 +447,12 @@ def resolve_viscosity_kernel(
         props,
         allow_online=allow_online,
     )
+
+
+def resolve_thermal_conductivity_kernel(symbol, phase, props=None, *, allow_online=True):
+    """Resolve a reusable conductivity evaluator with full provenance."""
+    return get_property_resolver().resolve_thermal_conductivity_kernel(
+        symbol, phase, props, allow_online=allow_online)
 
 
 def resolve_thermal_conductivity(

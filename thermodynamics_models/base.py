@@ -358,9 +358,9 @@ class IdealThermodynamics(PhaseDiagramMixin):
             tuple[str, float], tuple[float, Optional[str]]
         ] = {}
         self._solid_molar_volume_cache: dict[tuple[str, float], float] = {}
-        self._viscosity_cache: dict[tuple[str, str, float, float], float] = {}
+        self._viscosity_cache: dict[tuple[str, str, float, float], object] = {}
         self._viscosity_kernels: dict[tuple[str, str], object] = {}
-        self._thermal_conductivity_cache: dict[tuple[str, str, float], float] = {}
+        self._thermal_conductivity_cache: dict[tuple[str, str, float], object] = {}
         self._surface_tension_cache: dict[tuple[str, float], float] = {}
         self._surface_tension_calculators: dict[tuple[str, ...], object] = {}
         self._liquid_molar_volume_sources: dict[str, list[dict]] = {}
@@ -376,6 +376,7 @@ class IdealThermodynamics(PhaseDiagramMixin):
         self._provided_cp_coeffs: dict[str, list[float]] = {}
         self._ideal_gas_cp_kernels: dict[str, object] = {}
         self._liquid_cp_kernels: dict[str, object] = {}
+        self._thermal_conductivity_kernels: dict[tuple[str, str], object] = {}
         self._solid_cp_kernels: dict[str, object] = {}
         self._henry_component_data_cache: dict[str, Optional[HenryComponentData]] = {}
         self._henry_temperature_anchor_cache: dict[tuple, tuple[float, float]] = {}
@@ -1766,6 +1767,7 @@ class IdealThermodynamics(PhaseDiagramMixin):
         cache_key = (comp, float(T))
         cached = self._cp_ideal_cache.get(cache_key)
         if cached is not None:
+            self._record_ideal_gas_cp_kernel_range_use(comp, T, self._ideal_gas_cp_kernels.get(comp))
             return cached
         kernel = self._ideal_gas_cp_kernel(comp)
         if kernel is not None:
@@ -1833,6 +1835,7 @@ class IdealThermodynamics(PhaseDiagramMixin):
         cache_key = (comp, float(T))
         cached = self._cp_liquid_cache.get(cache_key)
         if cached is not None:
+            self._record_liquid_cp_kernel_range_use(comp, T, self._liquid_cp_kernels.get(comp))
             return cached
         kernel = self._liquid_cp_kernel(comp)
         if kernel is None:
@@ -3926,18 +3929,23 @@ class IdealThermodynamics(PhaseDiagramMixin):
         """Resolver-backed pure conductivity [W/(m K)], including solid requests."""
         key = (phase, comp, float(T))
         if key in self._thermal_conductivity_cache:
-            return self._thermal_conductivity_cache[key]
+            result = self._thermal_conductivity_cache[key]
+            self._record_lazy_property_source(comp, f'{phase}_thermal_conductivity', T, result)
+            return float(result.value)
         try:
             if __package__ and __package__.split(".", 1)[0] == "pfdsim":
                 from ..property_resolver import get_property_resolver
             else:
                 from property_resolver import get_property_resolver
-            result = get_property_resolver().resolve_thermal_conductivity(
-                _property_lookup_identifier(comp, self.props[comp]),
-                T,
-                phase=phase,
-                props=self._resolver_known_props.get(comp),
-            )
+            kernel_key = phase, comp
+            kernel = self._thermal_conductivity_kernels.get(kernel_key)
+            if kernel is None:
+                kernel = get_property_resolver().resolve_thermal_conductivity_kernel(
+                    _property_lookup_identifier(comp, self.props[comp]), phase,
+                    self._resolver_known_props.get(comp),
+                    allow_online=self._allow_online_lookup_for_component(comp))
+                self._thermal_conductivity_kernels[kernel_key] = kernel
+            result = kernel.evaluate(T)
             value = float(result.value)
             if not math.isfinite(value) or value <= 0:
                 raise ValueError("conductivity must be positive and finite")
@@ -3949,7 +3957,8 @@ class IdealThermodynamics(PhaseDiagramMixin):
         self._record_lazy_property_source(
             comp, f"{phase}_thermal_conductivity", T, result
         )
-        return self._set_limited_cache(self._thermal_conductivity_cache, key, value)
+        self._set_limited_cache(self._thermal_conductivity_cache, key, result)
+        return value
 
     def mixture_liquid_thermal_conductivity(
         self, composition: dict[str, float], T: float
@@ -3979,6 +3988,64 @@ class IdealThermodynamics(PhaseDiagramMixin):
             for i in composition
             for j in composition
         )
+
+    def prepare_wall_prandtl(self, composition, P, phase):
+        """Bind homogeneous wall-property inputs, retaining model callbacks.
+
+        Wall film corrections need Cp*mu/k, not a density or flow state.
+        Unknown state implementations retain their authoritative Cp query.
+        """
+        z = self._normalized_positive_composition(composition)
+        if set(z)-set(self.components) or any(c in self.permanent_solid_components for c in z):
+            raise ThermodynamicsError('Wall transport requires known fluid components')
+        phase = str(phase).strip().lower()
+        if phase == 'gas':
+            phase = 'vapor'
+        if phase not in ('liquid', 'vapor') or not math.isfinite(P) or P <= 0:
+            raise ThermodynamicsError('Wall transport requires a fluid phase and positive finite pressure')
+        vf = float(phase == 'vapor')
+        mw = self.mixture_MW(z)
+        if not math.isfinite(mw) or mw <= 0:
+            raise ThermodynamicsError('Wall molecular weight must be positive and finite')
+        context = self._quality_context_key(self._current_quality_context())
+        direct_cp = getattr(self.calculate_state, '__func__', None) is IdealThermodynamics.calculate_state
+        pure = next(iter(z)) if len(z) == 1 else None
+        stock = lambda name: getattr(getattr(self, name), '__func__', None) is getattr(IdealThermodynamics, name)
+        if (direct_cp and pure is not None and stock('mixture_Cp')
+                and stock('phase_weighted_mixture_Cp')):
+            pure_cp = self.Cp_ideal_gas if vf else self.Cp_liquid
+            cp_at = lambda T: pure_cp(pure, T)
+        elif direct_cp:
+            cp_at = lambda T: self.phase_weighted_mixture_Cp(z, T, vf, z, z, P)
+        else:
+            cp_at = lambda T: self.calculate_state(T, P, 1., z, phase=phase, flash=False, include=('Cp',)).Cp
+        if pure is not None and stock('mixture_viscosity') and stock(
+                '_mixture_vapor_viscosity' if vf else '_mixture_liquid_viscosity'):
+            mu_at = lambda T: self._pure_viscosity(pure, T, P, phase)
+        else:
+            mu_at = lambda T: self.mixture_viscosity(z, T, P, vf)
+        if (pure is not None and stock('transport_mixture_thermal_conductivity')
+                and (vf or stock('mixture_liquid_thermal_conductivity'))):
+            k_at = lambda T: self.pure_thermal_conductivity(pure, T, phase)
+        else:
+            def k_at(T):
+                conductivities = self.transport_mixture_thermal_conductivity(z, T, P, vf)
+                return conductivities.vapor if vf else conductivities.liquid
+        def evaluate(T):
+            nonlocal context, mw
+            if not math.isfinite(T) or T <= 0:
+                raise ThermodynamicsError('Wall temperature must be positive and finite')
+            current = self._quality_context_key(self._current_quality_context())
+            if current != context:
+                mw = self.mixture_MW(z)
+                if not math.isfinite(mw) or mw <= 0:
+                    raise ThermodynamicsError('Wall molecular weight must be positive and finite')
+                context = current
+            cp, mu, k = cp_at(T), mu_at(T), k_at(T)
+            if not all(value is not None and math.isfinite(value) and value > 0 for value in (cp, mu, k)):
+                raise ThermodynamicsError('Wall Cp, viscosity and conductivity must be positive and finite')
+            return cp*1000/mw*mu/k
+        return evaluate
 
     def transport_mixture_thermal_conductivity(
         self, composition: dict[str, float], T: float, P: float,
@@ -4020,7 +4087,8 @@ class IdealThermodynamics(PhaseDiagramMixin):
         cache_key = (phase_key, comp, float(T), float(P))
         cached = self._viscosity_cache.get(cache_key)
         if cached is not None:
-            return cached
+            self._record_viscosity_kernel_source_once(comp, phase_key, T, cached)
+            return float(cached.value)
         props = self.props.get(comp)
         if props is None:
             raise ThermodynamicsError(
@@ -4059,7 +4127,8 @@ class IdealThermodynamics(PhaseDiagramMixin):
             T,
             result,
         )
-        return self._set_limited_cache(self._viscosity_cache, cache_key, value)
+        self._set_limited_cache(self._viscosity_cache, cache_key, result)
+        return value
 
     @staticmethod
     def _normalized_positive_composition(

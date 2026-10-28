@@ -51,6 +51,7 @@ class SteamThermodynamics(IdealThermodynamics):
             ) from exc
 
         self._props_si = PropsSI
+        self._native_props_si = PropsSI
         self._phase_si = PhaseSI
         self._water_mw = STEAM_WATER_MW
         self._pcrit_bar = self._props('pcrit', '', 0.0, '', 0.0) / 1e5
@@ -58,16 +59,33 @@ class SteamThermodynamics(IdealThermodynamics):
         self._tmin = self._props('Tmin', '', 0.0, '', 0.0)
         self._reference_H_offset = STEAM_WATER_H_OFFSET
         self._reference_S_offset = STEAM_WATER_S_OFFSET
+        self._water_saturation_properties = {}
 
     def _props(self, output: str, input1: str, value1: float,
                input2: str, value2: float) -> float:
+        return self._props_values(output, input1, value1, input2, value2)
+
+    def _props_values(self, outputs, input1, value1, input2, value2):
+        """Use one fresh PropsSI state for a scalar or joint property request."""
+        if (not isinstance(outputs, str)
+                and (getattr(self._props, '__func__', None) is not SteamThermodynamics._props
+                     or self._props_si is not self._native_props_si)):
+            return tuple(self._props(output, input1, value1, input2, value2) for output in outputs)
         try:
-            return float(self._props_si(output, input1, value1, input2, value2, self.FLUID))
+            result = self._props_si(outputs, input1, value1, input2, value2, self.FLUID)
+            return float(result) if isinstance(outputs, str) else tuple(float(v) for v in result)
         except Exception as exc:
             raise ThermodynamicsError(
-                f"CoolProp IF97 failed for {output}({input1}={value1}, "
+                f"CoolProp IF97 failed for {outputs}({input1}={value1}, "
                 f"{input2}={value2})"
             ) from exc
+
+    def _transport_inputs(self, T, P, phase):
+        if P < self._pcrit_bar:
+            sat = self._saturation_temperature(P)
+            if abs(T-sat) <= max(1e-6, 1e-8*sat):
+                return 'P', self._pressure_to_pa(P), 'Q', float(phase == 'vapor')
+        return 'T', float(T), 'P', self._pressure_to_pa(P)
 
     def _phase(self, input1: str, value1: float, input2: str, value2: float) -> str:
         try:
@@ -106,19 +124,7 @@ class SteamThermodynamics(IdealThermodynamics):
         if cached is not None:
             return cached
 
-        use_saturation = False
-        if P < self._pcrit_bar:
-            T_sat = self._saturation_temperature(P)
-            use_saturation = abs(T - T_sat) <= max(1e-6, 1e-8 * T_sat)
-        if use_saturation:
-            quality = 1.0 if phase_key == 'vapor' else 0.0
-            value = self._props(
-                'V', 'P', self._pressure_to_pa(P), 'Q', quality
-            )
-        else:
-            value = self._props(
-                'V', 'T', float(T), 'P', self._pressure_to_pa(P)
-            )
+        value = self._props('V', *self._transport_inputs(T, P, phase_key))
 
         if value <= 0.0 or not math.isfinite(value):
             raise ThermodynamicsError(
@@ -137,15 +143,49 @@ class SteamThermodynamics(IdealThermodynamics):
         vf = float(vapor_fraction)
         if not math.isfinite(vf) or not 0 <= vf <= 1:
             raise ThermodynamicsError('Conductivity requires vapor fraction between zero and one')
-        saturated = P < self._pcrit_bar and abs(T-self._saturation_temperature(P)) <= max(1e-6, 1e-8*T)
         def value(quality):
-            result = (self._props('L', 'P', self._pressure_to_pa(P), 'Q', quality) if saturated
-                      else self._props('L', 'T', T, 'P', self._pressure_to_pa(P)))
+            result = self._props('L', *self._transport_inputs(T, P, 'vapor' if quality else 'liquid'))
             if not math.isfinite(result) or result <= 0:
                 raise ThermodynamicsError('IF97 returned invalid thermal conductivity')
             return result
         return TransportPhaseValues(liquid=value(0) if vf < 1 else None,
                                     vapor=value(1) if vf > 0 else None)
+
+    def prepare_wall_prandtl(self, composition, P, phase):
+        z = self._normalize_water_composition(composition)
+        fallback = super().prepare_wall_prandtl(z, P, phase)
+        phase = str(phase).strip().lower()
+        phase = 'vapor' if phase == 'gas' else phase
+        for name, expected in (
+            ('calculate_state', SteamThermodynamics.calculate_state),
+            ('mixture_Cp', SteamThermodynamics.mixture_Cp),
+            ('phase_weighted_mixture_Cp', IdealThermodynamics.phase_weighted_mixture_Cp),
+            ('mixture_viscosity', IdealThermodynamics.mixture_viscosity),
+            ('_pure_viscosity', SteamThermodynamics._pure_viscosity),
+            ('transport_mixture_thermal_conductivity', SteamThermodynamics.transport_mixture_thermal_conductivity),
+            ('_props', SteamThermodynamics._props),
+        ):
+            if getattr(getattr(self, name), '__func__', None) is not expected:
+                return fallback
+        mw = self.mixture_MW(z)
+        context = self._quality_context_key(self._current_quality_context())
+        def evaluate(T):
+            nonlocal mw, context
+            current = self._quality_context_key(self._current_quality_context())
+            if current != context:
+                mw = self.mixture_MW(z)
+                if not math.isfinite(mw) or mw <= 0:
+                    raise ThermodynamicsError('Wall molecular weight must be positive and finite')
+                context = current
+            if not math.isfinite(T) or T <= 0:
+                raise ThermodynamicsError('Wall temperature must be positive and finite')
+            if self._forced_phase_conflicts_with_TP(T, P, phase == 'liquid'):
+                return fallback(T)
+            cp, mu, k = self._props_values(['C', 'V', 'L'], *self._transport_inputs(T, P, phase))
+            if not all(math.isfinite(v) and v > 0 for v in (cp, mu, k)):
+                raise ThermodynamicsError('IF97 returned invalid wall transport properties')
+            return cp*self._water_mw/mw*mu/k
+        return evaluate
 
     def _normalize_water_composition(self, composition: dict[str, float]) -> dict[str, float]:
         total = sum(max(float(value), 0.0) for value in composition.values())
@@ -175,7 +215,19 @@ class SteamThermodynamics(IdealThermodynamics):
     def _saturation_temperature(self, P: float) -> float:
         if P >= self._pcrit_bar:
             raise ThermodynamicsError("Water has no saturation temperature above the critical pressure")
-        return self._props('T', 'P', self._pressure_to_pa(P), 'Q', 0.0)
+        return self._saturation_property('T', P, 0.)
+
+    def _saturation_property(self, output, P, quality):
+        # Saturation depends on pressure and backend, not the stream's flow
+        # or composition alias. Include overridden backend functions in the key.
+        props_method = getattr(self._props, '__func__', self._props)
+        key = (self.FLUID, self._props_si, props_method, output, float(P), float(quality))
+        cache = self._water_saturation_properties
+        if key not in cache:
+            value = self._props(output, 'P', self._pressure_to_pa(P), 'Q', quality)
+            self._set_limited_cache(cache, key, value, limit=2048)
+        return cache[key]
+
 
     def _saturation_pressure(self, T: float) -> float:
         if T >= self._tcrit:

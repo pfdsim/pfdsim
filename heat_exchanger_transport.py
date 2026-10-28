@@ -5,6 +5,7 @@ curves and stream energy balances remain owned by HeatExchanger.
 """
 from dataclasses import dataclass, field, replace
 import math
+from functools import lru_cache
 
 from ht.boiling_nucleic import Rohsenow, Zuber
 from ht.condensation import Shah
@@ -186,17 +187,16 @@ class ShellTubeGeometry:
             + (self.bundle_diameter-self.tube_outer_diameter)
             * (self.tube_pitch-self.tube_outer_diameter)/self.transverse_pitch)
 
-    def shell_coefficient(self, props, wall_prandtl):
+    @lru_cache(maxsize=2048)
+    def _bulk_terms(self, re, pr):
         ds, db, do = self.shell_diameter, self.bundle_diameter, self.tube_outer_diameter
         theta = math.acos(min(1., ds*(.5-self.baffle_cut)/((db-do)/2)))
         window_fraction = (theta-math.sin(theta)*math.cos(theta))/math.pi
         cross_fraction = 1-2*window_fraction
         rows = max(1, round(ds*(1-2*self.baffle_cut)/self.longitudinal_pitch))
         window_rows = max(0, round(.8*(ds*self.baffle_cut-(ds-db)/2)/self.longitudinal_pitch))
-        re, pr = props['reynolds'], props['prandtl']
         if not 10 <= re <= 2e6 or not .7 <= pr <= 500:
             raise UnitOperationError(f'Shell crossflow requires 10<=Re<=2000000 and 0.7<=Pr<=500; got Re={re:g}, Pr={pr:g}')
-        nu = Nu_Zukauskas_Bejan(re, pr, rows, self.longitudinal_pitch, self.transverse_pitch, Pr_wall=wall_prandtl)
         shell_arc = 2*math.pi-2*math.acos(1-2*self.baffle_cut)
         ssb = .5*ds*self.shell_baffle_clearance*shell_arc
         stb = self.tube_count*(1-window_fraction)*math.pi/4*((do+self.tube_baffle_clearance)**2-do**2)
@@ -217,9 +217,15 @@ class ShellTubeGeometry:
         factor = math.prod(factors.values())
         if not math.isfinite(factor) or factor <= 0:
             raise UnitOperationError('Invalid shell correction factors')
-        return {'h_W_m2_K': nu*props['conductivity_W_m_K']/do*factor, 'nusselt': nu*factor,
+        return rows, factor, factors, cross_fraction
+
+    def shell_coefficient(self, props, wall_prandtl):
+        re, pr = props['reynolds'], props['prandtl']
+        rows, factor, factors, cross_fraction = self._bulk_terms(re, pr)
+        nu = Nu_Zukauskas_Bejan(re, pr, rows, self.longitudinal_pitch, self.transverse_pitch, Pr_wall=wall_prandtl)
+        return {'h_W_m2_K': nu*props['conductivity_W_m_K']/self.tube_outer_diameter*factor, 'nusselt': nu*factor,
                 'flow_regime': 'shell_crossflow', 'correlation': 'zukauskas_bell_corrections',
-                'shell_corrections': factors, 'crossflow_rows': rows, 'crossflow_tube_fraction': cross_fraction}
+                'shell_corrections': dict(factors), 'crossflow_rows': rows, 'crossflow_tube_fraction': cross_fraction}
 
 
 @dataclass(frozen=True)
@@ -236,6 +242,8 @@ class TubularHeatTransfer:
     orientation: str = 'horizontal'
     saturation_cache: dict = field(default_factory=dict, compare=False, repr=False)
     property_cache: dict = field(default_factory=dict, compare=False, repr=False)
+    wall_prandtl_cache: dict = field(default_factory=dict, compare=False, repr=False)
+    wall_prandtl_evaluators: dict = field(default_factory=dict, compare=False, repr=False)
 
     def __post_init__(self):
         di, do, ds = self.tube_inner_diameter_m, self.tube_outer_diameter_m, self.shell_inner_diameter_m
@@ -363,6 +371,9 @@ class TubularHeatTransfer:
             phase=phase if vf in (0, 1) else 'two_phase', mass_quality=vf, hydraulic_diameter_m=diameter)
         prepared = {'thermo': thermo, 'state': state, 'side': side, 'sat': sat, 'properties': props,
                     'diameter': diameter, 'area': area, 'annulus_ratio': annulus_ratio, 'quality': vf}
+        context = (thermo._quality_context_key(thermo._current_quality_context())
+                   if hasattr(thermo, '_current_quality_context') else None)
+        prepared['wall_property_key'] = id(thermo), tuple(sorted(state.composition.items())), state.P, phase, context
         if sat and 0 < vf < 1:
             saturation = self._saturation_properties(prepared)
             rl, rv = saturation['liquid']['density_kg_m3'], saturation['vapor']['density_kg_m3']
@@ -394,15 +405,42 @@ class TubularHeatTransfer:
     def _single_phase(self, prepared, temperature):
         state, props = prepared['state'], prepared['properties']
         phase = 'vapor' if prepared['quality'] >= 1-1e-10 else 'liquid'
-        wall = state.copy()
-        wall.T = temperature
-        wall_props = self._phase_properties(prepared['thermo'], wall, phase)
+        wall_prandtl = self._wall_prandtl(prepared, temperature)
         if prepared['side'] == 'shell' and self.shell_geometry:
-            return self.shell_geometry.shell_coefficient(props, wall_props['prandtl'])
-        transfer = internal_flow_transfer(props['reynolds'], props['prandtl'], wall_props['prandtl'],
+            return self.shell_geometry.shell_coefficient(props, wall_prandtl)
+        transfer = internal_flow_transfer(props['reynolds'], props['prandtl'], wall_prandtl,
             annulus_diameter_ratio=prepared['annulus_ratio'],
             gas_temperature_ratio=state.T/temperature if phase == 'vapor' else None)
         return {**transfer, 'h_W_m2_K': transfer['nusselt']*props['conductivity_W_m_K']/prepared['diameter']}
+
+    def _wall_prandtl(self, prepared, temperature):
+        if temperature == prepared['state'].T:
+            return prepared['properties']['prandtl']
+        key = prepared['wall_property_key']
+        cache_key = key, float(temperature)
+        if cache_key in self.wall_prandtl_cache:
+            return self.wall_prandtl_cache[cache_key]
+        thermo, state = prepared['thermo'], prepared['state']
+        phase = 'vapor' if prepared['quality'] >= 1-1e-10 else 'liquid'
+        prepare = getattr(thermo, 'prepare_wall_prandtl', None)
+        if prepare is None:
+            wall = state.copy()
+            wall.T = temperature
+            value = self._phase_properties(thermo, wall, phase)['prandtl']
+        else:
+            evaluator = self.wall_prandtl_evaluators.get(key)
+            if evaluator is None:
+                evaluator = prepare(state.composition, state.P, phase)
+                if len(self.wall_prandtl_evaluators) >= 1024:
+                    self.wall_prandtl_evaluators.clear()
+                self.wall_prandtl_evaluators[key] = evaluator
+            value = evaluator(temperature)
+        if not math.isfinite(value) or value <= 0:
+            raise UnitOperationError('Wall Prandtl number must be positive and finite')
+        if len(self.wall_prandtl_cache) >= 4096:
+            self.wall_prandtl_cache.clear()
+        self.wall_prandtl_cache[cache_key] = value
+        return value
 
     def _boiling(self, prepared, flux, check_limits):
         sat = self._saturation_properties(prepared, surface_tension=True)

@@ -48,6 +48,29 @@ def laminar_flat_plate_transfer(reynolds: float, prandtl: float, schmidt: float)
             'sherwood': 0.664 * math.sqrt(re) * sc**(1/3)}
 
 
+@lru_cache(maxsize=2048)
+def _gnielinski_bulk_terms(re, pr, ratio):
+    """Bulk/geometry terms shared by all wall-temperature iterations."""
+    if ratio is None:
+        friction = (0.79 * math.log(re) - 1.64) ** -2
+        numerator = (friction / 8) * (re - 1000) * pr
+        denominator = 1 + 12.7 * math.sqrt(friction / 8) * (pr**(2/3) - 1)
+        geometry_factor = 1.0
+    else:
+        log_ratio = math.log(ratio)
+        effective_re = re * (
+            (1 + ratio**2) * log_ratio + (1 - ratio**2)
+        ) / ((1 - ratio)**2 * log_ratio)
+        friction = (1.8 * math.log10(effective_re) - 1.5) ** -2
+        numerator = (friction / 8) * re * pr
+        denominator = (
+            1.07 + 900 / re - 0.63 / (1 + 10 * pr)
+            + 12.7 * math.sqrt(friction / 8) * (pr**(2/3) - 1)
+        )
+        geometry_factor = 0.75 * ratio**-0.17
+    return numerator/denominator*geometry_factor, friction
+
+
 def gnielinski_liquid_transfer(
     reynolds: float,
     prandtl: float,
@@ -74,32 +97,18 @@ def gnielinski_liquid_transfer(
             f'Gnielinski liquid transfer requires {minimum_re}<=Re<=1000000 and '
             f'0.5<=Pr,Pr_wall<=1000; got Re={re:g}, Pr={pr:g}, Pr_wall={pr_wall:g}'
         )
-    if annulus_diameter_ratio is None:
-        friction = (0.79 * math.log(re) - 1.64) ** -2
-        numerator = (friction / 8) * (re - 1000) * pr
-        denominator = 1 + 12.7 * math.sqrt(friction / 8) * (pr**(2/3) - 1)
-        geometry_factor = 1.0
-    else:
+    ratio = None
+    if annulus_diameter_ratio is not None:
         ratio = _positive_float(annulus_diameter_ratio, 'annulus diameter ratio')
         if not 0.1 <= ratio <= 0.9:
             raise TransportCorrelationError('Annulus diameter ratio must be between 0.1 and 0.9')
-        log_ratio = math.log(ratio)
-        effective_re = re * (
-            (1 + ratio**2) * log_ratio + (1 - ratio**2)
-        ) / ((1 - ratio)**2 * log_ratio)
-        friction = (1.8 * math.log10(effective_re) - 1.5) ** -2
-        numerator = (friction / 8) * re * pr
-        denominator = (
-            1.07 + 900 / re - 0.63 / (1 + 10 * pr)
-            + 12.7 * math.sqrt(friction / 8) * (pr**(2/3) - 1)
-        )
-        geometry_factor = 0.75 * ratio**-0.17
+    bulk_nusselt, friction = _gnielinski_bulk_terms(re, pr, ratio)
     correction = (pr / pr_wall)**0.11
     return {
         'reynolds': re, 'prandtl': pr, 'wall_prandtl': pr_wall,
         'darcy_friction_factor': friction,
         'wall_property_correction': correction,
-        'nusselt': numerator / denominator * geometry_factor * correction,
+        'nusselt': bulk_nusselt * correction,
     }
 
 

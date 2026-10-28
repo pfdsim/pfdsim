@@ -270,11 +270,13 @@ def test_missing_solid_conductivity_is_not_substituted(monkeypatch):
     thermo = IdealThermodynamics(['water', 'ethanol'], ChemicalDatabase(enable_online=False))
     import property_resolver
     calls = []
-    def resolve(identifier, T, *, phase, props):
-        calls.append(phase)
-        raise ValueError('solid conductivity unavailable')
+    def resolve(identifier, phase, props, **options):
+        def evaluate(T):
+            calls.append(phase)
+            raise ValueError('solid conductivity unavailable')
+        return SimpleNamespace(evaluate=evaluate)
     monkeypatch.setattr(property_resolver, 'get_property_resolver',
-                        lambda: SimpleNamespace(resolve_thermal_conductivity=resolve))
+                        lambda: SimpleNamespace(resolve_thermal_conductivity_kernel=resolve))
     with pytest.raises(ThermodynamicsError, match='solid conductivity unavailable'):
         solve_layer_growth(thermo, **configuration())
     assert calls == ['solid']
