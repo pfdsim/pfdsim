@@ -24,9 +24,9 @@ if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
 else:
     from pressure_standards import ATM_PRESSURE_BAR, THERMOCHEMICAL_STANDARD_PRESSURE_BAR
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-    from .thermodynamics import StreamState
+    from .thermodynamics import StreamState, ThermodynamicsError
 else:
-    from thermodynamics import StreamState
+    from thermodynamics import StreamState, ThermodynamicsError
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .unit_conversions import (
         mass_flow_to_kg_per_hour,
@@ -3763,11 +3763,15 @@ class HeatExchanger(UnitOperation):
             )
 
         inlet_capacity = transport.inlet_capacity_W_K(self._thermo_for_stream(hot), self._thermo_for_stream(cold), hot, cold) if transport is not None else None
-        def objective(Q: float) -> float:
+        residuals = {}
+        def objective(Q: float, grid: int) -> float:
             if Q <= 1e-9:
                 return -target
+            key = grid, Q
+            if key in residuals:
+                return residuals[key]
             curve = self._curve_metrics(
-                hot, cold, P_hot_out, P_cold_out, Q, segments, flow_pattern,
+                hot, cold, P_hot_out, P_cold_out, Q, grid, flow_pattern,
                 include_u_estimates=(mode == 'area' and transport is None),
                 hot_force_phase=hot_force_phase,
                 cold_force_phase=cold_force_phase,
@@ -3777,8 +3781,15 @@ class HeatExchanger(UnitOperation):
                 raise UnitOperationError('Trial duty creates a temperature cross')
             if mode == 'area':
                 key = 'calculated_U_area_required_m2' if transport is not None else 'auto_U_area_required_m2'
-                return curve[key] - target
-            return curve['UA_required_W_per_K'] - target
+                residual = curve[key] - target
+            else:
+                residual = curve['UA_required_W_per_K'] - target
+            if not math.isfinite(residual):
+                raise UnitOperationError('Trial duty produces a nonfinite capacity residual')
+            # Retain scalar residuals only: a full curve can contain thousands
+            # of property/film records, and final reporting rebuilds that curve.
+            residuals[grid, Q] = residual
+            return residual
 
         delta_t = max(1e-6, hot.T - cold.T)
         if transport is not None:
@@ -3786,14 +3797,55 @@ class HeatExchanger(UnitOperation):
         else:
             capacity = constant_UA if constant_UA is not None else A_value * self.U_ESTIMATE_TABLE['liquid_liquid']['typical']
         Q_high = max(1.0, capacity * delta_t * 3.6)
-        duty = solve_thermal_domain_root(objective, Q_high, xtol=1e-5,
-            label=f"HeatExchanger '{self.unit_id}' cannot rate capacity within the supported domain")
-        if transport is not None and abs(objective(duty)) > max(1e-7, target * 1e-6):
-            raise UnitOperationError(
-                f"HeatExchanger '{self.unit_id}' cannot rate the supplied area within the "
-                "calculated-U domain: rating capacity residual exceeds tolerance"
-            )
-        return duty
+        tolerance = max(1e-7, target * 1e-6)
+        def solve_grid(grid):
+            duty = solve_thermal_domain_root(lambda Q: objective(Q, grid), Q_high, xtol=1e-5,
+                label=f"HeatExchanger '{self.unit_id}' cannot rate capacity within the supported domain")
+            if transport is not None and abs(objective(duty, grid)) > tolerance:
+                raise UnitOperationError(
+                    f"HeatExchanger '{self.unit_id}' cannot rate the supplied area within the "
+                    "calculated-U domain: rating capacity residual exceeds tolerance"
+                )
+            return duty
+
+        def correct_full_grid(duty, residual):
+            # Search locally only through finite, physically valid full-grid
+            # trials. A hole in the domain abandons this bracket, never supplies
+            # an artificial endpoint to Brent. The global search remains below.
+            direction = -1 if residual > 0 else 1
+            distance = max(1e-5, abs(duty) * 1e-3)
+            for _ in range(6):
+                trial = duty + direction * distance
+                if trial <= 0 or not math.isfinite(trial):
+                    return None
+                other_residual = objective(trial, segments)
+                if residual * other_residual <= 0:
+                    low, high = sorted((duty, trial))
+                    root = brentq(lambda Q: objective(Q, segments), low, high,
+                                  xtol=1e-5, rtol=1e-9, maxiter=100)
+                    return root if abs(objective(root, segments)) <= tolerance else None
+                distance *= 2
+            return None
+
+        if transport is not None and mode == 'area':
+            # Coarse curves propose duties only. Acceptance, including all
+            # phase/domain/pinch checks, always uses the requested full grid.
+            grid = 4
+            while grid < segments:
+                try:
+                    duty = solve_grid(grid)
+                    residual = objective(duty, segments)
+                    if abs(residual) <= tolerance:
+                        return duty
+                    corrected = correct_full_grid(duty, residual)
+                    if corrected is not None:
+                        return corrected
+                except (ValueError, UnitOperationError, ThermodynamicsError, RuntimeError):
+                    # Invalid or unconverged trial/correction: refine, then
+                    # ultimately propagate the authoritative full-grid result.
+                    pass
+                grid *= 2
+        return solve_grid(segments)
 
     def _compute_full_curve_metrics(self, rating_mode: bool) -> bool:
         if rating_mode:

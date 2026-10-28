@@ -1643,7 +1643,13 @@ Three-point interior Gauss quadrature integrates local `dQ/(U*delta_T)` for area
 and `dQ/delta_T` for conductance. Intervals split at pure-fluid saturated-liquid/
 vapor enthalpy boundaries. This avoids endpoint quality clamps and permits
 sensible/latent zones to coexist. Rating solves duty at installed area. Increasing
-`curve_segments` checks spatial convergence. Performance reports include
+`curve_segments` checks spatial convergence. Calculated-U rating may use a
+coarser grid to estimate duty, but accepts it only after checking the installed
+area equation and all physical constraints on the requested grid. If needed,
+it corrects duty using full-grid evaluations, refines the trial grid, and
+falls back to the full-grid search. Final profiles and film diagnostics always
+use the requested `curve_segments`; this does not relax the spatial resolution.
+Performance reports include
 `U_model`, `U_area_basis`, `tube_side`, `U_W_m2_K` (the effective coefficient
 `UA_required/area_required`), `length_required_m`, and `calculated_U_nodes`.
 Each node includes film coefficients, Nu/Re/Pr, bulk transport properties,
