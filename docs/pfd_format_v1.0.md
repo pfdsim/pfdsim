@@ -139,8 +139,8 @@ methods from other simulators may instead suggest the nearest available model
 and identify core model families intended for future implementation.
 
 The recognized planned-method diagnostics currently include `PRWS` and
-`RKSWS`/`SRKWS` (Wong-Sandler GE-EOS mixing rules), `PC-SAFT`, `CPA`, `LKP`
-(Lee-Kesler-Plocker), `IAPWS-95`, and `AMINES` for amine/acidic-gas systems.
+`RKSWS`/`SRKWS` (Wong-Sandler GE-EOS mixing rules), `PC-SAFT`, `CPA`,
+`IAPWS-95`, and `AMINES` for amine/acidic-gas systems.
 `IAWPS-95` is recognized as a common transposition and points to the standard
 `IAPWS-95` name. These declarations remain parse errors until their models are
 implemented; suggested available methods are approximations, not silent
@@ -148,6 +148,9 @@ substitutions.
 
 - `IDEAL` - Ideal gas law + Raoult's law (default)
 - `RK` or `REDLICH-KWONG` - Redlich-Kwong equation of state
+- `LKP` or `LEE-KESLER-PLOCKER` - Lee-Kesler-Plocker corresponding-states
+  model with DWSIM binary data and missing-pair correlations. Requires resolved
+  `Tc`, `Pc`, `Vc`, and `omega`. See [LKP technical notes](lkp.md).
 - `SRK` or `SOAVE-REDLICH-KWONG` - Soave-Redlich-Kwong equation of state
 - `PR` or `PENG-ROBINSON` - Peng-Robinson equation of state
 - `RKS-BM`, `PR-BM` - SRK and PR with Boston-Mathias alpha function
@@ -976,6 +979,9 @@ Each interaction model has a closed parameter schema. Unknown parameter names
 are fatal parse errors, with a close match suggestion when one is available.
 
 Supported models and fields:
+- `LKP` - symmetric, positive dimensionless `kij` (alias `k_ij`). Neutral
+  value **1**; see [LKP data and correlation details](lkp.md). No temperature
+  law or range fields are accepted for this model.
 - `NRTL` - `alpha` or `alpha12`, plus either scalar energy fields `a12`/`a21`
   [cal/mol] (`a12_cal_per_mol`/`a21_cal_per_mol` are aliases) or direct tau
   fields `tau12_c`, `tau12_d`, `tau12_e`, `tau12_f`, `tau12_g`, `tau21_c`,

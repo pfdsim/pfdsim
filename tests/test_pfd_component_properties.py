@@ -413,8 +413,6 @@ class PFDComponentPropertyTests(unittest.TestCase):
             "SRK-WS": ("Wong-Sandler", "PSRK"),
             "PC-SAFT": ("PC-SAFT", "PR or SRK"),
             "CPA": ("Cubic-Plus-Association", "PR or SRK"),
-            "LKP": ("Lee-Kesler-Plocker", "PR or SRK"),
-            "LEE-KESLER-PLOCKER": ("Lee-Kesler-Plocker", "PR or SRK"),
             "IAPWS-95": ("IAPWS-95", "STEAM"),
             "IAWPS-95": ("IAPWS-95", "standard formulation name is IAPWS-95"),
             "AMINES": ("Amine and acidic-gas", "no amine/acid-gas-capable substitute"),

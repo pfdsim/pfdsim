@@ -488,6 +488,7 @@ _INTERACTION_MODEL_ALIASES = {
 }
 
 _INTERACTION_PARAMETER_FIELDS = {
+    "LKP": frozenset({"comment", "kij", "k_ij"}),
     "PR": frozenset(
         {
             "comment",
@@ -817,14 +818,6 @@ _KNOWN_UNSUPPORTED_THERMO_METHODS = {
         "cover vapor dimerization only and are not a CPA replacement.",
         "Cubic-Plus-Association thermodynamics will be implemented in the future.",
     ),
-    "LKP": (
-        "Try PR or SRK for a cubic-EOS corresponding-states approximation.",
-        "Lee-Kesler-Plocker thermodynamics will be implemented in the future.",
-    ),
-    "LEE-KESLER-PLOCKER": (
-        "Try PR or SRK for a cubic-EOS corresponding-states approximation.",
-        "Lee-Kesler-Plocker thermodynamics will be implemented in the future.",
-    ),
     "IAPWS-95": (
         "Try STEAM, which currently uses CoolProp's IF97 water/steam properties.",
         "IAPWS-95 water/steam properties will be implemented in the future.",
@@ -872,6 +865,7 @@ _SUPPORTED_THERMO_SCOPE_METHODS = frozenset(
         "SRK",
         "PR",
         "PSRK",
+        "LKP",
         "RKS-BM",
         "PR-BM",
         "SRK-MC",
@@ -2449,6 +2443,7 @@ class PFDParser:
                     "PENG_ROBINSON": "PR",
                     "PREDICTIVE-SRK": "PSRK",
                     "PREDICTIVE_SRK": "PSRK",
+                    "LEE-KESLER-PLOCKER": "LKP",
                     "RKS_BM": "RKS-BM",
                     "SRK-BM": "RKS-BM",
                     "SRK_BM": "RKS-BM",
@@ -2580,6 +2575,7 @@ class PFDParser:
                     "SRK",
                     "PR",
                     "PSRK",
+                    "LKP",
                     "RKS-BM",
                     "PR-BM",
                     "SRK-MC",

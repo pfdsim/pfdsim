@@ -1,0 +1,15 @@
+PROCESS: Methane-ethane LKP flash
+VERSION: 1.0
+ONLINE_LOOKUP: false
+THERMO_METHOD: LKP
+
+COMPONENTS:
+    CH4 | Methane
+    C2H6 | Ethane
+
+# Uses DWSIM's tabulated kij=1.052; liquid/vapor fugacities use LKP.
+STREAM Feed : FEED -> PRODUCT
+    T = 200 [K]
+    P = 10 [bar]
+    F = 1 [kmol/h]
+    x = CH4:0.5, C2H6:0.5

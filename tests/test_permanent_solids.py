@@ -111,6 +111,20 @@ class PermanentSolidStateTests(unittest.TestCase):
                 places=10,
             )
 
+    def test_eos_state_accepts_absent_configured_permanent_solid(self):
+        from thermodynamics import create_thermodynamics
+        for method in ('PR', 'PSRK', 'LKP'):
+            with self.subTest(method=method):
+                thermo = create_thermodynamics(['CH4'], method, self.db)
+                thermo.configure_permanent_solids(['CH4', 'NaCl'], ['NaCl'])
+                for phase in (None, 'vapor'):
+                    state = thermo.calculate_state(
+                        300., 1., 1., {'CH4': 1., 'NaCl': 0.}, phase=phase, include=(),
+                    )
+                    self.assertEqual(state.composition, {'CH4': 1.})
+                    self.assertEqual(state.vapor_fraction, 1.)
+                    self.assert_component_conservation(state)
+
     def test_dry_solid_state_uses_no_fluid_flash(self):
         state = self.make_thermo().calculate_state(
             298.15, 1.0, 5.0, {'NaCl': 1.0}

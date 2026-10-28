@@ -12,6 +12,7 @@ from .base import IdealThermodynamics
 from .steam import SteamThermodynamics
 from .eos import RKThermodynamics, CubicEOSThermodynamics
 from .psrk_thermo import PSRKThermodynamics
+from .lkp import LKPThermodynamics
 from .unifac_models import UNIFLBYThermodynamics
 from .unifac_models import (UNIFACThermodynamics, UNIFAC2Thermodynamics, UNIFDMDThermodynamics, UNIFM2Thermodynamics, UNIFNISTThermodynamics, UNIFACVDMThermodynamics, UNIFDMDVDMThermodynamics, UNIFNISTVDMThermodynamics)
 from .nrtl_uniquac import (
@@ -33,7 +34,7 @@ from .second_virial import normalize_second_virial_correlation
 SUPPORTED_METHODS = (
     'RKSMHV2', 'UNIFLBY',
     'IDEAL', 'STEAM',
-    'RK', 'SRK', 'PR', 'PSRK', 'RKS-BM', 'PR-BM', 'SRK-MC', 'PR-MC',
+    'RK', 'SRK', 'PR', 'PSRK', 'LKP', 'RKS-BM', 'PR-BM', 'SRK-MC', 'PR-MC',
     'SRK-TWU', 'PR-TWU', 'PRSV1', 'PRSV2',
     'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
     'UNIFAC-VDM', 'UNIFDMD-VDM', 'UNIFNIST-VDM',
@@ -67,6 +68,7 @@ def create_thermodynamics(components: list[str],
                               RKThermodynamics,
                               CubicEOSThermodynamics,
                               PSRKThermodynamics,
+                              LKPThermodynamics,
                               UNIFACThermodynamics,
                               UNIFAC2Thermodynamics,
                               UNIFDMDThermodynamics,
@@ -100,7 +102,7 @@ def create_thermodynamics(components: list[str],
     
     Args:
         components: List of component symbols
-        method: 'IDEAL', 'STEAM', 'IF97', 'RK', 'SRK', 'PR', 'PSRK', 'RKSMHV2', 'UNIFLBY', 'RKS-BM', 'PR-BM',
+        method: 'IDEAL', 'STEAM', 'IF97', 'RK', 'SRK', 'PR', 'PSRK', 'LKP', 'RKSMHV2', 'UNIFLBY', 'RKS-BM', 'PR-BM',
             'SRK-MC', 'PR-MC', 'PRSV1', 'PRSV2', 'SRK-TWU', 'PR-TWU',
             'UNIFAC', 'UNIFAC2', 'UNIFDMD', 'UNIFM2', 'UNIFNIST',
             'UNIFAC-VDM', 'UNIFDMD-VDM',
@@ -176,6 +178,8 @@ def create_thermodynamics(components: list[str],
         return CubicEOSThermodynamics(components, 'SRK', db, interaction_overrides)
     elif method in ('PR', 'PENG-ROBINSON', 'PENG_ROBINSON'):
         return CubicEOSThermodynamics(components, 'PR', db, interaction_overrides)
+    elif method in ('LKP', 'LEE-KESLER-PLOCKER'):
+        return LKPThermodynamics(components, db, interaction_overrides)
     elif method in ('PSRK', 'PREDICTIVE-SRK', 'PREDICTIVE_SRK'):
         return PSRKThermodynamics(components, db, interaction_overrides)
     elif method == 'RKSMHV2':

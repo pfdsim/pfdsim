@@ -1063,6 +1063,19 @@ class Simulator:
                     "comment": str(params.get("comment") or "PFD interaction override"),
                 }
 
+                if model == "LKP":
+                    remember_activity_override(scope, model, comp1, comp2)
+                    if "kij" in params and "k_ij" in params:
+                        raise SimulationError("LKP cannot specify both kij and k_ij.")
+                    kij = params.get("kij", params.get("k_ij"))
+                    if kij is None:
+                        raise SimulationError("LKP INTERACTION_PARAMETERS require kij=... .")
+                    record["kij"] = numeric(kij, "kij")
+                    if not math.isfinite(record["kij"]) or record["kij"] <= 0.0:
+                        raise SimulationError("LKP kij must be positive and finite; neutral value is 1.")
+                    overrides.append(record)
+                    continue
+
                 if model == "TSONOPOULOS":
                     remember_activity_override(scope, model, comp1, comp2)
                     if "kij" in params and "k_ij" in params:

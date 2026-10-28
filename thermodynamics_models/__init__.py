@@ -32,6 +32,7 @@ from .ge_eos import (
 )
 from .psrk import PSRK, PSRKError, PSRKDataError, PSRKUnsupportedComponentError, PSRKCalculationError
 from .psrk_thermo import PSRKThermodynamics
+from .lkp import LKPThermodynamics
 from .activity import ActivityCoefficientThermodynamics, VLLEFlashResult, VaporDimerizationActivityMixin
 from .unifac_models import (
     UNIFACThermodynamics, UNIFAC2Thermodynamics, UNIFDMDThermodynamics,
@@ -84,7 +85,7 @@ __all__ = [
     'ExcessGibbsEOSMixingRule', 'ModifiedHuronVidalFirstOrderMixingRule',
     'ModifiedHuronVidalSecondOrderMixingRule',
     'PSRK', 'PSRKError', 'PSRKDataError', 'PSRKUnsupportedComponentError',
-    'PSRKCalculationError', 'PSRKThermodynamics',
+    'PSRKCalculationError', 'PSRKThermodynamics', 'LKPThermodynamics',
     'ActivityCoefficientThermodynamics', 'VLLEFlashResult', 'VaporDimerizationActivityMixin',
     'UNIFACThermodynamics', 'UNIFAC2Thermodynamics', 'UNIFDMDThermodynamics',
     'UNIFM2Thermodynamics', 'UNIFNISTThermodynamics', 'UNIFLBYThermodynamics',
