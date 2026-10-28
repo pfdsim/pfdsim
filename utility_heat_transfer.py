@@ -112,21 +112,17 @@ class HenryCurveThermodynamics:
         return self.helper._state_at_PV(composition, P, quality, F, 298.15, self.context)
 
 
-def size_thermal_utility(unit, inlet, outlet, duty, process_drop, *, process_thermo=None):
-    """Size fluid or surface-loading service for a specified process duty.
+def prepare_thermal_utility(unit):
+    """Select and initialize an internal package without solving a utility state.
 
-    Steam defaults to saturated supply and saturated-liquid return. Water
-    supply/return temperatures are required; no site utility grade is invented.
-    Without geometry or explicit U, service-class auto-U gives preliminary area.
+    Shared by Simulator initialization and standalone Heater/Cooler sizing.
+    Electric/fired surfaces and absent utilities need no fluid package.
     """
-    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
-        from .unit_operations_basic import HeatExchanger
-    else:
-        from unit_operations_basic import HeatExchanger
-
+    if unit.get_param('utility') is None:
+        return None
     utility = str(unit.get_param('utility')).strip().lower().replace('-', '_').replace(' ', '_')
     if utility in ('electric', 'fired'):
-        return _nonfluid_utility_size(unit, duty, utility)
+        return utility, None, None, None
     if utility not in ('steam', 'cooling_water', 'chilled_water', 'hot_water', 'hot_oil', 'thermal_fluid', 'air', 'refrigerant'):
         raise UnitOperationError('Unknown utility; choose steam, cooling_water, chilled_water, hot_water, hot_oil, thermal_fluid, air, refrigerant, electric or fired')
     heating = unit.heat_direction > 0
@@ -151,12 +147,44 @@ def size_thermal_utility(unit, inlet, outlet, duty, process_drop, *, process_the
             raise UnitOperationError('utility_thermo_method=process requires utility components in the process package')
         backend = unit.thermo
     else:
+        # Internal utilities inherit flowsheet-wide resolution controls, not
+        # the process components' identities, correlations or fitted values.
+        # Standalone utilities retain the existing offline database default.
+        policy = {'_allow_online_lookup': False,
+                  **getattr(unit.thermo, '_property_resolution_policy', {})}
         cache = getattr(unit, '_utility_backends', {})
-        cache_key = method, tuple(composition)
+        cache_key = method, tuple(composition), tuple(sorted(policy.items()))
         if cache_key not in cache:
-            cache[cache_key] = create_thermodynamics(list(composition), method, db=ChemicalDatabase(enable_online=False))
+            backend = create_thermodynamics(list(composition), method,
+                db=ChemicalDatabase(enable_online=policy['_allow_online_lookup']))
+            backend._property_resolution_policy = dict(policy)
+            for known in backend._resolver_known_props.values():
+                known.update(policy)
+            cache[cache_key] = backend
             unit._utility_backends = cache
         backend = cache[cache_key]
+    initialize = getattr(backend, 'initialize', None)
+    if callable(initialize):
+        initialize()
+    return utility, composition, method, backend
+
+
+def size_thermal_utility(unit, inlet, outlet, duty, process_drop, *, process_thermo=None):
+    """Size fluid or surface-loading service for a specified process duty.
+
+    Steam defaults to saturated supply and saturated-liquid return. Water
+    supply/return temperatures are required; no site utility grade is invented.
+    Without geometry or explicit U, service-class auto-U gives preliminary area.
+    """
+    if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
+        from .unit_operations_basic import HeatExchanger
+    else:
+        from unit_operations_basic import HeatExchanger
+
+    utility, composition, method, backend = prepare_thermal_utility(unit)
+    if backend is None:
+        return _nonfluid_utility_size(unit, duty, utility)
+    heating = unit.heat_direction > 0
     pressure_raw = unit.get_param('utility_P')
     pressure_unit = unit.get_param_unit('utility_P')
     saturation_temperature = unit.get_temperature_param('utility_T')

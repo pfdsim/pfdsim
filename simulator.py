@@ -68,8 +68,10 @@ else:
     )
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .flowsheet_solver import FlowsheetSolver, SimulationResult, FlowsheetError
+    from .unit_operations_base import UnitOperationError
 else:
     from flowsheet_solver import FlowsheetSolver, SimulationResult, FlowsheetError
+    from unit_operations_base import UnitOperationError
 if __package__ and __package__.split(".", 1)[0] == "pfdsim":
     from .dof_analyzer import analyze_dof, SpecificationStatus
 else:
@@ -1676,10 +1678,7 @@ class Simulator:
         ) -> None:
             known = props.to_dict()
             known.setdefault("antoine_source", "PFD component definition")
-            known["_allow_online_lookup"] = allow_online_lookup
-            known["_allow_computation"] = allow_computation
-            if psat_minimum_pressure_bar is not None:
-                known["_psat_minimum_pressure_bar"] = psat_minimum_pressure_bar
+            known.update(thermo._property_resolution_policy)
             if hasattr(thermo, "_resolver_known_props"):
                 thermo._resolver_known_props[comp_symbol] = known
             for cache_name in (
@@ -1855,6 +1854,12 @@ class Simulator:
                             "no fluid components; using the permanent-solid "
                             "property layer only."
                         )
+                thermo._property_resolution_policy = {
+                    "_allow_online_lookup": allow_online_lookup,
+                    "_allow_computation": allow_computation,
+                }
+                if psat_minimum_pressure_bar is not None:
+                    thermo._property_resolution_policy["_psat_minimum_pressure_bar"] = psat_minimum_pressure_bar
                 thermo.configure_permanent_solids(
                     components,
                     permanent_solid_components,
@@ -1902,7 +1907,9 @@ class Simulator:
                 self.thermo,
                 self.thermo_packages,
             )
-        except (FlowsheetError, ThermodynamicsError) as e:
+            for unit in self.solver.units.values():
+                unit.initialize()
+        except (FlowsheetError, ThermodynamicsError, UnitOperationError) as e:
             self.thermo = None
             self.thermo_packages = {}
             self.solver = None

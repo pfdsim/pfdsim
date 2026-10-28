@@ -271,6 +271,16 @@ capabilities. Ordinary VLE does not compile optional LLE/VLLE kernels; LLE,
 VLLE, and VDM kernels are prepared only when the phase model or unit operations
 can call them. The compilation step does not perform a sacrificial property or
 equilibrium calculation, and `run()` introduces no new compiled signatures.
+This includes internal fluid utility packages owned by heaters and coolers:
+their creation and signature preparation occur during initialization and the
+same instances are reused for sizing. Electric/fired surface utilities do not
+create a fluid package. Standalone Python heaters/coolers expose the same
+`initialize()` step; solving directly still prepares their utility on demand.
+Internal fluid utilities inherit `ONLINE_LOOKUP`, `ALLOW_COMPUTATION`, and
+`PSAT_MINIMUM_PRESSURE` from the flowsheet, including when their fluid is not
+a process component. These controls apply to both database fetching and
+downstream property resolution. Standalone utilities default to offline
+lookup unless their parent package carries an explicit flowsheet policy.
 
 #### Thermodynamic Scopes
 

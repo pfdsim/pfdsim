@@ -9,10 +9,10 @@ from scipy.optimize import brentq
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .heat_exchanger_transport import TubularHeatTransfer, ShellTubeGeometry, transport_parameter, heat_transfer_area, wall_material_record, solve_thermal_domain_root
-    from .utility_heat_transfer import HenryCurveThermodynamics, size_thermal_utility
+    from .utility_heat_transfer import HenryCurveThermodynamics, size_thermal_utility, prepare_thermal_utility
 else:
     from heat_exchanger_transport import TubularHeatTransfer, ShellTubeGeometry, transport_parameter, heat_transfer_area, wall_material_record, solve_thermal_domain_root
-    from utility_heat_transfer import HenryCurveThermodynamics, size_thermal_utility
+    from utility_heat_transfer import HenryCurveThermodynamics, size_thermal_utility, prepare_thermal_utility
 
 if __package__ and __package__.split('.', 1)[0] == 'pfdsim':
     from .physical_constants import R_J_MOL_K
@@ -2682,6 +2682,10 @@ class Heater(UnitOperation):
     particle_size_behavior = 'nonselective'
     heat_direction = 1
     direction_label = 'heat'
+
+    def initialize(self):
+        prepare_thermal_utility(self)
+        return self
     
     def solve(self, inlets: dict[str, StreamState]) -> UnitResult:
         if not inlets:

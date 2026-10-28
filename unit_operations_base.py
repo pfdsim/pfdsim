@@ -91,6 +91,10 @@ class UnitOperation:
         self.params = params
         self.solve_context = {}
 
+    def initialize(self):
+        """Prepare unit-owned runtime resources without solving a stream state."""
+        return self
+
     @staticmethod
     def _permanent_solid_components(inlets: dict[str, StreamState]) -> list[str]:
         components = set()
