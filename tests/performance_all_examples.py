@@ -69,17 +69,19 @@ PER_EXAMPLE_RELATIVE_REGRESSION = {
 # enough absolute slack to avoid flagging scheduling noise as a regression.
 MIN_EXAMPLE_SLOWDOWN_SECONDS = 0.03
 
-BASELINE_WALL_SECONDS = 18.0
+# Mean of normalized wall averages 15.440684 s and 15.387672 s (2026-10-26),
+# with each six-round run independently trimmed by _trim_one_outlier.
+BASELINE_WALL_SECONDS = 15.414178
 BASELINE_EXAMPLE_SECONDS = {
     '3methylpyridine_ether_extraction_recycle.pfd': 1.445,
     'adaptive_spinodal_water_toluene.pfd': 0.010,
-    'acrylic_acid_rigorous_extraction.pfd': 0.288,
+    'acrylic_acid_rigorous_extraction.pfd': 0.218,
     'air_3a_molecular_sieve_drying.pfd': 0.003,
     'ammonia_oxidation.pfd': 0.037,
     'ammonia_synthesis.pfd': 0.013,
     'benzene_toluene_20_stage_distillation_nrtl.pfd': 0.086,
     'biosteam_mesh_hydrocarbon_distillation.pfd': 1.113,
-    'butanol_water_lle.pfd': 0.007,
+    'butanol_water_lle.pfd': 0.005,
     'butanol_water_phase_selective_distillation.pfd': 0.511,
     'competitive_13x_adsorption.pfd': 0.055,
     'cryogenic_air_separation_rks_bm.pfd': 0.264,
@@ -87,7 +89,7 @@ BASELINE_EXAMPLE_SECONDS = {
     'dcm_3a_molecular_sieve_drying.pfd': 0.008,
     'ethanol_3a_molecular_sieve_drying.pfd': 0.006,
     'ethanol_benzene_azeotropic_distillation_rigorous.pfd': 0.410,
-    'ethanol_distillation_rigorous.pfd': 0.089,
+    'ethanol_distillation_rigorous.pfd': 0.074,
     'ethanol_ether_partial_condensation_absorption.pfd': 1.760,
     'ethanol_pressure_swing_recycle_wasteful.pfd': 6.941,
     'ethanol_water_mhv2.pfd': 0.006,
@@ -104,8 +106,8 @@ BASELINE_EXAMPLE_SECONDS = {
     'methanol_decomposition_pfr.pfd': 0.021,
     'methanol_diethyl_ether_5bar_nrtl_rk.pfd': 0.170,
     'methanol_ethanol_light_gas_cleanup_compact.pfd': 1.171,
-    'methanol_synthesis.pfd': 0.366,
-    'methanol_synthesis_psrk.pfd': 0.576,
+    'methanol_synthesis.pfd': 0.325,
+    'methanol_synthesis_psrk.pfd': 0.343,
     'mixed_acid_dehydration_uniquac_vdm.pfd': 0.744,
     'permanent_solid_global_vlle_flash.pfd': 0.019,
     'permanent_solid_slurry_operations.pfd': 0.003,
@@ -117,6 +119,13 @@ BASELINE_EXAMPLE_SECONDS = {
     'trace_organic_water_stripping_isothermal_unifnist.pfd': 0.501,
     'unifac_flash.pfd': 0.006,
     'vinegar_concentration_uniquac_vdm.pfd': 0.342,
+
+    # Pooled normalized samples from two six-round runs, trimming each run
+    # independently with _trim_one_outlier before averaging (2026-10-23).
+    'double_pipe_calculated_u.pfd': 2.040,
+    'methane_ethane_lkp.pfd': 0.377,
+    'shell_tube_calculated_u.pfd': 2.265,
+    'utility_surface_sizing.pfd': 0.108,
 
     'cake_filtration_washing.pfd': 0.079,
     'equilibrium_warm_melt_washing.pfd': 0.355,
